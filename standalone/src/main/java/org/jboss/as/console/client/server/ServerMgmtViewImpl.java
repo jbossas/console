@@ -3,7 +3,10 @@ package org.jboss.as.console.client.server;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.*;
+import org.jboss.as.console.client.components.AbstractToolsetView;
+import org.jboss.as.console.client.components.NavigationItem;
+import org.jboss.as.console.client.components.NavigationSection;
+import org.jboss.as.console.client.components.ViewName;
 import org.jboss.as.console.client.util.message.Message;
 
 import java.util.ArrayList;
@@ -31,7 +34,6 @@ public class ServerMgmtViewImpl extends ViewImpl
         return delegateWidget;
     }
 
-
     @Override
     public void setInSlot(Object slot, Widget content) {
 
@@ -49,11 +51,6 @@ public class ServerMgmtViewImpl extends ViewImpl
     private static AbstractToolsetView createToolset() {
 
         AbstractToolsetView toolset = new AbstractToolsetView("config") {
-            @Override
-            protected String defaultView()
-            {
-                return "server/subsystems";
-            }
 
             @Override
             protected List<NavigationSection> getNavigationSections()
@@ -61,29 +58,21 @@ public class ServerMgmtViewImpl extends ViewImpl
                 final ArrayList<NavigationSection> sections = new ArrayList<NavigationSection>();
 
                 final NavigationSection serverConfig= new NavigationSection(
-                        new ViewName("server", "Configuration"),
-                        new NavigationItem(new ViewName("server/path","Path"), "",null),
-                        /*
-                        new NavigationItem(new ViewName("subsystems","Subsystems"), "", new ViewFactory()
-                        {
-                            @Override
-                            public Widget createView() {
-                                return injector.getSubsystemTool().asWidget();
-                            }
-                        }),*/
-                        new NavigationItem(new ViewName("server/interfaces","Interfaces"), "",null),
-                        new NavigationItem(new ViewName("server/sockets","Sockets"), "",null),
-                        new NavigationItem(new ViewName("server/properties","Properties"), "",null)
+                        new ViewName("common", "Common Settings"),
+                        new NavigationItem(new ViewName("path","Path"), "",null),
+                        new NavigationItem(new ViewName("interfaces","Interfaces"), "",null),
+                        new NavigationItem(new ViewName("sockets","Sockets"), "",null),
+                        new NavigationItem(new ViewName("properties","Properties"), "",null)
                 );
 
                  final NavigationSection subsystems= new NavigationSection(
-                        new ViewName("server", "Subsystems"),
-                        new NavigationItem(new ViewName("server/subsys/threads","Threading"), "",null)
+                        new ViewName("config", "Subsystem Configuration"),
+                        new NavigationItem(new ViewName("subsys;name=threads","Threading"), "",null)
                 );
 
                 final NavigationSection deployments = new NavigationSection(
-                        new ViewName("server", "Deployments"),
-                        new NavigationItem(new ViewName("server/deployments","Deployments"), "", null)
+                        new ViewName("deployments", "Deployments"),
+                        new NavigationItem(new ViewName("deployments","Deployments"), "", null)
                 );
 
                 sections.add(serverConfig);

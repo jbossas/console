@@ -1,7 +1,9 @@
 package org.jboss.as.console.client.components;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
@@ -13,11 +15,10 @@ import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.NameTokens;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Heiko Braun
@@ -85,8 +86,6 @@ public abstract class AbstractToolsetView  {
         return layout;
     }
 
-    protected abstract String defaultView();
-
     protected abstract List<NavigationSection> getNavigationSections();
 
     public void setContent(Widget newContent) {
@@ -134,19 +133,24 @@ public abstract class AbstractToolsetView  {
 
         treeGrid.addCellClickHandler(new CellClickHandler() {
             @Override
-            public void onCellClick(CellClickEvent event) {
-                // We use cell click as opposed to selected changed handler
-                // because we want to be able to refresh even if clicking
-                // on an already selected node.
-                TreeNode selectedRecord = (TreeNode) treeGrid.getSelectedRecord();
-                if (selectedRecord != null) {
-                    String pageName = selectedRecord.getName();
-                    String viewPath = pageName;//sectionName + "/" + pageName;
-                    History.newItem(viewPath);
+            public void onCellClick(CellClickEvent event)
+            {
 
-                    /*Console.MODULES.getPlaceManager().revealPlace(
-                            new PlaceRequest(pageName)
-                    );*/
+                TreeNode selectedRecord = (TreeNode) treeGrid.getSelectedRecord();
+
+                if (selectedRecord != null) {
+                    final String pageName = selectedRecord.getName();
+                    //final String viewPath = pageName;//sectionName + "/" + pageName;
+                    //History.newItem(viewPath);
+
+                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                            new ArrayList<PlaceRequest>(){{
+                                add(new PlaceRequest(NameTokens.serverConfig));
+                                add(new PlaceRequest(pageName));
+                            }}
+                    );
+
+                    highlightTool(sectionName, pageName);
                 }
             }
         });
@@ -160,50 +164,21 @@ public abstract class AbstractToolsetView  {
 
     // --------------------------------------------------------------
 
-    /*public void renderView(ViewPath viewPath) {
-
-     // view change requested
-     if (!viewPath.isCurrent(currentSectionViewId) || !viewPath.isNext(currentPageViewId)) {
-         if (viewPath.isEnd()) {
-
-             if(null==currentSectionViewId) // first request
-             {
-                 Log.debug("Fallback to default view...");
-                 viewPath = defaultView();
-             }
-             else
-             {
-                 viewPath = new ViewPath(currentSectionViewId+"/"+currentPageViewId);
-             }
-         }
-
-         renderContentView(viewPath);
-
-         highlightTool(viewPath.getCurrent(), viewPath.getNext());
-
-     }
-     else
-     {
-         // TODO: path parameter might have changed and an update be necessary
-     }
- }
-
-
- protected void highlightTool(String sectionName, String pageName) {
-     for (String name : treeGrids.keySet()) {
-         TreeGrid treeGrid = treeGrids.get(name);
-         if (!name.equals(sectionName)) {
-             treeGrid.deselectAllRecords();
-         } else {
-             Tree tree = treeGrid.getTree();
-             TreeNode node = tree.find(sectionName + "/" + pageName);
-             if (node != null) {
-                 treeGrid.selectSingleRecord(node);
-             } else {
-                 System.out.println("Unknown page: "+sectionName+"/"+pageName);
-                 //Console.getErrorHandler().handleError(MSG.view_leftNav_unknownPage(pageName, sectionName));
-             }
-         }
-     }
- }   */
+    private void highlightTool(String sectionName, String pageName)
+    {
+        for (String name : treeGrids.keySet()) {
+            TreeGrid treeGrid = treeGrids.get(name);
+            if (!name.equals(sectionName)) {
+                treeGrid.deselectAllRecords();
+            } else {
+                Tree tree = treeGrid.getTree();
+                TreeNode node = tree.find(sectionName + "/" + pageName);
+                if (node != null) {
+                    treeGrid.selectSingleRecord(node);
+                } else {
+                    Log.error("Unknown page: " + sectionName + "/" + pageName);
+                }
+            }
+        }
+    }
 }
