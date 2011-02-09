@@ -3,6 +3,7 @@ package org.jboss.as.console.client.server;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.AbstractToolsetView;
 import org.jboss.as.console.client.components.NavigationItem;
 import org.jboss.as.console.client.components.NavigationSection;
@@ -50,7 +51,7 @@ public class ServerMgmtViewImpl extends ViewImpl
 
     private static AbstractToolsetView createToolset() {
 
-        AbstractToolsetView toolset = new AbstractToolsetView("config") {
+        AbstractToolsetView toolset = new AbstractToolsetView(NameTokens.serverConfig) {
 
             @Override
             protected List<NavigationSection> getNavigationSections()

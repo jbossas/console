@@ -1,12 +1,10 @@
 package org.jboss.as.console.client.components;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.events.CellClickEvent;
 import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -16,7 +14,6 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.NameTokens;
 
 import java.util.*;
 
@@ -26,7 +23,7 @@ import java.util.*;
  */
 public abstract class AbstractToolsetView  {
 
-    protected String viewId;  // distinct, top level navigation element
+    protected String appId;  // distinct, top level navigation element
 
     private Map<String, TreeGrid> treeGrids = new LinkedHashMap<String, TreeGrid>();
     private Map<String, NavigationSection> sectionsByName;
@@ -42,7 +39,7 @@ public abstract class AbstractToolsetView  {
 
     public AbstractToolsetView(String topLevelId) {
         super();
-        this.viewId = topLevelId;
+        this.appId = topLevelId;
 
         layout = new HLayout()
         {{
@@ -145,7 +142,7 @@ public abstract class AbstractToolsetView  {
 
                     Console.MODULES.getPlaceManager().revealPlaceHierarchy(
                             new ArrayList<PlaceRequest>(){{
-                                add(new PlaceRequest(NameTokens.serverConfig));
+                                add(new PlaceRequest(appId));
                                 add(new PlaceRequest(pageName));
                             }}
                     );

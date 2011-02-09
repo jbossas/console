@@ -41,13 +41,6 @@ public class InterfaceToolPresenter extends Presenter<InterfaceToolPresenter.MyV
         getView().setPresenter(this);
     }
 
-
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-        System.out.println(request.getNameToken());
-    }
-
     @Override
     protected void onReset() {
         super.onReset();
