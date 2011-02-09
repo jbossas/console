@@ -25,7 +25,6 @@ import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.DeploymentToolView,
         DeploymentToolPresenter.DeploymentToolProxy> {
 
-    private EventBus eventBus;
     private PlaceManager placeManager;
     private DeploymentStore store;
 
@@ -45,7 +44,6 @@ public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.D
 
         super(eventBus, view, proxy);
 
-        this.eventBus = eventBus;
         this.store = store;
         this.placeManager = placeManager;
     }
@@ -55,13 +53,13 @@ public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.D
     }
 
     @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
+    protected void onBind() {
+        super.onBind();
         getView().setPresenter(this);
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(eventBus, ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
+        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
     }
 }

@@ -68,7 +68,7 @@ public class ServerMgmtViewImpl extends ViewImpl
 
                  final NavigationSection subsystems= new NavigationSection(
                         new ViewName("config", "Subsystem Configuration"),
-                        new NavigationItem(new ViewName("subsys;name=threads","Threading"), "",null)
+                        new NavigationItem(new ViewName("threads","Threading"), "",null)
                 );
 
                 final NavigationSection deployments = new NavigationSection(

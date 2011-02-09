@@ -457,3 +457,8 @@ a:hover {
 .header-logo {
     padding-left:10px;
 }
+
+.description-label {
+    font-size:1em!important;
+    color:#C0C0C0;
+}

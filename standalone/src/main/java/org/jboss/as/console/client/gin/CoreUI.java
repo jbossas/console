@@ -22,6 +22,7 @@ import org.jboss.as.console.client.server.path.PathToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.subsys.SubsystemToolPresenter;
+import org.jboss.as.console.client.server.subsys.ThreadManagementPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.util.message.MessageBar;
 import org.jboss.as.console.client.util.message.MessageCenter;
@@ -70,7 +71,9 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<PathToolPresenter> getPathToolPresenter();
     AsyncProvider<PropertyToolPresenter> getPropertyToolPresenter();
     AsyncProvider<SocketToolPresenter> getSocketToolPresenter();
-    AsyncProvider<SubsystemToolPresenter> getSubsystemToolPresenter();
+    //AsyncProvider<SubsystemToolPresenter> getSubsystemToolPresenter();
+
+    AsyncProvider<ThreadManagementPresenter> getThreadManagementPresenter();
 
 
 }

@@ -23,8 +23,10 @@ import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolViewImpl;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
-import org.jboss.as.console.client.server.subsys.SubsystemToolPresenter;
+
 import org.jboss.as.console.client.server.subsys.SubsystemToolViewImpl;
+import org.jboss.as.console.client.server.subsys.ThreadManagementPresenter;
+import org.jboss.as.console.client.server.subsys.ThreadManagementViewImpl;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 import org.jboss.as.console.client.util.message.MessageBar;
@@ -113,11 +115,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 SocketToolViewImpl.class,
                 SocketToolPresenter.MyProxy.class);
         
-        // server/subsystems
-        bindPresenter(SubsystemToolPresenter.class,
-                SubsystemToolPresenter.MyView.class,
-                SubsystemToolViewImpl.class,
-                SubsystemToolPresenter.MyProxy.class);
+        // server/threads
+        bindPresenter(ThreadManagementPresenter.class,
+                ThreadManagementPresenter.MyView.class,
+                ThreadManagementViewImpl.class,
+                ThreadManagementPresenter.MyProxy.class);
                 
         
 
