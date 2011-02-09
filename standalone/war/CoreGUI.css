@@ -1,0 +1,460 @@
+/*body {
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}*/
+
+body, p, td, th, option, input, textarea, select {
+    color: #000000;
+    font-family: tahoma, verdana, sans-serif !important;
+    font-size: 11px !important;
+    background-color:#ffffff;
+}
+
+img {
+    border-style: none;
+}
+
+hr {
+    background-color: #AAAAAA;
+    border: 0 none;
+    color: #AAAAAA;
+    height: 1px;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+    width: 100%;
+}
+
+a, a:link, a:visited, a:hover {
+    color: #4A5D75 !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+}
+
+a:hover {
+    text-decoration: underline !important;
+}
+
+
+.backLink {
+    color: #4A5D75;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+
+.HeaderLabel {
+    height: 35px;
+    font-size: 11pt;
+    font-weight: bold;
+    color: #444444;
+}
+
+
+.OddRow {
+    background-color: white;
+    border-bottom-color: rgb(230, 234, 239);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: rgb(217, 224, 227);
+    border-right-style: solid;
+    border-right-width: 1px;
+
+}
+
+.OddRowDisabled {
+    background-color: white;
+    border-bottom-color: rgb(230, 234, 239);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: rgb(217, 224, 227);
+    border-right-style: solid;
+    border-right-width: 1px;
+
+}
+
+.EvenRow {
+    background-color: rgb(246, 246, 246);
+    border-bottom-color: rgb(230, 234, 239);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: rgb(217, 224, 227);
+    border-right-style: solid;
+    border-right-width: 1px;
+
+}
+
+.EvenRowDisabled {
+    background-color: rgb(246, 246, 246);
+    border-bottom-color: rgb(230, 234, 239);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-right-color: rgb(217, 224, 227);
+    border-right-style: solid;
+    border-right-width: 1px;
+
+}
+
+.TopSectionLink, .topsectionlinkselected {
+    vertical-align: bottom;
+    padding:5px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    cursor: pointer;
+    font-size: 10pt;
+    font-weight: bold;
+    text-decoration: none;
+    color: #4A5D75;
+}
+
+.TopSectionLinkSelected {
+    background-image: url('images/header/header_bg_selected.png');
+    color: white;
+}
+
+.BreadCrumb {
+    font-size: 10pt;
+    font-weight: bold;
+    text-decoration: none;
+    color: #363636;
+    height: 28px;
+}
+
+.SectionHeader {
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.textItemDisabled {
+    background: rgb(214, 213, 217);
+}
+
+.formTitle, .formTitleFocused {
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #D6D6D6;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+
+/* Availability Bar */
+.availBarLeftCap {
+    background-image: url("images/availBar/leftCap.png");
+    width: 8px;
+    height: 28px;
+}
+.availBarRightCap {
+    background-image: url("images/availBar/rightCap.png");
+    width: 8px;
+    height: 28px;
+}
+
+.availBarUp {
+    background-image: url("images/availBar/up.png");
+    background-repeat: repeat-x;
+    height: 28px;
+}
+
+.availBarDown {
+    background-image: url("images/availBar/down.png");
+    background-repeat: repeat-x;
+    height: 28px;
+}
+
+
+
+.GraphTooltip {
+    background-color:#B5D5FF;
+    font-weight:bold;
+    padding:5px;
+}
+
+
+/* About Modal Window */
+.DisplayContent,.DisplayLabel {
+    font-size: 11px;
+}
+
+.DisplayLabel {
+    font-weight: bold;
+}
+
+.DisplaySubhead {
+    font-weight: bolder;
+    font-size: 16px;
+    color: #DE652D;
+}
+
+
+.SubTabButton,
+.SubTabButtonOver,
+.SubTabButtonFocused,
+.SubTabButtonFocusedOver,
+.SubTabButtonDown,
+.SubTabButtonFocusedDown,
+.SubTabButtonSelected,
+.SubTabButtonSelectedFocused,
+.SubTabButtonSelectedDown,
+.SubTabButtonSelectedFocusedDown,
+.SubTabButtonSelectedOver,
+.SubTabButtonSelectedFocusedOver,
+.SubTabButtonDisabled,
+.SubTabButtonSelectedDisabled {
+    font-family: tahoma, verdona, sans-serif;
+    font-size: 11px;
+    padding: 2px;
+    }
+
+.SubTabButtonDisabled {
+
+}
+
+.SubTabButtonDisabled,
+.SubTabButtonSelectedDisabled {
+    font-weight: normal;
+    color: #AAAAAA;
+}
+
+.SubTabButtonFocused,
+.SubTabButtonFocusedOver,
+.SubTabButtonSelectedFocused,
+.SubTabButtonSelectedFocusedOver,
+.SubTabButtonSelectedFocusedDown {
+
+}
+
+.SubTabButtonOver,
+.SubTabButtonFocusedOver,
+.SubTabButtonSelectedFocused,
+.SubTabButtonSelectedFocusedOver {
+    font-weight: bold;
+}
+
+.SubTabButtonDown,
+.SubTabButtonFocusedDown,
+.SubTabButtonSelectedDown,
+.SubTabButtonSelectedFocusedDown {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.SubTabButtonSelected,
+.SubTabButtonSelectedFocused,
+.SubTabButtonSelectedOver,
+.SubTabButtonSelectedFocusedOver,
+.SubTabButtonSelectedDisabled {
+    font-weight: bold;
+}
+
+
+
+.SimpleButton,
+.SimpleButtonOver,
+.SimpleButtonFocused,
+.SimpleButtonFocusedOver,
+.SimpleButtonDown,
+.SimpleButtonFocusedDown,
+.SimpleButtonSelected,
+.SimpleButtonSelectedFocused,
+.SimpleButtonSelectedDown,
+.SimpleButtonSelectedFocusedDown,
+.SimpleButtonSelectedOver,
+.SimpleButtonSelectedFocusedOver,
+.SimpleButtonDisabled,
+.SimpleButtonSelectedDisabled,
+.SimpleButtonDisabled,
+.SimpleButtonDisabled,
+.SimpleButtonSelectedDisabled,
+.SimpleButtonFocused,
+.SimpleButtonFocusedOver,
+.SimpleButtonSelectedFocused,
+.SimpleButtonSelectedFocusedOver,
+.SimpleButtonSelectedFocusedDown ,
+.SimpleButtonOver,
+.SimpleButtonFocusedOver,
+.SimpleButtonSelectedFocused,
+.SimpleButtonSelectedFocusedOver ,
+.SimpleButtonDown,
+.SimpleButtonFocusedDown,
+.SimpleButtonSelectedDown,
+.SimpleButtonSelectedFocusedDown ,
+.SimpleButtonSelected,
+.SimpleButtonSelectedFocused,
+.SimpleButtonSelectedOver,
+.SimpleButtonSelectedFocusedOver,
+.SimpleButtonSelectedDisabled{
+    font-family: tahoma, verdana, sans-serif;
+    font-size: 11px;
+    padding: 2px;
+    font-weight: bold;
+}
+
+
+.topMenuBar {
+    background: url('/coregui/org.rhq.enterprise.gui.coregui.CoreGUI/sc/skins/Enterprise/images/cssButton/button_stretch.png') repeat-x scroll 0 0 #DDDDDD;
+}
+
+.menuButton, .menuButtonOver, .menuButtonDown, .menuButtonDisabled, .menuButtonSelected, .menuButtonSelectedDown, .menuButtonSelectedOver, .menuButtonSelectedDisabled {
+    border: none !important;
+    font-weight: bold !important;
+}
+
+
+
+/** Not used right now **/
+.gwtMenuBar {
+    background-image: url('images/header/header_bg.png');
+    /*background-image: url("http://localhost:7080/coregui/org.rhq.enterprise.gui.coregui.CoreGUI/sc/skins/Enterprise/images/SectionHeader/header_opened_stretch.png");*/
+    background-repeat: repeat-x;
+    padding: 0px;
+    -moz-box-sizing: border-box;
+    overflow: hidden;
+    cursor: auto;
+}
+
+.gwtMenu, .gwt-MenuBarPopup, .gwt-MenuPopup {
+    background-color: white;
+}
+
+.gwt-MenuItem {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #666666;
+    font-size: 9pt;
+}
+
+.gwt-MenuItemSeparator {
+    background-color: #666666;
+}
+
+.gwt-MenuItem-Selected {
+    background-color: #999999;
+}
+
+.selectedTag {
+    background-color: lightblue;
+    padding: 5px;
+    border: 1px solid darkblue;
+}
+
+
+/* This sets table mouse-over highlights to have an alpha component on browsers that support it.
+   It particularly helps with tables that have bar charts as a background component.
+   (e.g. problem metrics or call time)
+*/
+.tallCellOver, .tallCellOverDark {
+    background-color: rgb(230,230,230) !important;  /* for browsers that don't like alpha */
+    background-color: rgba(230,230,230,0.6) !important;
+}
+
+.editableText {
+    color: #070;
+}
+
+.InfoBlock,.ConfirmationBlock,.WarnBlock,.ErrorBlock,.FatalBlock {
+    /*padding: 4px;*/
+    border-width: 1px;
+    border-style: solid;
+    /*font-size: 10px;*/
+    color: #000000;
+}
+
+.InfoBlock,.ConfirmationBlock {
+    background-color: #BFF1B5; /* light green */
+    border-color: #00AC3D; /* medium green */
+}
+
+.WarnBlock {
+    background-color: #FFFD99; /* light yellow */
+    border-color: #FF9C15; /* medium orange */
+}
+
+.ErrorBlock {
+    background-color: #FF9999; /* light red */
+    border-color: #EE4444; /* medium red */
+}
+
+.FatalBlock {
+    background-color: #FF6666; /* slightly darker light red */
+    border-color: #EE1111; /* slightly darker medium red */
+}
+
+.InlineNote {
+    color: #C22;
+}
+
+.log-panel {
+    z-index: 9999999 !important;
+}
+
+.requiredFieldMarker {
+    font-weight: bolder;
+    color: #B77  /* medium red */
+}
+
+
+/* customizations beyond RHQ below */
+.main-content-panel {
+
+}
+
+.header-panel {
+    min-height:64px;
+    height:64px;
+    width:100%;
+}
+.footer-panel {
+    min-height:30px;
+    height:30px;
+    width:100%;
+}
+
+
+.loginForm>table
+{
+    border: 1px solid #A7ABB4;
+    padding:0px;
+    margin-top:200px;
+
+    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -webkit-box-shadow: 3px 3px 4px #c3c3c3;
+    box-shadow: 3px 3px 4px #c3c3c3;
+
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.loginForm>table * td
+{
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:5px;
+    padding-bottom:2px;
+
+}
+
+.table-header {
+    border-bottom: 1px solid #A7ABB4;
+    background-color:#FFFFFF;
+    background-image: url('app/sc/skins/Enterprise/images/ToolStrip/background.png');
+    padding-top:10px;
+    padding-bottom:10px;
+    height:25px;
+    color:#4A5D75;
+}
+
+.abstract-toolset-nav {
+    padding-bottom:95px; // hack to make the AbstractToolsetView work correctly
+}
+
+.header-logo {
+    padding-left:10px;
+}

@@ -1,0 +1,32 @@
+<module rename-to="app">
+
+    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <inherits name='com.google.gwt.user.User'/>
+
+    <inherits name='com.gwtplatform.mvp.Mvp' />
+
+    <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
+    <set-configuration-property name="gin.ginjector"
+                                value="org.jboss.as.console.client.gin.CoreUI" />
+
+    <inherits name="com.smartgwt.SmartGwt"/>
+
+    <!-- Add gwt-log support, default level `DEBUG` -->
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+
+    <set-property name="log_ConsoleLogger" value="ENABLED" />
+    <set-property name="log_GWTLogger" value="ENABLED" />
+    <set-property name="log_SystemLogger" value="ENABLED" />
+
+    <!-- Loggers Disabled by default -->
+    <set-property name="log_DivLogger" value="DISABLED" />
+    <set-property name="log_FirebugLogger" value="DISABLED" />
+    <set-property name="log_RemoteLogger" value="DISABLED" />
+    <set-property name="log_WindowLogger" value="DISABLED" />
+
+    <set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
+
+    <!-- Specify the app entry point class.                   -->
+    <entry-point class='org.jboss.as.console.client.Console'/>
+
+</module>
