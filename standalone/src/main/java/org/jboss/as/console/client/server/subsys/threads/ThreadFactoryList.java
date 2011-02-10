@@ -1,10 +1,6 @@
-package org.jboss.as.console.client.server.subsys;
+package org.jboss.as.console.client.server.subsys.threads;
 
-import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.types.ListGridEditEvent;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -13,45 +9,17 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.events.RowEditorExitEvent;
 import com.smartgwt.client.widgets.grid.events.RowEditorExitHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
-import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.jboss.as.console.client.components.DescriptionLabel;
-import org.jboss.as.console.client.components.TitleBar;
+import org.jboss.as.console.client.components.sgwt.HelpWindow;
 
 /**
  * @author Heiko Braun
- * @date 2/9/11
+ * @date 2/10/11
  */
-public class ThreadManagementViewImpl extends ViewImpl implements ThreadManagementPresenter.MyView {
+class ThreadFactoryList extends VLayout {
 
-    ThreadManagementPresenter presenter;
-
-    @Override
-    public void setPresenter(ThreadManagementPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public Widget asWidget() {
-        VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-        layout.setMembersMargin(5);
-
-        TitleBar titleBar = new TitleBar("Thread Management");
-        layout.addMember(titleBar);
-        // TODO: text should be retrieved from model description
-        layout.addMember(new DescriptionLabel("The threading subsystem, used to declare manageable thread pools and resources."));
-
-        final TabSet topTabSet = new TabSet();
-        topTabSet.setTabBarPosition(Side.TOP);
-        topTabSet.setWidth100();
-        topTabSet.setHeight100();
-
-        Tab tTab1 = new Tab("Thread Factories");
-        VLayout t1Layout = new VLayout();
+    public ThreadFactoryList(final ThreadManagementPresenter presenter) {
 
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.setWidth100();
@@ -69,7 +37,7 @@ public class ThreadManagementViewImpl extends ViewImpl implements ThreadManageme
             }
         });
 
-        t1Layout.addMember(toolStrip);
+        this.addMember(toolStrip);
         toolStrip.addSeparator();
 
         ToolStripButton helpButton = new ToolStripButton();
@@ -80,13 +48,9 @@ public class ThreadManagementViewImpl extends ViewImpl implements ThreadManageme
         {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                Window help = new Window();
-                help.setTitle("Help");
-                help.setAutoSize(true);
-                help.setAutoCenter(true);
 
-                // TODO: text should be retrieved from model description
-                HTMLFlow htmlFlow = new HTMLFlow("<pre>A thread factory (implementing java.util.concurrent.ThreadFactory).  The \"name\" attribute is\n" +
+                // TODO: text should come from model description
+                String text = "A thread factory (implementing java.util.concurrent.ThreadFactory).  The \"name\" attribute is\n" +
                         "the bean name of the created thread factory.  The optional \"priority\" attribute may be used to specify\n" +
                         "the thread priority of created threads.  The optional \"group-name\" attribute specifies the name of a the\n" +
                         "thread group to create for this thread factory.\n" +
@@ -99,12 +63,9 @@ public class ThreadManagementViewImpl extends ViewImpl implements ThreadManageme
                         "   %g - emit the global thread sequence number\n" +
                         "   %f - emit the factory sequence number\n" +
                         "   %i - emit the thread ID\n" +
-                        "   %G - emit the thread group name</pre>");
+                        "   %G - emit the thread group name";
 
-                htmlFlow.setMargin(10);
-                help.addItem(htmlFlow);
-
-                help.centerInPage();
+                Window help = new HelpWindow(text);
                 help.show();
             }
         });
@@ -144,26 +105,7 @@ public class ThreadManagementViewImpl extends ViewImpl implements ThreadManageme
 
             }
         });
-        t1Layout.addMember(factoriesGrid);
-        tTab1.setPane(t1Layout);
 
-        // ---------------------------------------
-        Tab tTab2 = new Tab("Unbounded Pools");
-        //tTab2.setPane(tImg2);
-
-        Tab tTab3 = new Tab("Bounded Pools");
-
-        Tab tTab4 = new Tab("Queueless Pools");
-
-        Tab tTab5 = new Tab("Scheduled Pools");
-
-        topTabSet.addTab(tTab1);
-        topTabSet.addTab(tTab2);
-        topTabSet.addTab(tTab3);
-        topTabSet.addTab(tTab4);
-        topTabSet.addTab(tTab5);
-
-        layout.addMember(topTabSet);
-        return layout;
+        this.addMember(factoriesGrid);
     }
 }

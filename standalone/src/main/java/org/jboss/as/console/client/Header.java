@@ -90,7 +90,7 @@ public class Header implements ValueChangeHandler<String> {
 
     private String setupLinks() {
         StringBuilder headerString = new StringBuilder(
-            "<table style=\"height: 34px;\" cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links'>");
+                "<table style=\"height: 34px;\" cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links'>");
 
         headerString.append("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
         for (ViewName section : SECTIONS) {
@@ -104,7 +104,7 @@ public class Header implements ValueChangeHandler<String> {
 
             // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
             headerString.append("<td style=\"vertical-align:middle\" id=\"" + id +"\"").append(section).append("\" class=\"")
-                .append(styleClass).append("\" onclick=\"document.location='#").append(section).append("'\" >");
+                    .append(styleClass).append("\" onclick=\"document.location='#").append(section).append("'\" >");
             headerString.append(section.getTitle());
             headerString.append("</td>\n");
 
@@ -120,7 +120,7 @@ public class Header implements ValueChangeHandler<String> {
     public void onValueChange(ValueChangeEvent<String> event) {
         String historyToken = event.getValue();
         if(historyToken.equals(currentHighlightedSection))
-           return;
+            return;
         else
             currentHighlightedSection = historyToken;
 

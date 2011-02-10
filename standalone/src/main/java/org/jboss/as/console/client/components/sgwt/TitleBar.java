@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.components;
+package org.jboss.as.console.client.components.sgwt;
 
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.VerticalAlignment;

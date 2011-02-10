@@ -24,9 +24,8 @@ import org.jboss.as.console.client.server.properties.PropertyToolViewImpl;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 
-import org.jboss.as.console.client.server.subsys.SubsystemToolViewImpl;
-import org.jboss.as.console.client.server.subsys.ThreadManagementPresenter;
-import org.jboss.as.console.client.server.subsys.ThreadManagementViewImpl;
+import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
+import org.jboss.as.console.client.server.subsys.threads.ThreadManagementViewImpl;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 import org.jboss.as.console.client.util.message.MessageBar;

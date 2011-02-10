@@ -7,7 +7,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.jboss.as.console.client.components.TitleBar;
+import org.jboss.as.console.client.components.sgwt.TitleBar;
 
 /**
  * @author Heiko Braun

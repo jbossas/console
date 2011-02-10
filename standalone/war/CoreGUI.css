@@ -450,8 +450,8 @@ a:hover {
     color:#4A5D75;
 }
 
-.abstract-toolset-nav {
-    padding-bottom:95px; // hack to make the AbstractToolsetView work correctly
+.lhs-navigation-panel {
+    padding-bottom:95px; // hack to make the LHSNavigation work correctly
 }
 
 .header-logo {
@@ -461,4 +461,8 @@ a:hover {
 .description-label {
     font-size:1em!important;
     color:#C0C0C0;
+}
+
+.lhs-navigation {
+
 }

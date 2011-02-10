@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.components;
+package org.jboss.as.console.client.components.sgwt;
 
 import com.smartgwt.client.widgets.Label;
 
@@ -19,7 +19,7 @@ public class DescriptionLabel extends Label {
     }
 
     private void setup() {
-        setMargin(10);
+        setMargin(5);
         setStyleName("description-label");
     }
 

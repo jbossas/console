@@ -1,4 +1,7 @@
-package org.jboss.as.console.client.components;
+package org.jboss.as.console.client.components.sgwt;
+
+import org.jboss.as.console.client.components.ViewFactory;
+import org.jboss.as.console.client.components.ViewName;
 
 /**
  * @author Ian Springer

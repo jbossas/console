@@ -1,4 +1,6 @@
-package org.jboss.as.console.client.components;
+package org.jboss.as.console.client.components.sgwt;
+
+import org.jboss.as.console.client.components.ViewName;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;

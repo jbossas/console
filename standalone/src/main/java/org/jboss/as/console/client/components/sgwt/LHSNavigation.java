@@ -1,13 +1,11 @@
-package org.jboss.as.console.client.components;
+package org.jboss.as.console.client.components.sgwt;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.events.CellClickEvent;
 import com.smartgwt.client.widgets.grid.events.CellClickHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
@@ -18,84 +16,46 @@ import org.jboss.as.console.client.Console;
 import java.util.*;
 
 /**
+ * Simple LHS navigation. Taken from RHQ.
+ *
  * @author Heiko Braun
- * @since 1/31/11
+ * @date 2/10/11
  */
-public abstract class AbstractToolsetView  {
+public class LHSNavigation {
 
     protected String appId;  // distinct, top level navigation element
 
     private Map<String, TreeGrid> treeGrids = new LinkedHashMap<String, TreeGrid>();
     private Map<String, NavigationSection> sectionsByName;
-
     private SectionStack sectionStack;
 
-    private Canvas contentCanvas;
-
-    private String currentSectionViewId;
-    private String currentPageViewId;
-
-    private HLayout layout;
-
-    public AbstractToolsetView(String topLevelId) {
+    public LHSNavigation(String appId, final List<NavigationSection> sections) {
         super();
-        this.appId = topLevelId;
+        this.appId = appId;
 
-        layout = new HLayout()
-        {{
-                setWidth100();
-                setHeight100();
-                setStyleName("abstract-toolset-nav");
+        sectionStack = new SectionStack();
+        sectionStack.setShowResizeBar(true);
+        sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
+        sectionStack.setWidth(250);
+        sectionStack.setHeight100();
 
-                contentCanvas = new Canvas();
-                contentCanvas.setWidth100();//setWidth("*");
-                contentCanvas.setHeight100();
+        // Build left hand navigation
+        sectionsByName = new HashMap<String, NavigationSection>(sections.size());
 
-                //contentCanvas.addChild(new Label("Empty"));
+        for (NavigationSection section : sections)
+        {
+            TreeGrid treeGrid = buildTreeGridForSection(section);
+            addSection(treeGrid);
+            treeGrid.getTree().openAll();
 
-                sectionStack = new SectionStack();
-                sectionStack.setShowResizeBar(true);
-                sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-                sectionStack.setWidth(250);
-                sectionStack.setHeight100();
+            sectionsByName.put(section.getName(), section);
+        }
 
-                // Build left hand navigation
-                final List<NavigationSection> sections = getNavigationSections();
-                sectionsByName = new HashMap<String, NavigationSection>(sections.size());
-
-                for (NavigationSection section : sections)
-                {
-                    TreeGrid treeGrid = buildTreeGridForSection(section);
-                    addSection(treeGrid);
-                    treeGrid.getTree().openAll();
-
-                    sectionsByName.put(section.getName(), section);
-                }
-
-                addMember(sectionStack);
-                addMember(contentCanvas);
-            }
-        };
     }
 
     public Widget asWidget()
     {
-        return layout;
-    }
-
-    protected abstract List<NavigationSection> getNavigationSections();
-
-    public void setContent(Widget newContent) {
-        // A call to destroy (e.g. certain IFrames/FullHTMLPane) can actually remove multiple children of the
-        // contentCanvas. As such, we need to query for the children after each destroy to ensure only valid children
-        // are in the array.
-        Canvas[] children;
-        while ((children = contentCanvas.getChildren()).length > 0) {
-            children[0].destroy();
-        }
-
-        contentCanvas.addChild(newContent);
-        contentCanvas.markForRedraw();
+        return sectionStack;
     }
 
     protected TreeGrid buildTreeGridForSection(NavigationSection navigationSection) {
@@ -158,8 +118,6 @@ public abstract class AbstractToolsetView  {
 
         this.sectionStack.addSection(section);
     }
-
-    // --------------------------------------------------------------
 
     private void highlightTool(String sectionName, String pageName)
     {

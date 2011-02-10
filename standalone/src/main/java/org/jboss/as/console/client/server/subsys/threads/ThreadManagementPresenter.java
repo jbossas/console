@@ -1,24 +1,17 @@
-package org.jboss.as.console.client.server.subsys;
+package org.jboss.as.console.client.server.subsys.threads;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.server.deployments.DeploymentRecord;
 import org.jboss.as.console.client.util.message.Message;
-
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Heiko Braun

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.server.subsys;
+package org.jboss.as.console.client.server.subsys.threads;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
@@ -9,7 +9,7 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 2/9/11
  */
-public class ThreadFactoryRecord extends ListGridRecord {
+final class ThreadFactoryRecord extends ListGridRecord {
     public ThreadFactoryRecord(String name, String group, int prio) {
         setAttribute("name", name);
         setAttribute("group", group);
