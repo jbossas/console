@@ -5,15 +5,14 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.sgwt.NavigationItem;
-import org.jboss.as.console.client.components.sgwt.NavigationSection;
 import org.jboss.as.console.client.components.ViewName;
 import org.jboss.as.console.client.components.sgwt.LHSNavigation;
+import org.jboss.as.console.client.components.sgwt.NavigationItem;
+import org.jboss.as.console.client.components.sgwt.NavigationSection;
 import org.jboss.as.console.client.util.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Server management default view implementation.
@@ -49,6 +48,7 @@ public class ServerMgmtViewImpl extends ViewImpl
         contentCanvas = new Canvas();
         contentCanvas.setWidth100();
         contentCanvas.setHeight100();
+        contentCanvas.setMargin(0);
 
         layout.addMember(lhsNavigation.asWidget());
         layout.addMember(contentCanvas);
@@ -74,10 +74,17 @@ public class ServerMgmtViewImpl extends ViewImpl
         }
     }
 
+    @Override
+    public void removeFromSlot(Object slot, Widget content) {
+        super.removeFromSlot(slot, content);
+        System.out.println("remove "+content.getElement().getId());
+    }
+
     public void setContent(Widget newContent) {
-        Canvas[] children;
-        while ((children = contentCanvas.getChildren()).length > 0) {
-            children[0].destroy();
+
+        Canvas[] children = contentCanvas.getChildren();
+        if(children.length>0) {
+            contentCanvas.removeChild(children[0]);
         }
 
         contentCanvas.addChild(newContent);
