@@ -16,7 +16,8 @@ import org.jboss.as.console.client.Console;
 import java.util.*;
 
 /**
- * Simple LHS navigation. Taken from RHQ.
+ * A stacked LHS navigation. Build from {@link NavigationSection}'s.
+ * Each item reveals a place hierarchy.
  *
  * @author Heiko Braun
  * @date 2/10/11

@@ -13,8 +13,19 @@ import org.jboss.as.console.client.util.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
+ * Server management default view implementation.
+ * Works on a LHS navigation and a all purpose content panel on the right.
+ *
+ * <p/>
+ * CSS:
+ * <ul>
+ * <li> 'lhs-navigation-panel', used for the top most horizontal panel
+ * </ul>
+ * @see LHSNavigation
+ *
  * @author Heiko Braun
  * @date 2/4/11
  */
@@ -41,6 +52,7 @@ public class ServerMgmtViewImpl extends ViewImpl
 
         layout.addMember(lhsNavigation.asWidget());
         layout.addMember(contentCanvas);
+
     }
 
     @Override
