@@ -3,16 +3,14 @@ package org.jboss.as.console.client.server.deployments;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 
 /**
@@ -28,7 +26,7 @@ public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.D
     private PlaceManager placeManager;
     private DeploymentStore store;
 
-    public interface DeploymentToolView extends View {
+    public interface DeploymentToolView extends SuspendableView {
         void setPresenter(DeploymentToolPresenter presenter);
     }
 

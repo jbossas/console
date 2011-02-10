@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.server.deployments;
 
+import com.allen_sauer.gwt.log.client.Log;
+
 import java.util.Date;
 
 /**
@@ -17,6 +19,7 @@ public class MockDeploymentStoreImpl implements DeploymentStore {
 
     @Override
     public DeploymentRecord[] loadDeployments() {
+        Log.debug("Loaded " + records.length +" deployment records");
         return records;
     }
 }
