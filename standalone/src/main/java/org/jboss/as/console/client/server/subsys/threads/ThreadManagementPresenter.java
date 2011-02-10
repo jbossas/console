@@ -3,13 +3,13 @@ package org.jboss.as.console.client.server.subsys.threads;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.util.message.Message;
 
@@ -26,7 +26,7 @@ public class ThreadManagementPresenter extends Presenter<ThreadManagementPresent
     public interface MyProxy extends Proxy<ThreadManagementPresenter>, Place {
     }
 
-    public interface MyView extends View {
+    public interface MyView extends SuspendableView {
         void setPresenter(ThreadManagementPresenter presenter);
     }
 
