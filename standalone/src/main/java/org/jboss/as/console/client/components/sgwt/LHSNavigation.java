@@ -35,9 +35,10 @@ public class LHSNavigation {
         this.appId = appId;
 
         sectionStack = new SectionStack();
+        sectionStack.addStyleName("lhs-section-stack");
         sectionStack.setShowResizeBar(true);
         sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-        sectionStack.setWidth(250);
+        sectionStack.setWidth(220);
         sectionStack.setHeight100();
 
         // Build left hand navigation
@@ -61,6 +62,7 @@ public class LHSNavigation {
 
     protected TreeGrid buildTreeGridForSection(NavigationSection navigationSection) {
         final TreeGrid treeGrid = new TreeGrid();
+        treeGrid.addStyleName("lhs-treeGrid");
         treeGrid.setTitle(navigationSection.getTitle());
         treeGrid.setLeaveScrollbarGap(false);
         treeGrid.setShowHeader(false);
@@ -70,9 +72,10 @@ public class LHSNavigation {
         for (int i = 0, navigationItemsSize = navigationItems.size(); i < navigationItemsSize; i++) {
             NavigationItem item = navigationItems.get(i);
             final TreeNode treeNode = new TreeNode(item.getName());
-            treeNode.setTitle(item.getTitle());
             //treeNode.setIcon(item.getIcon());
-            treeNode.setEnabled(item.isEnabled());
+            treeNode.setTitle(item.getTitle());
+            if(!item.getName().equals(""))   //TODO: development only, should be removed
+                treeNode.setEnabled(item.isEnabled());
             treeNodes[i] = treeNode;
         }
 
@@ -94,7 +97,9 @@ public class LHSNavigation {
             public void onCellClick(CellClickEvent event)
             {
 
+
                 TreeNode selectedRecord = (TreeNode) treeGrid.getSelectedRecord();
+                if(selectedRecord.getName().equals("") ) return; // TODO: development only
 
                 if (selectedRecord != null) {
                     final String pageName = selectedRecord.getName();

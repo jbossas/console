@@ -66,4 +66,12 @@ public class NameTokens {
     public static String getThreadManagementPresenter() {
         return ThreadManagementPresenter;
     }
+
+
+    // ------------------------------------------------------
+    // domain tokens below
+    public static final String DomainManagementPresenter = "domain";
+    public static String getDomainManagementPresenter() {
+        return DomainManagementPresenter;
+    }
 }

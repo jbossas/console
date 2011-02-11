@@ -9,11 +9,13 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
+import org.jboss.as.console.client.BootstrapContext;
 import org.jboss.as.console.client.Footer;
 import org.jboss.as.console.client.Header;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
+import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
@@ -42,6 +44,7 @@ public interface CoreUI extends Ginjector {
     @DefaultGatekeeper
     Gatekeeper getLoggedInGatekeeper();
     CurrentUser getCurrentUser();
+    BootstrapContext getBootstrapContext();
 
     // ----------------------------------------------------------------------
 
@@ -74,5 +77,9 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<ThreadManagementPresenter> getThreadManagementPresenter();
 
+
+    // ----------------------------------------------------------------------
+    // domain config below
+    AsyncProvider<DomainMgmtApplicationPresenter> getDomainMgmtAppPresenter();
 
 }

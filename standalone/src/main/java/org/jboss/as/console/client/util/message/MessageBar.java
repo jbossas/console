@@ -31,6 +31,7 @@ public class MessageBar extends HLayout implements MessageCenter.MessageListener
     public MessageBar(MessageCenter messageCenter) {
         super();
         setOverflow(Overflow.VISIBLE);
+        addStyleName("header-messagebar");
         this.messageCenter = messageCenter;
     }
 

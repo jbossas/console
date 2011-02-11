@@ -22,7 +22,6 @@ import org.jboss.as.console.client.NameTokens;
 public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicationPresenter.ServerManagementView,
         ServerMgmtApplicationPresenter.ServerManagementProxy> {
 
-    private EventBus eventBus;
     private PlaceManager placeManager;
     private boolean revealDefault = true;
 
@@ -43,7 +42,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
             EventBus eventBus, ServerManagementView view,
             ServerManagementProxy proxy, PlaceManager placeManager) {
         super(eventBus, view, proxy);
-        this.eventBus = eventBus;
         this.placeManager = placeManager;
     }
 
@@ -68,6 +66,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     @Override
     protected void revealInParent() {
         // reveal in main layout
-        RevealContentEvent.fire(eventBus, MainLayoutPresenter.TYPE_SetMainContent, this);
+        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_SetMainContent, this);
     }
 }

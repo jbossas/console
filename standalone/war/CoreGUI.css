@@ -466,3 +466,28 @@ a:hover {
 .lhs-navigation {
 
 }
+
+.lhs-section-stack {
+
+}
+
+.lhs-treeGrid * div {
+    /*background-color:#F8F8F8;*/
+}
+
+.header-messagebar {
+    /*background-color:#F8F8F8!important;*/
+}
+
+.lhs-primary-header{
+    /*background-color:#D0D0D0; */
+    font-weight:BOLD;
+    cursor:pointer;
+    border-bottom:1px solid #D0D0D0;
+}
+.lhs-secondary {
+    /*background-color:#F8F8F8;
+    color:#A0A0A0!important;*/
+    color:#686868;
+    cursor:pointer;
+}

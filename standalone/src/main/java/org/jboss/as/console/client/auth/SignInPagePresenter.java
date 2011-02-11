@@ -2,10 +2,10 @@ package org.jboss.as.console.client.auth;
 
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.Presenter;
@@ -14,6 +14,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.*;
+import org.jboss.as.console.client.BootstrapContext;
 import org.jboss.as.console.client.NameTokens;
 
 public class SignInPagePresenter extends
@@ -22,6 +23,7 @@ public class SignInPagePresenter extends
 
     private final PlaceManager placeManager;
     private CurrentUser user;
+    private BootstrapContext bootstrap;
 
     // private final ErrorDialogPresenterWidget errorDialog;
 
@@ -33,18 +35,20 @@ public class SignInPagePresenter extends
 
     public interface MyView extends View, HasUiHandlers<SignInPageUIHandlers> {
         HasClickHandlers getSignInButton();
-        String getUserName();
-        String getPassword();
+        TextBox getUserName();
+        TextBox getPassword();
         void resetAndFocus();
     }
 
     @Inject
     public SignInPagePresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                               PlaceManager placeManager, CurrentUser user) {
+                               PlaceManager placeManager, CurrentUser user,
+                               BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.user = user;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -57,8 +61,20 @@ public class SignInPagePresenter extends
                         doLogin();
                     }
                 }));
-    }
 
+        final KeyDownHandler handler = new KeyDownHandler()
+        {
+            public void onKeyDown(KeyDownEvent event)
+            {
+                if (KeyCodes.KEY_ENTER == event.getNativeKeyCode())
+                    doLogin();
+            }
+        };
+
+        registerHandler(getView().getPassword().addKeyDownHandler(handler));
+        registerHandler(getView().getUserName().addKeyDownHandler(handler));
+
+    }
 
     @Override
     protected void onReset() {
@@ -73,8 +89,8 @@ public class SignInPagePresenter extends
 
     void doLogin() {
 
-        String userName = getView().getUserName();
-        String password = getView().getPassword();
+        String userName = getView().getUserName().getText();
+        String password = getView().getPassword().getText();
 
         if (isValidUserName(userName) && (isValidPassword(password))) {
 
@@ -84,8 +100,15 @@ public class SignInPagePresenter extends
             user.setUserName(userName);
             user.setLoggedIn(true);
 
-            PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
-            placeManager.revealPlace(myRequest);
+            if(bootstrap.hasProperty(BootstrapContext.INITIAL_TOKEN))
+            {
+                History.newItem(bootstrap.getProperty(BootstrapContext.INITIAL_TOKEN));
+            }
+            else
+            {
+                PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
+                placeManager.revealPlace(myRequest);
+            }
 
             // notify listeners
             getEventBus().fireEvent(new AuthenticationEvent(user));

@@ -1,21 +1,16 @@
-package org.jboss.as.console.client.server;
+package org.jboss.as.console.client.domain;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.ViewName;
 import org.jboss.as.console.client.components.sgwt.LHSNavigation;
-import org.jboss.as.console.client.components.sgwt.NavigationItem;
-import org.jboss.as.console.client.components.sgwt.NavigationSection;
+import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.util.message.Message;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Server management default view implementation.
+ * Domain management default view implementation.
  * Works on a LHS navigation and a all purpose content panel on the right.
  *
  * <p/>
@@ -28,14 +23,15 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/4/11
  */
-public class ServerMgmtViewImpl extends ViewImpl
-        implements ServerMgmtApplicationPresenter.ServerManagementView{
+public class DomainMgmtApplicationViewImpl extends ViewImpl
+        implements DomainMgmtApplicationPresenter.MyView{
 
     private HLayout layout;
-    private LHSNavigation lhsNavigation;
-    private Canvas contentCanvas;
 
-    public ServerMgmtViewImpl() {
+    private Canvas contentCanvas;
+    private DomainMgmtApplicationPresenter presenter;
+
+    public DomainMgmtApplicationViewImpl() {
         super();
 
         layout = new HLayout();
@@ -43,16 +39,19 @@ public class ServerMgmtViewImpl extends ViewImpl
         layout.setHeight100();
         layout.setStyleName("lhs-navigation-panel");
 
-        lhsNavigation = new LHSNavigation("server", getNavigationSections());
-
         contentCanvas = new Canvas();
         contentCanvas.setWidth100();
         contentCanvas.setHeight100();
         contentCanvas.setMargin(0);
 
-        layout.addMember(lhsNavigation.asWidget());
+        layout.addMember(new TreeLHSDomainNavigation().asWidget());
         layout.addMember(contentCanvas);
 
+    }
+
+    @Override
+    public void setPresenter(DomainMgmtApplicationPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
@@ -91,32 +90,4 @@ public class ServerMgmtViewImpl extends ViewImpl
         contentCanvas.markForRedraw();
     }
 
-    private List<NavigationSection> getNavigationSections()
-    {
-        final ArrayList<NavigationSection> sections = new ArrayList<NavigationSection>();
-
-
-        final NavigationSection subsystems= new NavigationSection(
-                new ViewName("config", "Subsystem Configuration"),
-                new NavigationItem(new ViewName("threads","Threading"), "",null)
-        );
-
-        final NavigationSection deployments = new NavigationSection(
-                new ViewName("deployments", "Deployments"),
-                new NavigationItem(new ViewName("deployments","Deployments"), "", null)
-        );
-
-        final NavigationSection serverConfig= new NavigationSection(
-                new ViewName("common", "Server Settings"),
-                new NavigationItem(new ViewName("path","Path"), "",null),
-                new NavigationItem(new ViewName("interfaces","Interfaces"), "",null),
-                new NavigationItem(new ViewName("sockets","Socket Binding Groups"), "",null),
-                new NavigationItem(new ViewName("properties","System Properties"), "",null)
-        );
-
-        sections.add(subsystems);
-        sections.add(deployments);
-        sections.add(serverConfig);
-        return sections;
-    };
 }

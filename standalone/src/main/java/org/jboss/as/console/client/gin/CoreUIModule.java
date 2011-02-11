@@ -9,6 +9,8 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.*;
 import org.jboss.as.console.client.auth.*;
+import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.ServerMgmtViewImpl;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;
@@ -58,6 +60,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(ProxyFailureHandler.class).to(DefaultProxyFailureHandler.class).in(Singleton.class);
         bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
         bind(CurrentUser.class).in(Singleton.class);
+        bind(BootstrapContext.class).in(Singleton.class);
 
         // sign in
         bindPresenter(SignInPagePresenter.class, SignInPagePresenter.MyView.class,
@@ -121,7 +124,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ThreadManagementPresenter.MyProxy.class);
                 
         
+        // ------------------------------------------------
+        // domain below
 
+        // domain management application
+        bindPresenter(DomainMgmtApplicationPresenter.class,
+                DomainMgmtApplicationPresenter.MyView.class,
+                DomainMgmtApplicationViewImpl.class,
+                DomainMgmtApplicationPresenter.MyProxy.class);
+        
     }
 
 }
