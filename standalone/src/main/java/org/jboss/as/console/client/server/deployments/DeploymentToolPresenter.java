@@ -58,6 +58,6 @@ public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.D
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
+        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
     }
 }

@@ -16,6 +16,8 @@ import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileStore;
+import org.jboss.as.console.client.domain.profiles.ProfileToolPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
@@ -30,12 +32,15 @@ import org.jboss.as.console.client.util.message.MessageCenter;
 import org.jboss.as.console.client.util.message.MessageCenterView;
 
 /**
+ * Overall module configuration.
+ *
+ * @see CoreUIModule
+ *
  * @author Heiko Braun
  * @date 1/31/11
  */
 @GinModules(CoreUIModule.class)
 public interface CoreUI extends Ginjector {
-
 
     PlaceManager getPlaceManager();
     EventBus getEventBus();
@@ -73,7 +78,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<PathToolPresenter> getPathToolPresenter();
     AsyncProvider<PropertyToolPresenter> getPropertyToolPresenter();
     AsyncProvider<SocketToolPresenter> getSocketToolPresenter();
-    //AsyncProvider<SubsystemToolPresenter> getSubsystemToolPresenter();
 
     AsyncProvider<ThreadManagementPresenter> getThreadManagementPresenter();
 
@@ -81,5 +85,7 @@ public interface CoreUI extends Ginjector {
     // ----------------------------------------------------------------------
     // domain config below
     AsyncProvider<DomainMgmtApplicationPresenter> getDomainMgmtAppPresenter();
+    AsyncProvider<ProfileToolPresenter> getProfileToolPresenter();
+    ProfileStore getProfileStore();
 
 }

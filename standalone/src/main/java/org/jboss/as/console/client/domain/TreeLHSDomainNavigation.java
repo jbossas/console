@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.types.VisibilityMode;
@@ -11,6 +12,7 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.profiles.ProfileRecord;
 
 import java.util.ArrayList;
 
@@ -21,6 +23,8 @@ import java.util.ArrayList;
 public class TreeLHSDomainNavigation {
 
     private SectionStack sectionStack;
+    private TreeNode profileNode ;
+    private TreeGrid treeGrid;
 
     public TreeLHSDomainNavigation() {
 
@@ -33,7 +37,7 @@ public class TreeLHSDomainNavigation {
         sectionStack.setCanDragScroll(false);
         sectionStack.setMargin(0);
 
-        final TreeGrid treeGrid = new TreeGrid();
+        treeGrid = new TreeGrid();
         treeGrid.setTitle("Domain Configuration");
         treeGrid.setWidth100();
         treeGrid.setHeight100();
@@ -45,39 +49,41 @@ public class TreeLHSDomainNavigation {
             public void onCellClick(CellClickEvent event) {
                 final TreeNode selectedRecord = (TreeNode) treeGrid.getSelectedRecord();
 
-                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                        new ArrayList<PlaceRequest>(){{
-                            add(new PlaceRequest("domain"));
-                            add(new PlaceRequest(selectedRecord.getName()));
-                        }}
-                );
+                 /*Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                         new ArrayList<PlaceRequest>() {{
+                             add(new PlaceRequest("domain"));
+                             add(new PlaceRequest(selectedRecord.getName()));
+                         }}
+                 );*/
+
+                History.newItem(selectedRecord.getName());
 
             }
         });
 
-        final TreeNode profileNode = new NavTreeNode(
-                "profiles", "Profiles", false,
-                new NavTreeNode("profiles;name=ee6", "EE6 Web Profile"),
-                new NavTreeNode("profile;name=messaging", "Messaging Profile")
+        profileNode = new NavTreeNode(
+                "profiles", "Profiles", false/*,
+                new NavTreeNode("profiles;name=ee6", "\"EE6 Web Profile\""),
+                new NavTreeNode("profile;name=messaging", "\"Messaging Profile\"")*/
         );
 
         // -----
 
         final TreeNode serverGroupNode = new NavTreeNode(
                 "server-groups", "Server Groups", false,
-                new NavTreeNode("server-groups;name=ee6", "EE6 Application Server"),
-                new NavTreeNode("server-groups;name=web server", "Web Server"),
-                new NavTreeNode("server-groups;name=messaging", "Messaging Server")
+                new NavTreeNode("server-groups;name=ee6", "\"EE6 Application Server\""),
+                new NavTreeNode("server-groups;name=web server", "\"Web Server\""),
+                new NavTreeNode("server-groups;name=messaging", "\"Messaging Server\"")
         );
 
         // -----
 
         final TreeNode deploymentNode = new NavTreeNode(
-                "deployments", "Domain Deployments",false,
-                new NavTreeNode("deployments;type=web", "Web Applications"),
-                new NavTreeNode("deployments;type=ee", "Enterprise Applications"),
-                new NavTreeNode("deployments;type=rar", "Resource Adapters"),
-                new NavTreeNode("deployments;type=other", "Other")
+                "domain-deployments", "Domain Deployments",false,
+                new NavTreeNode("domain-deployments;type=web", "Web Applications"),
+                new NavTreeNode("domain-deployments;type=ee", "Enterprise Applications"),
+                new NavTreeNode("domain-deployments;type=rar", "Resource Adapters"),
+                new NavTreeNode("domain-deployments;type=other", "Other")
 
         );
 
@@ -121,6 +127,25 @@ public class TreeLHSDomainNavigation {
     public Widget asWidget()
     {
         return sectionStack;
+    }
+
+    public void updateFrom(ProfileRecord[] profileRecords) {
+
+        treeGrid.getTree().closeAll(profileNode);
+
+        TreeNode[] nodes = new TreeNode[profileRecords.length];
+        int i = 0;
+        for(ProfileRecord profile : profileRecords)
+        {
+            String profileName = profile.getAttribute("profile-name");
+            nodes[i] = new NavTreeNode("profiles;name="+profileName, profileName);
+            i++;
+        }
+
+        profileNode.setChildren(nodes);
+
+        treeGrid.markForRedraw();
+        treeGrid.getTree().openAll(profileNode);
     }
 
     class NavTreeNode extends TreeNode

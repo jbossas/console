@@ -5,20 +5,12 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.sgwt.LHSNavigation;
-import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileRecord;
 import org.jboss.as.console.client.util.message.Message;
 
 /**
  * Domain management default view implementation.
  * Works on a LHS navigation and a all purpose content panel on the right.
- *
- * <p/>
- * CSS:
- * <ul>
- * <li> 'lhs-navigation-panel', used for the top most horizontal panel
- * </ul>
- * @see LHSNavigation
  *
  * @author Heiko Braun
  * @date 2/4/11
@@ -27,9 +19,11 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         implements DomainMgmtApplicationPresenter.MyView{
 
     private HLayout layout;
-
     private Canvas contentCanvas;
+
     private DomainMgmtApplicationPresenter presenter;
+
+    private TreeLHSDomainNavigation lhsNavigation;
 
     public DomainMgmtApplicationViewImpl() {
         super();
@@ -44,14 +38,10 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         contentCanvas.setHeight100();
         contentCanvas.setMargin(0);
 
-        layout.addMember(new TreeLHSDomainNavigation().asWidget());
+        lhsNavigation = new TreeLHSDomainNavigation();
+        layout.addMember(lhsNavigation.asWidget());
         layout.addMember(contentCanvas);
 
-    }
-
-    @Override
-    public void setPresenter(DomainMgmtApplicationPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override
@@ -62,7 +52,7 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == ServerMgmtApplicationPresenter.TYPE_SetToolContent) {
+        if (slot == DomainMgmtApplicationPresenter.TYPE_MainContent) {
             if(content!=null)
                 setContent(content);
 
@@ -73,13 +63,7 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         }
     }
 
-    @Override
-    public void removeFromSlot(Object slot, Widget content) {
-        super.removeFromSlot(slot, content);
-        System.out.println("remove "+content.getElement().getId());
-    }
-
-    public void setContent(Widget newContent) {
+    private void setContent(Widget newContent) {
 
         Canvas[] children = contentCanvas.getChildren();
         if(children.length>0) {
@@ -90,4 +74,8 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         contentCanvas.markForRedraw();
     }
 
+    @Override
+    public void setProfiles(ProfileRecord[] profileRecords) {
+        lhsNavigation.updateFrom(profileRecords);
+    }
 }

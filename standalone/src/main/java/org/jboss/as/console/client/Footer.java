@@ -7,8 +7,8 @@ import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
-import org.jboss.as.console.client.auth.AuthenticationListener;
 import org.jboss.as.console.client.auth.AuthenticationEvent;
+import org.jboss.as.console.client.auth.AuthenticationListener;
 import org.jboss.as.console.client.util.message.MessageCenterView;
 
 /**

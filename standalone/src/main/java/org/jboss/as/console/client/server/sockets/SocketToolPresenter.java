@@ -52,6 +52,6 @@ public class SocketToolPresenter extends Presenter<SocketToolPresenter.MyView, S
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
+        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
     }
 }

@@ -28,14 +28,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/4/11
  */
-public class ServerMgmtViewImpl extends ViewImpl
+public class ServerMgmtApplicationViewImpl extends ViewImpl
         implements ServerMgmtApplicationPresenter.ServerManagementView{
 
     private HLayout layout;
     private LHSNavigation lhsNavigation;
     private Canvas contentCanvas;
 
-    public ServerMgmtViewImpl() {
+    public ServerMgmtApplicationViewImpl() {
         super();
 
         layout = new HLayout();
@@ -63,7 +63,7 @@ public class ServerMgmtViewImpl extends ViewImpl
     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == ServerMgmtApplicationPresenter.TYPE_SetToolContent) {
+        if (slot == ServerMgmtApplicationPresenter.TYPE_MainContent) {
             if(content!=null)
                 setContent(content);
 
@@ -74,13 +74,7 @@ public class ServerMgmtViewImpl extends ViewImpl
         }
     }
 
-    @Override
-    public void removeFromSlot(Object slot, Widget content) {
-        super.removeFromSlot(slot, content);
-        System.out.println("remove "+content.getElement().getId());
-    }
-
-    public void setContent(Widget newContent) {
+    private void setContent(Widget newContent) {
 
         Canvas[] children = contentCanvas.getChildren();
         if(children.length>0) {

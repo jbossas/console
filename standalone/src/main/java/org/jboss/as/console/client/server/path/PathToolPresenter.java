@@ -52,6 +52,6 @@ public class PathToolPresenter extends Presenter<PathToolPresenter.MyView, PathT
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
+        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
     }
 }

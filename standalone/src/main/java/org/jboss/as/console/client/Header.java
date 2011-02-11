@@ -33,7 +33,7 @@ public class Header implements ValueChangeHandler<String> {
 
     public static final ViewName[] SECTIONS = {
             new ViewName("system", "System Overview"),
-            //new ViewName("server", "Server Management"),  // or domain management
+            new ViewName("server", "Server Management"),  // or domain management
             new ViewName("domain", "Domain Management"),
             new ViewName("users", "User Management"),
             new ViewName("settings", "Settings")

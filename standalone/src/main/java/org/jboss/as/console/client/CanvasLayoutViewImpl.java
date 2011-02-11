@@ -59,7 +59,6 @@ public class CanvasLayoutViewImpl extends ViewImpl implements MainLayoutPresente
 
         Canvas contentCanvas = Canvas.getById(CONTENT_CANVAS_ID);
 
-        System.out.println("set content " + newContent.getElement().getId());
         for (Canvas child : contentCanvas.getChildren()) {
             child.destroy();
         }

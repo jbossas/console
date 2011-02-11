@@ -6,7 +6,10 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.*;
+import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 
@@ -48,6 +51,6 @@ public class InterfaceToolPresenter extends Presenter<InterfaceToolPresenter.MyV
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_SetToolContent, this);
+        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
     }
 }

@@ -8,11 +8,18 @@ import com.gwtplatform.mvp.client.RootPresenter;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.*;
-import org.jboss.as.console.client.auth.*;
+import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.as.console.client.auth.LoggedInGatekeeper;
+import org.jboss.as.console.client.auth.SignInPagePresenter;
+import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
+import org.jboss.as.console.client.domain.profiles.MockProfileStore;
+import org.jboss.as.console.client.domain.profiles.ProfileStore;
+import org.jboss.as.console.client.domain.profiles.ProfileToolPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileToolViewImpl;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.server.ServerMgmtViewImpl;
+import org.jboss.as.console.client.server.ServerMgmtApplicationViewImpl;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentToolViewImpl;
@@ -25,7 +32,6 @@ import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolViewImpl;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
-
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementViewImpl;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
@@ -35,6 +41,8 @@ import org.jboss.as.console.client.util.message.MessageCenter;
 import org.jboss.as.console.client.util.message.MessageCenterView;
 
 /**
+ * Provides the bindings for the core UI components.
+ *
  * @author Heiko Braun
  * @date 1/31/11
  */
@@ -73,6 +81,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutPresenter.MainLayoutProxy.class);
 
         // ----------------------------------------------------------------------
+
         // system application
         bindPresenter(SystemApplicationPresenter.class,
                 SystemApplicationPresenter.SystemAppView.class,
@@ -80,10 +89,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 SystemApplicationPresenter.SystemAppProxy.class);
 
         // ----------------------------------------------------------------------
+
         // server management application
         bindPresenter(ServerMgmtApplicationPresenter.class,
                 ServerMgmtApplicationPresenter.ServerManagementView.class,
-                ServerMgmtViewImpl.class,
+                ServerMgmtApplicationViewImpl.class,
                 ServerMgmtApplicationPresenter.ServerManagementProxy.class);
 
         // server deployments
@@ -132,6 +142,14 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainMgmtApplicationPresenter.MyView.class,
                 DomainMgmtApplicationViewImpl.class,
                 DomainMgmtApplicationPresenter.MyProxy.class);
+        
+        // domain/profiles
+        bindPresenter(ProfileToolPresenter.class,
+                ProfileToolPresenter.MyView.class,
+                ProfileToolViewImpl.class,
+                ProfileToolPresenter.MyProxy.class);
+        bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
+                
         
     }
 

@@ -4,7 +4,6 @@ package org.jboss.as.console.client.auth;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.HasUiHandlers;
@@ -100,7 +99,7 @@ public class SignInPagePresenter extends
             user.setUserName(userName);
             user.setLoggedIn(true);
 
-            if(bootstrap.hasProperty(BootstrapContext.INITIAL_TOKEN))
+            /*if(bootstrap.hasProperty(BootstrapContext.INITIAL_TOKEN))
             {
                 History.newItem(bootstrap.getProperty(BootstrapContext.INITIAL_TOKEN));
             }
@@ -108,7 +107,10 @@ public class SignInPagePresenter extends
             {
                 PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
                 placeManager.revealPlace(myRequest);
-            }
+            }                                       */
+
+            PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
+            placeManager.revealPlace(myRequest);
 
             // notify listeners
             getEventBus().fireEvent(new AuthenticationEvent(user));

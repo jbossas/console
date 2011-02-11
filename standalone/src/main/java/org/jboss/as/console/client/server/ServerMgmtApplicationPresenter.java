@@ -2,7 +2,6 @@ package org.jboss.as.console.client.server;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.History;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -34,8 +33,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     public interface ServerManagementProxy extends ProxyPlace<ServerMgmtApplicationPresenter> {}
 
     @ContentSlot
-    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_SetToolContent =
-            new GwtEvent.Type<RevealContentHandler<?>>();
+    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
 
     @Inject
     public ServerMgmtApplicationPresenter(
@@ -46,7 +44,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     }
 
     /**
-     * Load a default sub toolset upon first reveal
+     * Load a default sub page upon first reveal
      * and highlight navigation sections in subsequent requests.
      *
      * @param request
