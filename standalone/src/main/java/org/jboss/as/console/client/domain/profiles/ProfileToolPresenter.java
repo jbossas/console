@@ -10,6 +10,8 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.ProfileRecord;
+import org.jboss.as.console.client.domain.ProfileStore;
 
 
 /**

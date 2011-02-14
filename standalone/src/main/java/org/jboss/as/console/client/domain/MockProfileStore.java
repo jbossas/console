@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain;
 
 /**
  * @author Heiko Braun
@@ -9,9 +9,9 @@ public class MockProfileStore implements ProfileStore {
     private final ProfileRecord[] records =
             new ProfileRecord[]
                     {
-                            new ProfileRecord("EE6 Web Profile"),
-                            new ProfileRecord("Messaging Profile"),
-                            new ProfileRecord("BPM Platform Profile")
+                            new ProfileRecord("EE6 Web"),
+                            new ProfileRecord("Messaging"),
+                            new ProfileRecord("BPM Platform")
 
                     };
 

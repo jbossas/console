@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;

@@ -11,17 +11,18 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.domain.profiles.ProfileRecord;
-import org.jboss.as.console.client.domain.profiles.ProfileStore;
 
 /**
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class DomainMgmtApplicationPresenter extends Presenter<DomainMgmtApplicationPresenter.MyView, DomainMgmtApplicationPresenter.MyProxy> {
+public class DomainMgmtApplicationPresenter
+        extends Presenter<DomainMgmtApplicationPresenter.MyView, DomainMgmtApplicationPresenter.MyProxy>
+        implements ProfileSelectionEvent.ProfileSelectionListener {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainManagementPresenter)
@@ -30,6 +31,7 @@ public class DomainMgmtApplicationPresenter extends Presenter<DomainMgmtApplicat
 
     public interface MyView extends View {
         void setProfiles(ProfileRecord[] profileRecords);
+        void setSubsystems(SubsystemRecord[] subsystemRecords);
     }
 
     @ContentSlot
@@ -45,6 +47,7 @@ public class DomainMgmtApplicationPresenter extends Presenter<DomainMgmtApplicat
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.profileStore = profileStore;
+
     }
 
     @Override
@@ -54,8 +57,36 @@ public class DomainMgmtApplicationPresenter extends Presenter<DomainMgmtApplicat
     }
 
     @Override
+    protected void onBind() {
+        super.onBind();
+        getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         getView().setProfiles(profileStore.loadProfiles());
     }
+
+    public void loadSubsystems(String profileName) {
+        System.out.println("load subsystem for "+ profileName);
+        getView().setSubsystems(subsysRecords);
+    }
+
+    @Override
+    public void onProfileSelection(String profileName) {
+        loadSubsystems(profileName);
+    }
+
+    static SubsystemRecord[] subsysRecords = new SubsystemRecord[] {
+        new SubsystemRecord("Threads"),
+            new SubsystemRecord("Web"),
+            new SubsystemRecord("EJB"),
+            new SubsystemRecord("JCA"),
+            new SubsystemRecord("Messaging"),
+            new SubsystemRecord("Transactions"),
+            new SubsystemRecord("Web Services"),
+            new SubsystemRecord("Clustering")
+
+    };
 }

@@ -5,7 +5,6 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.profiles.ProfileRecord;
 import org.jboss.as.console.client.util.message.Message;
 
 /**
@@ -23,7 +22,7 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
 
     private DomainMgmtApplicationPresenter presenter;
 
-    private TreeLHSDomainNavigation lhsNavigation;
+    private LHSDomainNavigation lhsNavigation;
 
     public DomainMgmtApplicationViewImpl() {
         super();
@@ -38,7 +37,7 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         contentCanvas.setHeight100();
         contentCanvas.setMargin(0);
 
-        lhsNavigation = new TreeLHSDomainNavigation();
+        lhsNavigation = new LHSDomainNavigation();
         layout.addMember(lhsNavigation.asWidget());
         layout.addMember(contentCanvas);
 
@@ -77,5 +76,10 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
     @Override
     public void setProfiles(ProfileRecord[] profileRecords) {
         lhsNavigation.updateFrom(profileRecords);
+    }
+
+    public void setSubsystems(SubsystemRecord[] subsystemRecords)
+    {
+        lhsNavigation.updateFrom(subsystemRecords);
     }
 }

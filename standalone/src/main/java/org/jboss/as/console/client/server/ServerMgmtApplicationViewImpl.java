@@ -91,17 +91,29 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
 
 
         final NavigationSection subsystems= new NavigationSection(
-                new ViewName("config", "Subsystem Configuration"),
-                new NavigationItem(new ViewName("threads","Threading"), "",null)
+                new ViewName("config", "Profile"),
+                new NavigationItem(new ViewName("threads","Threads"), "",null),
+                new NavigationItem(new ViewName("threads","Web"), "",null),
+                new NavigationItem(new ViewName("threads","EJB"), "",null),
+                new NavigationItem(new ViewName("threads","JCA"), "",null),
+                new NavigationItem(new ViewName("threads","Messaging"), "",null),
+                new NavigationItem(new ViewName("threads","Transactions"), "",null),
+                new NavigationItem(new ViewName("threads","Web Services"), "",null),
+                new NavigationItem(new ViewName("threads","Clustering"), "",null)
+
+
         );
 
         final NavigationSection deployments = new NavigationSection(
                 new ViewName("deployments", "Deployments"),
-                new NavigationItem(new ViewName("deployments","Deployments"), "", null)
+                new NavigationItem(new ViewName("deployments","Web Applications"), "", null),
+                new NavigationItem(new ViewName("deployments","Enterprise Applications"), "", null),
+                new NavigationItem(new ViewName("deployments","Resource Adapters"), "", null),
+                new NavigationItem(new ViewName("deployments","Other"), "", null)
         );
 
         final NavigationSection serverConfig= new NavigationSection(
-                new ViewName("common", "Server Settings"),
+                new ViewName("common", "General Configuration"),
                 new NavigationItem(new ViewName("path","Path"), "",null),
                 new NavigationItem(new ViewName("interfaces","Interfaces"), "",null),
                 new NavigationItem(new ViewName("sockets","Socket Binding Groups"), "",null),

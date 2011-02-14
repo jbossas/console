@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 

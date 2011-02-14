@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain;
 
 /**
  * @author Heiko Braun
