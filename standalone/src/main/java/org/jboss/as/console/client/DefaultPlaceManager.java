@@ -1,5 +1,6 @@
 package org.jboss.as.console.client;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
@@ -15,6 +16,7 @@ import org.jboss.as.console.client.util.message.MessageCenter;
 public class DefaultPlaceManager extends PlaceManagerImpl {
 
     private MessageCenter messageCenter;
+    private boolean discardPlaceRequest = true;
 
     @Inject
     public DefaultPlaceManager(
@@ -30,6 +32,14 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
                 new Message("Could not reveal: "+invalidHistoryToken,
                         Message.Severity.Fatal)
         );
+
+        if(discardPlaceRequest)
+        {
+            Log.debug("Discard \""+ invalidHistoryToken+"\". Fallback to default place");
+            discardPlaceRequest = false;
+            revealUnauthorizedPlace(null);
+        }
+
     }
 
     public void revealDefaultPlace() {
