@@ -27,7 +27,7 @@ public class NameTokens {
         return serverConfig;
     }
 
-    public static final String deploymentTool = "deployments";
+    public static final String deploymentTool = "server-deployments";
     public static String getDeploymentTool() {
         return deploymentTool;
     }

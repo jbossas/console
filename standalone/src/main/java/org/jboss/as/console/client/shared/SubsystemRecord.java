@@ -8,15 +8,16 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class SubsystemRecord extends ListGridRecord {
 
-    public SubsystemRecord(String name) {
-        setAttribute("subsystem-name", name);
+    public SubsystemRecord(String token, String title) {
+        setAttribute("subsystem-token", token);
+        setAttribute("subsystem-title", title);
     }
 
     public String getTitle() {
-        return getName();
+        return getAttribute("subsystem-title");
     }
 
-    public String getName() {
-        return getAttribute("subsystem-name");
+    public String getToken() {
+        return getAttribute("subsystem-token");
     }
 }

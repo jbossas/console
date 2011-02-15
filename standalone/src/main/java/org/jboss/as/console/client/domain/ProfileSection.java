@@ -82,7 +82,7 @@ class ProfileSection extends SectionStackSection {
         int i = 0;
         for(SubsystemRecord subsys: subsystems)
         {
-            nodes[i] = new NavTreeNode(subsys.getName(), subsys.getTitle());
+            nodes[i] = new NavTreeNode(subsys.getToken(), subsys.getTitle());
             i++;
         }
 
