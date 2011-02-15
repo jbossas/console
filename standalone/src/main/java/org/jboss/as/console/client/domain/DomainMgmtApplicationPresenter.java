@@ -11,6 +11,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
+import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.SubsystemRecord;
 
 /**
  * @author Heiko Braun
@@ -18,7 +24,8 @@ import org.jboss.as.console.client.NameTokens;
  */
 public class DomainMgmtApplicationPresenter
         extends Presenter<DomainMgmtApplicationPresenter.MyView, DomainMgmtApplicationPresenter.MyProxy>
-        implements ProfileSelectionEvent.ProfileSelectionListener {
+        implements ProfileSelectionEvent.ProfileSelectionListener,
+        ServerGroupSelectionEvent.ServerGroupSelectionListener {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
@@ -32,6 +39,8 @@ public class DomainMgmtApplicationPresenter
     public interface MyView extends View {
         void setProfiles(ProfileRecord[] profileRecords);
         void setSubsystems(SubsystemRecord[] subsystemRecords);
+        void setServerGroups(ServerGroupRecord[] serverGroupRecords);
+        void setSelectedServerGroup(ServerGroupRecord record);
     }
 
     @ContentSlot
@@ -60,12 +69,14 @@ public class DomainMgmtApplicationPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerGroupSelectionEvent.TYPE, this);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
         getView().setProfiles(profileStore.loadProfiles());
+        getView().setServerGroups(serverGroupRecords);
     }
 
     public void loadSubsystems(String profileName) {
@@ -78,6 +89,21 @@ public class DomainMgmtApplicationPresenter
         loadSubsystems(profileName);
     }
 
+    @Override
+    public void onServerGroupSelection(String serverGroupName) {
+
+        for(ServerGroupRecord group : serverGroupRecords)
+        {
+            if(group.getAttribute("group-name").equals(serverGroupName))
+            {
+                getView().setSelectedServerGroup(group);
+                break;
+            }
+
+        }
+
+    }
+
     static SubsystemRecord[] subsysRecords = new SubsystemRecord[] {
         new SubsystemRecord("Threads"),
             new SubsystemRecord("Web"),
@@ -87,6 +113,15 @@ public class DomainMgmtApplicationPresenter
             new SubsystemRecord("Transactions"),
             new SubsystemRecord("Web Services"),
             new SubsystemRecord("Clustering")
+
+    };
+
+    static ServerGroupRecord[] serverGroupRecords = new ServerGroupRecord [] {
+            new ServerGroupRecord("EE6 Server"),
+            new ServerGroupRecord("Web Server"),
+            new ServerGroupRecord("Payment"),
+            new ServerGroupRecord("Hot Standby"),
+            new ServerGroupRecord("Backoffice")
 
     };
 }

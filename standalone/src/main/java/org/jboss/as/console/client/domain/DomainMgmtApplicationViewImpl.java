@@ -4,7 +4,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.SubsystemRecord;
 import org.jboss.as.console.client.util.message.Message;
 
 /**
@@ -23,6 +27,9 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
     private DomainMgmtApplicationPresenter presenter;
 
     private LHSDomainNavigation lhsNavigation;
+
+    VLayout vlayout;
+    Canvas tools;
 
     public DomainMgmtApplicationViewImpl() {
         super();
@@ -78,8 +85,19 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
         lhsNavigation.updateFrom(profileRecords);
     }
 
+    @Override
     public void setSubsystems(SubsystemRecord[] subsystemRecords)
     {
         lhsNavigation.updateFrom(subsystemRecords);
+    }
+
+    @Override
+    public void setServerGroups(ServerGroupRecord[] serverGroupRecords) {
+        lhsNavigation.updateFrom(serverGroupRecords);
+    }
+
+    @Override
+    public void setSelectedServerGroup(ServerGroupRecord record) {
+        lhsNavigation.setSelectedServerGroup(record);
     }
 }

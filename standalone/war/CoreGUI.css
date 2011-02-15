@@ -491,3 +491,13 @@ a:hover {
     color:#686868;
     cursor:pointer;
 }
+
+.content-group-label {
+    font-weight:BOLD;
+    color: #4A5D75;
+    font-size:1em!important;
+    height:20px;
+    padding-left:5px;
+    padding-bottom:8px;
+    border-bottom:1px solid #E0E0E0;
+}

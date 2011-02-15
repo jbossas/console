@@ -19,7 +19,7 @@ public class NavigationItem {
     }
 
     public NavigationItem(ViewName name, String icon, ViewFactory viewFactory, boolean enabled) {
-        this.icon = icon;
+        this.icon = (icon!=null & !icon.equals("")) ? icon : "images/blank.png";
         this.viewName = name;
         this.viewFactory = viewFactory;
         this.enabled = enabled;

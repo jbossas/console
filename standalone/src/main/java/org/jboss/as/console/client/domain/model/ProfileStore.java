@@ -1,4 +1,6 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.model;
+
+import org.jboss.as.console.client.domain.model.ProfileRecord;
 
 /**
  * @author Heiko Braun

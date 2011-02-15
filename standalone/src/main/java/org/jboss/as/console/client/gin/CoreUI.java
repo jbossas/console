@@ -16,7 +16,7 @@ import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
-import org.jboss.as.console.client.domain.ProfileStore;
+import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.profiles.ProfileToolPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;

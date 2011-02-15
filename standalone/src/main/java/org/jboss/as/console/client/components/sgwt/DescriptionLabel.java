@@ -20,6 +20,7 @@ public class DescriptionLabel extends Label {
 
     private void setup() {
         setMargin(5);
+        setHeight(50);
         setStyleName("description-label");
     }
 

@@ -36,18 +36,19 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
         if(discardPlaceRequest)
         {
             Log.debug("Discard \""+ invalidHistoryToken+"\". Fallback to default place");
-            discardPlaceRequest = false;
             revealUnauthorizedPlace(null);
         }
 
     }
 
     public void revealDefaultPlace() {
+        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.mainLayout) );
     }
 
     @Override
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
+        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.signInPage) );
     }
 }

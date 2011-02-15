@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.events;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
