@@ -5,7 +5,7 @@ import com.smartgwt.client.types.VisibilityMode;
 import com.smartgwt.client.widgets.layout.SectionStack;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.SubsystemRecord;
 
 /**
  * @author Heiko Braun

@@ -9,10 +9,10 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.NavigationTreeGrid;
+import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.SubsystemRecord;
 
 /**
  * @author Heiko Braun
@@ -21,7 +21,7 @@ import org.jboss.as.console.client.domain.model.SubsystemRecord;
 class ProfileSection extends SectionStackSection {
 
     private NavTreeNode subsysNode;
-    private NavigationTreeGrid subsysTreeGrid;
+    private NavTreeGrid subsysTreeGrid;
     private ComboBoxItem profileSelection;
 
 
@@ -29,7 +29,7 @@ class ProfileSection extends SectionStackSection {
 
         super("Profiles");
 
-        subsysTreeGrid = new NavigationTreeGrid("profile");
+        subsysTreeGrid = new NavTreeGrid("profile");
         subsysTreeGrid.setEmptyMessage("Please select a profile.");
 
         final DynamicForm form = new DynamicForm();

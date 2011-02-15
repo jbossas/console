@@ -11,6 +11,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.SubsystemStore;
 
 /**
  * A collection of tools to manage a standalone server instance.
@@ -24,8 +26,11 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private PlaceManager placeManager;
     private boolean revealDefault = true;
 
+    private SubsystemStore subsysStore;
+
     public interface ServerManagementView extends View {
 
+        void updateFrom(SubsystemRecord[] subsystemRecords);
     }
 
     @ProxyCodeSplit
@@ -38,9 +43,17 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     @Inject
     public ServerMgmtApplicationPresenter(
             EventBus eventBus, ServerManagementView view,
-            ServerManagementProxy proxy, PlaceManager placeManager) {
+            ServerManagementProxy proxy, PlaceManager placeManager,
+            SubsystemStore subsysStore) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
+        this.subsysStore = subsysStore;
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().updateFrom(subsysStore.loadSubsystems());
     }
 
     /**

@@ -3,8 +3,8 @@ package org.jboss.as.console.client.domain;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.NavigationTreeGrid;
 
 /**
  * @author Heiko Braun
@@ -15,7 +15,7 @@ class CommonConfigSection extends SectionStackSection{
 
         super("General Configuration");
 
-        NavigationTreeGrid commonGrid = new NavigationTreeGrid("Deployments");
+        NavTreeGrid commonGrid = new NavTreeGrid("Deployments");
         final TreeNode commonNode = new NavTreeNode(
                 "common", "Common Settings", true,
                 new NavTreeNode("paths", "Paths"),

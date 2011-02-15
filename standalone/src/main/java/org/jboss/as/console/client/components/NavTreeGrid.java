@@ -6,10 +6,10 @@ import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
-public class NavigationTreeGrid extends TreeGrid {
+public class NavTreeGrid extends TreeGrid {
 
 
-    public NavigationTreeGrid(String title) {
+    public NavTreeGrid(String title) {
 
         setTitle(title);
         setWidth100();
@@ -30,7 +30,8 @@ public class NavigationTreeGrid extends TreeGrid {
                         }}
                 );*/
 
-                History.newItem(selectedRecord.getName());
+                // TODO: by convention for now
+                History.newItem(selectedRecord.getName().toLowerCase());
 
             }
         });

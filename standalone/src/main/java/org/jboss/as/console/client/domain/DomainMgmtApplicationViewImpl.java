@@ -8,7 +8,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.util.message.Message;
 
 /**

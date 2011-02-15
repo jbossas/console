@@ -33,6 +33,8 @@ import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementViewImpl;
+import org.jboss.as.console.client.shared.MockSubsystemStore;
+import org.jboss.as.console.client.shared.SubsystemStore;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 import org.jboss.as.console.client.util.message.MessageBar;

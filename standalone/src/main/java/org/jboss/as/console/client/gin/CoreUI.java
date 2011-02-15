@@ -18,7 +18,7 @@ import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.model.SubsystemStore;
+import org.jboss.as.console.client.shared.SubsystemStore;
 import org.jboss.as.console.client.domain.profiles.ProfileToolPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentStore;

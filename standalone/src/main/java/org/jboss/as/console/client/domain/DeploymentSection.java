@@ -3,8 +3,8 @@ package org.jboss.as.console.client.domain;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.NavigationTreeGrid;
 
 /**
  * @author Heiko Braun
@@ -14,7 +14,7 @@ class DeploymentSection extends SectionStackSection {
     public DeploymentSection() {
         super("Deployments");
 
-        final NavigationTreeGrid deploymentGrid = new NavigationTreeGrid("Deployments");
+        final NavTreeGrid deploymentGrid = new NavTreeGrid("Deployments");
 
         final TreeNode deploymentNode = new NavTreeNode(
                 "domain-deployments", "Domain Deployments",false,

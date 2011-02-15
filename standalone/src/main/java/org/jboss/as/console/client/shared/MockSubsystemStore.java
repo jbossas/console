@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.shared;
 
 import com.allen_sauer.gwt.log.client.Log;
 
@@ -19,6 +19,11 @@ public class MockSubsystemStore implements SubsystemStore {
             new SubsystemRecord("Clustering")
 
     };
+
+    @Override
+    public SubsystemRecord[] loadSubsystems() {
+        return records;
+    }
 
     @Override
     public SubsystemRecord[] loadSubsystems(String profileName) {

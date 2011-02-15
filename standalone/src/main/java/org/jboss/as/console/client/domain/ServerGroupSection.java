@@ -15,8 +15,8 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.NavigationTreeGrid;
 import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
@@ -26,7 +26,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
  */
 class ServerGroupSection extends SectionStackSection{
 
-    private NavigationTreeGrid serverGroupTreeGrid ;
+    private NavTreeGrid serverGroupTreeGrid ;
     private ComboBoxItem groupSelection;
     private NavTreeNode serverGroupNode;
 
@@ -48,7 +48,7 @@ class ServerGroupSection extends SectionStackSection{
         });
         form.setFields(groupSelection);
 
-        serverGroupTreeGrid = new NavigationTreeGrid("Server Groups");
+        serverGroupTreeGrid = new NavTreeGrid("Server Groups");
         serverGroupTreeGrid.setEmptyMessage("Please select a server group.");
 
         serverGroupNode = new NavTreeNode(

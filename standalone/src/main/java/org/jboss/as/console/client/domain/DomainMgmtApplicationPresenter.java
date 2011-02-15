@@ -14,6 +14,8 @@ import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
 import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.SubsystemStore;
 
 /**
  * @author Heiko Braun
