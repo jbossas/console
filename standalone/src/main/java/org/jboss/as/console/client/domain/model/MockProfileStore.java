@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.model;
 
+import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 
@@ -21,6 +22,7 @@ public class MockProfileStore implements ProfileStore {
     @Override
     public ProfileRecord[] loadProfiles()
     {
+        Log.debug("Loaded " + records.length + " profiles");
         return records;
     }
 }

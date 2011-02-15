@@ -13,10 +13,7 @@ import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.SubsystemRecord;
+import org.jboss.as.console.client.domain.model.*;
 
 /**
  * @author Heiko Braun
@@ -29,7 +26,8 @@ public class DomainMgmtApplicationPresenter
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
-
+    private SubsystemStore subsysStore;
+    private ServerGroupStore serverGroupStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainManagementPresenter)
@@ -51,11 +49,15 @@ public class DomainMgmtApplicationPresenter
     public DomainMgmtApplicationPresenter(
             EventBus eventBus,
             MyView view, MyProxy proxy,
-            PlaceManager placeManager, ProfileStore profileStore) {
+            PlaceManager placeManager, ProfileStore profileStore,
+            SubsystemStore subsysStore,
+            ServerGroupStore serverGroupStore) {
 
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.profileStore = profileStore;
+        this.subsysStore = subsysStore;
+        this.serverGroupStore = serverGroupStore;
 
     }
 
@@ -76,12 +78,11 @@ public class DomainMgmtApplicationPresenter
     protected void onReset() {
         super.onReset();
         getView().setProfiles(profileStore.loadProfiles());
-        getView().setServerGroups(serverGroupRecords);
+        getView().setServerGroups(serverGroupStore.loadServerGroups());
     }
 
-    public void loadSubsystems(String profileName) {
-        System.out.println("load subsystem for "+ profileName);
-        getView().setSubsystems(subsysRecords);
+    private void loadSubsystems(String profileName) {
+        getView().setSubsystems(subsysStore.loadSubsystems(profileName));
     }
 
     @Override
@@ -92,7 +93,7 @@ public class DomainMgmtApplicationPresenter
     @Override
     public void onServerGroupSelection(String serverGroupName) {
 
-        for(ServerGroupRecord group : serverGroupRecords)
+        for(ServerGroupRecord group : serverGroupStore.loadServerGroups())
         {
             if(group.getAttribute("group-name").equals(serverGroupName))
             {
@@ -104,24 +105,4 @@ public class DomainMgmtApplicationPresenter
 
     }
 
-    static SubsystemRecord[] subsysRecords = new SubsystemRecord[] {
-        new SubsystemRecord("Threads"),
-            new SubsystemRecord("Web"),
-            new SubsystemRecord("EJB"),
-            new SubsystemRecord("JCA"),
-            new SubsystemRecord("Messaging"),
-            new SubsystemRecord("Transactions"),
-            new SubsystemRecord("Web Services"),
-            new SubsystemRecord("Clustering")
-
-    };
-
-    static ServerGroupRecord[] serverGroupRecords = new ServerGroupRecord [] {
-            new ServerGroupRecord("EE6 Server"),
-            new ServerGroupRecord("Web Server"),
-            new ServerGroupRecord("Payment"),
-            new ServerGroupRecord("Hot Standby"),
-            new ServerGroupRecord("Backoffice")
-
-    };
 }

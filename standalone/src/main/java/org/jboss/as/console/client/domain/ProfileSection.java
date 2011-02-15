@@ -27,7 +27,7 @@ class ProfileSection extends SectionStackSection {
 
     public ProfileSection() {
 
-        super("Configuration Profiles");
+        super("Profiles");
 
         subsysTreeGrid = new NavigationTreeGrid("profile");
         subsysTreeGrid.setEmptyMessage("Please select a profile.");
