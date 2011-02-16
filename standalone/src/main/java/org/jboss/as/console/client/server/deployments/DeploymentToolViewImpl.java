@@ -42,12 +42,12 @@ public class DeploymentToolViewImpl
         deploymentGrid.setHeight100();
         deploymentGrid.setShowAllRecords(true);
 
-        ListGridField keyField = new ListGridField("key", "Key", 40);
+        ListGridField keyField = new ListGridField("name", "Name", 40);
         keyField.setAlign(Alignment.CENTER);
         keyField.setType(ListGridFieldType.TEXT);
 
-        ListGridField nameField = new ListGridField("deploymentName", "Name");
-        ListGridField dateField = new ListGridField("since", "Deployed Since");
+        ListGridField nameField = new ListGridField("runtime-name", "Runtime Name");
+        ListGridField dateField = new ListGridField("sha", "sha");
 
         deploymentGrid.setFields(keyField, nameField, dateField);
         deploymentGrid.setCanResizeFields(true);

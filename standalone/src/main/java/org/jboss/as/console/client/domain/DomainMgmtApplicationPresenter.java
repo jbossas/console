@@ -63,6 +63,22 @@ public class DomainMgmtApplicationPresenter
 
     }
 
+    /**
+     * Load default view.
+     *
+     * @param request
+     */
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+
+        // reveal default sub page
+        if(NameTokens.DomainManagementPresenter.equals(request.getNameToken()))
+        {
+            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ProfileOverviewPresenter));
+        }
+    }
+
     @Override
     protected void revealInParent() {
         // reveal in main layout

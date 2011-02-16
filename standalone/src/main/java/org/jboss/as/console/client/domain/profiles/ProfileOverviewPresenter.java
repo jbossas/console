@@ -12,32 +12,44 @@ import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.shared.DeploymentRecord;
+import org.jboss.as.console.client.shared.DeploymentStore;
 
 
 /**
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class ProfileToolPresenter extends Presenter<ProfileToolPresenter.MyView, ProfileToolPresenter.MyProxy> {
+public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter.MyView, ProfileOverviewPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
+    private ServerGroupStore serverGroupStore;
+    private DeploymentStore deploymentStore;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.ProfileToolPresenter)
-    public interface MyProxy extends Proxy<ProfileToolPresenter>, Place {
+    @NameToken(NameTokens.ProfileOverviewPresenter)
+    public interface MyProxy extends Proxy<ProfileOverviewPresenter>, Place {
     }
 
     public interface MyView extends SuspendableView {
-        void setPresenter(ProfileToolPresenter presenter);
+        void setPresenter(ProfileOverviewPresenter presenter);
     }
 
     @Inject
-    public ProfileToolPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                                PlaceManager placeManager, ProfileStore profileStore) {
+    public ProfileOverviewPresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, ProfileStore profileStore,
+            ServerGroupStore serverGroupStore,
+            DeploymentStore deploymentStore) {
+
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.profileStore = profileStore;
+        this.serverGroupStore = serverGroupStore;
+        this.deploymentStore = deploymentStore;
     }
 
     @Override
@@ -59,11 +71,18 @@ public class ProfileToolPresenter extends Presenter<ProfileToolPresenter.MyView,
         RevealContentEvent.fire(getEventBus(), DomainMgmtApplicationPresenter.TYPE_MainContent, this);
     }
 
-
     // --------------------------------
 
-    public ProfileRecord[] getRecords() {
+    public ProfileRecord[] getProfileRecords() {
         return profileStore.loadProfiles();
     }
 
+    public ServerGroupRecord[] getServerGroupRecords()
+    {
+        return serverGroupStore.loadServerGroups();
+    }
+
+    public DeploymentRecord[] getDeploymentRecords() {
+        return deploymentStore.loadDeployments();
+    }
 }

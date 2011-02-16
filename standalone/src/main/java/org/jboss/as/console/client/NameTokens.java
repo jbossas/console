@@ -75,8 +75,8 @@ public class NameTokens {
         return DomainManagementPresenter;
     }
 
-    public static final String ProfileToolPresenter = "profiles";
-    public static String getProfileToolPresenter() {
-        return ProfileToolPresenter;
+    public static final String ProfileOverviewPresenter = "profile-overview";
+    public static String getProfileOverviewPresenter() {
+        return ProfileOverviewPresenter;
     }
 }

@@ -15,8 +15,10 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.components.NavLabel;
 import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
+import org.jboss.as.console.client.components.SpacerLabel;
 import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
@@ -47,6 +49,7 @@ class ServerGroupSection extends SectionStackSection{
             }
         });
         form.setFields(groupSelection);
+        form.setLayoutAlign(Alignment.CENTER);
 
         serverGroupTreeGrid = new NavTreeGrid("Server Groups");
         serverGroupTreeGrid.setEmptyMessage("Please select a server group.");
@@ -59,7 +62,7 @@ class ServerGroupSection extends SectionStackSection{
         sgTree.setRoot(serverGroupNode);
         serverGroupTreeGrid.setData(sgTree);
 
-        ToolStrip toolStrip = new ToolStrip();
+        /*ToolStrip toolStrip = new ToolStrip();
         toolStrip.setAlign(Alignment.RIGHT);
         toolStrip.setWidth100();
 
@@ -89,7 +92,16 @@ class ServerGroupSection extends SectionStackSection{
         toolStrip.addButton(addBtn);
         toolStrip.addSpacer(10);
 
-        this.addItem(toolStrip);
+        this.addItem(toolStrip);*/
+
+        NavLabel overviewLabel = new NavLabel("server-groups","Overview");
+        overviewLabel.setIcon("common/inventory_grey.png");
+
+        NavLabel createNewLabel = new NavLabel("server-groups;action=new","Create New Group");
+        createNewLabel.setIcon("common/add.png");
+        this.addItem(overviewLabel);
+        this.addItem(createNewLabel);
+        this.addItem(new SpacerLabel());
         this.addItem(form);
         this.addItem(serverGroupTreeGrid);
     }

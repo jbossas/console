@@ -15,14 +15,14 @@ import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
 import org.jboss.as.console.client.domain.model.*;
-import org.jboss.as.console.client.domain.profiles.ProfileToolPresenter;
-import org.jboss.as.console.client.domain.profiles.ProfileToolViewImpl;
+import org.jboss.as.console.client.domain.profiles.ProfileOverview;
+import org.jboss.as.console.client.domain.profiles.ProfileOverviewPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationViewImpl;
-import org.jboss.as.console.client.server.deployments.DeploymentStore;
+import org.jboss.as.console.client.shared.DeploymentStore;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentToolViewImpl;
-import org.jboss.as.console.client.server.deployments.MockDeploymentStoreImpl;
+import org.jboss.as.console.client.shared.MockDeploymentStoreImpl;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolViewImpl;
 import org.jboss.as.console.client.server.path.PathToolPresenter;
@@ -145,10 +145,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainMgmtApplicationPresenter.MyProxy.class);
         
         // domain/profiles
-        bindPresenter(ProfileToolPresenter.class,
-                ProfileToolPresenter.MyView.class,
-                ProfileToolViewImpl.class,
-                ProfileToolPresenter.MyProxy.class);
+        bindPresenter(ProfileOverviewPresenter.class,
+                ProfileOverviewPresenter.MyView.class,
+                ProfileOverview.class,
+                ProfileOverviewPresenter.MyProxy.class);
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);

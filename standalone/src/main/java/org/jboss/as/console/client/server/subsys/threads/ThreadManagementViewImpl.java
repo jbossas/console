@@ -64,4 +64,5 @@ public class ThreadManagementViewImpl extends SuspendableViewImpl implements Thr
 
         return layout;
     }
+
 }

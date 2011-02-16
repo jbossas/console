@@ -12,6 +12,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.shared.DeploymentStore;
 
 /**
  * Manages deployments on a standalone server.

@@ -461,6 +461,7 @@ a:hover {
 .description-label {
     font-size:1em!important;
     color:#C0C0C0;
+    padding-left:15px;
 }
 
 .lhs-navigation {
@@ -500,4 +501,37 @@ a:hover {
     padding-left:5px;
     padding-bottom:8px;
     border-bottom:1px solid #E0E0E0;
+}
+
+.lhs-label {
+    font-family:Arial,Verdana,sans-serif; font-size:11px; text-overflow:ellipsis;
+    color:black;
+    padding-left:25px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border-bottom:1px solid #A7ABB4;
+    overflow:hidden;
+}
+
+.lhs-label:hover {
+    /*taken from SC skin_styles.css*/
+    background:#FFFFFF url(/app/sc/skins/Enterprise/images/ListGrid/row_Over.png) repeat-x bottom left scroll;
+}
+
+.lhs-label-selected {
+    font-family:Arial,Verdana,sans-serif; font-size:11px; text-overflow:ellipsis;
+    color:black;
+    padding-left:25px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border-bottom:1px solid #A7ABB4;
+    overflow:hidden;
+    background:#d9e4f6;
+}
+
+.lhs-label-selected:hover {
+    background:#d0dff6 url(/app/sc/skins/Enterprise/images/ListGrid/row_Over_Selected.png) repeat-x bottom left scroll;
+}
+
+.lhs-spacer {
 }

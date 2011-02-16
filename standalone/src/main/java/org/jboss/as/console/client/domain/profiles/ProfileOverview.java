@@ -1,8 +1,6 @@
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -17,14 +15,15 @@ import org.jboss.as.console.client.components.sgwt.TitleBar;
  * @author Heiko Braun
  * @date 1/31/11
  */
-public class ProfileToolViewImpl
-        extends SuspendableViewImpl implements ProfileToolPresenter.MyView{
+public class ProfileOverview
+        extends SuspendableViewImpl implements ProfileOverviewPresenter.MyView{
 
-    private ProfileToolPresenter presenter;
+    private ProfileOverviewPresenter presenter;
     private ListGrid profileGrid;
+    private ListGrid groupGrid;
 
     @Override
-    public void setPresenter(ProfileToolPresenter presenter) {
+    public void setPresenter(ProfileOverviewPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -37,6 +36,7 @@ public class ProfileToolViewImpl
 
         TitleBar titleBar = new TitleBar("Domain Overview");
         layout.addMember(titleBar);
+        //layout.addMember(new DescriptionLabel("Available Profiles and Server Groups."));
 
         HLayout hlayout = new HLayout();
 
@@ -49,21 +49,12 @@ public class ProfileToolViewImpl
         profileGrid.setShowAllRecords(true);
 
         ListGridField nameField = new ListGridField("profile-name", "Name");
-        nameField.setType(ListGridFieldType.TEXT);
-
-        //ListGridField inclField = new ListGridField("includes", "Includes");
-
         profileGrid.setFields(nameField);
-        profileGrid.setCanResizeFields(true);
-
-        profileGrid.setData(presenter.getRecords());
         profileGrid.setMargin(5);
 
         Label leftLabel = new ContentGroupLabel("Available Profiles");
         vlayoutLeft.addMember(leftLabel);
         vlayoutLeft.addMember(profileGrid);
-
-        vlayoutLeft.addMember(new HTML("<ul><li><a href=''>Add new Profile</a></ul>"));
 
         // --------------------------------------
 
@@ -72,10 +63,47 @@ public class ProfileToolViewImpl
         Label rightLabel = new ContentGroupLabel("Server Groups");
         vlayoutRight.addMember(rightLabel);
 
+        groupGrid = new ListGrid();
+        groupGrid.setHeight(150);
+        groupGrid.setShowHeader(false);
+        groupGrid.setShowAllRecords(true);
+
+        ListGridField groupNameField = new ListGridField("group-name", "Server Group");
+        ListGridField profileNameField = new ListGridField("profile-name", "Profile");
+
+        groupGrid.setFields(groupNameField, profileNameField);
+        groupGrid.setMargin(5);
+
+        vlayoutRight.addMember(groupGrid);
+        // --------------------------------------
+
         hlayout.addMember(vlayoutLeft);
         hlayout.addMember(vlayoutRight);
 
         layout.addMember(hlayout);
+
+        // --------------------------------------
+
+        ContentGroupLabel deploymentLabel = new ContentGroupLabel("Domain Level Deployments");
+        deploymentLabel.setMargin(15);
+
+        layout.addMember(deploymentLabel);
+
+
+        ListGrid deploymentGrid = new ListGrid();
+        deploymentGrid.setMargin(15);
+        deploymentGrid.setWidth100();
+        deploymentGrid.setHeight100();
+        deploymentGrid.setShowAllRecords(true);
+
+        ListGridField dplNameField = new ListGridField("name", "Name");
+        ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
+        deploymentGrid.setFields(dplNameField, dplRtField);
+        deploymentGrid.setData(presenter.getDeploymentRecords());
+
+        layout.addMember(deploymentGrid);
+
+        refresh();
 
         return layout;
     }
@@ -84,6 +112,11 @@ public class ProfileToolViewImpl
     @Override
     public void onResume() {
         super.onResume();
-        profileGrid.setData(presenter.getRecords());
+        refresh();
+    }
+
+    private void refresh() {
+        profileGrid.setData(presenter.getProfileRecords());
+        groupGrid.setData(presenter.getServerGroupRecords());
     }
 }

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.server.deployments;
+package org.jboss.as.console.client.shared;
 
 /**
  * Responsible for loading deployment data

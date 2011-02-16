@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.server.deployments;
+package org.jboss.as.console.client.shared;
 
 import com.allen_sauer.gwt.log.client.Log;
 
@@ -12,9 +12,9 @@ public class MockDeploymentStoreImpl implements DeploymentStore {
 
     private final DeploymentRecord[] records = new DeploymentRecord[]
             {
-                    new DeploymentRecord("ABSC", "onlineStore.war", new Date()),
-                    new DeploymentRecord("G6FF", "backOfficeApplication.war", new Date()),
-                    new DeploymentRecord("DFFC", "monitor.war", new Date())
+                    new DeploymentRecord("ols.war", "onlineStore.war", "7a2d28fc ..."),
+                    new DeploymentRecord("backOfficeApp.war", "backOfficeApplication.war", "ed849ee1 ..."),
+                    new DeploymentRecord("mon-1.0.war", "monitor.war", "2fd4e1c6 ...")
             };
 
     @Override
