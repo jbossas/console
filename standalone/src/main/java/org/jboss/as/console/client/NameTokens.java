@@ -79,4 +79,9 @@ public class NameTokens {
     public static String getProfileOverviewPresenter() {
         return ProfileOverviewPresenter;
     }
+
+    public static final String ServerGroupsPresenter = "server-groups";
+    public static String getServerGroupsPresenter() {
+        return ServerGroupsPresenter;
+    }
 }

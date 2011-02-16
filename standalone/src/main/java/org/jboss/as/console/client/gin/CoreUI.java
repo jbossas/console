@@ -16,6 +16,7 @@ import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.groups.ServerGroupsPresenter;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.profiles.ProfileOverviewPresenter;
@@ -88,6 +89,8 @@ public interface CoreUI extends Ginjector {
     // domain config below
     AsyncProvider<DomainMgmtApplicationPresenter> getDomainMgmtAppPresenter();
     AsyncProvider<ProfileOverviewPresenter> getProfileToolPresenter();
+    AsyncProvider<ServerGroupsPresenter> getServerGroupsPresenter();
+
     ProfileStore getProfileStore();
     SubsystemStore getSubsystemStore();
     ServerGroupStore getServerGroupStore();

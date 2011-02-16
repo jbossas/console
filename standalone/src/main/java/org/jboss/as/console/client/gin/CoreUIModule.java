@@ -14,6 +14,8 @@ import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
+import org.jboss.as.console.client.domain.groups.ServerGroupsPresenter;
+import org.jboss.as.console.client.domain.groups.ServerGroupsView;
 import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileOverview;
 import org.jboss.as.console.client.domain.profiles.ProfileOverviewPresenter;
@@ -149,6 +151,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ProfileOverviewPresenter.MyView.class,
                 ProfileOverview.class,
                 ProfileOverviewPresenter.MyProxy.class);
+        
+        bindPresenter(ServerGroupsPresenter.class,
+                ServerGroupsPresenter.MyView.class,
+                ServerGroupsView.class,
+                ServerGroupsPresenter.MyProxy.class);
+        
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);

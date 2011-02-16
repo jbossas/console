@@ -8,7 +8,6 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
-import org.jboss.as.console.client.components.sgwt.DescriptionLabel;
 import org.jboss.as.console.client.components.sgwt.TitleBar;
 
 /**
@@ -16,7 +15,7 @@ import org.jboss.as.console.client.components.sgwt.TitleBar;
  * @date 1/31/11
  */
 public class ProfileOverview
-        extends SuspendableViewImpl implements ProfileOverviewPresenter.MyView{
+        extends SuspendableViewImpl implements ProfileOverviewPresenter.MyView {
 
     private ProfileOverviewPresenter presenter;
     private ListGrid profileGrid;
@@ -111,6 +110,7 @@ public class ProfileOverview
 
     @Override
     public void onResume() {
+        System.out.println("> resume");
         super.onResume();
         refresh();
     }

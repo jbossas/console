@@ -10,6 +10,6 @@ public class SpacerLabel extends Label {
     public SpacerLabel() {
         super("&nbsp;");
         setStyleName("lhs-spacer");
-        setHeight(20);
+        setHeight(25);
     }
 }

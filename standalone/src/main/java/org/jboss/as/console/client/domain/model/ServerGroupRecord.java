@@ -11,4 +11,9 @@ public class ServerGroupRecord extends ListGridRecord {
     public ServerGroupRecord(String name) {
         setAttribute("group-name", name);
     }
+
+    public ServerGroupRecord(String name, String profile) {
+        this(name);
+        setAttribute("profile-name", profile);
+    }
 }

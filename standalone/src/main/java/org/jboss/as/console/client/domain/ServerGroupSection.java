@@ -1,17 +1,11 @@
 package org.jboss.as.console.client.domain;
 
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
@@ -29,70 +23,18 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 class ServerGroupSection extends SectionStackSection{
 
     private NavTreeGrid serverGroupTreeGrid ;
-    private ComboBoxItem groupSelection;
     private NavTreeNode serverGroupNode;
 
     public ServerGroupSection() {
         super("Server Groups");
 
-        final DynamicForm form = new DynamicForm();
-        form.setWidth100();
-
-        groupSelection = new ComboBoxItem();
-        groupSelection.setTitle("Group");
-        groupSelection.setType("comboBox");
-        groupSelection.addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                Console.MODULES.getEventBus().fireEvent(new ServerGroupSelectionEvent((String) changeEvent.getValue()));
-                groupSelection.blurItem();
-            }
-        });
-        form.setFields(groupSelection);
-        form.setLayoutAlign(Alignment.CENTER);
-
         serverGroupTreeGrid = new NavTreeGrid("Server Groups");
         serverGroupTreeGrid.setEmptyMessage("Please select a server group.");
+        serverGroupNode = new NavTreeNode("server-groups", "Server Group", false);
 
-        serverGroupNode = new NavTreeNode(
-                "server-groups", "Server Group", false
-        );
-
-        Tree sgTree = new Tree();
-        sgTree.setRoot(serverGroupNode);
-        serverGroupTreeGrid.setData(sgTree);
-
-        /*ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setAlign(Alignment.RIGHT);
-        toolStrip.setWidth100();
-
-        ToolStripButton inventoryBtn = new ToolStripButton();
-        inventoryBtn.setIcon("common/xs/inventory.png");
-        inventoryBtn.setIconWidth(10);
-        inventoryBtn.setIconHeight(10);
-
-        ToolStripButton addBtn = new ToolStripButton();
-        addBtn.setIcon("common/xs/add.png");
-        addBtn.setIconWidth(10);
-        addBtn.setIconHeight(10);
-        addBtn.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                SC.confirm("Create new Server Group?", new BooleanCallback() {
-                    public void execute(Boolean value) {
-
-                    }
-                });
-            }
-        });
-
-        toolStrip.addButton(inventoryBtn);
-        toolStrip.addSeparator();
-        toolStrip.addButton(addBtn);
-        toolStrip.addSpacer(10);
-
-        this.addItem(toolStrip);*/
+        Tree serverGroupTree = new Tree();
+        serverGroupTree.setRoot(serverGroupNode);
+        serverGroupTreeGrid.setData(serverGroupTree);
 
         NavLabel overviewLabel = new NavLabel("server-groups","Overview");
         overviewLabel.setIcon("common/inventory_grey.png");
@@ -102,12 +44,12 @@ class ServerGroupSection extends SectionStackSection{
         this.addItem(overviewLabel);
         this.addItem(createNewLabel);
         this.addItem(new SpacerLabel());
-        this.addItem(form);
+
         this.addItem(serverGroupTreeGrid);
     }
 
     public void setSelectedServerGroup(ServerGroupRecord serverGroupRecord) {
-        serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
+        /*serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
 
         String groupName = serverGroupRecord.getAttribute("group-name");
         TreeNode[] nodes = new TreeNode[] {
@@ -120,19 +62,29 @@ class ServerGroupSection extends SectionStackSection{
         serverGroupNode.setChildren(nodes);
 
         serverGroupTreeGrid.markForRedraw();
-        serverGroupTreeGrid.getTree().openAll(serverGroupNode);
+        serverGroupTreeGrid.getTree().openAll(serverGroupNode);*/
     }
 
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
-        String[] updates = new String[serverGroupRecords.length];
+
+        serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
+
+        TreeNode[] nodes = new TreeNode[serverGroupRecords.length];
+
         int i=0;
         for(ServerGroupRecord record : serverGroupRecords)
         {
-            updates[i] = record.getAttribute("group-name");
+            String groupName = record.getAttribute("group-name");
+            nodes[i] = new NavTreeNode("server-group;name="+ groupName.toLowerCase(),groupName);
             i++;
         }
 
-        groupSelection.setValueMap(updates);
+        NavTreeNode folder = new NavTreeNode("", "Current Groups");
+        folder.setChildren(nodes);
+
+        serverGroupNode.setChildren(new NavTreeNode[] {folder});
+
         serverGroupTreeGrid.markForRedraw();
+        serverGroupTreeGrid.getTree().openAll(serverGroupNode);
     }
 }
