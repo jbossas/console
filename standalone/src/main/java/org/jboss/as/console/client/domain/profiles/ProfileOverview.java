@@ -1,14 +1,19 @@
 package org.jboss.as.console.client.domain.profiles;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
+import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.TitleBar;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 /**
  * @author Heiko Braun
@@ -72,6 +77,16 @@ public class ProfileOverview
 
         groupGrid.setFields(groupNameField, profileNameField);
         groupGrid.setMargin(5);
+
+        groupGrid.addRecordClickHandler(new RecordClickHandler()
+        {
+            @Override
+            public void onRecordClick(RecordClickEvent recordClickEvent) {
+                ServerGroupRecord selectedRecord = (ServerGroupRecord)groupGrid.getSelectedRecord();
+                String groupName = selectedRecord.getAttribute("group-name");
+                History.newItem(NameTokens.ServerGroupsPresenter+";name="+ groupName);
+            }
+        });
 
         vlayoutRight.addMember(groupGrid);
         // --------------------------------------

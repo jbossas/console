@@ -12,8 +12,10 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
-import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
-import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.shared.SubsystemStore;
 
@@ -23,8 +25,7 @@ import org.jboss.as.console.client.shared.SubsystemStore;
  */
 public class DomainMgmtApplicationPresenter
         extends Presenter<DomainMgmtApplicationPresenter.MyView, DomainMgmtApplicationPresenter.MyProxy>
-        implements ProfileSelectionEvent.ProfileSelectionListener,
-        ServerGroupSelectionEvent.ServerGroupSelectionListener {
+        implements ProfileSelectionEvent.ProfileSelectionListener {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
@@ -40,7 +41,6 @@ public class DomainMgmtApplicationPresenter
         void setProfiles(ProfileRecord[] profileRecords);
         void setSubsystems(SubsystemRecord[] subsystemRecords);
         void setServerGroups(ServerGroupRecord[] serverGroupRecords);
-        void setSelectedServerGroup(ServerGroupRecord record);
     }
 
     @ContentSlot
@@ -89,7 +89,6 @@ public class DomainMgmtApplicationPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
-        getEventBus().addHandler(ServerGroupSelectionEvent.TYPE, this);
     }
 
     @Override
@@ -107,20 +106,4 @@ public class DomainMgmtApplicationPresenter
     public void onProfileSelection(String profileName) {
         loadSubsystems(profileName);
     }
-
-    @Override
-    public void onServerGroupSelection(String serverGroupName) {
-
-        for(ServerGroupRecord group : serverGroupStore.loadServerGroups())
-        {
-            if(group.getAttribute("group-name").equals(serverGroupName))
-            {
-                getView().setSelectedServerGroup(group);
-                break;
-            }
-
-        }
-
-    }
-
 }

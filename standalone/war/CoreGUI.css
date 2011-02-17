@@ -493,13 +493,25 @@ a:hover {
     cursor:pointer;
 }
 
-.content-group-label {
+.content-header-label {
     font-weight:BOLD;
     color: #4A5D75;
+    font-size:1.5em!important;
+    height:35px;
+    padding-left:15px;
+    padding-bottom:8px;
+    padding-top:8px;
+}
+
+.content-group-label {
+    font-weight:BOLD;
+    color: #A4A4A4;
     font-size:1em!important;
     height:20px;
-    padding-left:5px;
     padding-bottom:8px;
+    padding-left:15px;
+    padding-right:15px;
+    margin-left:15px;
     border-bottom:1px solid #E0E0E0;
 }
 

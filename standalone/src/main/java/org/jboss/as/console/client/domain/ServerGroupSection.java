@@ -1,19 +1,15 @@
 package org.jboss.as.console.client.domain;
 
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
+import com.google.gwt.user.client.History;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeNode;
-import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.NavLabel;
 import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
 import org.jboss.as.console.client.components.SpacerLabel;
-import org.jboss.as.console.client.domain.events.ServerGroupSelectionEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 /**
@@ -30,52 +26,45 @@ class ServerGroupSection extends SectionStackSection{
 
         serverGroupTreeGrid = new NavTreeGrid("Server Groups");
         serverGroupTreeGrid.setEmptyMessage("Please select a server group.");
+
+        serverGroupTreeGrid.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final NavTreeNode selectedRecord = (NavTreeNode) serverGroupTreeGrid.getSelectedRecord();
+                History.newItem(selectedRecord.getName());
+            }
+        });
+
         serverGroupNode = new NavTreeNode("server-groups", "Server Group", false);
 
         Tree serverGroupTree = new Tree();
         serverGroupTree.setRoot(serverGroupNode);
         serverGroupTreeGrid.setData(serverGroupTree);
 
-        NavLabel overviewLabel = new NavLabel("server-groups","Overview");
-        overviewLabel.setIcon("common/inventory_grey.png");
+        //NavLabel overviewLabel = new NavLabel("server-groups","Overview");
+        //overviewLabel.setIcon("common/inventory_grey.png");
 
-        NavLabel createNewLabel = new NavLabel("server-groups;action=new","Create New Group");
+        NavLabel createNewLabel = new NavLabel("server-groups;action=new","Add Server Group");
         createNewLabel.setIcon("common/add.png");
-        this.addItem(overviewLabel);
+        //this.addItem(overviewLabel);
         this.addItem(createNewLabel);
         this.addItem(new SpacerLabel());
 
         this.addItem(serverGroupTreeGrid);
     }
 
-    public void setSelectedServerGroup(ServerGroupRecord serverGroupRecord) {
-        /*serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
-
-        String groupName = serverGroupRecord.getAttribute("group-name");
-        TreeNode[] nodes = new TreeNode[] {
-                new NavTreeNode("group-jvm;group="+groupName, "JVM"),
-                new NavTreeNode("group-sockets;group="+groupName, "Socket Bindings"),
-                new NavTreeNode("group-properties;group="+groupName, "System Properties"),
-                new NavTreeNode("group-deployments;group="+groupName, "Deployments")
-        };
-
-        serverGroupNode.setChildren(nodes);
-
-        serverGroupTreeGrid.markForRedraw();
-        serverGroupTreeGrid.getTree().openAll(serverGroupNode);*/
-    }
-
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
 
         serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
 
-        TreeNode[] nodes = new TreeNode[serverGroupRecords.length];
+        NavTreeNode[] nodes = new NavTreeNode[serverGroupRecords.length];
 
         int i=0;
         for(ServerGroupRecord record : serverGroupRecords)
         {
             String groupName = record.getAttribute("group-name");
-            nodes[i] = new NavTreeNode("server-group;name="+ groupName.toLowerCase(),groupName);
+            nodes[i] = new NavTreeNode(NameTokens.ServerGroupsPresenter+";name="+ groupName, groupName);
             i++;
         }
 

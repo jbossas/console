@@ -95,9 +95,4 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
     public void setServerGroups(ServerGroupRecord[] serverGroupRecords) {
         lhsNavigation.updateFrom(serverGroupRecords);
     }
-
-    @Override
-    public void setSelectedServerGroup(ServerGroupRecord record) {
-        lhsNavigation.setSelectedServerGroup(record);
-    }
 }

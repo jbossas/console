@@ -58,11 +58,6 @@ class LHSDomainNavigation {
         profileSection.updateFrom(subsystems);
     }
 
-     public void setSelectedServerGroup(ServerGroupRecord serverGroupRecord) {
-
-        serverGroupSection.setSelectedServerGroup(serverGroupRecord);
-    }
-
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
         serverGroupSection.updateFrom(serverGroupRecords);
     }
