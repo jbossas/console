@@ -31,6 +31,7 @@ public class DomainMgmtApplicationPresenter
     private ProfileStore profileStore;
     private SubsystemStore subsysStore;
     private ServerGroupStore serverGroupStore;
+    private boolean revealDefault = true;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainManagementPresenter)
@@ -73,9 +74,10 @@ public class DomainMgmtApplicationPresenter
         super.prepareFromRequest(request);
 
         // reveal default sub page
-        if(NameTokens.DomainManagementPresenter.equals(request.getNameToken()))
+        if(revealDefault && NameTokens.DomainManagementPresenter.equals(request.getNameToken()))
         {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ServerGroupPresenter));
+            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ProfileOverviewPresenter));
+            revealDefault = false;
         }
     }
 
