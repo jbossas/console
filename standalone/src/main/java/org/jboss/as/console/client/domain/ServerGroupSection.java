@@ -1,16 +1,16 @@
 package org.jboss.as.console.client.domain;
 
-import com.google.gwt.user.client.History;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.components.NavLabel;
 import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
 import org.jboss.as.console.client.components.SpacerLabel;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.util.Places;
 
 /**
  * @author Heiko Braun
@@ -32,20 +32,23 @@ class ServerGroupSection extends SectionStackSection{
             @Override
             public void onClick(ClickEvent clickEvent) {
                 final NavTreeNode selectedRecord = (NavTreeNode) serverGroupTreeGrid.getSelectedRecord();
-                History.newItem(selectedRecord.getName());
+
+                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                        Places.fromString(selectedRecord.getName())
+                );
             }
         });
 
-        serverGroupNode = new NavTreeNode("server-groups", "Server Group", false);
+        serverGroupNode = new NavTreeNode("domain/server-group", "Server Group", false);
 
         Tree serverGroupTree = new Tree();
         serverGroupTree.setRoot(serverGroupNode);
         serverGroupTreeGrid.setData(serverGroupTree);
 
-        //NavLabel overviewLabel = new NavLabel("server-groups","Overview");
+        //NavLabel overviewLabel = new NavLabel("domain/server-groups","Overview");
         //overviewLabel.setIcon("common/inventory_grey.png");
 
-        NavLabel createNewLabel = new NavLabel("server-groups;action=new","Add Server Group");
+        NavLabel createNewLabel = new NavLabel("domain/server-group;action=new","Add Server Group");
         createNewLabel.setIcon("common/add.png");
         //this.addItem(overviewLabel);
         this.addItem(createNewLabel);
@@ -64,7 +67,7 @@ class ServerGroupSection extends SectionStackSection{
         for(ServerGroupRecord record : serverGroupRecords)
         {
             String groupName = record.getAttribute("group-name");
-            nodes[i] = new NavTreeNode(NameTokens.ServerGroupsPresenter+";name="+ groupName, groupName);
+            nodes[i] = new NavTreeNode("domain/server-group;name="+ groupName, groupName);
             i++;
         }
 

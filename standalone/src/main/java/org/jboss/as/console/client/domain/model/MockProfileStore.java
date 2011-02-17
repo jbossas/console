@@ -1,8 +1,6 @@
 package org.jboss.as.console.client.domain.model;
 
 import com.allen_sauer.gwt.log.client.Log;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ProfileStore;
 
 /**
  * @author Heiko Braun

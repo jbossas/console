@@ -2,8 +2,6 @@ package org.jboss.as.console.client.shared;
 
 import com.allen_sauer.gwt.log.client.Log;
 
-import java.util.Date;
-
 /**
  * @author Heiko Braun
  * @date 1/31/11

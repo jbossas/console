@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -9,11 +9,14 @@ import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.TitleBar;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+
+import java.util.ArrayList;
 
 /**
  * @author Heiko Braun
@@ -83,8 +86,14 @@ public class ProfileOverview
             @Override
             public void onRecordClick(RecordClickEvent recordClickEvent) {
                 ServerGroupRecord selectedRecord = (ServerGroupRecord)groupGrid.getSelectedRecord();
-                String groupName = selectedRecord.getAttribute("group-name");
-                History.newItem(NameTokens.ServerGroupsPresenter+";name="+ groupName);
+                final String groupName = selectedRecord.getAttribute("group-name");
+
+                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                        new ArrayList<PlaceRequest>() {{
+                            add(new PlaceRequest("domain"));
+                            add(new PlaceRequest(NameTokens.ServerGroupPresenter).with("name", groupName));
+                        }}
+                );
             }
         });
 
@@ -125,7 +134,6 @@ public class ProfileOverview
 
     @Override
     public void onResume() {
-        System.out.println("> resume");
         super.onResume();
         refresh();
     }

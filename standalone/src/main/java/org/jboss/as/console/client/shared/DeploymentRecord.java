@@ -2,8 +2,6 @@ package org.jboss.as.console.client.shared;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
-import java.util.Date;
-
 /**
  * @author Heiko Braun
  * @date 1/31/11

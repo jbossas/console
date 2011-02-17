@@ -1,9 +1,5 @@
 package org.jboss.as.console.client.domain;
 
-import com.smartgwt.client.widgets.HTMLFlow;
-import com.smartgwt.client.widgets.HTMLPane;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
@@ -13,8 +9,8 @@ import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.components.NavLabel;
-import org.jboss.as.console.client.components.NavTreeNode;
 import org.jboss.as.console.client.components.NavTreeGrid;
+import org.jboss.as.console.client.components.NavTreeNode;
 import org.jboss.as.console.client.components.SpacerLabel;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -62,7 +58,7 @@ class ProfileSection extends SectionStackSection {
         subsysTreeGrid.setData(profileTree);
         subsysTreeGrid.getTree().openAll();
 
-        final NavLabel overviewLabel = new NavLabel("profile-overview","Overview");
+        final NavLabel overviewLabel = new NavLabel("domain/profile-overview","Overview");
         overviewLabel.setIcon("common/inventory_grey.png");
 
         this.addItem(overviewLabel);

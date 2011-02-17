@@ -75,7 +75,7 @@ public class DomainMgmtApplicationPresenter
         // reveal default sub page
         if(NameTokens.DomainManagementPresenter.equals(request.getNameToken()))
         {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ServerGroupsPresenter));
+            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ServerGroupPresenter));
         }
     }
 

@@ -7,13 +7,11 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.shared.DeploymentStore;
 
 /**
  * Maintains a single server group.
@@ -29,7 +27,7 @@ public class ServerGroupPresenter
 
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.ServerGroupsPresenter)
+    @NameToken(NameTokens.ServerGroupPresenter)
     public interface MyProxy extends Proxy<ServerGroupPresenter>, Place {
     }
 

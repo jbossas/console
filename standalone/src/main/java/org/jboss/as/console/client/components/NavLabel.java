@@ -4,6 +4,8 @@ import com.google.gwt.user.client.History;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.util.Places;
 
 /**
  * @author Heiko Braun
@@ -20,7 +22,9 @@ public class NavLabel extends Label {
         addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                History.newItem(token);
+                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                        Places.fromString(token)
+                );
             }
         });
     }

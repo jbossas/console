@@ -80,8 +80,8 @@ public class NameTokens {
         return ProfileOverviewPresenter;
     }
 
-    public static final String ServerGroupsPresenter = "server-groups";
-    public static String getServerGroupsPresenter() {
-        return ServerGroupsPresenter;
+    public static final String ServerGroupPresenter = "server-group";
+    public static String getServerGroupPresenter() {
+        return ServerGroupPresenter;
     }
 }
