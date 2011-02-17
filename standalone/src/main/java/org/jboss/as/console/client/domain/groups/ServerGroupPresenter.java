@@ -24,7 +24,7 @@ public class ServerGroupPresenter
 
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
-
+    private ServerGroupRecord selectedRecord;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -53,6 +53,7 @@ public class ServerGroupPresenter
         getView().setPresenter(this);
     }
 
+
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
@@ -68,6 +69,12 @@ public class ServerGroupPresenter
     }
 
     @Override
+    protected void onReset() {
+        super.onReset();
+        getView().setSelectedRecord(selectedRecord);
+    }
+
+    @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), DomainMgmtApplicationPresenter.TYPE_MainContent, this);
     }
@@ -79,7 +86,7 @@ public class ServerGroupPresenter
         {
             if(groupName.equals(record.getAttribute("group-name")))
             {
-                getView().setSelectedRecord(record);
+                selectedRecord = record;
                 break;
             }
         }

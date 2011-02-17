@@ -26,7 +26,6 @@ class ProfileSection extends SectionStackSection {
     private NavTreeGrid subsysTreeGrid;
     private ComboBoxItem profileSelection;
 
-
     public ProfileSection() {
 
         super("Profiles");
@@ -44,7 +43,7 @@ class ProfileSection extends SectionStackSection {
         {
             @Override
             public void onChange(ChangeEvent changeEvent) {
-                Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent((String) changeEvent.getValue()));
+                fireProfileSelection((String)changeEvent.getValue());
                 profileSelection.blurItem();
             }
         });
@@ -67,6 +66,10 @@ class ProfileSection extends SectionStackSection {
         this.addItem(subsysTreeGrid);
     }
 
+    private void fireProfileSelection(String profileName) {
+        Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(profileName));
+    }
+
     public void updateFrom(ProfileRecord[] profileRecords) {
 
         String[] updates = new String[profileRecords.length];
@@ -78,6 +81,11 @@ class ProfileSection extends SectionStackSection {
         }
 
         profileSelection.setValueMap(updates);
+
+        // select first option when updated
+        profileSelection.setDefaultToFirstOption(true);
+        fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
+
         subsysTreeGrid.markForRedraw();
     }
 

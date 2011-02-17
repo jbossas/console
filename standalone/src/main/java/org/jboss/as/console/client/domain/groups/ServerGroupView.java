@@ -56,36 +56,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         nameLabel = new ContentHeaderLabel();
         layout.addMember(nameLabel);
 
-        /*ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setWidth100();
-        toolStrip.setAlign(Alignment.RIGHT);
-
-        ToolStripButton addButton = new ToolStripButton();
-        addButton.setIcon("common/add.png");
-        toolStrip.addButton(addButton);
-        addButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-            }
-        });
-
-        layout.addMember(toolStrip);
-        toolStrip.addSeparator();
-
-        ToolStripButton helpButton = new ToolStripButton();
-        helpButton.setIcon("[SKIN]/actions/help.png");
-        toolStrip.addButton(helpButton);
-        helpButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-
-            }
-        });
-
-        toolStrip.addSpacer(10);*/
-
         // ---------------------------------------------------
 
         form = new DynamicForm();
@@ -154,7 +124,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         ListGridField dplNameField = new ListGridField("name", "Name");
         ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
         deploymentGrid.setFields(dplNameField, dplRtField);
-        //deploymentGrid.setData(presenter.getDeploymentRecords());
 
         layout.addMember(deploymentGrid);
 
@@ -176,7 +145,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         return layout;
     }
 
-    public void setSelectedRecord(ServerGroupRecord record)
+    public void setSelectedRecord(final ServerGroupRecord record)
     {
         final String selectedGroupName = record.getAttribute("group-name");
 
