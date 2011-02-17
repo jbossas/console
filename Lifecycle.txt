@@ -1,0 +1,36 @@
+
+How do I choose between onReveal() and onReset()?
+=================================================
+
+onReset is called whenever a new Presenter is requested,
+even if the current Presenter is visible. onReveal is called whenever the Presenter is revealed.
+
+
+In what order are the Presenter methods called?
+===============================================
+
+On First load:
+
+    Constructor
+    onBind
+    prepareFromRequest
+    revealInParent
+    onReveal
+    onReset
+    prepareRequest
+
+
+On Hiding:
+
+    onHide
+
+
+On Subsequent Reveals:
+
+    prepareFromRequest
+    revealInParent
+    onReveal
+    onReset
+    prepareRequest
+
+(Taken from http://code.google.com/p/gwt-platform/wiki/FrequentlyAskedQuestions)
