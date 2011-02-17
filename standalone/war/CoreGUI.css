@@ -298,7 +298,7 @@ a:hover {
 
 
 .topMenuBar {
-    background: url('/coregui/org.rhq.enterprise.gui.coregui.CoreGUI/sc/skins/Enterprise/images/cssButton/button_stretch.png') repeat-x scroll 0 0 #DDDDDD;
+    /*background: url('/coregui/org.rhq.enterprise.gui.coregui.CoreGUI/sc/skins/Enterprise/images/cssButton/button_stretch.png') repeat-x scroll 0 0 #DDDDDD;*/
 }
 
 .menuButton, .menuButtonOver, .menuButtonDown, .menuButtonDisabled, .menuButtonSelected, .menuButtonSelectedDown, .menuButtonSelectedOver, .menuButtonSelectedDisabled {

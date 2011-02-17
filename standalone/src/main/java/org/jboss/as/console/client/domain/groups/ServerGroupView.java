@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
@@ -7,12 +8,13 @@ import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
@@ -32,7 +34,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private ServerGroupPresenter presenter;
     private DynamicForm form;
-    private DynamicForm profileform;
     private ListGrid propertyGrid;
     private ComboBoxItem socketBindingItem;
 
@@ -61,39 +62,59 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         form = new DynamicForm();
         form.setWidth100();
-        //form.setHeight100();
+        form.setNumCols(4); //(TextItem, SelectItem, etc) take up two columns by default
+
         TextItem nameField = new TextItem("group-name", "Group Name");
         TextItem jvmField = new TextItem("jvm", "JVM");
 
-        socketBindingItem = new ComboBoxItem();
+        socketBindingItem = new ComboBoxItem("socket-binding");
         socketBindingItem.setTitle("Socket Binding");
         socketBindingItem.setType("comboBox");
         socketBindingItem.setValueMap("default", "DMZ");
         socketBindingItem.setDefaultToFirstOption(true);
 
-        form.setFields(nameField, jvmField, socketBindingItem);
-
-        form.setMargin(15);
-
-        HLayout attributeLayout = new HLayout();
-        attributeLayout.setWidth100();
-
-        VLayout attLeft = new VLayout();
-        VLayout attRight = new VLayout();
-
-        attLeft.addMember(new ContentGroupLabel("Attributes"));
-        attLeft.addMember(form);
-
-        attRight.addMember(new ContentGroupLabel("Profile"));
-        profileform = new DynamicForm();
-        profileform.setMargin(15);
         TextItem profileNameField = new TextItem("profile-name", "Profile Name");
-        profileform.setFields(profileNameField);
-        attRight.addMember(profileform);
 
-        attributeLayout.addMember(attLeft);
-        attributeLayout.addMember(attRight);
-        layout.addMember(attributeLayout);
+        final Button button = new Button("Save");
+        button.setWidth(80);
+        button.setLayoutAlign(Alignment.CENTER);
+        button.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                Scheduler.get().scheduleDeferred(
+                        new Scheduler.ScheduledCommand() {
+                            @Override
+                            public void execute() {
+                                Console.MODULES.getMessageCenter().notify(
+                                        new Message("Saved: " +form.getChangedValues(), Message.Severity.Info)
+                                );
+                                form.rememberValues();
+                                form.setBackgroundColor("#ffffff");
+                                button.animateFade(0);
+                            }
+                        }
+                );
+            }
+        });
+
+        button.setAnimateTime(600);
+        button.setVisible(false);
+
+        form.setFields(nameField, jvmField, socketBindingItem, profileNameField);
+        form.setMargin(15);
+        form.setPadding(4);
+        form.addItemChangedHandler(new ItemChangedHandler()
+        {
+            @Override
+            public void onItemChanged(ItemChangedEvent itemChangedEvent) {
+                button.setVisible(true);
+                button.animateFade(100);
+                form.setBackgroundColor("#F0F0D8");
+            }
+        });
+
+        layout.addMember(new ContentGroupLabel("Attributes"));
+        layout.addMember(form);
+        layout.addMember(button);
 
         // ---------------------------------------------------
 
@@ -129,20 +150,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.addMember(deploymentGrid);
 
 
-        // ---------------------------------------------------
-
-        Button saveBtn = new Button("Save");
-        saveBtn.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Server Group changes saved!", Message.Severity.Info)
-                );
-            }
-        });
-        saveBtn.setLayoutAlign(Alignment.RIGHT);
-
         return layout;
     }
 
@@ -153,7 +160,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         nameLabel.setContents(selectedGroupName);
 
         form.editRecord(record);
-        profileform.editRecord(record);
+        form.rememberValues();
 
         // TODO: update socket binding ref
 
