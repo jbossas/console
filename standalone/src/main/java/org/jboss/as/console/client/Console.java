@@ -3,9 +3,11 @@ package org.jboss.as.console.client;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
+import org.jboss.as.console.client.auth.AuthenticationEvent;
 import org.jboss.as.console.client.gin.CoreUI;
 
 /**
@@ -22,12 +24,14 @@ public class Console implements EntryPoint {
         // UncaughtExceptionHandler can catch any unexpected exceptions.
         Log.setUncaughtExceptionHandler();
 
-        DeferredCommand.addCommand(new Command() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
             public void execute() {
                 onModuleLoad2();
             }
         });
-      }
+
+    }
 
 
     public void onModuleLoad2() {

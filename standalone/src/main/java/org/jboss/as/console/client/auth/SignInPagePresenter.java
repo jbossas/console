@@ -2,6 +2,7 @@ package org.jboss.as.console.client.auth;
 
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.TextBox;
@@ -15,6 +16,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.BootstrapContext;
 import org.jboss.as.console.client.NameTokens;
+
 
 public class SignInPagePresenter extends
         Presenter<SignInPagePresenter.MyView, SignInPagePresenter.MyProxy> implements
@@ -113,7 +115,12 @@ public class SignInPagePresenter extends
             placeManager.revealPlace(myRequest);
 
             // notify listeners
-            getEventBus().fireEvent(new AuthenticationEvent(user));
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    getEventBus().fireEvent(new AuthenticationEvent(user));
+                }
+            });
         }
         else {
             showErrorDialog();

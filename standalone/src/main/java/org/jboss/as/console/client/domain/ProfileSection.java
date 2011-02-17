@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.domain;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.core.client.Scheduler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
@@ -17,8 +16,6 @@ import org.jboss.as.console.client.components.SpacerLabel;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
-
-import javax.activation.CommandObject;
 
 /**
  * @author Heiko Braun
@@ -87,13 +84,11 @@ class ProfileSection extends SectionStackSection {
         profileSelection.setValueMap(updates);
 
         // select first option when updated
-        DeferredCommand.addCommand(new Command()
-        {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 profileSelection.setDefaultToFirstOption(true);
                 fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
-
             }
         });
 
