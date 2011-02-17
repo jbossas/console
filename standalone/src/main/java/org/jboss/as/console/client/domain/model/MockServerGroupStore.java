@@ -28,7 +28,7 @@ public class MockServerGroupStore implements ServerGroupStore {
             new ServerGroupRecord("Web Server", "EE6 Web")
             {{
                     setAttribute("jvm", "jdk_15_default");
-                    setAttribute("socket-binding", "DMZ-Socket-Binding");
+                    setAttribute("socket-binding", "DMZ");
                 }},
             new ServerGroupRecord("Payment", "Messaging")
             {{

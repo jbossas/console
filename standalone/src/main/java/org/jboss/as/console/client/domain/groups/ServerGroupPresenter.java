@@ -7,11 +7,17 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.util.message.Message;
+
+import java.util.Map;
 
 /**
  * Maintains a single server group.
@@ -25,6 +31,31 @@ public class ServerGroupPresenter
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
     private ServerGroupRecord selectedRecord;
+    private ProfileStore profileStore;
+
+    public String[] getProfileNames() {
+
+        ProfileRecord[] profileRecords = profileStore.loadProfiles();
+        String[] names = new String[profileRecords.length];
+        int i=0;
+        for(ProfileRecord profile : profileRecords)
+        {
+            names[i] = profile.getAttribute("profile-name");
+            i++;
+        }
+        return names;
+    }
+
+    public String[] getSocketBindings() {
+        return new String[] {"default", "DMZ"};
+    }
+
+    public void persistChanges(Map changedValues) {
+        String groupName = selectedRecord.getAttribute("group-name");
+        Console.MODULES.getMessageCenter().notify(
+                new Message("Saved :"+ groupName +" " +changedValues, Message.Severity.Info)
+        );
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -34,17 +65,20 @@ public class ServerGroupPresenter
     public interface MyView extends SuspendableView {
         void setPresenter(ServerGroupPresenter presenter);
         void setSelectedRecord(ServerGroupRecord record);
+        void setEnabled(boolean isEnabled);
     }
 
     @Inject
     public ServerGroupPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            ServerGroupStore serverGroupStore) {
+            ServerGroupStore serverGroupStore,
+            ProfileStore profileStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.serverGroupStore = serverGroupStore;
+        this.profileStore = profileStore;
     }
 
     @Override

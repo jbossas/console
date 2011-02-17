@@ -11,6 +11,7 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -35,8 +36,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ServerGroupPresenter presenter;
     private DynamicForm form;
     private ListGrid propertyGrid;
-    private ComboBoxItem socketBindingItem;
-
     private ContentHeaderLabel nameLabel;
 
     @Override
@@ -67,13 +66,18 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         TextItem nameField = new TextItem("group-name", "Group Name");
         TextItem jvmField = new TextItem("jvm", "JVM");
 
-        socketBindingItem = new ComboBoxItem("socket-binding");
+        final ComboBoxItem socketBindingItem = new ComboBoxItem("socket-binding");
         socketBindingItem.setTitle("Socket Binding");
         socketBindingItem.setType("comboBox");
-        socketBindingItem.setValueMap("default", "DMZ");
+        socketBindingItem.setValueMap(presenter.getSocketBindings());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        TextItem profileNameField = new TextItem("profile-name", "Profile Name");
+        final ComboBoxItem profileItem = new ComboBoxItem("profile-name");
+        profileItem.setTitle("Profile");
+        profileItem.setType("comboBox");
+        profileItem.setValueMap(presenter.getProfileNames());
+        profileItem.setDefaultToFirstOption(true);
+        
 
         final Button button = new Button("Save");
         button.setWidth(80);
@@ -84,9 +88,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                         new Scheduler.ScheduledCommand() {
                             @Override
                             public void execute() {
-                                Console.MODULES.getMessageCenter().notify(
-                                        new Message("Saved: " +form.getChangedValues(), Message.Severity.Info)
-                                );
+                                presenter.persistChanges(form.getChangedValues());
                                 form.rememberValues();
                                 form.setBackgroundColor("#ffffff");
                                 button.animateFade(0);
@@ -99,7 +101,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         button.setAnimateTime(600);
         button.setVisible(false);
 
-        form.setFields(nameField, jvmField, socketBindingItem, profileNameField);
+        form.setFields(nameField, jvmField, socketBindingItem, profileItem);
         form.setMargin(15);
         form.setPadding(4);
         form.addItemChangedHandler(new ItemChangedHandler()
@@ -111,6 +113,9 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 form.setBackgroundColor("#F0F0D8");
             }
         });
+
+        for(FormItem item : form.getFields())
+            item.setShowDisabled(false);
 
         layout.addMember(new ContentGroupLabel("Attributes"));
         layout.addMember(form);
@@ -162,8 +167,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.editRecord(record);
         form.rememberValues();
 
-        // TODO: update socket binding ref
-
         final Map<String, String> properties = record.getAttributeAsMap("properties");
 
         if(properties!=null)
@@ -186,6 +189,20 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         {
             // no system properties available
             propertyGrid.setData(new Record[]{});
+        }
+    }
+
+    public void setEnabled(boolean isEnabled)
+    {
+        if(isEnabled)
+        {
+            form.enable();
+            propertyGrid.enable();
+        }
+        else
+        {
+            form.disable();
+            propertyGrid.disable();
         }
     }
 }
