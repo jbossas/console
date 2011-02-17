@@ -54,6 +54,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.addMember(titleBar);
 
         nameLabel = new ContentHeaderLabel();
+        nameLabel.setIcon("common/server_group.png");
         layout.addMember(nameLabel);
 
         // ---------------------------------------------------

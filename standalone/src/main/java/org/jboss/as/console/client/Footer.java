@@ -28,6 +28,7 @@ public class Footer implements AuthenticationListener {
     @Override
     public void onUserAuthenticated(AuthenticationEvent event) {
         label.setContents("&nbsp;"+event.getUser().getUserName());
+        label.markForRedraw();
     }
 
     public Widget asWidget() {

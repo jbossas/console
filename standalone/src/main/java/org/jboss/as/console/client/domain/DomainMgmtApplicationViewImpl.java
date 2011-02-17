@@ -1,11 +1,10 @@
 package org.jboss.as.console.client.domain;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
@@ -18,18 +17,13 @@ import org.jboss.as.console.client.util.message.Message;
  * @author Heiko Braun
  * @date 2/4/11
  */
-public class DomainMgmtApplicationViewImpl extends ViewImpl
+public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
         implements DomainMgmtApplicationPresenter.MyView{
 
+    private DomainMgmtApplicationPresenter presenter;
     private HLayout layout;
     private Canvas contentCanvas;
-
-    private DomainMgmtApplicationPresenter presenter;
-
     private LHSDomainNavigation lhsNavigation;
-
-    VLayout vlayout;
-    Canvas tools;
 
     public DomainMgmtApplicationViewImpl() {
         super();
@@ -51,7 +45,7 @@ public class DomainMgmtApplicationViewImpl extends ViewImpl
     }
 
     @Override
-    public Widget asWidget() {
+    public Widget createWidget() {
         return layout;
     }
 

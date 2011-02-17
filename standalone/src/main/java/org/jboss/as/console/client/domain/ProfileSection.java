@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.domain;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
@@ -15,6 +17,8 @@ import org.jboss.as.console.client.components.SpacerLabel;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
+
+import javax.activation.CommandObject;
 
 /**
  * @author Heiko Braun
@@ -70,7 +74,7 @@ class ProfileSection extends SectionStackSection {
         Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(profileName));
     }
 
-    public void updateFrom(ProfileRecord[] profileRecords) {
+    public void updateFrom(final ProfileRecord[] profileRecords) {
 
         String[] updates = new String[profileRecords.length];
         int i=0;
@@ -83,8 +87,15 @@ class ProfileSection extends SectionStackSection {
         profileSelection.setValueMap(updates);
 
         // select first option when updated
-        profileSelection.setDefaultToFirstOption(true);
-        fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
+        DeferredCommand.addCommand(new Command()
+        {
+            @Override
+            public void execute() {
+                profileSelection.setDefaultToFirstOption(true);
+                fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
+
+            }
+        });
 
         subsysTreeGrid.markForRedraw();
     }

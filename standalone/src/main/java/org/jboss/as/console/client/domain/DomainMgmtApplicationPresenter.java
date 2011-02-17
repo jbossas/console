@@ -4,13 +4,13 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.MainLayoutPresenter;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
@@ -38,7 +38,7 @@ public class DomainMgmtApplicationPresenter
     public interface MyProxy extends Proxy<DomainMgmtApplicationPresenter>, Place {
     }
 
-    public interface MyView extends View {
+    public interface MyView extends SuspendableView {
         void setProfiles(ProfileRecord[] profileRecords);
         void setSubsystems(SubsystemRecord[] subsystemRecords);
         void setServerGroups(ServerGroupRecord[] serverGroupRecords);
@@ -57,11 +57,11 @@ public class DomainMgmtApplicationPresenter
             ServerGroupStore serverGroupStore) {
 
         super(eventBus, view, proxy);
+
         this.placeManager = placeManager;
         this.profileStore = profileStore;
         this.subsysStore = subsysStore;
         this.serverGroupStore = serverGroupStore;
-
     }
 
     /**
@@ -91,21 +91,14 @@ public class DomainMgmtApplicationPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
-    }
 
-    @Override
-    protected void onReset() {
-        super.onReset();
+        // TODO: when do these refresh?
         getView().setProfiles(profileStore.loadProfiles());
         getView().setServerGroups(serverGroupStore.loadServerGroups());
     }
 
-    private void loadSubsystems(String profileName) {
-        getView().setSubsystems(subsysStore.loadSubsystems(profileName));
-    }
-
     @Override
     public void onProfileSelection(String profileName) {
-        loadSubsystems(profileName);
+        getView().setSubsystems(subsysStore.loadSubsystems(profileName));
     }
 }

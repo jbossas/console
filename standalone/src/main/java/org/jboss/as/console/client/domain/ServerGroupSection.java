@@ -33,9 +33,13 @@ class ServerGroupSection extends SectionStackSection{
             public void onClick(ClickEvent clickEvent) {
                 final NavTreeNode selectedRecord = (NavTreeNode) serverGroupTreeGrid.getSelectedRecord();
 
-                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                        Places.fromString(selectedRecord.getName())
-                );
+                String token = selectedRecord.getName();
+                if(token!=null && !token.equals(""))
+                {
+                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                            Places.fromString(token)
+                    );
+                }
             }
         });
 
@@ -79,4 +83,6 @@ class ServerGroupSection extends SectionStackSection{
         serverGroupTreeGrid.markForRedraw();
         serverGroupTreeGrid.getTree().openAll(serverGroupNode);
     }
+
+
 }

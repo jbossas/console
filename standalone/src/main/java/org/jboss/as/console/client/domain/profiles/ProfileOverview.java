@@ -60,6 +60,7 @@ public class ProfileOverview
         profileGrid.setMargin(5);
 
         Label leftLabel = new ContentGroupLabel("Available Profiles");
+        leftLabel.setIcon("common/profile.png");
         vlayoutLeft.addMember(leftLabel);
         vlayoutLeft.addMember(profileGrid);
 
@@ -68,6 +69,8 @@ public class ProfileOverview
         VLayout vlayoutRight = new VLayout();
         vlayoutRight.setMargin(15);
         Label rightLabel = new ContentGroupLabel("Server Groups");
+        rightLabel.setIcon("common/server_group.png");
+
         vlayoutRight.addMember(rightLabel);
 
         groupGrid = new ListGrid();
