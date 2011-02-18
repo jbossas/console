@@ -8,6 +8,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 
 /**
+ * LHS domain management navigation.
+ *
  * @author Heiko Braun
  * @date 2/11/11
  */

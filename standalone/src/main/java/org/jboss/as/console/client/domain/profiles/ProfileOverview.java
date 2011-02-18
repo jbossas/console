@@ -2,7 +2,6 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;

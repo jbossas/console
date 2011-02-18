@@ -70,6 +70,7 @@ public class NameTokens {
 
     // ------------------------------------------------------
     // domain tokens below
+
     public static final String DomainManagementPresenter = "domain";
     public static String getDomainManagementPresenter() {
         return DomainManagementPresenter;
@@ -83,5 +84,10 @@ public class NameTokens {
     public static final String ServerGroupPresenter = "server-group";
     public static String getServerGroupPresenter() {
         return ServerGroupPresenter;
+    }
+
+    public static final String ServerGroupOverviewPresenter = "server-groups-overview";
+    public static String getServerGroupOverviewPresenter() {
+        return ServerGroupOverviewPresenter;
     }
 }

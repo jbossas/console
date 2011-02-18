@@ -5,6 +5,7 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
 import com.smartgwt.client.widgets.tree.Tree;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.NavLabel;
 import org.jboss.as.console.client.components.NavTreeGrid;
 import org.jboss.as.console.client.components.NavTreeNode;
@@ -13,6 +14,11 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.util.Places;
 
 /**
+ * LHS navigation section of the domain management app.
+ * Gives access to server group management use cases.
+ *
+ * @see LHSDomainNavigation
+ *
  * @author Heiko Braun
  * @date 2/15/11
  */
@@ -43,18 +49,18 @@ class ServerGroupSection extends SectionStackSection{
             }
         });
 
-        serverGroupNode = new NavTreeNode("domain/server-group", "Server Group", false);
+        serverGroupNode = new NavTreeNode("", "Server Group", false);
 
         Tree serverGroupTree = new Tree();
         serverGroupTree.setRoot(serverGroupNode);
         serverGroupTreeGrid.setData(serverGroupTree);
 
-        //NavLabel overviewLabel = new NavLabel("domain/server-groups","Overview");
-        //overviewLabel.setIcon("common/inventory_grey.png");
+        NavLabel overviewLabel = new NavLabel("domain/"+ NameTokens.ServerGroupOverviewPresenter,"Overview");
+        overviewLabel.setIcon("common/inventory_grey.png");
 
-        NavLabel createNewLabel = new NavLabel("domain/server-group;action=new","Add Server Group");
+        NavLabel createNewLabel = new NavLabel("domain/"+ NameTokens.ServerGroupPresenter+";action=new","Add Server Group");
         createNewLabel.setIcon("common/add.png");
-        //this.addItem(overviewLabel);
+        this.addItem(overviewLabel);
         this.addItem(createNewLabel);
         this.addItem(new SpacerLabel());
 
@@ -71,7 +77,7 @@ class ServerGroupSection extends SectionStackSection{
         for(ServerGroupRecord record : serverGroupRecords)
         {
             String groupName = record.getAttribute("group-name");
-            nodes[i] = new NavTreeNode("domain/server-group;name="+ groupName, groupName);
+            nodes[i] = new NavTreeNode("domain/"+ NameTokens.ServerGroupPresenter+";name="+ groupName, groupName);
             i++;
         }
 

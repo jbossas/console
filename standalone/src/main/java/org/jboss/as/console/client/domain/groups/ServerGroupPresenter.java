@@ -1,12 +1,18 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.History;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.CloseClickHandler;
+import com.smartgwt.client.widgets.events.CloseClientEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
@@ -92,14 +98,52 @@ public class ServerGroupPresenter
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String groupName = request.getParameter("name", null);
+        String action = request.getParameter("action", null);
         if(groupName!=null)
         {
             onSelectServerGroup(groupName);
         }
+        else if(action!=null && action.equals("new"))
+        {
+            createNewGroup();
+        }
         else
         {
-            Log.error("'name' parameter missing!");
+            Log.error("Parameters missing!");
         }
+    }
+
+    public void createNewGroup() {
+        final Window winModal = new Window();
+
+        double GOLDEN_RATIO = 1.618;
+        int winWidth = (int)(com.google.gwt.user.client.Window.getClientWidth()*0.8);
+        int winHeight = (int) ( winWidth / GOLDEN_RATIO );
+
+        winModal.setWidth(winWidth);
+        winModal.setHeight(winHeight);
+
+
+        winModal.setTitle("Create Server Group");
+        winModal.setShowMinimizeButton(false);
+        winModal.setIsModal(true);
+        winModal.setShowModalMask(true);
+        winModal.centerInPage();
+        winModal.addCloseClickHandler(new CloseClickHandler() {
+            public void onCloseClick(CloseClientEvent event) {
+
+                winModal.destroy();
+                History.back();
+            }
+        });
+        winModal.addItem(
+                new Label("This will become a wizard to create server groups.")
+                {{
+                        setMargin(15);
+                    }}
+        );
+
+        winModal.show();
     }
 
     @Override

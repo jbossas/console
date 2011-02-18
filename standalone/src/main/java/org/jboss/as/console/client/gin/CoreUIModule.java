@@ -14,8 +14,10 @@ import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
+import org.jboss.as.console.client.domain.groups.ServerGroupOverviewPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
+import org.jboss.as.console.client.domain.groups.ServerGroupsOverview;
 import org.jboss.as.console.client.domain.model.MockProfileStore;
 import org.jboss.as.console.client.domain.model.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
@@ -97,6 +99,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         // ----------------------------------------------------------------------
 
         // server management application
+
         bindPresenter(ServerMgmtApplicationPresenter.class,
                 ServerMgmtApplicationPresenter.ServerManagementView.class,
                 ServerMgmtApplicationViewImpl.class,
@@ -141,7 +144,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 
         
         // ------------------------------------------------
-        // domain below
+        // domain management application
 
         // domain management application
         bindPresenter(DomainMgmtApplicationPresenter.class,
@@ -154,12 +157,19 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ProfileOverviewPresenter.MyView.class,
                 ProfileOverview.class,
                 ProfileOverviewPresenter.MyProxy.class);
-        
+
+        // domain/server-group
         bindPresenter(ServerGroupPresenter.class,
                 ServerGroupPresenter.MyView.class,
                 ServerGroupView.class,
                 ServerGroupPresenter.MyProxy.class);
-        
+
+        //domain/server-groups-overview
+         bindPresenter(ServerGroupOverviewPresenter.class,
+                ServerGroupOverviewPresenter.MyView.class,
+                ServerGroupsOverview.class,
+                ServerGroupOverviewPresenter.MyProxy.class);
+
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);

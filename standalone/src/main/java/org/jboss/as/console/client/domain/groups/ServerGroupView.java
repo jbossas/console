@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.data.Record;
@@ -17,17 +18,19 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.jboss.as.console.client.Console;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.ContentHeaderLabel;
 import org.jboss.as.console.client.components.sgwt.TitleBar;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.util.message.Message;
 
 import java.util.Map;
 
 /**
+ * Shows an editable view of a single server group.
+ *
  * @author Heiko Braun
  * @date 2/16/11
  */
@@ -50,7 +53,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.setWidth100();
         layout.setHeight100();
 
-        TitleBar titleBar = new TitleBar("Server Groups");
+        TitleBar titleBar = new TitleBar("Server Group");
         layout.addMember(titleBar);
 
         nameLabel = new ContentHeaderLabel();
@@ -123,8 +126,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------------
 
-        ContentGroupLabel propertiesLabel = new ContentGroupLabel("System Properties");
-        layout.addMember(propertiesLabel);
+        layout.addMember(new ContentGroupLabel("System Properties"));
 
         propertyGrid = new ListGrid();
         propertyGrid.setTitle("System Properties");
@@ -133,17 +135,60 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         ListGridField keyField = new ListGridField("key", "Property Name");
         ListGridField valueField = new ListGridField("value", "Property Value");
         propertyGrid.setFields(keyField, valueField);
-        propertyGrid.setMargin(15);
 
-        layout.addMember(propertyGrid);
+        // ------------
+
+        ToolStrip toolStrip = new ToolStrip();
+        toolStrip.setStyleName("inline-toolstrip");
+        toolStrip.setWidth100();
+        toolStrip.setHeight(10);
+
+        ToolStripButton addButton = new ToolStripButton();
+        addButton.setIcon("common/xs/add.png");
+        addButton.setIconWidth(10);
+        addButton.setIconHeight(10);
+
+        ToolStripButton delButton = new ToolStripButton();
+        delButton.setIcon("common/xs/delete.png");
+        delButton.setIconWidth(10);
+        delButton.setIconHeight(10);
+
+        toolStrip.addButton(addButton);
+        toolStrip.addSeparator();
+        toolStrip.addButton(delButton);
+
+        toolStrip.setAlign(Alignment.RIGHT);
+
+        addButton.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                propertyGrid.startEditingNew();
+            }
+        });
+
+        delButton.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                ListGridRecord selectedRecord = propertyGrid.getSelectedRecord();
+                if(selectedRecord!=null)
+                    Log.debug("remove " + selectedRecord.getAttribute("key"));
+            }
+        });
+
+        VLayout propsLayout = new VLayout();
+        propsLayout.addMember(toolStrip);
+        propsLayout.addMember(propertyGrid);
+        propsLayout.setLayoutLeftMargin(15);
+        propsLayout.setLayoutRightMargin(15);
+        layout.addMember(propsLayout);
 
         // ---------------------------------------------------
 
-        ContentGroupLabel deploymentLabel = new ContentGroupLabel("Deployments");
-        layout.addMember(deploymentLabel);
+        layout.addMember(new ContentGroupLabel("Deployments"));
 
         ListGrid deploymentGrid = new ListGrid();
-        deploymentGrid.setMargin(15);
         deploymentGrid.setWidth100();
         deploymentGrid.setHeight("*");
         deploymentGrid.setShowAllRecords(true);
@@ -152,8 +197,56 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
         deploymentGrid.setFields(dplNameField, dplRtField);
 
-        layout.addMember(deploymentGrid);
+        ToolStrip dplToolStrip = new ToolStrip();
+        dplToolStrip.setStyleName("inline-toolstrip");
+        dplToolStrip.setWidth100();
+        dplToolStrip.setHeight(10);
 
+        ToolStripButton dplAddButton = new ToolStripButton();
+        dplAddButton.setIcon("common/xs/add.png");
+        dplAddButton.setIconWidth(10);
+        dplAddButton.setIconHeight(10);
+
+        ToolStripButton dplDelButton = new ToolStripButton();
+        dplDelButton.setIcon("common/xs/delete.png");
+        dplDelButton.setIconWidth(10);
+        dplDelButton.setIconHeight(10);
+
+        dplToolStrip.addButton(dplAddButton);
+        dplToolStrip.addSeparator();
+        dplToolStrip.addButton(dplDelButton);
+
+        dplToolStrip.setAlign(Alignment.RIGHT);
+
+        dplAddButton.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                // TODO: implement remove deployment ..
+            }
+        });
+
+        dplDelButton.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                ListGridRecord selectedRecord = propertyGrid.getSelectedRecord();
+                if(selectedRecord!=null)
+                {
+                    // TODO: implement add deployment ..
+                }
+                
+            }
+        });
+
+        VLayout dplLayout = new VLayout();
+        dplLayout.addMember(dplToolStrip);
+        dplLayout.addMember(deploymentGrid);
+        dplLayout.setLayoutLeftMargin(15);
+        dplLayout.setLayoutRightMargin(15);
+        dplLayout.setLayoutBottomMargin(10);
+
+        layout.addMember(dplLayout);
 
         return layout;
     }

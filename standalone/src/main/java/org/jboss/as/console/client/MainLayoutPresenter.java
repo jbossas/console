@@ -8,6 +8,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
@@ -19,6 +20,8 @@ import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
         MainLayoutPresenter.MainLayoutProxy> {
+
+    boolean revealDefault = true;
 
     public interface MainLayoutView extends View {
     }
@@ -34,6 +37,18 @@ public class MainLayoutPresenter
     @Inject
     public MainLayoutPresenter(EventBus eventBus, MainLayoutView view, MainLayoutProxy proxy) {
         super(eventBus, view, proxy);
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        if(revealDefault && request.getNameToken().equals(NameTokens.mainLayout))
+        {
+            revealDefault = false;
+            Console.MODULES.getPlaceManager().revealRelativePlace(
+                    new PlaceRequest(NameTokens.DomainManagementPresenter)
+            );
+        }
     }
 
     @Override

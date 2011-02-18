@@ -38,7 +38,6 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
             Log.debug("Discard \""+ invalidHistoryToken+"\". Fallback to default place");
             revealUnauthorizedPlace(null);
         }
-
     }
 
     public void revealDefaultPlace() {
