@@ -1,8 +1,8 @@
 package org.jboss.as.console.client.domain;
 
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -21,27 +21,21 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
         implements DomainMgmtApplicationPresenter.MyView{
 
     private DomainMgmtApplicationPresenter presenter;
-    private HLayout layout;
-    private Canvas contentCanvas;
+    private SplitLayoutPanel layout;
+    private LayoutPanel contentCanvas;
     private LHSDomainNavigation lhsNavigation;
 
     public DomainMgmtApplicationViewImpl() {
         super();
 
-        layout = new HLayout();
-        layout.setWidth100();
-        layout.setHeight100();
+        layout = new SplitLayoutPanel(4);
         layout.setStyleName("lhs-navigation-panel");
 
-        contentCanvas = new Canvas();
-        contentCanvas.setWidth100();
-        contentCanvas.setHeight100();
-        contentCanvas.setMargin(0);
-
+        contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSDomainNavigation();
-        layout.addMember(lhsNavigation.asWidget());
-        layout.addMember(contentCanvas);
 
+        layout.addWest(lhsNavigation.asWidget(), 220);
+        layout.add(contentCanvas);
     }
 
     @Override
@@ -64,14 +58,8 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
     }
 
     private void setContent(Widget newContent) {
-
-        Canvas[] children = contentCanvas.getChildren();
-        if(children.length>0) {
-            contentCanvas.removeChild(children[0]);
-        }
-
-        contentCanvas.addChild(newContent);
-        contentCanvas.markForRedraw();
+        contentCanvas.clear();
+        contentCanvas.add(newContent);
     }
 
     @Override

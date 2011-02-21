@@ -1,15 +1,13 @@
 package org.jboss.as.console.client.domain;
 
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.tree.Tree;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.components.NavLabel;
-import org.jboss.as.console.client.components.NavTreeGrid;
-import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.SpacerLabel;
+import org.jboss.as.console.client.components.LHSNavItem;
+import org.jboss.as.console.client.components.img.Icons;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.util.Places;
 
@@ -22,72 +20,69 @@ import org.jboss.as.console.client.util.Places;
  * @author Heiko Braun
  * @date 2/15/11
  */
-class ServerGroupSection extends SectionStackSection{
+class ServerGroupSection {
 
-    private NavTreeGrid serverGroupTreeGrid ;
-    private NavTreeNode serverGroupNode;
+    LayoutPanel layout;
+    Tree serverGroupTree;
+    TreeItem root;
 
     public ServerGroupSection() {
-        super("Server Groups");
 
-        serverGroupTreeGrid = new NavTreeGrid("Server Groups");
-        serverGroupTreeGrid.setEmptyMessage("Please select a server group.");
+        layout = new LayoutPanel();
+        layout.setStyleName("stack-section");
 
-        serverGroupTreeGrid.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                final NavTreeNode selectedRecord = (NavTreeNode) serverGroupTreeGrid.getSelectedRecord();
+        serverGroupTree = new Tree();
+        root = new TreeItem("Current Groups:");
+        serverGroupTree.addItem(root);
 
-                String token = selectedRecord.getName();
-                if(token!=null && !token.equals(""))
-                {
-                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                            Places.fromString(token)
-                    );
-                }
-            }
-        });
+        LHSNavItem overview = new LHSNavItem(
+                "Overview",
+                "domain/" + NameTokens.ServerGroupOverviewPresenter,
+                Icons.INSTANCE.inventory()
+        );
+        LHSNavItem createNew = new LHSNavItem(
+                "Create Server Group",
+                "domain/" + NameTokens.ServerGroupPresenter + ";action=new",
+                Icons.INSTANCE.add());
 
-        serverGroupNode = new NavTreeNode("", "Server Group", false);
+        layout.add(overview);
+        layout.add(createNew);
+        layout.add(serverGroupTree);
 
-        Tree serverGroupTree = new Tree();
-        serverGroupTree.setRoot(serverGroupNode);
-        serverGroupTreeGrid.setData(serverGroupTree);
+        layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(createNew, 25, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(serverGroupTree, 55, Style.Unit.PX, 100, Style.Unit.PCT);
+    }
 
-        NavLabel overviewLabel = new NavLabel("domain/"+ NameTokens.ServerGroupOverviewPresenter,"Overview");
-        overviewLabel.setIcon("common/inventory_grey.png");
-
-        NavLabel createNewLabel = new NavLabel("domain/"+ NameTokens.ServerGroupPresenter+";action=new","Add Server Group");
-        createNewLabel.setIcon("common/add.png");
-        this.addItem(overviewLabel);
-        this.addItem(createNewLabel);
-        this.addItem(new SpacerLabel());
-
-        this.addItem(serverGroupTreeGrid);
+    public Widget asWidget()
+    {
+        return layout;
     }
 
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
 
-        serverGroupTreeGrid.getTree().closeAll(serverGroupNode);
+        root.removeItems();
 
-        NavTreeNode[] nodes = new NavTreeNode[serverGroupRecords.length];
-
-        int i=0;
         for(ServerGroupRecord record : serverGroupRecords)
         {
             String groupName = record.getAttribute("group-name");
-            nodes[i] = new NavTreeNode("domain/"+ NameTokens.ServerGroupPresenter+";name="+ groupName, groupName);
-            i++;
+            final String token = "domain/" + NameTokens.ServerGroupPresenter + ";name=" + groupName;
+            HTML link = new HTML(groupName);
+            link.addClickHandler(new ClickHandler()
+            {
+                @Override
+                public void onClick(ClickEvent event) {
+                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                            Places.fromString(token)
+                    );
+                }
+            });
+            TreeItem item = new TreeItem(link);
+            item.setStyleName("lhs-tree-item");
+            root.addItem(item);
         }
 
-        NavTreeNode folder = new NavTreeNode("", "Current Groups");
-        folder.setChildren(nodes);
-
-        serverGroupNode.setChildren(new NavTreeNode[] {folder});
-
-        serverGroupTreeGrid.markForRedraw();
-        serverGroupTreeGrid.getTree().openAll(serverGroupNode);
+        root.setState(true);
     }
 
 

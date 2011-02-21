@@ -1,8 +1,9 @@
 package org.jboss.as.console.client.domain;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.widgets.layout.SectionStack;
+import org.jboss.as.console.client.components.StackSectionHeader;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
@@ -15,40 +16,35 @@ import org.jboss.as.console.client.shared.SubsystemRecord;
  */
 class LHSDomainNavigation {
 
-    private SectionStack sectionStack;
+    private StackLayoutPanel stack;
 
     private ProfileSection profileSection;
     private ServerGroupSection serverGroupSection;
 
     public LHSDomainNavigation() {
 
-        sectionStack = new SectionStack();
-        sectionStack.addStyleName("lhs-section-stack");
-        sectionStack.setShowResizeBar(true);
-        sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-        sectionStack.setWidth(220);
-        sectionStack.setHeight100();
+        stack = new StackLayoutPanel(Style.Unit.PX);
+        stack.addStyleName("section-stack");
+        stack.setWidth("250");
 
         profileSection = new ProfileSection();
-        profileSection.setExpanded(true);
-        sectionStack.addSection(profileSection);
+        stack.add(profileSection.asWidget(), new StackSectionHeader("Profiles"), 28);
+
 
         serverGroupSection = new ServerGroupSection();
-        serverGroupSection.setExpanded(true);
-        sectionStack.addSection(serverGroupSection);
+        stack.add(serverGroupSection.asWidget(), new StackSectionHeader("Server Groups"), 28);
 
         DeploymentSection deploymentSection = new DeploymentSection();
-        sectionStack.addSection(deploymentSection);
+        stack.add(deploymentSection.asWidget(), new StackSectionHeader("Deployments"), 28);
 
         CommonConfigSection commonSection = new CommonConfigSection();
-        sectionStack.addSection(commonSection);
-
+        stack.add(commonSection.asWidget(), new StackSectionHeader("General Config"), 28);
 
     }
 
     public Widget asWidget()
     {
-        return sectionStack;
+        return stack;
     }
 
     public void updateFrom(ProfileRecord[] profileRecords) {
@@ -64,4 +60,5 @@ class LHSDomainNavigation {
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
         serverGroupSection.updateFrom(serverGroupRecords);
     }
+
 }

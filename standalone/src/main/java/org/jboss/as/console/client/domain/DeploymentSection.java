@@ -1,34 +1,43 @@
 package org.jboss.as.console.client.domain;
 
-import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeNode;
-import org.jboss.as.console.client.components.NavTreeGrid;
-import org.jboss.as.console.client.components.NavTreeNode;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.components.LHSNavItem;
 
 /**
  * @author Heiko Braun
  * @date 2/15/11
  */
-class DeploymentSection extends SectionStackSection {
+class DeploymentSection {
+
+    private LayoutPanel layout;
+
     public DeploymentSection() {
-        super("Deployments");
 
-        final NavTreeGrid deploymentGrid = new NavTreeGrid("Deployments");
+        layout = new LayoutPanel();
+        layout.setStyleName("stack-section");
 
-        final TreeNode deploymentNode = new NavTreeNode(
-                "domain-deployments", "Domain Deployments",false,
-                new NavTreeNode("domain-deployments;type=web", "Web Applications"),
-                new NavTreeNode("domain-deployments;type=ee", "Enterprise Applications"),
-                new NavTreeNode("domain-deployments;type=rar", "Resource Adapters"),
-                new NavTreeNode("domain-deployments;type=other", "Other")
+        LHSNavItem webApps = new LHSNavItem("Web Applications", "domain-deployments;type=web");
+        LHSNavItem eeApps = new LHSNavItem("Enterprise Applications", "domain-deployments;type=ee");
+        LHSNavItem resourceAdapters = new LHSNavItem("Resource Adapters", "domain-deployments;type=jca");
+        LHSNavItem other = new LHSNavItem("Other", "domain-deployments;type=other");
 
-        );
-        Tree deploymentTree = new Tree();
-        deploymentTree.setRoot(deploymentNode);
-        deploymentGrid.setData(deploymentTree);
+        addNavItems(webApps, eeApps, resourceAdapters, other);
+    }
 
-        this.addItem(deploymentGrid);
+    private void addNavItems(LHSNavItem... items) {
+        int i=0;
+        int height = 25;
+        for(LHSNavItem navItem : items)
+        {
+            layout.add(navItem);
+            layout.setWidgetTopHeight(navItem, i*height, Style.Unit.PX, height, Style.Unit.PX);
+            i++;
+        }
+    }
 
+    public Widget asWidget() {
+        return layout;
     }
 }

@@ -6,8 +6,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
+import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.DescriptionLabel;
-import org.jboss.as.console.client.components.sgwt.TitleBar;
 
 /**
  * @author Heiko Braun

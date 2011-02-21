@@ -8,7 +8,7 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.sgwt.DescriptionLabel;
-import org.jboss.as.console.client.components.sgwt.TitleBar;
+import org.jboss.as.console.client.components.TitleBar;
 
 /**
  * @author Heiko Braun

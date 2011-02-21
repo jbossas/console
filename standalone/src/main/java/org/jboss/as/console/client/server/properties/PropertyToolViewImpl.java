@@ -3,7 +3,7 @@ package org.jboss.as.console.client.server.properties;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.smartgwt.client.widgets.layout.VLayout;
-import org.jboss.as.console.client.components.sgwt.TitleBar;
+import org.jboss.as.console.client.components.TitleBar;
 
 /**
  * @author Heiko Braun

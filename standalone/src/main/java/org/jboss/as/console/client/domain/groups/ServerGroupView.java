@@ -1,31 +1,25 @@
 package org.jboss.as.console.client.domain.groups;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.widgets.Button;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
+import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.ContentHeaderLabel;
-import org.jboss.as.console.client.components.sgwt.TitleBar;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.forms.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,8 +31,8 @@ import java.util.Map;
 public class ServerGroupView extends SuspendableViewImpl implements ServerGroupPresenter.MyView {
 
     private ServerGroupPresenter presenter;
-    private DynamicForm form;
-    private ListGrid propertyGrid;
+    private Form form;
+    private CellTable<PropertyRecord> propertyList;
     private ContentHeaderLabel nameLabel;
 
     @Override
@@ -49,205 +43,182 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-        final VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
+        final VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         TitleBar titleBar = new TitleBar("Server Group");
-        layout.addMember(titleBar);
+        layout.add(titleBar);
 
-        nameLabel = new ContentHeaderLabel();
+        nameLabel = new ContentHeaderLabel("Name here ...");
         nameLabel.setIcon("common/server_group.png");
-        layout.addMember(nameLabel);
+        layout.add(nameLabel);
 
         // ---------------------------------------------------
 
-        form = new DynamicForm();
-        form.setWidth100();
-        form.setNumCols(4); //(TextItem, SelectItem, etc) take up two columns by default
+        form = new Form();
+        form.setNumColumns(2);
 
         TextItem nameField = new TextItem("group-name", "Group Name");
         TextItem jvmField = new TextItem("jvm", "JVM");
 
-        final ComboBoxItem socketBindingItem = new ComboBoxItem("socket-binding");
-        socketBindingItem.setTitle("Socket Binding");
-        socketBindingItem.setType("comboBox");
+        final ComboBoxItem socketBindingItem = new ComboBoxItem("socket-binding", "Socket Binding");
         socketBindingItem.setValueMap(presenter.getSocketBindings());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        final ComboBoxItem profileItem = new ComboBoxItem("profile-name");
-        profileItem.setTitle("Profile");
-        profileItem.setType("comboBox");
+        final ComboBoxItem profileItem = new ComboBoxItem("profile-name", "Profile");
         profileItem.setValueMap(presenter.getProfileNames());
         profileItem.setDefaultToFirstOption(true);
-        
+
 
         final Button button = new Button("Save");
-        button.setWidth(80);
-        button.setLayoutAlign(Alignment.CENTER);
         button.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 Scheduler.get().scheduleDeferred(
                         new Scheduler.ScheduledCommand() {
                             @Override
                             public void execute() {
+
                                 presenter.persistChanges(form.getChangedValues());
                                 form.rememberValues();
-                                form.setBackgroundColor("#ffffff");
-                                button.animateFade(0);
+                                //form.setBackgroundColor("#ffffff");
+                                //button.animateFade(0);
                             }
                         }
                 );
             }
         });
 
-        button.setAnimateTime(600);
-        button.setVisible(false);
+        //button.setAnimateTime(600);
+        //button.setVisible(false);
 
         form.setFields(nameField, jvmField, socketBindingItem, profileItem);
-        form.setMargin(15);
-        form.setPadding(4);
+
         form.addItemChangedHandler(new ItemChangedHandler()
         {
             @Override
-            public void onItemChanged(ItemChangedEvent itemChangedEvent) {
-                button.setVisible(true);
+            public void onItemChanged(FormItem item) {
+                /*button.setVisible(true);
                 button.animateFade(100);
-                form.setBackgroundColor("#F0F0D8");
+                form.setBackgroundColor("#F0F0D8");*/
             }
         });
 
-        for(FormItem item : form.getFields())
-            item.setShowDisabled(false);
+        layout.add(new ContentGroupLabel("Attributes"));
 
-        layout.addMember(new ContentGroupLabel("Attributes"));
-        layout.addMember(form);
-        layout.addMember(button);
+        Widget formWidget = form.asWidget();
+        formWidget.getElement().setAttribute("style", "padding-left:15px;");
+        layout.add(formWidget);
+        //layout.add(button);
 
         // ---------------------------------------------------
 
-        layout.addMember(new ContentGroupLabel("System Properties"));
+        layout.add(new ContentGroupLabel("System Properties"));
 
-        propertyGrid = new ListGrid();
-        propertyGrid.setTitle("System Properties");
-        propertyGrid.setWidth100();
-        propertyGrid.setHeight("*");
-        ListGridField keyField = new ListGridField("key", "Property Name");
-        ListGridField valueField = new ListGridField("value", "Property Value");
-        propertyGrid.setFields(keyField, valueField);
+        PropertyCell propCell = new PropertyCell();
 
-        // ------------
+        // Create a CellTable.
+        propertyList = new CellTable<PropertyRecord>();
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setStyleName("inline-toolstrip");
-        toolStrip.setWidth100();
-        toolStrip.setHeight(10);
-
-        ToolStripButton addButton = new ToolStripButton();
-        addButton.setIcon("common/xs/add.png");
-        addButton.setIconWidth(10);
-        addButton.setIconHeight(10);
-
-        ToolStripButton delButton = new ToolStripButton();
-        delButton.setIcon("common/xs/delete.png");
-        delButton.setIconWidth(10);
-        delButton.setIconHeight(10);
-
-        toolStrip.addButton(addButton);
-        toolStrip.addSeparator();
-        toolStrip.addButton(delButton);
-
-        toolStrip.setAlign(Alignment.RIGHT);
-
-        addButton.addClickHandler(new ClickHandler()
-        {
+        TextColumn<PropertyRecord> nameColumn = new TextColumn<PropertyRecord>() {
             @Override
-            public void onClick(ClickEvent clickEvent) {
-                propertyGrid.startEditingNew();
+            public String getValue(PropertyRecord prop) {
+                return prop.getKey();
+            }
+        };
+
+        // Create address column.
+        TextColumn<PropertyRecord> addressColumn = new TextColumn<PropertyRecord>() {
+            @Override
+            public String getValue(PropertyRecord prop) {
+                return prop.getValue();
+            }
+        };
+
+        // Add the columns.
+        propertyList.addColumn(nameColumn, "Key");
+        propertyList.addColumn(addressColumn, "Value");
+
+        propertyList.setStyleName("cell-list");
+        propertyList.setPageSize(5);
+
+        final SingleSelectionModel<PropertyRecord> selectionModel = new SingleSelectionModel<PropertyRecord>();
+        //propertyList.setSelectionModel(selectionModel);
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            public void onSelectionChange(SelectionChangeEvent event) {
+                PropertyRecord property = selectionModel.getSelectedObject();
             }
         });
 
-        delButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                ListGridRecord selectedRecord = propertyGrid.getSelectedRecord();
-                if(selectedRecord!=null)
-                    Log.debug("remove " + selectedRecord.getAttribute("key"));
-            }
-        });
+        propertyList.getElement().setAttribute("style", "padding-left:15px;");
 
-        VLayout propsLayout = new VLayout();
-        propsLayout.addMember(toolStrip);
-        propsLayout.addMember(propertyGrid);
-        propsLayout.setLayoutLeftMargin(15);
-        propsLayout.setLayoutRightMargin(15);
-        layout.addMember(propsLayout);
+        layout.add(propertyList);
 
-        // ---------------------------------------------------
+        /*
+                // ---------------------------------------------------
 
-        layout.addMember(new ContentGroupLabel("Deployments"));
+                layout.addMember(new ContentGroupLabel("Deployments"));
 
-        ListGrid deploymentGrid = new ListGrid();
-        deploymentGrid.setWidth100();
-        deploymentGrid.setHeight("*");
-        deploymentGrid.setShowAllRecords(true);
+                ListGrid deploymentGrid = new ListGrid();
+                deploymentGrid.setWidth100();
+                deploymentGrid.setHeight("*");
+                deploymentGrid.setShowAllRecords(true);
 
-        ListGridField dplNameField = new ListGridField("name", "Name");
-        ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
-        deploymentGrid.setFields(dplNameField, dplRtField);
+                ListGridField dplNameField = new ListGridField("name", "Name");
+                ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
+                deploymentGrid.setFields(dplNameField, dplRtField);
 
-        ToolStrip dplToolStrip = new ToolStrip();
-        dplToolStrip.setStyleName("inline-toolstrip");
-        dplToolStrip.setWidth100();
-        dplToolStrip.setHeight(10);
+                ToolStrip dplToolStrip = new ToolStrip();
+                dplToolStrip.setStyleName("inline-toolstrip");
+                dplToolStrip.setWidth100();
+                dplToolStrip.setHeight(10);
 
-        ToolStripButton dplAddButton = new ToolStripButton();
-        dplAddButton.setIcon("common/xs/add.png");
-        dplAddButton.setIconWidth(10);
-        dplAddButton.setIconHeight(10);
+                ToolStripButton dplAddButton = new ToolStripButton();
+                dplAddButton.setIcon("common/xs/add.png");
+                dplAddButton.setIconWidth(10);
+                dplAddButton.setIconHeight(10);
 
-        ToolStripButton dplDelButton = new ToolStripButton();
-        dplDelButton.setIcon("common/xs/delete.png");
-        dplDelButton.setIconWidth(10);
-        dplDelButton.setIconHeight(10);
+                ToolStripButton dplDelButton = new ToolStripButton();
+                dplDelButton.setIcon("common/xs/delete.png");
+                dplDelButton.setIconWidth(10);
+                dplDelButton.setIconHeight(10);
 
-        dplToolStrip.addButton(dplAddButton);
-        dplToolStrip.addSeparator();
-        dplToolStrip.addButton(dplDelButton);
+                dplToolStrip.addButton(dplAddButton);
+                dplToolStrip.addSeparator();
+                dplToolStrip.addButton(dplDelButton);
 
-        dplToolStrip.setAlign(Alignment.RIGHT);
+                dplToolStrip.setAlign(Alignment.RIGHT);
 
-        dplAddButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                // TODO: implement remove deployment ..
-            }
-        });
-
-        dplDelButton.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                ListGridRecord selectedRecord = propertyGrid.getSelectedRecord();
-                if(selectedRecord!=null)
+                dplAddButton.addClickHandler(new ClickHandler()
                 {
-                    // TODO: implement add deployment ..
-                }
-                
-            }
-        });
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        // TODO: implement remove deployment ..
+                    }
+                });
 
-        VLayout dplLayout = new VLayout();
-        dplLayout.addMember(dplToolStrip);
-        dplLayout.addMember(deploymentGrid);
-        dplLayout.setLayoutLeftMargin(15);
-        dplLayout.setLayoutRightMargin(15);
-        dplLayout.setLayoutBottomMargin(10);
+                dplDelButton.addClickHandler(new ClickHandler()
+                {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        ListGridRecord selectedRecord = propertyGrid.getSelectedRecord();
+                        if(selectedRecord!=null)
+                        {
+                            // TODO: implement add deployment ..
+                        }
 
-        layout.addMember(dplLayout);
+                    }
+                });
 
+                VLayout dplLayout = new VLayout();
+                dplLayout.addMember(dplToolStrip);
+                dplLayout.addMember(deploymentGrid);
+                dplLayout.setLayoutLeftMargin(15);
+                dplLayout.setLayoutRightMargin(15);
+                dplLayout.setLayoutBottomMargin(10);
+
+                layout.addMember(dplLayout);
+
+        */
         return layout;
     }
 
@@ -255,47 +226,32 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     {
         final String selectedGroupName = record.getAttribute("group-name");
 
-        nameLabel.setContents(selectedGroupName);
+        nameLabel.setHTML(selectedGroupName);
 
         form.editRecord(record);
+
         form.rememberValues();
 
         final Map<String, String> properties = record.getAttributeAsMap("properties");
 
         if(properties!=null)
         {
-            ListGridRecord[] propRecords = new ListGridRecord[properties.size()];
-            int i=0;
+            List<PropertyRecord> propRecords = new ArrayList<PropertyRecord>(properties.size());
             for(final String key : properties.keySet())
             {
-                propRecords[i] = new ListGridRecord(){{
-                    setAttribute("key", key);
-                    setAttribute("value", properties.get(key));
-
-                }};
-                i++;
+                propRecords.add(new PropertyRecord(key, properties.get(key)));
             }
 
-            propertyGrid.setData(propRecords);
+            propertyList.setRowCount(propRecords.size());
+            propertyList.setRowData(0, propRecords);
         }
         else
         {
             // no system properties available
-            propertyGrid.setData(new Record[]{});
         }
     }
 
     public void setEnabled(boolean isEnabled)
     {
-        if(isEnabled)
-        {
-            form.enable();
-            propertyGrid.enable();
-        }
-        else
-        {
-            form.disable();
-            propertyGrid.disable();
-        }
     }
 }

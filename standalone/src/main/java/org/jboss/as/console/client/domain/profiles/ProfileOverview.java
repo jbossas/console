@@ -11,8 +11,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
+import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
-import org.jboss.as.console.client.components.sgwt.TitleBar;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class ProfileOverview
         groupGrid.setFields(groupNameField, profileNameField);
         groupGrid.setMargin(5);
 
-        groupGrid.addRecordClickHandler(new RecordClickHandler()
+        /*groupGrid.addRecordClickHandler(new RecordClickHandler()
         {
             @Override
             public void onRecordClick(RecordClickEvent recordClickEvent) {
@@ -97,7 +97,7 @@ public class ProfileOverview
                         }}
                 );
             }
-        });
+        });  */
 
         vlayoutRight.addMember(groupGrid);
         // --------------------------------------
@@ -110,7 +110,6 @@ public class ProfileOverview
         // --------------------------------------
 
         ContentGroupLabel deploymentLabel = new ContentGroupLabel("Domain Level Deployments");
-        deploymentLabel.setMargin(15);
 
         layout.addMember(deploymentLabel);
 
@@ -142,6 +141,6 @@ public class ProfileOverview
 
     private void refresh() {
         profileGrid.setData(presenter.getProfileRecords());
-        groupGrid.setData(presenter.getServerGroupRecords());
+        //groupGrid.setData(presenter.getServerGroupRecords());
     }
 }

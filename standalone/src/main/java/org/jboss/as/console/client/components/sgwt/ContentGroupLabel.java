@@ -1,16 +1,21 @@
 package org.jboss.as.console.client.components.sgwt;
 
-import com.smartgwt.client.widgets.Label;
+import com.google.gwt.user.client.ui.HTML;
 
 /**
  * @author Heiko Braun
  * @date 2/15/11
  */
-public class ContentGroupLabel extends Label {
+public class ContentGroupLabel extends HTML {
+
+    private String icon;
 
     public ContentGroupLabel(String title) {
         super(title);
         setStyleName("content-group-label");
-        setHeight(20);
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

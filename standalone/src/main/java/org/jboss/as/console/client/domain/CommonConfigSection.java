@@ -1,33 +1,43 @@
 package org.jboss.as.console.client.domain;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeNode;
-import org.jboss.as.console.client.components.NavTreeGrid;
-import org.jboss.as.console.client.components.NavTreeNode;
+import org.jboss.as.console.client.components.LHSNavItem;
 
 /**
  * @author Heiko Braun
  * @date 2/15/11
  */
 class CommonConfigSection extends SectionStackSection{
+    private LayoutPanel layout;
+
     public CommonConfigSection() {
 
-        super("General Configuration");
+        layout = new LayoutPanel();
+        layout.setStyleName("stack-section");
 
-        NavTreeGrid commonGrid = new NavTreeGrid("Deployments");
-        final TreeNode commonNode = new NavTreeNode(
-                "common", "Common Settings", true,
-                new NavTreeNode("paths", "Paths"),
-                new NavTreeNode("interfaces", "Interfaces"),
-                new NavTreeNode("sockets", "Socket Binding Groups"),
-                new NavTreeNode("properties", "System Properties")
-        );
+        LHSNavItem paths = new LHSNavItem("Paths", "domain-deployments;type=web");
+        LHSNavItem interfaces = new LHSNavItem("Interfaces", "domain-deployments;type=ee");
+        LHSNavItem sockets = new LHSNavItem("Socket Binding Groups", "domain-deployments;type=jca");
+        LHSNavItem properties = new LHSNavItem("System Properties", "domain-deployments;type=properties");
 
-        Tree commonTree = new Tree();
-        commonTree.setRoot(commonNode);
-        commonGrid.setData(commonTree);
+        addNavItems(paths, interfaces, sockets, properties);
+    }
 
-        this.addItem(commonGrid);
+    private void addNavItems(LHSNavItem... items) {
+        int i=0;
+        int height = 25;
+        for(LHSNavItem navItem : items)
+        {
+            layout.add(navItem);
+            layout.setWidgetTopHeight(navItem, i*height, Style.Unit.PX, height, Style.Unit.PX);
+            i++;
+        }
+    }
+
+    public Widget asWidget() {
+        return layout;
     }
 }

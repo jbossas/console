@@ -1,12 +1,12 @@
 package org.jboss.as.console.client.domain.model;
 
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import org.jboss.as.console.client.util.DataClass;
 
 /**
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class ServerGroupRecord extends ListGridRecord {
+public class ServerGroupRecord extends DataClass {
 
     public ServerGroupRecord(String name) {
         setAttribute("group-name", name);

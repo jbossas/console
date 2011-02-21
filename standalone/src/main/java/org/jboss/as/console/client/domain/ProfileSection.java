@@ -1,18 +1,12 @@
 package org.jboss.as.console.client.domain;
 
 import com.google.gwt.core.client.Scheduler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
-import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.NavLabel;
-import org.jboss.as.console.client.components.NavTreeGrid;
-import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.SpacerLabel;
+import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.LHSNavItem;
+import org.jboss.as.console.client.components.img.Icons;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
@@ -21,50 +15,42 @@ import org.jboss.as.console.client.shared.SubsystemRecord;
  * @author Heiko Braun
  * @date 2/15/11
  */
-class ProfileSection extends SectionStackSection {
+class ProfileSection {
 
-    private NavTreeNode subsysNode;
-    private NavTreeGrid subsysTreeGrid;
-    private ComboBoxItem profileSelection;
+    private TreeItem root;
+    private Tree subsysTree;
+    private ListBox profileSelection;
+
+    private LayoutPanel layout;
 
     public ProfileSection() {
 
-        super("Profiles");
+        layout = new LayoutPanel();
+        layout.setStyleName("stack-section");
 
-        subsysTreeGrid = new NavTreeGrid("profile");
-        subsysTreeGrid.setEmptyMessage("Please select a profile.");
+        profileSelection = new ListBox();
+        subsysTree = new Tree();
+        root = new TreeItem("Subsystems:");
+        subsysTree.addItem(root);
 
-        final DynamicForm form = new DynamicForm();
-        form.setWidth100();
+        LHSNavItem overview = new LHSNavItem(
+                "Overview",
+                "domain/"+ NameTokens.ProfileOverviewPresenter,
+                Icons.INSTANCE.inventory()
+        );
 
-        profileSelection = new ComboBoxItem();
-        profileSelection.setTitle("Profile");
-        profileSelection.setType("comboBox");
-        profileSelection.addChangeHandler(new ChangeHandler()
-        {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                fireProfileSelection((String)changeEvent.getValue());
-                profileSelection.blurItem();
-            }
-        });
-        profileSelection.setShowTitle(true);
-        form.setFields(profileSelection);
+        layout.add(overview);
+        layout.add(profileSelection);
+        layout.add(subsysTree);
 
-        subsysNode = new NavTreeNode( "subsystems", false);
-        Tree profileTree = new Tree();
-        profileTree.setRoot(subsysNode);
+        layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(profileSelection, 25, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(subsysTree, 50, Style.Unit.PX, 100, Style.Unit.PCT);
+    }
 
-        subsysTreeGrid.setData(profileTree);
-        subsysTreeGrid.getTree().openAll();
-
-        final NavLabel overviewLabel = new NavLabel("domain/profile-overview","Overview");
-        overviewLabel.setIcon("common/inventory_grey.png");
-
-        this.addItem(overviewLabel);
-        this.addItem(new SpacerLabel());
-        this.addItem(form);
-        this.addItem(subsysTreeGrid);
+    public Widget asWidget()
+    {
+        return layout;
     }
 
     private void fireProfileSelection(String profileName) {
@@ -73,43 +59,36 @@ class ProfileSection extends SectionStackSection {
 
     public void updateFrom(final ProfileRecord[] profileRecords) {
 
-        String[] updates = new String[profileRecords.length];
-        int i=0;
+        profileSelection.clear();
+
         for(ProfileRecord record : profileRecords)
         {
-            updates[i] = record.getAttribute("profile-name");
-            i++;
+            profileSelection.addItem(record.getAttribute("profile-name"));
         }
-
-        profileSelection.setValueMap(updates);
 
         // select first option when updated
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                profileSelection.setDefaultToFirstOption(true);
+                profileSelection.setItemSelected(0, true);
                 fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
             }
         });
 
-        subsysTreeGrid.markForRedraw();
     }
 
     public void updateFrom(SubsystemRecord[] subsystems) {
 
-        subsysTreeGrid.getTree().closeAll(subsysNode);
+        root.removeItems();
 
-        TreeNode[] nodes = new TreeNode[subsystems.length];
-        int i = 0;
         for(SubsystemRecord subsys: subsystems)
         {
-            nodes[i] = new NavTreeNode(subsys.getToken(), subsys.getTitle());
-            i++;
+            TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
+            item.setStyleName("lhs-tree-item");
+            root.addItem(item);
         }
 
-        subsysNode.setChildren(nodes);
+        root.setState(true);
 
-        subsysTreeGrid.markForRedraw();
-        subsysTreeGrid.getTree().openAll(subsysNode);
     }
 }
