@@ -30,12 +30,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
             <version>${gwt.version}</version>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>smartgwt</groupId>
@@ -50,7 +50,6 @@
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-all</artifactId>
-            <version>0.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -75,6 +74,21 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mycila.com.google.inject.extensions</groupId>
+            <artifactId>guice-assisted-inject</artifactId>
+        </dependency>
+
     </dependencies>
 
     <!-- Plugins -->
@@ -93,7 +107,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>${gwt.maven}</version>
+                <version>2.2.0</version>
                 <configuration>
                     <inplace>true</inplace>
                     <logLevel>TRACE</logLevel>
@@ -233,5 +247,12 @@
 
     </profiles>
 
-
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gwtplatform.plugin</id>
+            <name>Gwtplatform custom plugin epository</name>
+            <url>http://maven.gwt-platform.googlecode.com/hg/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

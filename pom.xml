@@ -52,16 +52,18 @@
     </licenses>
 
     <properties>
-        <gwt.version>2.1.1</gwt.version>
-        <gwt.maven>2.1.0-1</gwt.maven>
+        <gwt.version>2.2.0</gwt.version>
+        <gwt.maven>2.2.0</gwt.maven>
         <smartgwt.version>2.4</smartgwt.version>
-        <gwt-log.version>3.0.1</gwt-log.version>
-
+        <gwt-log.version>3.1.0</gwt-log.version>
+        <gin.version>1.0-r170</gin.version>
+        <guice.version>3.0-rc2</guice.version>
+        <gwtp.version>0.6-2.17</gwtp.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
-    	<module>standalone</module>
+        <module>standalone</module>
         <!--module>domain</module>        
         <module>shared</module-->
     </modules>
@@ -93,12 +95,58 @@
                 <version>${gwt-log.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-all</artifactId>
+                <version>${gwtp.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.sourceforge.htmlunit</groupId>
+                        <artifactId>crawl_htmlunit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.gwt.inject</groupId>
+                <artifactId>gin</artifactId>
+                <version>${gin.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mycila.com.google.inject.extensions</groupId>
+                <artifactId>guice-assisted-inject</artifactId>
+                <version>3.0-20100927</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <build>
         <plugins>
-           
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
@@ -162,7 +210,7 @@
                     </execution>
                 </executions>
             </plugin>
-         
+
         </plugins>
 
         <!-- PluginManagement -->
@@ -187,7 +235,7 @@
         </pluginManagement>
 
     </build>
-   
+
     <!-- Profiles -->
     <profiles>
 
@@ -237,6 +285,7 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </pluginRepository>
+
     </pluginRepositories>
 
     <!-- DistributionManagement -->
