@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.forms;
+package org.jboss.as.console.client.shared.forms;
 
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;

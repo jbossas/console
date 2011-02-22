@@ -119,6 +119,7 @@ public class ProfileOverview
         deploymentGrid.setWidth100();
         deploymentGrid.setHeight100();
         deploymentGrid.setShowAllRecords(true);
+        deploymentGrid.setShowHeaderContextMenu(false);
 
         ListGridField dplNameField = new ListGridField("name", "Name");
         ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");

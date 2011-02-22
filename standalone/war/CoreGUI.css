@@ -106,6 +106,57 @@ body, p, td, th, option, input, textarea, select {
     width:100%;
 }
 
+
+/* CellTable customization */
+
+.default-cell-table{
+
+    font-family:Arial, Verdana, sans-serif;
+    font-size:11px;
+    color: black;
+
+    border: 1px solid #A7ABB4;
+    width:100%;
+
+}
+
+.cellTableHeader {
+    background:#FFFFFF url('images/sc/skins/Enterprise/images/ListGrid/header.png') repeat-x bottom left scroll;
+    border-bottom:1px solid #A7ABB4;
+    padding:4px;
+    border-left:1px solid rgb(246,247,249);
+    border-right:1px solid rgb(200,204,207);
+    height:13px;
+    font-weight:normal!important;
+    text-align:left!important;
+}
+
+.cellTableEvenRow {
+
+}
+
+.cellTableOddRow {
+    border-top: 1px solid #e5e5e5;
+    background-color:#fafafa;
+}
+
+.cellTableCell {
+    padding:5px;
+}
+
+.cellTableHoveredRow {
+  background:#FFFFFF url(images/sc/skins/Enterprise/images/ListGrid/row_Over.png) repeat-x bottom left scroll;
+}
+
+.cellTableSelectedRow {
+    background:#d9e4f6;
+}
+
+/*edit mode*/
+.cellTableKeyboardSelectedRow {
+    /*background:none; doesn't work atm */
+}
+
 .stack-section-header {
     font-family:Arial,Verdana,sans-serif; font-size:11px; text-overflow:ellipsis;
     background-color:#FFFFFF;

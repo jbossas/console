@@ -21,10 +21,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.ValueEnum;
-import com.smartgwt.client.util.JSOHelper;
-import com.smartgwt.client.widgets.BaseWidget;
 
 import java.util.Date;
 import java.util.Map;
@@ -48,10 +44,6 @@ public class DataClass extends JsObject {
     }
 
     public String getAttribute(String property) {
-        return JSOHelper.getAttribute(jsObj, property);
-    }
-
-    public String getAttributeAsString(String property) {
         return JSOHelper.getAttribute(jsObj, property);
     }
 
@@ -107,9 +99,9 @@ public class DataClass extends JsObject {
         JSOHelper.setAttribute(jsObj, property, JSOHelper.convertToJavaScriptArray(value));
     }*/
 
-    public void setAttribute(String property, BaseWidget[] value) {
+    /*public void setAttribute(String property, BaseWidget[] value) {
         JSOHelper.setAttribute(jsObj, property, JSOHelper.convertToJavaScriptArray(value));
-    }
+    } */
 
 
     public int[] getAttributeAsIntArray(String property) {
@@ -153,13 +145,13 @@ public class DataClass extends JsObject {
         JSOHelper.setAttribute(jsObj, property, value);
     }
 
-    public void setAttribute(String property, ValueEnum[] value) {
+    /*public void setAttribute(String property, ValueEnum[] value) {
         JSOHelper.setAttribute(jsObj, property, value);
     }
 
     public void setAttribute(String property, ValueEnum value) {
         JSOHelper.setAttribute(jsObj, property, value.getValue());
-    }
+    } */
 
     /**
      * Set the attribute value as and Object. Note that this method converts the Java primitive Object types, Dates and Maps to the underyling
@@ -228,9 +220,9 @@ public class DataClass extends JsObject {
      * @param property the property name
      * @return the record value
      */
-    public Record getAttributeAsRecord(String property) {
+    /*public Record getAttributeAsRecord(String property) {
         return Record.getOrCreateRef(getAttributeAsJavaScriptObject(property));
-    }
+    } */
 
     public JavaScriptObject getAttributeAsJavaScriptObject(String property) {
         return JSOHelper.getAttributeAsJavaScriptObject(jsObj, property);

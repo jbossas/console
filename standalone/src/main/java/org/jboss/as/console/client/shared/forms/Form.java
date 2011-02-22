@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.forms;
+package org.jboss.as.console.client.shared.forms;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -102,8 +102,6 @@ public class Form {
         }
 
         builder.appendHtmlConstant(tableSuffix);
-
-        System.out.println(builder.toSafeHtml().asString());
 
         HTMLPanel panel = new HTMLPanel(builder.toSafeHtml());
 

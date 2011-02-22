@@ -1,26 +1,29 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.cell.client.EditTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
 import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.ContentHeaderLabel;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.forms.*;
+import org.jboss.as.console.client.shared.forms.*;
+import org.jboss.as.console.client.shared.tables.DefaultCellTableResources;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Shows an editable view of a single server group.
@@ -35,7 +38,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private CellTable<PropertyRecord> propertyList;
     private ContentHeaderLabel nameLabel;
 
-    @Override
+        @Override
     public void setPresenter(ServerGroupPresenter presenter) {
         this.presenter = presenter;
     }
@@ -114,42 +117,60 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         layout.add(new ContentGroupLabel("System Properties"));
 
-        PropertyCell propCell = new PropertyCell();
+        propertyList = new CellTable<PropertyRecord>(5, new DefaultCellTableResources());
+        propertyList.setStyleName("default-cell-table");
+        propertyList.setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
 
-        // Create a CellTable.
-        propertyList = new CellTable<PropertyRecord>();
-
-        TextColumn<PropertyRecord> nameColumn = new TextColumn<PropertyRecord>() {
+        // Add a text input column to edit the name.
+        final EditTextCell nameCell = new EditTextCell();
+        Column<PropertyRecord, String> keyColumn = new Column<PropertyRecord, String>(nameCell) {
             @Override
-            public String getValue(PropertyRecord prop) {
-                return prop.getKey();
+            public String getValue(PropertyRecord object) {
+                return object.getKey();
             }
         };
+
+        keyColumn.setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
+            public void update(int index, PropertyRecord object, String value) {
+                object.setKey(value);
+                System.out.println("> " + value);
+            }
+        });
 
         // Create address column.
-        TextColumn<PropertyRecord> addressColumn = new TextColumn<PropertyRecord>() {
+        final EditTextCell valueCell = new EditTextCell();
+        Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(valueCell) {
             @Override
-            public String getValue(PropertyRecord prop) {
-                return prop.getValue();
+            public String getValue(PropertyRecord object) {
+                return object.getValue();
             }
         };
 
-        // Add the columns.
-        propertyList.addColumn(nameColumn, "Key");
-        propertyList.addColumn(addressColumn, "Value");
+        valueColumn.setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
+            public void update(int index, PropertyRecord object, String value) {
+                object.setValue(value);
+                System.out.println("> "+value);
+            }
+        });
 
-        propertyList.setStyleName("cell-list");
+        // Add the columns.
+        propertyList.addColumn(keyColumn, "Key");
+        propertyList.addColumn(valueColumn, "Value");
+
+        propertyList.setColumnWidth(keyColumn, 50, Style.Unit.PCT);
+        propertyList.setColumnWidth(valueColumn, 50, Style.Unit.PCT);
+
         propertyList.setPageSize(5);
 
-        final SingleSelectionModel<PropertyRecord> selectionModel = new SingleSelectionModel<PropertyRecord>();
-        //propertyList.setSelectionModel(selectionModel);
+        /*final SingleSelectionModel<PropertyRecord> selectionModel = new SingleSelectionModel<PropertyRecord>();
+        propertyList.setSelectionModel(selectionModel);
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             public void onSelectionChange(SelectionChangeEvent event) {
                 PropertyRecord property = selectionModel.getSelectedObject();
             }
-        });
+        });*/
 
-        propertyList.getElement().setAttribute("style", "padding-left:15px;");
+        propertyList.getElement().setAttribute("style", "margin:10px;");
 
         layout.add(propertyList);
 
@@ -222,8 +243,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         return layout;
     }
 
-    public void setSelectedRecord(final ServerGroupRecord record)
-    {
+    public void setSelectedRecord(final ServerGroupRecord record) {
         final String selectedGroupName = record.getAttribute("group-name");
 
         nameLabel.setHTML(selectedGroupName);
@@ -234,24 +254,22 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         final Map<String, String> properties = record.getAttributeAsMap("properties");
 
-        if(properties!=null)
-        {
+        if (properties != null) {
             List<PropertyRecord> propRecords = new ArrayList<PropertyRecord>(properties.size());
-            for(final String key : properties.keySet())
-            {
+            Set<String> strings = properties.keySet();
+            System.out.println("keyset: " + strings);
+
+            for (final String key : strings) {
                 propRecords.add(new PropertyRecord(key, properties.get(key)));
             }
 
             propertyList.setRowCount(propRecords.size());
             propertyList.setRowData(0, propRecords);
-        }
-        else
-        {
+        } else {
             // no system properties available
         }
     }
 
-    public void setEnabled(boolean isEnabled)
-    {
+    public void setEnabled(boolean isEnabled) {
     }
 }
