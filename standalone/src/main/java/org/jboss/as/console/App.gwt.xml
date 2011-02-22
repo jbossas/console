@@ -13,6 +13,7 @@
 
     <!-- Add gwt-log support, default level `DEBUG` -->
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+    <inherits name="com.google.gwt.autobean.AutoBean"/>
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />

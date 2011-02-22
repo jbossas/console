@@ -57,7 +57,7 @@ public class ServerGroupPresenter
     }
 
     public void persistChanges(Map changedValues) {
-        String groupName = selectedRecord.getAttribute("group-name");
+        String groupName = selectedRecord.getGroupName();
         Console.MODULES.getMessageCenter().notify(
                 new Message("Saved :"+ groupName +" " +changedValues, Message.Severity.Info)
         );
@@ -162,7 +162,7 @@ public class ServerGroupPresenter
         ServerGroupRecord[] records = serverGroupStore.loadServerGroups();
         for(ServerGroupRecord record : records)
         {
-            if(groupName.equals(record.getAttribute("group-name")))
+            if(groupName.equals(record.getGroupName()))
             {
                 selectedRecord = record;
                 break;

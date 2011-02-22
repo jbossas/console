@@ -1,17 +1,22 @@
 package org.jboss.as.console.client.shared.forms;
 
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanVisitor;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.util.DataClass;
 
 import java.util.*;
 
 /**
+ * Form data binding that works on {@link AutoBean} entities.
+ *
  * @author Heiko Braun
  * @date 2/21/11
  */
 public class Form {
+
     private Map<String, FormItem> formItems = new LinkedHashMap<String, FormItem>();
     private List<ItemChangedHandler> itemChangedHandler= new ArrayList<ItemChangedHandler>();
 
@@ -27,11 +32,24 @@ public class Form {
 
     }
 
+    /**
+     * Number of layot columns.<br>
+     * Form fields will fill columns in the order they have been specified
+     * in {@link #setFields(FormItem[])}.
+     *
+     * @param columns
+     */
     public void setNumColumns(int columns)
     {
         this.numColumns = columns;
     }
 
+    /**
+     * Specify the form fields.
+     * Needs to be called before {@link #asWidget()}.
+     *
+     * @param items
+     */
     public void setFields(FormItem... items) {
         for(FormItem item : items)
         {
@@ -44,19 +62,47 @@ public class Form {
         this.itemChangedHandler.add(handler);
     }
 
-    public void editRecord(DataClass record) {
-        for(String att : record.getAttributes())
-        {
-            FormItem matchingField = formItems.get(att);
-            if(matchingField!=null) // not required to match
-            {
-                matchingField.setValue(record.getAttribute(att));
+    public void editRecord(AutoBean<?> record) {
+
+        record.accept(new AutoBeanVisitor() {
+            @Override
+            public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
+                FormItem matchingField = formItems.get(propertyName);
+                if(matchingField!=null) // not required to match
+                {
+                    matchingField.setValue(value);
+                }
+                else
+                {
+                    if(!"empty".equals(propertyName)) // empty is an autobean default property
+                        Log.error("No matching field for '"+propertyName+"' ("+ctx.getType()+")");
+                }
+                return true;
             }
-        }
+        });
     }
 
+    /**
+     * Take a value snapshot for later comparison
+     *
+     * @see #getChangedValues()
+     */
     public void rememberValues() {
         snapshot(rememberedValues);
+    }
+
+    /**
+     * Get changed values sine last  {@link #rememberValues()}
+     * @return
+     */
+    public Map<String, Object> getChangedValues() {
+
+        // TODO: implement diff operation. Currently it simply returns all values
+        // Take a look at AutoBeanUtils#diff()
+
+        HashMap<String, Object> values = new HashMap<String, Object>();
+        snapshot(values);
+        return values;
     }
 
     private void snapshot(Map<String, Object> buffer) {
@@ -128,15 +174,12 @@ public class Form {
         builder.appendHtmlConstant("</td>");
     }
 
+    /**
+     * Enable/disable this form.
+     *
+     * @param b
+     */
     public void setEnabled(boolean b) {
 
-    }
-
-    public Map<String, Object> getChangedValues() {
-
-        // TOD: implement diff operation. Currently it simply returns all values
-        HashMap<String, Object> values = new HashMap<String, Object>();
-        snapshot(values);
-        return values;
     }
 }

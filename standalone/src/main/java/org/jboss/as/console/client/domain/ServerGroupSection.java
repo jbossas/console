@@ -65,7 +65,7 @@ class ServerGroupSection {
 
         for(ServerGroupRecord record : serverGroupRecords)
         {
-            String groupName = record.getAttribute("group-name");
+            String groupName = record.getGroupName();
             final String token = "domain/" + NameTokens.ServerGroupPresenter + ";name=" + groupName;
             HTML link = new HTML(groupName);
             link.addClickHandler(new ClickHandler()

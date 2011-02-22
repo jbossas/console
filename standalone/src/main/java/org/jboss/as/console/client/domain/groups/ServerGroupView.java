@@ -1,7 +1,9 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -17,6 +19,7 @@ import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.ContentHeaderLabel;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.forms.*;
 import org.jboss.as.console.client.shared.tables.DefaultCellTableResources;
 
@@ -61,14 +64,14 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form = new Form();
         form.setNumColumns(2);
 
-        TextItem nameField = new TextItem("group-name", "Group Name");
+        TextItem nameField = new TextItem("groupName", "Group Name");
         TextItem jvmField = new TextItem("jvm", "JVM");
 
-        final ComboBoxItem socketBindingItem = new ComboBoxItem("socket-binding", "Socket Binding");
+        final ComboBoxItem socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setValueMap(presenter.getSocketBindings());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        final ComboBoxItem profileItem = new ComboBoxItem("profile-name", "Profile");
+        final ComboBoxItem profileItem = new ComboBoxItem("profileName", "Profile");
         profileItem.setValueMap(presenter.getProfileNames());
         profileItem.setDefaultToFirstOption(true);
 
@@ -133,7 +136,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         keyColumn.setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
             public void update(int index, PropertyRecord object, String value) {
                 object.setKey(value);
-                System.out.println("> " + value);
+                System.out.println("field change " + value);
             }
         });
 
@@ -149,7 +152,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         valueColumn.setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
             public void update(int index, PropertyRecord object, String value) {
                 object.setValue(value);
-                System.out.println("> "+value);
+                System.out.println("field change "+value);
             }
         });
 
@@ -244,23 +247,27 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     }
 
     public void setSelectedRecord(final ServerGroupRecord record) {
-        final String selectedGroupName = record.getAttribute("group-name");
+        final String selectedGroupName = record.getGroupName();
 
         nameLabel.setHTML(selectedGroupName);
 
-        form.editRecord(record);
+        form.editRecord(AutoBeanUtils.getAutoBean(record));
 
         form.rememberValues();
 
-        final Map<String, String> properties = record.getAttributeAsMap("properties");
+        final Map<String, String> properties = record.getProperties();
+
+        BeanFactory factory = GWT.create(BeanFactory.class);
 
         if (properties != null) {
             List<PropertyRecord> propRecords = new ArrayList<PropertyRecord>(properties.size());
             Set<String> strings = properties.keySet();
-            System.out.println("keyset: " + strings);
 
             for (final String key : strings) {
-                propRecords.add(new PropertyRecord(key, properties.get(key)));
+                PropertyRecord propertyRecord = factory.property().as();
+                propertyRecord.setKey(key);
+                propertyRecord.setValue(properties.get(key));
+                propRecords.add(propertyRecord);
             }
 
             propertyList.setRowCount(propRecords.size());
