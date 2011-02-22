@@ -10,18 +10,17 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.components.RHSContentPanel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
-import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
 import org.jboss.as.console.client.components.sgwt.ContentHeaderLabel;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.forms.*;
-import org.jboss.as.console.client.shared.tables.DefaultCellTableResources;
+import org.jboss.as.console.client.shared.tables.DefaultCellTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private ServerGroupPresenter presenter;
     private Form form;
-    private CellTable<PropertyRecord> propertyList;
+    private CellTable<PropertyRecord> propertyTable;
     private ContentHeaderLabel nameLabel;
 
         @Override
@@ -49,11 +48,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-        final VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-
-        TitleBar titleBar = new TitleBar("Server Group");
-        layout.add(titleBar);
+        LayoutPanel layout = new RHSContentPanel("Server Group");
 
         nameLabel = new ContentHeaderLabel("Name here ...");
         nameLabel.setIcon("common/server_group.png");
@@ -111,18 +106,14 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         layout.add(new ContentGroupLabel("Attributes"));
 
-        Widget formWidget = form.asWidget();
-        formWidget.getElement().setAttribute("style", "padding-left:15px;");
-        layout.add(formWidget);
+        layout.add(form.asWidget());
         //layout.add(button);
 
         // ---------------------------------------------------
 
         layout.add(new ContentGroupLabel("System Properties"));
 
-        propertyList = new CellTable<PropertyRecord>(5, new DefaultCellTableResources());
-        propertyList.setStyleName("default-cell-table");
-        propertyList.setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
+        propertyTable = new DefaultCellTable<PropertyRecord>(5);
 
         // Add a text input column to edit the name.
         final EditTextCell nameCell = new EditTextCell();
@@ -157,25 +148,22 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
 
         // Add the columns.
-        propertyList.addColumn(keyColumn, "Key");
-        propertyList.addColumn(valueColumn, "Value");
+        propertyTable.addColumn(keyColumn, "Key");
+        propertyTable.addColumn(valueColumn, "Value");
 
-        propertyList.setColumnWidth(keyColumn, 50, Style.Unit.PCT);
-        propertyList.setColumnWidth(valueColumn, 50, Style.Unit.PCT);
-
-        propertyList.setPageSize(5);
+        propertyTable.setColumnWidth(keyColumn, 50, Style.Unit.PCT);
+        propertyTable.setColumnWidth(valueColumn, 50, Style.Unit.PCT);
 
         /*final SingleSelectionModel<PropertyRecord> selectionModel = new SingleSelectionModel<PropertyRecord>();
-        propertyList.setSelectionModel(selectionModel);
+        propertyTable.setSelectionModel(selectionModel);
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             public void onSelectionChange(SelectionChangeEvent event) {
                 PropertyRecord property = selectionModel.getSelectedObject();
             }
         });*/
 
-        propertyList.getElement().setAttribute("style", "margin:10px;");
 
-        layout.add(propertyList);
+        layout.add(propertyTable);
 
         /*
                 // ---------------------------------------------------
@@ -243,6 +231,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 layout.addMember(dplLayout);
 
         */
+
         return layout;
     }
 
@@ -270,8 +259,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 propRecords.add(propertyRecord);
             }
 
-            propertyList.setRowCount(propRecords.size());
-            propertyList.setRowData(0, propRecords);
+            propertyTable.setRowCount(propRecords.size());
+            propertyTable.setRowData(0, propRecords);
         } else {
             // no system properties available
         }

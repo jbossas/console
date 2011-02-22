@@ -5,3 +5,4 @@ target
 .idea
 build.number
 
+standalone/war/WEB-INF/deploy/app/rpcPolicyManifest/manifest.txt

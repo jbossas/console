@@ -12,7 +12,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
     private static String html = "<div class='loginForm'>\n"
             + "<table align=\"center\" cellspacing=0 cellpadding=0>\n"
             + "  <tr>\n"
-            + "    <td class='table-header' colspan=\"2\" style=\"font-weight:bold;\">JBoss Management</td>\n"
+            + "    <td class='loginForm-header' colspan=\"2\" style=\"font-weight:bold;\">JBoss Management</td>\n"
             + "  </tr>\n"
             + "  <tr>\n"
             + "    <td>Username</td>\n"

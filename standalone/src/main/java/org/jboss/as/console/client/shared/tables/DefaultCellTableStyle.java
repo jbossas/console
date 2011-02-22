@@ -8,7 +8,6 @@ public class DefaultCellTableStyle implements CellTable.Style {
         return "cellTableCell";
     }
 
-
     @Override
     public String cellTableEvenRow() {
         return "cellTableEvenRow"; 
