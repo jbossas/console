@@ -63,7 +63,7 @@ class ProfileSection {
 
         for(ProfileRecord record : profileRecords)
         {
-            profileSelection.addItem(record.getAttribute("profile-name"));
+            profileSelection.addItem(record.getName());
         }
 
         // select first option when updated
@@ -71,7 +71,7 @@ class ProfileSection {
             @Override
             public void execute() {
                 profileSelection.setItemSelected(0, true);
-                fireProfileSelection(profileRecords[0].getAttribute("profile-name"));
+                fireProfileSelection(profileRecords[0].getName());
             }
         });
 

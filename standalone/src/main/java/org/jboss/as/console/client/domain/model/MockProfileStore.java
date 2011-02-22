@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.domain.model;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
+import org.jboss.as.console.client.shared.BeanFactory;
 
 /**
  * @author Heiko Braun
@@ -8,19 +10,25 @@ import com.allen_sauer.gwt.log.client.Log;
  */
 public class MockProfileStore implements ProfileStore {
 
-    private final ProfileRecord[] records =
-            new ProfileRecord[]
-                    {
-                            new ProfileRecord("EE6 Web"),
-                            new ProfileRecord("Messaging"),
-                            new ProfileRecord("BPM Platform")
-
-                    };
+    BeanFactory factory = GWT.create(BeanFactory.class);
+    private final String[] names = new String[] {"EE6 Web", "Messaging", "BPM Platform"};
 
     @Override
     public ProfileRecord[] loadProfiles()
     {
+        ProfileRecord[] records = new ProfileRecord[names.length];
+
+        int i=0;
+        for(String name : names)
+        {
+            ProfileRecord profile = factory.profile().as();
+            profile.setName(name);
+            records[i] = profile;
+            i++;
+        }
+
         Log.debug("Loaded " + records.length + " profiles");
+
         return records;
     }
 }

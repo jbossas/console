@@ -236,6 +236,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     }
 
     public void setSelectedRecord(final ServerGroupRecord record) {
+
         final String selectedGroupName = record.getGroupName();
 
         nameLabel.setHTML(selectedGroupName);

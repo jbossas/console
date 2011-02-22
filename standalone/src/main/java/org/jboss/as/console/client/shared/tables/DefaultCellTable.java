@@ -49,7 +49,7 @@ public class DefaultCellTable<T> extends CellTable {
             Element div = DOM.createDiv();
             div.setId(CELLTABLE_EMPTY_DIV);
             div.setInnerHTML("No records!");
-            div.setAttribute("style", "text-align:center;width:100%; height:50px; color:#cccccc; padding-top:20px;");
+            div.setAttribute("style", "text-align:center;width:100%; height:50px; color:#cccccc; padding-top:22px;");
             getElement().appendChild(div);
         }
         else

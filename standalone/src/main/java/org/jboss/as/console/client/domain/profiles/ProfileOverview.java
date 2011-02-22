@@ -1,21 +1,29 @@
 package org.jboss.as.console.client.domain.profiles;
 
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
-import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.RHSContentPanel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
-import org.jboss.as.console.client.components.TitleBar;
 import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
+import org.jboss.as.console.client.domain.groups.ServerGroupCell;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.DeploymentRecord;
+import org.jboss.as.console.client.shared.tables.DefaultCellTable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -25,8 +33,9 @@ public class ProfileOverview
         extends SuspendableViewImpl implements ProfileOverviewPresenter.MyView {
 
     private ProfileOverviewPresenter presenter;
-    private ListGrid profileGrid;
-    private ListGrid groupGrid;
+    private CellList<ProfileRecord> profileList;
+    private CellList<ServerGroupRecord> groupList;
+    private CellTable<DeploymentRecord> deploymentTable;
 
     @Override
     public void setPresenter(ProfileOverviewPresenter presenter) {
@@ -36,59 +45,43 @@ public class ProfileOverview
     @Override
     public Widget createWidget() {
 
-        final VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
+        LayoutPanel layout = new RHSContentPanel("Domain Overview");
 
-        TitleBar titleBar = new TitleBar("Domain Overview");
-        layout.addMember(titleBar);
-        //layout.addMember(new DescriptionLabel("Available Profiles and Server Groups."));
+        HorizontalPanel hlayout = new HorizontalPanel();
+        hlayout.setStyleName("fill-layout-width");
+        hlayout.getElement().setAttribute("cellpadding", "10");
 
-        HLayout hlayout = new HLayout();
+        VerticalPanel vlayoutLeft = new VerticalPanel();
+        vlayoutLeft.setStyleName("fill-layout-width");
 
-        VLayout vlayoutLeft = new VLayout();
-        vlayoutLeft.setMargin(15);
-
-        profileGrid = new ListGrid();
-        profileGrid.setHeight(150);
-        profileGrid.setShowHeader(false);
-        profileGrid.setShowAllRecords(true);
-
-        ListGridField nameField = new ListGridField("profile-name", "Name");
-        profileGrid.setFields(nameField);
-        profileGrid.setMargin(5);
+        profileList = new CellList<ProfileRecord>(new ProfileCell());
+        profileList.setPageSize(25);
 
         ContentGroupLabel leftLabel = new ContentGroupLabel("Available Profiles");
         leftLabel.setIcon("common/profile.png");
-        vlayoutLeft.addMember(leftLabel);
-        vlayoutLeft.addMember(profileGrid);
+        vlayoutLeft.add(leftLabel);
+        vlayoutLeft.add(profileList);
 
         // --------------------------------------
 
-        VLayout vlayoutRight = new VLayout();
-        vlayoutRight.setMargin(15);
+        VerticalPanel vlayoutRight = new VerticalPanel();
+        vlayoutRight.setStyleName("fill-layout-width");
+
         ContentGroupLabel rightLabel = new ContentGroupLabel("Server Groups");
         rightLabel.setIcon("common/server_group.png");
 
-        vlayoutRight.addMember(rightLabel);
+        vlayoutRight.add(rightLabel);
 
-        groupGrid = new ListGrid();
-        groupGrid.setHeight(150);
-        groupGrid.setShowHeader(false);
-        groupGrid.setShowAllRecords(true);
+        ServerGroupCell groupCell = new ServerGroupCell();
+        groupList = new CellList<ServerGroupRecord>(groupCell);
+        groupList.setPageSize(25);
 
-        ListGridField groupNameField = new ListGridField("group-name", "Server Group");
-        ListGridField profileNameField = new ListGridField("profile-name", "Profile");
-
-        groupGrid.setFields(groupNameField, profileNameField);
-        groupGrid.setMargin(5);
-
-        /*groupGrid.addRecordClickHandler(new RecordClickHandler()
-        {
-            @Override
-            public void onRecordClick(RecordClickEvent recordClickEvent) {
-                ServerGroupRecord selectedRecord = (ServerGroupRecord)groupGrid.getSelectedRecord();
-                final String groupName = selectedRecord.getAttribute("group-name");
+        final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
+        groupList.setSelectionModel(selectionModel);
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ServerGroupRecord selectedRecord = selectionModel.getSelectedObject();
+                final String groupName = selectedRecord.getGroupName();
 
                 Console.MODULES.getPlaceManager().revealPlaceHierarchy(
                         new ArrayList<PlaceRequest>() {{
@@ -97,36 +90,50 @@ public class ProfileOverview
                         }}
                 );
             }
-        });  */
+        });
 
-        vlayoutRight.addMember(groupGrid);
+
+        vlayoutRight.add(groupList);
         // --------------------------------------
 
-        hlayout.addMember(vlayoutLeft);
-        hlayout.addMember(vlayoutRight);
+        hlayout.add(vlayoutLeft);
+        hlayout.add(vlayoutRight);
 
-        layout.addMember(hlayout);
+        layout.add(hlayout);
 
         // --------------------------------------
 
         ContentGroupLabel deploymentLabel = new ContentGroupLabel("Domain Level Deployments");
+        layout.add(deploymentLabel);
 
-        layout.addMember(deploymentLabel);
+        deploymentTable = new DefaultCellTable<DeploymentRecord>(10);
 
+        TextColumn<DeploymentRecord> dplNameColumn = new TextColumn<DeploymentRecord>() {
+            @Override
+            public String getValue(DeploymentRecord record) {
+                return record.getName();
+            }
+        };
 
-        ListGrid deploymentGrid = new ListGrid();
-        deploymentGrid.setMargin(15);
-        deploymentGrid.setWidth100();
-        deploymentGrid.setHeight100();
-        deploymentGrid.setShowAllRecords(true);
-        deploymentGrid.setShowHeaderContextMenu(false);
+        TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
+            @Override
+            public String getValue(DeploymentRecord record) {
+                return record.getRuntimeName();
+            }
+        };
 
-        ListGridField dplNameField = new ListGridField("name", "Name");
-        ListGridField dplRtField = new ListGridField("runtime-name", "Runtime Name");
-        deploymentGrid.setFields(dplNameField, dplRtField);
-        deploymentGrid.setData(presenter.getDeploymentRecords());
+        TextColumn<DeploymentRecord> dplShaColumn = new TextColumn<DeploymentRecord>() {
+            @Override
+            public String getValue(DeploymentRecord record) {
+                return record.getSha();
+            }
+        };
 
-        layout.addMember(deploymentGrid);
+        deploymentTable.addColumn(dplNameColumn, "Name");
+        deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
+        deploymentTable.addColumn(dplShaColumn, "Sha");
+
+        layout.add(deploymentTable);
 
         refresh();
 
@@ -141,7 +148,11 @@ public class ProfileOverview
     }
 
     private void refresh() {
-        profileGrid.setData(presenter.getProfileRecords());
-        //groupGrid.setData(presenter.getServerGroupRecords());
+        List<ProfileRecord> profiles = Arrays.asList(presenter.getProfileRecords());
+        List<ServerGroupRecord> groups = Arrays.asList(presenter.getServerGroupRecords());
+
+        profileList.setRowData(0, profiles);
+        groupList.setRowData(0, groups);
+        deploymentTable.setRowData(0, presenter.getDeploymentRecords());
     }
 }

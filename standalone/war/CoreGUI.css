@@ -248,4 +248,15 @@ body, p, td, th, option, input, textarea, select {
     margin:0px;
 }
 
+.cross-reference {
+    padding:4px;
+    padding-bottom:8px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.cross-reference:hover {
+    background-color:#d9e4f6;
+    text-decoration:underline;
+}
 

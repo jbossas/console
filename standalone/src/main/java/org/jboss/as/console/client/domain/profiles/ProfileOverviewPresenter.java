@@ -17,6 +17,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentStore;
 
+import java.util.List;
+
 
 /**
  * @author Heiko Braun
@@ -82,7 +84,7 @@ public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter
         return serverGroupStore.loadServerGroups();
     }
 
-    public DeploymentRecord[] getDeploymentRecords() {
+    public List<DeploymentRecord> getDeploymentRecords() {
         return deploymentStore.loadDeployments();
     }
 }

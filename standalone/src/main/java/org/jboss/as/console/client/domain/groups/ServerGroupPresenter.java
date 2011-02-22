@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.History;
 import com.google.inject.Inject;
@@ -46,7 +45,7 @@ public class ServerGroupPresenter
         int i=0;
         for(ProfileRecord profile : profileRecords)
         {
-            names[i] = profile.getAttribute("profile-name");
+            names[i] = profile.getName();
             i++;
         }
         return names;

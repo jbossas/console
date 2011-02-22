@@ -1,14 +1,11 @@
 package org.jboss.as.console.client.domain.model;
 
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-
 /**
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class ProfileRecord extends ListGridRecord {
+public interface ProfileRecord {
 
-    public ProfileRecord(String name) {
-        setAttribute("profile-name", name);
-    }
+    public String getName();
+    public void setName(String name);
 }

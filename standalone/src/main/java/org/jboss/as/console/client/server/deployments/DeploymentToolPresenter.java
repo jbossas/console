@@ -8,11 +8,13 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentStore;
+
+import java.util.List;
 
 /**
  * Manages deployments on a standalone server.
@@ -47,7 +49,7 @@ public class DeploymentToolPresenter extends Presenter<DeploymentToolPresenter.D
         this.placeManager = placeManager;
     }
 
-    public ListGridRecord[] getRecords() {
+    public List<DeploymentRecord> getRecords() {
         return store.loadDeployments();
     }
 
