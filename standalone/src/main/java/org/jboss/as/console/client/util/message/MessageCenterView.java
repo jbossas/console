@@ -19,163 +19,145 @@
 package org.jboss.as.console.client.util.message;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
-import com.smartgwt.client.types.*;
-import com.smartgwt.client.widgets.AnimationCallback;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.ButtonItem;
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.StaticTextItem;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.LayoutSpacer;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.menu.IMenuButton;
-import com.smartgwt.client.widgets.menu.Menu;
-import com.smartgwt.client.widgets.menu.MenuItem;
-import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
+import org.jboss.as.console.client.components.img.Icons;
 
 import java.util.List;
 
 /**
  * @author Greg Hinkle
+ * @author Heiko Braun
  */
 public class MessageCenterView implements MessageCenter.MessageListener {
 
-    public static final String LOCATOR_ID = "MessageCenter";
-
     private MessageCenter messageCenter;
-    private HLayout layout;
+    private LayoutPanel messageDisplay;
+    final MessageListPopup messagePopup = new MessageListPopup();
 
     @Inject
     public MessageCenterView(MessageCenter messageCenter) {
         this.messageCenter = messageCenter;
     }
 
+    private static class MessageListPopup extends PopupPanel
+    {
+        private CellList<Message> messageList;
+
+        public MessageListPopup()
+        {
+            super(true);
+
+            SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
+            emptyMessage.appendHtmlConstant("No recent messages!");
+
+            MessageCell messageCell = new MessageCell();
+            messageList = new CellList<Message>(messageCell);
+            messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
+
+            messageList.setStyleName("message-list");
+            setWidget(messageList);
+            setStyleName("default-popup");
+        }
+
+        public CellList<Message> getMessageList() {
+            return messageList;
+        }
+    }
+
+    private MessageListPopup getMessagePopup() {
+        return messagePopup;
+    }
+
     public Widget asWidget()
     {
-        layout = new HLayout();
-
-        layout.setHeight100();
-        layout.setAlign(Alignment.RIGHT);
-        layout.setAlign(VerticalAlignment.CENTER);
-        layout.setOverflow(Overflow.HIDDEN);
-
-        final Menu recentEventsMenu = new Menu();
-        recentEventsMenu.setTitle("Messages");
-
-        IMenuButton recentEventsButton = new IMenuButton("Messages", recentEventsMenu);
-        recentEventsButton.setTop(5);
-        recentEventsButton.setShowMenuBelow(false);
-        recentEventsButton.setAutoFit(true);
-        recentEventsButton.setValign(VerticalAlignment.CENTER);
-
-        recentEventsButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent clickEvent) {
-                List<Message> messages = messageCenter.getMessages();
-                if (messages.isEmpty()) {
-                    recentEventsMenu.setItems(new MenuItem("No recent messages"));
-                } else {
-                    MenuItem[] items = new MenuItem[messages.size()];
-                    for (int i = 0, messagesSize = messages.size(); i < messagesSize; i++) {
-                        final Message message = messages.get(i);
-                        MenuItem messageItem = new MenuItem(message.conciseMessage, getSeverityIcon(message.severity));
-
-                        items[i] = messageItem;
-
-                        messageItem.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
-                            public void onClick(MenuItemClickEvent event) {
-                                showDetails(message);
-                            }
-                        });
-                    }
-                    recentEventsMenu.setItems(items);
-                }
+        LayoutPanel layout = new LayoutPanel()
+        {
+            @Override
+            public void onResize() {
+                super.onResize();
+                MessageListPopup popup = getMessagePopup();
+                if(popup!=null) popup.hide();
             }
-        });
+        };
 
-        VLayout vl = new VLayout();
-        vl.setAutoWidth();
-        vl.setAlign(Alignment.LEFT);
-        vl.setAlign(VerticalAlignment.CENTER);
-        vl.addMember(recentEventsButton);
+        messageDisplay = new LayoutPanel();
 
-        layout.addMember(new LayoutSpacer());
-        layout.addMember(vl);
+        final Button button = new Button("Messages");
+        button.getElement().addClassName("default-button");
+
+        ClickHandler clickHandler = new ClickHandler() {
+            public void onClick(ClickEvent event) {
+
+                int numMessages = fetchMessages(messagePopup);
+
+                int width = 200;
+                int height = numMessages*25;
+
+                messagePopup.setPopupPosition(
+                        button.getAbsoluteLeft() - (width+24-button.getOffsetWidth()) ,
+                        button.getAbsoluteTop() - (height+24)
+                );
+
+
+
+                messagePopup.show();
+
+                messagePopup.setWidth(width+"px");
+                messagePopup.setHeight(height+"px");
+            }
+        };
+
+        button.addClickHandler(clickHandler);
 
         // register listener
         messageCenter.addMessageListener(this);
 
+
+        layout.add(messageDisplay);
+        layout.add(button);
+
+        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 200, Style.Unit.PX);
+        layout.setWidgetLeftWidth(button, 200, Style.Unit.PX, 100, Style.Unit.PX);
+
         return layout;
     }
 
+    private int fetchMessages(MessageListPopup popup) {
+        List<Message> messages = messageCenter.getMessages();
+        popup.getMessageList().setRowData(0, messages);
+        return messages.size();
+    }
+
     private void showDetails(Message message) {
-        DynamicForm form = new DynamicForm();
-        form.setTitle("Details");
-        form.setWrapItemTitles(false);
-
-        StaticTextItem title = new StaticTextItem("title", "Title");
-        title.setValue(message.conciseMessage);
-
-        StaticTextItem severity = new StaticTextItem("severity", "Severity");
-        FormItemIcon severityIcon = new FormItemIcon();
-        severityIcon.setSrc(getSeverityIcon(message.severity));
-        severity.setIcons(severityIcon);
-        severity.setValue(message.severity.name());
-
-        StaticTextItem date = new StaticTextItem("time", "Time");
-        date.setValue(message.fired);
-
-        StaticTextItem detail = new StaticTextItem("detail", "Detail");
-        detail.setTitleOrientation(TitleOrientation.TOP);
-        detail.setValue(message.detailedMessage);
-        detail.setColSpan(2);
-
-        ButtonItem okButton = new ButtonItem("ok", "OK");
-        okButton.setColSpan(2);
-        okButton.setAlign(Alignment.CENTER);
-
-        form.setItems(title, severity, date, detail, okButton);
-
-        final Window window = new Window();
-        window.setTitle("Message");
-        window.setTitle(message.conciseMessage);
-        window.setWidth(600);
-        window.setHeight(400);
-        window.setIsModal(true);
-        window.setShowModalMask(true);
-        window.setCanDragResize(true);
-        window.centerInPage();
-        window.addItem(form);
-        window.show();
-        okButton.focusInItem();
-        okButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
-            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent clickEvent) {
-                window.destroy();
-            }
-        });
+        // TODO: implement popup window
+        Log.debug("Message detail not implemented yet");
     }
 
     public void onMessage(final Message message) {
         if (!message.isTransient()) {
             logMessage(message);
 
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.getElement().setAttribute("cellpadding", "6");
+
             final Label label = new Label(message.conciseMessage);
-            label.setMargin(5);
-            label.setAutoFit(true);
-            label.setHeight(25);
-            label.setWrap(false);
+            label.getElement().setAttribute("style", "white-space: nowrap;text-overflow:ellipsis");
 
-            String iconSrc = getSeverityIcon(message.severity);
+            final ImageResource iconSrc = getSeverityIcon(message.severity);
 
-            label.setIcon(iconSrc);
+            panel.add(new Image(iconSrc));
+            panel.add(label);
 
-            label.setTooltip(message.detailedMessage);
+            // would be nice too have
+            //label.setTooltip(message.detailedMessage);
 
             label.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent clickEvent) {
@@ -183,20 +165,18 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 }
             });
 
-            layout.addMember(label, 1);
-            layout.redraw();
+            messageDisplay.clear();
+            messageDisplay.add(panel);
 
             Timer hideTimer = new Timer() {
                 @Override
                 public void run() {
-                    label.animateHide(AnimationEffect.FADE, new AnimationCallback() {
-                        public void execute(boolean b) {
-                            label.destroy();
-                        }
-                    });
+                    // hide message
+                    messageDisplay.clear();
                 }
             };
-            hideTimer.schedule(10000);
+
+            hideTimer.schedule(5000);
         }
     }
 
@@ -219,18 +199,18 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         }
     }
 
-    private String getSeverityIcon(Message.Severity severity) {
-        String iconSrc = null;
+    public static ImageResource getSeverityIcon(Message.Severity severity) {
+        ImageResource iconSrc = null;
         switch (severity) {
             case Info:
-                iconSrc = "info/icn_info_blue.png";
+                iconSrc = Icons.INSTANCE.info_blue();
                 break;
             case Warning:
-                iconSrc = "info/icn_info_orange.png";
+                iconSrc = Icons.INSTANCE.info_orange();
                 break;
             case Error:
             case Fatal:
-                iconSrc = "info/icn_info_red.png";
+                iconSrc = Icons.INSTANCE.info_red();
                 break;
         }
         return iconSrc;

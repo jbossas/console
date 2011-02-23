@@ -10,7 +10,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 public class ProfileCell extends AbstractCell<ProfileRecord> {
 
     interface Template extends SafeHtmlTemplates {
-        @Template("<div class=\"{0}\" style=\"outline:none;\" ><h3>{1}</h3></div>")
+        @Template("<div class=\"{0}\" style=\"outline:none;\" >- <b>{1}</b></div>")
         SafeHtml message(String cssClass, String name);
     }
 

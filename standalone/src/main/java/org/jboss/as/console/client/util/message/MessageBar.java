@@ -1,13 +1,11 @@
 package org.jboss.as.console.client.util.message;
 
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.events.DoubleClickEvent;
-import com.smartgwt.client.widgets.events.DoubleClickHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
 
 /**
  * Displays messages to the user.
@@ -16,47 +14,39 @@ import com.smartgwt.client.widgets.layout.HLayout;
  * @author Heiko Braun
  * @date 1/28/11
  */
-public class MessageBar extends HLayout implements MessageCenter.MessageListener {
+public class MessageBar extends LayoutPanel implements MessageCenter.MessageListener {
 
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    private Label label = new Label();
     private Message stickyMessage;
-
-    private static final String NON_BREAKING_SPACE = "&nbsp;";
-
     private MessageCenter messageCenter;
+    private MessagePopup popup;
+
+    private static class MessagePopup extends PopupPanel
+    {
+        private Label label;
+
+        public MessagePopup()
+        {
+            super(true);
+
+            label = new Label();
+            setWidget(label);
+            setStyleName(Message.Severity.Blank.getStyle());
+        }
+
+        public void setMessage(Message message) {
+            label.setText(message.getConciseMessage());
+            setStyleName(Message.Severity.Blank.getStyle());
+            addStyleName(message.getSeverity().getStyle());
+        }
+    }
 
     @Inject
     public MessageBar(MessageCenter messageCenter) {
         super();
-        setOverflow(Overflow.VISIBLE);
-        addStyleName("header-messagebar");
         this.messageCenter = messageCenter;
-    }
-
-    @Override
-    protected void onDraw() {
-        super.onDraw();
-
-        setWidth100();
-        setAlign(Alignment.CENTER);
-
-        label.setAlign(Alignment.CENTER);
-        label.setWidth("600px");
-        label.setHeight("25px");
-
-        setLabelEmpty();
-        addMember(label);
-
-        // sometimes its annoying to have the error message hang around for too long
-        // let the user click the message so it goes away on demand
-        addDoubleClickHandler(new DoubleClickHandler() {
-            @Override
-            public void onDoubleClick(DoubleClickEvent event) {
-                clearMessage(true);
-            }
-        });
+        this.popup = new MessagePopup();
 
         messageCenter.addMessageListener(this);
     }
@@ -64,7 +54,7 @@ public class MessageBar extends HLayout implements MessageCenter.MessageListener
     @Override
     public void onMessage(Message message) {
         if (!message.isBackgroundJobResult()) {
-            updateLabel(message);
+            popup.setMessage(message);
 
             // Auto-clear the message after some time unless it's been designated as sticky.
             if (message.isSticky()) {
@@ -75,44 +65,30 @@ public class MessageBar extends HLayout implements MessageCenter.MessageListener
                     public void run() {
                         clearMessage(false);
                         if (stickyMessage != null) {
-                            updateLabel(stickyMessage);
+                             popup.setMessage(stickyMessage);
                         }
                     }
                 }.schedule(AUTO_HIDE_DELAY_MILLIS);
             }
+
+            int width =  (Window.getClientWidth()/3)*2;
+            int height = 24;
+
+            popup.setWidth(width+"px");
+            popup.setHeight(height+"px");
+
+            popup.setPopupPosition(Window.getClientWidth()/2 - width/2, 35);
+            popup.show();
         }
     }
 
     private void clearMessage(boolean clearSticky) {
-        setLabelEmpty();
-        markForRedraw();
 
         if (clearSticky) {
             this.stickyMessage = null;
         }
+
+        popup.hide();
     }
 
-    private void setLabelEmpty() {
-        label.setContents(NON_BREAKING_SPACE);
-        label.setIcon(Message.Severity.Blank.getIcon());
-        label.setStyleName(Message.Severity.Blank.getStyle());
-    }
-
-    private void updateLabel(Message message) {
-        String contents = (message.getConciseMessage() != null) ? message.getConciseMessage() : message
-            .getDetailedMessage();
-        label.setContents(contents);
-
-        String styleName = (contents != null) ? message.getSeverity().getStyle() : null;
-        label.setStyleName(styleName);
-
-        // TODO: Create some custom edge images in greed, yellow, red, etc. so we can add nice rounded corners to the
-        //       label.
-        //label.setShowEdges(true);
-
-        String icon = (contents != null) ? message.getSeverity().getIcon() : null;
-        label.setIcon(icon);
-
-        markForRedraw();
-    }
 }

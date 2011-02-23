@@ -1,15 +1,15 @@
 package org.jboss.as.console.client;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.smartgwt.client.types.VerticalAlignment;
-import com.smartgwt.client.widgets.Img;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
 import org.jboss.as.console.client.auth.AuthenticationEvent;
 import org.jboss.as.console.client.auth.AuthenticationListener;
+import org.jboss.as.console.client.components.img.Icons;
 import org.jboss.as.console.client.util.message.MessageCenterView;
 
 /**
@@ -18,7 +18,7 @@ import org.jboss.as.console.client.util.message.MessageCenterView;
  */
 public class Footer implements AuthenticationListener {
 
-    private Label label;
+    private Label userName;
 
     @Inject
     public Footer(EventBus bus) {
@@ -27,35 +27,33 @@ public class Footer implements AuthenticationListener {
 
     @Override
     public void onUserAuthenticated(AuthenticationEvent event) {
-        label.setContents("&nbsp;"+event.getUser().getUserName());
-        label.markForRedraw();
+        userName.setText(event.getUser().getUserName());
     }
 
     public Widget asWidget() {
 
-        ToolStrip toolstrip = new ToolStrip();
+        LayoutPanel layout = new LayoutPanel();
+        layout.setStyleName("footer-panel");
+        Image userImg = new Image(Icons.INSTANCE.user());
+        layout.add(userImg);
 
-        toolstrip.setHeight(30);
-        toolstrip.setAlign(VerticalAlignment.CENTER);
-        toolstrip.setWidth100();
-        toolstrip.setMembersMargin(10);
-        toolstrip.setLayoutRightMargin(15);
-        toolstrip.setLayoutLeftMargin(10);
-
-        Img img = new Img("global/User_16.png");
-        img.setWidth(16);
-        img.setHeight(16);
-        toolstrip.addMember(img);
-
-        label = new Label();
-        label.setMargin(5);
-        toolstrip.addMember(label);
-
-        toolstrip.addMember(new ToolStripSeparator());
+        userName = new Label();
+        userName.setStyleName("footer-item");
+        layout.add(userName);
 
         MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
-        toolstrip.addMember(messageCenterView.asWidget());
-        return toolstrip;
+        Widget messageCenter = messageCenterView.asWidget();
+        //messageCenter.getElement().addClassName("footer-item-right");
+        layout.add(messageCenter);
 
+        layout.setWidgetLeftWidth(userImg, 5, Style.Unit.PX, 16, Style.Unit.PX);
+        layout.setWidgetTopHeight(userImg, 6, Style.Unit.PX, 16, Style.Unit.PX);
+
+        layout.setWidgetLeftWidth(userName, 25, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetTopHeight(userName, 6, Style.Unit.PX, 16, Style.Unit.PX);
+
+        layout.setWidgetRightWidth(messageCenter, 15, Style.Unit.PX, 300, Style.Unit.PX);
+        layout.setWidgetTopHeight(messageCenter, 2, Style.Unit.PX, 28, Style.Unit.PX);
+        return layout;
     }
 }

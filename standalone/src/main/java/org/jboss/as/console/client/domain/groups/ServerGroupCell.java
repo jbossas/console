@@ -10,7 +10,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 public class ServerGroupCell extends AbstractCell<ServerGroupRecord> {
 
     interface Template extends SafeHtmlTemplates {
-        @Template("<div class=\"{0}\" style=\"outline:none;\" ><h3>{1}</h3>(Profile: {2})</div>")
+        @Template("<div class=\"{0}\" style=\"outline:none;\" >- <b>{1}</b><br/>(Profile: {2})</div>")
         SafeHtml message(String cssClass, String name, String profile);
     }
 

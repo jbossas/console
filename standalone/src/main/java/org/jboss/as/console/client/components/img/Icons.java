@@ -19,4 +19,20 @@ public interface Icons extends ClientBundle {
 
     @Source("add.png")
     ImageResource add();
+
+    @Source("user.png")
+    ImageResource user();
+
+
+    @Source("icn_info_blank.png")
+    ImageResource info_blank();
+
+    @Source("icn_info_blue.png")
+    ImageResource info_blue();
+
+    @Source("icn_info_orange.png")
+    ImageResource info_orange();
+
+    @Source("icn_info_red.png")
+    ImageResource info_red();
 }
