@@ -13,7 +13,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 public class MessageCell extends AbstractCell<Message> {
 
     interface Template extends SafeHtmlTemplates {
-        @Template("<div class=\"{0}\" style='text-overflow:ellipsis'>&nbsp;{1}</div>")
+        @Template("<span class=\"{0}\">&nbsp;{1}</span>")
         SafeHtml message(String cssClass, String title);
     }
 
@@ -37,7 +37,8 @@ public class MessageCell extends AbstractCell<Message> {
         safeHtmlBuilder.appendHtmlConstant("<td>");
         safeHtmlBuilder.appendHtmlConstant(prototype.getHTML());
         safeHtmlBuilder.appendHtmlConstant("</td><td>");
-        safeHtmlBuilder.append(TEMPLATE.message(cssName,message.getConciseMessage()));
+        String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
+        safeHtmlBuilder.append(TEMPLATE.message(cssName, actualMessage));
         safeHtmlBuilder.appendHtmlConstant("</td></tr></table>");
 
     }

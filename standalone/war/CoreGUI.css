@@ -317,6 +317,9 @@ body, p, td, th, option, input, textarea, select {
 .message-list-item {
     padding:2px;
     min-height:20px;
+    padding:2px;
+    white-space: nowrap;
+    text-overflow:ellipsis;
 }
 
 .message-list-item:hover {

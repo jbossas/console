@@ -18,10 +18,10 @@ class CommonConfigSection extends SectionStackSection{
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        LHSNavItem paths = new LHSNavItem("Paths", "domain-deployments;type=web");
-        LHSNavItem interfaces = new LHSNavItem("Interfaces", "domain-deployments;type=ee");
-        LHSNavItem sockets = new LHSNavItem("Socket Binding Groups", "domain-deployments;type=jca");
-        LHSNavItem properties = new LHSNavItem("System Properties", "domain-deployments;type=properties");
+        LHSNavItem paths = new LHSNavItem("Paths", "domain/paths");
+        LHSNavItem interfaces = new LHSNavItem("Interfaces", "domain/domain-interfaces");
+        LHSNavItem sockets = new LHSNavItem("Socket Binding Groups", "domain/socket-bindings");
+        LHSNavItem properties = new LHSNavItem("System Properties", "domain/domain-properties");
 
         addNavItems(paths, interfaces, sockets, properties);
     }
