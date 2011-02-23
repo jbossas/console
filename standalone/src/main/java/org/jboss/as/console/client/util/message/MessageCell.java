@@ -13,7 +13,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 public class MessageCell extends AbstractCell<Message> {
 
     interface Template extends SafeHtmlTemplates {
-        @Template("<span class=\"{0}\">&nbsp;{1}</span>")
+        @Template("<div class=\"{0}\">{1}</div>")
         SafeHtml message(String cssClass, String title);
     }
 
@@ -33,10 +33,10 @@ public class MessageCell extends AbstractCell<Message> {
 
         String cssName = (context.getIndex() %2 > 0) ? "message-list-item message-list-item-odd" : "message-list-item";
 
-        safeHtmlBuilder.appendHtmlConstant("<table width='100%' cellpadding=0 cellspacing=0><tr valign='middle'>");
-        safeHtmlBuilder.appendHtmlConstant("<td>");
+        safeHtmlBuilder.appendHtmlConstant("<table width='100%' cellpadding=4 cellspacing=0><tr valign='middle'>");
+        safeHtmlBuilder.appendHtmlConstant("<td width=16>");
         safeHtmlBuilder.appendHtmlConstant(prototype.getHTML());
-        safeHtmlBuilder.appendHtmlConstant("</td><td>");
+        safeHtmlBuilder.appendHtmlConstant("</td><td width='100%'>");
         String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
         safeHtmlBuilder.append(TEMPLATE.message(cssName, actualMessage));
         safeHtmlBuilder.appendHtmlConstant("</td></tr></table>");

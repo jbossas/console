@@ -320,6 +320,7 @@ body, p, td, th, option, input, textarea, select {
     padding:2px;
     white-space: nowrap;
     text-overflow:ellipsis;
+    width:100%;
 }
 
 .message-list-item:hover {

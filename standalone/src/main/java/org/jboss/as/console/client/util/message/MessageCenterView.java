@@ -63,6 +63,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
 
             messageList.setStyleName("message-list");
+
             setWidget(messageList);
             setStyleName("default-popup");
         }
@@ -99,7 +100,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int numMessages = fetchMessages(messagePopup);
 
                 int width = 200;
-                int height = numMessages*25;
+                int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
                         button.getAbsoluteLeft() - (width+24-button.getOffsetWidth()) ,
@@ -148,7 +149,9 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             HorizontalPanel panel = new HorizontalPanel();
             panel.getElement().setAttribute("cellpadding", "6");
 
-            final Label label = new Label(message.conciseMessage);
+            String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
+
+            final Label label = new Label(actualMessage);
             label.getElement().setAttribute("style", "white-space: nowrap;text-overflow:ellipsis");
 
             final ImageResource iconSrc = getSeverityIcon(message.severity);
