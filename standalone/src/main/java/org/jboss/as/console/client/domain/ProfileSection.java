@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.LHSNavItem;
-import org.jboss.as.console.client.components.img.Icons;
+import org.jboss.as.console.client.icons.Icons;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;

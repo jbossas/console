@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.LHSNavItem;
-import org.jboss.as.console.client.components.img.Icons;
+import org.jboss.as.console.client.icons.Icons;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.util.Places;
 

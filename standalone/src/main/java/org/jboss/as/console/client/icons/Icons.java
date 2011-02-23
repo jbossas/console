@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.components.img;
+package org.jboss.as.console.client.icons;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

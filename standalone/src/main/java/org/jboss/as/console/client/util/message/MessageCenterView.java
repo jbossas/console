@@ -28,7 +28,7 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.components.img.Icons;
+import org.jboss.as.console.client.icons.Icons;
 
 import java.util.List;
 

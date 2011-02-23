@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.auth.AuthenticationEvent;
 import org.jboss.as.console.client.auth.AuthenticationListener;
-import org.jboss.as.console.client.components.img.Icons;
+import org.jboss.as.console.client.icons.Icons;
 import org.jboss.as.console.client.util.message.MessageCenterView;
 
 /**
