@@ -6,6 +6,7 @@ package org.jboss.as.console.client.components;
  *
  * @author Jay Shaughnessy
  */
+@Deprecated
 public final class ViewName {
 
     private final String name;

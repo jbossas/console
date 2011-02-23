@@ -1,14 +1,12 @@
 package org.jboss.as.console.client.server.deployments;
 
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.ListGridFieldType;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.layout.VLayout;
+import org.jboss.as.console.client.components.RHSContentPanel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
-import org.jboss.as.console.client.components.sgwt.DescriptionLabel;
-import org.jboss.as.console.client.components.TitleBar;
+import org.jboss.as.console.client.shared.DeploymentRecord;
+import org.jboss.as.console.client.shared.DeploymentTable;
 
 /**
  * @author Heiko Braun
@@ -18,7 +16,7 @@ public class DeploymentToolViewImpl
         extends SuspendableViewImpl implements DeploymentToolPresenter.DeploymentToolView {
 
     private DeploymentToolPresenter presenter;
-    private ListGrid deploymentGrid;
+    private CellTable<DeploymentRecord> deploymentTable;
 
     @Override
     public void setPresenter(DeploymentToolPresenter presenter) {
@@ -28,33 +26,9 @@ public class DeploymentToolViewImpl
     @Override
     public Widget createWidget() {
 
-        final VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-
-        TitleBar titleBar = new TitleBar("Deployments");
-        layout.addMember(titleBar);
-
-        layout.addMember(new DescriptionLabel("Application deployments"));
-
-        deploymentGrid = new ListGrid();
-        deploymentGrid.setWidth100();
-        deploymentGrid.setHeight100();
-        deploymentGrid.setShowAllRecords(true);
-
-        ListGridField keyField = new ListGridField("name", "Name", 40);
-        keyField.setAlign(Alignment.CENTER);
-        keyField.setType(ListGridFieldType.TEXT);
-
-        ListGridField nameField = new ListGridField("runtime-name", "Runtime Name");
-        ListGridField dateField = new ListGridField("sha", "sha");
-
-        deploymentGrid.setFields(keyField, nameField, dateField);
-        deploymentGrid.setCanResizeFields(true);
-
-        deploymentGrid.setData(presenter.getRecords());
-
-        layout.addMember(deploymentGrid);
+        final LayoutPanel layout = new RHSContentPanel("Deployments");
+        deploymentTable = new DeploymentTable();
+        layout.add(deploymentTable);
 
         return layout;
     }
@@ -63,6 +37,6 @@ public class DeploymentToolViewImpl
     @Override
     public void onResume() {
         super.onResume();
-        deploymentGrid.setData(presenter.getRecords());
+        deploymentTable.setRowData(0, presenter.getRecords());
     }
 }

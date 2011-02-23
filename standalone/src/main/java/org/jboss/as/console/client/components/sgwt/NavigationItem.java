@@ -6,6 +6,7 @@ import org.jboss.as.console.client.components.ViewName;
 /**
  * @author Ian Springer
  */
+@Deprecated
 public class NavigationItem {
     private final ViewName viewName;
     private final String icon;

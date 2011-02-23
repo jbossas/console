@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * @author Ian Springer
  */
+@Deprecated
 public class NavigationSection {
     private ViewName viewName;
     private List<NavigationItem> navigationItems;

@@ -45,7 +45,7 @@ public class MainLayoutPresenter
         if(revealDefault && request.getNameToken().equals(NameTokens.mainLayout))
         {
             revealDefault = false;
-            Console.MODULES.getPlaceManager().revealRelativePlace(
+            Console.MODULES.getPlaceManager().revealPlace(
                     new PlaceRequest(NameTokens.DomainManagementPresenter)
             );
         }

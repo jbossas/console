@@ -3,21 +3,19 @@ package org.jboss.as.console.client;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Img;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import org.jboss.as.console.client.components.ViewName;
 import org.jboss.as.console.client.util.message.MessageBar;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Top level header, gives access to main applications.
@@ -31,15 +29,17 @@ public class Header implements ValueChangeHandler<String> {
     private HTMLPanel linksPane;
     private String currentHighlightedSection = null;
 
-    public static final ViewName[] SECTIONS = {
-            new ViewName("system", "System Overview"),
-            new ViewName("server", "Server Management"),  // or domain management
-            new ViewName("domain", "Domain Management"),
-            new ViewName("users", "User Management"),
-            new ViewName("settings", "Settings")
+    public static final String[][] SECTIONS = {
+            new String[]{"system", "System Overview"},
+            new String[]{"server", "Server Management"},
+            new String[]{"domain", "Domain Management"},
+            new String[]{"users", "User Management"},
+            new String[]{"settings", "Settings"}
     };
 
     private MessageBar messageBar;
+
+    private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
     @Inject
     public Header(MessageBar messageBar) {
@@ -49,43 +49,38 @@ public class Header implements ValueChangeHandler<String> {
 
     public Widget asWidget() {
 
-        VLayout outerLayout = new VLayout();
-        outerLayout.setWidth100();
-        outerLayout.setMembersMargin(0);
-        outerLayout.setHeight(60);
+        LayoutPanel outerLayout = new LayoutPanel();
 
-        final HLayout innerLayout = new HLayout();
-        ToolStrip topStrip = new ToolStrip();
-        topStrip.setHeight(34);
-        topStrip.setWidth100();
-        topStrip.setMembersMargin(20);
-        topStrip.addMember(getLogoSection());
-        topStrip.addMember(getLinksSection());
+        Widget logo = getLogoSection();
+        Widget links = getLinksSection();
 
-        innerLayout.addMember(topStrip);
+        LayoutPanel innerLayout = new LayoutPanel();
+        innerLayout.setStyleName("header");
+        innerLayout.add(logo);
+        innerLayout.add(links);
 
-        outerLayout.addMember(innerLayout);
-        outerLayout.addMember(messageBar);
+        innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PX);
+        innerLayout.setWidgetLeftWidth(links, 50, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        outerLayout.add(innerLayout);
+        //outerLayout.add(messageBar);
+
+        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 35, Style.Unit.PX);
+        //outerLayout.setWidgetTopHeight(messageBar, 34, Style.Unit.PX, 25, Style.Unit.PX);
 
         return outerLayout;
     }
 
-    private Canvas getLogoSection() {
+    private Widget getLogoSection() {
 
-        Img logo = new Img("header/product-framework.png", 30, 25);
-        logo.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-
-            }
-        });
-
+        Image logo = new Image("images/header/product-framework.png", 0, 0, 30, 25);
         logo.setStyleName("header-logo");
-
         return logo;
     }
 
     private Widget getLinksSection() {
         linksPane = new HTMLPanel(setupLinks());
+        linksPane.getElement().setId("header-links-section");
         return linksPane;
     }
 
@@ -94,19 +89,21 @@ public class Header implements ValueChangeHandler<String> {
                 "<table style=\"height: 34px;\" cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links'>");
 
         headerString.append("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
-        for (ViewName section : SECTIONS) {
+        for (String[] section : SECTIONS) {
 
-            final String id = "header-" + section.getName();
+            final String name = section[0];
+            final String title = section[1];
+            final String id = "header-" + name;
 
-            String styleClass = "TopSectionLink";
-            if (section.getName().equals(currentlySelectedSection)) {
-                styleClass = "TopSectionLinkSelected";
+            String styleClass = "header-link";
+            if (name.equals(currentlySelectedSection)) {
+                styleClass = "header-link-selected";
             }
 
             // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
-            headerString.append("<td style=\"vertical-align:middle\" id=\"" + id +"\"").append(section).append("\" class=\"")
-                    .append(styleClass).append("\" onclick=\"document.location='#").append(section).append("'\" >");
-            headerString.append(section.getTitle());
+            headerString.append("<td style=\"vertical-align:middle\" id=\"" + id +"\"").append(" class=\"")
+                    .append(styleClass).append("\" onclick=\"document.location='#").append(name).append("'\" >");
+            headerString.append(title);
             headerString.append("</td>\n");
 
             headerString.append("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
@@ -145,9 +142,9 @@ public class Header implements ValueChangeHandler<String> {
             {
                 Element element = (Element) n;
                 if(element.getId().equals("header-"+name))
-                    element.addClassName("TopSectionLinkSelected");
+                    element.addClassName("header-link-selected");
                 else
-                    element.removeClassName("TopSectionLinkSelected");
+                    element.removeClassName("header-link-selected");
             }
         }
     }

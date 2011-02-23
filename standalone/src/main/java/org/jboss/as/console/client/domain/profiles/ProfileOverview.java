@@ -19,6 +19,7 @@ import org.jboss.as.console.client.domain.groups.ServerGroupCell;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.DeploymentRecord;
+import org.jboss.as.console.client.shared.DeploymentTable;
 import org.jboss.as.console.client.shared.tables.DefaultCellTable;
 
 import java.util.ArrayList;
@@ -106,33 +107,7 @@ public class ProfileOverview
         ContentGroupLabel deploymentLabel = new ContentGroupLabel("Domain Level Deployments");
         layout.add(deploymentLabel);
 
-        deploymentTable = new DefaultCellTable<DeploymentRecord>(10);
-
-        TextColumn<DeploymentRecord> dplNameColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getName();
-            }
-        };
-
-        TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getRuntimeName();
-            }
-        };
-
-        TextColumn<DeploymentRecord> dplShaColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getSha();
-            }
-        };
-
-        deploymentTable.addColumn(dplNameColumn, "Name");
-        deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-        deploymentTable.addColumn(dplShaColumn, "Sha");
-
+        deploymentTable = new DeploymentTable();
         layout.add(deploymentTable);
 
         refresh();
