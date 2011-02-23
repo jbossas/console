@@ -35,4 +35,7 @@ public interface Icons extends ClientBundle {
 
     @Source("icn_info_red.png")
     ImageResource info_red();
+
+    @Source("close.png")
+    ImageResource close();
 }

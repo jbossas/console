@@ -1,19 +1,20 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.CloseClickHandler;
-import com.smartgwt.client.widgets.events.CloseClientEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.components.DefaultWindow;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -113,42 +114,30 @@ public class ServerGroupPresenter
     }
 
     public void createNewGroup() {
-        final Window winModal = new Window();
+        final DefaultWindow window = new DefaultWindow("Create Server Group");
 
-        double GOLDEN_RATIO = 1.618;
-        int winWidth = (int)(com.google.gwt.user.client.Window.getClientWidth()*0.8);
-        int winHeight = (int) ( winWidth / GOLDEN_RATIO );
-
-        winModal.setWidth(winWidth);
-        winModal.setHeight(winHeight);
-
-
-        winModal.setTitle("Create Server Group");
-        winModal.setShowMinimizeButton(false);
-        winModal.setIsModal(true);
-        winModal.setShowModalMask(true);
-        winModal.centerInPage();
-        winModal.addCloseClickHandler(new CloseClickHandler() {
-            public void onCloseClick(CloseClientEvent event) {
-
-                winModal.destroy();
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
                 History.back();
             }
         });
-        winModal.addItem(
-                new Label("This will become a wizard to create server groups.")
-                {{
-                        setMargin(15);
-                    }}
+
+        window.setWidget(
+                new Label("This will become a wizard to create server groups.") {{
+                    getElement().setAttribute("style", "margin:15px;");
+                }}
         );
 
-        winModal.show();
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        getView().setSelectedRecord(selectedRecord);
+        if(selectedRecord!=null)
+            getView().setSelectedRecord(selectedRecord);
     }
 
     @Override
