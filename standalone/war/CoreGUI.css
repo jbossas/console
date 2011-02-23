@@ -385,7 +385,8 @@ body, p, td, th, option, input, textarea, select {
 
 .gwt-PopupPanelGlass {
     background-color:#A7ABB4;
-    opacity:0.6;
+    filter:alpha(opacity=75);
+    opacity:0.75;
 }
 
 
