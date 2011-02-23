@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.util;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 import java.util.ArrayList;
@@ -13,31 +14,57 @@ public class Places {
 
     public static List<PlaceRequest> fromString(String urlString)
     {
-        List<PlaceRequest> places = new ArrayList<PlaceRequest>();
+        List<PlaceRequest> places = null;
+        try {
+            places = new ArrayList<PlaceRequest>();
 
-        // TODO: Tis is currently limited to a a parent/child hierarchy with depth 1
-        if(urlString.contains("/"))
-        {
-            String[] parentChild = urlString.split("/");
-
-            String parent = parentChild[0];
-            places.add(new PlaceRequest(parent));
-
-            String child = parentChild[1];
-            if(child.contains(";"))
+            StringTokenizer tokenizer = new StringTokenizer(urlString, "/");
+            while(tokenizer.hasMoreTokens())
             {
-                String[] split = child.split(";");
-                String childPlace = split[0];
-                String params[] = split[1].split("=");
+                parseSingleToken(places, tokenizer.nextToken());
+            }
 
-                places.add(new PlaceRequest(childPlace).with(params[0], params[1]));
-            }
-            else
-            {
-                places.add(new PlaceRequest(child));
-            }
+        } catch (Throwable e) {
+            Log.error("Error parsing token: " + urlString);
         }
 
         return places;
+    }
+
+    private static void parseSingleToken(List<PlaceRequest> places, String token) {
+
+        if(token.contains(";")) // parametrized?
+        {
+            StringTokenizer params = new StringTokenizer(token, ";");
+            PlaceRequest request = null;
+            while(params.hasMoreTokens())
+            {
+                String tok = params.nextToken();
+                if(tok.contains("="))
+                {
+                    if(null==request) break;
+
+                    // parameter
+                    String[] parameter = tok.split("=");
+                    request = request.with(parameter[0], parameter[1]);
+                }
+                else
+                {
+                    // address
+                    request = new PlaceRequest(tok);
+
+                }
+            }
+
+            // exit, either wrong token or different formatter
+            if(null==request)
+                throw new IllegalArgumentException("Illegal token: "+token);
+
+            places.add(request);
+        }
+        else
+        {
+            places.add(new PlaceRequest(token));
+        }
     }
 }
