@@ -23,15 +23,14 @@ public class DefaultWindow extends PopupPanel {
         LayoutPanel layout = new LayoutPanel();
         setStyleName("default-window");
 
-        LayoutPanel header = new LayoutPanel();
+        HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("default-window-header");
+        header.getElement().setAttribute("cellpadding", "4");
 
         HTML titleText = new HTML(title);
-        titleText.getElement().setAttribute("style", "padding:6px;");
 
         Image closeIcon = new Image(Icons.INSTANCE.close());
         closeIcon.setAltText("Close");
-
         closeIcon.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -42,8 +41,12 @@ public class DefaultWindow extends PopupPanel {
         header.add(titleText);
         header.add(closeIcon);
 
-        header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
-        header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
+        // it's just a table ...
+        titleText.getElement().getParentElement().setAttribute("width", "100%");
+        closeIcon.getElement().getParentElement().setAttribute("width", "16px");
+
+        //header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
+        //header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
 
         layout.add(header);
 
