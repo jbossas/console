@@ -5,6 +5,8 @@ import com.google.gwt.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.server.subsys.threads.ThreadFactoryRecord;
+
 
 /**
  * @author Heiko Braun
@@ -13,7 +15,10 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<ProfileRecord> profile();
+    AutoBean<SubsystemRecord> subsystem();
     AutoBean<ServerGroupRecord> serverGroup();
     AutoBean<PropertyRecord> property();
     AutoBean<DeploymentRecord> deployment();
+
+    AutoBean<ThreadFactoryRecord> threadFactory();
 }

@@ -3,14 +3,13 @@ package org.jboss.as.console.client.domain;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.widgets.layout.SectionStackSection;
 import org.jboss.as.console.client.components.LHSNavItem;
 
 /**
  * @author Heiko Braun
  * @date 2/15/11
  */
-class CommonConfigSection extends SectionStackSection{
+class CommonConfigSection {
     private LayoutPanel layout;
 
     public CommonConfigSection() {

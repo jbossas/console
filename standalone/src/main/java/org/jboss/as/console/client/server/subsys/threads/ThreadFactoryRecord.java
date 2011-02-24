@@ -1,30 +1,17 @@
 package org.jboss.as.console.client.server.subsys.threads;
 
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @author Heiko Braun
  * @date 2/9/11
  */
-final class ThreadFactoryRecord extends ListGridRecord {
-    public ThreadFactoryRecord(String name, String group, int prio) {
-        setAttribute("name", name);
-        setAttribute("group", group);
-        setAttribute("prio", prio);
-    }
+public interface ThreadFactoryRecord {
 
-    public ThreadFactoryRecord() {
-    }
+    String getName();
+    void setName(String name);
 
-    public void fromValues(Map values)
-    {
-        Set<String> keys = values.keySet();
-        for(String key : keys)
-        {
-            setAttribute(key, values.get(key));
-        }
-    }
+    String getGroup();
+    void setGroup(String group);
+
+    int getPriority();
+    void setPriority(int prio);
 }

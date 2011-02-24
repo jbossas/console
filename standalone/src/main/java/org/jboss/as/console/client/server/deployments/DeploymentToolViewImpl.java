@@ -29,7 +29,7 @@ public class DeploymentToolViewImpl
         final LayoutPanel layout = new RHSContentPanel("Deployments");
         deploymentTable = new DeploymentTable();
         layout.add(deploymentTable);
-
+        deploymentTable.setRowData(0, presenter.getRecords());
         return layout;
     }
 

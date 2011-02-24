@@ -1,51 +1,43 @@
 package org.jboss.as.console.client.server;
 
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.util.message.Message;
+
+import java.util.List;
 
 /**
  * Server management default view implementation.
  * Works on a LHS navigation and a all purpose content panel on the right.
  *
- * <p/>
- * CSS:
- * <ul>
- * <li> 'lhs-navigation-panel', used for the top most horizontal panel
- * </ul>
  * @see LHSServerNavigation
  *
  * @author Heiko Braun
  * @date 2/4/11
  */
 public class ServerMgmtApplicationViewImpl extends ViewImpl
-        implements ServerMgmtApplicationPresenter.ServerManagementView{
+        implements ServerMgmtApplicationPresenter.ServerManagementView {
 
-    private HLayout layout;
+    private ServerMgmtApplicationPresenter presenter;
+
+    private SplitLayoutPanel layout;
+    private LayoutPanel contentCanvas;
     private LHSServerNavigation lhsNavigation;
-    private Canvas contentCanvas;
 
     public ServerMgmtApplicationViewImpl() {
         super();
 
-        layout = new HLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-        layout.setStyleName("lhs-navigation-panel");
+        layout = new SplitLayoutPanel(4);
 
+        contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSServerNavigation();
 
-        contentCanvas = new Canvas();
-        contentCanvas.setWidth100();
-        contentCanvas.setHeight100();
-        contentCanvas.setMargin(0);
-
-        layout.addMember(lhsNavigation.asWidget());
-        layout.addMember(contentCanvas);
+        layout.addWest(lhsNavigation.asWidget(), 220);
+        layout.add(contentCanvas);
 
     }
 
@@ -55,7 +47,7 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
     }
 
     @Override
-    public void updateFrom(SubsystemRecord[] subsystemRecords) {
+    public void updateFrom(List<SubsystemRecord> subsystemRecords) {
         lhsNavigation.updateFrom(subsystemRecords);
     }
 
@@ -74,14 +66,9 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
     }
 
     private void setContent(Widget newContent) {
-
-        Canvas[] children = contentCanvas.getChildren();
-        if(children.length>0) {
-            contentCanvas.removeChild(children[0]);
-        }
-
-        contentCanvas.addChild(newContent);
-        contentCanvas.markForRedraw();
+        contentCanvas.clear();
+        contentCanvas.add(newContent);
     }
+
 
 }

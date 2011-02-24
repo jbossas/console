@@ -10,6 +10,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.util.message.Message;
 
+import java.util.List;
+
 /**
  * Domain management default view implementation.
  * Works on a LHS navigation and a all purpose content panel on the right.
@@ -29,7 +31,6 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
         super();
 
         layout = new SplitLayoutPanel(4);
-        layout.setStyleName("lhs-navigation-panel");
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSDomainNavigation();
@@ -68,7 +69,7 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
     }
 
     @Override
-    public void setSubsystems(SubsystemRecord[] subsystemRecords)
+    public void setSubsystems(List<SubsystemRecord> subsystemRecords)
     {
         lhsNavigation.updateFrom(subsystemRecords);
     }

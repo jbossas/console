@@ -11,6 +11,8 @@ import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 2/15/11
@@ -77,7 +79,7 @@ class ProfileSection {
 
     }
 
-    public void updateFrom(SubsystemRecord[] subsystems) {
+    public void updateFrom(List<SubsystemRecord> subsystems) {
 
         root.removeItems();
 

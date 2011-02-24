@@ -2,8 +2,7 @@ package org.jboss.as.console.client.server.properties;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.smartgwt.client.widgets.layout.VLayout;
-import org.jboss.as.console.client.components.TitleBar;
+import org.jboss.as.console.client.components.RHSContentPanel;
 
 /**
  * @author Heiko Braun
@@ -21,13 +20,6 @@ public class PropertyToolViewImpl extends ViewImpl
 
     @Override
     public Widget asWidget() {
-        VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-
-        TitleBar titleBar = new TitleBar("System Properties");
-        layout.addMember(titleBar);
-
-        return layout;
+        return new RHSContentPanel("System Properties");
     }
 }

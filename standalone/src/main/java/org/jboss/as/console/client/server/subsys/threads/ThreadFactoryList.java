@@ -1,27 +1,46 @@
 package org.jboss.as.console.client.server.subsys.threads;
 
-import com.smartgwt.client.types.ListGridEditEvent;
-import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.events.RowEditorExitEvent;
-import com.smartgwt.client.widgets.grid.events.RowEditorExitHandler;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.jboss.as.console.client.components.sgwt.HelpWindow;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import org.jboss.as.console.client.shared.tables.DefaultCellTable;
 
 /**
  * @author Heiko Braun
  * @date 2/10/11
  */
-class ThreadFactoryList extends VLayout {
+class ThreadFactoryList extends LayoutPanel {
 
     public ThreadFactoryList(final ThreadManagementPresenter presenter) {
 
-        ToolStrip toolStrip = new ToolStrip();
+        DefaultCellTable factoryTable = new DefaultCellTable(10);
+
+        TextColumn<ThreadFactoryRecord> nameColumn = new TextColumn<ThreadFactoryRecord>() {
+            @Override
+            public String getValue(ThreadFactoryRecord record) {
+                return record.getName();
+            }
+        };
+
+        TextColumn<ThreadFactoryRecord> groupColumn = new TextColumn<ThreadFactoryRecord>() {
+            @Override
+            public String getValue(ThreadFactoryRecord record) {
+                return record.getGroup();
+            }
+        };
+
+        TextColumn<ThreadFactoryRecord> prioColumn = new TextColumn<ThreadFactoryRecord>() {
+            @Override
+            public String getValue(ThreadFactoryRecord record) {
+                return String.valueOf(record.getPriority());
+            }
+        };
+
+        factoryTable.addColumn(nameColumn, "Factory Name");
+        factoryTable.addColumn(groupColumn, "Group");
+        factoryTable.addColumn(prioColumn, "Priority");
+
+       /* ToolStrip toolStrip = new ToolStrip();
         toolStrip.setWidth100();
 
         final ListGrid factoriesGrid = new ListGrid();
@@ -72,40 +91,10 @@ class ThreadFactoryList extends VLayout {
 
 
 
-        factoriesGrid.setWidth100();
-        factoriesGrid.setHeight100();
-        factoriesGrid.setShowAllRecords(true);
+        */
 
-        ListGridField nameField = new ListGridField("name", "Name");
-        ListGridField groupField = new ListGridField("group", "Group");
-        ListGridField prioField = new ListGridField("prio", "Priority");
 
-        factoriesGrid.setFields(nameField, groupField, prioField);
-        factoriesGrid.setCanResizeFields(true);
-        factoriesGrid.setCanEdit(true);
-        factoriesGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
-
-        factoriesGrid.setData(presenter.getFactoryRecords());
-
-        factoriesGrid.addRowEditorExitHandler(new RowEditorExitHandler()
-        {
-            @Override
-            public void onRowEditorExit(RowEditorExitEvent event) {
-
-                ThreadFactoryRecord record = null;
-                if(event.getRecord() instanceof ThreadFactoryRecord)
-                    record = (ThreadFactoryRecord)event.getRecord();
-                else
-                {
-                    record = new ThreadFactoryRecord();
-                    record.fromValues(event.getNewValues());
-                }
-
-                presenter.onUpdateRecord(record);
-
-            }
-        });
-
-        this.addMember(factoriesGrid);
+        add(factoryTable);
+        setWidgetTopHeight(factoryTable, 0, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 }

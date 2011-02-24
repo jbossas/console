@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.components.sgwt;
+package org.jboss.as.console.client.components;
 
 import com.google.gwt.user.client.ui.HTML;
 

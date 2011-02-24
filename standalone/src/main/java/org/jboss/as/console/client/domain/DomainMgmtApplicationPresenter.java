@@ -19,6 +19,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.shared.SubsystemStore;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 2/11/11
@@ -40,7 +42,7 @@ public class DomainMgmtApplicationPresenter
 
     public interface MyView extends SuspendableView {
         void setProfiles(ProfileRecord[] profileRecords);
-        void setSubsystems(SubsystemRecord[] subsystemRecords);
+        void setSubsystems(List<SubsystemRecord> subsystemRecords);
         void setServerGroups(ServerGroupRecord[] serverGroupRecords);
     }
 

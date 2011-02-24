@@ -1,25 +1,16 @@
 package org.jboss.as.console.client.server;
 
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.smartgwt.client.types.VisibilityMode;
-import com.smartgwt.client.widgets.grid.events.CellClickEvent;
-import com.smartgwt.client.widgets.grid.events.CellClickHandler;
-import com.smartgwt.client.widgets.layout.SectionStack;
-import com.smartgwt.client.widgets.layout.SectionStackSection;
-import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.components.NavTreeGrid;
-import org.jboss.as.console.client.components.NavTreeNode;
-import org.jboss.as.console.client.components.sgwt.NavigationSection;
+import org.jboss.as.console.client.components.LHSNavItem;
+import org.jboss.as.console.client.components.StackSectionHeader;
 import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.util.Places;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * LHS navigation for standalone server management.
@@ -29,152 +20,105 @@ import java.util.Map;
  */
 public class LHSServerNavigation {
 
-    private Map<String, TreeGrid> treeGrids = new LinkedHashMap<String, TreeGrid>();
-    private Map<String, NavigationSection> sectionsByName;
-    private SectionStack sectionStack;
-
-    private NavTreeGrid subsysTreeGrid;
-    private NavTreeNode subsysNode;
+    private StackLayoutPanel stack;
+    TreeItem subsysRoot;
 
     public LHSServerNavigation() {
         super();
 
+        stack = new StackLayoutPanel(Style.Unit.PX);
+        stack.addStyleName("section-stack");
+        stack.setWidth("250");
 
-        sectionStack = new SectionStack();
-        sectionStack.addStyleName("lhs-section-stack");
-        sectionStack.setShowResizeBar(true);
-        sectionStack.setVisibilityMode(VisibilityMode.MULTIPLE);
-        sectionStack.setWidth(220);
-        sectionStack.setHeight100();
 
         // ----------------------------------------------------
 
-        subsysTreeGrid = new NavTreeGrid("subsys");
+        LayoutPanel subsysLayout = new LayoutPanel();
+        subsysLayout.setStyleName("stack-section");
 
-        subsysTreeGrid.addCellClickHandler(new CellClickHandler() {
+        Tree subsysTree = new Tree();
+        subsysTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
-            public void onCellClick(CellClickEvent event) {
-                final NavTreeNode selectedRecord = (NavTreeNode) subsysTreeGrid.getSelectedRecord();
-
+            public void onSelection(SelectionEvent<TreeItem> event) {
+                TreeItem selectedItem = event.getSelectedItem();
+                String token = selectedItem.getElement().getAttribute("token");
                 Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                        new ArrayList<PlaceRequest>() {{
-                            add(new PlaceRequest("server"));
-                            add(new PlaceRequest(selectedRecord.getName()));
-                        }}
+                        Places.fromString(token)
                 );
             }
         });
 
-        subsysNode = new NavTreeNode( "subsystems", false);
-        Tree profileTree = new Tree();
-        profileTree.setRoot(subsysNode);
+        subsysRoot = new TreeItem("Subsystems:");
+        subsysTree.addItem(subsysRoot);
 
-        subsysTreeGrid.setData(profileTree);
-        subsysTreeGrid.getTree().openAll();
-
-        SectionStackSection profileSection = new SectionStackSection("Profile");
-        profileSection.setExpanded(true);
-        profileSection.addItem(subsysTreeGrid);
-
-        sectionStack.addSection(profileSection);
+        subsysLayout.add(subsysTree);
+        stack.add(subsysLayout, new StackSectionHeader("Profile"), 28);
 
         // ----------------------------------------------------
 
-        final NavTreeGrid deploymentGrid = new NavTreeGrid("Deployments");
+        LayoutPanel dplLayout = new LayoutPanel();
+        dplLayout.setStyleName("stack-section");
 
-        deploymentGrid.addCellClickHandler(new CellClickHandler() {
-            @Override
-            public void onCellClick(CellClickEvent event) {
-                final NavTreeNode selectedRecord =
-                        (NavTreeNode) deploymentGrid.getSelectedRecord();
+        LHSNavItem[] dplItems = new LHSNavItem[] {
+                new LHSNavItem("Web Applications", "server-deployments;type=web"),
+                new LHSNavItem("Enterprise Applications", "server-deployments;type=ee"),
+                new LHSNavItem("Resource Adapters", "server-deployments;type=jca"),
+                new LHSNavItem("Other", "server-deployments;type=other")
+        };
 
-                // TODO: why does revealPlaceHierarchy() not work?
-                History.newItem("server/"+selectedRecord.getName());
-            }
-        });
+        int i =0;
+        for(LHSNavItem item : dplItems)
+        {
+            dplLayout.add(item);
+            dplLayout.setWidgetTopHeight(item, i, Style.Unit.PX, 25, Style.Unit.PX);
+            i+=25;
+        }
 
+        stack.add(dplLayout, new StackSectionHeader("Deployments"), 28);
 
-        final TreeNode deploymentNode = new NavTreeNode(
-                "server-deployments", "Server Deployments",false,
-                new NavTreeNode("server-deployments;type=web", "Web Applications"),
-                new NavTreeNode("server-deployments;type=ee", "Enterprise Applications"),
-                new NavTreeNode("server-deployments;type=rar", "Resource Adapters"),
-                new NavTreeNode("server-deployments;type=other", "Other")
-
-        );
-        Tree deploymentTree = new Tree();
-        deploymentTree.setRoot(deploymentNode);
-        deploymentGrid.setData(deploymentTree);
-
-
-        SectionStackSection deploymentSection = new SectionStackSection("Deployments");
-        deploymentSection.setExpanded(true);
-        deploymentSection.addItem(deploymentGrid);
-
-        sectionStack.addSection(deploymentSection);
-
+                       
         // ----------------------------------------------------
 
-        NavTreeGrid commonGrid = new NavTreeGrid("Common");
-        final TreeNode commonNode = new NavTreeNode(
-                "common", "Common Settings", true,
-                new NavTreeNode("paths", "Paths"),
-                new NavTreeNode("interfaces", "Interfaces"),
-                new NavTreeNode("sockets", "Socket Binding Groups"),
-                new NavTreeNode("properties", "System Properties")
-        );
+        LayoutPanel commonLayout = new LayoutPanel();
+         commonLayout.setStyleName("stack-section");
 
-        Tree commonTree = new Tree();
-        commonTree.setRoot(commonNode);
-        commonGrid.setData(commonTree);
+        LHSNavItem[] commonItems = new LHSNavItem[] {
+                new LHSNavItem("Paths", "server/server-paths"),
+                new LHSNavItem("Interfaces", "server/server-interfaces"),
+                new LHSNavItem("Socket Binding Groups", "server/server-sockets"),
+                new LHSNavItem("System Properties", "server/server-properties")
+        };
 
-        SectionStackSection commonSection = new SectionStackSection("General Configuration");
-        commonSection.addItem(commonGrid);
+        i =0;
+        for(LHSNavItem item : commonItems)
+        {
+            commonLayout.add(item);
+            commonLayout.setWidgetTopHeight(item, i, Style.Unit.PX, 25, Style.Unit.PX);
+            i+=25;
+        }
 
-        sectionStack.addSection(commonSection);
-
+        stack.add(commonLayout, new StackSectionHeader("General Config"), 28);
 
     }
 
     public Widget asWidget()
     {
-        return sectionStack;
+        return stack;
     }
 
-    public void updateFrom(SubsystemRecord[] subsystems) {
+    public void updateFrom(List<SubsystemRecord> subsystems) {
 
-        subsysTreeGrid.getTree().closeAll(subsysNode);
+        subsysRoot.removeItems();
 
-        TreeNode[] nodes = new TreeNode[subsystems.length];
-        int i = 0;
         for(SubsystemRecord subsys: subsystems)
         {
-            nodes[i] = new NavTreeNode(subsys.getToken(), subsys.getTitle());
-            i++;
+            TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
+            item.getElement().setAttribute("token", subsys.getToken());
+            item.setStyleName("lhs-tree-item");
+            subsysRoot.addItem(item);
         }
 
-        subsysNode.setChildren(nodes);
+        subsysRoot.setState(true);
 
-        subsysTreeGrid.markForRedraw();
-        subsysTreeGrid.getTree().openAll(subsysNode);
     }
-
-    /*
-   private void highlightTool(String sectionName, String pageName)
-   {
-       for (String name : treeGrids.keySet()) {
-           TreeGrid treeGrid = treeGrids.get(name);
-           if (!name.equals(sectionName)) {
-               treeGrid.deselectAllRecords();
-           } else {
-               Tree tree = treeGrid.getTree();
-               TreeNode node = tree.find(sectionName + "/" + pageName);
-               if (node != null) {
-                   treeGrid.selectSingleRecord(node);
-               } else {
-                   Log.error("Unknown page: " + sectionName + "/" + pageName);
-               }
-           }
-       }
-   } */
 }

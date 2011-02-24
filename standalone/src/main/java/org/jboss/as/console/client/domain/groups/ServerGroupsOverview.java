@@ -1,10 +1,10 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.layout.VLayout;
+import org.jboss.as.console.client.components.RHSContentPanel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
-import org.jboss.as.console.client.components.TitleBar;
 
 /**
  * @author Heiko Braun
@@ -22,16 +22,9 @@ public class ServerGroupsOverview extends SuspendableViewImpl
 
     @Override
     public Widget createWidget() {
-        final VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-
-        TitleBar titleBar = new TitleBar("Server Groups Overview");
-        layout.addMember(titleBar);
+        final LayoutPanel layout = new RHSContentPanel("Server Group Overview");
 
         Label label = new Label("This will contain a list of server groups and hosts (servers) that actually belong to each group.");
-        label.setMargin(15);
-        layout.addMember(label);
 
         return layout;
     }

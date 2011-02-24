@@ -2,7 +2,6 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -14,13 +13,12 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.RHSContentPanel;
 import org.jboss.as.console.client.components.SuspendableViewImpl;
-import org.jboss.as.console.client.components.sgwt.ContentGroupLabel;
+import org.jboss.as.console.client.components.ContentGroupLabel;
 import org.jboss.as.console.client.domain.groups.ServerGroupCell;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentTable;
-import org.jboss.as.console.client.shared.tables.DefaultCellTable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

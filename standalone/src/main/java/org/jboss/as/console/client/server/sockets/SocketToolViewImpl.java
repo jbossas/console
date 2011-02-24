@@ -1,9 +1,8 @@
 package org.jboss.as.console.client.server.sockets;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.smartgwt.client.widgets.layout.VLayout;
 import org.jboss.as.console.client.components.DisposableViewImpl;
-import org.jboss.as.console.client.components.TitleBar;
+import org.jboss.as.console.client.components.RHSContentPanel;
 
 /**
  * @author Heiko Braun
@@ -21,13 +20,6 @@ public class SocketToolViewImpl extends DisposableViewImpl implements SocketTool
     @Override
     public Widget createWidget() {
 
-        VLayout layout = new VLayout();
-        layout.setWidth100();
-        layout.setHeight100();
-
-        TitleBar titleBar = new TitleBar("Sockets");
-        layout.addMember(titleBar);
-
-        return layout;
+        return new RHSContentPanel("Socket Binding Groups");
     }
 }

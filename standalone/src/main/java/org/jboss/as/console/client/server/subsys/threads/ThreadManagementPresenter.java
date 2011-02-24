@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.server.subsys.threads;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -9,12 +10,15 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.components.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.util.message.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -23,6 +27,8 @@ import org.jboss.as.console.client.util.message.Message;
 public class ThreadManagementPresenter extends Presenter<ThreadManagementPresenter.MyView, ThreadManagementPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+
+    BeanFactory beanFactory = GWT.create(BeanFactory.class);
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ThreadManagementPresenter)
@@ -54,13 +60,22 @@ public class ThreadManagementPresenter extends Presenter<ThreadManagementPresent
 
     // -----------------------------------------------
 
-    public ListGridRecord[] getFactoryRecords() {
-        return records;
+    public List<ThreadFactoryRecord> getFactoryRecords() {
+
+        List<ThreadFactoryRecord> result = new ArrayList<ThreadFactoryRecord>();
+        ThreadFactoryRecord record = beanFactory.threadFactory().as();
+        record.setName("Default Thread Factory");
+        record.setGroup("system");
+        record.setPriority(1);
+
+        result.add(record);
+
+        return result;
     }
 
     public void onUpdateRecord(ThreadFactoryRecord record) {
 
-        String name = record.getAttribute("name");
+        String name = record.getName();
         if(name!=null)
         {
             Console.MODULES.getMessageCenter().notify(
@@ -68,12 +83,5 @@ public class ThreadManagementPresenter extends Presenter<ThreadManagementPresent
             );
         }
     }
-
-
-    private final ThreadFactoryRecord[] records =
-            new ThreadFactoryRecord[]
-                    {
-                            new ThreadFactoryRecord("DefaultThreadFactory", "default", 1)
-                    };
 }
 

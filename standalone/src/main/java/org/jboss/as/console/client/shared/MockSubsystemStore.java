@@ -1,7 +1,10 @@
 package org.jboss.as.console.client.shared;
 
 import com.allen_sauer.gwt.log.client.Log;
-import org.jboss.as.console.client.NameTokens;
+import com.google.gwt.core.client.GWT;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -9,26 +12,40 @@ import org.jboss.as.console.client.NameTokens;
  */
 public class MockSubsystemStore implements SubsystemStore {
 
-    static SubsystemRecord[] records = new SubsystemRecord[] {
-            new SubsystemRecord(NameTokens.ThreadManagementPresenter,"Threads"),
-            new SubsystemRecord("web","Web"),
-            new SubsystemRecord("ejb","EJB"),
-            new SubsystemRecord("jca","JCA"),
-            new SubsystemRecord("messaging","Messaging"),
-            new SubsystemRecord("tx","Transactions"),
-            new SubsystemRecord("ws","Web Services"),
-            new SubsystemRecord("ha","Clustering")
+    BeanFactory beanFactory = GWT.create(BeanFactory.class);
+
+    static String[][] tuples = new String[][] {
+            new String[]{"threads","Threads"},
+            new String[]{"web","Web"},
+            new String[]{"ejb","EJB"},
+            new String[]{"jca","JCA"},
+            new String[]{"messaging","Messaging"},
+            new String[]{"tx","Transactions"},
+            new String[]{"ws","Web Services"},
+            new String[]{"ha","Clustering"}
 
     };
 
     @Override
-    public SubsystemRecord[] loadSubsystems() {
+    public List<SubsystemRecord> loadSubsystems() {
+
+        List<SubsystemRecord> records = new ArrayList<SubsystemRecord>(tuples.length);
+
+        for(String[] tuple : tuples)
+        {
+            SubsystemRecord rec = beanFactory.subsystem().as();
+            rec.setToken(tuple[0]);
+            rec.setTitle(tuple[1]);
+
+            records.add(rec);
+        }
         return records;
     }
 
     @Override
-    public SubsystemRecord[] loadSubsystems(String profileName) {
-        Log.debug("Loaded " + records.length + " subsystems for profile '"+profileName+"'");
+    public List<SubsystemRecord>  loadSubsystems(String profileName) {
+        List<SubsystemRecord> records = loadSubsystems();
+        Log.debug("Loaded " + records.size() + " subsystems for profile '"+profileName+"'");
         return records;
     }
 }

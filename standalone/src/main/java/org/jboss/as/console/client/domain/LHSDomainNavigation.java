@@ -8,6 +8,8 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 
+import java.util.List;
+
 /**
  * LHS domain management navigation.
  *
@@ -47,14 +49,14 @@ class LHSDomainNavigation {
         return stack;
     }
 
-    public void updateFrom(ProfileRecord[] profileRecords) {
-
-        profileSection.updateFrom(profileRecords);
-    }
-
-    public void updateFrom(SubsystemRecord[] subsystems) {
+    public void updateFrom(List<SubsystemRecord> subsystems) {
 
         profileSection.updateFrom(subsystems);
+    }
+
+    public void updateFrom(ProfileRecord[] profiles) {
+
+        profileSection.updateFrom(profiles);
     }
 
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {

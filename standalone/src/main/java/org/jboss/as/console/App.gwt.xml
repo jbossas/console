@@ -9,8 +9,6 @@
     <set-configuration-property name="gin.ginjector"
                                 value="org.jboss.as.console.client.gin.CoreUI" />
 
-    <inherits name="com.smartgwt.SmartGwt"/>
-
     <!-- Add gwt-log support, default level `DEBUG` -->
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
     <inherits name="com.google.gwt.autobean.AutoBean"/>

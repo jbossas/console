@@ -37,22 +37,22 @@ public class NameTokens {
         return systemApp;
     }
 
-    public final static String InterfaceToolPresenter = "interfaces";
+    public final static String InterfaceToolPresenter = "server-interfaces";
     public static String getInterfaceToolPresenter() {
         return InterfaceToolPresenter;
     }
 
-    public final static String PathToolPresenter = "path";
+    public final static String PathToolPresenter = "server-paths";
     public static String getPathToolPresenter() {
         return PathToolPresenter;
     }
 
-    public final static String PropertyToolPresenter = "properties";
+    public final static String PropertyToolPresenter = "server-properties";
     public static String getPropertyToolPresenter() {
         return PropertyToolPresenter;
     }
 
-    public final static String SocketToolPresenter = "sockets";
+    public final static String SocketToolPresenter = "server-sockets";
     public static String getSocketToolPresenter() {
         return SocketToolPresenter;
     }

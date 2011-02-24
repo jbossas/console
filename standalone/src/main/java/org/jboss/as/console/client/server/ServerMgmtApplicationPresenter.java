@@ -14,6 +14,8 @@ import org.jboss.as.console.client.NameTokens;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.shared.SubsystemStore;
 
+import java.util.List;
+
 /**
  * A collection of tools to manage a standalone server instance.
  *
@@ -30,7 +32,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
     public interface ServerManagementView extends View {
 
-        void updateFrom(SubsystemRecord[] subsystemRecords);
+        void updateFrom(List<SubsystemRecord> subsystemRecords);
     }
 
     @ProxyCodeSplit
