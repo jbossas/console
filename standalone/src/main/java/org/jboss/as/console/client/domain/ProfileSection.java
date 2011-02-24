@@ -5,11 +5,12 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.icons.Icons;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ class ProfileSection {
 
     private TreeItem root;
     private Tree subsysTree;
-    private ListBox profileSelection;
+
+    private ComboBox selection;
 
     private LayoutPanel layout;
 
@@ -30,7 +32,7 @@ class ProfileSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        profileSelection = new ListBox();
+
         subsysTree = new Tree();
         root = new TreeItem("Subsystems:");
         subsysTree.addItem(root);
@@ -42,12 +44,17 @@ class ProfileSection {
         );
 
         layout.add(overview);
-        layout.add(profileSelection);
+
+        selection = new ComboBox();
+
+
+        Widget dropDown = selection.asWidget();
+        layout.add(dropDown);
         layout.add(subsysTree);
 
         layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(profileSelection, 25, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(subsysTree, 50, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(dropDown, 25, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(subsysTree, 53, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
     public Widget asWidget()
@@ -61,18 +68,18 @@ class ProfileSection {
 
     public void updateFrom(final ProfileRecord[] profileRecords) {
 
-        profileSelection.clear();
+        selection.clearValues();
 
         for(ProfileRecord record : profileRecords)
         {
-            profileSelection.addItem(record.getName());
+            selection.addItem(record.getName());
         }
 
         // select first option when updated
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                profileSelection.setItemSelected(0, true);
+                selection.setItemSelected(0, true);
                 fireProfileSelection(profileRecords[0].getName());
             }
         });

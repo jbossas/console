@@ -3,6 +3,7 @@ package org.jboss.as.console.client.widgets;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.widgets.icons.Icons;
@@ -12,6 +13,8 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  * @date 2/23/11
  */
 public class DefaultWindow extends PopupPanel {
+
+    private static final int ESCAPE = 27;
 
     LayoutPanel content;
     private final static double GOLDEN_RATIO = 1.618;
@@ -64,6 +67,16 @@ public class DefaultWindow extends PopupPanel {
 
         layout.setWidgetTopHeight(header, 0, Style.Unit.PX, 25, Style.Unit.PX);
         layout.setWidgetTopHeight(content, 25, Style.Unit.PX, 500, Style.Unit.PX);
+    }
+
+    @Override
+    protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
+        if (Event.ONKEYUP == event.getTypeInt()) {
+            if (event.getNativeEvent().getKeyCode() == ESCAPE) {
+                // Dismiss when escape is pressed
+                hide();
+            }
+        }
     }
 
     @Override

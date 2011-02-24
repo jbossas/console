@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.widgets.forms;
 
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.ComboBox;
 
 /**
  * @author Heiko Braun
@@ -9,17 +9,17 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ComboBoxItem extends FormItem<String> {
 
-    private ListBox listBox;
+    private ComboBox listBox;
     private boolean defaultToFirst;
 
     public ComboBoxItem(String name, String title) {
         super(name, title);
-        this.listBox = new ListBox();
+        this.listBox = new ComboBox();
     }
 
     @Override
     public String getValue() {
-        return listBox.getValue(listBox.getSelectedIndex());
+        return listBox.getSelectedValue();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public Widget asWidget() {
-        return listBox;
+        return listBox.asWidget();
     }
 
     public void setDefaultToFirstOption(boolean b) {
@@ -44,7 +44,7 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     public void setValueMap(String[] values) {
-        listBox.clear();
+        listBox.clearValues();
         for(String s : values)
         {
             listBox.addItem(s);
