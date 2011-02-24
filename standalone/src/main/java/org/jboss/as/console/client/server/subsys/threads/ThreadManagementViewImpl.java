@@ -2,8 +2,8 @@ package org.jboss.as.console.client.server.subsys.threads;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.components.RHSContentPanel;
-import org.jboss.as.console.client.components.SuspendableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 /**
  * @author Heiko Braun

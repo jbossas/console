@@ -8,8 +8,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.MainLayoutPresenter;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.core.MainLayoutPresenter;
+import org.jboss.as.console.client.core.NameTokens;
 
 /**
  * @author Heiko Braun

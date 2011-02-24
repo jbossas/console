@@ -9,8 +9,8 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
-import org.jboss.as.console.client.MainLayoutPresenter;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.core.MainLayoutPresenter;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.shared.SubsystemStore;
 

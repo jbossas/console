@@ -3,13 +3,11 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
-import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.components.SuspendableView;
+import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 
 /**

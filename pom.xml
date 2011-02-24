@@ -54,7 +54,6 @@
     <properties>
         <gwt.version>2.2.0</gwt.version>
         <gwt.maven>2.2.0</gwt.maven>
-        <smartgwt.version>2.4</smartgwt.version>
         <gwt-log.version>3.1.0</gwt-log.version>
         <gin.version>1.0_r170</gin.version>
         <guice.version>3.0-rc2</guice.version>
@@ -81,12 +80,6 @@
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
                 <version>${gwt.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>smartgwt</groupId>
-                <artifactId>smartgwt</artifactId>
-                <version>${smartgwt.version}</version>
             </dependency>
 
             <dependency>

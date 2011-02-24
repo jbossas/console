@@ -11,7 +11,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.core.NameTokens;
 
 /**
  * @author Heiko Braun

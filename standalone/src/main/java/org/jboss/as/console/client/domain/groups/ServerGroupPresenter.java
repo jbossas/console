@@ -13,15 +13,15 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.components.DefaultWindow;
-import org.jboss.as.console.client.components.SuspendableView;
+import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.util.message.Message;
+import org.jboss.as.console.client.core.message.Message;
 
 import java.util.Map;
 

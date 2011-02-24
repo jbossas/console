@@ -10,7 +10,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 
 /**

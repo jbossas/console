@@ -3,7 +3,7 @@ package org.jboss.as.console.client.server.subsys.threads;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import org.jboss.as.console.client.shared.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**
  * @author Heiko Braun

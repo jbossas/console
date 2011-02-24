@@ -3,7 +3,7 @@ package org.jboss.as.console.client.domain;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.components.StackSectionHeader;
+import org.jboss.as.console.client.widgets.StackSectionHeader;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;

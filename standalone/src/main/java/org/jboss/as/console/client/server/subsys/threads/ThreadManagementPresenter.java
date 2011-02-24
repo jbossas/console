@@ -11,11 +11,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.components.SuspendableView;
+import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.util.message.Message;
+import org.jboss.as.console.client.core.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;

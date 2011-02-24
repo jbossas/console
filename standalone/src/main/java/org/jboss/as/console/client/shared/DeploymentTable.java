@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared;
 
 import com.google.gwt.user.cellview.client.TextColumn;
-import org.jboss.as.console.client.shared.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**
  * @author Heiko Braun

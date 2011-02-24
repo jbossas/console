@@ -5,11 +5,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.NameTokens;
-import org.jboss.as.console.client.components.LHSNavItem;
-import org.jboss.as.console.client.icons.Icons;
+import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.Places;
+import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.util.Places;
 
 /**
  * LHS navigation section of the domain management app.

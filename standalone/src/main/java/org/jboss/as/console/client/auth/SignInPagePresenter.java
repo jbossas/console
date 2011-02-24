@@ -14,8 +14,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.*;
-import org.jboss.as.console.client.BootstrapContext;
-import org.jboss.as.console.client.NameTokens;
+import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.NameTokens;
 
 
 public class SignInPagePresenter extends
