@@ -30,13 +30,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <scope>compile</scope>
-            <version>${gwt.version}</version>
-        </dependency-->
-
         <dependency>
             <groupId>com.google.code.gwt-log</groupId>
             <artifactId>gwt-log</artifactId>
@@ -171,6 +164,7 @@
                                 -->
                                 <delete dir="war/WEB-INF/classes"/>
                                 <delete dir="war/WEB-INF/lib"/>
+                                <delete dir="war/WEB-INF/deploy"/>
                                 <!--delete file="war/WEB-INF/jboss-web.xml"/>
                                 <delete file="war/WEB-INF/web.xml"/-->
                                 <delete dir="war/app"/>
