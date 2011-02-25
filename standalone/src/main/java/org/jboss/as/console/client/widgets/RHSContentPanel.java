@@ -34,4 +34,5 @@ public class RHSContentPanel extends LayoutPanel {
     public void add(Widget widget) {
         delegate.add(widget);
     }
+
 }

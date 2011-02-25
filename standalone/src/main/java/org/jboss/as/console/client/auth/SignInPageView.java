@@ -40,6 +40,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         userNameField = new TextBox();
         passwordField = new PasswordTextBox();
         signInButton = new Button("Sign in");
+        signInButton.setStyleName("default-button");
 
         userNameField.setText("admin");
 

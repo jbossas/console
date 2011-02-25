@@ -118,13 +118,17 @@ public class SignInPagePresenter extends
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    getEventBus().fireEvent(new AuthenticationEvent(user));
+                    getEventBus().fireEvent(new AuthenticationEvent(getUser()));
                 }
             });
         }
         else {
             showErrorDialog();
         }
+    }
+
+    public CurrentUser getUser() {
+        return user;
     }
 
     private static boolean isValidUserName(String username)
@@ -139,7 +143,6 @@ public class SignInPagePresenter extends
 
     @Override
     public void showErrorDialog() {
-        //addToPopupSlot(errorDialog);
         // TODO: implement authentication error handling
         Log.error("Login failed!");
 

@@ -11,6 +11,8 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -75,7 +77,13 @@ public class ComboBox implements HasValueChangeHandlers<String> {
             }
         });
 
+        final String panelId = "popup_"+HTMLPanel.createUniqueId();
         panel = new PopupPanel(true, true) {
+
+            {
+                //sinkEvents(Event.ONMOUSEOUT);
+            }
+
             @Override
             protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
                 if (Event.ONKEYUP == event.getTypeInt()) {
@@ -85,7 +93,19 @@ public class ComboBox implements HasValueChangeHandlers<String> {
                     }
                 }
             }
+
+            public void onBrowserEvent(Event event) {
+                super.onBrowserEvent(event);
+
+                /*if (DOM.eventGetType(event) == Event.ONMOUSEOUT) {
+                    Element element = DOM.eventGetTarget(event);
+                    if(panelId.equals(element.getId()))
+                        hide();
+                } */
+            }
         };
+
+        panel.getElement().setId(panelId);
 
         panel.setStyleName("default-popup");
 
