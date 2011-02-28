@@ -75,7 +75,7 @@ public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter
 
     // --------------------------------
 
-    public ProfileRecord[] getProfileRecords() {
+    public List<ProfileRecord> getProfileRecords() {
         return profileStore.loadProfiles();
     }
 

@@ -4,6 +4,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import org.jboss.as.console.client.shared.BeanFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 2/11/11
@@ -14,21 +17,31 @@ public class MockProfileStore implements ProfileStore {
     private final String[] names = new String[] {"EE6 Web", "Messaging", "BPM Platform"};
 
     @Override
-    public ProfileRecord[] loadProfiles()
+    public List<ProfileRecord> loadProfiles()
     {
-        ProfileRecord[] records = new ProfileRecord[names.length];
+        List<ProfileRecord> records = new ArrayList<ProfileRecord>(names.length);
 
-        int i=0;
         for(String name : names)
         {
             ProfileRecord profile = factory.profile().as();
             profile.setName(name);
-            records[i] = profile;
-            i++;
+            records.add(profile);
         }
 
-        Log.debug("Loaded " + records.length + " profiles");
+        Log.debug("Loaded " + records.size()+ " profiles");
 
         return records;
+    }
+
+    @Override
+    public List<String> loadProfileNames() {
+        List<ProfileRecord> profileRecords = loadProfiles();
+        List<String> names = new ArrayList<String>();
+
+        for(ProfileRecord profile : profileRecords)
+        {
+            names.add(profile.getName());
+        }
+        return names;
     }
 }

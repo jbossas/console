@@ -23,6 +23,8 @@ public class MainLayoutViewImpl extends ViewImpl
     private LayoutPanel mainContentPanel;
     private LayoutPanel footerPanel;
 
+    private Header header;
+
     @Inject
     public MainLayoutViewImpl() {
 
@@ -40,7 +42,9 @@ public class MainLayoutViewImpl extends ViewImpl
         panel.addSouth(footerPanel, 30);
         panel.add(mainContentPanel);
 
-        getHeaderPanel().add(Console.MODULES.getHeader().asWidget());
+        header = Console.MODULES.getHeader();
+        getHeaderPanel().add(header.asWidget());
+
         getFooterPanel().add(Console.MODULES.getFooter().asWidget());
     }
 
@@ -54,7 +58,8 @@ public class MainLayoutViewImpl extends ViewImpl
         if (slot == MainLayoutPresenter.TYPE_SetMainContent) {
             if(content!=null)
                 setMainContent(content);
-        } else {
+        }
+        else {
             Console.MODULES.getMessageCenter().notify(
                     new Message("Unknown slot requested:" + slot)
             );

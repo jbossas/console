@@ -7,6 +7,7 @@ body, p, td, th, option, input, textarea, select {
 
 .main-content-panel {
     border-bottom:1px solid #A7ABB4;
+    margin-top:10px;
 }
 
 .header-panel {
@@ -512,6 +513,30 @@ body, p, td, th, option, input, textarea, select {
     background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_end.png)
 }
 
+.header-content {
+    font-size:22px;
+    font-weight:bold;
+    padding-left:10px;
+}
 
+.combobox-header {
+    width:150px;
+}
+
+.combobox-value-header {
+    font-size:18px;
+    font-weight:bold;
+    padding-left:5px;
+}
+
+.html-link {
+    text-decoration:none;
+    color:#4A5D75;
+    cursor:pointer;
+}
+
+.html-link:hover {
+    text-decoration:underline;
+}
 
 

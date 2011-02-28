@@ -30,14 +30,14 @@ class LHSDomainNavigation {
         stack.setWidth("250");
 
         profileSection = new ProfileSection();
-        stack.add(profileSection.asWidget(), new StackSectionHeader("Profiles"), 28);
+        stack.add(profileSection.asWidget(), new StackSectionHeader("Subsystems"), 28);
 
 
-        serverGroupSection = new ServerGroupSection();
-        stack.add(serverGroupSection.asWidget(), new StackSectionHeader("Server Groups"), 28);
+        //serverGroupSection = new ServerGroupSection();
+        //stack.add(serverGroupSection.asWidget(), new StackSectionHeader("Server Groups"), 28);
 
-        DeploymentSection deploymentSection = new DeploymentSection();
-        stack.add(deploymentSection.asWidget(), new StackSectionHeader("Deployments"), 28);
+        //DeploymentSection deploymentSection = new DeploymentSection();
+        //stack.add(deploymentSection.asWidget(), new StackSectionHeader("Deployments"), 28);
 
         CommonConfigSection commonSection = new CommonConfigSection();
         stack.add(commonSection.asWidget(), new StackSectionHeader("General Config"), 28);
@@ -54,13 +54,13 @@ class LHSDomainNavigation {
         profileSection.updateFrom(subsystems);
     }
 
-    public void updateFrom(ProfileRecord[] profiles) {
+    public void updateProfiles(List<ProfileRecord> profiles) {
 
-        profileSection.updateFrom(profiles);
+        //profileSection.updateProfiles(profiles);
     }
 
     public void updateFrom(ServerGroupRecord[] serverGroupRecords) {
-        serverGroupSection.updateFrom(serverGroupRecords);
+        //serverGroupSection.updateFrom(serverGroupRecords);
     }
 
 }

@@ -8,6 +8,7 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -41,7 +42,7 @@ public class DomainMgmtApplicationPresenter
     }
 
     public interface MyView extends SuspendableView {
-        void setProfiles(ProfileRecord[] profileRecords);
+        void setProfiles(List<ProfileRecord> profileRecords);
         void setSubsystems(List<SubsystemRecord> subsystemRecords);
         void setServerGroups(ServerGroupRecord[] serverGroupRecords);
     }
@@ -65,6 +66,7 @@ public class DomainMgmtApplicationPresenter
         this.subsysStore = subsysStore;
         this.serverGroupStore = serverGroupStore;
     }
+
 
     /**
      * Load default view.
@@ -97,6 +99,18 @@ public class DomainMgmtApplicationPresenter
         // TODO: when do these refresh?
         getView().setProfiles(profileStore.loadProfiles());
         getView().setServerGroups(serverGroupStore.loadServerGroups());
+
+        // TODO: how does this fit into presenter hierarchy?
+        ProfileHeader header = new ProfileHeader(profileStore.loadProfileNames().get(0));
+        Console.MODULES.getHeader().setContent(header);
+    }
+
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        // TODO
+        onProfileSelection(profileStore.loadProfileNames().get(0));
     }
 
     @Override

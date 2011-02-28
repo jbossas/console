@@ -45,4 +45,10 @@ public interface Icons extends ClientBundle {
     @Source("comboBoxPicker.png")
     ImageResource comboPicker();
 
+    @Source("profile.png")
+    ImageResource profile();
+
+    @Source("server_group.png")
+    ImageResource serverGroup();
+
 }

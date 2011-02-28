@@ -34,10 +34,10 @@ class ProfileSection {
 
 
         subsysTree = new Tree();
-        root = new TreeItem("Subsystems:");
+        root = new TreeItem("Available Subsystems:");
         subsysTree.addItem(root);
 
-        LHSNavItem overview = new LHSNavItem(
+        /*LHSNavItem overview = new LHSNavItem(
                 "Overview",
                 "domain/"+ NameTokens.ProfileOverviewPresenter,
                 Icons.INSTANCE.inventory()
@@ -47,14 +47,13 @@ class ProfileSection {
 
         selection = new ComboBox();
 
-
         Widget dropDown = selection.asWidget();
-        layout.add(dropDown);
+        layout.add(dropDown);                  */
         layout.add(subsysTree);
 
-        layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(dropDown, 25, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(subsysTree, 53, Style.Unit.PX, 100, Style.Unit.PCT);
+        //layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        //layout.setWidgetTopHeight(dropDown, 25, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(subsysTree, 0, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
     public Widget asWidget()
@@ -66,7 +65,7 @@ class ProfileSection {
         Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(profileName));
     }
 
-    public void updateFrom(final ProfileRecord[] profileRecords) {
+    public void updateProfiles(final List<ProfileRecord> profileRecords) {
 
         selection.clearValues();
 
@@ -80,7 +79,7 @@ class ProfileSection {
             @Override
             public void execute() {
                 selection.setItemSelected(0, true);
-                fireProfileSelection(profileRecords[0].getName());
+                fireProfileSelection(profileRecords.get(0).getName());
             }
         });
 

@@ -64,8 +64,8 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
     }
 
     @Override
-    public void setProfiles(ProfileRecord[] profileRecords) {
-        lhsNavigation.updateFrom(profileRecords);
+    public void setProfiles(List<ProfileRecord> profileRecords) {
+        lhsNavigation.updateProfiles(profileRecords);
     }
 
     @Override

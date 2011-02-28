@@ -119,7 +119,7 @@ public class ProfileOverview
     }
 
     private void refresh() {
-        List<ProfileRecord> profiles = Arrays.asList(presenter.getProfileRecords());
+        List<ProfileRecord> profiles = presenter.getProfileRecords();
         List<ServerGroupRecord> groups = Arrays.asList(presenter.getServerGroupRecords());
 
         profileList.setRowData(0, profiles);

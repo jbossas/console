@@ -41,6 +41,8 @@ public class Header implements ValueChangeHandler<String> {
 
     private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
+    private LayoutPanel contentPanel;
+
     @Inject
     public Header(MessageBar messageBar) {
         this.messageBar = messageBar;
@@ -50,6 +52,7 @@ public class Header implements ValueChangeHandler<String> {
     public Widget asWidget() {
 
         LayoutPanel outerLayout = new LayoutPanel();
+        contentPanel = new LayoutPanel();
 
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
@@ -64,10 +67,10 @@ public class Header implements ValueChangeHandler<String> {
         innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
-        //outerLayout.add(messageBar);
+        outerLayout.add(contentPanel);
 
         outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        //outerLayout.setWidgetTopHeight(messageBar, 34, Style.Unit.PX, 25, Style.Unit.PX);
+        outerLayout.setWidgetTopHeight(contentPanel , 34, Style.Unit.PX, 25, Style.Unit.PX);
 
         return outerLayout;
     }
@@ -148,5 +151,10 @@ public class Header implements ValueChangeHandler<String> {
                     element.removeClassName("header-link-selected");
             }
         }
+    }
+
+    public void setContent(Widget content) {
+        contentPanel.clear();
+        contentPanel.add(content);
     }
 }

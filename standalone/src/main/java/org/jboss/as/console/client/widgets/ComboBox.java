@@ -48,8 +48,11 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     private HorizontalPanel header;
     private HTML currentValue;
 
-    public ComboBox() {
+    private String cssSuffix = "";
 
+    public ComboBox(String cssSuffix) {
+
+        this.cssSuffix = cssSuffix;
 
         cellList = new CellList<String>(new TextCell()
         {
@@ -118,10 +121,10 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         panel.setWidget(cellList);
 
         currentValue = new HTML("&nbsp;");
-        currentValue.setStyleName("combobox-value");
+        currentValue.setStyleName("combobox-value"+cssSuffix);
 
         header = new HorizontalPanel();
-        header.setStyleName("combobox");
+        header.setStyleName("combobox"+cssSuffix);
         header.add(currentValue);
 
         Image img = new Image(Icons.INSTANCE.comboPicker());
@@ -145,6 +148,12 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         currentValue.addClickHandler(clickHandler);
         img.addClickHandler(clickHandler);
 
+    }
+
+    public ComboBox() {
+
+
+        this("");
     }
 
     public String getSelectedValue() {
@@ -216,7 +225,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> handler) {
 
         return Console.MODULES.getEventBus().addHandler(
-          ValueChangeEvent.getType(), handler
+                ValueChangeEvent.getType(), handler
         );
 
     }
