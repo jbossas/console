@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -9,11 +9,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentStore;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter.MyView, ProfileOverviewPresenter.MyProxy> {
+public class DomainOverviewPresenter extends Presenter<DomainOverviewPresenter.MyView, DomainOverviewPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
@@ -33,15 +33,15 @@ public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileOverviewPresenter)
-    public interface MyProxy extends Proxy<ProfileOverviewPresenter>, Place {
+    public interface MyProxy extends Proxy<DomainOverviewPresenter>, Place {
     }
 
     public interface MyView extends SuspendableView {
-        void setPresenter(ProfileOverviewPresenter presenter);
+        void setPresenter(DomainOverviewPresenter presenter);
     }
 
     @Inject
-    public ProfileOverviewPresenter(
+    public DomainOverviewPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, ProfileStore profileStore,
             ServerGroupStore serverGroupStore,
@@ -70,7 +70,7 @@ public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainMgmtApplicationPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
     // --------------------------------
@@ -79,7 +79,7 @@ public class ProfileOverviewPresenter extends Presenter<ProfileOverviewPresenter
         return profileStore.loadProfiles();
     }
 
-    public ServerGroupRecord[] getServerGroupRecords()
+    public List<ServerGroupRecord> getServerGroupRecords()
     {
         return serverGroupStore.loadServerGroups();
     }

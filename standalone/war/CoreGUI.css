@@ -361,6 +361,10 @@ body, p, td, th, option, input, textarea, select {
     margin:0px;
 }
 
+.combobox-value-disbaled {
+    color:#A7ABB4!important;
+}
+
 .combobox-item {
     min-height:20px;
     white-space: nowrap;
@@ -537,6 +541,12 @@ body, p, td, th, option, input, textarea, select {
 
 .html-link:hover {
     text-decoration:underline;
+}
+
+.default-toolstrip {
+    width:100%;
+    height:20px;
+    /*background-image:url(/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
 }
 
 

@@ -11,8 +11,6 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -49,6 +47,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     private HTML currentValue;
 
     private String cssSuffix = "";
+    private boolean isEnabled = true;
 
     public ComboBox(String cssSuffix) {
 
@@ -151,8 +150,6 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     }
 
     public ComboBox() {
-
-
         this("");
     }
 
@@ -169,15 +166,19 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     };
 
     private void openPanel() {
-        panel.setWidth(header.getOffsetWidth()+"px");
-        panel.setHeight((cellList.getRowCount()*25)+"px");
 
-        panel.setPopupPosition(
-                header.getAbsoluteLeft(),
-                header.getAbsoluteTop()+20
-        );
+        if(isEnabled)
+        {
+            panel.setWidth(header.getOffsetWidth()+"px");
+            panel.setHeight((cellList.getRowCount()*25)+"px");
 
-        panel.show();
+            panel.setPopupPosition(
+                    header.getAbsoluteLeft(),
+                    header.getAbsoluteTop()+20
+            );
+
+            panel.show();
+        }
     }
 
     public int getItemCount() {
@@ -233,5 +234,17 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     @Override
     public void fireEvent(GwtEvent<?> gwtEvent) {
         Console.MODULES.getEventBus().fireEvent(gwtEvent);
+    }
+
+    public void setEnabled(boolean b) {
+        this.isEnabled = b;
+        if(isEnabled)
+        {
+            currentValue.removeStyleName("combobox-value-disabled");
+        }
+        else
+        {
+            currentValue.addStyleName("combobox-value-disabled");
+        }
     }
 }

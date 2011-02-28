@@ -36,7 +36,6 @@ public class TextItem extends FormItem<String> {
 
     @Override
     public void setEnabled(boolean b) {
-        super.setEnabled(b);
         textBox.setEnabled(b);
     }
 }

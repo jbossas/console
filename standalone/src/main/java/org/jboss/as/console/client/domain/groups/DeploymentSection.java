@@ -1,9 +1,10 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.icons.Icons;
 
 /**
  * @author Heiko Braun
@@ -18,12 +19,12 @@ class DeploymentSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        LHSNavItem webApps = new LHSNavItem("Web Applications", "domain-deployments;type=web");
-        LHSNavItem eeApps = new LHSNavItem("Enterprise Applications", "domain-deployments;type=ee");
-        LHSNavItem resourceAdapters = new LHSNavItem("Resource Adapters", "domain-deployments;type=jca");
-        LHSNavItem other = new LHSNavItem("Other", "domain-deployments;type=other");
+        LHSNavItem current = new LHSNavItem("Current Deployments", "current-deployments",Icons.INSTANCE.inventory());
 
-        addNavItems(webApps, eeApps, resourceAdapters, other);
+        LHSNavItem createNew = new LHSNavItem("New Deployment", "current-deployments;action=new", Icons.INSTANCE.add());
+        LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");
+
+        addNavItems(current, createNew, plans);
     }
 
     private void addNavItems(LHSNavItem... items) {

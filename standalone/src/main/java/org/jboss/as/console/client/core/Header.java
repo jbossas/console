@@ -32,8 +32,8 @@ public class Header implements ValueChangeHandler<String> {
     public static final String[][] SECTIONS = {
             /*new String[]{"system", "System Overview"},*/
             /*new String[]{"server", "Server Management"},*/
-            new String[]{"domain", "Profiles"},
-            new String[]{"groups", "Server Groups"},
+            new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
+            new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
             new String[]{"hosts", "Hosts"}
     };
 
@@ -136,7 +136,7 @@ public class Header implements ValueChangeHandler<String> {
         }
     }
 
-    private void highlight(String name)
+    public void highlight(String name)
     {
         NodeList<Node> childNodes = linksPane.getElementById("header-links-ref").getChildNodes();
         for(int i=0; i<childNodes.getLength(); i++)

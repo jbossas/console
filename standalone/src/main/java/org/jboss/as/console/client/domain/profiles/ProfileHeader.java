@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -29,15 +29,15 @@ public class ProfileHeader extends HorizontalPanel {
         });
 
         add(prefix);
-        add(changeButton);
+        //add(changeButton);
 
-        changeButton.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        //changeButton.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
 
         setProfileName(title);
     }
 
     private void setProfileName(String title) {
-        prefix.setHTML("Profile: "+ title + "&nbsp;&nbsp;");
+        prefix.setHTML(title + "&nbsp;&nbsp;");
     }
 
 

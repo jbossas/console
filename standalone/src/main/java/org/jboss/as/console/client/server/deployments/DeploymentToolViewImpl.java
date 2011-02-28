@@ -4,9 +4,9 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentTable;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 /**
  * @author Heiko Braun

@@ -1,16 +1,16 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
 
 import java.util.List;
 
@@ -34,26 +34,36 @@ class ProfileSection {
 
 
         subsysTree = new Tree();
-        root = new TreeItem("Available Subsystems:");
+        root = new TreeItem("Subsystems in Profile:");
         subsysTree.addItem(root);
 
-        /*LHSNavItem overview = new LHSNavItem(
-                "Overview",
-                "domain/"+ NameTokens.ProfileOverviewPresenter,
-                Icons.INSTANCE.inventory()
+        LHSNavItem manage = new LHSNavItem(
+                "In-/Exclude Subsystems", "domain/manage-subsystems"
         );
 
-        layout.add(overview);
+        //layout.add(manage);
 
         selection = new ComboBox();
+        selection.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                fireProfileSelection(event.getValue());
+            }
+        });
 
         Widget dropDown = selection.asWidget();
-        layout.add(dropDown);                  */
+
+        HorizontalPanel horz = new HorizontalPanel();
+        horz.getElement().setAttribute("width", "100%");
+        horz.add(new HTML("&nbsp;Profile:"));
+        horz.add(dropDown);
+
+        layout.add(horz);
         layout.add(subsysTree);
 
-        //layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        //layout.setWidgetTopHeight(dropDown, 25, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(subsysTree, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(horz, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        //layout.setWidgetTopHeight(manage, 28, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(subsysTree, 28, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
     public Widget asWidget()

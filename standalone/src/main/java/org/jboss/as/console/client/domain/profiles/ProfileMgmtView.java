@@ -1,14 +1,14 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
-import org.jboss.as.console.client.core.message.Message;
 
 import java.util.List;
 
@@ -19,23 +19,23 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/4/11
  */
-public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
-        implements DomainMgmtApplicationPresenter.MyView{
+public class ProfileMgmtView extends SuspendableViewImpl
+        implements ProfileMgmtPresenter.MyView{
 
-    private DomainMgmtApplicationPresenter presenter;
+    private ProfileMgmtPresenter presenter;
     private SplitLayoutPanel layout;
     private LayoutPanel contentCanvas;
-    private LHSDomainNavigation lhsNavigation;
+    private LHSProfileNavigation lhsNavigation;
 
-    public DomainMgmtApplicationViewImpl() {
+    public ProfileMgmtView() {
         super();
 
         layout = new SplitLayoutPanel(4);
 
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new LHSDomainNavigation();
+        lhsNavigation = new LHSProfileNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 220);
+        layout.addWest(lhsNavigation.asWidget(), 180);
         layout.add(contentCanvas);
     }
 
@@ -47,7 +47,7 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == DomainMgmtApplicationPresenter.TYPE_MainContent) {
+        if (slot == ProfileMgmtPresenter.TYPE_MainContent) {
             if(content!=null)
                 setContent(content);
 
@@ -75,7 +75,7 @@ public class DomainMgmtApplicationViewImpl extends SuspendableViewImpl
     }
 
     @Override
-    public void setServerGroups(ServerGroupRecord[] serverGroupRecords) {
-        lhsNavigation.updateFrom(serverGroupRecords);
+    public void setServerGroups(List<ServerGroupRecord> serverGroupRecords) {
+        lhsNavigation.updateServerGroups(serverGroupRecords);
     }
 }

@@ -12,18 +12,22 @@ import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.core.*;
-import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
-import org.jboss.as.console.client.domain.DomainMgmtApplicationViewImpl;
-import org.jboss.as.console.client.domain.groups.ServerGroupOverviewPresenter;
+import org.jboss.as.console.client.core.message.MessageBar;
+import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.core.message.MessageCenterView;
+import org.jboss.as.console.client.domain.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.DomainOverview;
+import org.jboss.as.console.client.domain.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
+import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
-import org.jboss.as.console.client.domain.groups.ServerGroupsOverview;
 import org.jboss.as.console.client.domain.model.MockProfileStore;
 import org.jboss.as.console.client.domain.model.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.profiles.ProfileOverview;
-import org.jboss.as.console.client.domain.profiles.ProfileOverviewPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationViewImpl;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
@@ -44,9 +48,6 @@ import org.jboss.as.console.client.shared.MockSubsystemStore;
 import org.jboss.as.console.client.shared.SubsystemStore;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
-import org.jboss.as.console.client.core.message.MessageBar;
-import org.jboss.as.console.client.core.message.MessageCenter;
-import org.jboss.as.console.client.core.message.MessageCenterView;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -146,29 +147,30 @@ public class CoreUIModule extends AbstractPresenterModule {
         // ------------------------------------------------
         // domain management application
 
-        // domain management application
-        bindPresenter(DomainMgmtApplicationPresenter.class,
-                DomainMgmtApplicationPresenter.MyView.class,
-                DomainMgmtApplicationViewImpl.class,
-                DomainMgmtApplicationPresenter.MyProxy.class);
+        // profile management application
+        bindPresenter(ProfileMgmtPresenter.class,
+                ProfileMgmtPresenter.MyView.class,
+                ProfileMgmtView.class,
+                ProfileMgmtPresenter.MyProxy.class);
         
         // domain/profiles
-        bindPresenter(ProfileOverviewPresenter.class,
-                ProfileOverviewPresenter.MyView.class,
-                ProfileOverview.class,
-                ProfileOverviewPresenter.MyProxy.class);
+        bindPresenter(DomainOverviewPresenter.class,
+                DomainOverviewPresenter.MyView.class,
+                DomainOverview.class,
+                DomainOverviewPresenter.MyProxy.class);
+        bind(CurrentSelectedProfile.class).in(Singleton.class);
+
+        // domain/server-group
+        bindPresenter(ServerGroupMgmtPresenter.class,
+                ServerGroupMgmtPresenter.MyView.class,
+                ServerGroupMgmtView.class,
+                ServerGroupMgmtPresenter.MyProxy.class);
 
         // domain/server-group
         bindPresenter(ServerGroupPresenter.class,
                 ServerGroupPresenter.MyView.class,
                 ServerGroupView.class,
                 ServerGroupPresenter.MyProxy.class);
-
-        //domain/server-groups-overview
-         bindPresenter(ServerGroupOverviewPresenter.class,
-                ServerGroupOverviewPresenter.MyView.class,
-                ServerGroupsOverview.class,
-                ServerGroupOverviewPresenter.MyProxy.class);
 
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);

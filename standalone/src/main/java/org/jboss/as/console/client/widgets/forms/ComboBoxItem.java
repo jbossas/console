@@ -9,26 +9,26 @@ import org.jboss.as.console.client.widgets.ComboBox;
  */
 public class ComboBoxItem extends FormItem<String> {
 
-    private ComboBox listBox;
+    private ComboBox comboBox;
     private boolean defaultToFirst;
 
     public ComboBoxItem(String name, String title) {
         super(name, title);
-        this.listBox = new ComboBox();
+        this.comboBox = new ComboBox();
     }
 
     @Override
     public String getValue() {
-        return listBox.getSelectedValue();
+        return comboBox.getSelectedValue();
     }
 
     @Override
     public void setValue(String value) {
-        for(int i=0; i<listBox.getItemCount(); i++)
+        for(int i=0; i< comboBox.getItemCount(); i++)
         {
-            if(listBox.getValue(i).equals(value))
+            if(comboBox.getValue(i).equals(value))
             {
-                listBox.setItemSelected(i, true);
+                comboBox.setItemSelected(i, true);
                 break;
             }
         }
@@ -36,7 +36,7 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public Widget asWidget() {
-        return listBox.asWidget();
+        return comboBox.asWidget();
     }
 
     public void setDefaultToFirstOption(boolean b) {
@@ -44,10 +44,15 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     public void setValueMap(String[] values) {
-        listBox.clearValues();
+        comboBox.clearValues();
         for(String s : values)
         {
-            listBox.addItem(s);
+            comboBox.addItem(s);
         }
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        comboBox.setEnabled(b);
     }
 }

@@ -11,7 +11,6 @@ public abstract class FormItem<T> {
     private T value;
     private String name;
     private String title;
-    private boolean enabled;
 
     public FormItem(String name, String title) {
         this.name = name;
@@ -40,12 +39,5 @@ public abstract class FormItem<T> {
 
     public abstract Widget asWidget();
 
-    public void setEnabled(boolean b)
-    {
-        this.enabled = b;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
+    public abstract void setEnabled(boolean b);
 }

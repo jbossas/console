@@ -2,12 +2,18 @@ package org.jboss.as.console.client.widgets.forms;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanCodex;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.autobean.shared.AutoBeanVisitor;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.BeanFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Form data binding that works on {@link AutoBean} entities.
@@ -15,11 +21,9 @@ import java.util.*;
  * @author Heiko Braun
  * @date 2/21/11
  */
-public class Form {
+public class Form<T> {
 
     private Map<String, FormItem> formItems = new LinkedHashMap<String, FormItem>();
-    private List<ItemChangedHandler> itemChangedHandler= new ArrayList<ItemChangedHandler>();
-
     private Map<String, Object> rememberedValues = new HashMap<String, Object>();
 
     private int numColumns = 1;
@@ -28,12 +32,17 @@ public class Form {
     private final String tablePrefix = "<table id='"+id+"' border=0 cellpadding=0 cellspacing=0>";
     private final static String tableSuffix = "</table>";
 
-    public Form() {
+    private T editedBean;
+    private Class<?> conversionType;
 
+    BeanFactory factory = GWT.create(BeanFactory.class);
+
+    public Form(Class<?> conversionType) {
+        this.conversionType = conversionType;
     }
 
     /**
-     * Number of layot columns.<br>
+     * Number of layout columns.<br>
      * Form fields will fill columns in the order they have been specified
      * in {@link #setFields(FormItem[])}.
      *
@@ -57,25 +66,22 @@ public class Form {
         }
     }
 
-    public void addItemChangedHandler(ItemChangedHandler handler)
-    {
-        this.itemChangedHandler.add(handler);
-    }
+    public void edit(T bean) {
 
-    public void editRecord(AutoBean<?> record) {
+        this.editedBean = bean;
 
-        record.accept(new AutoBeanVisitor() {
+        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
+
+        autoBean.accept(new AutoBeanVisitor() {
             @Override
             public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
                 FormItem matchingField = formItems.get(propertyName);
-                if(matchingField!=null) // not required to match
+                if (matchingField != null) // not required to match
                 {
                     matchingField.setValue(value);
-                }
-                else
-                {
-                    if(!"empty".equals(propertyName)) // empty is an autobean default property
-                        Log.error("No matching field for '"+propertyName+"' ("+ctx.getType()+")");
+                } else {
+                    if (!"empty".equals(propertyName)) // empty is an autobean default property
+                        Log.error("No matching field for '" + propertyName + "' (" + ctx.getType() + ")");
                 }
                 return true;
             }
@@ -92,17 +98,63 @@ public class Form {
     }
 
     /**
-     * Get changed values sine last  {@link #rememberValues()}
+     * Get changed values since last {@link #rememberValues()}
      * @return
      */
     public Map<String, Object> getChangedValues() {
 
-        // TODO: implement diff operation. Currently it simply returns all values
-        // Take a look at AutoBeanUtils#diff()
+        //System.out.println("1 >" + AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(editedBean)).getPayload());
 
         HashMap<String, Object> values = new HashMap<String, Object>();
         snapshot(values);
         return values;
+    }
+
+    public T getUpdatedEntity() {
+
+        Map<String, Object> values = getChangedValues();
+
+        StringBuilder builder = new StringBuilder("{");
+
+        int i=0;
+        for(String property : values.keySet())
+        {
+            builder.append("\"");
+            builder.append(property);
+            builder.append("\"");
+
+            builder.append(":");
+
+            builder.append("\"");
+            builder.append(values.get(property));
+            builder.append("\"");
+
+            if(i<values.size()-1)
+                builder.append(", ");
+            i++;
+
+        }
+
+        builder.append("}");
+
+        //System.out.println("2 > " + builder.toString());
+
+        AutoBean<?> decoded = AutoBeanCodex.decode(
+                factory,
+                conversionType,
+                builder.toString()
+        );
+
+        /*System.out.println("> "+ decoded);
+        decoded.accept(new AutoBeanVisitor() {
+            @Override
+            public void endVisitValueProperty(String propertyName, Object value, PropertyContext ctx) {
+                System.out.println(propertyName+"->"+value);
+            }
+        });*/
+
+        return (T) decoded.as();
+
     }
 
     private void snapshot(Map<String, Object> buffer) {
@@ -180,6 +232,10 @@ public class Form {
      * @param b
      */
     public void setEnabled(boolean b) {
-
+        for(FormItem i : formItems.values())
+        {
+            i.setEnabled(b);
+        }
     }
+
 }

@@ -52,9 +52,9 @@ public class MockServerGroupStore implements ServerGroupStore {
   };  */
 
     @Override
-    public ServerGroupRecord[] loadServerGroups() {
+    public List<ServerGroupRecord> loadServerGroups() {
 
-        List<ServerGroupRecord> tmp = new ArrayList<ServerGroupRecord>();
+        List<ServerGroupRecord> results = new ArrayList<ServerGroupRecord>();
 
         ServerGroupRecord eeServer = factory.serverGroup().as();
         eeServer.setGroupName("EE6 Server");
@@ -62,7 +62,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         eeServer.setProperties(props);
         eeServer.setJvm("jdk_16_default");
         eeServer.setSocketBinding("default");
-        tmp.add(eeServer);
+        results.add(eeServer);
 
         ServerGroupRecord webServer = factory.serverGroup().as();
         webServer.setGroupName("Web Server");
@@ -70,7 +70,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         webServer.setProperties(Collections.EMPTY_MAP);
         webServer.setJvm("jdk_16_default");
         webServer.setSocketBinding("DMZ");
-        tmp.add(webServer);
+        results.add(webServer);
         
         ServerGroupRecord standby = factory.serverGroup().as();
         standby.setGroupName("Hot Standby");
@@ -78,9 +78,22 @@ public class MockServerGroupStore implements ServerGroupStore {
         standby.setProperties(Collections.EMPTY_MAP);
         standby.setJvm("jrockit");
         standby.setSocketBinding("default_no_http");
-        tmp.add(standby);
+        results.add(standby);
         
-        Log.debug("Loaded " + tmp.size()+ " server groups");
-        return tmp.toArray(new ServerGroupRecord[]{});
+        Log.debug("Loaded " + results.size() + " server groups");
+        return results;
+    }
+
+    @Override
+    public List<ServerGroupRecord> loadServerGroups(String profileName) {
+        List<ServerGroupRecord> all = loadServerGroups();
+        List<ServerGroupRecord> results = new ArrayList<ServerGroupRecord>();
+
+        for(ServerGroupRecord group : all)
+        {
+            if(group.getProfileName().equals(profileName))
+                results.add(group);
+        }
+        return results;
     }
 }

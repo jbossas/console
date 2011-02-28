@@ -33,6 +33,7 @@ public class MockSubsystemStore implements SubsystemStore {
 
         for(String[] tuple : tuples)
         {
+
             SubsystemRecord rec = beanFactory.subsystem().as();
             rec.setToken(tuple[0]);
             rec.setTitle(tuple[1]);
@@ -45,7 +46,24 @@ public class MockSubsystemStore implements SubsystemStore {
     @Override
     public List<SubsystemRecord>  loadSubsystems(String profileName) {
         List<SubsystemRecord> records = loadSubsystems();
-        Log.debug("Loaded " + records.size() + " subsystems for profile '"+profileName+"'");
-        return records;
+        List<SubsystemRecord> results = new ArrayList<SubsystemRecord>();
+
+
+        if("Messaging".equals(profileName))
+        {
+            int i=0;
+            for(SubsystemRecord rec : records)
+            {
+                if(i>5) break;
+                results.add(rec);
+                i++;
+            }
+        }
+        else
+        {
+            results.addAll(records);
+        }
+        Log.debug("Loaded " + results.size() + " subsystems for profile '"+profileName+"'");
+        return results;
     }
 }

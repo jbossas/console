@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;

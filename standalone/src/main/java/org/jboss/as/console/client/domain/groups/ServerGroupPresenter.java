@@ -16,7 +16,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -24,7 +23,6 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Maintains a single server group.
@@ -40,28 +38,8 @@ public class ServerGroupPresenter
     private ServerGroupRecord selectedRecord;
     private ProfileStore profileStore;
 
-    public String[] getProfileNames() {
-
-        List<ProfileRecord> profileRecords = profileStore.loadProfiles();
-        String[] names = new String[profileRecords.size()];
-        int i=0;
-        for(ProfileRecord profile : profileRecords)
-        {
-            names[i] = profile.getName();
-            i++;
-        }
-        return names;
-    }
-
-    public String[] getSocketBindings() {
-        return new String[] {"default", "DMZ"};
-    }
-
-    public void persistChanges(Map changedValues) {
-        String groupName = selectedRecord.getGroupName();
-        Console.MODULES.getMessageCenter().notify(
-                new Message("Saved :"+ groupName +" " +changedValues, Message.Severity.Info)
-        );
+    public ServerGroupRecord getSelectedRecord() {
+        return selectedRecord;
     }
 
     @ProxyCodeSplit
@@ -94,7 +72,6 @@ public class ServerGroupPresenter
         getView().setPresenter(this);
     }
 
-
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
@@ -112,6 +89,56 @@ public class ServerGroupPresenter
         {
             Log.error("Parameters missing!");
         }
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        if(selectedRecord!=null)
+            getView().setSelectedRecord(selectedRecord);
+        getView().setEnabled(false);
+    }
+
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(getEventBus(), ServerGroupMgmtPresenter.TYPE_MainContent, this);
+    }
+
+    // ----------------------------------------------------------------
+
+    public String[] getProfileNames() {
+
+        List<ProfileRecord> profileRecords = profileStore.loadProfiles();
+        String[] names = new String[profileRecords.size()];
+        int i=0;
+        for(ProfileRecord profile : profileRecords)
+        {
+            names[i] = profile.getName();
+            i++;
+        }
+        return names;
+    }
+
+    public String[] getSocketBindings() {
+        return new String[] {"default", "DMZ"};
+    }
+
+    public void editCurrentRecord() {
+        getView().setEnabled(true);
+    }
+
+    public void deleteCurrentRecord() {
+
+    }
+
+    public void onSaveChanges(ServerGroupRecord updatedEntity) {
+        getView().setEnabled(false);
+
+        Console.MODULES.getMessageCenter().notify(
+                new Message("Saved " + updatedEntity.getGroupName(), Message.Severity.Info)
+        );
+
+        // TODO: persist changes
     }
 
     public void createNewGroup() {
@@ -134,22 +161,9 @@ public class ServerGroupPresenter
         window.center();
     }
 
-    @Override
-    protected void onReset() {
-        super.onReset();
-        if(selectedRecord!=null)
-            getView().setSelectedRecord(selectedRecord);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DomainMgmtApplicationPresenter.TYPE_MainContent, this);
-    }
-
     public void onSelectServerGroup(String groupName)
     {
-        ServerGroupRecord[] records = serverGroupStore.loadServerGroups();
-        for(ServerGroupRecord record : records)
+        for(ServerGroupRecord record : serverGroupStore.loadServerGroups())
         {
             if(groupName.equals(record.getGroupName()))
             {

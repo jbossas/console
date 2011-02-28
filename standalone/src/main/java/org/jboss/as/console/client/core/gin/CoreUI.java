@@ -9,18 +9,22 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
+import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
-import org.jboss.as.console.client.auth.CurrentUser;
-import org.jboss.as.console.client.auth.SignInPagePresenter;
-import org.jboss.as.console.client.domain.DomainMgmtApplicationPresenter;
-import org.jboss.as.console.client.domain.groups.ServerGroupOverviewPresenter;
+import org.jboss.as.console.client.core.message.MessageBar;
+import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.core.message.MessageCenterView;
+import org.jboss.as.console.client.domain.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.domain.profiles.ProfileOverviewPresenter;
+import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolPresenter;
@@ -31,9 +35,6 @@ import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresent
 import org.jboss.as.console.client.shared.DeploymentStore;
 import org.jboss.as.console.client.shared.SubsystemStore;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
-import org.jboss.as.console.client.core.message.MessageBar;
-import org.jboss.as.console.client.core.message.MessageCenter;
-import org.jboss.as.console.client.core.message.MessageCenterView;
 
 /**
  * Overall module configuration.
@@ -88,10 +89,12 @@ public interface CoreUI extends Ginjector {
 
     // ----------------------------------------------------------------------
     // domain config below
-    AsyncProvider<DomainMgmtApplicationPresenter> getDomainMgmtAppPresenter();
-    AsyncProvider<ProfileOverviewPresenter> getProfileToolPresenter();
+    AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
+    CurrentSelectedProfile getCurrentSelectedProfile();
+    AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
+
+    AsyncProvider<DomainOverviewPresenter> getProfileToolPresenter();
     AsyncProvider<ServerGroupPresenter> getServerGroupsPresenter();
-    AsyncProvider<ServerGroupOverviewPresenter> getServerGroupOverviewPresenter();
 
     ProfileStore getProfileStore();
     SubsystemStore getSubsystemStore();

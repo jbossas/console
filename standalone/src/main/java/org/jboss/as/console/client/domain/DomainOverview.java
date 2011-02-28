@@ -1,41 +1,43 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain;
 
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.domain.groups.ServerGroupCell;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.profiles.ProfileCell;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentTable;
-import org.jboss.as.console.client.widgets.TabHeader;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 1/31/11
  */
-public class ProfileOverview
-        extends SuspendableViewImpl implements ProfileOverviewPresenter.MyView {
+public class DomainOverview
+        extends SuspendableViewImpl implements DomainOverviewPresenter.MyView {
 
-    private ProfileOverviewPresenter presenter;
+    private DomainOverviewPresenter presenter;
     private CellList<ProfileRecord> profileList;
     private CellList<ServerGroupRecord> groupList;
     private CellTable<DeploymentRecord> deploymentTable;
 
     @Override
-    public void setPresenter(ProfileOverviewPresenter presenter) {
+    public void setPresenter(DomainOverviewPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -120,7 +122,7 @@ public class ProfileOverview
 
     private void refresh() {
         List<ProfileRecord> profiles = presenter.getProfileRecords();
-        List<ServerGroupRecord> groups = Arrays.asList(presenter.getServerGroupRecords());
+        List<ServerGroupRecord> groups = presenter.getServerGroupRecords();
 
         profileList.setRowData(0, profiles);
         groupList.setRowData(0, groups);

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -26,8 +26,8 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class DomainMgmtApplicationPresenter
-        extends Presenter<DomainMgmtApplicationPresenter.MyView, DomainMgmtApplicationPresenter.MyProxy>
+public class ProfileMgmtPresenter
+        extends Presenter<ProfileMgmtPresenter.MyView, ProfileMgmtPresenter.MyProxy>
         implements ProfileSelectionEvent.ProfileSelectionListener {
 
     private final PlaceManager placeManager;
@@ -37,14 +37,14 @@ public class DomainMgmtApplicationPresenter
     private boolean revealDefault = true;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.DomainManagementPresenter)
-    public interface MyProxy extends Proxy<DomainMgmtApplicationPresenter>, Place {
+    @NameToken(NameTokens.ProfileMgmtPresenter)
+    public interface MyProxy extends Proxy<ProfileMgmtPresenter>, Place {
     }
 
     public interface MyView extends SuspendableView {
         void setProfiles(List<ProfileRecord> profileRecords);
         void setSubsystems(List<SubsystemRecord> subsystemRecords);
-        void setServerGroups(ServerGroupRecord[] serverGroupRecords);
+        void setServerGroups(List<ServerGroupRecord> serverGroupRecords);
     }
 
     @ContentSlot
@@ -52,7 +52,7 @@ public class DomainMgmtApplicationPresenter
             new GwtEvent.Type<RevealContentHandler<?>>();
 
     @Inject
-    public DomainMgmtApplicationPresenter(
+    public ProfileMgmtPresenter(
             EventBus eventBus,
             MyView view, MyProxy proxy,
             PlaceManager placeManager, ProfileStore profileStore,
@@ -78,7 +78,7 @@ public class DomainMgmtApplicationPresenter
         super.prepareFromRequest(request);
 
         // reveal default sub page
-        if(revealDefault && NameTokens.DomainManagementPresenter.equals(request.getNameToken()))
+        if(revealDefault && NameTokens.ProfileMgmtPresenter.equals(request.getNameToken()))
         {
             placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ProfileOverviewPresenter));
             revealDefault = false;
@@ -99,18 +99,18 @@ public class DomainMgmtApplicationPresenter
         // TODO: when do these refresh?
         getView().setProfiles(profileStore.loadProfiles());
         getView().setServerGroups(serverGroupStore.loadServerGroups());
-
-        // TODO: how does this fit into presenter hierarchy?
-        ProfileHeader header = new ProfileHeader(profileStore.loadProfileNames().get(0));
-        Console.MODULES.getHeader().setContent(header);
     }
 
 
     @Override
     protected void onReset() {
         super.onReset();
-        // TODO
-        onProfileSelection(profileStore.loadProfileNames().get(0));
+
+        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
+
+        ProfileHeader header = new ProfileHeader("Configuration Profiles");
+        Console.MODULES.getHeader().setContent(header);
+
     }
 
     @Override

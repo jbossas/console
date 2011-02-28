@@ -6,9 +6,9 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.Places;
+import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
-import org.jboss.as.console.client.shared.SubsystemRecord;
 
 import java.util.List;
 

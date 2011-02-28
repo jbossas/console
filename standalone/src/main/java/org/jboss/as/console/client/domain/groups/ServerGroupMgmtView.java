@@ -1,60 +1,54 @@
-package org.jboss.as.console.client.server;
+package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 import java.util.List;
 
 /**
- * Server management default view implementation.
- * Works on a LHS navigation and a all purpose content panel on the right.
- *
- * @see LHSServerNavigation
- *
  * @author Heiko Braun
- * @date 2/4/11
+ * @date 2/28/11
  */
-public class ServerMgmtApplicationViewImpl extends ViewImpl
-        implements ServerMgmtApplicationPresenter.ServerManagementView {
+public class ServerGroupMgmtView extends SuspendableViewImpl implements ServerGroupMgmtPresenter.MyView {
 
-    private ServerMgmtApplicationPresenter presenter;
 
+    private ServerGroupMgmtPresenter presenter;
     private SplitLayoutPanel layout;
     private LayoutPanel contentCanvas;
-    private LHSServerNavigation lhsNavigation;
+    private LHSServerGroupNavigation lhsNavigation;
 
-    public ServerMgmtApplicationViewImpl() {
+    public ServerGroupMgmtView() {
         super();
 
         layout = new SplitLayoutPanel(4);
 
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new LHSServerNavigation();
+        lhsNavigation = new LHSServerGroupNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 220);
+        layout.addWest(lhsNavigation.asWidget(), 180);
         layout.add(contentCanvas);
+    }
 
+
+    @Override
+    public void setPresenter(ServerGroupMgmtPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
-    public Widget asWidget() {
+    public Widget createWidget() {
         return layout;
     }
 
-    @Override
-    public void updateFrom(List<SubsystemRecord> subsystemRecords) {
-        lhsNavigation.updateFrom(subsystemRecords);
-    }
-
-    @Override
+     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == ServerMgmtApplicationPresenter.TYPE_MainContent) {
+        if (slot == ServerGroupMgmtPresenter.TYPE_MainContent) {
             if(content!=null)
                 setContent(content);
 
@@ -70,5 +64,8 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
         contentCanvas.add(newContent);
     }
 
-
+    @Override
+    public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
+        lhsNavigation.updateFrom(serverGroupRecords);
+    }
 }

@@ -3,6 +3,7 @@
     <!-- Inherit the core Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.chrome.ChromeResources'/>
+    <inherits name="com.google.gwt.editor.Editor"/>
 
     <inherits name='com.gwtplatform.mvp.Mvp' />
 

@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets.tables;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
@@ -68,5 +69,17 @@ public class DefaultCellTable<T> extends CellTable {
         this.state = isEmpty;
     }
 
+    public void setEnabled(boolean b)
+    {
+        for(int i=0; i<getColumnCount(); i++)
+        {
+            Cell cell = getColumn(i).getCell();
+            if(cell instanceof DefaultEditTextCell)
+            {
+                DefaultEditTextCell defaultCell = (DefaultEditTextCell)cell;
+                defaultCell.setEnabled(b);
+            }
+        }
 
+    }
 }

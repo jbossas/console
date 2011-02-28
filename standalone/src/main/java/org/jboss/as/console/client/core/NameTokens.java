@@ -71,9 +71,9 @@ public class NameTokens {
     // ------------------------------------------------------
     // domain tokens below
 
-    public static final String DomainManagementPresenter = "domain";
-    public static String getDomainManagementPresenter() {
-        return DomainManagementPresenter;
+    public static final String ProfileMgmtPresenter = "profiles";
+    public static String getProfileMgmtPresenter() {
+        return ProfileMgmtPresenter;
     }
 
     public static final String ProfileOverviewPresenter = "profile-overview";
@@ -86,8 +86,8 @@ public class NameTokens {
         return ServerGroupPresenter;
     }
 
-    public static final String ServerGroupOverviewPresenter = "server-groups-overview";
-    public static String getServerGroupOverviewPresenter() {
-        return ServerGroupOverviewPresenter;
+    public static final String ServerGroupMgmtPresenter = "server-groups";
+    public static String getServerGroupMgmtPresenter() {
+        return ServerGroupMgmtPresenter;
     }
 }

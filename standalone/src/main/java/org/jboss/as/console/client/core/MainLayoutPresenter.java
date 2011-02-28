@@ -46,7 +46,7 @@ public class MainLayoutPresenter
         {
             revealDefault = false;
             Console.MODULES.getPlaceManager().revealPlace(
-                    new PlaceRequest(NameTokens.DomainManagementPresenter)
+                    new PlaceRequest(NameTokens.ProfileMgmtPresenter)
             );
         }
     }
