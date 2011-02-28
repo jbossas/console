@@ -48,7 +48,7 @@ public class MessageBar extends LayoutPanel implements MessageCenter.MessageList
         this.messageCenter = messageCenter;
         this.popup = new MessagePopup();
 
-        messageCenter.addMessageListener(this);
+        //messageCenter.addMessageListener(this);
     }
 
     @Override

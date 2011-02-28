@@ -30,11 +30,11 @@ public class Header implements ValueChangeHandler<String> {
     private String currentHighlightedSection = null;
 
     public static final String[][] SECTIONS = {
-            new String[]{"system", "System Overview"},
-            new String[]{"server", "Server Management"},
-            new String[]{"domain", "Domain Management"},
-            new String[]{"users", "User Management"},
-            new String[]{"settings", "Settings"}
+            /*new String[]{"system", "System Overview"},*/
+            /*new String[]{"server", "Server Management"},*/
+            new String[]{"domain", "Profiles"},
+            new String[]{"groups", "Server Groups"},
+            new String[]{"hosts", "Hosts"}
     };
 
     private MessageBar messageBar;
@@ -56,16 +56,17 @@ public class Header implements ValueChangeHandler<String> {
 
         LayoutPanel innerLayout = new LayoutPanel();
         innerLayout.setStyleName("header");
-        innerLayout.add(logo);
+        //innerLayout.add(logo);
         innerLayout.add(links);
 
-        innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PX);
-        innerLayout.setWidgetLeftWidth(links, 50, Style.Unit.PX, 100, Style.Unit.PCT);
+        //innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PX);
+        innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 100, Style.Unit.PCT);
+        innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
         //outerLayout.add(messageBar);
 
-        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 35, Style.Unit.PX);
+        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 40, Style.Unit.PX);
         //outerLayout.setWidgetTopHeight(messageBar, 34, Style.Unit.PX, 25, Style.Unit.PX);
 
         return outerLayout;
@@ -86,9 +87,9 @@ public class Header implements ValueChangeHandler<String> {
 
     private String setupLinks() {
         StringBuilder headerString = new StringBuilder(
-                "<table style=\"height: 34px;\" cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links'>");
+                "<table class='header-links' cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links-ref'>");
 
-        headerString.append("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
+        headerString.append("<td style=\"width: 1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
         for (String[] section : SECTIONS) {
 
             final String name = section[0];
@@ -101,7 +102,7 @@ public class Header implements ValueChangeHandler<String> {
             }
 
             // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
-            headerString.append("<td style=\"vertical-align:middle\" id=\"" + id +"\"").append(" class=\"")
+            headerString.append("<td style=\"vertical-align:middle; text-align:center\" width='100' id=\"" + id +"\"").append(" class=\"")
                     .append(styleClass).append("\" onclick=\"document.location='#").append(name).append("'\" >");
             headerString.append(title);
             headerString.append("</td>\n");
@@ -134,7 +135,7 @@ public class Header implements ValueChangeHandler<String> {
 
     private void highlight(String name)
     {
-        NodeList<Node> childNodes = linksPane.getElementById("header-links").getChildNodes();
+        NodeList<Node> childNodes = linksPane.getElementById("header-links-ref").getChildNodes();
         for(int i=0; i<childNodes.getLength(); i++)
         {
             Node n = childNodes.getItem(i);

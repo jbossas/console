@@ -1,9 +1,7 @@
 package org.jboss.as.console.client.widgets;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 
 /**
  * @author Heiko Braun
@@ -17,9 +15,25 @@ public class RHSContentPanel extends LayoutPanel {
 
         super();
 
-        final TitleBar titleBar = new TitleBar(title);
-        super.add(titleBar);
-        super.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 35, Style.Unit.PX);
+        /*final TitleBar titleBar = new TitleBar(title);
+        super.add(titleBar);*/
+
+        HorizontalPanel stretch = new HorizontalPanel();
+        stretch.getElement().setAttribute("style", "width:100%");
+
+        HTML spacerLeft = new HTML("&nbsp;");
+        stretch.add(spacerLeft);
+        spacerLeft.getElement().getParentElement().setAttribute("style", "border-bottom:1px solid #A7ABB4;");
+
+        stretch.add(new TabHeader(title));
+
+        HTML spacerRight= new HTML("&nbsp;");
+        stretch.add(spacerRight);
+        spacerRight.getElement().getParentElement().setAttribute("style", "width:100%;border-bottom:1px solid #A7ABB4;");
+
+        super.add(stretch);
+
+        super.setWidgetTopHeight(stretch, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
         delegate = new VerticalPanel();
         delegate.setStyleName("fill-layout-width");

@@ -18,7 +18,8 @@ body, p, td, th, option, input, textarea, select {
     min-height:30px;
     height:30px;
     width:100%;
-    background-image: url(http://127.0.0.1:8888/images/sc/skins/Enterprise/images/ToolStrip/background.png);
+    /*background-image: url(http://127.0.0.1:8888/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
+
 }
 
 .footer-item {
@@ -68,19 +69,35 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .header {
-    border: 1px solid #A7ABB4;
-    background-color:#FFFFFF;
-    background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");
-    background-position: -4px -4px;
+
+    /*background-color:#FFFFFF;
+    background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
+}
+
+.header-links {
+    float: right;
+    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -webkit-box-shadow: 3px 3px 4px #c3c3c3;
+    box-shadow: 3px 3px 4px #c3c3c3;
+    margin-right:4px;
+    margin-bottom:4px;
 }
 
 .header-link {
-    padding:6px;
+
     cursor: pointer;
     font-size: 12px;
-    font-weight: bold;
+
     text-decoration: none;
-    color: #4A5D75;
+    /*color: #4A5D75;*/
+
+    background-color:#F8F8F8;
+    /*background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
+    /*background-image: url('images/sc/skins/Enterprise/images/Panel/panel_header.png');*/
+}
+
+.header-link:hover {
+    text-decoration: underline;
 }
 
 .header-link-selected {
@@ -123,13 +140,6 @@ body, p, td, th, option, input, textarea, select {
 }
 
 
-/* GWT Proper customizations */
-
-.section-stack {
-    width:100%;
-}
-
-
 /* CellTable customization */
 
 .default-cell-table{
@@ -165,7 +175,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .cellTableHoveredRow {
-    background:#FFFFFF url(images/sc/skins/Enterprise/images/ListGrid/row_Over.png) repeat-x bottom left scroll;
+   background-color:#d9e4f6;
 }
 
 .cellTableSelectedRow {
@@ -177,10 +187,17 @@ body, p, td, th, option, input, textarea, select {
 /*background:none; doesn't work atm */
 }
 
+.section-stack {
+    width:100%;
+}
+
 .stack-section-header {
-    font-family:Arial,Verdana,sans-serif; font-size:11px; text-overflow:ellipsis;
+    font-family:Arial,Verdana,sans-serif;
+    font-size:11px;
+    text-overflow:ellipsis;
     background-color:#FFFFFF;
-    background-image: url('images/sc/skins/Enterprise/images/ToolStrip/background.png');
+    /*background-image: url('images/sc/skins/Enterprise/images/SectionHeader/header_opened_stretch.png');*/
+    background-color:#F8F8F8;
     padding-left:10px;
     padding-top:6px;
     padding-bottom:4px;
@@ -188,7 +205,7 @@ body, p, td, th, option, input, textarea, select {
     color:#000;
     font-size:12px;
     border-top:1px solid #A7ABB4;
-
+    cursor:pointer;
 }
 
 .stack-section {
@@ -239,8 +256,9 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .gwt-SplitLayoutPanel-HDragger {
-    cursor:w-resize;
-    background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);
+    cursor:col-resize;
+    /*background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);*/
+    border-left:1px solid #A7ABB4;
     border-right:1px solid #A7ABB4!important;
 }
 
@@ -299,6 +317,10 @@ body, p, td, th, option, input, textarea, select {
     border-radius: 4px;
 }
 
+.default-button:hover {
+     background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
+}
+
 .default-popup {
     border: 1px solid #A7ABB4;
     background-color:#ffffff;
@@ -338,10 +360,16 @@ body, p, td, th, option, input, textarea, select {
     margin:0px;
 }
 
-.message-list-item, .combobox-item {
+.combobox-item {
+    min-height:20px;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    width:100%;
+}
+
+.message-list-item {
     padding:2px;
     min-height:20px;
-    padding:2px;
     white-space: nowrap;
     text-overflow:ellipsis;
     width:100%;
@@ -461,6 +489,28 @@ body, p, td, th, option, input, textarea, select {
 }
 
 
+.tab-left {
+    width:6px;
+    height:27px;
+    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_start.png)
+}
+
+.tab-title {
+    height:27px;
+    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_stretch.png);
+    padding-left:5px;
+    padding-right:5px;
+    vertical-align:middle;
+    font-size:12px;
+    white-space:nowrap;
+    font-weight:bold;
+}
+
+.tab-right {
+    width:6px;
+    height:27px;
+    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_end.png)
+}
 
 
 
