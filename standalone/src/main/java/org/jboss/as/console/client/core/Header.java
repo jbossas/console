@@ -33,7 +33,7 @@ public class Header implements ValueChangeHandler<String> {
             /*new String[]{"system", "System Overview"},*/
             /*new String[]{"server", "Server Management"},*/
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
-            new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
+            new String[]{NameTokens.ServerGroupPresenter, "Server Groups"},
             new String[]{"hosts", "Hosts"}
     };
 

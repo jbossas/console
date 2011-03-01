@@ -81,13 +81,15 @@ public class ServerGroupPresenter
         {
             onSelectServerGroup(groupName);
         }
-        else if(action!=null && action.equals("new"))
+        else if("new".equals(action))
         {
+            selectedRecord = null;
             createNewGroup();
         }
         else
         {
-            Log.error("Parameters missing!");
+            Log.error("Parameters missing. Fallback to default Group");
+            this.selectedRecord = serverGroupStore.loadServerGroups().get(0);
         }
     }
 
@@ -128,7 +130,7 @@ public class ServerGroupPresenter
     }
 
     public void deleteCurrentRecord() {
-        System.out.println("Delete ");
+
         if(selectedRecord!=null)
             serverGroupStore.deleteGroup(selectedRecord);
 
@@ -172,8 +174,9 @@ public class ServerGroupPresenter
 
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                History.back();
+            public void onClose(CloseEvent<PopupPanel> event) {
+                if(selectedRecord==null)
+                    History.back();
             }
         });
 

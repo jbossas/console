@@ -34,7 +34,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         this.bus = bus;
 
         ServerGroupRecord eeServer = factory.serverGroup().as();
-        eeServer.setGroupName("EE6 Server");
+        eeServer.setGroupName("Productive Servers");
         eeServer.setProfileName("EE6 Web");
         eeServer.setProperties(props);
         eeServer.setJvm("jdk_16_default");
@@ -42,7 +42,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         results.add(eeServer);
 
         ServerGroupRecord webServer = factory.serverGroup().as();
-        webServer.setGroupName("Web Server");
+        webServer.setGroupName("Development Environment");
         webServer.setProfileName("EE6 Web");
         webServer.setProperties(Collections.EMPTY_MAP);
         webServer.setJvm("jdk_16_default");
@@ -50,7 +50,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         results.add(webServer);
 
         ServerGroupRecord standby = factory.serverGroup().as();
-        standby.setGroupName("Hot Standby");
+        standby.setGroupName("B2B Services");
         standby.setProfileName("Messaging");
         standby.setProperties(Collections.EMPTY_MAP);
         standby.setJvm("jrockit");

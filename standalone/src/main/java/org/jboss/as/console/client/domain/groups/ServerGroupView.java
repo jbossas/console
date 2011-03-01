@@ -7,6 +7,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -80,7 +81,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         delete.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
-                presenter.deleteCurrentRecord();
+                if(Window.confirm("Delete this Server Group?"))
+                    presenter.deleteCurrentRecord();
             }
         });
         toolStrip.addToolButton(delete);
