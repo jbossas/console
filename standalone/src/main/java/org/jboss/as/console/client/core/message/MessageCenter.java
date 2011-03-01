@@ -32,7 +32,7 @@ public class MessageCenter {
     private LinkedList<Message> messages = new LinkedList<Message>();
     private List<MessageListener> listeners = new ArrayList<MessageListener>();
 
-    private static final int MAX_MESSAGES = 50;
+    private static final int MAX_MESSAGES = 10;
 
     public void notify(Message message) {
         log(message);
