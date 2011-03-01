@@ -2,6 +2,8 @@ package org.jboss.as.console.client.domain.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.ArrayList;

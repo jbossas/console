@@ -2,6 +2,9 @@ package org.jboss.as.console.client.domain.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.*;
@@ -21,40 +24,14 @@ public class MockServerGroupStore implements ServerGroupStore {
         props.put("DEFAULT_LOG_LEVEL", "INFO");
     }
 
-    /*static ServerGroupRecord[] records = new ServerGroupRecord [] {
-          new ServerGroupRecord("EE6 Server", "EE6 Web")
-          {{
-                  setAttribute("jvm", "jdk_16_default");
-                  setAttribute("socket-binding", "default");
-                  setAttribute("properties", props);
-              }},
-          new ServerGroupRecord("Web Server", "EE6 Web")
-          {{
-                  setAttribute("jvm", "jdk_15_default");
-                  setAttribute("socket-binding", "DMZ");
-              }},
-          new ServerGroupRecord("Payment", "Messaging")
-          {{
-                  setAttribute("jvm", "jrockit_15");
-                  setAttribute("socket-binding", "default");
-              }},
-          new ServerGroupRecord("Hot Standby", "BPM Platform")
-          {{
-                  setAttribute("jvm", "jdk_16_default");
-                  setAttribute("socket-binding", "default");
-              }},
-          new ServerGroupRecord("Backoffice", "EE6 Web")
-          {{
-                  setAttribute("jvm", "jdk_16_default");
-                  setAttribute("socket-binding", "default");
-              }}
+    private EventBus bus;
 
-  };  */
+    private List<ServerGroupRecord> results = new ArrayList<ServerGroupRecord>();
 
-    @Override
-    public List<ServerGroupRecord> loadServerGroups() {
+    @Inject
+    public MockServerGroupStore(EventBus bus) {
 
-        List<ServerGroupRecord> results = new ArrayList<ServerGroupRecord>();
+        this.bus = bus;
 
         ServerGroupRecord eeServer = factory.serverGroup().as();
         eeServer.setGroupName("EE6 Server");
@@ -71,7 +48,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         webServer.setJvm("jdk_16_default");
         webServer.setSocketBinding("DMZ");
         results.add(webServer);
-        
+
         ServerGroupRecord standby = factory.serverGroup().as();
         standby.setGroupName("Hot Standby");
         standby.setProfileName("Messaging");
@@ -79,7 +56,11 @@ public class MockServerGroupStore implements ServerGroupStore {
         standby.setJvm("jrockit");
         standby.setSocketBinding("default_no_http");
         results.add(standby);
-        
+    }
+
+    @Override
+    public List<ServerGroupRecord> loadServerGroups() {
+
         Log.debug("Loaded " + results.size() + " server groups");
         return results;
     }
@@ -95,5 +76,28 @@ public class MockServerGroupStore implements ServerGroupStore {
                 results.add(group);
         }
         return results;
+    }
+
+    @Override
+    public void persist(ServerGroupRecord updatedEntity) {
+
+        ServerGroupRecord removal = null;
+        for(ServerGroupRecord rec : results)
+        {
+            if(rec.getGroupName().equals(updatedEntity.getGroupName()))
+            {
+                removal = rec;
+                break;
+            }
+        }
+
+        // replace
+        if(removal!=null)
+        {
+            results.remove(removal);
+            results.add(updatedEntity);
+        }
+
+        bus.fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
     }
 }

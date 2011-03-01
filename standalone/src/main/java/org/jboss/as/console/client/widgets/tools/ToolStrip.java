@@ -31,4 +31,12 @@ public class ToolStrip extends LayoutPanel {
         button.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
         innerPanel.add(new HTML("&nbsp;"));
     }
+
+    public void reflectEditState(boolean isEditState)
+    {
+        if(isEditState)
+            addStyleName("default-toolstrip-edited");
+        else
+            removeStyleName("default-toolstrip-edited");
+    }
 }

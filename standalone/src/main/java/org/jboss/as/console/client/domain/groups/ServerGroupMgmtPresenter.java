@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.profiles.ProfileHeader;
@@ -23,7 +24,8 @@ import java.util.List;
  * @date 2/28/11
  */
 public class ServerGroupMgmtPresenter
-        extends Presenter<ServerGroupMgmtPresenter.MyView, ServerGroupMgmtPresenter.MyProxy> {
+        extends Presenter<ServerGroupMgmtPresenter.MyView, ServerGroupMgmtPresenter.MyProxy>
+        implements StaleModelEvent.StaleModelListener{
 
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
@@ -57,6 +59,7 @@ public class ServerGroupMgmtPresenter
     @Override
     protected void onBind() {
         super.onBind();
+        getEventBus().addHandler(StaleModelEvent.TYPE, this);
         getView().setPresenter(this);
     }
 
@@ -68,12 +71,18 @@ public class ServerGroupMgmtPresenter
 
         getView().updateServerGroups(serverGroupStore.loadServerGroups());
 
-        ProfileHeader header = new ProfileHeader("Group Mangement");
+        ProfileHeader header = new ProfileHeader("Group Management");
         Console.MODULES.getHeader().setContent(header);
     }
 
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_SetMainContent, this);
+    }
+
+    @Override
+    public void onStaleModel(String modelName) {
+        if(StaleModelEvent.SERVER_GROUPS.equals(modelName))
+            getView().updateServerGroups(serverGroupStore.loadServerGroups());
     }
 }

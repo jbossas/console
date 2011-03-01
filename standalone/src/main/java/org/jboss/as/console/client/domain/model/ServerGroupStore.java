@@ -9,4 +9,6 @@ import java.util.List;
 public interface ServerGroupStore {
     List<ServerGroupRecord> loadServerGroups();
     List<ServerGroupRecord> loadServerGroups(String profileName);
+
+    void persist(ServerGroupRecord updatedEntity);
 }

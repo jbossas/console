@@ -112,24 +112,24 @@ public class Form<T> {
 
     public T getUpdatedEntity() {
 
-        Map<String, Object> values = getChangedValues();
 
         StringBuilder builder = new StringBuilder("{");
 
         int i=0;
-        for(String property : values.keySet())
+        for(FormItem item : formItems.values())
         {
+
             builder.append("\"");
-            builder.append(property);
+            builder.append(item.getName());
             builder.append("\"");
 
             builder.append(":");
 
             builder.append("\"");
-            builder.append(values.get(property));
+            builder.append(item.getValue());
             builder.append("\"");
 
-            if(i<values.size()-1)
+            if(i<formItems.size()-1)
                 builder.append(", ");
             i++;
 
@@ -215,6 +215,7 @@ public class Form<T> {
     }
 
     private void createItemCell(SafeHtmlBuilder builder, FormItem item) {
+
         final String widgetId = id + item.getName();
 
         builder.appendHtmlConstant("<td align='right' class='form-item-title'>");

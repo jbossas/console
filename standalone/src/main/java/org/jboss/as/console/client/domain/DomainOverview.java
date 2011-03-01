@@ -108,24 +108,21 @@ public class DomainOverview
         deploymentTable = new DeploymentTable();
         layout.add(deploymentTable);
 
-        refresh();
-
         return layout;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refresh();
+    public void updateProfiles(List<ProfileRecord> profiles)
+    {
+        profileList.setRowData(0, profiles);
     }
 
-    private void refresh() {
-        List<ProfileRecord> profiles = presenter.getProfileRecords();
-        List<ServerGroupRecord> groups = presenter.getServerGroupRecords();
-
-        profileList.setRowData(0, profiles);
+    public void updateGroups(List<ServerGroupRecord> groups)
+    {
         groupList.setRowData(0, groups);
-        deploymentTable.setRowData(0, presenter.getDeploymentRecords());
+    }
+
+    public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
+
+        deploymentTable.setRowData(0, deploymentRecords);
     }
 }

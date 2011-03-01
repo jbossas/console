@@ -1,11 +1,13 @@
 package org.jboss.as.console.client.widgets.tables;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 
 import java.util.List;
 
@@ -21,7 +23,16 @@ public class DefaultCellTable<T> extends CellTable {
             new DefaultCellTableResources();
     private static final String CELLTABLE_EMPTY_DIV = "celltable-empty-div";
 
-    private boolean state = false;
+    private boolean isEmpty = false;
+    private boolean isEnabled = false;
+
+    public interface RowOverHandler {
+        void onRowOver(int rowNum);
+
+        void onRowOut(int rowNum);
+    }
+
+    private RowOverHandler rowOverHandler = null;
 
     public DefaultCellTable(int pageSize) {
 
@@ -43,7 +54,7 @@ public class DefaultCellTable<T> extends CellTable {
 
     private void setEmpty(boolean isEmpty)
     {
-        if(state == isEmpty) return;
+        if(this.isEmpty == isEmpty) return;
 
         if(isEmpty)
         {
@@ -66,11 +77,13 @@ public class DefaultCellTable<T> extends CellTable {
 
         }
 
-        this.state = isEmpty;
+        this.isEmpty = isEmpty;
     }
 
     public void setEnabled(boolean b)
     {
+        this.isEnabled = b;
+
         for(int i=0; i<getColumnCount(); i++)
         {
             Cell cell = getColumn(i).getCell();
@@ -80,6 +93,50 @@ public class DefaultCellTable<T> extends CellTable {
                 defaultCell.setEnabled(b);
             }
         }
+    }
 
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    int hoveredRow = -1;
+
+    @Override
+    protected void onBrowserEvent2(Event event) {
+        super.onBrowserEvent2(event);
+
+        if(rowOverHandler!=null)
+        {
+            EventTarget eventTarget = event.getEventTarget();
+            String eventType = event.getType();
+
+            if("mouseover".equals(eventType))
+            {
+                if (!com.google.gwt.dom.client.Element.is(eventTarget)) {
+                    return;
+                }
+                final com.google.gwt.dom.client.Element target = event.getEventTarget().cast();
+
+                hoveredRow = TableUtils.identifyRow(target);
+                rowOverHandler.onRowOver(hoveredRow);
+            }
+            else if ("mouseout".equals(eventType) )
+            {
+                if(hoveredRow>=0)
+                {
+                    rowOverHandler.onRowOut(hoveredRow);
+                }
+            }
+        }
+    }
+
+    public void setRowOverHandler(RowOverHandler rowOverHandler) {
+        this.rowOverHandler = rowOverHandler;
+    }
+
+    public boolean isEmpty() {
+        return isEmpty;
     }
 }
+
+

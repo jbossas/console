@@ -9,8 +9,10 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class FormItem<T> {
 
     private T value;
-    private String name;
-    private String title;
+    protected String name;
+    protected String title;
+
+    private boolean isKey;
 
     public FormItem(String name, String title) {
         this.name = name;
@@ -35,6 +37,14 @@ public abstract class FormItem<T> {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isKey() {
+        return isKey;
+    }
+
+    public void setKey(boolean key) {
+        isKey = key;
     }
 
     public abstract Widget asWidget();

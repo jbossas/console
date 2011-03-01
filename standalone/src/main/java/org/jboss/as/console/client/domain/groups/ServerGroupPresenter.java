@@ -38,10 +38,6 @@ public class ServerGroupPresenter
     private ServerGroupRecord selectedRecord;
     private ProfileStore profileStore;
 
-    public ServerGroupRecord getSelectedRecord() {
-        return selectedRecord;
-    }
-
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
     public interface MyProxy extends Proxy<ServerGroupPresenter>, Place {
@@ -138,7 +134,11 @@ public class ServerGroupPresenter
                 new Message("Saved " + updatedEntity.getGroupName(), Message.Severity.Info)
         );
 
-        // TODO: persist changes
+        serverGroupStore.persist(updatedEntity);
+
+        this.selectedRecord = updatedEntity;
+        getView().setSelectedRecord(selectedRecord);
+
     }
 
     public void createNewGroup() {

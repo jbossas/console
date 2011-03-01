@@ -254,6 +254,7 @@ body, p, td, th, option, input, textarea, select {
     padding-bottom:8px;
     padding-right:8px;
     padding-left:2px;
+    min-width:200px;
 }
 
 .gwt-SplitLayoutPanel-HDragger {
@@ -547,6 +548,16 @@ body, p, td, th, option, input, textarea, select {
     width:100%;
     height:20px;
     /*background-image:url(/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
+}
+
+.row-tools {
+    visibility:hidden;
+}
+
+.row-tools-enabled {
+    visibility:visible;
+    cursor:pointer;
+    text-decoration:underline;
 }
 
 

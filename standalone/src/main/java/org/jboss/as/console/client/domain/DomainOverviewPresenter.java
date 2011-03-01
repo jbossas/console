@@ -9,6 +9,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -24,7 +25,9 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class DomainOverviewPresenter extends Presenter<DomainOverviewPresenter.MyView, DomainOverviewPresenter.MyProxy> {
+public class DomainOverviewPresenter
+        extends Presenter<DomainOverviewPresenter.MyView, DomainOverviewPresenter.MyProxy>
+        implements StaleModelEvent.StaleModelListener {
 
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
@@ -38,6 +41,9 @@ public class DomainOverviewPresenter extends Presenter<DomainOverviewPresenter.M
 
     public interface MyView extends SuspendableView {
         void setPresenter(DomainOverviewPresenter presenter);
+        void updateProfiles(List<ProfileRecord> profiles);
+        void updateGroups(List<ServerGroupRecord> groups);
+        void updateDeployments(List<DeploymentRecord> deploymentRecords);
     }
 
     @Inject
@@ -69,22 +75,24 @@ public class DomainOverviewPresenter extends Presenter<DomainOverviewPresenter.M
     }
 
     @Override
+    protected void onReset() {
+        getView().updateProfiles(profileStore.loadProfiles());
+        getView().updateGroups(serverGroupStore.loadServerGroups());
+        getView().updateDeployments(deploymentStore.loadDeployments());
+    }
+
+    @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
     // --------------------------------
 
-    public List<ProfileRecord> getProfileRecords() {
-        return profileStore.loadProfiles();
-    }
-
-    public List<ServerGroupRecord> getServerGroupRecords()
-    {
-        return serverGroupStore.loadServerGroups();
-    }
-
-    public List<DeploymentRecord> getDeploymentRecords() {
-        return deploymentStore.loadDeployments();
+    @Override
+    public void onStaleModel(String modelName) {
+        if(modelName.equals(StaleModelEvent.SERVER_GROUPS))
+        {
+            getView().updateGroups(serverGroupStore.loadServerGroups());
+        }
     }
 }
