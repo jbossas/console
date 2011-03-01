@@ -81,10 +81,21 @@ public class MockServerGroupStore implements ServerGroupStore {
     @Override
     public void persist(ServerGroupRecord updatedEntity) {
 
+        deleteGroup(updatedEntity, false);
+        results.add(updatedEntity);
+        bus.fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+    }
+
+    @Override
+    public boolean deleteGroup(ServerGroupRecord record) {
+        return deleteGroup(record, true);
+    }
+
+    private boolean deleteGroup(ServerGroupRecord record, boolean fire) {
         ServerGroupRecord removal = null;
         for(ServerGroupRecord rec : results)
         {
-            if(rec.getGroupName().equals(updatedEntity.getGroupName()))
+            if(rec.getGroupName().equals(record.getGroupName()))
             {
                 removal = rec;
                 break;
@@ -95,9 +106,10 @@ public class MockServerGroupStore implements ServerGroupStore {
         if(removal!=null)
         {
             results.remove(removal);
-            results.add(updatedEntity);
         }
 
-        bus.fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+        if(fire) bus.fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+
+        return removal!=null;
     }
 }

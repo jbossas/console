@@ -11,4 +11,6 @@ public interface ServerGroupStore {
     List<ServerGroupRecord> loadServerGroups(String profileName);
 
     void persist(ServerGroupRecord updatedEntity);
+
+    boolean deleteGroup(ServerGroupRecord selectedRecord);
 }

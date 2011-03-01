@@ -121,7 +121,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
-
         addProp = new Button("Add");
         addProp.setStyleName("default-button");
 
@@ -211,11 +210,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         );
 
         layout.add(propertyTable);
-
-
-        // -----------------
-
-
 
         return layout;
     }

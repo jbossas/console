@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.resource.WidgetResources;
 
 import java.util.ArrayList;

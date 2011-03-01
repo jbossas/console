@@ -3,7 +3,6 @@ package org.jboss.as.console.client.shared;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**

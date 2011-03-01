@@ -1,7 +1,5 @@
 package org.jboss.as.console.client.widgets.tables;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.view.client.ListDataProvider;
 

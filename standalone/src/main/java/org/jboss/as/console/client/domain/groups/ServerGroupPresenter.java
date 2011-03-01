@@ -1,11 +1,11 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -20,6 +20,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
@@ -37,6 +38,9 @@ public class ServerGroupPresenter
     private ServerGroupStore serverGroupStore;
     private ServerGroupRecord selectedRecord;
     private ProfileStore profileStore;
+
+    private BeanFactory beanFactory = GWT.create(BeanFactory.class);
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -124,7 +128,25 @@ public class ServerGroupPresenter
     }
 
     public void deleteCurrentRecord() {
+        System.out.println("Delete ");
+        if(selectedRecord!=null)
+            serverGroupStore.deleteGroup(selectedRecord);
 
+        // switch to alternate record instead
+        workOn(serverGroupStore.loadServerGroups().get(0));
+
+    }
+
+    public void onNewGroup(ServerGroupRecord newGroup) {
+
+        // close popup
+        if(window!=null && window.isShowing())
+        {
+            window.hide();
+        }
+
+        // save changes
+        onSaveChanges(newGroup);
     }
 
     public void onSaveChanges(ServerGroupRecord updatedEntity) {
@@ -136,13 +158,17 @@ public class ServerGroupPresenter
 
         serverGroupStore.persist(updatedEntity);
 
-        this.selectedRecord = updatedEntity;
-        getView().setSelectedRecord(selectedRecord);
+        workOn(updatedEntity);
 
     }
 
+    private void workOn(ServerGroupRecord record) {
+        this.selectedRecord = record;
+        getView().setSelectedRecord(selectedRecord);
+    }
+
     public void createNewGroup() {
-        final DefaultWindow window = new DefaultWindow("Create Server Group");
+        window = new DefaultWindow("Create Server Group");
 
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
@@ -152,9 +178,7 @@ public class ServerGroupPresenter
         });
 
         window.setWidget(
-                new Label("This will become a wizard to create server groups.") {{
-                    getElement().setAttribute("style", "margin:15px;");
-                }}
+                new NewGroupWizard(this, serverGroupStore.loadServerGroups()).asWidget()
         );
 
         window.setGlassEnabled(true);
