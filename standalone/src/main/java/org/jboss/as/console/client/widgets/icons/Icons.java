@@ -39,12 +39,6 @@ public interface Icons extends ClientBundle {
     @Source("close.png")
     ImageResource close();
 
-    @Source("comboBoxPicker_Over.png")
-    ImageResource comboPicker_over();
-
-    @Source("comboBoxPicker.png")
-    ImageResource comboPicker();
-
     @Source("profile.png")
     ImageResource profile();
 

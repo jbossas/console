@@ -17,6 +17,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.resource.WidgetResources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         header.setStyleName("combobox"+cssSuffix);
         header.add(currentValue);
 
-        Image img = new Image(Icons.INSTANCE.comboPicker());
+        Image img = new Image(WidgetResources.INSTANCE.comboPicker());
         header.add(img);
 
         currentValue.getElement().getParentElement().setAttribute("width", "100%");
