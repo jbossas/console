@@ -497,12 +497,12 @@ body, p, td, th, option, input, textarea, select {
 .tab-left {
     width:6px;
     height:27px;
-    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_start.png)
+    background-image:url(images/sc/skins/Enterprise/images/Tab/top/tab_Selected_start.png)
 }
 
 .tab-title {
     height:27px;
-    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_stretch.png);
+    background-image:url(images/sc/skins/Enterprise/images/Tab/top/tab_Selected_stretch.png);
     padding-left:5px;
     padding-right:5px;
     vertical-align:middle;
@@ -514,7 +514,7 @@ body, p, td, th, option, input, textarea, select {
 .tab-right {
     width:6px;
     height:27px;
-    background-image:url(/images/sc/skins/Enterprise/images/Tab/top/tab_Selected_end.png)
+    background-image:url(images/sc/skins/Enterprise/images/Tab/top/tab_Selected_end.png)
 }
 
 .header-content {
