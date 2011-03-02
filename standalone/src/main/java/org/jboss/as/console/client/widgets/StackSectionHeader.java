@@ -12,4 +12,9 @@ public class StackSectionHeader extends HTML {
         super(title);
         setStyleName("stack-section-header");
     }
+
+    public StackSectionHeader(String title, boolean inline) {
+        super(title);
+        setStyleName("stack-section-header-inline");
+    }
 }

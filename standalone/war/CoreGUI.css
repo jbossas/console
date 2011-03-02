@@ -19,7 +19,7 @@ body, p, td, th, option, input, textarea, select {
     min-height:30px;
     height:30px;
     width:100%;
-    /*background-image: url(http://127.0.0.1:8888/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
+/*background-image: url(http://127.0.0.1:8888/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
 
 }
 
@@ -90,11 +90,11 @@ body, p, td, th, option, input, textarea, select {
     font-size: 12px;
 
     text-decoration: none;
-    /*color: #4A5D75;*/
+/*color: #4A5D75;*/
 
     background-color:#F8F8F8;
-    /*background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
-    /*background-image: url('images/sc/skins/Enterprise/images/Panel/panel_header.png');*/
+/*background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
+/*background-image: url('images/sc/skins/Enterprise/images/Panel/panel_header.png');*/
 }
 
 .header-link:hover {
@@ -176,7 +176,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .cellTableHoveredRow {
-   background-color:#d9e4f6;
+    background-color:#d9e4f6;
 }
 
 .cellTableSelectedRow {
@@ -194,9 +194,7 @@ body, p, td, th, option, input, textarea, select {
 
 .stack-section-header {
     font-family:Arial,Verdana,sans-serif;
-    font-size:11px;
     text-overflow:ellipsis;
-    background-color:#FFFFFF;
     /*background-image: url('images/sc/skins/Enterprise/images/SectionHeader/header_opened_stretch.png');*/
     background-color:#F8F8F8;
     padding-left:10px;
@@ -206,6 +204,21 @@ body, p, td, th, option, input, textarea, select {
     color:#000;
     font-size:12px;
     border-top:1px solid #A7ABB4;
+    cursor:pointer;
+}
+
+.stack-section-header-inline {
+    font-family:Arial,Verdana,sans-serif;
+    text-overflow:ellipsis;
+    background-color:#F8F8F8;
+    padding-left:10px;
+    padding-top:6px;
+    padding-bottom:4px;
+    height:20px;
+    color:#000;
+    font-size:12px;
+    border-top:1px solid #A7ABB4;
+    border-bottom:1px solid #A7ABB4;
     cursor:pointer;
 }
 
@@ -259,7 +272,7 @@ body, p, td, th, option, input, textarea, select {
 
 .gwt-SplitLayoutPanel-HDragger {
     cursor:col-resize;
-    /*background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);*/
+/*background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);*/
     border-left:1px solid #A7ABB4;
     border-right:1px solid #A7ABB4!important;
 }
@@ -320,7 +333,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .default-button:hover {
-     background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
+    background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
 }
 
 .default-popup {
@@ -371,6 +384,12 @@ body, p, td, th, option, input, textarea, select {
     white-space: nowrap;
     text-overflow:ellipsis;
     width:100%;
+}
+
+.combobox-item-selected {
+    color:#000000!important;
+    font-weight:bold;
+    background-color:#ffffff!important;
 }
 
 .message-list-item {
@@ -547,7 +566,7 @@ body, p, td, th, option, input, textarea, select {
 .default-toolstrip {
     width:100%;
     height:20px;
-    /*background-image:url(/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
+/*background-image:url(/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
 }
 
 .row-tools {
@@ -559,5 +578,7 @@ body, p, td, th, option, input, textarea, select {
     cursor:pointer;
     text-decoration:underline;
 }
+
+
 
 
