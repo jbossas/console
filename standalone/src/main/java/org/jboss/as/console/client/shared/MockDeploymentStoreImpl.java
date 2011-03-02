@@ -96,4 +96,9 @@ public class MockDeploymentStoreImpl implements DeploymentStore {
         Log.debug("Loaded " + records.size() +" deployment records");
         return records;
     }
+
+    @Override
+    public void deleteDeployment(DeploymentRecord deploymentRecord) {
+        //TODO: implement
+    }
 }

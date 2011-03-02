@@ -16,6 +16,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -56,18 +57,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
-        VerticalPanel delegate = new VerticalPanel();
-        delegate.setStyleName("fill-layout-width");
-        delegate.getElement().setAttribute("style", "padding:15px;");
-
-        layout.add(delegate);
-        layout.setWidgetTopHeight(delegate, 35, Style.Unit.PX, 70, Style.Unit.PCT);
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
+        vpanel.getElement().setAttribute("style", "padding:15px;");
 
         // -----------
 
         ContentHeaderLabel nameLabel = new ContentHeaderLabel("Available Deployments");
         nameLabel.setIcon("common/server_group.png");
-        delegate.add(nameLabel);
+        vpanel.add(nameLabel);
 
         deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
@@ -108,7 +106,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         tableOptions.add(new Label("Server Group:"));
         tableOptions.add(groupFilterWidget);
 
-        
+
         ComboBox typeFilter = new ComboBox();
         typeFilter.setValues(Arrays.asList(new String[]{"", "war", "ear", "rar", "other"}));
         typeFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -126,14 +124,21 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         tableOptions.add(filterWidget);
 
         tableOptions.getElement().setAttribute("style", "float:right;");
-        delegate.add(tableOptions);
-        delegate.add(deploymentTable);
+        vpanel.add(tableOptions);
+        vpanel.add(deploymentTable);
 
 
-        // -----------
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.add(vpanel);
+
+        layout.add(scroll);
+        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 60, Style.Unit.PCT);
+
+        // ----------- --------------------------------------------------
 
         StackLayoutPanel stack = new StackLayoutPanel(Style.Unit.PX);
         stack.addStyleName("section-stack");
+        stack.getElement().setAttribute("style", "background:#ffffff;");
 
         LayoutPanel formPanel = new LayoutPanel();
         formPanel.getElement().setAttribute("style", "margin:15px;");
@@ -160,11 +165,19 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         delete.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
-                if(Window.confirm("Delete this Deployment?"))
-                {
-
-                }
-
+                Feedback.confirm(
+                        "Delete Deployment",
+                        "Do you want to delete this deployment?",
+                        new Feedback.ConfirmationHandler()
+                        {
+                            @Override
+                            public void onConfirmation(boolean isConformed) {
+                                SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
+                                presenter.deleteDeployment(
+                                       selectionModel.getSelectedObject()
+                               );
+                            }
+                        });
             }
         });
         toolStrip.addToolButton(delete);
@@ -175,11 +188,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
 
+        TextItem groupItem = new TextItem("serverGroup", "Deployed to Group");
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
         TextItem shaItem = new TextItem("sha", "Sha");
         CheckBoxItem suspendedItem = new CheckBoxItem("suspended", "Suspended?");
-        form.setFields(nameItem,  runtimeName, shaItem, suspendedItem);
+
+        form.setFields(groupItem, nameItem,  runtimeName, shaItem, suspendedItem);
 
         Widget formWidget = form.asWidget();
         formPanel.add(formWidget);
@@ -200,7 +215,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
 
         layout.add(stack);
-        layout.setWidgetBottomHeight(stack, 0, Style.Unit.PX, 30, Style.Unit.PCT);
+        layout.setWidgetBottomHeight(stack, 0, Style.Unit.PX, 40, Style.Unit.PCT);
 
         return layout;
     }

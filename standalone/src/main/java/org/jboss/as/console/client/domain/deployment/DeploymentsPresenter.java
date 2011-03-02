@@ -76,6 +76,11 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         RevealContentEvent.fire(getEventBus(), ServerGroupMgmtPresenter.TYPE_MainContent, this);
     }
 
+    public void deleteDeployment(DeploymentRecord deploymentRecord) {
+        deploymentStore.deleteDeployment(deploymentRecord);
+    }
+
+
     public void onFilterGroup(final String filter) {
         this.groupFilter = filter;
         getView().updateDeployments(

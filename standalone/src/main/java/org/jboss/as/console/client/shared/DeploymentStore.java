@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface DeploymentStore {
     List<DeploymentRecord> loadDeployments();
+
+    void deleteDeployment(DeploymentRecord deploymentRecord);
 }
