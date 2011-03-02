@@ -90,4 +90,9 @@ public class NameTokens {
     public static String getServerGroupMgmtPresenter() {
         return ServerGroupMgmtPresenter;
     }
+
+    public static final String DeploymentsPresenter  = "domain-deployments";
+    public static String getDeploymentsPresenter() {
+        return DeploymentsPresenter;
+    }
 }

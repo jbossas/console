@@ -141,6 +141,8 @@ public class ServerGroupPresenter
 
     public void onNewGroup(ServerGroupRecord newGroup) {
 
+        workOn(newGroup);
+
         // close popup
         if(window!=null && window.isShowing())
         {
@@ -159,9 +161,6 @@ public class ServerGroupPresenter
         );
 
         serverGroupStore.persist(updatedEntity);
-
-        workOn(updatedEntity);
-
     }
 
     private void workOn(ServerGroupRecord record) {

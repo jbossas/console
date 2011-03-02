@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared;
 
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -9,10 +10,11 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
  * @author Heiko Braun
  * @date 2/22/11
  */
-public class DeploymentTable extends DefaultCellTable<DeploymentRecord>{
+public class DeploymentTable extends CellTable<DeploymentRecord> {
 
     public DeploymentTable() {
         super(10);
+        addStyleName("fill-layout-width");
 
         TextColumn<DeploymentRecord> dplNameColumn = new TextColumn<DeploymentRecord>() {
             @Override
@@ -28,16 +30,8 @@ public class DeploymentTable extends DefaultCellTable<DeploymentRecord>{
             }
         };
 
-        TextColumn<DeploymentRecord> dplShaColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getSha();
-            }
-        };
-
         addColumn(dplNameColumn, "Name");
         addColumn(dplRuntimeColumn, "Runtime Name");
-        addColumn(dplShaColumn, "Sha");
 
         // just an example
         final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();

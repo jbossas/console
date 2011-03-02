@@ -3,6 +3,7 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 
@@ -19,9 +20,18 @@ class DeploymentSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        LHSNavItem current = new LHSNavItem("Current Deployments", "current-deployments",Icons.INSTANCE.inventory());
+        LHSNavItem current = new LHSNavItem(
+                "Current Deployments",
+                NameTokens.DeploymentsPresenter,
+                Icons.INSTANCE.inventory()
+        );
 
-        LHSNavItem createNew = new LHSNavItem("New Deployment", "current-deployments;action=new", Icons.INSTANCE.add());
+        LHSNavItem createNew = new LHSNavItem(
+                "New Deployment",
+                "current-deployments;action=new",
+                Icons.INSTANCE.add()
+        );
+
         LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");
 
         addNavItems(current, createNew, plans);

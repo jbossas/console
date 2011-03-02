@@ -18,6 +18,8 @@ import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.DomainOverview;
 import org.jboss.as.console.client.domain.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.deployment.DeploymentsOverview;
+import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -175,7 +177,13 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);
-                
+
+
+         // domain/domain-deployments
+        bindPresenter(DeploymentsPresenter.class,
+                DeploymentsPresenter.MyView.class,
+                DeploymentsOverview.class,
+                DeploymentsPresenter.MyProxy.class);
         
     }
 

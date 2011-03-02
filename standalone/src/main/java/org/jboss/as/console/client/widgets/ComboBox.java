@@ -15,7 +15,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.resource.WidgetResources;
 
 import java.util.ArrayList;
@@ -49,6 +48,9 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     private String cssSuffix = "";
     private boolean isEnabled = true;
 
+
+    private List<ValueChangeHandler<String>> changeHandlers = new ArrayList<ValueChangeHandler<String>>();
+
     public ComboBox(String cssSuffix) {
 
         this.cssSuffix = cssSuffix;
@@ -58,6 +60,9 @@ public class ComboBox implements HasValueChangeHandlers<String> {
             @Override
             public void render(Context context, String data, SafeHtmlBuilder sb) {
                 String cssName = (context.getIndex() %2 > 0) ? "combobox-item combobox-item-odd" : "combobox-item";
+
+                if(data.equals(currentValue.getText()))
+                    cssName+=" combobox-item-selected";
 
                 sb.append(TEMPLATE.item(cssName, data));
             }
@@ -75,16 +80,12 @@ public class ComboBox implements HasValueChangeHandlers<String> {
                 currentValue.setHTML(selectedValue);
                 panel.hide();
 
-                handleSelection(selectedValue);
+                onSelection(selectedValue);
             }
         });
 
         final String panelId = "popup_"+HTMLPanel.createUniqueId();
         panel = new PopupPanel(true, true) {
-
-            {
-                //sinkEvents(Event.ONMOUSEOUT);
-            }
 
             @Override
             protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
@@ -98,12 +99,6 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
             public void onBrowserEvent(Event event) {
                 super.onBrowserEvent(event);
-
-                /*if (DOM.eventGetType(event) == Event.ONMOUSEOUT) {
-                    Element element = DOM.eventGetTarget(event);
-                    if(panelId.equals(element.getId()))
-                        hide();
-                } */
             }
         };
 
@@ -157,7 +152,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         return currentValue.getText();
     }
 
-    private void handleSelection(String selectedValue) {
+    private void onSelection(String selectedValue) {
         ValueChangeEvent.fire(this, selectedValue);
     }
 
@@ -225,15 +220,20 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> handler) {
 
-        return Console.MODULES.getEventBus().addHandler(
-                ValueChangeEvent.getType(), handler
-        );
+        changeHandlers.add(handler);
 
+        return new HandlerRegistration() {
+            @Override
+            public void removeHandler() {
+                changeHandlers.remove(handler);
+            }
+        };
     }
 
     @Override
     public void fireEvent(GwtEvent<?> gwtEvent) {
-        Console.MODULES.getEventBus().fireEvent(gwtEvent);
+        for(ValueChangeHandler<String> handler : changeHandlers)
+            handler.onValueChange((ValueChangeEvent<String>)gwtEvent);
     }
 
     public void setEnabled(boolean b) {

@@ -14,4 +14,7 @@ public interface DeploymentRecord  {
 
     public String getSha();
     public void setSha(String sha);
+
+    public String getServerGroup();
+    public void setServerGroup(String groupName);
 }

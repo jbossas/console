@@ -15,6 +15,10 @@ import java.util.*;
  */
 public class MockServerGroupStore implements ServerGroupStore {
 
+    public static final String PRODUCTION_SERVERS = "Production Servers";
+    public static final String DEVELOPMENT_ENVIRONMENT = "Development Environment";
+    public static final String B2B_SERVICES = "B2B Services";
+
     BeanFactory factory = GWT.create(BeanFactory.class);
 
     static Map props = new LinkedHashMap();
@@ -34,7 +38,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         this.bus = bus;
 
         ServerGroupRecord eeServer = factory.serverGroup().as();
-        eeServer.setGroupName("Productive Servers");
+        eeServer.setGroupName(PRODUCTION_SERVERS);
         eeServer.setProfileName("EE6 Web");
         eeServer.setProperties(props);
         eeServer.setJvm("jdk_16_default");
@@ -42,7 +46,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         results.add(eeServer);
 
         ServerGroupRecord webServer = factory.serverGroup().as();
-        webServer.setGroupName("Development Environment");
+        webServer.setGroupName(DEVELOPMENT_ENVIRONMENT);
         webServer.setProfileName("EE6 Web");
         webServer.setProperties(Collections.EMPTY_MAP);
         webServer.setJvm("jdk_16_default");
@@ -50,7 +54,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         results.add(webServer);
 
         ServerGroupRecord standby = factory.serverGroup().as();
-        standby.setGroupName("B2B Services");
+        standby.setGroupName(B2B_SERVICES);
         standby.setProfileName("Messaging");
         standby.setProperties(Collections.EMPTY_MAP);
         standby.setJvm("jrockit");

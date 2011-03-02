@@ -20,6 +20,7 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.model.ProfileStore;
@@ -99,5 +100,8 @@ public interface CoreUI extends Ginjector {
     ProfileStore getProfileStore();
     SubsystemStore getSubsystemStore();
     ServerGroupStore getServerGroupStore();
+
+
+    AsyncProvider<DeploymentsPresenter> getDeploymentsPresenter();
 
 }
