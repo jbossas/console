@@ -17,7 +17,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/1/11
  */
-public class NewGroupWizard {
+class NewGroupWizard {
 
     VerticalPanel  layout;
 

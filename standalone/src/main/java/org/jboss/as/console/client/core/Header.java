@@ -25,7 +25,6 @@ import java.util.Map;
  */
 public class Header implements ValueChangeHandler<String> {
 
-    private String currentlySelectedSection = "config/Server/Subsystems";
     private HTMLPanel linksPane;
     private String currentHighlightedSection = null;
 
@@ -34,7 +33,7 @@ public class Header implements ValueChangeHandler<String> {
             /*new String[]{"server", "Server Management"},*/
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
             new String[]{NameTokens.ServerGroupPresenter, "Server Groups"},
-            new String[]{"hosts", "Hosts"}
+            new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
     };
 
     private MessageBar messageBar;
@@ -100,9 +99,6 @@ public class Header implements ValueChangeHandler<String> {
             final String id = "header-" + name;
 
             String styleClass = "header-link";
-            if (name.equals(currentlySelectedSection)) {
-                styleClass = "header-link-selected";
-            }
 
             // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
             headerString.append("<td style=\"vertical-align:middle; text-align:center\" width='100' id=\"" + id +"\"").append(" class=\"")

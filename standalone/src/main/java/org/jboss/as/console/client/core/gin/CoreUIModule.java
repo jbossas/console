@@ -24,10 +24,9 @@ import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
-import org.jboss.as.console.client.domain.model.MockProfileStore;
-import org.jboss.as.console.client.domain.model.MockServerGroupStore;
-import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
+import org.jboss.as.console.client.domain.hosts.HostMgmtView;
+import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
@@ -177,14 +176,21 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
         bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);
-
+        bind(HostInformationStore.class).to(MockHostInformationStore.class).in(Singleton.class);
 
          // domain/domain-deployments
         bindPresenter(DeploymentsPresenter.class,
                 DeploymentsPresenter.MyView.class,
                 DeploymentsOverview.class,
                 DeploymentsPresenter.MyProxy.class);
-        
+
+
+
+        bindPresenter(HostMgmtPresenter.class,
+                HostMgmtPresenter.MyView.class,
+                HostMgmtView.class,
+                HostMgmtPresenter.MyProxy.class);
+
     }
 
 }

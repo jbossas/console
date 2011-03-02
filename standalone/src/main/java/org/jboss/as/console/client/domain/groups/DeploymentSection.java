@@ -29,7 +29,7 @@ class DeploymentSection {
         LHSNavItem createNew = new LHSNavItem(
                 "New Deployment",
                 "current-deployments;action=new",
-                Icons.INSTANCE.add()
+                Icons.INSTANCE.add_small()
         );
 
         LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");

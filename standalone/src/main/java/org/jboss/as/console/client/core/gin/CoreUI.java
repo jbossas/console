@@ -23,6 +23,8 @@ import org.jboss.as.console.client.domain.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
+import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
@@ -100,8 +102,11 @@ public interface CoreUI extends Ginjector {
     ProfileStore getProfileStore();
     SubsystemStore getSubsystemStore();
     ServerGroupStore getServerGroupStore();
+    HostInformationStore getHostInfoStore();
 
 
     AsyncProvider<DeploymentsPresenter> getDeploymentsPresenter();
+
+    AsyncProvider<HostMgmtPresenter> getHostMgmtPresenter();
 
 }

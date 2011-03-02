@@ -20,6 +20,15 @@ public interface Icons extends ClientBundle {
     @Source("add.png")
     ImageResource add();
 
+    @Source("add_small.png")
+    ImageResource add_small();
+
+    @Source("remove.png")
+    ImageResource remove();
+
+    @Source("remove_small.png")
+    ImageResource remove_small();
+
     @Source("user.png")
     ImageResource user();
 

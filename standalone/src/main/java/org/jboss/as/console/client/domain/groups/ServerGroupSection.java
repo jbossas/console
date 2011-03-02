@@ -35,7 +35,7 @@ class ServerGroupSection {
         LHSNavItem createNew = new LHSNavItem(
                 "Create Group",
                 "domain/" + NameTokens.ServerGroupPresenter + ";action=new",
-                Icons.INSTANCE.add());
+                Icons.INSTANCE.add_small());
 
         layout.add(createNew);
         layout.add(serverGroupTree);

@@ -95,4 +95,9 @@ public class NameTokens {
     public static String getDeploymentsPresenter() {
         return DeploymentsPresenter;
     }
+
+    public static final String HostMgmtPresenter = "hosts";
+    public static String getHostMgmtPresenter() {
+        return HostMgmtPresenter;
+    }
 }
