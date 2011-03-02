@@ -16,12 +16,17 @@ public class Feedback {
     public static void confirm(String title, String message, final ConfirmationHandler handler)
     {
         final DefaultWindow window = new DefaultWindow(title);
-        window.setWidth(200);
-        window.setHeight(150);
+
+        int width = 200;
+        int height = (int) (width / DefaultWindow.GOLDEN_RATIO);
+
+        window.setWidth(width);
+        window.setHeight(height);
+
         window.setGlassEnabled(true);
 
         LayoutPanel panel = new LayoutPanel();
-        panel.getElement().setAttribute("style", "width:180px; height:120px; margin:10px");
+        panel.getElement().setAttribute("style", "width:"+(width-20)+"px; height:"+(height-30)+"px; margin:10px");
 
         HTML text = new HTML(message);
 
@@ -35,6 +40,7 @@ public class Feedback {
         });
 
         Label cancel = new Label("Cancel");
+        cancel.setStyleName("html-link");
         cancel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -44,13 +50,20 @@ public class Feedback {
         });
 
         HorizontalPanel options = new HorizontalPanel();
+        options.getElement().setAttribute("style", "width:100%");
+        HTML spacer = new HTML("&nbsp;");
+        options.add(spacer);
+        spacer.getElement().getParentElement().setAttribute("width", "100%");
+
         options.add(ok);
         options.add(cancel);
+
+        cancel.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
 
         panel.add(text);
         panel.add(options);
 
-        panel.setWidgetBottomHeight(text, 30, Style.Unit.PX, 90, Style.Unit.PX);
+        panel.setWidgetBottomHeight(text, 30, Style.Unit.PX, height-60, Style.Unit.PX);
         panel.setWidgetBottomHeight(options, 0, Style.Unit.PX, 30, Style.Unit.PX);
 
         window.setWidget(panel);
@@ -60,6 +73,6 @@ public class Feedback {
 
     public interface ConfirmationHandler
     {
-        void onConfirmation(boolean isConformed);
+        void onConfirmation(boolean isConfirmed);
     }
 }

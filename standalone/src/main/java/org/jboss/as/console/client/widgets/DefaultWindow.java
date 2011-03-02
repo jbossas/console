@@ -14,10 +14,10 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  */
 public class DefaultWindow extends PopupPanel {
 
+    public final static double GOLDEN_RATIO = 1.618;
     private static final int ESCAPE = 27;
 
     LayoutPanel content;
-    private final static double GOLDEN_RATIO = 1.618;
 
     int width, height;
 

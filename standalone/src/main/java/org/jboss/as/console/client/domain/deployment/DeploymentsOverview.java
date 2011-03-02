@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -171,11 +170,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                         new Feedback.ConfirmationHandler()
                         {
                             @Override
-                            public void onConfirmation(boolean isConformed) {
-                                SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
-                                presenter.deleteDeployment(
-                                       selectionModel.getSelectedObject()
-                               );
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                {
+                                    SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
+                                    presenter.deleteDeployment(
+                                            selectionModel.getSelectedObject()
+
+                                    );
+                                }
                             }
                         });
             }

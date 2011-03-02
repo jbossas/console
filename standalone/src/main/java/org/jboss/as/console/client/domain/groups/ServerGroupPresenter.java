@@ -132,7 +132,12 @@ public class ServerGroupPresenter
     public void deleteCurrentRecord() {
 
         if(selectedRecord!=null)
+        {
             serverGroupStore.deleteGroup(selectedRecord);
+            Console.MODULES.getMessageCenter().notify(
+                    new Message("Deleted "+selectedRecord.getGroupName())
+            );
+        }
 
         // switch to alternate record instead
         workOn(serverGroupStore.loadServerGroups().get(0));
