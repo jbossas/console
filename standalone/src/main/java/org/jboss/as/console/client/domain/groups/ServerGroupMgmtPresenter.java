@@ -67,7 +67,8 @@ public class ServerGroupMgmtPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
+        // TODO: this doesn't match
+        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupPresenter);
 
         getView().updateServerGroups(serverGroupStore.loadServerGroups());
 
