@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.core;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
@@ -15,7 +16,7 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 public class DefaultPlaceManager extends PlaceManagerImpl {
 
     private MessageCenter messageCenter;
-    //private boolean discardPlaceRequest = true;
+    private boolean discardPlaceRequest = true;
 
     @Inject
     public DefaultPlaceManager(
@@ -32,21 +33,21 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
                         Message.Severity.Fatal)
         );
 
-        /*if(discardPlaceRequest)
+        if(discardPlaceRequest)
         {
-            Log.debug("Discard \""+ invalidHistoryToken+"\". Fallback to default place");
+            Log.debug("Discard \"" + invalidHistoryToken + "\". Fallback to default place");
             revealUnauthorizedPlace(null);
-        } */
+        }
     }
 
     public void revealDefaultPlace() {
-        //discardPlaceRequest = false;
+        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.mainLayout) );
     }
 
     @Override
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
-        //discardPlaceRequest = false;
+        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.signInPage) );
     }
 }
