@@ -42,11 +42,15 @@ public class MockHostInformationStore implements HostInformationStore {
         s1.setGroup(MockServerGroupStore.PRODUCTION_SERVERS);
         s1.setName("EE6 Server (default)");
         s1.setStarted(true);
+        s1.setSocketBinding(MockServerGroupStore.SOCKET_DEFAULT);
+        s1.setJvm(MockServerGroupStore.JVM_DEFAULT);
 
         Server s2 = beanFactory.serverInstance().as();
         s2.setGroup(MockServerGroupStore.DEVELOPMENT_ENVIRONMENT);
         s2.setName("Internal Dev");
         s2.setStarted(false);
+        s2.setSocketBinding(MockServerGroupStore.SOCKET_DMZ);
+        s2.setJvm(MockServerGroupStore.JVM_15);
 
         servers.get(addresses[0]).add(s1);
         servers.get(addresses[0]).add(s2);
@@ -55,11 +59,15 @@ public class MockHostInformationStore implements HostInformationStore {
         s3.setGroup(MockServerGroupStore.DEVELOPMENT_ENVIRONMENT);
         s3.setName("Message Broker (dev)");
         s3.setStarted(false);
+        s3.setSocketBinding(MockServerGroupStore.SOCKET_NO_HTTP);
+        s3.setJvm(MockServerGroupStore.JVM_DEFAULT);
 
         Server s4 = beanFactory.serverInstance().as();
         s4.setGroup(MockServerGroupStore.B2B_SERVICES);
         s4.setName("Message Broker");
         s4.setStarted(true);
+        s4.setSocketBinding(MockServerGroupStore.SOCKET_DEFAULT);
+        s2.setJvm(MockServerGroupStore.JVM_15);
 
         servers.get(addresses[1]).add(s3);
         servers.get(addresses[1]).add(s4);

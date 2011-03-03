@@ -29,9 +29,11 @@ public class HostMgmtPresenter
 
     private final PlaceManager placeManager;
 
+    private HostInformationStore hostInfoStore;
+    private String hostSelection = null;
+
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
-    private HostInformationStore hostInfoStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostMgmtPresenter)
@@ -60,6 +62,13 @@ public class HostMgmtPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+
+        getView().updateHosts(hostInfoStore.getHosts());
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        hostSelection = request.getParameter("host", null);
     }
 
     @Override
@@ -70,8 +79,8 @@ public class HostMgmtPresenter
         Console.MODULES.getHeader().setContent(header);
 
         List<Host> hosts = hostInfoStore.getHosts();
-        getView().updateHosts(hosts);
-        getView().updateServers(hostInfoStore.getServers(hosts.get(0).getName()));
+        String hostName = hostSelection==null ? hosts.get(0).getName() : hostSelection;
+        getView().updateServers(hostInfoStore.getServers(hostName));
 
     }
 
@@ -82,6 +91,7 @@ public class HostMgmtPresenter
 
     @Override
     public void onHostSelection(String hostName) {
+        hostSelection = hostName;
         getView().updateServers(
                 hostInfoStore.getServers(hostName)
         );

@@ -17,6 +17,9 @@ public interface Icons extends ClientBundle {
     @Source("inventory.png")
     ImageResource inventory();
 
+    @Source("inventory_small.png")
+    ImageResource inventory_small();
+
     @Source("add.png")
     ImageResource add();
 
@@ -53,5 +56,18 @@ public interface Icons extends ClientBundle {
 
     @Source("server_group.png")
     ImageResource serverGroup();
+
+
+    @Source("status_red_small.png")
+    ImageResource statusRed_small();
+
+    @Source("status_green_small.png")
+    ImageResource statusGreen_small();
+
+    @Source("status_yellow_small.png")
+    ImageResource statusYellow_small();
+
+    @Source("status_blue_small.png")
+    ImageResource statusBlue_small();
 
 }

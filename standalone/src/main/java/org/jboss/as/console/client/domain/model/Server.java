@@ -13,4 +13,10 @@ public interface Server {
 
     boolean isStarted();
     void setStarted(boolean b);
+
+    String getSocketBinding();
+    void setSocketBinding(String socketBindingRef);
+
+    String getJvm();
+    void setJvm(String jvm);
 }

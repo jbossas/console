@@ -9,6 +9,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,6 +40,10 @@ public class DefaultCellTable<T> extends CellTable {
         super(pageSize, DEFAULT_CELL_TABLE_RESOURCES);
         setStyleName("default-cell-table");
         setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
+
+        // default empty
+        setRowCount(0);
+        setRowData(0, Collections.EMPTY_LIST);
     }
 
     @Override

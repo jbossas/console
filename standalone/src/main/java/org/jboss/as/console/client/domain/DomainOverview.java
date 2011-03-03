@@ -102,11 +102,10 @@ public class DomainOverview
 
         // --------------------------------------
 
-        ContentGroupLabel deploymentLabel = new ContentGroupLabel("Domain Level Deployments");
-        layout.add(deploymentLabel);
+        //layout.add(new ContentGroupLabel("Domain Level Deployments"));
 
-        deploymentTable = new DeploymentTable();
-        layout.add(deploymentTable);
+        //deploymentTable = new DeploymentTable();
+        //layout.add(deploymentTable);
 
         return layout;
     }
@@ -123,6 +122,6 @@ public class DomainOverview
 
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
 
-        deploymentTable.setRowData(0, deploymentRecords);
+        //deploymentTable.setRowData(0, deploymentRecords);
     }
 }

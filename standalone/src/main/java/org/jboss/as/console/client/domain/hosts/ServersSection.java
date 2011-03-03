@@ -2,16 +2,20 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 import java.util.List;
 
@@ -36,13 +40,13 @@ class ServersSection {
 
         LHSNavItem createNew = new LHSNavItem(
                 "Create Server",
-                "servers/" + NameTokens.HostMgmtPresenter + ";action=new",
+                "hosts/" + NameTokens.ServerPresenter + ";action=new",
                 Icons.INSTANCE.add_small()
         );
 
         // --------------------------------------------------
 
-        hostTree = new Tree();
+        hostTree = new Tree(DefaultTreeResources.INSTANCE);
 
         root = new TreeItem("");
         servers = new TreeItem("Servers on Host:");
@@ -109,32 +113,50 @@ class ServersSection {
             @Override
             public void execute() {
                 selection.setItemSelected(0, true);
-                fireHostSelection(hostRecords.get(0).getName());
             }
         });
 
     }
 
-    public void updateInstances(List<Server> instances) {
+    public void updateServers(List<Server> servers) {
 
         root.setState(false); // hide it
-        servers.removeItems();
+        this.servers.removeItems();
 
-        for(Server instance: instances)
+        for(Server server: servers)
         {
-            TreeItem item = new TreeItem(new HTML(instance.getName()));
+            String serverName = server.getName();
+            final String token = "hosts/" + NameTokens.ServerPresenter+
+                    ";host="+selection.getSelectedValue() +
+                    ";server=" + serverName;
+
+            HTML link = new HTML(serverName);
+            final TreeItem item = new TreeItem(link);
             item.setStyleName("lhs-tree-item");
-            servers.addItem(item);
+
+            link.addClickHandler(new ClickHandler()
+            {
+                @Override
+                public void onClick(ClickEvent event) {
+                    hostTree.setSelectedItem(item);
+                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                            Places.fromString(token)
+                    );
+                }
+            });
+
+            this.servers.addItem(item);
+
         }
 
-        if(instances.isEmpty())
+        if(servers.isEmpty())
         {
             TreeItem empty = new TreeItem(new HTML("(no servers)"));
-            servers.addItem(empty);
+            this.servers.addItem(empty);
         }
 
         root.setState(true);
-        servers.setState(true);
+        this.servers.setState(true);
 
     }
 

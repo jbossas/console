@@ -23,7 +23,7 @@ class DeploymentSection {
         LHSNavItem current = new LHSNavItem(
                 "Current Deployments",
                 NameTokens.DeploymentsPresenter,
-                Icons.INSTANCE.inventory()
+                Icons.INSTANCE.inventory_small()
         );
 
         LHSNavItem createNew = new LHSNavItem(

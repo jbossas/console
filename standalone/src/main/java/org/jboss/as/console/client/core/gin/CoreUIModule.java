@@ -26,6 +26,8 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
+import org.jboss.as.console.client.domain.hosts.ServerPresenter;
+import org.jboss.as.console.client.domain.hosts.ServerView;
 import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
@@ -190,6 +192,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostMgmtPresenter.MyView.class,
                 HostMgmtView.class,
                 HostMgmtPresenter.MyProxy.class);
+
+         bindPresenter(ServerPresenter.class,
+                ServerPresenter.MyView.class,
+                ServerView.class,
+                ServerPresenter.MyProxy.class);
 
     }
 

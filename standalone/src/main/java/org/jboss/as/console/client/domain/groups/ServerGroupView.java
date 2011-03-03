@@ -21,10 +21,7 @@ import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.forms.*;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
@@ -120,7 +117,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         profileItem.setValueMap(presenter.getProfileNames());
         profileItem.setDefaultToFirstOption(true);
 
-        form.setFields(nameField, jvmField, socketBindingItem, profileItem);
+        form.setFields(nameField, profileItem);
+        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem, jvmField);
 
         layout.add(new ContentGroupLabel("Attributes"));
 

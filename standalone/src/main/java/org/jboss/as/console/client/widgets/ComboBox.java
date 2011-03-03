@@ -38,7 +38,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
     private static final Template TEMPLATE = GWT.create(Template.class);
 
-    private PopupPanel panel;
+    private PopupPanel popup;
 
     private CellList<String> cellList;
 
@@ -78,21 +78,21 @@ public class ComboBox implements HasValueChangeHandlers<String> {
                 String selectedValue = selectionModel.getSelectedObject();
 
                 currentValue.setHTML(selectedValue);
-                panel.hide();
+                popup.hide();
 
                 onSelection(selectedValue);
             }
         });
 
         final String panelId = "popup_"+HTMLPanel.createUniqueId();
-        panel = new PopupPanel(true, true) {
+        popup = new PopupPanel(true, true) {
 
             @Override
             protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
                 if (Event.ONKEYUP == event.getTypeInt()) {
                     if (event.getNativeEvent().getKeyCode() == ESCAPE) {
                         // Dismiss when escape is pressed
-                        panel.hide();
+                        popup.hide();
                     }
                 }
             }
@@ -102,17 +102,17 @@ public class ComboBox implements HasValueChangeHandlers<String> {
             }
         };
 
-        panel.getElement().setId(panelId);
+        popup.getElement().setId(panelId);
 
-        panel.setStyleName("default-popup");
+        popup.setStyleName("default-popup");
 
-        panel.addCloseHandler(new CloseHandler<PopupPanel>() {
+        popup.addCloseHandler(new CloseHandler<PopupPanel>() {
             public void onClose(CloseEvent<PopupPanel> event) {
 
             }
         });
 
-        panel.setWidget(cellList);
+        popup.setWidget(cellList);
 
         currentValue = new HTML("&nbsp;");
         currentValue.setStyleName("combobox-value"+cssSuffix);
@@ -164,15 +164,15 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
         if(isEnabled)
         {
-            panel.setWidth(header.getOffsetWidth()+"px");
-            panel.setHeight((cellList.getRowCount()*25)+"px");
+            popup.setWidth(header.getOffsetWidth()+"px");
+            popup.setHeight((cellList.getRowCount()*25)+"px");
 
-            panel.setPopupPosition(
+            popup.setPopupPosition(
                     header.getAbsoluteLeft(),
                     header.getAbsoluteTop()+20
             );
 
-            panel.show();
+            popup.show();
         }
     }
 

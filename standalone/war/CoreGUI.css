@@ -260,6 +260,7 @@ body, p, td, th, option, input, textarea, select {
     padding-right:2px;
     color:#4A5D75;
     font-weight:bold;
+    white-space:nowrap;
 }
 
 .form-item {
@@ -268,6 +269,21 @@ body, p, td, th, option, input, textarea, select {
     padding-right:8px;
     padding-left:2px;
     min-width:200px;
+}
+
+.default-fieldset {
+   margin-top:15px;
+   margin-botom:15px;
+   border:1px solid #C0C0C0;
+}
+
+.default-legend {
+    /*padding: 0.2em 0.5em;
+    border:1px solid green;
+    color:green;
+    font-size:90%;
+    text-align:right;*/
+    color:#C0C0C0;
 }
 
 .gwt-SplitLayoutPanel-HDragger {
@@ -501,6 +517,7 @@ body, p, td, th, option, input, textarea, select {
     border-left:1px solid white;
     border-top:1px solid white;
     border-right:1px solid #808080;
+    color:#808080;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
     background-image: url('images/sc/skins/Enterprise/images/Tab/top/tab_Selected_Disabled_stretch.png');
@@ -511,6 +528,7 @@ body, p, td, th, option, input, textarea, select {
     border-left:1px solid white;
     border-top:1px solid white;
     border-right:1px solid #808080;
+    color:#000000!important;
 }
 
 
@@ -577,6 +595,11 @@ body, p, td, th, option, input, textarea, select {
     visibility:visible;
     cursor:pointer;
     text-decoration:underline;
+}
+
+.default-disclosure {
+    margin-top:15px;
+    margin-bottom:15px;
 }
 
 

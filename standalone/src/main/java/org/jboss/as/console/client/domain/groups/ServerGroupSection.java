@@ -10,6 +10,7 @@ import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ class ServerGroupSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        serverGroupTree = new Tree();
+        serverGroupTree = new Tree(DefaultTreeResources.INSTANCE);
         root = new TreeItem("Current Groups:");
         serverGroupTree.addItem(root);
 

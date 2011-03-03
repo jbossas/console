@@ -11,6 +11,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ class ProfileSection {
         layout.setStyleName("stack-section");
 
 
-        subsysTree = new Tree();
+        subsysTree = new Tree(DefaultTreeResources.INSTANCE);
         root = new TreeItem("Subsystems in Profile:");
         subsysTree.addItem(root);
 

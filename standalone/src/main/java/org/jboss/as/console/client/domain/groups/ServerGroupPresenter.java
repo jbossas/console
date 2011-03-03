@@ -34,12 +34,10 @@ import java.util.List;
 public class ServerGroupPresenter
         extends Presenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy> {
 
-    private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
-    private ServerGroupRecord selectedRecord;
     private ProfileStore profileStore;
 
-    private BeanFactory beanFactory = GWT.create(BeanFactory.class);
+    private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
 
     @ProxyCodeSplit
@@ -56,12 +54,10 @@ public class ServerGroupPresenter
     @Inject
     public ServerGroupPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager,
             ServerGroupStore serverGroupStore,
             ProfileStore profileStore) {
         super(eventBus, view, proxy);
 
-        this.placeManager = placeManager;
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
     }
@@ -74,12 +70,20 @@ public class ServerGroupPresenter
 
     @Override
     public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
+
         String groupName = request.getParameter("name", null);
         String action = request.getParameter("action", null);
+
         if(groupName!=null)
         {
-            onSelectServerGroup(groupName);
+            for(ServerGroupRecord record : serverGroupStore.loadServerGroups())
+            {
+                if(groupName.equals(record.getGroupName()))
+                {
+                    selectedRecord = record;
+                    break;
+                }
+            }
         }
         else if("new".equals(action))
         {
@@ -192,15 +196,4 @@ public class ServerGroupPresenter
         window.center();
     }
 
-    public void onSelectServerGroup(String groupName)
-    {
-        for(ServerGroupRecord record : serverGroupStore.loadServerGroups())
-        {
-            if(groupName.equals(record.getGroupName()))
-            {
-                selectedRecord = record;
-                break;
-            }
-        }
-    }
 }

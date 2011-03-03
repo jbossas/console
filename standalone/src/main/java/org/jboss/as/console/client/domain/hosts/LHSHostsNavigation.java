@@ -39,6 +39,6 @@ class LHSHostsNavigation {
     }
 
     public void updateInstances(List<Server> servers) {
-        serversSection.updateInstances(servers);
+        serversSection.updateServers(servers);
     }
 }

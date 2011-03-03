@@ -50,4 +50,5 @@ public abstract class FormItem<T> {
     public abstract Widget asWidget();
 
     public abstract void setEnabled(boolean b);
+
 }

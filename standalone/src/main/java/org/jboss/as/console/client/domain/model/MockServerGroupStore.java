@@ -19,6 +19,14 @@ public class MockServerGroupStore implements ServerGroupStore {
     public static final String DEVELOPMENT_ENVIRONMENT = "Development Environment";
     public static final String B2B_SERVICES = "B2B Services";
 
+    public static final String SOCKET_DMZ = "DMZ";
+    public static final String SOCKET_DEFAULT = "default";
+    public static final String SOCKET_NO_HTTP = "default_no_http";
+
+    public static final String JVM_DEFAULT = "jdk_1.6";
+    public static final String JVM_15 = "jdk_1.5";
+
+
     BeanFactory factory = GWT.create(BeanFactory.class);
 
     static Map props = new LinkedHashMap();
@@ -41,24 +49,24 @@ public class MockServerGroupStore implements ServerGroupStore {
         eeServer.setGroupName(PRODUCTION_SERVERS);
         eeServer.setProfileName("EE6 Web");
         eeServer.setProperties(props);
-        eeServer.setJvm("jdk_16_default");
-        eeServer.setSocketBinding("default");
+        eeServer.setJvm(JVM_DEFAULT);
+        eeServer.setSocketBinding(SOCKET_DEFAULT);
         results.add(eeServer);
 
         ServerGroupRecord webServer = factory.serverGroup().as();
         webServer.setGroupName(DEVELOPMENT_ENVIRONMENT);
         webServer.setProfileName("EE6 Web");
         webServer.setProperties(Collections.EMPTY_MAP);
-        webServer.setJvm("jdk_16_default");
-        webServer.setSocketBinding("DMZ");
+        webServer.setJvm(JVM_DEFAULT);
+        webServer.setSocketBinding(SOCKET_DMZ);
         results.add(webServer);
 
         ServerGroupRecord standby = factory.serverGroup().as();
         standby.setGroupName(B2B_SERVICES);
         standby.setProfileName("Messaging");
         standby.setProperties(Collections.EMPTY_MAP);
-        standby.setJvm("jrockit");
-        standby.setSocketBinding("default_no_http");
+        standby.setJvm(JVM_15);
+        standby.setSocketBinding(SOCKET_NO_HTTP);
         results.add(standby);
     }
 

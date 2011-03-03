@@ -131,7 +131,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         scroll.add(vpanel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 60, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 70, Style.Unit.PCT);
 
         // ----------- --------------------------------------------------
 
@@ -218,7 +218,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
 
         layout.add(stack);
-        layout.setWidgetBottomHeight(stack, 0, Style.Unit.PX, 40, Style.Unit.PCT);
+        layout.setWidgetBottomHeight(stack, 0, Style.Unit.PX, 30, Style.Unit.PCT);
 
         return layout;
     }

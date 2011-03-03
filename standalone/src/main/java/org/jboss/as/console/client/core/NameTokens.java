@@ -100,4 +100,9 @@ public class NameTokens {
     public static String getHostMgmtPresenter() {
         return HostMgmtPresenter;
     }
+
+    public final static String ServerPresenter = "server-config";
+    public static String getServerPresenter() {
+        return ServerPresenter;
+    }
 }
