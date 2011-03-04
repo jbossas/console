@@ -135,12 +135,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         // ----------- --------------------------------------------------
 
-        StackLayoutPanel stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
-        stack.getElement().setAttribute("style", "background:#ffffff;");
 
         LayoutPanel formPanel = new LayoutPanel();
-        formPanel.getElement().setAttribute("style", "margin:15px;");
+        formPanel.getElement().setAttribute("style", "background-color:#ffffff;margin:15px;");
 
 
         final ToolStrip toolStrip = new ToolStrip();
@@ -203,9 +200,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         formPanel.add(formWidget);
         formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        stack.add(formPanel, new StackSectionHeader("Deployment Details"), 28);
-
-
         final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -217,8 +211,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         deploymentTable.setSelectionModel(selectionModel);
 
 
-        layout.add(stack);
-        layout.setWidgetBottomHeight(stack, 0, Style.Unit.PX, 30, Style.Unit.PCT);
+        layout.add(formPanel);
+        layout.setWidgetBottomHeight(formPanel, 0, Style.Unit.PX, 30, Style.Unit.PCT);
 
         return layout;
     }

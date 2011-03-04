@@ -1,8 +1,10 @@
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -19,10 +21,10 @@ import java.util.List;
  */
 class NewGroupWizard {
 
-    VerticalPanel  layout;
+    LayoutPanel layout;
 
     public NewGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
-        layout = new VerticalPanel();
+        layout = new LayoutPanel();
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("style", "margin:15px;");
 
@@ -45,10 +47,8 @@ class NewGroupWizard {
 
         form.setFields(nameField, basedOnSelection);
 
-
-        layout.add(form.asWidget());
-
         Button submit = new DefaultButton("Save");
+        submit.getElement().setAttribute("style", "float:right");
         submit.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -74,7 +74,15 @@ class NewGroupWizard {
             }
         });
 
+        // ----------------------------------------
+
+        Widget formWidget = form.asWidget();
+        layout.add(formWidget);
         layout.add(submit);
+
+        layout.setWidgetTopHeight(formWidget, 0, Style.Unit.PX, 150, Style.Unit.PX);
+        layout.setWidgetTopHeight(submit, 160, Style.Unit.PX, 20, Style.Unit.PX);
+
     }
 
     public Widget asWidget() {

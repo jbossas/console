@@ -179,7 +179,8 @@ public class ServerGroupPresenter
 
     public void createNewGroup() {
         window = new DefaultWindow("Create Server Group");
-
+        window.setWidth(300);
+        window.setHeight(250);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {

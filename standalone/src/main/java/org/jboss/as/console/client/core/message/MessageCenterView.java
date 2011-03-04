@@ -127,6 +127,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
         layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetLeftWidth(button, 200, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetTopHeight(button, 2, Style.Unit.PX, 22, Style.Unit.PX);
 
         return layout;
     }

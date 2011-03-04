@@ -5,6 +5,18 @@ body, p, td, th, option, input, textarea, select {
     font-size: 11px !important;
 }
 
+a {
+   outline : none;
+}
+
+a:active {
+   outline : none;
+}
+
+a:link {
+   outline : none;
+}
+
 .main-content-panel {
     border-bottom:1px solid #A7ABB4;
     margin-top:10px;
@@ -39,7 +51,7 @@ body, p, td, th, option, input, textarea, select {
     padding:0px;
     margin-top:200px;
 
-    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
 }
@@ -70,14 +82,14 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .header {
-
+    border:none!important;
     /*background-color:#FFFFFF;
     background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
 }
 
 .header-links {
     float: right;
-    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
     margin-right:4px;
@@ -116,7 +128,6 @@ body, p, td, th, option, input, textarea, select {
     color: #4A5D75;
     font-size:16px!important;
     padding-bottom:8px;
-    padding-top:10px;
 }
 
 .content-group-label {
@@ -260,10 +271,12 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .form-item-title {
+    font-size:8pt;
     padding-right:2px;
     color:#4A5D75;
     font-weight:bold;
     white-space:nowrap;
+    text-align:right;
 }
 
 .form-item {
@@ -271,7 +284,7 @@ body, p, td, th, option, input, textarea, select {
     padding-bottom:8px;
     padding-right:8px;
     padding-left:2px;
-    min-width:200px;
+    min-width:150px;
 }
 
 .default-fieldset {
@@ -279,15 +292,15 @@ body, p, td, th, option, input, textarea, select {
    margin-botom:15px;
    border:1px solid #C0C0C0;
 }
-
 .default-legend {
-    /*padding: 0.2em 0.5em;
-    border:1px solid green;
-    color:green;
-    font-size:90%;
-    text-align:right;*/
-    color:#C0C0C0;
+/*padding: 0.2em 0.5em;
+border:1px solid green;
+color:green;
+font-size:90%;
+text-align:right;*/
+color:#C0C0C0;
 }
+
 
 .gwt-SplitLayoutPanel-HDragger {
     cursor:col-resize;
@@ -360,7 +373,7 @@ body, p, td, th, option, input, textarea, select {
     background-color:#ffffff;
     padding:4px;
 
-    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
 }
@@ -434,7 +447,7 @@ body, p, td, th, option, input, textarea, select {
     padding-left:10px;
     padding-top:4px;
 
-    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
 
@@ -466,7 +479,7 @@ body, p, td, th, option, input, textarea, select {
     border: 1px solid #A7ABB4;
     background-color:#ffffff;
 
-    moz-box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
 }
@@ -623,4 +636,5 @@ body, p, td, th, option, input, textarea, select {
     padding-top:5px;
     padding-bottom:5px;
 }
+
 

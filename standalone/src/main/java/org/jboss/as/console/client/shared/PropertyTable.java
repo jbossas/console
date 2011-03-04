@@ -49,7 +49,7 @@ public class PropertyTable extends VerticalPanel {
             }
         });
 
-        add(addProp);
+        //add(addProp);
 
 
         // Create columns

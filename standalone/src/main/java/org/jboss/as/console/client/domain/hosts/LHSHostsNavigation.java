@@ -17,6 +17,7 @@ import java.util.List;
  */
 class LHSHostsNavigation {
 
+    private static final int SELECTOR_HEIGHT = 60;
     private StackLayoutPanel stack;
 
     private ServersSection serversSection;
@@ -32,7 +33,7 @@ class LHSHostsNavigation {
             @Override
             public void onResize() {
                 super.onResize();
-                int parentHeight = getParent().getOffsetHeight() - 80;
+                int parentHeight = getParent().getOffsetHeight() - SELECTOR_HEIGHT;
                 setSize("100%", parentHeight + "px");  // hack
             }
         };
@@ -49,7 +50,7 @@ class LHSHostsNavigation {
         Widget serverSectionWidget = serversSection.asWidget();
         stack.add(serverSectionWidget, new StackSectionHeader("Servers"), 28);
 
-        ServersInstanceSection instanceSection = new ServersInstanceSection();
+        ServerInstanceSection instanceSection = new ServerInstanceSection();
         stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), 28);
 
         HostConfigSection hostConfigSection = new HostConfigSection();
@@ -60,8 +61,8 @@ class LHSHostsNavigation {
         layout.add(selectorWidget);
         layout.add(stack);
 
-        layout.setWidgetTopHeight(selectorWidget, 0, Style.Unit.PX, 80, Style.Unit.PX);
-        layout.setWidgetTopHeight(stack, 80, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(selectorWidget, 0, Style.Unit.PX, SELECTOR_HEIGHT, Style.Unit.PX);
+        layout.setWidgetTopHeight(stack, SELECTOR_HEIGHT, Style.Unit.PX, 100, Style.Unit.PCT);
 
     }
 
@@ -70,7 +71,7 @@ class LHSHostsNavigation {
         Timer t = new Timer() {
             @Override
             public void run() {
-                int parentHeight = layout.getParent().getOffsetHeight() - 80;
+                int parentHeight = layout.getParent().getOffsetHeight() - SELECTOR_HEIGHT;
                 layout.setSize("100%", parentHeight +"px");
             }
         };

@@ -6,6 +6,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.PropertyTable;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
@@ -51,7 +52,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
 
         // ------------------------------------------------------
 
-        socketItem = new ComboBoxItem("socketBinding", "Socket Binding Group");
+        socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketItem.setValueMap(new String[] {
                 MockServerGroupStore.SOCKET_DEFAULT,
                 MockServerGroupStore.SOCKET_DMZ,
@@ -118,6 +119,10 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         layout.setWidgetTopHeight(tabLayoutpanel, 220, Style.Unit.PX, 100, Style.Unit.PCT);
         */
 
+        layout.add(new ContentGroupLabel("System Properties"));
+
+        PropertyTable properties = new PropertyTable();
+        layout.add(properties);
         return layout;
     }
 
