@@ -9,6 +9,6 @@ import java.util.Map;
  * @date 3/3/11
  */
 public interface GroupRenderer {
-    Widget render(String groupName, Map<String, FormItem> groupItems);
-    void setNumColumns(int cols);
+    Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems);
+
 }

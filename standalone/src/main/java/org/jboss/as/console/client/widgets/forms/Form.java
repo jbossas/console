@@ -61,6 +61,7 @@ public class Form<T> {
         setFieldsInGroup(DEFAULT_GROUP, items);
     }
 
+    int maxTitleLength = 0;
     public void setFieldsInGroup(String group, FormItem... items) {
 
         // create new group
@@ -69,6 +70,12 @@ public class Form<T> {
 
         for(FormItem item : items)
         {
+            String title = item.getTitle();
+            if(title.length()>maxTitleLength)
+            {
+                maxTitleLength = title.length();
+            }
+
             groupItems.put(item.getName(), item);
         }
     }
@@ -191,22 +198,26 @@ public class Form<T> {
         VerticalPanel parentPanel = new VerticalPanel();
         parentPanel.setStyleName("fill-layout-width");
 
+        RenderMetaData metaData = new RenderMetaData();
+        metaData.setNumColumns(numColumns);
+        metaData.setTitleWidth(maxTitleLength);
+
         for(String group : formItems.keySet())
         {
             Map<String, FormItem> groupItems = formItems.get(group);
             if(DEFAULT_GROUP.equals(group))
             {
-                DefaultGroupRenderer defaultGroupRenderer = new DefaultGroupRenderer(numColumns);
-                Widget defaultGroupWidget = defaultGroupRenderer.render(DEFAULT_GROUP, groupItems);
+                DefaultGroupRenderer defaultGroupRenderer = new DefaultGroupRenderer();
+
+                Widget defaultGroupWidget = defaultGroupRenderer.render(metaData,DEFAULT_GROUP, groupItems);
                 parentPanel.add(defaultGroupWidget);
             }
             else
             {
                 GroupRenderer groupRenderer = registeredRenderer.get(group)!=null ?
-                        registeredRenderer.get(group) : new FieldsetRenderer(numColumns);
-                groupRenderer.setNumColumns(numColumns);
+                        registeredRenderer.get(group) : new FieldsetRenderer();
 
-                Widget widget = groupRenderer.render(group, groupItems);
+                Widget widget = groupRenderer.render(metaData, group, groupItems);
                 parentPanel.add(widget);
             }
         }

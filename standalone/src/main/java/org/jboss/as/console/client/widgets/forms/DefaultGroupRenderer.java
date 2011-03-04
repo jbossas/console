@@ -2,7 +2,6 @@ package org.jboss.as.console.client.widgets.forms;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Map;
@@ -18,17 +17,18 @@ import java.util.Map;
 class DefaultGroupRenderer implements GroupRenderer
 {
     private final String id = "form-"+ HTMLPanel.createUniqueId()+"_";
-    private final String tablePrefix = "<table id='"+id+"' border=0 cellpadding=0 cellspacing=0>";
+    private final String tablePrefix = "<table border=0 id='"+id+"' border=0 cellpadding=0 cellspacing=0>";
     private final static String tableSuffix = "</table>";
 
-    private int numColumns = 1;
+    DefaultGroupRenderer() {
 
-    DefaultGroupRenderer(int numColumns) {
-        this.numColumns = numColumns;
     }
 
     @Override
-    public Widget render(String groupName, Map<String, FormItem> groupItems) {
+    public Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems) {
+
+        System.out.println("> " + metaData.getTitleWidth());
+
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(tablePrefix);
 
@@ -40,13 +40,13 @@ class DefaultGroupRenderer implements GroupRenderer
             builder.appendHtmlConstant("<tr>");
 
             int col=0;
-            for(col=0; col<numColumns; col++)
+            for(col=0; col<metaData.getNumColumns(); col++)
             {
                 int next = i + col;
                 if(next<values.length)
                 {
                     FormItem item = values[next];
-                    createItemCell(builder, item);
+                    createItemCell(metaData, builder, item);
                 }
                 else
                 {
@@ -67,26 +67,22 @@ class DefaultGroupRenderer implements GroupRenderer
         {
             final String widgetId = id + item.getName();
             panel.add(item.asWidget(), widgetId);
+
         }
 
         return panel;
     }
 
-    private void createItemCell(SafeHtmlBuilder builder, FormItem item) {
+    private void createItemCell(RenderMetaData metaData, SafeHtmlBuilder builder, FormItem item) {
 
         final String widgetId = id + item.getName();
 
-        builder.appendHtmlConstant("<td align='right' class='form-item-title'>");
+        builder.appendHtmlConstant("<td class='form-item-title' style='min-width:"+metaData.getTitleWidth()*5+"pt'>");
         builder.appendEscaped(item.getTitle()+":");
         builder.appendHtmlConstant("</td>");
 
         builder.appendHtmlConstant("<td id='" + widgetId + "' class='form-item'>").appendHtmlConstant("</td>");
         // contents added later
         builder.appendHtmlConstant("</td>");
-    }
-
-    @Override
-    public void setNumColumns(int cols) {
-        this.numColumns = cols;
     }
 }

@@ -13,15 +13,13 @@ import java.util.Map;
 public class FieldsetRenderer implements GroupRenderer {
 
     String id;
-    int numColumns;
 
-    public FieldsetRenderer(int columns) {
+    public FieldsetRenderer() {
         this.id = "formGroup_"+HTMLPanel.createUniqueId();
-        this.numColumns = columns;
     }
 
     @Override
-    public Widget render(String groupName, Map<String, FormItem> groupItems) {
+    public Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems) {
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
 
@@ -31,15 +29,10 @@ public class FieldsetRenderer implements GroupRenderer {
 
         HTMLPanel html = new HTMLPanel(builder.toSafeHtml());
 
-        DefaultGroupRenderer defaultGroupRenderer = new DefaultGroupRenderer(numColumns);
-        Widget defaultGroupWidget = defaultGroupRenderer.render("", groupItems);
+        DefaultGroupRenderer defaultGroupRenderer = new DefaultGroupRenderer();
+        Widget defaultGroupWidget = defaultGroupRenderer.render(metaData, "", groupItems);
         html.add(defaultGroupWidget,id);
 
         return html;
-    }
-
-    @Override
-    public void setNumColumns(int cols) {
-        this.numColumns = cols;
     }
 }
