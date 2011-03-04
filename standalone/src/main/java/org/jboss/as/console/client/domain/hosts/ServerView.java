@@ -1,29 +1,16 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.PropertyTable;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.as.console.client.widgets.forms.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,18 +34,12 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        TitleBar titleBar = new TitleBar("Server Configuration");
-        layout.add(titleBar);
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-
-        VerticalPanel vpanel = new VerticalPanel();
-        vpanel.getElement().setAttribute("style", "margin:15px;");
+        LayoutPanel layout = new RHSContentPanel("Server Configuration");
 
         nameLabel = new ContentHeaderLabel("Name here ...");
-        vpanel.add(nameLabel);
-        vpanel.add(new ContentGroupLabel("Attributes"));
+        layout.add(nameLabel);
+
+        layout.add(new ContentGroupLabel("Attributes"));
 
         form = new Form<Server>(Server.class);
         form.setNumColumns(2);
@@ -84,23 +65,17 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         });
 
         form.setFields(nameItem, startedItem, groupItem);
-        /*form.setFieldsInGroup(
+        form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
                 socketItem, jvmItem
-        );*/
+        );
 
-        vpanel.add(form.asWidget());
-
-        layout.add(vpanel);
-        layout.setWidgetTopHeight(vpanel, 28, Style.Unit.PX, 190, Style.Unit.PX);
+        layout.add(form.asWidget());
 
         // ------------------------------------------------------
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
-
-        CellTable<ServerInstance> instanceTable = new DefaultCellTable<ServerInstance>(10);
+        /*CellTable<ServerInstance> instanceTable = new DefaultCellTable<ServerInstance>(10);
 
         // Create columns
         Column<ServerInstance, String> nameColumn = new Column<ServerInstance, String>(new DefaultEditTextCell()) {
@@ -129,15 +104,11 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         instanceTable.addColumn(nameColumn, "Instance Name");
         instanceTable.addColumn(statusColumn, "Status");
 
-        VerticalPanel instancePanel = new VerticalPanel();
-        instancePanel.setStyleName("fill-layout-width");
-        instancePanel.add(instanceTable);
-
-        tabLayoutpanel.add(instancePanel, "Server Instances");
+        */
 
 
 
-        PropertyTable propertyTable = new PropertyTable();
+        /*PropertyTable propertyTable = new PropertyTable();
         propertyTable.asTable().setRowData(0, Collections.EMPTY_LIST);
         tabLayoutpanel.add(propertyTable, "Advanced Configuration");
 
@@ -145,7 +116,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
 
         layout.add(tabLayoutpanel);
         layout.setWidgetTopHeight(tabLayoutpanel, 220, Style.Unit.PX, 100, Style.Unit.PCT);
-
+        */
 
         return layout;
     }

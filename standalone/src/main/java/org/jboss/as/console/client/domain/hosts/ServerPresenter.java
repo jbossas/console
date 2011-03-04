@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -63,9 +64,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         String serverName = request.getParameter("server", null);
         String action= request.getParameter("action", null);
 
-        assert hostName!=null : "Parameter 'host' required!";
-
-        if(serverName!=null)
+        if(hostName!=null && serverName!=null)
         {
             for(Server server : hostInfoStore.getServers(hostName))
             {
@@ -82,10 +81,10 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         }
         else
         {
-            throw new IllegalStateException("Parameter 'server' or 'action' required");
+            Log.warn("Parameters missing. Fallback to default Server");
+            hostName = hostInfoStore.getHosts().get(0).getName();
+            selectedRecord = hostInfoStore.getServers(hostName).get(0);
         }
-
-
 
     }
 

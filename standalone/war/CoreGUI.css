@@ -189,7 +189,10 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .section-stack {
-    width:100%;
+    width:99%;
+    margin:0px;
+    border-left:1px solid #A7ABB4;
+    border-right:1px solid #A7ABB4!important;
 }
 
 .stack-section-header {
@@ -289,8 +292,8 @@ body, p, td, th, option, input, textarea, select {
 .gwt-SplitLayoutPanel-HDragger {
     cursor:col-resize;
 /*background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);*/
-    border-left:1px solid #A7ABB4;
-    border-right:1px solid #A7ABB4!important;
+    /*border-left:1px solid #A7ABB4;
+    border-right:1px solid #A7ABB4!important;*/
 }
 
 .lhs-tree-item {
@@ -602,6 +605,22 @@ body, p, td, th, option, input, textarea, select {
     margin-bottom:15px;
 }
 
+.host-selector {
+    border: 1px solid #A7ABB4;
+}
 
+.host-selector-header {
+    background-image: url('images/header/header_bg_selected.png');
+    color:white;
+    padding-top:6px;
+    padding-bottom:6px;
+    padding-left:10px;
+}
 
+#host-selector-content {
+    padding-left:10px;
+    padding-right:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
 

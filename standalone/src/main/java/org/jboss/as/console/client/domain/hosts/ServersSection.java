@@ -4,15 +4,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.Places;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
@@ -23,20 +20,18 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/2/11
  */
-class ServersSection {
+class ServersSection implements HostSelectionEvent.HostSelectionListener{
 
-    private TreeItem root, servers, common;
+    private TreeItem root;
     private Tree hostTree;
 
-    private ComboBox selection;
-
     private LayoutPanel layout;
+    private String selectedHost = null;
 
     public ServersSection() {
 
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
-
 
         LHSNavItem createNew = new LHSNavItem(
                 "Create Server",
@@ -47,46 +42,22 @@ class ServersSection {
         // --------------------------------------------------
 
         hostTree = new Tree(DefaultTreeResources.INSTANCE);
-
-        root = new TreeItem("");
-        servers = new TreeItem("Servers on Host:");
-        common = new TreeItem("General Config:");
-
-        common.addItem(new StyledTreeItem("Paths"));
-        common.addItem(new StyledTreeItem("Interfaces"));
-        common.addItem(new StyledTreeItem("Virtual Machines"));
-        common.addItem(new StyledTreeItem("System Properties"));
-
+        root = new TreeItem("Servers on Host:");
         hostTree.addItem(root);
-        hostTree.addItem(servers);
-        hostTree.addItem(new TreeItem("&nbsp;"));// spacer
-        hostTree.addItem(common);
-
-        selection = new ComboBox();
-        selection.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                fireHostSelection(event.getValue());
-            }
-        });
-
-        Widget dropDown = selection.asWidget();
-
-        HorizontalPanel horz = new HorizontalPanel();
-        horz.getElement().setAttribute("width", "100%");
-        horz.add(new HTML("&nbsp;Host:"));
-        horz.add(dropDown);
-
 
         // --------------------------------------------------
 
-        layout.add(horz);
         layout.add(createNew);
         layout.add(hostTree);
 
-        layout.setWidgetTopHeight(horz, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(createNew, 28, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(hostTree, 53, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(hostTree, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        // listen on host selection events
+        Console.MODULES.getEventBus().addHandler(
+                HostSelectionEvent.TYPE, this
+        );
+
 
     }
 
@@ -95,40 +66,15 @@ class ServersSection {
         return layout;
     }
 
-    private void fireHostSelection(String hostName) {
-        Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(hostName));
-    }
-
-    public void updateHosts(final List<Host> hostRecords) {
-
-        selection.clearValues();
-
-        for(Host record : hostRecords)
-        {
-            selection.addItem(record.getName());
-        }
-
-        // select first option when updated
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                selection.setItemSelected(0, true);
-            }
-        });
-
-    }
-
     public void updateServers(List<Server> servers) {
 
         root.setState(false); // hide it
-        this.servers.removeItems();
+        root.removeItems();
 
         for(Server server: servers)
         {
-            String serverName = server.getName();
-            final String token = "hosts/" + NameTokens.ServerPresenter+
-                    ";host="+selection.getSelectedValue() +
-                    ";server=" + serverName;
+            final String serverName = server.getName();
+
 
             HTML link = new HTML(serverName);
             final TreeItem item = new TreeItem(link);
@@ -140,24 +86,32 @@ class ServersSection {
                 public void onClick(ClickEvent event) {
                     hostTree.setSelectedItem(item);
                     Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                            Places.fromString(token)
+                            Places.fromString(buildToken(serverName))
                     );
                 }
             });
 
-            this.servers.addItem(item);
+            root.addItem(item);
 
         }
 
         if(servers.isEmpty())
         {
             TreeItem empty = new TreeItem(new HTML("(no servers)"));
-            this.servers.addItem(empty);
+            root.addItem(empty);
         }
 
         root.setState(true);
-        this.servers.setState(true);
+        root.setState(true);
 
+    }
+
+    private String buildToken(String serverName) {
+        assert selectedHost!=null : "host selection is null!";
+        final String token = "hosts/" + NameTokens.ServerPresenter+
+                ";host="+selectedHost +
+                ";server=" + serverName;
+        return token;
     }
 
     class StyledTreeItem extends TreeItem {
@@ -165,5 +119,10 @@ class ServersSection {
             super(html);
             setStyleName("lhs-tree-item");
         }
+    }
+
+    @Override
+    public void onHostSelection(String hostName) {
+        selectedHost = hostName;
     }
 }

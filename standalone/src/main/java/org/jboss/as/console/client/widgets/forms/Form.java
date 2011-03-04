@@ -29,8 +29,6 @@ public class Form<T> {
 
     private int numColumns = 1;
 
-    private T editedBean;
-
     private Map<String,GroupRenderer> registeredRenderer = new HashMap<String, GroupRenderer>();
 
     private Class<?> conversionType;
@@ -84,9 +82,10 @@ public class Form<T> {
 
     public void edit(T bean) {
 
-        this.editedBean = bean;
-
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
+
+        if(null==autoBean)
+            throw new IllegalArgumentException("Not an auto bean: " + bean.getClass());
 
         autoBean.accept(new AutoBeanVisitor() {
             @Override
@@ -124,16 +123,12 @@ public class Form<T> {
      * @return
      */
     public Map<String, Object> getChangedValues() {
-
-        //System.out.println("1 >" + AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(editedBean)).getPayload());
-
         HashMap<String, Object> values = new HashMap<String, Object>();
         snapshot(values);
         return values;
     }
 
     public T getUpdatedEntity() {
-
 
         StringBuilder builder = new StringBuilder("{");
         int g=0;
@@ -166,21 +161,11 @@ public class Form<T> {
         }
         builder.append("}");
 
-        //System.out.println("JSON > " + builder.toString());
-
         AutoBean<?> decoded = AutoBeanCodex.decode(
                 factory,
                 conversionType,
                 builder.toString()
         );
-
-        /*System.out.println("> "+ decoded);
-        decoded.accept(new AutoBeanVisitor() {
-            @Override
-            public void endVisitValueProperty(String propertyName, Object value, PropertyContext ctx) {
-                System.out.println(propertyName+"->"+value);
-            }
-        });*/
 
         return (T) decoded.as();
 
