@@ -57,6 +57,11 @@ public interface Icons extends ClientBundle {
     @Source("server_group.png")
     ImageResource serverGroup();
 
+    @Source("server.png")
+    ImageResource server();
+
+    @Source("deployment.png")
+    ImageResource deployment();
 
     @Source("status_red_small.png")
     ImageResource statusRed_small();

@@ -21,7 +21,7 @@ class DeploymentSection {
         layout.setStyleName("stack-section");
 
         LHSNavItem current = new LHSNavItem(
-                "Current Deployments",
+                "Available Deployments",
                 NameTokens.DeploymentsPresenter,
                 Icons.INSTANCE.inventory_small()
         );

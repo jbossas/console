@@ -25,9 +25,8 @@ class DefaultGroupRenderer implements GroupRenderer
     }
 
     @Override
-    public Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems) {
-
-        System.out.println("> " + metaData.getTitleWidth());
+    public Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems)
+    {
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(tablePrefix);

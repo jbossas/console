@@ -1,7 +1,9 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -9,8 +11,12 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.PropertyTable;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.*;
+import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -35,12 +41,73 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Server Configuration");
+        LayoutPanel layout = new LayoutPanel();
+
+        TitleBar titleBar = new TitleBar("Server Configuration");
+        layout.add(titleBar);
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
+        panel.getElement().setAttribute("style", "padding:15px;");
+
+        layout.add(panel);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(panel, 35, Style.Unit.PX, 100, Style.Unit.PCT);
+
+
+        // --------------------------------------------------------
+
+        final ToolStrip toolStrip = new ToolStrip();
+        final ToolButton edit = new ToolButton("Edit");
+        edit.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                if(edit.getText().equals("Edit"))
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+        });
+
+        toolStrip.addToolButton(edit);
+        ToolButton delete = new ToolButton("Delete");
+        delete.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Feedback.confirm(
+                        "Delete Server Configuration",
+                        "Do you want to delete this server configuration?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+
+                            }
+                        });
+            }
+        });
+        toolStrip.addToolButton(delete);
 
         nameLabel = new ContentHeaderLabel("Name here ...");
-        layout.add(nameLabel);
+        nameLabel.setIcon("common/server_group.png");
 
-        layout.add(new ContentGroupLabel("Attributes"));
+        HorizontalPanel horzPanel = new HorizontalPanel();
+        horzPanel.getElement().setAttribute("style", "width:100%;");
+        horzPanel.add(new Image(Icons.INSTANCE.server()));
+        horzPanel.add(nameLabel);
+        horzPanel.add(toolStrip);
+        toolStrip.getElement().getParentElement().setAttribute("width", "50%");
+
+        panel.add(horzPanel);
+
+        // ----------------------------------------------------------------------
+
+
+        panel.add(new ContentGroupLabel("Attributes"));
 
         form = new Form<Server>(Server.class);
         form.setNumColumns(2);
@@ -72,7 +139,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
                 socketItem, jvmItem
         );
 
-        layout.add(form.asWidget());
+        panel.add(form.asWidget());
 
         // ------------------------------------------------------
 
@@ -119,10 +186,11 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         layout.setWidgetTopHeight(tabLayoutpanel, 220, Style.Unit.PX, 100, Style.Unit.PCT);
         */
 
-        layout.add(new ContentGroupLabel("System Properties"));
+        panel.add(new ContentGroupLabel("System Properties"));
 
         PropertyTable properties = new PropertyTable();
-        layout.add(properties);
+        panel.add(properties);
+
         return layout;
     }
 

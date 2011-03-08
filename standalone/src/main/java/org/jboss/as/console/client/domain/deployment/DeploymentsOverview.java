@@ -21,6 +21,7 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
@@ -61,8 +62,16 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         // -----------
 
         ContentHeaderLabel nameLabel = new ContentHeaderLabel("Available Deployments");
-        nameLabel.setIcon("common/server_group.png");
-        vpanel.add(nameLabel);
+
+        HorizontalPanel horzPanel = new HorizontalPanel();
+        horzPanel.getElement().setAttribute("style", "width:100%;");
+        Image image = new Image(Icons.INSTANCE.deployment());
+        horzPanel.add(image);
+        image.getElement().getParentElement().setAttribute("width", "25");
+
+        horzPanel.add(nameLabel);
+
+        vpanel.add(horzPanel);
 
         deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();

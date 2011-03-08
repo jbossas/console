@@ -2,6 +2,7 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -77,7 +78,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         }
         else if("new".equals(action))
         {
-
+            Window.alert("Not implemented yet.");
         }
         else
         {

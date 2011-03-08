@@ -17,6 +17,7 @@ import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.*;
+import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
@@ -111,6 +112,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
+        horzPanel.add(new Image(Icons.INSTANCE.serverGroup()));
         horzPanel.add(nameLabel);
         horzPanel.add(toolStrip);
         toolStrip.getElement().getParentElement().setAttribute("width", "50%");
