@@ -33,6 +33,8 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     private ComboBoxItem groupItem;
     private ComboBoxItem socketItem;
 
+    private LayoutPanel layout;
+
     @Override
     public void setPresenter(ServerPresenter presenter) {
         this.presenter = presenter;
@@ -41,7 +43,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
+        layout = new LayoutPanel();
 
         TitleBar titleBar = new TitleBar("Server Configuration");
         layout.add(titleBar);

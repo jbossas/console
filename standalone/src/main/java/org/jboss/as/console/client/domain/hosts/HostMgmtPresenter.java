@@ -74,14 +74,8 @@ public class HostMgmtPresenter
     @Override
     protected void onReset() {
         super.onReset();
-
         ProfileHeader header = new ProfileHeader("Host Management");
         Console.MODULES.getHeader().setContent(header);
-
-        List<Host> hosts = hostInfoStore.getHosts();
-        String hostName = hostSelection==null ? hosts.get(0).getName() : hostSelection;
-        getView().updateServers(hostInfoStore.getServers(hostName));
-
     }
 
     @Override

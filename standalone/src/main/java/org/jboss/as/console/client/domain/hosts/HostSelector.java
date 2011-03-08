@@ -31,7 +31,6 @@ public class HostSelector {
         builder.appendHtmlConstant("</div>");
 
         panel = new HTMLPanel(builder.toSafeHtml());
-
         hostSelection = new ComboBox();
         hostSelection.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override

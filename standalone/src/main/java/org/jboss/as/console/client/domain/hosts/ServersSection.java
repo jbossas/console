@@ -1,10 +1,8 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;

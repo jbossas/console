@@ -34,8 +34,8 @@ class LHSHostsNavigation {
         final Widget selectorWidget = selector.asWidget();
 
         stack = new StackLayoutPanel(Style.Unit.PX);
-
         stack.addStyleName("section-stack");
+
         serversSection = new ServersSection();
 
         Widget serverSectionWidget = serversSection.asWidget();
