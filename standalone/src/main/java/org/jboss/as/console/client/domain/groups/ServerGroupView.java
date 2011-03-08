@@ -7,20 +7,15 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.*;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
@@ -50,6 +45,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private BeanFactory beanFactory = GWT.create(BeanFactory.class);
     private Button addProp;
 
+    private LayoutPanel layout;
+
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
         this.presenter = presenter;
@@ -58,7 +55,21 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Server Group");
+        layout = new LayoutPanel();
+
+        TitleBar titleBar = new TitleBar("Server Group");
+        layout.add(titleBar);
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
+        panel.getElement().setAttribute("style", "padding:15px;");
+
+        layout.add(panel);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(panel, 35, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        // ---------------------------------------------
 
         final ToolStrip toolStrip = new ToolStrip();
         edit = new ToolButton("Edit");
@@ -95,11 +106,16 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
         toolStrip.addToolButton(delete);
 
-        layout.add(toolStrip);
-
         nameLabel = new ContentHeaderLabel("Name here ...");
         nameLabel.setIcon("common/server_group.png");
-        layout.add(nameLabel);
+
+        HorizontalPanel horzPanel = new HorizontalPanel();
+        horzPanel.getElement().setAttribute("style", "width:100%;");
+        horzPanel.add(nameLabel);
+        horzPanel.add(toolStrip);
+        toolStrip.getElement().getParentElement().setAttribute("width", "50%");
+
+        panel.add(horzPanel);
 
         // ---------------------------------------------------
 
@@ -120,13 +136,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.setFields(nameField, profileItem);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem, jvmField);
 
-        layout.add(new ContentGroupLabel("Attributes"));
+        panel.add(new ContentGroupLabel("Attributes"));
 
-        layout.add(form.asWidget());
+        panel.add(form.asWidget());
 
         // ---------------------------------------------------
 
-        layout.add(new ContentGroupLabel("System Properties"));
+        panel.add(new ContentGroupLabel("System Properties"));
 
         propertyTable = new DefaultCellTable<PropertyRecord>(5);
         propertyProvider = new ListDataProvider<PropertyRecord>();
@@ -146,7 +162,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 propertyProvider.refresh();
             }
         });
-        layout.add(addProp);
+        panel.add(addProp);
 
 
         // Create columns
@@ -220,7 +236,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 new DefaultOptionRolloverHandler(propertyProvider, propertyTable)
         );
 
-        layout.add(propertyTable);
+        panel.add(propertyTable);
 
         return layout;
     }

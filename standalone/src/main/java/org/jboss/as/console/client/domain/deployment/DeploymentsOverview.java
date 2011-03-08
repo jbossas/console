@@ -25,9 +25,7 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Heiko Braun
@@ -84,8 +82,17 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             }
         };
 
+        TextColumn<DeploymentRecord> groupColumn = new TextColumn<DeploymentRecord>() {
+            @Override
+            public String getValue(DeploymentRecord record) {
+                return record.getServerGroup();
+            }
+        };
+
+
         deploymentTable.addColumn(dplNameColumn, "Name");
         deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
+        deploymentTable.addColumn(groupColumn, "Server Group");
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
@@ -220,7 +227,24 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     @Override
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
+
+        Collections.sort(deploymentRecords, new Comparator<DeploymentRecord>() {
+
+            @Override
+            public int compare(DeploymentRecord first, DeploymentRecord second) {
+                if(first.getServerGroup().equals(second.getServerGroup()))
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        });
+
         deploymentProvider.setList(deploymentRecords);
+
         deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
 
     }
