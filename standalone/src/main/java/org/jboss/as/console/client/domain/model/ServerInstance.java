@@ -8,7 +8,9 @@ public interface ServerInstance {
     String getName();
     void setName(String name);
 
-
     boolean isRunning();
     void setRunning(boolean b);
+
+    String getSever();
+    void setServer(String server);
 }

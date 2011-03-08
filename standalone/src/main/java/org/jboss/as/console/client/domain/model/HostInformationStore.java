@@ -9,4 +9,5 @@ import java.util.List;
 public interface HostInformationStore {
     List<Host> getHosts();
     List<Server> getServers(String name);
+    List<ServerInstance> getInstances(String host);
 }

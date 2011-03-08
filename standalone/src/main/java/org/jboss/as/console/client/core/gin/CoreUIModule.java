@@ -24,10 +24,7 @@ import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
-import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
-import org.jboss.as.console.client.domain.hosts.HostMgmtView;
-import org.jboss.as.console.client.domain.hosts.ServerPresenter;
-import org.jboss.as.console.client.domain.hosts.ServerView;
+import org.jboss.as.console.client.domain.hosts.*;
 import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
@@ -121,32 +118,32 @@ public class CoreUIModule extends AbstractPresenterModule {
                 InterfaceToolPresenter.MyView.class,
                 InterfaceToolViewImpl.class,
                 InterfaceToolPresenter.MyProxy.class);
-        
+
         // server/path
         bindPresenter(PathToolPresenter.class,
                 PathToolPresenter.MyView.class,
                 PathToolViewImpl.class,
                 PathToolPresenter.MyProxy.class);
-        
+
         // server/properties
         bindPresenter(PropertyToolPresenter.class,
                 PropertyToolPresenter.MyView.class,
                 PropertyToolViewImpl.class,
                 PropertyToolPresenter.MyProxy.class);
-        
+
         // server/sockets
         bindPresenter(SocketToolPresenter.class,
                 SocketToolPresenter.MyView.class,
                 SocketToolViewImpl.class,
                 SocketToolPresenter.MyProxy.class);
-        
+
         // server/threads
         bindPresenter(ThreadManagementPresenter.class,
                 ThreadManagementPresenter.MyView.class,
                 ThreadManagementViewImpl.class,
                 ThreadManagementPresenter.MyProxy.class);
-                
-        
+
+
         // ------------------------------------------------
         // domain management application
 
@@ -155,7 +152,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ProfileMgmtPresenter.MyView.class,
                 ProfileMgmtView.class,
                 ProfileMgmtPresenter.MyProxy.class);
-        
+
         // domain/profiles
         bindPresenter(DomainOverviewPresenter.class,
                 DomainOverviewPresenter.MyView.class,
@@ -180,12 +177,11 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);
         bind(HostInformationStore.class).to(MockHostInformationStore.class).in(Singleton.class);
 
-         // domain/domain-deployments
+        // domain/domain-deployments
         bindPresenter(DeploymentsPresenter.class,
                 DeploymentsPresenter.MyView.class,
                 DeploymentsOverview.class,
                 DeploymentsPresenter.MyProxy.class);
-
 
 
         bindPresenter(HostMgmtPresenter.class,
@@ -193,10 +189,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostMgmtView.class,
                 HostMgmtPresenter.MyProxy.class);
 
-         bindPresenter(ServerPresenter.class,
+        bindPresenter(ServerPresenter.class,
                 ServerPresenter.MyView.class,
                 ServerView.class,
                 ServerPresenter.MyProxy.class);
+
+        bindPresenter(InstancesPresenter.class,
+                InstancesPresenter.MyView.class,
+                InstancesView.class,
+                InstancesPresenter.MyProxy.class);
 
     }
 

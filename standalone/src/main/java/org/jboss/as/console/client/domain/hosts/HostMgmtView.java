@@ -24,6 +24,7 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
     private LHSHostsNavigation lhsNavigation;
 
     public HostMgmtView() {
+
         layout = new SplitLayoutPanel(4);
 
         contentCanvas = new LayoutPanel();
@@ -31,6 +32,7 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
 
         layout.addWest(lhsNavigation.asWidget(), 180);
         layout.add(contentCanvas);
+
     }
 
     @Override
@@ -64,6 +66,7 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
 
     @Override
     public void updateHosts(List<Host> hosts) {
+        System.out.println("> "+lhsNavigation);
         lhsNavigation.updateHosts(hosts);
     }
 

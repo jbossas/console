@@ -18,7 +18,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/2/11
  */
-class ServersSection implements HostSelectionEvent.HostSelectionListener{
+class ServersSection {
 
     private TreeItem root;
     private Tree hostTree;
@@ -50,13 +50,10 @@ class ServersSection implements HostSelectionEvent.HostSelectionListener{
 
         layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
         layout.setWidgetTopHeight(hostTree, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+    }
 
-        // listen on host selection events
-        Console.MODULES.getEventBus().addHandler(
-                HostSelectionEvent.TYPE, this
-        );
-
-
+    public void setSelectedHost(String selectedHost) {
+        this.selectedHost = selectedHost;
     }
 
     public Widget asWidget()
@@ -117,10 +114,5 @@ class ServersSection implements HostSelectionEvent.HostSelectionListener{
             super(html);
             setStyleName("lhs-tree-item");
         }
-    }
-
-    @Override
-    public void onHostSelection(String hostName) {
-        selectedHost = hostName;
     }
 }

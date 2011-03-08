@@ -145,49 +145,6 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
 
         // ------------------------------------------------------
 
-        /*CellTable<ServerInstance> instanceTable = new DefaultCellTable<ServerInstance>(10);
-
-        // Create columns
-        Column<ServerInstance, String> nameColumn = new Column<ServerInstance, String>(new DefaultEditTextCell()) {
-            @Override
-            public String getValue(ServerInstance object) {
-                return object.getName();
-            }
-        };
-
-        Column<ServerInstance, ImageResource> statusColumn =
-                new Column<ServerInstance, ImageResource>(new ImageResourceCell()) {
-            @Override
-            public ImageResource getValue(ServerInstance instance) {
-
-                ImageResource res = null;
-
-                if(instance.isRunning())
-                    res = Icons.INSTANCE.statusGreen_small();
-                else
-                    res = Icons.INSTANCE.statusRed_small();
-
-                return res;
-            }
-        };
-
-        instanceTable.addColumn(nameColumn, "Instance Name");
-        instanceTable.addColumn(statusColumn, "Status");
-
-        */
-
-
-
-        /*PropertyTable propertyTable = new PropertyTable();
-        propertyTable.asTable().setRowData(0, Collections.EMPTY_LIST);
-        tabLayoutpanel.add(propertyTable, "Advanced Configuration");
-
-        tabLayoutpanel.selectTab(0);
-
-        layout.add(tabLayoutpanel);
-        layout.setWidgetTopHeight(tabLayoutpanel, 220, Style.Unit.PX, 100, Style.Unit.PCT);
-        */
-
         panel.add(new ContentGroupLabel("System Properties"));
 
         PropertyTable properties = new PropertyTable();

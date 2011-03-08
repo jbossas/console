@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
@@ -14,15 +15,17 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/2/11
  */
-class LHSHostsNavigation {
+class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
     private static final int SELECTOR_HEIGHT = 60;
-    private StackLayoutPanel stack;
+    private static final int HEADER_SIZE = 28;
 
     private ServersSection serversSection;
+    private InstancesSection instanceSection;
+    private HostConfigSection hostConfigSection;
 
     private HostSelector selector;
-
+    private StackLayoutPanel stack;
     private DockLayoutPanel layout;
 
     public LHSHostsNavigation() {
@@ -37,20 +40,24 @@ class LHSHostsNavigation {
         stack.addStyleName("section-stack");
 
         serversSection = new ServersSection();
+        stack.add(serversSection.asWidget(), new StackSectionHeader("Servers"), HEADER_SIZE);
 
-        Widget serverSectionWidget = serversSection.asWidget();
-        stack.add(serverSectionWidget, new StackSectionHeader("Servers"), 28);
+        instanceSection = new InstancesSection();
+        stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), HEADER_SIZE);
 
-        ServerInstanceSection instanceSection = new ServerInstanceSection();
-        stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), 28);
-
-        HostConfigSection hostConfigSection = new HostConfigSection();
-        stack.add(hostConfigSection.asWidget(), new StackSectionHeader("General Configuration"), 28);
+        hostConfigSection = new HostConfigSection();
+        stack.add(hostConfigSection.asWidget(), new StackSectionHeader("General Configuration"), HEADER_SIZE);
 
         // -----------------------------
 
         layout.addNorth(selectorWidget, SELECTOR_HEIGHT);
         layout.add(stack);
+
+        // listen on host selection events
+        // TODO: should this be moved ot presenter onBind()?
+        Console.MODULES.getEventBus().addHandler(
+                HostSelectionEvent.TYPE, this
+        );
 
     }
 
@@ -65,5 +72,11 @@ class LHSHostsNavigation {
 
     public void updateInstances(List<Server> servers) {
         serversSection.updateServers(servers);
+    }
+
+    @Override
+    public void onHostSelection(String hostName) {
+        serversSection.setSelectedHost(hostName);
+        instanceSection.setSelectedHost(hostName);
     }
 }

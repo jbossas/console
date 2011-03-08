@@ -105,4 +105,9 @@ public class NameTokens {
     public static String getServerPresenter() {
         return ServerPresenter;
     }
+
+    public static final String InstancesPresenter = "server-instances";
+    public static String getInstancesPresenter() {
+        return InstancesPresenter;
+    }
 }

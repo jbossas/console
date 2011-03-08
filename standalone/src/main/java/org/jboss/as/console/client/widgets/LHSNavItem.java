@@ -35,6 +35,20 @@ public class LHSNavItem extends LayoutPanel {
         setWidgetLeftWidth(html, 29, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
+    public LHSNavItem(String title, ImageResource icon, ClickHandler clickHandler) {
+        setStyleName("lhs-nav-item");
+        Image image = new Image(icon);
+        add(image);
+        HTML text = new HTML(title);
+        text.getElement().setAttribute("style", "padding-top:5px;");
+        text.addClickHandler(clickHandler);
+        add(text);
+
+        setWidgetLeftWidth(image, 15, Style.Unit.PX, 10, Style.Unit.PX);
+        setWidgetTopHeight(image, 5, Style.Unit.PX, 10, Style.Unit.PX);
+        setWidgetLeftWidth(text, 29, Style.Unit.PX, 100, Style.Unit.PCT);
+    }
+
     private HTML addText(final String token, String title) {
         HTML text = new HTML(title);
         text.getElement().setAttribute("style", "padding-top:5px;");
