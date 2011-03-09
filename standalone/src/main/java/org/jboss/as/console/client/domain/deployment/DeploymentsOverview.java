@@ -147,14 +147,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         scroll.add(vpanel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 70, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 65, Style.Unit.PCT);
 
         // ----------- --------------------------------------------------
 
 
         LayoutPanel formPanel = new LayoutPanel();
-        formPanel.getElement().setAttribute("style", "background-color:#ffffff;margin:15px;");
-
+        formPanel.getElement().setAttribute("style", "padding:15px;");
 
         final ToolStrip toolStrip = new ToolStrip();
         final ToolButton edit = new ToolButton("Edit");
@@ -217,8 +216,17 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         formPanel.add(formWidget);
         formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        layout.add(formPanel);
-        layout.setWidgetBottomHeight(formPanel, 0, Style.Unit.PX, 30, Style.Unit.PCT);
+        // ------------------------------------------
+
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+
+        tabLayoutpanel.add(formPanel, "Deployment Details");
+        tabLayoutpanel.selectTab(0);
+
+        layout.add(tabLayoutpanel);
+
+        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 35, Style.Unit.PCT);
 
         return layout;
     }
