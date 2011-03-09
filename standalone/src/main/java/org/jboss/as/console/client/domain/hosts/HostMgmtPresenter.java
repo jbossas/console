@@ -87,7 +87,7 @@ public class HostMgmtPresenter
     public void onHostSelection(String hostName) {
         hostSelection = hostName;
         getView().updateServers(
-                hostInfoStore.getServers(hostName)
+                hostInfoStore.getServerConfigurations(hostName)
         );
     }
 }

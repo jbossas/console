@@ -8,6 +8,6 @@ import java.util.List;
  */
 public interface HostInformationStore {
     List<Host> getHosts();
-    List<Server> getServers(String name);
-    List<ServerInstance> getInstances(String host);
+    List<Server> getServerConfigurations(String name);
+    List<ServerInstance> getServerInstances(String host);
 }

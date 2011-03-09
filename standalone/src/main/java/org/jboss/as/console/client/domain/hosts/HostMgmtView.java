@@ -66,7 +66,6 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
 
     @Override
     public void updateHosts(List<Host> hosts) {
-        System.out.println("> "+lhsNavigation);
         lhsNavigation.updateHosts(hosts);
     }
 

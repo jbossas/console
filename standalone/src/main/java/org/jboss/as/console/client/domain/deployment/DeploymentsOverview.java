@@ -211,21 +211,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         CheckBoxItem suspendedItem = new CheckBoxItem("suspended", "Suspended?");
 
         form.setFields(groupItem, nameItem,  runtimeName, shaItem, suspendedItem);
+        form.bind(deploymentTable);
 
         Widget formWidget = form.asWidget();
         formPanel.add(formWidget);
         formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                form.edit(selectionModel.getSelectedObject());
-            }
-        });
-
-        deploymentTable.setSelectionModel(selectionModel);
-
 
         layout.add(formPanel);
         layout.setWidgetBottomHeight(formPanel, 0, Style.Unit.PX, 30, Style.Unit.PCT);
@@ -254,7 +244,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         deploymentProvider.setList(deploymentRecords);
 
-        deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
+        if(!deploymentRecords.isEmpty())
+            deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
 
     }
 

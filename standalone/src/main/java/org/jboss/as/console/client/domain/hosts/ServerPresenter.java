@@ -67,7 +67,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
 
         if(hostName!=null && serverName!=null)
         {
-            for(Server server : hostInfoStore.getServers(hostName))
+            for(Server server : hostInfoStore.getServerConfigurations(hostName))
             {
                 if(server.getName().equals(serverName))
                 {
@@ -84,7 +84,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         {
             Log.warn("Parameters missing. Fallback to default Server");
             hostName = hostInfoStore.getHosts().get(0).getName();
-            selectedRecord = hostInfoStore.getServers(hostName).get(0);
+            selectedRecord = hostInfoStore.getServerConfigurations(hostName).get(0);
         }
 
     }

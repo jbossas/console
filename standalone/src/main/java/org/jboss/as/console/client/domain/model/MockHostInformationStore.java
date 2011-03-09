@@ -117,12 +117,12 @@ public class MockHostInformationStore implements HostInformationStore {
     }
 
     @Override
-    public List<Server> getServers(String hostName) {
+    public List<Server> getServerConfigurations(String hostName) {
         return servers.get(hostName);
     }
 
     @Override
-    public List<ServerInstance> getInstances(String host) {
+    public List<ServerInstance> getServerInstances(String host) {
 
         return instances.get(host);
     }

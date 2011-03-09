@@ -40,13 +40,13 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
         stack.addStyleName("section-stack");
 
         serversSection = new ServersSection();
-        stack.add(serversSection.asWidget(), new StackSectionHeader("Servers"), HEADER_SIZE);
+        stack.add(serversSection.asWidget(), new StackSectionHeader("Server Configurations"), HEADER_SIZE);
 
         instanceSection = new InstancesSection();
         stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), HEADER_SIZE);
 
         hostConfigSection = new HostConfigSection();
-        stack.add(hostConfigSection.asWidget(), new StackSectionHeader("General Configuration"), HEADER_SIZE);
+        stack.add(hostConfigSection.asWidget(), new StackSectionHeader("Host Settings"), HEADER_SIZE);
 
         // -----------------------------
 

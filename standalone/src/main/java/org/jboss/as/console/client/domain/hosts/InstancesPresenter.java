@@ -1,19 +1,15 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.*;
 
 import java.util.List;
 
@@ -24,11 +20,12 @@ import java.util.List;
  * @date 3/8/11
  */
 public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, InstancesPresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener {
+        implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
     private HostInformationStore hostInfoStore;
     private String selectedHost = null;
+    private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -39,6 +36,7 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
         void setPresenter(InstancesPresenter presenter);
         void setSelectedHost(String selectedHost);
         void updateInstances(List<ServerInstance> instances);
+        void updateServerConfigurations(List<Server> servers);
     }
 
     @Inject
@@ -63,6 +61,12 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     public void prepareFromRequest(PlaceRequest request) {
         selectedHost = request.getParameter("host", null);
         assert selectedHost!=null : "Parameter 'host' is missing";
+
+        String action = request.getParameter("action", null);
+        if(action!=null)
+        {
+            Window.alert("Not yet implemented");
+        }
     }
 
     @Override
@@ -74,17 +78,45 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
 
     private void refreshView() {
         getView().setSelectedHost(selectedHost);
-        getView().updateInstances(hostInfoStore.getInstances(selectedHost));
+        getView().updateInstances(hostInfoStore.getServerInstances(selectedHost));
+        getView().updateServerConfigurations(hostInfoStore.getServerConfigurations(selectedHost));
     }
 
     @Override
     protected void revealInParent() {
-       RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     @Override
     public void onHostSelection(String hostName) {
         selectedHost = hostName;
         refreshView();
+    }
+
+    public void onFilterType(String serverConfig) {
+
+        List<ServerInstance> filtered = filter.apply(
+                new ServerConfigPredicate(serverConfig),
+                hostInfoStore.getServerInstances(selectedHost)
+        );
+
+        getView().updateInstances(filtered);
+    }
+
+    class ServerConfigPredicate implements Predicate<ServerInstance> {
+        private String configFilter;
+
+        ServerConfigPredicate(String configFilter) {
+            this.configFilter = configFilter;
+        }
+
+        @Override
+        public boolean appliesTo(ServerInstance candidate) {
+
+            boolean configMatch = configFilter.equals("") ?
+                    true : candidate.getServer().equals(configFilter);
+
+            return configMatch;
+        }
     }
 }

@@ -1,22 +1,29 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.DeploymentRecord;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.*;
+import org.jboss.as.console.client.widgets.forms.ButtonItem;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +35,9 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
     private InstancesPresenter presenter;
     private ContentHeaderLabel nameLabel;
     private ListDataProvider<ServerInstance> instanceProvider;
+    private String selectedHost = null;
+    private ComboBox typeFilter;
+    private CellTable<ServerInstance> instanceTable;
 
     @Override
     public void setPresenter(InstancesPresenter presenter) {
@@ -41,14 +51,11 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         TitleBar titleBar = new TitleBar("Server Instances");
         layout.add(titleBar);
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
-
-        layout.add(panel);
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
+        vpanel.getElement().setAttribute("style", "padding:15px;");
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 35, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ----------------------------------------------------------------------
 
@@ -62,20 +69,51 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
 
         image.getElement().getParentElement().setAttribute("width", "25");
 
-        panel.add(horzPanel);
+        vpanel.add(horzPanel);
 
-         // ----------------------------------------------------------------------
+        // ----------------------------------------------------------------------
 
 
-        CellTable<ServerInstance> instanceTable = new DefaultCellTable<ServerInstance>(10);
+        HorizontalPanel tableOptions = new HorizontalPanel();
+        tableOptions.getElement().setAttribute("cellpadding", "2px");
+
+        typeFilter = new ComboBox();
+        typeFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                presenter.onFilterType(event.getValue());
+            }
+        });
+
+        Widget typeFilterWidget = typeFilter.asWidget();
+        typeFilterWidget.getElement().setAttribute("style", "width:200px;");
+
+
+        tableOptions.add(new Label("Config:"));
+        tableOptions.add(typeFilterWidget);
+
+        tableOptions.getElement().setAttribute("style", "float:right;");
+        vpanel.add(tableOptions);
+
+        // ----------------------------------------------------------------------
+
+        instanceTable = new DefaultCellTable<ServerInstance>(10);
         instanceProvider = new ListDataProvider<ServerInstance>();
         instanceProvider.addDataDisplay(instanceTable);
 
         // Create columns
-        Column<ServerInstance, String> nameColumn = new Column<ServerInstance, String>(new DefaultEditTextCell()) {
+        Column<ServerInstance, String> nameColumn = new Column<ServerInstance, String>(new TextCell()) {
             @Override
             public String getValue(ServerInstance object) {
                 return object.getName();
+            }
+        };
+
+
+        Column<ServerInstance, String> serverColumn = new Column<ServerInstance, String>(new TextCell()) {
+            @Override
+            public String getValue(ServerInstance object) {
+                return object.getServer();
             }
         };
 
@@ -96,20 +134,102 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         };
 
         instanceTable.addColumn(nameColumn, "Instance Name");
+        instanceTable.addColumn(serverColumn, "Config");
         instanceTable.addColumn(statusColumn, "Status");
+        vpanel.add(instanceTable);
 
-        panel.add(instanceTable);
+
+        // scroll enabled
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.add(vpanel);
+
+        layout.add(scroll);
+        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 60, Style.Unit.PCT);
+
+
+        // ----------------------------------------------------------------------
+
+        LayoutPanel formPanel = new LayoutPanel();
+        //formPanel.getElement().setAttribute("style", "background-color:#ffffff;margin:15px;");
+
+        Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
+        form.setNumColumns(2);
+
+        TextItem nameItem = new TextItem("name", "Instance Name");
+        TextItem serverItem = new TextItem("server", "Server Configuration");
+        CheckBoxItem runningItem = new CheckBoxItem("running", "Running?");
+        ButtonItem enableItem = new ButtonItem("running", "Action") {
+            @Override
+            public void setValue(Boolean value) {
+
+                if(value)
+                    button.setText("Stop");
+                else
+                    button.setText("Start");
+            }
+        };
+
+        form.setFields(nameItem, serverItem, runningItem, enableItem);
+        form.bind(instanceTable);
+
+        Widget formWidget = form.asWidget();
+        formWidget.getElement().setAttribute("style", "margin-top:15px;");
+
+        formPanel.add(formWidget);
+
+
+        formPanel.setWidgetTopHeight(formWidget, 5, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        //layout.add(formPanel);
+        //layout.setWidgetBottomHeight(formPanel, 0, Style.Unit.PX, 30, Style.Unit.PCT);
+
+
+        // ----------------------------------------------------------
+
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+
+        tabLayoutpanel.add(formPanel, "Instance Details");
+        tabLayoutpanel.add(new HTML("This going to display heap, permgen, etc, "), "JVM Status");
+        //tabLayoutpanel.add(new HTML("Baz"), "Other");
+
+        tabLayoutpanel.selectTab(0);
+
+        layout.add(tabLayoutpanel);
+        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
 
         return layout;
     }
 
     @Override
     public void setSelectedHost(String selectedHost) {
-        //nameLabel.setText("Server Status (Host: "+selectedHost+")");
+        this.selectedHost = selectedHost;
+        //nameLabel.setText("Server Status ("+selectedHost+")");
     }
 
     @Override
     public void updateInstances(List<ServerInstance> instances) {
         instanceProvider.setList(instances);
+        if(!instances.isEmpty())
+            instanceTable.getSelectionModel().setSelected(instances.get(0), true);
+    }
+
+    @Override
+    public void updateServerConfigurations(List<Server> servers) {
+        List<String> names = new ArrayList<String>(servers.size());
+        names.add(""); // de-select filter
+        for(Server server : servers)
+        {
+            names.add(server.getName());
+        }
+        typeFilter.setValues(names);
+    }
+
+    private String buildToken(String serverName) {
+        assert selectedHost!=null : "host selection is null!";
+        final String token = "hosts/" + NameTokens.ServerPresenter+
+                ";host="+selectedHost +
+                ";server=" + serverName;
+        return token;
     }
 }

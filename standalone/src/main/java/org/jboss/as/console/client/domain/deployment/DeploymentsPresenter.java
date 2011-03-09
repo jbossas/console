@@ -12,12 +12,13 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
+import org.jboss.as.console.client.domain.model.EntityFilter;
+import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.shared.DeploymentStore;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +33,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     private String groupFilter = "";
     private String typeFilter= "";
+
+    private EntityFilter<DeploymentRecord> filter = new EntityFilter<DeploymentRecord>();
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
@@ -81,36 +84,22 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
 
-    public void onFilterGroup(final String filter) {
-        this.groupFilter = filter;
+    public void onFilterGroup(final String groupName) {
+        this.groupFilter = groupName;
         getView().updateDeployments(
-                filterDeployments(new TypeAndGroupFilter())
+                filter.apply(new TypeAndGroupPredicate(), deploymentStore.loadDeployments())
         );
     }
 
-    public void onFilterType(final String filter) {
+    public void onFilterType(final String type) {
 
-        this.typeFilter = filter;
+        this.typeFilter = type;
         getView().updateDeployments(
-                filterDeployments(new TypeAndGroupFilter())
+                filter.apply(new TypeAndGroupPredicate(), deploymentStore.loadDeployments())
         );
     }
 
-    private List<DeploymentRecord> filterDeployments(DeploymentFilter filter)
-    {
-        List<DeploymentRecord> records = deploymentStore.loadDeployments();
-        List<DeploymentRecord> filtered = new ArrayList<DeploymentRecord>();
-
-        for(DeploymentRecord rec : records)
-        {
-            if(filter.appliesTo(rec))
-                filtered.add(rec);
-        }
-
-        return filtered;
-    }
-
-    class TypeAndGroupFilter implements DeploymentFilter
+    class TypeAndGroupPredicate implements Predicate<DeploymentRecord>
     {
         @Override
         public boolean appliesTo(DeploymentRecord candidate) {
@@ -124,11 +113,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
             return groupMatch && typeMatch;
         }
-    }
-
-    interface DeploymentFilter
-    {
-        boolean appliesTo(DeploymentRecord candidate);
     }
 
 }

@@ -11,6 +11,6 @@ public interface ServerInstance {
     boolean isRunning();
     void setRunning(boolean b);
 
-    String getSever();
+    String getServer();
     void setServer(String server);
 }

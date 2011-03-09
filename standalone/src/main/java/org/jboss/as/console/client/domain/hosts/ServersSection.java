@@ -101,7 +101,7 @@ class ServersSection {
 
     }
 
-    private String buildToken(String serverName) {
+    public String buildToken(String serverName) {
         assert selectedHost!=null : "host selection is null!";
         final String token = "hosts/" + NameTokens.ServerPresenter+
                 ";host="+selectedHost +
