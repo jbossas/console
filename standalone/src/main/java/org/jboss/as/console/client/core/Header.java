@@ -32,8 +32,8 @@ public class Header implements ValueChangeHandler<String> {
             /*new String[]{"system", "System Overview"},*/
             /*new String[]{"server", "Server Management"},*/
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
-            new String[]{NameTokens.ServerGroupPresenter, "Server Groups"},
-            new String[]{NameTokens.ServerPresenter, "Hosts"}
+            new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
+            new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
     };
 
     private MessageBar messageBar;
@@ -89,9 +89,10 @@ public class Header implements ValueChangeHandler<String> {
 
     private String setupLinks() {
         StringBuilder headerString = new StringBuilder(
-                "<table class='header-links' cellpadding=\"0\" cellspacing=\"0\"><tr id='header-links-ref'>");
+                "<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
+        headerString.append("<tr id='header-links-ref'>");
 
-        headerString.append("<td style=\"width: 1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
+        headerString.append("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
         for (String[] section : SECTIONS) {
 
             final String name = section[0];
@@ -101,7 +102,7 @@ public class Header implements ValueChangeHandler<String> {
             String styleClass = "header-link";
 
             // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
-            headerString.append("<td style=\"vertical-align:middle; text-align:center\" width='100' id=\"" + id +"\"").append(" class=\"")
+            headerString.append("<td style=\"vertical-align:middle; text-align:center;\" width='100px'\" id=\"" + id +"\"").append(" class=\"")
                     .append(styleClass).append("\" onclick=\"document.location='#").append(name).append("'\" >");
             headerString.append(title);
             headerString.append("</td>\n");
