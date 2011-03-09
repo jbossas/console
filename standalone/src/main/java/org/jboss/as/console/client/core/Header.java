@@ -4,14 +4,16 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
 
 import java.util.HashMap;
@@ -82,37 +84,52 @@ public class Header implements ValueChangeHandler<String> {
     }
 
     private Widget getLinksSection() {
-        linksPane = new HTMLPanel(setupLinks());
+        linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
+
+        for (String[] section : SECTIONS) {
+            final String name = section[0];
+            final String id = "header-" + name;
+            HTML widget = new HTML(section[1]);
+
+            widget.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    Console.MODULES.getPlaceManager().revealPlace(
+                            new PlaceRequest(name)
+                    );
+                }
+            });
+            linksPane.add(widget, id);
+        }
         return linksPane;
     }
 
-    private String setupLinks() {
-        StringBuilder headerString = new StringBuilder(
-                "<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
-        headerString.append("<tr id='header-links-ref'>");
+    private String createLinks() {
+        SafeHtmlBuilder headerString = new SafeHtmlBuilder();
+        headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
+        headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
-        headerString.append("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
+        headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
         for (String[] section : SECTIONS) {
 
             final String name = section[0];
-            final String title = section[1];
             final String id = "header-" + name;
-
             String styleClass = "header-link";
+            String styleAtt = "vertical-align:middle; text-align:center";
 
-            // Set explicit identifiers because the generated scLocator is not getting picked up by Selenium.
-            headerString.append("<td style=\"vertical-align:middle; text-align:center;\" width='100px'\" id=\"" + id +"\"").append(" class=\"")
-                    .append(styleClass).append("\" onclick=\"document.location='#").append(name).append("'\" >");
-            headerString.append(title);
-            headerString.append("</td>\n");
+            String td =  "<td style='"+styleAtt+"' width='100px' id='" + id +"'"+
+                            " class='"+styleClass+"'></td>";
+            headerString.appendHtmlConstant(td);
+            //headerString.append(title);
 
-            headerString.append("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
+
+            headerString.appendHtmlConstant("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
         }
 
-        headerString.append("</tr></table>");
+        headerString.appendHtmlConstant("</tr></table>");
 
-        return headerString.toString();
+        return headerString.toSafeHtml().asString();
     }
 
     @Override
