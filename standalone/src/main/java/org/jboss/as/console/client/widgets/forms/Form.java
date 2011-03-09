@@ -6,8 +6,11 @@ import com.google.gwt.autobean.shared.AutoBeanCodex;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.autobean.shared.AutoBeanVisitor;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.HashMap;
@@ -34,6 +37,8 @@ public class Form<T> {
     private Class<?> conversionType;
 
     BeanFactory factory = GWT.create(BeanFactory.class);
+
+    private int nextId = 1;
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
@@ -76,7 +81,17 @@ public class Form<T> {
                 maxTitleLength = title.length();
             }
 
-            groupItems.put(item.getName(), item);
+            // key maybe be used multiple times
+            String itemKey = item.getName();
+
+            if(groupItems.containsKey(itemKey)) {
+                groupItems.put(itemKey+"#"+nextId, item);
+                nextId++;
+            }
+            else
+            {
+                groupItems.put(itemKey, item);
+            }
         }
     }
 
@@ -102,10 +117,14 @@ public class Form<T> {
 
                 for(Map<String, FormItem> groupItems : formItems.values())
                 {
-                    matchingField = groupItems.get(propertyName);
-                    if (matchingField != null)
-                        matchingField.setValue(value);
-
+                   for(String key : groupItems.keySet()) // keys maybe used multiple times
+                   {
+                       if(key.startsWith(propertyName))
+                       {
+                           matchingField = groupItems.get(key);
+                           matchingField.setValue(value);
+                       }
+                   }
                 }
 
                 if (null==matchingField && !"empty".equals(propertyName))
@@ -240,4 +259,20 @@ public class Form<T> {
         }
     }
 
+    /**
+     * Binds a default single selection model to the table
+     * that displays selected rows in a form.
+     *
+     * @param instanceTable
+     */
+    public void bind(CellTable<T> instanceTable) {
+        final SingleSelectionModel<T> selectionModel = new SingleSelectionModel<T>();
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                edit(selectionModel.getSelectedObject());
+            }
+        });
+        instanceTable.setSelectionModel(selectionModel);
+    }
 }

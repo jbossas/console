@@ -4,7 +4,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * The default renderer for a group of form items.
@@ -32,9 +32,11 @@ class DefaultGroupRenderer implements GroupRenderer
         builder.appendHtmlConstant(tablePrefix);
 
         // build html structure
-        FormItem[] values = groupItems.values().toArray(new FormItem[0]);
+        String[] itemKeys = groupItems.keySet().toArray(new String[]{});
+        FormItem[] values = groupItems.values().toArray(new FormItem[]{});
+
         int i=0;
-        while(i<values.length)
+        while(i<itemKeys.length)
         {
             builder.appendHtmlConstant("<tr>");
 
@@ -42,10 +44,10 @@ class DefaultGroupRenderer implements GroupRenderer
             for(col=0; col<metaData.getNumColumns(); col++)
             {
                 int next = i + col;
-                if(next<values.length)
+                if(next<itemKeys.length)
                 {
                     FormItem item = values[next];
-                    createItemCell(metaData, builder, item);
+                    createItemCell(metaData, builder, itemKeys[next], item);
                 }
                 else
                 {
@@ -62,9 +64,11 @@ class DefaultGroupRenderer implements GroupRenderer
         HTMLPanel panel = new HTMLPanel(builder.toSafeHtml());
 
         // inline widget
-        for(FormItem item : groupItems.values())
+        Set<String> keys = groupItems.keySet();
+        for(String key : keys)
         {
-            final String widgetId = id + item.getName();
+            FormItem item = groupItems.get(key);
+            final String widgetId = id + key;
             panel.add(item.asWidget(), widgetId);
 
         }
@@ -72,9 +76,9 @@ class DefaultGroupRenderer implements GroupRenderer
         return panel;
     }
 
-    private void createItemCell(RenderMetaData metaData, SafeHtmlBuilder builder, FormItem item) {
+    private void createItemCell(RenderMetaData metaData, SafeHtmlBuilder builder, String key, FormItem item) {
 
-        final String widgetId = id + item.getName();
+        final String widgetId = id + key;
 
         builder.appendHtmlConstant("<td class='form-item-title' style='min-width:"+metaData.getTitleWidth()*5+"pt'>");
         builder.appendEscaped(item.getTitle()+":");
