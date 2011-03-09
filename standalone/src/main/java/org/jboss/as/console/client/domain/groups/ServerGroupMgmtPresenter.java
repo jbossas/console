@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -29,6 +30,7 @@ public class ServerGroupMgmtPresenter
 
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
+    private boolean hasBeenRevealed;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
@@ -67,13 +69,22 @@ public class ServerGroupMgmtPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        // TODO: this doesn't match
-        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupPresenter);
+
+        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
 
         getView().updateServerGroups(serverGroupStore.loadServerGroups());
 
         ProfileHeader header = new ProfileHeader("Group Management");
         Console.MODULES.getHeader().setContent(header);
+
+        // default place upon first request
+        if(!hasBeenRevealed)
+        {
+            placeManager.revealPlaceHierarchy(
+                    Places.fromString("server-groups/"+NameTokens.ServerGroupPresenter)
+            );
+            hasBeenRevealed = true;
+        }
     }
 
     @Override

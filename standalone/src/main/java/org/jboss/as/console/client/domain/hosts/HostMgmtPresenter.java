@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -31,6 +32,7 @@ public class HostMgmtPresenter
 
     private HostInformationStore hostInfoStore;
     private String hostSelection = null;
+    private boolean hasBeenRevealed;
 
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
@@ -74,8 +76,19 @@ public class HostMgmtPresenter
     @Override
     protected void onReset() {
         super.onReset();
+
+        Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
+
         ProfileHeader header = new ProfileHeader("Host Management");
         Console.MODULES.getHeader().setContent(header);
+
+        if(!hasBeenRevealed)
+        {
+            placeManager.revealPlaceHierarchy(
+                    Places.fromString("hosts/"+NameTokens.ServerPresenter)
+            );
+            hasBeenRevealed = true;
+        }
     }
 
     @Override
