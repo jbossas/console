@@ -24,12 +24,15 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/3/11
  */
-public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPresenter.MyProxy> {
+public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
+    implements HostSelectionEvent.HostSelectionListener {
 
     private HostInformationStore hostInfoStore;
 
     private Server selectedRecord = null;
     private ServerGroupStore serverGroupStore;
+
+    private boolean hasBeenRevealed = false;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -57,6 +60,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override
@@ -92,15 +96,28 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     @Override
     protected void onReset() {
         super.onReset();
-
-        // update available groups first
         getView().updateServerGroups(serverGroupStore.loadServerGroups());
+        if(selectedRecord!=null)
+            getView().setSelectedRecord(selectedRecord);
 
-        if(selectedRecord!=null) getView().setSelectedRecord(selectedRecord);
+        hasBeenRevealed = true;
     }
 
     @Override
     protected void revealInParent() {
          RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
     }
+
+    @Override
+    public void onHostSelection(String hostName) {
+
+        // display first server config by default
+        List<Server> serverConfigurations = hostInfoStore.getServerConfigurations(hostName);
+        if(!serverConfigurations.isEmpty() && hasBeenRevealed) {
+            selectedRecord = serverConfigurations.get(0);
+            getView().setSelectedRecord(selectedRecord);
+        }
+    }
+
+
 }
