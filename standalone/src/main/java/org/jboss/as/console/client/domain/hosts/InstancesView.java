@@ -10,7 +10,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
@@ -36,7 +35,7 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
     private ContentHeaderLabel nameLabel;
     private ListDataProvider<ServerInstance> instanceProvider;
     private String selectedHost = null;
-    private ComboBox typeFilter;
+    private ComboBox configFilter;
     private CellTable<ServerInstance> instanceTable;
 
     @Override
@@ -77,15 +76,15 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
 
-        typeFilter = new ComboBox();
-        typeFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
+        configFilter = new ComboBox();
+        configFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 presenter.onFilterType(event.getValue());
             }
         });
 
-        Widget typeFilterWidget = typeFilter.asWidget();
+        Widget typeFilterWidget = configFilter.asWidget();
         typeFilterWidget.getElement().setAttribute("style", "width:200px;");
 
 
@@ -222,7 +221,8 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         {
             names.add(server.getName());
         }
-        typeFilter.setValues(names);
+        configFilter.setValues(names);
+        configFilter.setItemSelected(0, true);
     }
 
     private String buildToken(String serverName) {
