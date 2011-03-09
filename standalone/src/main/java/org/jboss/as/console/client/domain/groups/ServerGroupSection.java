@@ -30,11 +30,11 @@ class ServerGroupSection {
         layout.setStyleName("stack-section");
 
         serverGroupTree = new Tree(DefaultTreeResources.INSTANCE);
-        root = new TreeItem("Current Groups:");
+        root = new TreeItem("Available Groups:");
         serverGroupTree.addItem(root);
 
         LHSNavItem createNew = new LHSNavItem(
-                "Create Group",
+                "Add Server Group",
                 "domain/" + NameTokens.ServerGroupPresenter + ";action=new",
                 Icons.INSTANCE.add_small());
 
