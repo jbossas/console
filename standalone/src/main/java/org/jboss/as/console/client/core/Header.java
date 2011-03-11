@@ -31,11 +31,14 @@ public class Header implements ValueChangeHandler<String> {
     private String currentHighlightedSection = null;
 
     public static final String[][] SECTIONS = {
-            /*new String[]{"system", "System Overview"},*/
-            /*new String[]{"server", "Server Management"},*/
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
             new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
             new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
+    };
+
+    public static final String[][] SECTIONS_STANADLONE = {
+            new String[]{NameTokens.serverConfig, "Profile"},
+             new String[]{NameTokens.deploymentTool, "Deployments"}
     };
 
     private MessageBar messageBar;
@@ -43,10 +46,12 @@ public class Header implements ValueChangeHandler<String> {
     private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
     private LayoutPanel contentPanel;
+    private BootstrapContext bootstrap;
 
     @Inject
-    public Header(MessageBar messageBar) {
+    public Header(MessageBar messageBar, BootstrapContext bootstrap) {
         this.messageBar = messageBar;
+        this.bootstrap = bootstrap;
         History.addValueChangeHandler(this);
     }
 
@@ -87,7 +92,8 @@ public class Header implements ValueChangeHandler<String> {
         linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
 
-        for (String[] section : SECTIONS) {
+        String[][] sections = bootstrap.hasProperty(BootstrapContext.STANDALONE) ? SECTIONS_STANADLONE : SECTIONS;
+        for (String[] section : sections) {
             final String name = section[0];
             final String id = "header-" + name;
             HTML widget = new HTML(section[1]);
@@ -111,7 +117,8 @@ public class Header implements ValueChangeHandler<String> {
         headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
         headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
-        for (String[] section : SECTIONS) {
+        String[][] sections = bootstrap.hasProperty(BootstrapContext.STANDALONE) ? SECTIONS_STANADLONE : SECTIONS;
+        for (String[] section : sections) {
 
             final String name = section[0];
             final String id = "header-" + name;

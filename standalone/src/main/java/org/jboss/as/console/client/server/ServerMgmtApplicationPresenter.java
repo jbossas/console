@@ -9,8 +9,10 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.*;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.profiles.ProfileHeader;
 import org.jboss.as.console.client.shared.SubsystemRecord;
 import org.jboss.as.console.client.shared.SubsystemStore;
 
@@ -74,6 +76,15 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
             placeManager.revealRelativePlace(new PlaceRequest(NameTokens.deploymentTool));
             revealDefault = false; // only once
         }
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+
+        ProfileHeader header = new ProfileHeader("Standalone Server");
+        Console.MODULES.getHeader().setContent(header);
     }
 
     @Override

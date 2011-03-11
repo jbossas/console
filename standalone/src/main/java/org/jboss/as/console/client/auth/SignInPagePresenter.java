@@ -39,12 +39,15 @@ public class SignInPagePresenter extends
         TextBox getUserName();
         TextBox getPassword();
         void resetAndFocus();
+
+        void setPresenter(SignInPagePresenter signInPagePresenter);
     }
 
     @Inject
-    public SignInPagePresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                               PlaceManager placeManager, CurrentUser user,
-                               BootstrapContext bootstrap) {
+    public SignInPagePresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, CurrentUser user,
+            BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -75,6 +78,7 @@ public class SignInPagePresenter extends
         registerHandler(getView().getPassword().addKeyDownHandler(handler));
         registerHandler(getView().getUserName().addKeyDownHandler(handler));
 
+        getView().setPresenter(this);
     }
 
     @Override
@@ -146,5 +150,9 @@ public class SignInPagePresenter extends
         // TODO: implement authentication error handling
         Log.error("Login failed!");
 
+    }
+
+    public void setBootStandalone(Boolean b) {
+        this.bootstrap.setProperty(BootstrapContext.STANDALONE, b.toString());
     }
 }

@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.auth;
 
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
@@ -9,31 +11,33 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> implements
         SignInPagePresenter.MyView {
 
-    private static String html = "<div class='loginForm'>\n"
-            + "<table align=\"center\" cellspacing=0 cellpadding=0>\n"
-            + "  <tr>\n"
-            + "    <td class='loginForm-header' colspan=\"2\" style=\"font-weight:bold;\">JBoss Management</td>\n"
-            + "  </tr>\n"
-            + "  <tr>\n"
-            + "    <td>Username</td>\n"
-            + "    <td id=\"userNameFieldContainer\"></td>\n"
-            + "  </tr>\n"
-            + "  <tr>\n"
-            + "    <td>Password</td>\n"
-            + "    <td id=\"passwordFieldContainer\"></td>\n"
-            + "  </tr>\n"
-            + "  <tr>\n"
-            + "    <td></td>\n"
-            + "    <td id=\"signInButtonContainer\"></td>\n"
-            + "  </tr>\n"
-            + "</table>\n"
-            + "</div>\n";
+    private static String html = "<div class='loginForm'>"
+            + "<table align=\"center\" cellspacing=0 cellpadding=0>"
+            + "  <tr>"
+            + "    <td class='loginForm-header' colspan=\"2\" style=\"font-weight:bold;\">JBoss Management</td>"
+            + "  </tr>"
+            + "  <tr>"
+            + "    <td>Username</td>"
+            + "    <td id=\"userNameFieldContainer\"></td>"
+            + "  </tr>"
+            + "  <tr>"
+            + "    <td>Password</td>"
+            + "    <td id=\"passwordFieldContainer\"></td>"
+            + "  </tr>"
+            + "  <tr>"
+            + "    <td></td>"
+            + "    <td id=\"signInButtonContainer\"></td>"
+            + "  </tr>"
+            + "</table>"
+            + "</div>"+
+            "<div id='dev-options'><div>";
 
     HTMLPanel panel = new HTMLPanel(html);
 
     private final TextBox userNameField;
     private final PasswordTextBox passwordField;
     private final Button signInButton;
+    private SignInPagePresenter presenter;
 
     @Inject
     public SignInPageView() {
@@ -48,8 +52,30 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         panel.add(passwordField, "passwordFieldContainer");
         panel.add(signInButton, "signInButtonContainer");
 
+
+        // dev options
+        final CheckBox checkbox = new CheckBox();
+        checkbox.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.setBootStandalone(checkbox.getValue());
+            }
+        });
+        HorizontalPanel options = new HorizontalPanel();
+        options.add(new Label("Boot 'standalone' console?"));
+        options.add(checkbox);
+
+        options.getElement().setAttribute("style", "margin-top:20px; vertical-align:bottom;");
+        options.getElement().setAttribute("align", "center");
+        panel.add(options);
+
         panel.sinkEvents(Event.ONKEYDOWN);
 
+    }
+
+    @Override
+    public void setPresenter(SignInPagePresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override

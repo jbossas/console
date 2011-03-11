@@ -23,6 +23,7 @@ public class MainLayoutPresenter
         MainLayoutPresenter.MainLayoutProxy> {
 
     boolean revealDefault = true;
+    private BootstrapContext bootstrap;
 
     public interface MainLayoutView extends View {
     }
@@ -35,8 +36,13 @@ public class MainLayoutPresenter
     public interface MainLayoutProxy extends ProxyPlace<MainLayoutPresenter> {}
 
     @Inject
-    public MainLayoutPresenter(EventBus eventBus, MainLayoutView view, MainLayoutProxy proxy) {
+    public MainLayoutPresenter(
+            EventBus eventBus,
+            MainLayoutView view,
+            MainLayoutProxy proxy, BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
+        this.bootstrap = bootstrap;
+
     }
 
     @Override
@@ -46,7 +52,7 @@ public class MainLayoutPresenter
         {
             revealDefault = false;
             Console.MODULES.getPlaceManager().revealPlace(
-                    new PlaceRequest(NameTokens.ProfileMgmtPresenter)
+                    bootstrap.getDefaultPlace()
             );
         }
     }
