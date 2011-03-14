@@ -39,6 +39,8 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
     private final Button signInButton;
     private SignInPagePresenter presenter;
 
+    private CheckBox checkbox;
+
     @Inject
     public SignInPageView() {
         userNameField = new TextBox();
@@ -54,7 +56,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
 
 
         // dev options
-        final CheckBox checkbox = new CheckBox();
+        checkbox = new CheckBox();
         checkbox.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
@@ -102,4 +104,9 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         userNameField.selectAll();
     }
 
+    @Override
+    public void setStandalone(String property) {
+        if("true".equals(property))
+            checkbox.setValue(Boolean.TRUE);
+    }
 }

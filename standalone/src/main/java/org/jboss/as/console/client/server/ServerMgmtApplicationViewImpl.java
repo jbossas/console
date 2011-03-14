@@ -36,7 +36,7 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSServerNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 220);
+        layout.addWest(lhsNavigation.asWidget(), 180);
         layout.add(contentCanvas);
 
     }

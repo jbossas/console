@@ -16,6 +16,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.Preferences;
 
 
 public class SignInPagePresenter extends
@@ -41,6 +42,8 @@ public class SignInPagePresenter extends
         void resetAndFocus();
 
         void setPresenter(SignInPagePresenter signInPagePresenter);
+
+        void setStandalone(String property);
     }
 
     @Inject
@@ -85,6 +88,7 @@ public class SignInPagePresenter extends
     protected void onReset() {
         super.onReset();
         getView().resetAndFocus();
+        getView().setStandalone(bootstrap.getProperty(BootstrapContext.STANDALONE));
     }
 
     @Override
@@ -153,6 +157,9 @@ public class SignInPagePresenter extends
     }
 
     public void setBootStandalone(Boolean b) {
-        this.bootstrap.setProperty(BootstrapContext.STANDALONE, b.toString());
+        if(b)
+            bootstrap.setProperty(BootstrapContext.STANDALONE, b.toString());
+        else
+            bootstrap.removeProperty(BootstrapContext.STANDALONE);
     }
 }
