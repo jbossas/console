@@ -17,6 +17,11 @@ NOTE: Really quick turnaround through
 
 	mvn -Dhosted gwt:<run|debug>
 
+
+NOTE: Currently both the codebase for the 'standalone' and 'domain' usage scenario
+	  reside within the same module. A development switch at login prompt allows you to bootstrap one or the other.
+      The codebases will be separated at a later point in time. But for now it's most productive way tp move forward.
+
 Running in web mode:
 -------------------
 
