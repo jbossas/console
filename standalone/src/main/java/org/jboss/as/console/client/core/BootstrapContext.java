@@ -29,9 +29,16 @@ public class BootstrapContext {
         if(token!=null && !token.equals("") && !token.equals(NameTokens.signInPage))
             setProperty(INITIAL_TOKEN, token);
 
-        String standalonePref = Preferences.get(BootstrapContext.STANDALONE);
-        if(standalonePref!=null)
-            setProperty(STANDALONE, standalonePref);
+        loadPersistedProperties();
+    }
+
+    private void loadPersistedProperties() {
+        for(String key : persistentProperties)
+        {
+            String pref = Preferences.get(key);
+            if(pref!=null)
+                setProperty(key, pref);
+        }
     }
 
     public void setProperty(String key, String value)
