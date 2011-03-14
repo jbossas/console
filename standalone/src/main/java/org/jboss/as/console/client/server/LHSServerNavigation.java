@@ -74,7 +74,7 @@ public class LHSServerNavigation {
             i+=25;
         }
 
-        stack.add(dplLayout, new StackSectionHeader("Deployments"), 28);
+        //stack.add(dplLayout, new StackSectionHeader("Deployments"), 28);
 
                        
         // ----------------------------------------------------

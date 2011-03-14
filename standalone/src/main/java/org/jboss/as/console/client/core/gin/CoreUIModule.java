@@ -29,9 +29,11 @@ import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.server.ServerMgmtApplicationViewImpl;
-import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
-import org.jboss.as.console.client.server.deployments.DeploymentToolViewImpl;
+import org.jboss.as.console.client.server.ServerMgmtApplicationView;
+import org.jboss.as.console.client.server.deployment.DeploymentListPresenter;
+import org.jboss.as.console.client.server.deployment.DeploymentListView;
+import org.jboss.as.console.client.server.deployment.DeploymentMgmtPresenter;
+import org.jboss.as.console.client.server.deployment.DeploymentMgmtView;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolViewImpl;
 import org.jboss.as.console.client.server.path.PathToolPresenter;
@@ -41,7 +43,7 @@ import org.jboss.as.console.client.server.properties.PropertyToolViewImpl;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
-import org.jboss.as.console.client.server.subsys.threads.ThreadManagementViewImpl;
+import org.jboss.as.console.client.server.subsys.threads.ThreadManagementView;
 import org.jboss.as.console.client.shared.DeploymentStore;
 import org.jboss.as.console.client.shared.MockDeploymentStoreImpl;
 import org.jboss.as.console.client.shared.MockSubsystemStore;
@@ -103,14 +105,20 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bindPresenter(ServerMgmtApplicationPresenter.class,
                 ServerMgmtApplicationPresenter.ServerManagementView.class,
-                ServerMgmtApplicationViewImpl.class,
+                ServerMgmtApplicationView.class,
                 ServerMgmtApplicationPresenter.ServerManagementProxy.class);
 
         // server deployments
-        bindPresenter(DeploymentToolPresenter.class,
-                DeploymentToolPresenter.DeploymentToolView.class,
-                DeploymentToolViewImpl.class,
-                DeploymentToolPresenter.DeploymentToolProxy.class);
+        bindPresenter(DeploymentMgmtPresenter.class,
+                DeploymentMgmtPresenter.DeploymentToolView.class,
+                DeploymentMgmtView.class,
+                DeploymentMgmtPresenter.DeploymentToolProxy.class);
+
+        bindPresenter(DeploymentListPresenter.class,
+                DeploymentListPresenter.MyView.class,
+                DeploymentListView.class,
+                DeploymentListPresenter.MyProxy.class);
+
         bind(DeploymentStore.class).to(MockDeploymentStoreImpl.class).in(Singleton.class);
 
         // server/interfaces
@@ -140,7 +148,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         // server/threads
         bindPresenter(ThreadManagementPresenter.class,
                 ThreadManagementPresenter.MyView.class,
-                ThreadManagementViewImpl.class,
+                ThreadManagementView.class,
                 ThreadManagementPresenter.MyProxy.class);
 
 

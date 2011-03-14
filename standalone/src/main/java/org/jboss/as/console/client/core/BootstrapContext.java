@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class BootstrapContext {
+    public class BootstrapContext {
 
     public static final String INITIAL_TOKEN = "initial_token";
     public static final String STANDALONE = "standalone_usage";

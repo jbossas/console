@@ -27,9 +27,9 @@ public class NameTokens {
         return serverConfig;
     }
 
-    public static final String deploymentTool = "server-deployments";
-    public static String getDeploymentTool() {
-        return deploymentTool;
+    public static final String DeploymentMgmtPresenter = "server-deployments";
+    public static String getDeploymentMgmtPresenter() {
+        return DeploymentMgmtPresenter;
     }
 
     public static final String systemApp = "system";
@@ -109,5 +109,10 @@ public class NameTokens {
     public static final String InstancesPresenter = "server-instances";
     public static String getInstancesPresenter() {
         return InstancesPresenter;
+    }
+
+    public static final String DeploymentListPresenter = "deployment-list";
+    public static String getDeploymentListPresenter() {
+        return DeploymentListPresenter;
     }
 }

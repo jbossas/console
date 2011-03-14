@@ -17,6 +17,7 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.Preferences;
+import org.jboss.as.console.client.widgets.LoadingOverlay;
 
 
 public class SignInPagePresenter extends
@@ -118,6 +119,9 @@ public class SignInPagePresenter extends
                 PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
                 placeManager.revealPlace(myRequest);
             }                                       */
+
+            LoadingOverlay.on(getView().asWidget(), true);
+            getView().asWidget().setVisible(false);
 
             PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
             placeManager.revealPlace(myRequest);

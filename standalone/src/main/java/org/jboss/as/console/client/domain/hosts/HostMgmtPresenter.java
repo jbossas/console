@@ -93,7 +93,7 @@ public class HostMgmtPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_SetMainContent, this);
+        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     @Override

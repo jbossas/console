@@ -55,7 +55,7 @@ public class MainLayoutViewImpl extends ViewImpl
     @Override
     public void setInSlot(Object slot, Widget content) {
 
-        if (slot == MainLayoutPresenter.TYPE_SetMainContent) {
+        if (slot == MainLayoutPresenter.TYPE_MainContent) {
             if(content!=null)
                 setMainContent(content);
         }

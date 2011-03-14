@@ -31,7 +31,8 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.server.deployments.DeploymentToolPresenter;
+import org.jboss.as.console.client.server.deployment.DeploymentListPresenter;
+import org.jboss.as.console.client.server.deployment.DeploymentMgmtPresenter;
 import org.jboss.as.console.client.server.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.server.path.PathToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
@@ -80,8 +81,9 @@ public interface CoreUI extends Ginjector {
 
     // ----------------------------------------------------------------------
     AsyncProvider<ServerMgmtApplicationPresenter> getServerManagementAppPresenter();
+    AsyncProvider<DeploymentMgmtPresenter> getDeploymentMgmtPresenter();
+    AsyncProvider<DeploymentListPresenter> getDeploymentListPresenter();
 
-    AsyncProvider<DeploymentToolPresenter> getDeploymentToolPresenter();
     DeploymentStore getDeploymentStore();
 
     AsyncProvider<InterfaceToolPresenter> getInterfaceToolPresenter();

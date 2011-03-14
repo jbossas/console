@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.deployment;
+package org.jboss.as.console.client.widgets;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -8,9 +8,9 @@ import org.jboss.as.console.client.widgets.TabHeader;
  * @author Heiko Braun
  * @date 3/2/11
  */
-public class DeploymentHeader extends HorizontalPanel{
+public class RHSHeader extends HorizontalPanel{
 
-    public DeploymentHeader() {
+    public RHSHeader(String title) {
 
         super();
 
@@ -20,7 +20,7 @@ public class DeploymentHeader extends HorizontalPanel{
         add(spacerLeft);
         spacerLeft.getElement().getParentElement().setAttribute("style", "border-bottom:1px solid #A7ABB4;");
 
-        add(new TabHeader("Domain Deployments"));
+        add(new TabHeader(title));
 
         HTML spacerRight= new HTML("&nbsp;");
         add(spacerRight);

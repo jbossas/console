@@ -36,7 +36,7 @@ public class SystemApplicationPresenter extends Presenter<SystemApplicationPrese
     @Override
     protected void revealInParent() {
         // reveal in main layout
-        RevealContentEvent.fire(eventBus, MainLayoutPresenter.TYPE_SetMainContent, this);
+        RevealContentEvent.fire(eventBus, MainLayoutPresenter.TYPE_MainContent, this);
     }
 
 }

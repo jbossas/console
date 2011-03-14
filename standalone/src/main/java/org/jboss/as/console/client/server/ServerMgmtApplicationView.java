@@ -19,7 +19,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/4/11
  */
-public class ServerMgmtApplicationViewImpl extends ViewImpl
+public class ServerMgmtApplicationView extends ViewImpl
         implements ServerMgmtApplicationPresenter.ServerManagementView {
 
     private ServerMgmtApplicationPresenter presenter;
@@ -28,7 +28,7 @@ public class ServerMgmtApplicationViewImpl extends ViewImpl
     private LayoutPanel contentCanvas;
     private LHSServerNavigation lhsNavigation;
 
-    public ServerMgmtApplicationViewImpl() {
+    public ServerMgmtApplicationView() {
         super();
 
         layout = new SplitLayoutPanel(4);

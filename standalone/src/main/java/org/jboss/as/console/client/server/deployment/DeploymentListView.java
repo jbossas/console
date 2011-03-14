@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.deployment;
+package org.jboss.as.console.client.server.deployment;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,12 +10,11 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.shared.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -25,32 +24,31 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * @author Heiko Braun
- * @date 3/1/11
+ * @date 3/14/11
  */
-public class DeploymentsOverview extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
+public class DeploymentListView extends SuspendableViewImpl implements DeploymentListPresenter.MyView{
 
-    private DeploymentsPresenter presenter;
-    private ListDataProvider<DeploymentRecord> deploymentProvider;
+
+    private DeploymentListPresenter presenter;
     private DefaultCellTable<DeploymentRecord> deploymentTable;
-
-    private ComboBox groupFilter;
+    private ListDataProvider<DeploymentRecord> deploymentProvider;
     private Form<DeploymentRecord> form;
 
     @Override
-    public void setPresenter(DeploymentsPresenter presenter) {
+    public void setPresenter(DeploymentListPresenter presenter) {
         this.presenter = presenter;
     }
 
-
     @Override
     public Widget createWidget() {
+
         LayoutPanel layout = new LayoutPanel();
 
-        RHSHeader title = new RHSHeader("Domain Deployments");
+        RHSHeader title = new RHSHeader("Server Deployments");
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
@@ -90,35 +88,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             }
         };
 
-        TextColumn<DeploymentRecord> groupColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getServerGroup();
-            }
-        };
-
 
         deploymentTable.addColumn(dplNameColumn, "Name");
         deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-        deploymentTable.addColumn(groupColumn, "Server Group");
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
-
-        groupFilter = new ComboBox();
-        groupFilter.setValues(Arrays.asList(new String[] {"war", "ear", "rar", "other"}));
-        groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.onFilterGroup(event.getValue());
-            }
-        });
-        Widget groupFilterWidget = groupFilter.asWidget();
-        groupFilterWidget.getElement().setAttribute("style", "width:200px;");
-
-
-        tableOptions.add(new Label("Server Group:"));
-        tableOptions.add(groupFilterWidget);
 
 
         ComboBox typeFilter = new ComboBox();
@@ -178,12 +153,10 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 Feedback.confirm(
                         "Delete Deployment",
                         "Do you want to delete this deployment?",
-                        new Feedback.ConfirmationHandler()
-                        {
+                        new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                {
+                                if (isConfirmed) {
                                     SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
                                     presenter.deleteDeployment(
                                             selectionModel.getSelectedObject()
@@ -202,13 +175,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
 
-        TextItem groupItem = new TextItem("serverGroup", "Deployed to Group");
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
         TextItem shaItem = new TextItem("sha", "Sha");
         CheckBoxItem suspendedItem = new CheckBoxItem("suspended", "Suspended?");
 
-        form.setFields(groupItem, nameItem,  runtimeName, shaItem, suspendedItem);
+        form.setFields(nameItem,  runtimeName, shaItem, suspendedItem);
         form.bind(deploymentTable);
 
         Widget formWidget = form.asWidget();
@@ -228,42 +200,5 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 35, Style.Unit.PCT);
 
         return layout;
-    }
-
-
-    @Override
-    public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
-
-        Collections.sort(deploymentRecords, new Comparator<DeploymentRecord>() {
-
-            @Override
-            public int compare(DeploymentRecord first, DeploymentRecord second) {
-                if(first.getServerGroup().equals(second.getServerGroup()))
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        });
-
-        deploymentProvider.setList(deploymentRecords);
-
-        if(!deploymentRecords.isEmpty())
-            deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
-
-    }
-
-    @Override
-    public void updateGroups(List<ServerGroupRecord> serverGroupRecords) {
-
-        List<String> names = new ArrayList<String>(serverGroupRecords.size());
-        names.add("");
-        for(ServerGroupRecord rec : serverGroupRecords)
-            names.add(rec.getGroupName());
-
-        groupFilter.setValues(names);
     }
 }

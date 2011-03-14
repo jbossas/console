@@ -73,7 +73,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         // reveal default sub page
         if(revealDefault && NameTokens.serverConfig.equals(request.getNameToken()))
         {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.deploymentTool));
+            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ThreadManagementPresenter));
             revealDefault = false; // only once
         }
     }
@@ -81,15 +81,16 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     @Override
     protected void onReset() {
         super.onReset();
+
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
 
-        ProfileHeader header = new ProfileHeader("Standalone Server");
+        ProfileHeader header = new ProfileHeader("Configuration Profile");
         Console.MODULES.getHeader().setContent(header);
     }
 
     @Override
     protected void revealInParent() {
         // reveal in main layout
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_SetMainContent, this);
+        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
     }
 }

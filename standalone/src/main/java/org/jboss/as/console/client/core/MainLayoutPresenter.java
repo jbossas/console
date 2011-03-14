@@ -13,6 +13,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.widgets.LoadingOverlay;
 
 /**
  * @author Heiko Braun
@@ -29,7 +30,7 @@ public class MainLayoutPresenter
     }
 
     @ContentSlot
-    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_SetMainContent = new GwtEvent.Type<RevealContentHandler<?>>();
+    public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
 
     @ProxyCodeSplit
     @NameToken(NameTokens.mainLayout)
@@ -55,6 +56,12 @@ public class MainLayoutPresenter
                     bootstrap.getDefaultPlace()
             );
         }
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        LoadingOverlay.hide();
     }
 
     @Override
