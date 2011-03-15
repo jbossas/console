@@ -14,7 +14,7 @@
         <include>**/*.*</include>
       </includes>
       <excludes>
-        <exclude>**/WEB-INF</exclude>
+        <exclude>**/WEB-INF/</exclude>
       </excludes>
     </fileSet>
   </fileSets>
