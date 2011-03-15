@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <name>JBoss 7 - Management Console</name>
     <groupId>org.jboss.as</groupId>
-    <artifactId>management-console</artifactId>
+    <artifactId>jboss-as-console-parent</artifactId>
     <version>1.0.0-M1</version>
     <packaging>pom</packaging>
 
