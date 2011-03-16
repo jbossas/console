@@ -5,4 +5,19 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
+    <servlet>
+        <servlet-name>gwtProxy</servlet-name>
+        <servlet-class>org.jboss.as.console.server.proxy.XmlHttpProxyServlet</servlet-class>
+        <init-param>
+            <param-name>config.name</param-name>
+            <param-value>gwt-proxy.properties</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>gwtProxy</servlet-name>
+        <url-pattern>/app/proxy/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
