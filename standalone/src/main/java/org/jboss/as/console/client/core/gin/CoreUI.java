@@ -18,6 +18,8 @@ import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
+import org.jboss.as.console.client.debug.DebugToolsPresenter;
+import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
@@ -114,5 +116,10 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<HostMgmtPresenter> getHostMgmtPresenter();
     AsyncProvider<ServerPresenter> getServerPresenter();
     AsyncProvider<InstancesPresenter> getInstancesPresenter();
+
+    // ----------------------------------------------------------------------
+    // dev tools
+    AsyncProvider<DebugToolsPresenter> getDebugTools();
+    AsyncProvider<ModelBrowserPresenter> getModelBrowser();
 
 }

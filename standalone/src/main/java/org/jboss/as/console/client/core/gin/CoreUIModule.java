@@ -15,6 +15,10 @@ import org.jboss.as.console.client.core.*;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
+import org.jboss.as.console.client.debug.DebugToolsPresenter;
+import org.jboss.as.console.client.debug.DebugToolsView;
+import org.jboss.as.console.client.debug.ModelBrowserPresenter;
+import org.jboss.as.console.client.debug.ModelBrowserView;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.DomainOverview;
 import org.jboss.as.console.client.domain.DomainOverviewPresenter;
@@ -207,6 +211,19 @@ public class CoreUIModule extends AbstractPresenterModule {
                 InstancesView.class,
                 InstancesPresenter.MyProxy.class);
 
+
+        // -------
+
+
+        bindPresenter(DebugToolsPresenter.class,
+                DebugToolsPresenter.MyView.class,
+                DebugToolsView.class,
+                DebugToolsPresenter.MyProxy.class);
+
+         bindPresenter(ModelBrowserPresenter.class,
+                ModelBrowserPresenter.MyView.class,
+                ModelBrowserView.class,
+                ModelBrowserPresenter.MyProxy.class);
     }
 
 }

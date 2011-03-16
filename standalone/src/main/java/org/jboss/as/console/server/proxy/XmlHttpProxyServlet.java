@@ -64,7 +64,7 @@ public class XmlHttpProxyServlet extends HttpServlet
     private static boolean allowXDomain = false;
     private static boolean requireSession = false;
     private static boolean createSession = false;
-    private static String defaultContentType = "application/json;charset=UTF-8";
+    private static String defaultContentType = "application/dmr-encoded;charset=UTF-8";
     private static boolean rDebug = false;
     private Logger logger = null;
     private XmlHttpProxy xhp = null;
@@ -279,6 +279,19 @@ public class XmlHttpProxyServlet extends HttpServlet
                     }
                     String sname = name.substring(headerToken.length(), name.length());
                     headers.put(sname,value);
+                }
+                else if (name.equals("Accept"))
+                {
+                    if (headers == null) headers = new HashMap();
+
+                    String value = "";
+                    // handle multi-value headers
+                    Enumeration vnum = req.getHeaders(name);
+                    while (vnum.hasMoreElements()) {
+                        value += (String)vnum.nextElement();
+                        if (vnum.hasMoreElements()) value += ";";
+                    }
+                    headers.put(name,value);
                 }
                 else if(name.startsWith(testToken))
                 {
