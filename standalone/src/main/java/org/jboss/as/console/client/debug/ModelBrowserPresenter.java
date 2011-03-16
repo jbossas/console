@@ -1,10 +1,8 @@
 package org.jboss.as.console.client.debug;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.*;
-import com.google.gwt.requestfactory.rebind.model.RequestMethod;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -14,9 +12,12 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
 
 /**
  * @author Heiko Braun
@@ -25,6 +26,7 @@ import org.jboss.dmr.client.ModelNode;
 public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ModelBrowserPresenter)
@@ -35,6 +37,10 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         void setPresenter(ModelBrowserPresenter presenter);
 
         void setRoot(ModelNode modelNode);
+        void setRootJson(String json);
+        void updateItem(String itemName, String json);
+
+        void updateResource(String itemName, String json);
     }
 
     @Inject
@@ -58,16 +64,70 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
 
     public void requestRootModel()
     {
-
         //GWT.getHostPageBaseURL() + "app/proxy/domain-api?recursive=true";
-        String url = "http://localhost:9990/domain-api?recursive=true";
+        String url = "http://localhost:9990/domain-api";
+        request(url, new SimpleCallback()
+        {
+            @Override
+            public void onResponseText(String response) {
+                getView().setRootJson(response);
+            }
+        });
+
+    }
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(getEventBus(), DebugToolsPresenter.TYPE_MainContent, this);
+    }
+
+    public void onTreeItemSelection(final ModelBrowserView.AddressableTreeItem item) {
+        Log.debug("Request " + item.addressString());
+
+
+        ModelNode operation = null;
+
+        if(item.isTuple())
+        {
+            operation = new ModelNode();
+            for(String addr : item.getAddress())
+                operation.get(OP_ADDR).add(addr);
+
+            operation.get(OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+
+        }
+        else
+        {
+            operation = new ModelNode();
+            operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+            operation.get("child-type").set(item.title);
+        }
+
+        System.out.println(operation.asString());
+
+        String url = "http://localhost:9990/domain-api";
+        post(url, operation.toJSONString(false), new SimpleCallback() {
+            @Override
+            public void onResponseText(String response) {
+                System.out.println("> "+response);
+
+                if(!item.isTuple())
+                    getView().updateItem(item.title, response);
+                else
+                    getView().updateResource(item.title, response);
+            }
+        });
+
+    }
+
+    private void request(final String url, final SimpleCallback callback)
+    {
 
         RequestBuilder rb = new RequestBuilder(
                 RequestBuilder.GET,
                 url
         );
 
-        rb.setHeader("Accept", "application/dmr-encoded");
+        //rb.setHeader("Accept", "application/dmr-encoded");
 
         try {
             rb.sendRequest(null, new RequestCallback() {
@@ -76,10 +136,11 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
 
                     if(200==response.getStatusCode())
                     {
-                        System.out.println("> "+response.getText());
-
-                        ModelNode modelNode = ModelNode.fromBase64(response.getText());
-                        //getView().setRoot(modelNode);
+                        callback.onResponseText(response.getText());
+                    }
+                    else
+                    {
+                        Log.warn(response.getStatusCode() + " on " + url);
                     }
                 }
 
@@ -93,8 +154,46 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         }
 
     }
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DebugToolsPresenter.TYPE_MainContent, this);
+
+
+    private void post(final String url, String data, final SimpleCallback callback)
+    {
+
+        RequestBuilder rb = new RequestBuilder(
+                RequestBuilder.POST,
+                url
+        );
+
+        //rb.setHeader("Accept", "application/dmr-encoded");
+
+        try {
+            rb.sendRequest(data, new RequestCallback() {
+                @Override
+                public void onResponseReceived(Request request, Response response) {
+
+                    if(200==response.getStatusCode())
+                    {
+                        callback.onResponseText(response.getText());
+                    }
+                    else
+                    {
+                        Log.warn(response.getStatusCode() + " on "+ url);
+                        Log.warn(response.getStatusText() );
+                    }
+                }
+
+                @Override
+                public void onError(Request request, Throwable e) {
+                    Log.error("request failed", e);
+                }
+            });
+        } catch (RequestException e) {
+            Log.error("Failed to request root model", e);
+        }
+
+    }
+
+    interface SimpleCallback {
+        void onResponseText(String response);
     }
 }
