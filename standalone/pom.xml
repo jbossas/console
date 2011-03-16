@@ -187,6 +187,7 @@
                                 <!--delete file="war/WEB-INF/jboss-web.xml"/>
                                 <delete file="war/WEB-INF/web.xml"/-->
                                 <delete dir="war/app"/>
+                                <delete dir="war/dmr_gwt"/>
                                 <delete dir="target"/>
 
                             </tasks>
