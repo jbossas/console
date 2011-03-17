@@ -35,6 +35,11 @@ final class PropertyModelValue extends ModelValue {
 
     private final Property property;
 
+    /**
+     * JSON Key used to identify PropertyModelValue.
+     */
+    public static final String TYPE_KEY = "PROPERTY_VALUE";
+
     PropertyModelValue(final String name, final ModelNode value) {
         this(new Property(name, value));
     }
@@ -148,11 +153,47 @@ final class PropertyModelValue extends ModelValue {
     }
 
     @Override
-    void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
+    /*void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
         builder.append('{');
         builder.append(quote(property.getName()));
         builder.append(" : ");
         property.getValue().formatAsJSON(builder, indent, multiLineRequested);
         builder.append('}');
+    }     */
+
+     void formatAsJSON(final StringBuilder builder, final int indent, final boolean multiLineRequested) {
+        builder.append('{');
+        if (multiLineRequested) {
+            indent(builder.append('\n'), indent + 1);
+        } else {
+            builder.append(' ');
+        }
+        builder.append(jsonEscape(TYPE_KEY));
+        builder.append(" : ");
+        formatPropertyAsJSON(builder, indent + 1, multiLineRequested);
+        if (multiLineRequested) {
+            indent(builder.append('\n'), indent);
+        } else {
+            builder.append(' ');
+        }
+        builder.append('}');
+    }
+
+    private void formatPropertyAsJSON(final StringBuilder writer, final int indent, final boolean multiLineRequested) {
+        writer.append('{');
+        if (multiLineRequested) {
+            indent(writer.append('\n'), indent + 1);
+        } else {
+            writer.append(' ');
+        }
+        writer.append(jsonEscape(property.getName()));
+        writer.append(" : ");
+        property.getValue().formatAsJSON(writer, indent + 1, multiLineRequested);
+        if (multiLineRequested) {
+            indent(writer.append('\n'), indent);
+        } else {
+            writer.append(' ');
+        }
+        writer.append('}');
     }
 }
