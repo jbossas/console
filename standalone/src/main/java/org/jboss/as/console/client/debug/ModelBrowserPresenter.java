@@ -3,6 +3,9 @@ package org.jboss.as.console.client.debug;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.*;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -16,6 +19,8 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Set;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
 
@@ -25,8 +30,9 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
  */
 public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy> {
 
+    private static final String DOMAIN_API_ENDPOINT = "http://localhost:9990/domain-api";
     private final PlaceManager placeManager;
-
+    private String selectedOperation = ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ModelBrowserPresenter)
@@ -35,12 +41,12 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
 
     public interface MyView extends View {
         void setPresenter(ModelBrowserPresenter presenter);
-
-        void setRoot(ModelNode modelNode);
-        void setRootJson(String json);
         void updateItem(String itemName, String json);
+        void updateRequest(String itemName, String json);
+        void updateResponse(String itemName, String json);
 
-        void updateResource(String itemName, String json);
+        void addItem(TreeItem item);
+        void clearTree();
     }
 
     @Inject
@@ -62,61 +68,83 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         super.onReset();
     }
 
-    public void requestRootModel()
+    public void reloadRootModel()
     {
+        getView().clearTree();
         //GWT.getHostPageBaseURL() + "app/proxy/domain-api?recursive=true";
-        String url = "http://localhost:9990/domain-api";
-        request(url, new SimpleCallback()
-        {
+        request(DOMAIN_API_ENDPOINT, new SimpleCallback() {
             @Override
             public void onResponseText(String response) {
-                getView().setRootJson(response);
+                JSONObject root = JSONParser.parse(response).isObject();
+
+                Set<String> properties = root.keySet();
+                for (final String title : properties) {
+                    final TreeItem item = new AddressableTreeItem(title, title);
+                    getView().addItem(item);
+
+                    ModelNode operation = new ModelNode();
+                    operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+                    operation.get("child-type").set(title);
+
+                    post(DOMAIN_API_ENDPOINT, operation.toJSONString(false), new SimpleCallback() {
+                        @Override
+                        public void onResponseText(String response) {
+
+                            getView().updateItem(title, response);
+                        }
+                    });
+                }
             }
         });
+    };
 
-    }
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), DebugToolsPresenter.TYPE_MainContent, this);
     }
 
-    public void onTreeItemSelection(final ModelBrowserView.AddressableTreeItem item) {
+    public void onTreeItemSelection(final AddressableTreeItem item) {
         Log.debug("Request " + item.addressString());
-
 
         ModelNode operation = null;
 
+        operation = new ModelNode();
+        ModelNode addr = operation.get(OP_ADDR).setEmptyList();
         if(item.isTuple())
         {
-            operation = new ModelNode();
-            for(String addr : item.getAddress())
-                operation.get(OP_ADDR).add(addr);
-
-            operation.get(OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-
+            for(int i=0; i<item.getAddress().size(); i+=2)
+            {
+                addr.add(item.getAddress().get(i), item.getAddress().get(i+1));
+            }
         }
         else
         {
-            operation = new ModelNode();
-            operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
-            operation.get("child-type").set(item.title);
+            for(int i=0; i<item.getAddress().size(); i++)
+            {
+                addr.add(item.getAddress().get(i));
+            }
         }
 
-        System.out.println(operation.asString());
+        // address
+        /*for(String addr : item.getAddress())
+            operation.get(OP_ADDR).add(addr);*/
 
-        String url = "http://localhost:9990/domain-api";
-        post(url, operation.toJSONString(false), new SimpleCallback() {
+        // operation
+        operation.get(OP).set(selectedOperation);
+
+        getView().updateRequest(item.title, operation.toString());
+
+        post(DOMAIN_API_ENDPOINT, operation.toJSONString(true), new SimpleCallback() {
             @Override
             public void onResponseText(String response) {
-                System.out.println("> "+response);
-
-                if(!item.isTuple())
-                    getView().updateItem(item.title, response);
-                else
-                    getView().updateResource(item.title, response);
+                getView().updateResponse(item.title, response);
             }
         });
 
+    }
+
+    public void setOperation(String opValue) {
+        this.selectedOperation = opValue;
     }
 
     private void request(final String url, final SimpleCallback callback)
@@ -137,10 +165,6 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
                     if(200==response.getStatusCode())
                     {
                         callback.onResponseText(response.getText());
-                    }
-                    else
-                    {
-                        Log.warn(response.getStatusCode() + " on " + url);
                     }
                 }
 
@@ -174,11 +198,6 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
                     if(200==response.getStatusCode())
                     {
                         callback.onResponseText(response.getText());
-                    }
-                    else
-                    {
-                        Log.warn(response.getStatusCode() + " on "+ url);
-                        Log.warn(response.getStatusText() );
                     }
                 }
 

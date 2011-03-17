@@ -1,24 +1,25 @@
 package org.jboss.as.console.client.debug;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.JSONUtil;
+import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelDescriptionConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -28,7 +29,9 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
     private ModelBrowserPresenter presenter;
     private Tree tree;
-    private TextArea textArea;
+
+    private TextArea requestArea;
+    private TextArea responseArea;
 
     @Override
     public void setPresenter(ModelBrowserPresenter presenter) {
@@ -40,11 +43,11 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
         LayoutPanel layout = new RHSContentPanel("Model Browser");
 
-        Button btn = new DefaultButton("Request Root Model");
+        Button btn = new DefaultButton("Reload Root Model");
         btn.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.requestRootModel();
+                presenter.reloadRootModel();
             }
         });
 
@@ -55,14 +58,42 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
         // ---
 
-        textArea = new TextArea();
-        textArea.setCharacterWidth(60);
-        textArea.setVisibleLines(30);
+        VerticalPanel outputPanel = new VerticalPanel();
+
+        ComboBox comboBox = new ComboBox();
+        comboBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                presenter.setOperation(event.getValue());
+            }
+        });
+
+        List<String> options = new ArrayList<String>();
+        options.add(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        options.add(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
+        options.add(ModelDescriptionConstants.READ_OPERATION_NAMES_OPERATION);
+        options.add(ModelDescriptionConstants.READ_RESOURCE_METRICS);
+        options.add(ModelDescriptionConstants.READ_CHILDREN_TYPES_OPERATION);
+
+        comboBox.setValues(options);
+        comboBox.setItemSelected(0,true);
+        outputPanel.add(comboBox.asWidget());
+
+        requestArea = new TextArea();
+        requestArea.setCharacterWidth(80);
+        requestArea.setVisibleLines(10);
+
+        responseArea = new TextArea();
+        responseArea.setCharacterWidth(80);
+        responseArea.setVisibleLines(20);
+
+        outputPanel.add(requestArea);
+        outputPanel.add(responseArea);
 
         tree = new Tree(DefaultTreeResources.INSTANCE);
         horz.add(tree);
-        horz.add(textArea);
-        tree.getElement().getParentElement().setAttribute("width", "50%");
+        horz.add(outputPanel);
+        tree.getElement().getParentElement().setAttribute("width", "30%");
         layout.add(horz);
 
         // ---
@@ -70,7 +101,8 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
         tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> event) {
-                textArea.setText("");
+                requestArea.setText("");
+                responseArea.setText("");
                 AddressableTreeItem selectedItem = (AddressableTreeItem)event.getSelectedItem();
                 presenter.onTreeItemSelection(selectedItem);
             }
@@ -79,23 +111,8 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
     }
 
     @Override
-    public void setRoot(ModelNode modelNode) {
-        System.out.println("> "+ modelNode.asString());
-    }
-
-    @Override
-    public void setRootJson(String json) {
-
-        tree.removeItems();
-
-        JSONObject root = JSONParser.parse(json).isObject();
-
-        Set<String> properties = root.keySet();
-        for(String prop : properties)
-        {
-            final TreeItem item = new AddressableTreeItem(prop, prop);
-            tree.addItem(item);
-        }
+    public void addItem(TreeItem item) {
+        tree.addItem(item);
     }
 
     @Override
@@ -113,8 +130,6 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
         if(match!=null) // graceful
         {
-            match.removeItems();
-
             JSONObject responseObject = JSONParser.parse(json).isObject();
             JSONArray result = responseObject.get("result").isArray();
             for(int x=0;x<result.size(); x++) {
@@ -122,80 +137,27 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
                 match.addItem(new AddressableTreeItem(value, match.getText(), value));
             }
         }
-        tree.setSelectedItem(null);
-        match.setState(true);
-    }
-
-
-    public class AddressableTreeItem extends TreeItem
-    {
-        List<String> address = new ArrayList<String>();
-        String title;
-
-        AddressableTreeItem(String title, String... addresses) {
-            super(title);
-            this.title = title;
-            for(String a : addresses)
-                address.add(a);
-        }
-
-        public List<String> getAddress() {
-            return address;
-        }
-
-        public boolean isTuple() {
-            return address.size() % 2 == 0;
-        }
-
-        public String addressString() {
-            StringBuilder sb = new StringBuilder();
-            for(String s: address)
-                sb.append("/").append(s);
-            return sb.toString();
-        }
 
     }
 
     @Override
-    public void updateResource(String itemName, String json) {
-        textArea.setText(pretty(parseJson(json), " "));
+    public void updateRequest(String itemName, String json) {
+        requestArea.setText(json);
     }
 
-    public static native JavaScriptObject parseJson(String jsonStr) /*-{
-	  return eval('(' + jsonStr + ')');
-	}-*/;
+    public void updateResponse(String itemName, String json) {
+        responseArea.setText(pretty(json));
+    }
 
-    public static native String pretty(JavaScriptObject obj, String indent)/*-{
+    private String pretty(String json)
+    {
+        return JSONUtil.pretty(
+                JSONUtil.parseJson(json), " "
+        );
+    }
 
-        var result = "";
-        if (indent == null) indent = "";
-
-        for (var property in obj)
-        {
-            var value = obj[property];
-            if (typeof value == 'string')
-                value = "'" + value + "'";
-            else if (typeof value == 'object')
-            {
-                if (value instanceof Array)
-                {
-                    // Just let JS convert the Array to a string!
-                    value = "[ " + value + " ]";
-                }
-                else
-                {
-                    // Recursive dump
-                    // (replace "  " by "\t" or something else if you prefer)
-                    var od = @org.jboss.as.console.client.debug.ModelBrowserView::pretty(Lcom/google/gwt/core/client/JavaScriptObject;Ljava/lang/String;)(value, indent + "\t");
-                    // If you like { on the same line as the key
-                    //value = "{\n" + od + "\n" + indent + "}";
-                    // If you prefer { and } to be aligned
-                    value = "\n" + indent + "{\n" + od + "\n" + indent + "}";
-                }
-            }
-            result += indent + "'" + property + "' : " + value + ",\n";
-        }
-        return result.replace(/,\n$/, "");
-
-    }-*/;
+    @Override
+    public void clearTree() {
+        tree.removeItems();
+    }
 }
