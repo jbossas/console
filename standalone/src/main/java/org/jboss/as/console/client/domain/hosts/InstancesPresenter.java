@@ -26,6 +26,7 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     private HostInformationStore hostInfoStore;
     private String selectedHost = null;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
+    private List<ServerInstance> serverInstances;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -78,8 +79,22 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
 
     private void refreshView() {
         getView().setSelectedHost(selectedHost);
-        getView().updateInstances(hostInfoStore.getServerInstances(selectedHost));
-        getView().updateServerConfigurations(hostInfoStore.getServerConfigurations(selectedHost));
+
+        // TODO: server instances
+        /*hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+            @Override
+            public void onSuccess(List<ServerInstance> result) {
+                serverInstances = result;
+                getView().updateInstances(result);
+            }
+        });*/
+
+        hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(List<Server> result) {
+                getView().updateServerConfigurations(result);
+            }
+        });
     }
 
     @Override
@@ -97,7 +112,7 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
 
         List<ServerInstance> filtered = filter.apply(
                 new ServerConfigPredicate(serverConfig),
-                hostInfoStore.getServerInstances(selectedHost)
+                serverInstances
         );
 
         getView().updateInstances(filtered);

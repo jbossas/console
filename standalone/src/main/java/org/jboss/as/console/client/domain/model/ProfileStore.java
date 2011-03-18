@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.domain.model;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,5 @@ import java.util.List;
  * @date 2/11/11
  */
 public interface ProfileStore {
-    List<ProfileRecord> loadProfiles();
-    List<String> loadProfileNames();
+    void loadProfiles(AsyncCallback<List<ProfileRecord>> callback);
 }

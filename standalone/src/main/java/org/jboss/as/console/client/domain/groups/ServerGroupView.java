@@ -10,6 +10,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
@@ -39,6 +40,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private Form<ServerGroupRecord> form;
     private DefaultCellTable<PropertyRecord> propertyTable;
     private ContentHeaderLabel nameLabel;
+
+    private ComboBoxItem profileItem;
 
     private ToolButton edit;
 
@@ -131,9 +134,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         socketBindingItem.setValueMap(presenter.getSocketBindings());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        final ComboBoxItem profileItem = new ComboBoxItem("profileName", "Profile");
-        profileItem.setValueMap(presenter.getProfileNames());
-        profileItem.setDefaultToFirstOption(true);
+        profileItem = new ComboBoxItem("profileName", "Profile");
 
         form.setFields(nameField, profileItem);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem, jvmField);
@@ -286,6 +287,16 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
             propertyProvider.setList(propRecords);
 
         }
+    }
+
+    @Override
+    public void updateProfiles(List<ProfileRecord> result) {
+
+        List<String> names = new ArrayList<String>(result.size());
+        for(ProfileRecord rec : result)
+            names.add(rec.getName());
+
+        profileItem.setValueMap(names);
     }
 
     public void setEnabled(boolean isEnabled) {

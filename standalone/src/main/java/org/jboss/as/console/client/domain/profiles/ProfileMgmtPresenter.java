@@ -13,12 +13,9 @@ import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.shared.SubsystemRecord;
-import org.jboss.as.console.client.shared.SubsystemStore;
+import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 
 import java.util.List;
 
@@ -95,10 +92,6 @@ public class ProfileMgmtPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
-
-        // TODO: when do these refresh?
-        getView().setProfiles(profileStore.loadProfiles());
-        getView().setServerGroups(serverGroupStore.loadServerGroups());
     }
 
 
@@ -107,14 +100,33 @@ public class ProfileMgmtPresenter
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
-
         ProfileHeader header = new ProfileHeader("Configuration Profiles");
         Console.MODULES.getHeader().setContent(header);
+
+        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
+            @Override
+            public void onSuccess(List<ProfileRecord> result) {
+                getView().setProfiles(result);
+            }
+        });
+
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().setServerGroups(result);
+            }
+        });
 
     }
 
     @Override
     public void onProfileSelection(String profileName) {
-        getView().setSubsystems(subsysStore.loadSubsystems(profileName));
+
+        subsysStore.loadSubsystems(profileName, new SimpleCallback<List<SubsystemRecord>>() {
+            @Override
+            public void onSuccess(List<SubsystemRecord> result) {
+                getView().setSubsystems(result);
+            }
+        });
     }
 }

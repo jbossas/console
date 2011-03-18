@@ -12,12 +12,9 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
-import org.jboss.as.console.client.domain.model.EntityFilter;
-import org.jboss.as.console.client.domain.model.Predicate;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.shared.DeploymentRecord;
-import org.jboss.as.console.client.shared.DeploymentStore;
+import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
 
 import java.util.List;
 
@@ -35,6 +32,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     private String typeFilter= "";
 
     private EntityFilter<DeploymentRecord> filter = new EntityFilter<DeploymentRecord>();
+
+    public List<DeploymentRecord> deployments;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
@@ -70,8 +69,22 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
-        getView().updateDeployments(deploymentStore.loadDeployments());
-        getView().updateGroups(serverGroupStore.loadServerGroups());
+
+        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+
+            @Override
+            public void onSuccess(List<DeploymentRecord> result) {
+                deployments = result;
+                getView().updateDeployments(result);
+            }
+        });
+
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().updateGroups(result);
+            }
+        });
     }
 
     @Override
@@ -80,14 +93,19 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     public void deleteDeployment(DeploymentRecord deploymentRecord) {
-        deploymentStore.deleteDeployment(deploymentRecord);
+        deploymentStore.deleteDeployment(deploymentRecord, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+
+            }
+        });
     }
 
 
     public void onFilterGroup(final String groupName) {
         this.groupFilter = groupName;
         getView().updateDeployments(
-                filter.apply(new TypeAndGroupPredicate(), deploymentStore.loadDeployments())
+                filter.apply(new TypeAndGroupPredicate(), deployments)
         );
     }
 
@@ -95,7 +113,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
         this.typeFilter = type;
         getView().updateDeployments(
-                filter.apply(new TypeAndGroupPredicate(), deploymentStore.loadDeployments())
+                filter.apply(new TypeAndGroupPredicate(), deployments)
         );
     }
 

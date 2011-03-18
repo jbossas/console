@@ -1,10 +1,12 @@
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.BeanFactory;
 
 import java.util.*;
@@ -13,7 +15,7 @@ import java.util.*;
  * @author Heiko Braun
  * @date 2/15/11
  */
-public class MockServerGroupStore implements ServerGroupStore {
+public class MockServerGroupStore {
 
     public static final String PRODUCTION_SERVERS = "Production Servers";
     public static final String DEVELOPMENT_ENVIRONMENT = "Development Environment";
@@ -70,14 +72,14 @@ public class MockServerGroupStore implements ServerGroupStore {
         results.add(standby);
     }
 
-    @Override
+
     public List<ServerGroupRecord> loadServerGroups() {
 
         Log.debug("Loaded " + results.size() + " server groups");
         return results;
     }
 
-    @Override
+
     public List<ServerGroupRecord> loadServerGroups(String profileName) {
         List<ServerGroupRecord> all = loadServerGroups();
         List<ServerGroupRecord> results = new ArrayList<ServerGroupRecord>();
@@ -90,7 +92,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         return results;
     }
 
-    @Override
+
     public void persist(ServerGroupRecord updatedEntity) {
 
         deleteGroup(updatedEntity, false);
@@ -98,7 +100,7 @@ public class MockServerGroupStore implements ServerGroupStore {
         bus.fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
     }
 
-    @Override
+
     public boolean deleteGroup(ServerGroupRecord record) {
         return deleteGroup(record, true);
     }

@@ -2,6 +2,8 @@ package org.jboss.as.console.client.shared.dispatch.impl;
 
 import com.google.gwt.http.client.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.dmr.client.ModelNode;
@@ -15,10 +17,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
     private final RequestBuilder requestBuilder;
 
-    public DMRHandler() {
+    @Inject
+    public DMRHandler(BootstrapContext bootstrap) {
         requestBuilder = new RequestBuilder(
                 RequestBuilder.POST,
-                "http://localhost:9990/domain-api"
+                bootstrap.getProperty(BootstrapContext.DOMAIN_API)
         );
     }
 
@@ -27,7 +30,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         assert action.getOperation()!=null;
 
-        ModelNode operation = action.getOperation();
+        final ModelNode operation = action.getOperation();
 
         Request requestHandle = null;
         try {
@@ -46,7 +49,10 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     }
                     else
                     {
-                        resultCallback.onFailure(new Exception("Unexpected HTTP status " + response.getStatusCode()));
+                        resultCallback.onFailure(
+                                new Exception("Unexpected HTTP status " + response.getStatusCode()+
+                                ": "+operation.asString())
+                        );
                     }
                 }
 

@@ -81,11 +81,11 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
         outputPanel.add(comboBox.asWidget());
 
         requestArea = new TextArea();
-        requestArea.setCharacterWidth(80);
+        requestArea.setCharacterWidth(60);
         requestArea.setVisibleLines(10);
 
         responseArea = new TextArea();
-        responseArea.setCharacterWidth(80);
+        responseArea.setCharacterWidth(60);
         responseArea.setVisibleLines(20);
 
         outputPanel.add(requestArea);

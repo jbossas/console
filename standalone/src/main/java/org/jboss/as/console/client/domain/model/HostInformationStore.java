@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.domain.model;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  * @date 3/2/11
  */
 public interface HostInformationStore {
-    List<Host> getHosts();
-    List<Server> getServerConfigurations(String name);
-    List<ServerInstance> getServerInstances(String host);
+    void getHosts(AsyncCallback<List<Host>> callback);
+    void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
+    void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
 }

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
 
 import java.util.List;
@@ -40,9 +40,9 @@ class LHSProfileNavigation {
         return stack;
     }
 
-    public void updateFrom(List<SubsystemRecord> subsystems) {
+    public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
-        profileSection.updateFrom(subsystems);
+        profileSection.updateSubsystems(subsystems);
     }
 
     public void updateProfiles(List<ProfileRecord> profiles) {
@@ -51,7 +51,7 @@ class LHSProfileNavigation {
     }
 
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
-        //serverGroupSection.updateFrom(serverGroupRecords);
+        //serverGroupSection.updateSubsystems(serverGroupRecords);
     }
 
 }

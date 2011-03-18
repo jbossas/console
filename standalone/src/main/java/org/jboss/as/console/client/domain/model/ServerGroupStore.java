@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.domain.model;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.List;
 
 /**
@@ -7,10 +9,8 @@ import java.util.List;
  * @date 2/15/11
  */
 public interface ServerGroupStore {
-    List<ServerGroupRecord> loadServerGroups();
-    List<ServerGroupRecord> loadServerGroups(String profileName);
 
-    void persist(ServerGroupRecord updatedEntity);
-
-    boolean deleteGroup(ServerGroupRecord selectedRecord);
+    void loadServerGroups(AsyncCallback<List<ServerGroupRecord>> callback);
+    void persist(ServerGroupRecord updatedEntity, AsyncCallback<Boolean> callback);
+    void deleteGroup(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
 }

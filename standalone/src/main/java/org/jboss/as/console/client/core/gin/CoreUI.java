@@ -40,8 +40,9 @@ import org.jboss.as.console.client.server.path.PathToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
-import org.jboss.as.console.client.shared.DeploymentStore;
-import org.jboss.as.console.client.shared.SubsystemStore;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
@@ -79,6 +80,7 @@ public interface CoreUI extends Ginjector {
 
     DispatchAsync getDispatchAsync();
     HandlerRegistry getDispatcherHandlerRegistry();
+    DMRHandler getDMRHandler();
 
     // ----------------------------------------------------------------------
     Provider<SignInPagePresenter> getSignInPagePresenter();

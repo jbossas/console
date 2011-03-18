@@ -6,7 +6,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.Places;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
 
@@ -113,7 +113,7 @@ public class LHSServerNavigation {
         for(SubsystemRecord subsys: subsystems)
         {
             TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
-            item.getElement().setAttribute("token", subsys.getToken());
+            item.getElement().setAttribute("token", "server/"+subsys.getTitle().toLowerCase().replace(" ","_"));
             item.setStyleName("lhs-tree-item");
             subsysRoot.addItem(item);
         }

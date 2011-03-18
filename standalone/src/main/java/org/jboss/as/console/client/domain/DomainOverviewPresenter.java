@@ -10,13 +10,10 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
-import org.jboss.as.console.client.shared.DeploymentRecord;
-import org.jboss.as.console.client.shared.DeploymentStore;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
 
 import java.util.List;
 
@@ -76,9 +73,33 @@ public class DomainOverviewPresenter
 
     @Override
     protected void onReset() {
-        getView().updateProfiles(profileStore.loadProfiles());
-        getView().updateGroups(serverGroupStore.loadServerGroups());
-        getView().updateDeployments(deploymentStore.loadDeployments());
+
+        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
+            @Override
+            public void onSuccess(List<ProfileRecord> result) {
+                getView().updateProfiles(result);
+            }
+        });
+
+        refreshGroups();
+
+        // TODO: this needs to reference a server group
+        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+            @Override
+            public void onSuccess(List<DeploymentRecord> result) {
+                getView().updateDeployments(result);
+            }
+        });
+
+    }
+
+    private void refreshGroups() {
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().updateGroups(result);
+            }
+        });
     }
 
     @Override
@@ -92,7 +113,7 @@ public class DomainOverviewPresenter
     public void onStaleModel(String modelName) {
         if(modelName.equals(StaleModelEvent.SERVER_GROUPS))
         {
-            getView().updateGroups(serverGroupStore.loadServerGroups());
+            refreshGroups();
         }
     }
 }

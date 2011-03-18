@@ -5,6 +5,8 @@ import com.google.gwt.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.server.subsys.threads.ThreadFactoryRecord;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 
 /**

@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 import java.util.List;
 

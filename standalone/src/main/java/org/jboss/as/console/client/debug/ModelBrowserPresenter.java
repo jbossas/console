@@ -111,7 +111,7 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
             dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    Log.error("Failed to retrieve resource ", caught);
+                    //Log.error("Failed to retrieve resource ", caught);
                 }
 
                 @Override

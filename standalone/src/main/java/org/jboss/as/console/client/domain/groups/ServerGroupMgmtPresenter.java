@@ -16,6 +16,7 @@ import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ProfileHeader;
 
 import java.util.List;
@@ -72,7 +73,12 @@ public class ServerGroupMgmtPresenter
 
         Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
 
-        getView().updateServerGroups(serverGroupStore.loadServerGroups());
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().updateServerGroups(result);
+            }
+        });
 
         ProfileHeader header = new ProfileHeader("Group Management");
         Console.MODULES.getHeader().setContent(header);
@@ -95,6 +101,13 @@ public class ServerGroupMgmtPresenter
     @Override
     public void onStaleModel(String modelName) {
         if(StaleModelEvent.SERVER_GROUPS.equals(modelName))
-            getView().updateServerGroups(serverGroupStore.loadServerGroups());
+        {
+            serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+                @Override
+                public void onSuccess(List<ServerGroupRecord> result) {
+                    getView().updateServerGroups(result);
+                }
+            });
+        }
     }
 }

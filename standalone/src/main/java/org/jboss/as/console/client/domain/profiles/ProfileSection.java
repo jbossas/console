@@ -2,13 +2,16 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
 import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
@@ -35,6 +38,17 @@ class ProfileSection {
 
 
         subsysTree = new Tree(DefaultTreeResources.INSTANCE);
+        subsysTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
+            @Override
+            public void onSelection(SelectionEvent<TreeItem> event) {
+                TreeItem selectedItem = event.getSelectedItem();
+                String token = selectedItem.getElement().getAttribute("token");
+                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                        Places.fromString(token)
+                );
+            }
+        });
+
         root = new TreeItem("Subsystems in Profile:");
         subsysTree.addItem(root);
 
@@ -96,13 +110,16 @@ class ProfileSection {
 
     }
 
-    public void updateFrom(List<SubsystemRecord> subsystems) {
+    public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
         root.removeItems();
 
         for(SubsystemRecord subsys: subsystems)
         {
             TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
+            item.getElement().setAttribute("token", "domain/profile/"+
+                subsys.getTitle().toLowerCase().replace(" ", "_"));
+
             item.setStyleName("lhs-tree-item");
             root.addItem(item);
         }

@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -11,16 +10,15 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.*;
+import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
-import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
@@ -37,6 +35,7 @@ public class ServerGroupPresenter
     private ServerGroupStore serverGroupStore;
     private ProfileStore profileStore;
 
+    private List<ServerGroupRecord> serverGroups;
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
 
@@ -49,6 +48,7 @@ public class ServerGroupPresenter
         void setPresenter(ServerGroupPresenter presenter);
         void setSelectedRecord(ServerGroupRecord record);
         void setEnabled(boolean isEnabled);
+        void updateProfiles(List<ProfileRecord> result);
     }
 
     @Inject
@@ -71,37 +71,64 @@ public class ServerGroupPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
 
-        String groupName = request.getParameter("name", null);
+        final String groupName = request.getParameter("name", null);
         String action = request.getParameter("action", null);
 
-        if(groupName!=null)
-        {
-            for(ServerGroupRecord record : serverGroupStore.loadServerGroups())
-            {
-                if(groupName.equals(record.getGroupName()))
-                {
-                    selectedRecord = record;
-                    break;
-                }
-            }
-        }
-        else if("new".equals(action))
+        if("new".equals(action))
         {
             selectedRecord = null;
             createNewGroup();
         }
         else
         {
-            Log.error("Parameters missing. Fallback to default Group");
-            this.selectedRecord = serverGroupStore.loadServerGroups().get(0);
+            serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+                @Override
+                public void onSuccess(List<ServerGroupRecord> result) {
+
+                    if(groupName!=null)
+                    {
+                        for(ServerGroupRecord record : result)
+                        {
+                            if(groupName.equals(record.getGroupName()))
+                            {
+                                selectedRecord = record;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Log.warn("Parameter 'groupName' missing, fallback to default group");
+                        selectedRecord = result.get(0);
+                    }
+                }
+            });
         }
+
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        if(selectedRecord!=null)
-            getView().setSelectedRecord(selectedRecord);
+
+        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
+            @Override
+            public void onSuccess(List<ProfileRecord> result) {
+                getView().updateProfiles(result);
+
+                if(selectedRecord!=null)
+                    getView().setSelectedRecord(selectedRecord);
+            }
+        });
+
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                serverGroups = result;
+            }
+        });
+
         getView().setEnabled(false);
     }
 
@@ -112,21 +139,9 @@ public class ServerGroupPresenter
 
     // ----------------------------------------------------------------
 
-    public String[] getProfileNames() {
-
-        List<ProfileRecord> profileRecords = profileStore.loadProfiles();
-        String[] names = new String[profileRecords.size()];
-        int i=0;
-        for(ProfileRecord profile : profileRecords)
-        {
-            names[i] = profile.getName();
-            i++;
-        }
-        return names;
-    }
 
     public String[] getSocketBindings() {
-        return new String[] {"default", "DMZ"};
+        return new String[] {"default", "DMZ"}; // TODO: implement
     }
 
     public void editCurrentRecord() {
@@ -137,14 +152,20 @@ public class ServerGroupPresenter
 
         if(selectedRecord!=null)
         {
-            serverGroupStore.deleteGroup(selectedRecord);
+            serverGroupStore.deleteGroup(selectedRecord, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+
+                }
+            });
+
             Console.MODULES.getMessageCenter().notify(
                     new Message("Deleted "+selectedRecord.getGroupName())
             );
         }
 
         // switch to alternate record instead
-        workOn(serverGroupStore.loadServerGroups().get(0));
+        workOn(serverGroups.get(0));
 
     }
 
@@ -169,7 +190,12 @@ public class ServerGroupPresenter
                 new Message("Saved " + updatedEntity.getGroupName(), Message.Severity.Info)
         );
 
-        serverGroupStore.persist(updatedEntity);
+        serverGroupStore.persist(updatedEntity, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+
+            }
+        });
     }
 
     private void workOn(ServerGroupRecord record) {
@@ -190,7 +216,7 @@ public class ServerGroupPresenter
         });
 
         window.setWidget(
-                new NewGroupWizard(this, serverGroupStore.loadServerGroups()).asWidget()
+                new NewGroupWizard(this, serverGroups).asWidget()
         );
 
         window.setGlassEnabled(true);

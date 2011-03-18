@@ -12,9 +12,10 @@ import com.gwtplatform.mvp.client.proxy.*;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ProfileHeader;
-import org.jboss.as.console.client.shared.SubsystemRecord;
-import org.jboss.as.console.client.shared.SubsystemStore;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 
 import java.util.List;
 
@@ -54,12 +55,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         this.subsysStore = subsysStore;
     }
 
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().updateFrom(subsysStore.loadSubsystems());
-    }
-
     /**
      * Load a default sub page upon first reveal
      * and highlight navigation sections in subsequent requests.
@@ -83,9 +78,15 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
-
         ProfileHeader header = new ProfileHeader("Configuration Profile");
         Console.MODULES.getHeader().setContent(header);
+
+        subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
+            @Override
+            public void onSuccess(List<SubsystemRecord> result) {
+                getView().updateFrom(result);
+            }
+        });
     }
 
     @Override

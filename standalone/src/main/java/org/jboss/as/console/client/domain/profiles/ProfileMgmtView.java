@@ -8,7 +8,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class ProfileMgmtView extends SuspendableViewImpl
     @Override
     public void setSubsystems(List<SubsystemRecord> subsystemRecords)
     {
-        lhsNavigation.updateFrom(subsystemRecords);
+        lhsNavigation.updateSubsystems(subsystemRecords);
     }
 
     @Override

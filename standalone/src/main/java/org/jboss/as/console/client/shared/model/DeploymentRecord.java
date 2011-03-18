@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared;
+package org.jboss.as.console.client.shared.model;
 
 /**
  * @author Heiko Braun

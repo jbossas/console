@@ -3,6 +3,8 @@ package org.jboss.as.console.client.widgets.forms;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.ComboBox;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 2/21/11
@@ -44,6 +46,14 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     public void setValueMap(String[] values) {
+        comboBox.clearValues();
+        for(String s : values)
+        {
+            comboBox.addItem(s);
+        }
+    }
+
+    public void setValueMap(List<String> values) {
         comboBox.clearValues();
         for(String s : values)
         {

@@ -11,7 +11,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.shared.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
  * @author Heiko Braun

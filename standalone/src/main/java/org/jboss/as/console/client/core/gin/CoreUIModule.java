@@ -30,6 +30,7 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.hosts.*;
 import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.model.impl.*;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
@@ -48,13 +49,14 @@ import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementView;
-import org.jboss.as.console.client.shared.DeploymentStore;
-import org.jboss.as.console.client.shared.MockDeploymentStoreImpl;
-import org.jboss.as.console.client.shared.MockSubsystemStore;
-import org.jboss.as.console.client.shared.SubsystemStore;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
+import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -102,6 +104,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
         bind(HandlerRegistry.class).in(Singleton.class);
+        bind(DMRHandler.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 
@@ -131,7 +134,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DeploymentListView.class,
                 DeploymentListPresenter.MyProxy.class);
 
-        bind(DeploymentStore.class).to(MockDeploymentStoreImpl.class).in(Singleton.class);
+        bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
 
         // server/interfaces
         bindPresenter(InterfaceToolPresenter.class,
@@ -192,10 +195,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerGroupView.class,
                 ServerGroupPresenter.MyProxy.class);
 
-        bind(ProfileStore.class).to(MockProfileStore.class).in(Singleton.class);
-        bind(SubsystemStore.class).to(MockSubsystemStore.class).in(Singleton.class);
-        bind(ServerGroupStore.class).to(MockServerGroupStore.class).in(Singleton.class);
-        bind(HostInformationStore.class).to(MockHostInformationStore.class).in(Singleton.class);
+        bind(ProfileStore.class).to(ProfileStoreImpl.class).in(Singleton.class);
+        bind(SubsystemStore.class).to(SubsystemStoreImpl.class).in(Singleton.class);
+        bind(ServerGroupStore.class).to(ServerGroupStoreImpl.class).in(Singleton.class);
+        bind(HostInformationStore.class).to(HostInfoStoreImpl.class).in(Singleton.class);
 
         // domain/domain-deployments
         bindPresenter(DeploymentsPresenter.class,

@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -13,10 +12,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.*;
 
 import java.util.List;
 
@@ -65,38 +61,52 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
 
     @Override
     public void prepareFromRequest(PlaceRequest request) {
-        String hostName = request.getParameter("host", null);
-        String serverName = request.getParameter("server", null);
+        final String hostName = request.getParameter("host", null);
+        final String serverName = request.getParameter("server", null);
         String action= request.getParameter("action", null);
 
-        if(hostName!=null && serverName!=null)
-        {
-            for(Server server : hostInfoStore.getServerConfigurations(hostName))
-            {
-                if(server.getName().equals(serverName))
-                {
-                    selectedRecord = server;
-                    break;
-                }
-            }
-        }
-        else if("new".equals(action))
+        if("new".equals(action))
         {
             Window.alert("Not implemented yet.");
         }
-        else
-        {
-            Log.warn("Parameters missing. Fallback to default Server");
-            hostName = hostInfoStore.getHosts().get(0).getName();
-            selectedRecord = hostInfoStore.getServerConfigurations(hostName).get(0);
+        else {
+
+            if(hostName!=null && serverName!=null)
+            {
+                hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
+                    @Override
+                    public void onSuccess(List<Server> result) {
+                        for (Server server : result) {
+                            if (server.getName().equals(serverName)) {
+                                selectedRecord = server;
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+            /*else
+            {
+                Log.warn("Parameters missing. Fallback to default Server");
+                hostName = hostInfoStore.getHosts().get(0).getName();
+                selectedRecord = hostInfoStore.getServerConfigurations(hostName).get(0);
+            } */
         }
+
 
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        getView().updateServerGroups(serverGroupStore.loadServerGroups());
+
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().updateServerGroups(result);
+            }
+        });
+
         if(selectedRecord!=null)
             getView().setSelectedRecord(selectedRecord);
 
@@ -112,11 +122,16 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     public void onHostSelection(String hostName) {
 
         // display first server config by default
-        List<Server> serverConfigurations = hostInfoStore.getServerConfigurations(hostName);
-        if(!serverConfigurations.isEmpty() && hasBeenRevealed) {
-            selectedRecord = serverConfigurations.get(0);
-            getView().setSelectedRecord(selectedRecord);
-        }
+        hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(List<Server> result) {
+                if(!result.isEmpty() && hasBeenRevealed) {
+                    selectedRecord = result.get(0);
+                    getView().setSelectedRecord(selectedRecord);
+                }
+            }
+        });
+
     }
 
 

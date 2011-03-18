@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.core;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.shared.Preferences;
@@ -16,6 +17,7 @@ import java.util.Map;
 
     public static final String INITIAL_TOKEN = "initial_token";
     public static final String STANDALONE = "standalone_usage";
+    public static final String DOMAIN_API = "domain-api";
 
     private Map<String,String> ctx = new HashMap<String,String>();
 
@@ -30,6 +32,25 @@ import java.util.Map;
             setProperty(INITIAL_TOKEN, token);
 
         loadPersistedProperties();
+
+        String domainApi = GWT.isScript() ? getHostUrl() : "http://localhost:9990/domain-api";
+        setProperty(DOMAIN_API, domainApi);
+
+        System.out.println("Domain API Endpoint: "+ domainApi);
+    }
+
+    private String getHostUrl() {
+        // extract host
+        String base = GWT.getHostPageBaseURL();
+        String protocol = base.substring(0, base.indexOf("//")+2);
+        String remainder = base.substring(base.indexOf(protocol)+protocol.length(), base.length());
+        String host = remainder.indexOf(":")!=-1 ?
+                remainder.substring(0, remainder.indexOf(":")) :
+                remainder.substring(0, remainder.indexOf("/"));
+
+        // default url
+        return protocol + host + ":9990/domain-api";
+
     }
 
     private void loadPersistedProperties() {

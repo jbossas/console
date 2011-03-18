@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
+import com.google.inject.Inject;
 import org.jboss.as.console.client.shared.dispatch.Action;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.ActionType;
@@ -15,8 +16,9 @@ public class HandlerRegistry {
 
     private Map<ActionType, ActionHandler> registry = new HashMap<ActionType, ActionHandler>();
 
-    public HandlerRegistry() {
-        register(ActionType.DMR, new DMRHandler());
+    @Inject
+    public HandlerRegistry(DMRHandler dmrhandler) {
+        register(ActionType.DMR, dmrhandler);
     }
 
     public ActionHandler resolve(Action action) {
