@@ -52,6 +52,9 @@ import org.jboss.as.console.client.shared.DeploymentStore;
 import org.jboss.as.console.client.shared.MockDeploymentStoreImpl;
 import org.jboss.as.console.client.shared.MockSubsystemStore;
 import org.jboss.as.console.client.shared.SubsystemStore;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
+import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -94,6 +97,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutPresenter.MainLayoutView.class,
                 MainLayoutViewImpl.class,
                 MainLayoutPresenter.MainLayoutProxy.class);
+
+        // ----------------------------------------------------------------------
+
+        bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
+        bind(HandlerRegistry.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 

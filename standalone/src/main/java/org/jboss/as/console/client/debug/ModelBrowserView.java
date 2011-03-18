@@ -74,6 +74,7 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
         options.add(ModelDescriptionConstants.READ_OPERATION_NAMES_OPERATION);
         options.add(ModelDescriptionConstants.READ_RESOURCE_METRICS);
         options.add(ModelDescriptionConstants.READ_CHILDREN_TYPES_OPERATION);
+        options.add(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
 
         comboBox.setValues(options);
         comboBox.setItemSelected(0,true);
