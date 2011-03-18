@@ -1,9 +1,21 @@
+Prerequisites:
+-------------
+
+In order to work on the console. You a need running JBoss 7
+instance on your local host. You can download it here:
+
+    http://www.jboss.org:80/jbossas/downloads.html
+
+You can run JBoss in either the 'domain' or 'standalone' scenario.
+
 Running in hosted mode:
 ----------------------
 
-1.) Make sure you build the top level module first.
+1.) Make sure JBoss 7 is started
 
-2.) cd 'standalone'
+2.) Make sure you build the top level module first.
+
+3.) cd 'standalone'
 
 Start the GWT shell with 
 
