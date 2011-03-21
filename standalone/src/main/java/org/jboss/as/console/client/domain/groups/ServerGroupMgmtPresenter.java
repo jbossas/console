@@ -31,6 +31,7 @@ public class ServerGroupMgmtPresenter
 
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
+    private boolean hasBeenRevealed;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
@@ -65,9 +66,32 @@ public class ServerGroupMgmtPresenter
         getView().setPresenter(this);
     }
 
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+
+        PlaceRequest currentPlaceRequest = placeManager.getCurrentPlaceRequest();
+        if(!hasBeenRevealed &&
+                NameTokens.ServerGroupMgmtPresenter.equals(currentPlaceRequest.getNameToken()))
+        {
+            hasBeenRevealed = true;
+            // forward default to ServerGroupPresenter, this presenter doesn't have a default view
+            placeManager.revealRelativePlace(
+                    new PlaceRequest(NameTokens.ServerGroupPresenter)
+            );
+        }
+
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        System.out.println("> "+request.getParameterNames());
+    }
 
     @Override
     protected void onReset() {
+
         super.onReset();
 
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
@@ -77,7 +101,7 @@ public class ServerGroupMgmtPresenter
             }
         });
 
-        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupPresenter);
+        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
         ProfileHeader header = new ProfileHeader("Group Management");
         Console.MODULES.getHeader().setContent(header);
     }

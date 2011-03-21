@@ -85,6 +85,7 @@ public class ServerGroupPresenter
 
     @Override
     protected void onReset() {
+
         super.onReset();
 
         profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {

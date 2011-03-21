@@ -32,7 +32,7 @@ public class Header implements ValueChangeHandler<String> {
 
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
-            new String[]{NameTokens.ServerGroupPresenter, "Server Groups"},
+            new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
             new String[]{NameTokens.HostMgmtPresenter, "Hosts"},
             new String[]{NameTokens.DebugToolsPresenter, "Debug"}
     };
