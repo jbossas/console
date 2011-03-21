@@ -38,6 +38,7 @@ public class ServerGroupPresenter
     private List<ServerGroupRecord> serverGroups;
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
+    private String groupName;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -71,40 +72,15 @@ public class ServerGroupPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
 
-        final String groupName = request.getParameter("name", null);
-        String action = request.getParameter("action", null);
+        this.groupName = request.getParameter("name", null);
+        final String action = request.getParameter("action", null);
 
         if("new".equals(action))
         {
             selectedRecord = null;
+            groupName = null;
             createNewGroup();
         }
-        else
-        {
-            serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-                @Override
-                public void onSuccess(List<ServerGroupRecord> result) {
-
-                    if(groupName!=null)
-                    {
-                        for(ServerGroupRecord record : result)
-                        {
-                            if(groupName.equals(record.getGroupName()))
-                            {
-                                selectedRecord = record;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Log.warn("Parameter 'groupName' missing, fallback to default group");
-                        selectedRecord = result.get(0);
-                    }
-                }
-            });
-        }
-
     }
 
     @Override
@@ -115,21 +91,37 @@ public class ServerGroupPresenter
             @Override
             public void onSuccess(List<ProfileRecord> result) {
                 getView().updateProfiles(result);
-
-                if(selectedRecord!=null)
-                    getView().setSelectedRecord(selectedRecord);
             }
         });
 
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
+
                 serverGroups = result;
+                if(groupName!=null)
+                {
+                    for(ServerGroupRecord record : result)
+                    {
+                        if(groupName.equals(record.getGroupName()))
+                        {
+                            selectedRecord = record;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Log.warn("Parameter 'name' missing, fallback to default group");
+                    groupName = result.get(0).getGroupName();
+                    selectedRecord = result.get(0);
+                }
+
+                getView().setSelectedRecord(selectedRecord);
+                getView().setEnabled(false);
             }
         });
 
-        getView().setEnabled(false);
     }
 
     @Override

@@ -31,7 +31,6 @@ public class ServerGroupMgmtPresenter
 
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
-    private boolean hasBeenRevealed;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
@@ -71,8 +70,6 @@ public class ServerGroupMgmtPresenter
     protected void onReset() {
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
-
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
@@ -80,17 +77,9 @@ public class ServerGroupMgmtPresenter
             }
         });
 
+        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupPresenter);
         ProfileHeader header = new ProfileHeader("Group Management");
         Console.MODULES.getHeader().setContent(header);
-
-        // default place upon first request
-        if(!hasBeenRevealed)
-        {
-            placeManager.revealPlaceHierarchy(
-                    Places.fromString("server-groups/"+NameTokens.ServerGroupPresenter)
-            );
-            hasBeenRevealed = true;
-        }
     }
 
     @Override
