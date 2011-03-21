@@ -101,10 +101,4 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         userNameField.setFocus(true);
         userNameField.selectAll();
     }
-
-    @Override
-    public void setStandalone(String property) {
-        if("true".equals(property))
-            checkbox.setValue(Boolean.TRUE);
-    }
 }
