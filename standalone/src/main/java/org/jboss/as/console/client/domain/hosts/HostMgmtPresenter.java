@@ -73,6 +73,19 @@ public class HostMgmtPresenter
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+        if(!hasBeenRevealed &&
+                NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        {
+            placeManager.revealRelativePlace(
+                    new PlaceRequest(NameTokens.ServerPresenter)
+            );
+            hasBeenRevealed = true;
+        }
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
 
@@ -86,14 +99,6 @@ public class HostMgmtPresenter
                 getView().updateHosts(result);
             }
         });
-
-        if(!hasBeenRevealed)
-        {
-            placeManager.revealPlaceHierarchy(
-                    Places.fromString("hosts/"+NameTokens.ServerPresenter)
-            );
-            hasBeenRevealed = true;
-        }
     }
 
     @Override

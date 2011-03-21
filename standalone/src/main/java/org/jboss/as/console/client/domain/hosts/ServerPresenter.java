@@ -29,6 +29,8 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     private ServerGroupStore serverGroupStore;
 
     private boolean hasBeenRevealed = false;
+    private String serverName;
+    private String hostName;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -61,44 +63,47 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
 
     @Override
     public void prepareFromRequest(PlaceRequest request) {
-        final String hostName = request.getParameter("host", null);
-        final String serverName = request.getParameter("server", null);
+        hostName = request.getParameter("host", null);
+        serverName = request.getParameter("server", null);
         String action= request.getParameter("action", null);
 
         if("new".equals(action))
         {
             Window.alert("Not implemented yet.");
         }
-        else {
-
-            if(hostName!=null && serverName!=null)
-            {
-                hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
-                    @Override
-                    public void onSuccess(List<Server> result) {
-                        for (Server server : result) {
-                            if (server.getName().equals(serverName)) {
-                                selectedRecord = server;
-                                break;
-                            }
-                        }
-                    }
-                });
-            }
-            /*else
-            {
-                Log.warn("Parameters missing. Fallback to default Server");
-                hostName = hostInfoStore.getHosts().get(0).getName();
-                selectedRecord = hostInfoStore.getServerConfigurations(hostName).get(0);
-            } */
-        }
-
-
     }
 
     @Override
     protected void onReset() {
         super.onReset();
+
+        if(hostName!=null && serverName!=null)
+        {
+            hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
+                @Override
+                public void onSuccess(List<Server> result) {
+                    for (Server server : result) {
+                        if (server.getName().equals(serverName)) {
+                            selectedRecord = server;
+                            break;
+                        }
+                    }
+
+                    getView().setSelectedRecord(selectedRecord);
+                }
+            });
+        }
+        else
+        {
+            // fallback (first request)
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                @Override
+                public void onSuccess(List<Host> result) {
+                    hostName = result.get(0).getName();
+                    loadDefaultForHost(hostName);
+                }
+            });
+        }
 
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
@@ -106,9 +111,6 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
                 getView().updateServerGroups(result);
             }
         });
-
-        if(selectedRecord!=null)
-            getView().setSelectedRecord(selectedRecord);
 
         hasBeenRevealed = true;
     }
@@ -122,16 +124,20 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     public void onHostSelection(String hostName) {
 
         // display first server config by default
+        //loadDefaultForHost(hostName);
+    }
+
+    private void loadDefaultForHost(String hostName) {
         hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
                 if(!result.isEmpty() && hasBeenRevealed) {
                     selectedRecord = result.get(0);
+                    serverName = selectedRecord.getName();
                     getView().setSelectedRecord(selectedRecord);
                 }
             }
         });
-
     }
 
 
