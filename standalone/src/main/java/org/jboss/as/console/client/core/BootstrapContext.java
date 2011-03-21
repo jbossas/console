@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 2/11/11
  */
-    public class BootstrapContext {
+public class BootstrapContext {
 
     public static final String INITIAL_TOKEN = "initial_token";
     public static final String STANDALONE = "standalone_usage";
@@ -22,7 +22,7 @@ import java.util.Map;
     private Map<String,String> ctx = new HashMap<String,String>();
 
     private static final String[] persistentProperties = new String[] {
-            STANDALONE
+            //STANDALONE
     };
 
     @Inject
@@ -81,8 +81,9 @@ import java.util.Map;
     }
 
     public PlaceRequest getDefaultPlace() {
-       PlaceRequest defaultPlace  = hasProperty(STANDALONE) ?
-               new PlaceRequest(NameTokens.serverConfig) : new PlaceRequest(NameTokens.ProfileMgmtPresenter);
+
+        PlaceRequest defaultPlace  = getProperty(STANDALONE).equals("true") ?
+                new PlaceRequest(NameTokens.serverConfig) : new PlaceRequest(NameTokens.ProfileMgmtPresenter);
         return defaultPlace;
     }
 

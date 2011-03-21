@@ -9,12 +9,23 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.gin.CoreUI;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Main application entry point.
+ * Executes a two phased init process:
+ * <ol>
+ *     <li>Identify management model (standalone vs. domain)
+ *     <li>Load main application
+ * </ol>
  *
  * @author Heiko Braun
  */
@@ -60,12 +71,12 @@ public class Console implements EntryPoint {
                         if(response.getStatusCode()!=200)
                             Window.alert(message);
                         else
-                            MODULES.getPlaceManager().revealCurrentPlace();
+                            identifyManagementModel();
                     }
 
                     @Override
                     public void onError(Request request, Throwable exception) {
-                            Window.alert(message);
+                        Window.alert(message);
                     }
                 });
             }
@@ -76,9 +87,37 @@ public class Console implements EntryPoint {
         }
         else
         {
-            MODULES.getPlaceManager().revealCurrentPlace();
+            identifyManagementModel();
         }
 
 
+    }
+
+    private void identifyManagementModel() {
+        // distinguish standalone and domain mode
+        final BootstrapContext bootstrap = MODULES.getBootstrapContext();
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set("subsystem");
+        operation.get(ADDRESS).setEmptyList();
+
+        MODULES.getDispatchAsync().execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
+                loadMainApp();
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                bootstrap.setProperty(BootstrapContext.STANDALONE, "true");
+                loadMainApp();
+            }
+        });
+
+    }
+
+    private void loadMainApp() {
+        MODULES.getPlaceManager().revealCurrentPlace();
     }
 }

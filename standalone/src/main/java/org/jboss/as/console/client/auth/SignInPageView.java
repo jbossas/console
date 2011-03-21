@@ -1,8 +1,6 @@
 package org.jboss.as.console.client.auth;
 
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
@@ -56,7 +54,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
 
 
         // dev options
-        checkbox = new CheckBox();
+        /*checkbox = new CheckBox();
         checkbox.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
@@ -69,7 +67,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
 
         options.getElement().setAttribute("style", "margin-top:20px; vertical-align:bottom;");
         options.getElement().setAttribute("align", "center");
-        panel.add(options);
+        panel.add(options);   */
 
         panel.sinkEvents(Event.ONKEYDOWN);
 

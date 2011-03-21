@@ -44,7 +44,7 @@ public class SignInPagePresenter extends
 
         void setPresenter(SignInPagePresenter signInPagePresenter);
 
-        void setStandalone(String property);
+        //void setStandalone(String property);
     }
 
     @Inject
@@ -89,7 +89,7 @@ public class SignInPagePresenter extends
     protected void onReset() {
         super.onReset();
         getView().resetAndFocus();
-        getView().setStandalone(bootstrap.getProperty(BootstrapContext.STANDALONE));
+        //getView().setStandalone(bootstrap.getProperty(BootstrapContext.STANDALONE));
     }
 
     @Override

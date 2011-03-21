@@ -6,6 +6,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -27,21 +28,27 @@ public class SubsystemStoreImpl implements SubsystemStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory = GWT.create(BeanFactory.class);
-    private ModelNode operation;
+    private BootstrapContext bootstrap;
 
     @Inject
-    public SubsystemStoreImpl(DispatchAsync dispatcher) {
+    public SubsystemStoreImpl(DispatchAsync dispatcher, BootstrapContext bootstrap) {
         this.dispatcher = dispatcher;
-
-        this.operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
-        operation.get(CHILD_TYPE).set("subsystem");
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(ADDRESS).add("profile", "default");
+        this.bootstrap = bootstrap;
     }
 
     @Override
     public void loadSubsystems(String profileName, final AsyncCallback<List<SubsystemRecord>> callback) {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set("subsystem");
+        operation.get(ADDRESS).setEmptyList();
+
+        if(bootstrap.getProperty(BootstrapContext.STANDALONE).equals("false"))
+        {
+            operation.get(ADDRESS).add("profile", "default");  //TODO: doesn't work with multiple profiles
+        }
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {

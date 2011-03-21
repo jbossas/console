@@ -94,7 +94,9 @@ public class Header implements ValueChangeHandler<String> {
         linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
 
-        String[][] sections = bootstrap.hasProperty(BootstrapContext.STANDALONE) ? SECTIONS_STANADLONE : SECTIONS;
+        String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ?
+                SECTIONS_STANADLONE : SECTIONS;
+
         for (String[] section : sections) {
             final String name = section[0];
             final String id = "header-" + name;
@@ -119,7 +121,7 @@ public class Header implements ValueChangeHandler<String> {
         headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
         headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
-        String[][] sections = bootstrap.hasProperty(BootstrapContext.STANDALONE) ? SECTIONS_STANADLONE : SECTIONS;
+        String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ? SECTIONS_STANADLONE : SECTIONS;
         for (String[] section : sections) {
 
             final String name = section[0];
