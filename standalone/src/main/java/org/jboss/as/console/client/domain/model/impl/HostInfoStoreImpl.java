@@ -1,12 +1,12 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -47,13 +47,14 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                JSONObject root = JSONParser.parseLenient(result.getResponseText()).isObject();
-                JSONArray payload = root.get("result").isArray();
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
                 List<Host> records = new ArrayList<Host>(payload.size());
                 for(int i=0; i<payload.size(); i++)
                 {
                     Host record = factory.host().as();
-                    record.setName(payload.get(i).isString().stringValue());
+                    record.setName(payload.get(i).asString());
                     records.add(record);
                 }
 
@@ -80,13 +81,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                JSONObject root = JSONParser.parseLenient(result.getResponseText()).isObject();
-                JSONArray payload = root.get("result").isArray();
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
                 List<Server> records = new ArrayList<Server>(payload.size());
                 for(int i=0; i<payload.size(); i++)
                 {
                     Server record = factory.server().as();
-                    record.setName(payload.get(i).isString().stringValue());
+                    record.setName(payload.get(i).asString());
                     records.add(record);
                 }
 

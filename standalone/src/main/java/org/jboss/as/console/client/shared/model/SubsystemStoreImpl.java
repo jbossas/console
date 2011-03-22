@@ -57,14 +57,14 @@ public class SubsystemStoreImpl implements SubsystemStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                JSONObject root = JSONParser.parseLenient(result.getResponseText()).isObject();
-                JSONArray payload = root.get("result").isArray();
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
 
                 List<SubsystemRecord> records = new ArrayList<SubsystemRecord>(payload.size());
                 for(int i=0; i<payload.size(); i++)
                 {
                     SubsystemRecord record = factory.subsystem().as();
-                    record.setTitle(payload.get(i).isString().stringValue());
+                    record.setTitle(payload.get(i).asString());
                     records.add(record);
                 }
 

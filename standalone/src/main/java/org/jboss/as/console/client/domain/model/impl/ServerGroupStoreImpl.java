@@ -49,14 +49,15 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                JSONObject root = JSONParser.parseLenient(result.getResponseText()).isObject();
-                JSONArray payload = root.get("result").isArray();
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
                 List<ServerGroupRecord> records = new ArrayList<ServerGroupRecord>(payload.size());
 
                 for(int i=0; i<payload.size(); i++)
                 {
                     ServerGroupRecord record = factory.serverGroup().as();
-                    record.setGroupName(payload.get(i).isString().stringValue());
+                    record.setGroupName(payload.get(i).asString());
                     record.setProfileName("default");  // TODO: remaining properties
                     records.add(record);
                 }

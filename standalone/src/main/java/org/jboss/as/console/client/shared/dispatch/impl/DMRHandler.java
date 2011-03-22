@@ -15,6 +15,9 @@ import org.jboss.dmr.client.ModelNode;
 public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String HEADER_ACCEPT = "Accept";
+    private static final String DMR_ENCODED = "application/dmr-encoded";
+
     private final RequestBuilder requestBuilder;
 
     @Inject
@@ -23,6 +26,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                 RequestBuilder.POST,
                 bootstrap.getProperty(BootstrapContext.DOMAIN_API)
         );
+
+        requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
+        requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
     }
 
     @Override
@@ -34,7 +40,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         Request requestHandle = null;
         try {
-            requestHandle = requestBuilder.sendRequest(operation.toJSONString(true), new RequestCallback() {
+            requestHandle = requestBuilder.sendRequest(operation.toBase64String(), new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
 

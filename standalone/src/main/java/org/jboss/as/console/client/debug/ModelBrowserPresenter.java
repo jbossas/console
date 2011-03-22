@@ -2,8 +2,6 @@ package org.jboss.as.console.client.debug;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.inject.Inject;
@@ -22,10 +20,9 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Set;
+import java.util.List;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -80,7 +77,8 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         getView().clearTree();
 
         ModelNode rootOp = new ModelNode();
-        rootOp.get(OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        rootOp.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_TYPES_OPERATION);
+        rootOp.get(ADDRESS).setEmptyList();
 
         dispatcher.execute(new DMRAction(rootOp), new AsyncCallback<DMRResponse>() {
             @Override
@@ -95,12 +93,13 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         });
     }
 
-    private void loadChildren(String json) {
-        JSONObject responsePayload= JSONParser.parse(json).isObject();
-        JSONObject root = responsePayload.get("result").isObject();
+    private void loadChildren(String base64) {
+        ModelNode response = ModelNode.fromBase64(base64);
+        List<ModelNode> result = response.get("result").asList();
 
-        Set<String> properties = root.keySet();
-        for (final String title : properties) {
+        for (final ModelNode node : result) {
+
+            final String title = node.asString();
             final TreeItem item = new AddressableTreeItem(title, title);
             getView().addItem(item);
 
@@ -165,7 +164,8 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
 
             @Override
             public void onSuccess(DMRResponse result) {
-                getView().updateResponse(item.title, result.getResponseText());
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                getView().updateResponse(item.title, response.toJSONString(false));
             }
         });
 

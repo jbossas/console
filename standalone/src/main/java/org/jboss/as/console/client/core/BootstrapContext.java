@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.core;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -33,10 +34,10 @@ public class BootstrapContext {
 
         loadPersistedProperties();
 
-        String domainApi = GWT.isScript() ? getHostUrl() : "http://localhost:9990/domain-api";
+        String domainApi = GWT.isScript() ? getHostUrl() : "http://127.0.0.1:8888/app/proxy"; //"http://localhost:9990/domain-api";
         setProperty(DOMAIN_API, domainApi);
 
-        System.out.println("Domain API Endpoint: "+ domainApi);
+        Log.info("Domain API Endpoint: " + domainApi);
     }
 
     private String getHostUrl() {

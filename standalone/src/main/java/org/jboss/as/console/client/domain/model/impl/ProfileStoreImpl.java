@@ -1,9 +1,6 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -51,13 +48,14 @@ public class ProfileStoreImpl implements ProfileStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                JSONObject root = JSONParser.parseLenient(result.getResponseText()).isObject();
-                JSONArray payload = root.get("result").isArray();
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
                 List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());
                 for(int i=0; i<payload.size(); i++)
                 {
                     ProfileRecord record = factory.profile().as();
-                    record.setName(payload.get(i).isString().stringValue());
+                    record.setName(payload.get(i).asString());
                     records.add(record);
                 }
 

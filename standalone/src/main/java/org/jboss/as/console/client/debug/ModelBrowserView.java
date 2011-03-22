@@ -6,17 +6,21 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.JSONUtil;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 import org.jboss.dmr.client.ModelDescriptionConstants;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +121,7 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
     }
 
     @Override
-    public void updateItem(String itemName, String json) {
+    public void updateItem(String itemName, String base64) {
         TreeItem match = null;
         for(int i=0; i<tree.getItemCount(); i++)
         {
@@ -131,10 +135,10 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
         if(match!=null) // graceful
         {
-            JSONObject responseObject = JSONParser.parse(json).isObject();
-            JSONArray result = responseObject.get("result").isArray();
+            ModelNode response = ModelNode.fromBase64(base64);
+            List<ModelNode> result = response.get("result").asList();
             for(int x=0;x<result.size(); x++) {
-                String value = result.get(x).isString().stringValue();
+                String value = result.get(x).asString();
                 match.addItem(new AddressableTreeItem(value, match.getText(), value));
             }
         }
@@ -147,15 +151,15 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
     }
 
     public void updateResponse(String itemName, String json) {
-        responseArea.setText(pretty(json));
+        responseArea.setText(json);
     }
 
-    private String pretty(String json)
+   /* private String pretty(String json)
     {
         return JSONUtil.pretty(
                 JSONUtil.parseJson(json), " "
         );
-    }
+    }*/
 
     @Override
     public void clearTree() {

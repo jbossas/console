@@ -98,7 +98,7 @@ public class HttpClient {
         while (it.hasNext()) {
           String key = (String)it.next();
           String value = (String)headers.get(key);
-          System.out.println("Set Request Header: "+key + "->"+value);
+          //System.out.println("Set Request Header: "+key + "->"+value);
           this.urlConnection.setRequestProperty (key, value);
         }
       }
