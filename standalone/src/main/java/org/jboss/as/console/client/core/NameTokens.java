@@ -65,7 +65,7 @@ public class NameTokens {
         return SubsystemToolPresenter;
     }
 
-    public static final String ThreadManagementPresenter = "threads";
+    public static final String ThreadManagementPresenter = "threading";
     public static String getThreadManagementPresenter() {
         return ThreadManagementPresenter;
     }

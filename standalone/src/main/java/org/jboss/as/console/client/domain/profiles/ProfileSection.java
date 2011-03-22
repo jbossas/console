@@ -42,10 +42,16 @@ class ProfileSection {
             @Override
             public void onSelection(SelectionEvent<TreeItem> event) {
                 TreeItem selectedItem = event.getSelectedItem();
-                String token = selectedItem.getElement().getAttribute("token");
-                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                        Places.fromString(token)
-                );
+                if(selectedItem.getElement().hasAttribute("token"))
+                {
+                    String token = selectedItem.getElement().getAttribute("token");
+                    if(token!=null)
+                    {
+                        Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                                Places.fromString(token)
+                        );
+                    }
+                }
             }
         });
 
