@@ -10,6 +10,7 @@ public class NameTokens {
 
     public static final String DebugToolsPresenter = "debug-tools";
     public static final String ModelBrowserPresenter = "model-browser";
+    public static final String MetricsPresenter = "invocation-metrics";
 
     public static String getMainLayout() {
         return mainLayout;

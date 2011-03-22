@@ -29,8 +29,8 @@ public class LHSDebugToolsNavigation {
 
         LHSNavItem[] commonItems = new LHSNavItem[] {
                 new LHSNavItem("Browser", "debug/model-browser"),
-                new LHSNavItem("Operations", "debug/model-operations"),
                 new LHSNavItem("Invocation Metrics", "debug/invocation-metrics")
+                //new LHSNavItem("Operations", "debug/model-operations"),
         };
 
         int i =0;

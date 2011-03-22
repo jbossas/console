@@ -19,6 +19,7 @@ import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.debug.DebugToolsPresenter;
+import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.DomainOverviewPresenter;
@@ -40,6 +41,7 @@ import org.jboss.as.console.client.server.path.PathToolPresenter;
 import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
+import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
@@ -81,6 +83,7 @@ public interface CoreUI extends Ginjector {
     DispatchAsync getDispatchAsync();
     HandlerRegistry getDispatcherHandlerRegistry();
     DMRHandler getDMRHandler();
+    InvocationMetrics getInvocationMetrics();
 
     // ----------------------------------------------------------------------
     Provider<SignInPagePresenter> getSignInPagePresenter();
@@ -129,5 +132,5 @@ public interface CoreUI extends Ginjector {
     // dev tools
     AsyncProvider<DebugToolsPresenter> getDebugTools();
     AsyncProvider<ModelBrowserPresenter> getModelBrowser();
-
+    AsyncProvider<InvocationMetricsPresenter> getMetrics();
 }

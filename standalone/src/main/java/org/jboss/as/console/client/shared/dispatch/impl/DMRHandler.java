@@ -1,11 +1,16 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
-import com.google.gwt.http.client.*;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
+import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -20,8 +25,14 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
+    private boolean trackInvocations = true; //!GWT.isScript(); TODO
+    private InvocationMetrics metrics;
+
     @Inject
-    public DMRHandler(BootstrapContext bootstrap) {
+    public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics) {
+
+        this.metrics = metrics;
+
         requestBuilder = new RequestBuilder(
                 RequestBuilder.POST,
                 bootstrap.getProperty(BootstrapContext.DOMAIN_API)
@@ -37,6 +48,11 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         assert action.getOperation()!=null;
 
         final ModelNode operation = action.getOperation();
+
+        if(trackInvocations)
+        {
+            metrics.addInvocation(operation);
+        }
 
         Request requestHandle = null;
         try {

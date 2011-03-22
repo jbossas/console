@@ -17,6 +17,8 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.debug.DebugToolsPresenter;
 import org.jboss.as.console.client.debug.DebugToolsView;
+import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
+import org.jboss.as.console.client.debug.InvocationMetricsView;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserView;
 import org.jboss.as.console.client.domain.CurrentSelectedProfile;
@@ -49,6 +51,7 @@ import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementView;
+import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
@@ -105,6 +108,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
         bind(HandlerRegistry.class).in(Singleton.class);
         bind(DMRHandler.class).in(Singleton.class);
+        bind(InvocationMetrics.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 
@@ -231,10 +235,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DebugToolsView.class,
                 DebugToolsPresenter.MyProxy.class);
 
-         bindPresenter(ModelBrowserPresenter.class,
+        bindPresenter(ModelBrowserPresenter.class,
                 ModelBrowserPresenter.MyView.class,
                 ModelBrowserView.class,
                 ModelBrowserPresenter.MyProxy.class);
+
+        bindPresenter(InvocationMetricsPresenter.class,
+                InvocationMetricsPresenter.MyView.class,
+                InvocationMetricsView.class,
+                InvocationMetricsPresenter.MyProxy.class);
     }
 
 }
