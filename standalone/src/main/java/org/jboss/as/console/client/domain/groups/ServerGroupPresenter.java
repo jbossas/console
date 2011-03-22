@@ -19,7 +19,10 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.dmr.client.ModelDescriptionConstants;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -50,6 +53,8 @@ public class ServerGroupPresenter
         void setSelectedRecord(ServerGroupRecord record);
         void setEnabled(boolean isEnabled);
         void updateProfiles(List<ProfileRecord> result);
+
+        void updateSocketBindings(List<String> result);
     }
 
     @Inject
@@ -95,6 +100,12 @@ public class ServerGroupPresenter
             }
         });
 
+        serverGroupStore.loadSocketBindingGroupNames(new SimpleCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> result) {
+                getView().updateSocketBindings(result);
+            }
+        });
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
@@ -118,8 +129,19 @@ public class ServerGroupPresenter
                     selectedRecord = result.get(0);
                 }
 
-                getView().setSelectedRecord(selectedRecord);
+                loadServerGroup(selectedRecord.getGroupName());
                 getView().setEnabled(false);
+            }
+        });
+
+    }
+
+    private void loadServerGroup(String name)
+    {
+        serverGroupStore.loadServerGroup(name, new SimpleCallback<ServerGroupRecord>() {
+            @Override
+            public void onSuccess(ServerGroupRecord result) {
+                getView().setSelectedRecord(result);
             }
         });
 
@@ -131,11 +153,6 @@ public class ServerGroupPresenter
     }
 
     // ----------------------------------------------------------------
-
-
-    public String[] getSocketBindings() {
-        return new String[] {"default", "DMZ"}; // TODO: implement
-    }
 
     public void editCurrentRecord() {
         getView().setEnabled(true);

@@ -42,6 +42,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ContentHeaderLabel nameLabel;
 
     private ComboBoxItem profileItem;
+    private ComboBoxItem socketBindingItem;
 
     private ToolButton edit;
 
@@ -130,8 +131,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         TextItem nameField = new TextItem("groupName", "Group Name");
         TextBoxItem jvmField = new TextBoxItem("jvm", "JVM");
 
-        final ComboBoxItem socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
-        socketBindingItem.setValueMap(presenter.getSocketBindings());
+        socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setDefaultToFirstOption(true);
 
         profileItem = new ComboBoxItem("profileName", "Profile");
@@ -308,5 +308,10 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         );
 
         addProp.setVisible(isEnabled);
+    }
+
+    @Override
+    public void updateSocketBindings(List<String> result) {
+        socketBindingItem.setValueMap(result);
     }
 }

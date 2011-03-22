@@ -69,6 +69,65 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     }
 
     @Override
+    public void loadServerGroup(final String name, final AsyncCallback<ServerGroupRecord> callback) {
+        ModelNode op = new ModelNode();
+        op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        op.get(ModelDescriptionConstants.ADDRESS).add("server-group", name);
+
+        dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode payload = response.get("result").asObject();
+
+                ServerGroupRecord record = factory.serverGroup().as();
+                record.setGroupName(name);
+                record.setProfileName(payload.get("profile").asString());
+                record.setJvm(payload.get("jvm").asProperty().getName());
+                record.setSocketBinding(payload.get("socket-binding-group").asString());
+
+                callback.onSuccess(record);
+
+            }
+        });
+
+    }
+
+    public void loadSocketBindingGroupNames(final AsyncCallback<List<String>> callback)
+    {
+        ModelNode op = new ModelNode();
+        op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+        op.get(ModelDescriptionConstants.OP_ADDR).setEmptyList();
+        op.get(ModelDescriptionConstants.CHILD_TYPE).set("socket-binding-group");
+
+        dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
+                List<String> records = new ArrayList<String>(payload.size());
+                for(ModelNode binding : payload)
+                {
+                    records.add(binding.asString());
+                }
+
+                callback.onSuccess(records);
+            }
+        });
+    }
+
+    @Override
     public void persist(ServerGroupRecord updatedEntity, final AsyncCallback<Boolean> callback) {
 
     }

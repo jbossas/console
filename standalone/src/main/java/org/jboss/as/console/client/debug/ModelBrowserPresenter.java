@@ -154,6 +154,12 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
         // operation
         operation.get(OP).set(selectedOperation);
 
+        if(selectedOperation.equals(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION))
+        {
+            operation.get(OP_ADDR).setEmptyList();
+            operation.get(ModelDescriptionConstants.CHILD_TYPE).set(item.title);
+        }
+
         getView().updateRequest(item.title, operation.toString());
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
