@@ -222,11 +222,11 @@ public class HttpClient {
     {
       // logger doesnt work, because it writes to stderr,
       // which causes GwtTest to interpret it as failure
-      System.out.println(
+      /*System.out.println(
           this.urlConnection.getRequestMethod()+ " " +
               this.urlConnection.getURL() +": "+
               this.urlConnection.getResponseCode()
-      );
+      );*/
 
       try
       {

@@ -158,7 +158,7 @@ public class XmlHttpProxyServlet extends HttpServlet
         String servletName = config.getServletName();
         String configName = config.getInitParameter("config.name");
         configResource = configName!=null ? configName : DEFAULT_CONFIG;
-        System.out.println("Configure "+servletName + " through "+configResource);
+        //System.out.println("Configure "+servletName + " through "+configResource);
     }
 
     private void getServices(HttpServletResponse res)
@@ -328,7 +328,7 @@ public class XmlHttpProxyServlet extends HttpServlet
 
                     if(null==testUser)
                     {
-                        System.out.println("Ignore service configuration credentials");
+                        //System.out.println("Ignore service configuration credentials");
                         if (service.containsKey("username")) userName = (String)service.get("username");
                         if (service.containsKey("password")) password = (String)service.get("password");
                     }
@@ -559,7 +559,7 @@ public class XmlHttpProxyServlet extends HttpServlet
 
             // TODO: the logger breaks the GWT tests, because it writes to stderr
             // we'll turn it off for now.
-            System.out.println("WARN: XHP proxy logging is turned off");
+            //System.out.println("WARN: XHP proxy logging is turned off");
             logger.setLevel(Level.OFF);
         }
         return logger;
