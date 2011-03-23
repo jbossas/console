@@ -5,6 +5,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import org.jboss.as.console.client.Build;
 
 public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> implements
         SignInPagePresenter.MyView {
@@ -52,6 +53,7 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
         panel.add(passwordField, "passwordFieldContainer");
         panel.add(signInButton, "signInButtonContainer");
 
+        panel.sinkEvents(Event.ONKEYDOWN);
 
         // dev options
         /*checkbox = new CheckBox();
@@ -61,15 +63,15 @@ public class SignInPageView extends ViewWithUiHandlers<SignInPageUIHandlers> imp
                 presenter.setBootStandalone(checkbox.getValue());
             }
         });
+        */
         HorizontalPanel options = new HorizontalPanel();
-        options.add(new Label("Boot 'standalone' console?"));
-        options.add(checkbox);
-
         options.getElement().setAttribute("style", "margin-top:20px; vertical-align:bottom;");
         options.getElement().setAttribute("align", "center");
-        panel.add(options);   */
 
-        panel.sinkEvents(Event.ONKEYDOWN);
+        HTML version = new HTML(Build.VERSION);
+        version.getElement().setAttribute("style", "color:#cccccc;font-size:10px; align:center");
+        options.add(version);
+        panel.add(options);
 
     }
 
