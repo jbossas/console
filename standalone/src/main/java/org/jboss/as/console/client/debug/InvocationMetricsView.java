@@ -27,6 +27,7 @@ public class InvocationMetricsView extends SuspendableViewImpl implements Invoca
     private InvocationMetricsPresenter presenter;
 
     private CellTable<SimpleMetric> invocationTable;
+    private double upperHalf;
 
     @Override
     public void setPresenter(InvocationMetricsPresenter presenter) {
@@ -50,14 +51,22 @@ public class InvocationMetricsView extends SuspendableViewImpl implements Invoca
 
             @Override
             public void render(Cell.Context context, SimpleMetric object, SafeHtmlBuilder sb) {
-                sb.appendHtmlConstant("<div style='text-align:right'>")
-                        .append(object.getValue())
+
+
+                int value = object.getValue().intValue();
+                String color = value>upperHalf ? "red" : "black";
+
+                // fallback when num records < 3
+                if(upperHalf==0) color ="black";
+
+                sb.appendHtmlConstant("<div style='text-align:right; color:"+color+"'>")
+                        .append(value)
                         .appendHtmlConstant("</div>");
             }
 
             @Override
             public String getValue(SimpleMetric metric) {
-                return String.valueOf(metric.getValue());
+                return String.valueOf(metric.getValue().intValue());
             }
         };
 
@@ -72,6 +81,16 @@ public class InvocationMetricsView extends SuspendableViewImpl implements Invoca
 
     @Override
     public void updateFrom(List<SimpleMetric> values) {
+
+        List<Double> l = new ArrayList<Double>(values.size());
+        for(SimpleMetric metric : values)
+        {
+            l.add(metric.getValue());
+        }
+
+        double[] quartiles = Stats.Quartiles(l);
+        upperHalf = quartiles[1];
+
         invocationTable.setRowCount(values.size());
         invocationTable.setRowData(values);
     }

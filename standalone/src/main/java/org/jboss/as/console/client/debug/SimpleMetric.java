@@ -6,9 +6,9 @@ package org.jboss.as.console.client.debug;
  */
 public final class SimpleMetric implements Comparable{
     String key;
-    Integer value;
+    Double value;
 
-    SimpleMetric(String key, Integer value) {
+    SimpleMetric(String key, Double value) {
         this.key = key;
         this.value = value;
     }
@@ -21,11 +21,11 @@ public final class SimpleMetric implements Comparable{
         this.key = key;
     }
 
-    public Integer getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

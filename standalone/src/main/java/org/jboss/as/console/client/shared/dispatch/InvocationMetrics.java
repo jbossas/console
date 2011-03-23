@@ -13,16 +13,16 @@ import java.util.Map;
  */
 public class InvocationMetrics {
 
-    private Map<String, Integer> numInvocations = new HashMap<String, Integer>();
+    private Map<String, Double> numInvocations = new HashMap<String, Double>();
 
     public void addInvocation(ModelNode operation)
     {
 
         String key = deriveKey(operation);
 
-        Integer value = numInvocations.get(key);
+        Double value = numInvocations.get(key);
         if(null==value)
-            numInvocations.put(key, 1);
+            numInvocations.put(key, 1.0);
         else
         {
             numInvocations.put(key, ++value);
@@ -40,7 +40,7 @@ public class InvocationMetrics {
         return key;
     }
 
-    public Map<String, Integer> getNumInvocations() {
+    public Map<String, Double> getNumInvocations() {
         return numInvocations;
     }
 }

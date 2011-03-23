@@ -62,7 +62,7 @@ public class InvocationMetricsPresenter extends Presenter<InvocationMetricsPrese
     }
 
     public void refreshMetrics() {
-        Map<String,Integer> invocations = metrics.getNumInvocations();
+        Map<String,Double> invocations = metrics.getNumInvocations();
         Set<String> keys = invocations.keySet();
         List<SimpleMetric> values = new ArrayList<SimpleMetric>();
         for(String key : keys)
