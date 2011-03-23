@@ -11,7 +11,9 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,76 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 }
 
                 callback.onSuccess(records);
+            }
+
+        });
+    }
+
+    public void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set("jvm");
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", host);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
+                List<String> records = new ArrayList<String>(payload.size());
+
+                for(ModelNode jvm : payload)
+                    records.add(jvm.asString());
+
+                callback.onSuccess(records);
+            }
+
+        });
+    }
+
+
+    public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(RECURSIVE).set(true);
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add("server-config", serverConfig);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode payload = response.get("result").asObject();
+
+                Server record = factory.server().as();
+                record.setName(payload.get("name").asString());
+                record.setGroup(payload.get("group").asString());
+                record.setStarted(payload.get("auto-start").asBoolean());
+
+                System.out.println(payload.toJSONString(false));
+
+                if(payload.get("jvm").isDefined())
+                {
+                    ModelNode jvm = payload.get("jvm").asObject();
+                    record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                }
+
+                callback.onSuccess(record);
             }
 
         });

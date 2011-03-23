@@ -13,6 +13,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

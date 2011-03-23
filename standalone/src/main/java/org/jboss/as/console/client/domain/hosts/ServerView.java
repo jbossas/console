@@ -3,9 +3,12 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.model.impl.MockServerGroupStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.PropertyTable;
@@ -13,7 +16,11 @@ import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.forms.*;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
+import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
@@ -32,6 +39,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     private ContentHeaderLabel nameLabel;
     private ComboBoxItem groupItem;
     private ComboBoxItem socketItem;
+    private ComboBoxItem jvmItem;
 
     private LayoutPanel layout;
 
@@ -122,17 +130,8 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         // ------------------------------------------------------
 
         socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
-        socketItem.setValueMap(new String[] {
-                MockServerGroupStore.SOCKET_DEFAULT,
-                MockServerGroupStore.SOCKET_DMZ,
-                MockServerGroupStore.SOCKET_NO_HTTP
-        });
 
-        ComboBoxItem jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
-        jvmItem.setValueMap(new String[]{
-                MockServerGroupStore.JVM_DEFAULT,
-                MockServerGroupStore.JVM_15
-        });
+        jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
 
         form.setFields(nameItem, startedItem, groupItem);
         form.setFieldsInGroup(
@@ -170,5 +169,15 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
             i++;
         }
         groupItem.setValueMap(names);
+    }
+
+    @Override
+    public void updateSocketBindings(List<String> result) {
+        socketItem.setValueMap(result);
+    }
+
+    @Override
+    public void updateVirtualMachines(List<String> result) {
+        jvmItem.setValueMap(result);
     }
 }
