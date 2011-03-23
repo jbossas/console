@@ -184,15 +184,16 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         return values.get(i);
     }
 
-    public void setItemSelected(int i, boolean b) {
-        if(b)
-        {
-            this.selectedItemIndex =  i;
-            currentValue.setText(values.get(selectedItemIndex));
+    public void setItemSelected(int i, boolean isSelected) {
+
+        if(!isSelected){
+            currentValue.setText("");
+            this.selectedItemIndex = -1;
         }
         else
         {
-            this.selectedItemIndex = -1;
+            this.selectedItemIndex =  i;
+            currentValue.setText(values.get(selectedItemIndex));
         }
     }
 
@@ -245,6 +246,13 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         else
         {
             currentValue.addStyleName("combobox-value-disabled");
+        }
+    }
+
+    public void clearSelection() {
+         for(int i=0; i< getItemCount(); i++)
+        {
+            setItemSelected(i, false);
         }
     }
 }

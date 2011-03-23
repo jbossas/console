@@ -26,6 +26,9 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public void setValue(String value) {
+
+        comboBox.clearSelection();
+
         for(int i=0; i< comboBox.getItemCount(); i++)
         {
             if(comboBox.getValue(i).equals(value))
