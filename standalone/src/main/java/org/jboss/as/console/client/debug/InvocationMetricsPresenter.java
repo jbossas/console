@@ -14,6 +14,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,7 @@ public class InvocationMetricsPresenter extends Presenter<InvocationMetricsPrese
             values.add(new SimpleMetric(key, invocations.get(key)));
         }
 
+        Collections.sort(values);
         getView().updateFrom(values);
     }
 

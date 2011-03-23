@@ -130,9 +130,8 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
     public void onTreeItemSelection(final AddressableTreeItem item) {
         Log.debug("Request " + item.addressString());
 
-        ModelNode operation = null;
-
-        operation = new ModelNode();
+        ModelNode operation = new ModelNode();
+        //operation.get(ModelDescriptionConstants.RECURSIVE).set(true);
         ModelNode addr = operation.get(OP_ADDR).setEmptyList();
 
         // address
