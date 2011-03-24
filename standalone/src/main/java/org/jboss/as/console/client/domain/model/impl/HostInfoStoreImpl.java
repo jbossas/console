@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.model.impl;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.core.client.GWT;
@@ -72,9 +73,13 @@ public class HostInfoStoreImpl implements HostInformationStore {
     // TODO: parse full server config resource
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {
+
+        // /host=local:read-children-resources(child-type=server-config, recursive=true)
+
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("server-config");
+        operation.get(RECURSIVE).set(true);
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
 
@@ -91,10 +96,21 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<Server> records = new ArrayList<Server>(payload.size());
-                for(int i=0; i<payload.size(); i++)
+                for(ModelNode item : payload)
                 {
                     Server record = factory.server().as();
-                    record.setName(payload.get(i).asString());
+
+                    ModelNode server = item.asProperty().getValue();
+
+                    record.setName(server.get("name").asString());
+                    record.setGroup(server.get("group").asString());
+                    record.setStarted(server.get("auto-start").asBoolean());
+
+                    if(server.get("jvm").isDefined())
+                    {
+                        ModelNode jvm = server.get("jvm").asObject();
+                        record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                    }
                     records.add(record);
                 }
 
@@ -135,7 +151,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
 
-    public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
+   /* public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).setEmptyList();
@@ -172,7 +188,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
             }
 
         });
-    }
+    }       */
 
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
@@ -180,7 +196,23 @@ public class HostInfoStoreImpl implements HostInformationStore {
         // TODO: terrible nesting of calls‚
         final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
 
-        getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", host);
+        operation.get(CHILD_TYPE).set("server");
+
+        //System.out.println(operation.toJSONString(false));
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                //System.out.println(response.toJSONString(false));
+            }
+        });
+
+        /*getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(final List<Server> serverNames) {
                 for(final Server handle : serverNames)
@@ -200,6 +232,40 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     });
                 }
             }
+        });*/
+    }
+
+    @Override
+    public void startServer(final String host, final String configName, boolean startIt, final AsyncCallback<Boolean> callback) {
+        // /host=local/server-config=server-one:start
+
+        final String actualOp = startIt ? "start" : "stop";
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(actualOp);
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add("server-config", configName);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if(response.get("outcome").equals("success"))
+                {
+                    callback.onSuccess(Boolean.TRUE);
+                }
+                else
+                {
+                    callback.onSuccess(Boolean.FALSE);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onSuccess(Boolean.FALSE);
+                Log.error("Failed to "+actualOp + " server " +configName);
+            }
         });
+
     }
 }

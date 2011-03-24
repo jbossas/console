@@ -3,6 +3,8 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -151,22 +153,30 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         LayoutPanel formPanel = new LayoutPanel();
         //formPanel.getElement().setAttribute("style", "background-color:#ffffff;margin:15px;");
 
-        Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
+        final Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Instance Name");
         TextItem serverItem = new TextItem("server", "Server Configuration");
         CheckBoxItem runningItem = new CheckBoxItem("running", "Running?");
-        ButtonItem enableItem = new ButtonItem("running", "Action") {
+        final ButtonItem enableItem = new ButtonItem("running", "Action") {
             @Override
-            public void setValue(Boolean value) {
+            public void setValue(Boolean b) {
 
-                if(value)
+                if(b)
                     button.setText("Stop");
                 else
                     button.setText("Start");
+
             }
         };
+
+        enableItem.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.startServer(form.getEditedEntity().getServer(), !enableItem.getValue());
+            }
+        });
 
         form.setFields(nameItem, serverItem, runningItem, enableItem);
         form.bind(instanceTable);

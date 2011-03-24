@@ -12,6 +12,7 @@ public interface HostInformationStore {
     void getHosts(AsyncCallback<List<Host>> callback);
     void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
     void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
-    void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback);
     void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
+
+    void startServer(String host, String configName, boolean startIt, final AsyncCallback<Boolean> callback);
 }

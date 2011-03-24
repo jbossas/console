@@ -4,7 +4,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -13,7 +12,12 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 
 import java.util.List;
 
@@ -22,7 +26,7 @@ import java.util.List;
  * @date 3/3/11
  */
 public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener {
+        implements HostSelectionEvent.HostSelectionListener {
 
     private HostInformationStore hostInfoStore;
 
@@ -97,7 +101,26 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         if(hostName!=null && serverName!=null)
         {
             loadJVMs(hostName);
-            loadServerDetails(hostName, serverName);
+
+            hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
+                @Override
+                public void onSuccess(List<Server> result) {
+
+                    for(Server server : result)
+                    {
+                        if(server.getName().equals(serverName))
+                        {
+                            selectedRecord = server;
+                            serverName = selectedRecord.getName();
+                            getView().setSelectedRecord(selectedRecord);
+
+                            break;
+                        }
+                    }
+
+                }
+            });
+
         }
         else
         {
@@ -123,19 +146,9 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         });
     }
 
-    private void loadServerDetails(String hostName, String serverName) {
-        hostInfoStore.loadServerConfig(hostName, serverName, new SimpleCallback<Server>() {
-            @Override
-            public void onSuccess(Server result) {
-                selectedRecord = result;
-                getView().setSelectedRecord(result);
-            }
-        });
-    }
-
     @Override
     protected void revealInParent() {
-         RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     @Override
@@ -153,7 +166,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
                     selectedRecord = result.get(0);
                     serverName = selectedRecord.getName();
                     loadJVMs(hostName);
-                    loadServerDetails(hostName, serverName);
+                    getView().setSelectedRecord(selectedRecord);
                 }
             }
         });

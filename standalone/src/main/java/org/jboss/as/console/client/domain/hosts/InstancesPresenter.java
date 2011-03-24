@@ -6,10 +6,20 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.*;
+import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.model.EntityFilter;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Predicate;
+import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 
 import java.util.List;
 
@@ -27,6 +37,7 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     private String selectedHost = null;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -152,5 +163,14 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
 
             return configMatch;
         }
+    }
+
+    public void startServer(String configName, boolean startIt) {
+        hostInfoStore.startServer(selectedHost, configName, startIt, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadHostData(selectedHost);
+            }
+        });
     }
 }
