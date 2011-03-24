@@ -70,11 +70,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
         });
     }
 
-    // TODO: parse full server config resource
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {
-
-        // /host=local:read-children-resources(child-type=server-config, recursive=true)
 
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -151,44 +148,44 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
 
-   /* public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
-        final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(RECURSIVE).set(true);
-        operation.get(ADDRESS).add("host", host);
-        operation.get(ADDRESS).add("server-config", serverConfig);
+    /* public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
+ final ModelNode operation = new ModelNode();
+ operation.get(OP).set(READ_RESOURCE_OPERATION);
+ operation.get(ADDRESS).setEmptyList();
+ operation.get(RECURSIVE).set(true);
+ operation.get(ADDRESS).add("host", host);
+ operation.get(ADDRESS).add("server-config", serverConfig);
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
+ dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+     @Override
+     public void onFailure(Throwable caught) {
+         callback.onFailure(caught);
+     }
 
-            @Override
-            public void onSuccess(DMRResponse result) {
+     @Override
+     public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode payload = response.get("result").asObject();
+         ModelNode response = ModelNode.fromBase64(result.getResponseText());
+         ModelNode payload = response.get("result").asObject();
 
-                Server record = factory.server().as();
-                record.setName(payload.get("name").asString());
-                record.setGroup(payload.get("group").asString());
-                record.setStarted(payload.get("auto-start").asBoolean());
+         Server record = factory.server().as();
+         record.setName(payload.get("name").asString());
+         record.setGroup(payload.get("group").asString());
+         record.setStarted(payload.get("auto-start").asBoolean());
 
-                //System.out.println(payload.toJSONString(false));
+         //System.out.println(payload.toJSONString(false));
 
-                if(payload.get("jvm").isDefined())
-                {
-                    ModelNode jvm = payload.get("jvm").asObject();
-                    record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
-                }
+         if(payload.get("jvm").isDefined())
+         {
+             ModelNode jvm = payload.get("jvm").asObject();
+             record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+         }
 
-                callback.onSuccess(record);
-            }
+         callback.onSuccess(record);
+     }
 
-        });
-    }       */
+ });
+}       */
 
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
@@ -196,7 +193,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         // TODO: terrible nesting of calls‚
         final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
 
-        final ModelNode operation = new ModelNode();
+        /*final ModelNode operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
@@ -210,35 +207,29 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 //System.out.println(response.toJSONString(false));
             }
-        });
+        });*/
 
-        /*getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+        getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(final List<Server> serverNames) {
                 for(final Server handle : serverNames)
                 {
-                    loadServerConfig(host, handle.getName(), new SimpleCallback<Server>() {
-                        @Override
-                        public void onSuccess(Server result) {
-                            ServerInstance instance = factory.serverInstance().as();
-                            instance.setName(result.getName());
-                            instance.setRunning(result.isStarted());
-                            instance.setServer(result.getName());
+                    ServerInstance instance = factory.serverInstance().as();
+                    instance.setName(handle.getName());
+                    instance.setRunning(handle.isStarted());
+                    instance.setServer(handle.getName());
 
-                            instanceList.add(instance);
-                            if(instanceList.size()==serverNames.size())
-                                callback.onSuccess(instanceList);
-                        }
-                    });
+                    instanceList.add(instance);
+
                 }
+
+                callback.onSuccess(instanceList);
             }
-        });*/
+        });
     }
 
     @Override
     public void startServer(final String host, final String configName, boolean startIt, final AsyncCallback<Boolean> callback) {
-        // /host=local/server-config=server-one:start
-
         final String actualOp = startIt ? "start" : "stop";
 
         final ModelNode operation = new ModelNode();
