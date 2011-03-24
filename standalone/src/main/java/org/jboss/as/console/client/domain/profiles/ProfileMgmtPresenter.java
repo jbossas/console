@@ -31,7 +31,7 @@ public class ProfileMgmtPresenter
     private ProfileStore profileStore;
     private SubsystemStore subsysStore;
     private ServerGroupStore serverGroupStore;
-    private boolean revealDefault = true;
+    private boolean hasBeenRevealed;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -65,21 +65,41 @@ public class ProfileMgmtPresenter
     }
 
 
-    /**
-     * Load default view.
-     *
-     * @param request
-     */
     @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-
-        // reveal default sub page
-        if(revealDefault && NameTokens.ProfileMgmtPresenter.equals(request.getNameToken()))
+    protected void onReveal() {
+        super.onReveal();
+        if(!hasBeenRevealed)
         {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ProfileOverviewPresenter));
-            revealDefault = false;
+            hasBeenRevealed = true;
+
+            // load profiles
+            profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
+                @Override
+                public void onSuccess(List<ProfileRecord> result) {
+                    getView().setProfiles(result);
+                }
+            });
+
+            // load server groups
+            serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+                @Override
+                public void onSuccess(List<ServerGroupRecord> result) {
+                    getView().setServerGroups(result);
+                }
+            });
+
+            if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+                placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ProfileOverviewPresenter));
         }
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
+        ProfileHeader header = new ProfileHeader("Configuration Profiles");
+        Console.MODULES.getHeader().setContent(header);
+
     }
 
     @Override
@@ -92,31 +112,6 @@ public class ProfileMgmtPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
-    }
-
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-
-        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
-        ProfileHeader header = new ProfileHeader("Configuration Profiles");
-        Console.MODULES.getHeader().setContent(header);
-
-        profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
-            @Override
-            public void onSuccess(List<ProfileRecord> result) {
-                getView().setProfiles(result);
-            }
-        });
-
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-            @Override
-            public void onSuccess(List<ServerGroupRecord> result) {
-                getView().setServerGroups(result);
-            }
-        });
-
     }
 
     @Override
