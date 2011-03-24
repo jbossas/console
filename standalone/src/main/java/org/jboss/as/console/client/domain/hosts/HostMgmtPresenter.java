@@ -92,7 +92,7 @@ public class HostMgmtPresenter
             });
 
             placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.ServerPresenter)
+                    new PlaceRequest(NameTokens.InstancesPresenter)
             );
             hasBeenRevealed = true;
         }

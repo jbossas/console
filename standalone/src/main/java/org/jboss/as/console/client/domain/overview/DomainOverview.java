@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.overview;
 
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;

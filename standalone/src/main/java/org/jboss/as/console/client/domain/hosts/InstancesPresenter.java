@@ -61,7 +61,6 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         selectedHost = request.getParameter("host", null);
-        assert selectedHost!=null : "Parameter 'host' is missing";
 
         String action = request.getParameter("action", null);
         if(action!=null)
@@ -78,9 +77,30 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     }
 
     private void refreshView() {
-        getView().setSelectedHost(selectedHost);
 
-        hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+        if(null== selectedHost)
+        {
+            // fallback
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                @Override
+                public void onSuccess(List<Host> result) {
+                    loadHostData(result.get(0).getName());
+                }
+            });
+        }
+        else
+        {
+            loadHostData(selectedHost);
+        }
+    }
+
+    private void loadHostData(String hostName) {
+
+        selectedHost = hostName;
+
+        getView().setSelectedHost(hostName);
+
+        hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
@@ -88,7 +108,7 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
             }
         });
 
-        hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
+        hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
                 getView().updateServerConfigurations(result);

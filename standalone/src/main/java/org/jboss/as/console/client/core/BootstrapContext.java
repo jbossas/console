@@ -84,7 +84,7 @@ public class BootstrapContext {
     public PlaceRequest getDefaultPlace() {
 
         PlaceRequest defaultPlace  = getProperty(STANDALONE).equals("true") ?
-                new PlaceRequest(NameTokens.serverConfig) : new PlaceRequest(NameTokens.ProfileMgmtPresenter);
+                new PlaceRequest(NameTokens.serverConfig) : new PlaceRequest(NameTokens.HostMgmtPresenter);
         return defaultPlace;
     }
 

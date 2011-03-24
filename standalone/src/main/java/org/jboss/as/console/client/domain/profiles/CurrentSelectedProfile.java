@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain;
+package org.jboss.as.console.client.domain.profiles;
 
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 

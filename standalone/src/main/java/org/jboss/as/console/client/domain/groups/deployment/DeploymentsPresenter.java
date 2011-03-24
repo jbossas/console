@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.deployment;
+package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

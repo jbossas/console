@@ -21,11 +21,11 @@ import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsView;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserView;
-import org.jboss.as.console.client.domain.CurrentSelectedProfile;
-import org.jboss.as.console.client.domain.DomainOverview;
-import org.jboss.as.console.client.domain.DomainOverviewPresenter;
-import org.jboss.as.console.client.domain.deployment.DeploymentsOverview;
-import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.overview.DomainOverview;
+import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
+import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -60,6 +60,8 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -244,6 +246,13 @@ public class CoreUIModule extends AbstractPresenterModule {
                 InvocationMetricsPresenter.MyView.class,
                 InvocationMetricsView.class,
                 InvocationMetricsPresenter.MyProxy.class);
+
+        // -------
+
+        bindPresenter(DataSourcePresenter.class,
+                DataSourcePresenter.MyView.class,
+                DatasourceView.class,
+                DataSourcePresenter.MyProxy.class);
     }
 
 }

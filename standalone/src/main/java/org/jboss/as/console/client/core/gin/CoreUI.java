@@ -21,9 +21,9 @@ import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.debug.DebugToolsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
-import org.jboss.as.console.client.domain.CurrentSelectedProfile;
-import org.jboss.as.console.client.domain.DomainOverviewPresenter;
-import org.jboss.as.console.client.domain.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
+import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
@@ -47,6 +47,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -133,4 +134,10 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<DebugToolsPresenter> getDebugTools();
     AsyncProvider<ModelBrowserPresenter> getModelBrowser();
     AsyncProvider<InvocationMetricsPresenter> getMetrics();
+
+
+    // ----------------------------------------------------------------------
+    // shared subsystems
+    AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
+
 }

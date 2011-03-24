@@ -59,6 +59,10 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
                 HostSelectionEvent.TYPE, this
         );
 
+
+        // show instances by default
+        stack.showWidget(1);
+
     }
 
     public Widget asWidget()
