@@ -190,7 +190,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
-        // TODO: terrible nesting of calls‚
+        // TODO: https://issues.jboss.org/browse/JBAS-9131
         final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
 
         /*final ModelNode operation = new ModelNode();
