@@ -96,7 +96,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
 
         if(hostName!=null && serverName!=null)
         {
-            loadJVMs();
+            loadJVMs(hostName);
             loadServerDetails(hostName, serverName);
         }
         else
@@ -114,8 +114,8 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
         hasBeenRevealed = true;
     }
 
-    private void loadJVMs() {
-        hostInfoStore.getVirtualMachines(hostName, new SimpleCallback<List<String>>() {
+    private void loadJVMs(String host) {
+        hostInfoStore.getVirtualMachines(host, new SimpleCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> result) {
                 getView().updateVirtualMachines(result);
@@ -152,6 +152,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
                 if(!result.isEmpty() && hasBeenRevealed) {
                     selectedRecord = result.get(0);
                     serverName = selectedRecord.getName();
+                    loadJVMs(hostName);
                     loadServerDetails(hostName, serverName);
                 }
             }

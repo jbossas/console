@@ -112,14 +112,15 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         toolStrip.addToolButton(delete);
 
         nameLabel = new ContentHeaderLabel("Name here ...");
-        nameLabel.setIcon("common/server_group.png");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
-        horzPanel.add(new Image(Icons.INSTANCE.serverGroup()));
+        Image image = new Image(Icons.INSTANCE.serverGroup());
+        horzPanel.add(image);
         horzPanel.add(nameLabel);
         horzPanel.add(toolStrip);
         toolStrip.getElement().getParentElement().setAttribute("width", "50%");
+        image.getElement().getParentElement().setAttribute("width", "25");
 
         panel.add(horzPanel);
 

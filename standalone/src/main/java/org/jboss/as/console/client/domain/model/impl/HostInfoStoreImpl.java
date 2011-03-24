@@ -157,7 +157,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 record.setGroup(payload.get("group").asString());
                 record.setStarted(payload.get("auto-start").asBoolean());
 
-                System.out.println(payload.toJSONString(false));
+                //System.out.println(payload.toJSONString(false));
 
                 if(payload.get("jvm").isDefined())
                 {

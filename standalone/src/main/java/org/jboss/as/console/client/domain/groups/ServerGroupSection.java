@@ -1,16 +1,16 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
-import org.jboss.as.console.client.Console;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.LHSNavigationTree;
+import org.jboss.as.console.client.widgets.LHSTreeItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ class ServerGroupSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        serverGroupTree = new Tree(DefaultTreeResources.INSTANCE);
+        serverGroupTree = new LHSNavigationTree();
         root = new TreeItem("Available Groups:");
         serverGroupTree.addItem(root);
 
@@ -58,22 +58,7 @@ class ServerGroupSection {
         {
             String groupName = record.getGroupName();
             final String token = "domain/" + NameTokens.ServerGroupPresenter + ";name=" + groupName;
-
-            HTML link = new HTML(groupName);
-            final TreeItem item = new TreeItem(link);
-            item.setStyleName("lhs-tree-item");
-
-            link.addClickHandler(new ClickHandler()
-            {
-                @Override
-                public void onClick(ClickEvent event) {
-                    serverGroupTree.setSelectedItem(item);
-                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                            Places.fromString(token)
-                    );
-                }
-            });
-
+            final TreeItem item = new LHSTreeItem(groupName, token);
             root.addItem(item);
         }
 

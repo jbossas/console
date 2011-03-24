@@ -1,16 +1,17 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
-import org.jboss.as.console.client.Console;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.LHSNavItem;
+import org.jboss.as.console.client.widgets.LHSNavigationTree;
+import org.jboss.as.console.client.widgets.LHSTreeItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ class ServersSection {
 
         // --------------------------------------------------
 
-        hostTree = new Tree(DefaultTreeResources.INSTANCE);
+        hostTree = new LHSNavigationTree();
         root = new TreeItem("Servers on Host:");
         hostTree.addItem(root);
 
@@ -69,25 +70,8 @@ class ServersSection {
         for(Server server: servers)
         {
             final String serverName = server.getName();
-
-
-            HTML link = new HTML(serverName);
-            final TreeItem item = new TreeItem(link);
-            item.setStyleName("lhs-tree-item");
-
-            link.addClickHandler(new ClickHandler()
-            {
-                @Override
-                public void onClick(ClickEvent event) {
-                    hostTree.setSelectedItem(item);
-                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                            Places.fromString(buildToken(serverName))
-                    );
-                }
-            });
-
+            final TreeItem item = new LHSTreeItem(serverName, buildToken(serverName));
             root.addItem(item);
-
         }
 
         if(servers.isEmpty())
@@ -107,12 +91,5 @@ class ServersSection {
                 ";host="+selectedHost +
                 ";server=" + serverName;
         return token;
-    }
-
-    class StyledTreeItem extends TreeItem {
-        StyledTreeItem(String html) {
-            super(html);
-            setStyleName("lhs-tree-item");
-        }
     }
 }

@@ -75,30 +75,34 @@ public class HostMgmtPresenter
     @Override
     protected void onReveal() {
         super.onReveal();
-        if(!hasBeenRevealed &&
-                NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
-        {
-            placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.ServerPresenter)
-            );
-            hasBeenRevealed = true;
-        }
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
         ProfileHeader header = new ProfileHeader("Host Management");
         Console.MODULES.getHeader().setContent(header);
 
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-            @Override
-            public void onSuccess(List<Host> result) {
-                getView().updateHosts(result);
-            }
-        });
+        if(!hasBeenRevealed &&
+                NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        {
+
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                @Override
+                public void onSuccess(List<Host> result) {
+                    getView().updateHosts(result);
+                }
+            });
+
+            placeManager.revealRelativePlace(
+                    new PlaceRequest(NameTokens.ServerPresenter)
+            );
+            hasBeenRevealed = true;
+        }
+
+
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
     }
 
     @Override

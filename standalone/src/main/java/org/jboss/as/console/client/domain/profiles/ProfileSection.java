@@ -2,19 +2,22 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
+import org.jboss.as.console.client.widgets.LHSNavigationTree;
+import org.jboss.as.console.client.widgets.LHSTreeItem;
 
 import java.util.List;
 
@@ -37,24 +40,7 @@ class ProfileSection {
         layout.setStyleName("stack-section");
 
 
-        subsysTree = new Tree(DefaultTreeResources.INSTANCE);
-        subsysTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
-            @Override
-            public void onSelection(SelectionEvent<TreeItem> event) {
-                TreeItem selectedItem = event.getSelectedItem();
-                if(selectedItem.getElement().hasAttribute("token"))
-                {
-                    String token = selectedItem.getElement().getAttribute("token");
-                    if(token!=null)
-                    {
-                        Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                                Places.fromString(token)
-                        );
-                    }
-                }
-            }
-        });
-
+        subsysTree = new LHSNavigationTree();
         root = new TreeItem("Subsystems in Profile:");
         subsysTree.addItem(root);
 
@@ -122,11 +108,8 @@ class ProfileSection {
 
         for(SubsystemRecord subsys: subsystems)
         {
-            TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
-            item.getElement().setAttribute("token", "domain/profile/"+
-                subsys.getTitle().toLowerCase().replace(" ", "_"));
-
-            item.setStyleName("lhs-tree-item");
+            String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
+            TreeItem item = new LHSTreeItem(subsys.getTitle(), token);
             root.addItem(item);
         }
 

@@ -317,6 +317,10 @@ color:#C0C0C0;
     background-color:#d9e4f6;
 }
 
+.lhs-tree-item-selected {
+    background-color:#d9e4f6;
+}
+
 .cell-record {
     border-bottom: 1px solid #A7ABB4;
     height: 20px;

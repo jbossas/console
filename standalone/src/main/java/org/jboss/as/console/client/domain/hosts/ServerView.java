@@ -103,14 +103,15 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         toolStrip.addToolButton(delete);
 
         nameLabel = new ContentHeaderLabel("Name here ...");
-        nameLabel.setIcon("common/server_group.png");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
-        horzPanel.add(new Image(Icons.INSTANCE.server()));
+        Image image = new Image(Icons.INSTANCE.server());
+        horzPanel.add(image);
         horzPanel.add(nameLabel);
         horzPanel.add(toolStrip);
         toolStrip.getElement().getParentElement().setAttribute("width", "50%");
+        image.getElement().getParentElement().setAttribute("width", "25");
 
         panel.add(horzPanel);
 
