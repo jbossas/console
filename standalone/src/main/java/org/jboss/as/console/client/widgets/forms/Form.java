@@ -39,6 +39,7 @@ public class Form<T> {
     BeanFactory factory = GWT.create(BeanFactory.class);
 
     private int nextId = 1;
+    private T editedEntity;
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
@@ -105,6 +106,8 @@ public class Form<T> {
     public void edit(T bean) {
 
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
+
+        this.editedEntity = bean;
 
         if(null==autoBean)
             throw new IllegalArgumentException("Not an auto bean: " + bean.getClass());
@@ -274,5 +277,9 @@ public class Form<T> {
             }
         });
         instanceTable.setSelectionModel(selectionModel);
+    }
+
+    public T getEditedEntity() {
+        return editedEntity;
     }
 }
