@@ -68,6 +68,13 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+        reloadRootModel();
+
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
     }

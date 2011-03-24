@@ -80,14 +80,13 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
     private void refreshView() {
         getView().setSelectedHost(selectedHost);
 
-        // TODO: server instances
-        /*hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+        hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
                 getView().updateInstances(result);
             }
-        });*/
+        });
 
         hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
             @Override

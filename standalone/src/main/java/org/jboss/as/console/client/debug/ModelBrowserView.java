@@ -47,7 +47,7 @@ public class ModelBrowserView extends SuspendableViewImpl implements ModelBrowse
 
         LayoutPanel layout = new RHSContentPanel("Model Browser");
 
-        Button btn = new DefaultButton("Reload Root Model");
+        Button btn = new DefaultButton("Refresh Tree");
         btn.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.domain.model.impl;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -7,6 +9,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -172,7 +175,31 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
     @Override
-    public void getServerInstances(String serverConfig, AsyncCallback<List<ServerInstance>> callback) {
+    public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
+        // TODO: terrible nesting of calls‚
+        final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
+
+        getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(final List<Server> serverNames) {
+                for(final Server handle : serverNames)
+                {
+                    loadServerConfig(host, handle.getName(), new SimpleCallback<Server>() {
+                        @Override
+                        public void onSuccess(Server result) {
+                            ServerInstance instance = factory.serverInstance().as();
+                            instance.setName(result.getName());
+                            instance.setRunning(result.isStarted());
+                            instance.setServer(result.getName());
+
+                            instanceList.add(instance);
+                            if(instanceList.size()==serverNames.size())
+                                callback.onSuccess(instanceList);
+                        }
+                    });
+                }
+            }
+        });
     }
 }
