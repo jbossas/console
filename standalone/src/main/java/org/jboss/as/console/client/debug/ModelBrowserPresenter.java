@@ -139,6 +139,7 @@ public class ModelBrowserPresenter extends Presenter<ModelBrowserPresenter.MyVie
 
         ModelNode operation = new ModelNode();
         //operation.get(ModelDescriptionConstants.RECURSIVE).set(true);
+        operation.get("include-runtime").set(1);
         ModelNode addr = operation.get(OP_ADDR).setEmptyList();
 
         // address
