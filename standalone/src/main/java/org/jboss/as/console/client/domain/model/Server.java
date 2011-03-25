@@ -11,6 +11,9 @@ public interface Server {
     String getGroup();
     void setGroup(String group);
 
+    boolean isAutoStart();
+    void setAutoStart(boolean b);
+
     boolean isStarted();
     void setStarted(boolean b);
 

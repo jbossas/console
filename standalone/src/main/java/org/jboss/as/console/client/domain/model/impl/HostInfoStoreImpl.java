@@ -76,9 +76,9 @@ public class HostInfoStoreImpl implements HostInformationStore {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("server-config");
-        operation.get(RECURSIVE).set(true);
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
+        operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -101,7 +101,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setName(server.get("name").asString());
                     record.setGroup(server.get("group").asString());
-                    record.setStarted(server.get("auto-start").asBoolean());
+                    record.setAutoStart(server.get("auto-start").asBoolean());
+                    record.setStarted(server.get("status").asString().equals("STARTED"));
 
                     if(server.get("jvm").isDefined())
                     {
@@ -147,67 +148,10 @@ public class HostInfoStoreImpl implements HostInformationStore {
         });
     }
 
-
-    /* public void loadServerConfig(String host, String serverConfig, final AsyncCallback<Server> callback) {
- final ModelNode operation = new ModelNode();
- operation.get(OP).set(READ_RESOURCE_OPERATION);
- operation.get(ADDRESS).setEmptyList();
- operation.get(RECURSIVE).set(true);
- operation.get(ADDRESS).add("host", host);
- operation.get(ADDRESS).add("server-config", serverConfig);
-
- dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-     @Override
-     public void onFailure(Throwable caught) {
-         callback.onFailure(caught);
-     }
-
-     @Override
-     public void onSuccess(DMRResponse result) {
-
-         ModelNode response = ModelNode.fromBase64(result.getResponseText());
-         ModelNode payload = response.get("result").asObject();
-
-         Server record = factory.server().as();
-         record.setName(payload.get("name").asString());
-         record.setGroup(payload.get("group").asString());
-         record.setStarted(payload.get("auto-start").asBoolean());
-
-         //System.out.println(payload.toJSONString(false));
-
-         if(payload.get("jvm").isDefined())
-         {
-             ModelNode jvm = payload.get("jvm").asObject();
-             record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
-         }
-
-         callback.onSuccess(record);
-     }
-
- });
-}       */
-
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
-        // TODO: https://issues.jboss.org/browse/JBAS-9131
         final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
-
-        /*final ModelNode operation = new ModelNode();
-        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(ADDRESS).add("host", host);
-        operation.get(CHILD_TYPE).set("server");
-
-        //System.out.println(operation.toJSONString(false));
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                //System.out.println(response.toJSONString(false));
-            }
-        });*/
 
         getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override
@@ -241,7 +185,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                if(response.get("outcome").equals("success"))
+                if(response.get("outcome").asString().equals("success"))
                 {
                     callback.onSuccess(Boolean.TRUE);
                 }

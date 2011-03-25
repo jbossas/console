@@ -124,9 +124,8 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Server Name");
-        CheckBoxItem startedItem = new CheckBoxItem("started", "Start Instances?");
+        CheckBoxItem startedItem = new CheckBoxItem("autoStart", "Start Instances?");
         groupItem = new ComboBoxItem("group", "Server Group");
-
 
         // ------------------------------------------------------
 

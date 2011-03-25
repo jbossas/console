@@ -11,8 +11,10 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -165,11 +167,49 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
         }
     }
 
-    public void startServer(String configName, boolean startIt) {
+    public void startServer(final String configName, final boolean startIt) {
         hostInfoStore.startServer(selectedHost, configName, startIt, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(Boolean result) {
-                loadHostData(selectedHost);
+            public void onSuccess(Boolean wasSuccessful) {
+
+                String msg;
+                if(startIt)
+                {
+                    msg = wasSuccessful ?
+                            "Successfully started server "+configName :
+                            "Failed to start server "+configName;
+                }
+                else
+                {
+                    msg = wasSuccessful ?
+                            "Successfully stopped server "+configName :
+                            "Failed to stop server "+configName;
+
+                }
+
+                Message.Severity sev = wasSuccessful ? Message.Severity.Info : Message.Severity.Error;
+                Console.MODULES.getMessageCenter().notify(
+                    new Message(msg, sev)
+                );
+
+                if(wasSuccessful)
+                {
+                    // if the operation was success we merge the local state changes into the mdoel
+                    // to avoid a polling request (server started async)
+
+                    hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+                        @Override
+                        public void onSuccess(List<ServerInstance> result) {
+                            serverInstances = result;
+
+                            // merge local state
+                            for(ServerInstance instance : result)
+                                if(instance.getServer().equals(configName)) instance.setRunning(startIt);
+
+                            getView().updateInstances(result);
+                        }
+                    });
+                }
             }
         });
     }

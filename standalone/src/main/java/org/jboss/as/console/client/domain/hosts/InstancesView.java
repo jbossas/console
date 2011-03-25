@@ -10,15 +10,24 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.widgets.*;
+import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
@@ -158,7 +167,7 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
 
         TextItem nameItem = new TextItem("name", "Instance Name");
         TextItem serverItem = new TextItem("server", "Server Configuration");
-        CheckBoxItem runningItem = new CheckBoxItem("running", "Running?");
+
         final ButtonItem enableItem = new ButtonItem("running", "Action") {
             @Override
             public void setValue(Boolean b) {
@@ -174,11 +183,12 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         enableItem.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.startServer(form.getEditedEntity().getServer(), !enableItem.getValue());
+                ServerInstance instance = form.getEditedEntity();
+                presenter.startServer(instance.getServer(), !instance.isRunning());
             }
         });
 
-        form.setFields(nameItem, serverItem, runningItem, enableItem);
+        form.setFields(nameItem, enableItem, serverItem);
         form.bind(instanceTable);
 
         Widget formWidget = form.asWidget();
