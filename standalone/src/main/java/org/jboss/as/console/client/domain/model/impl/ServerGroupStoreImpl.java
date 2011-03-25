@@ -1,9 +1,7 @@
 package org.jboss.as.console.client.domain.model.impl;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -13,12 +11,12 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 
 /**
@@ -129,12 +127,44 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     }
 
     @Override
-    public void persist(ServerGroupRecord updatedEntity, final AsyncCallback<Boolean> callback) {
+    public void save(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
 
     }
 
     @Override
-    public void deleteGroup(ServerGroupRecord selectedRecord, final AsyncCallback<Boolean> callback) {
+    public void create(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
+
+        final ModelNode group = new ModelNode();
+        group.get(OP).set(ModelDescriptionConstants.ADD);
+        group.get(ADDRESS).set(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
+
+        group.get("profile").set(record.getProfileName());
+        //group.get("jvm").set(record.getJvm());
+        //group.get("socket-binding").set(record.getSocketBinding());
+
+
+        System.out.println(group.toJSONString(false));
+
+        dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Failed to create server group: " + caught);
+                callback.onSuccess(Boolean.FALSE);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                String outcome = response.get("outcome").asString();
+
+                Boolean returnValue = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                callback.onSuccess(returnValue);
+            }
+        });
+    }
+
+    @Override
+    public void delete(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
 
     }
 }

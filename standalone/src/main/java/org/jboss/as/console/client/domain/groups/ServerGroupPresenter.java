@@ -19,10 +19,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.*;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.dmr.client.ModelDescriptionConstants;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -162,7 +159,7 @@ public class ServerGroupPresenter
 
         if(selectedRecord!=null)
         {
-            serverGroupStore.deleteGroup(selectedRecord, new SimpleCallback<Boolean>() {
+            serverGroupStore.delete(selectedRecord, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
 
@@ -179,9 +176,7 @@ public class ServerGroupPresenter
 
     }
 
-    public void onNewGroup(ServerGroupRecord newGroup) {
-
-        workOn(newGroup);
+    public void createNewGroup(final ServerGroupRecord newGroup) {
 
         // close popup
         if(window!=null && window.isShowing())
@@ -189,8 +184,28 @@ public class ServerGroupPresenter
             window.hide();
         }
 
-        // save changes
-        onSaveChanges(newGroup);
+        getView().setEnabled(false);
+
+        serverGroupStore.create(newGroup, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+
+                if (success) {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Created " + newGroup.getGroupName(), Message.Severity.Info)
+                    );
+
+                    workOn(newGroup);
+
+                } else {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to create " + newGroup.getGroupName(), Message.Severity.Error)
+                    );
+
+                }
+
+            }
+        });
     }
 
     public void onSaveChanges(ServerGroupRecord updatedEntity) {
@@ -200,7 +215,7 @@ public class ServerGroupPresenter
                 new Message("Saved " + updatedEntity.getGroupName(), Message.Severity.Info)
         );
 
-        serverGroupStore.persist(updatedEntity, new SimpleCallback<Boolean>() {
+        serverGroupStore.save(updatedEntity, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
 
@@ -215,8 +230,8 @@ public class ServerGroupPresenter
 
     public void createNewGroup() {
         window = new DefaultWindow("Create Server Group");
-        window.setWidth(300);
-        window.setHeight(250);
+        window.setWidth(320);
+        window.setHeight(240);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {

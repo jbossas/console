@@ -1,10 +1,8 @@
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -21,12 +19,12 @@ import java.util.List;
  */
 class NewGroupWizard {
 
-    LayoutPanel layout;
+    VerticalPanel layout;
 
     public NewGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
-        layout = new LayoutPanel();
+        layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-        layout.getElement().setAttribute("style", "margin:15px;");
+        layout.getElement().setAttribute("cellpadding", "10");
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
@@ -42,13 +40,13 @@ class NewGroupWizard {
             i++;
         }
 
-        basedOnSelection.setValueMap(exists);
         basedOnSelection.setDefaultToFirstOption(true);
+        basedOnSelection.setValueMap(exists);
 
         form.setFields(nameField, basedOnSelection);
 
         Button submit = new DefaultButton("Save");
-        submit.getElement().setAttribute("style", "float:right");
+        submit.getElement().setAttribute("style", "width:50px;height:25px");
         submit.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -69,7 +67,7 @@ class NewGroupWizard {
                 newGroup.setProfileName(base.getProfileName());
                 newGroup.setProperties(base.getProperties());
 
-                presenter.onNewGroup(newGroup);
+                presenter.createNewGroup(newGroup);
 
             }
         });
@@ -79,9 +77,7 @@ class NewGroupWizard {
         Widget formWidget = form.asWidget();
         layout.add(formWidget);
         layout.add(submit);
-
-        layout.setWidgetTopHeight(formWidget, 0, Style.Unit.PX, 150, Style.Unit.PX);
-        layout.setWidgetTopHeight(submit, 160, Style.Unit.PX, 20, Style.Unit.PX);
+        submit.getElement().getParentElement().setAttribute("align", "right");
 
     }
 

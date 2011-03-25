@@ -13,6 +13,8 @@ public interface ServerGroupStore {
     void loadServerGroups(AsyncCallback<List<ServerGroupRecord>> callback);
     void loadServerGroup(String name, AsyncCallback<ServerGroupRecord> callback);
     void loadSocketBindingGroupNames(final AsyncCallback<List<String>> callback);
-    void persist(ServerGroupRecord updatedEntity, AsyncCallback<Boolean> callback);
-    void deleteGroup(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
+
+    void save(ServerGroupRecord updatedEntity, AsyncCallback<Boolean> callback);
+    void create(ServerGroupRecord record, final AsyncCallback<Boolean> callback);
+    void delete(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
 }

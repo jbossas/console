@@ -117,10 +117,8 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
                             break;
                         }
                     }
-
                 }
             });
-
         }
         else
         {
