@@ -249,8 +249,6 @@ public class HttpClient {
 
       return (this.urlConnection.getInputStream());
     } catch (Exception e) {
-      System.out.println("Failed to open " + this.urlConnection.getURL());
-      e.printStackTrace();
       return null;
     }
   }
