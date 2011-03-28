@@ -231,8 +231,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
         serverConfig.get("auto-start").set(record.isAutoStart());
         serverConfig.get("socket-binding-port-offset").set(record.getPortOffset());
 
-        System.out.println(serverConfig.toJSONString(false));
-
         dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -254,5 +252,31 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void saveServerConfig(String host, Server updatedEntity) {
         Log.warn("Save server config not implemented yet!");
+    }
+
+    @Override
+    public void deleteServerConfig(String host, Server record, final AsyncCallback<Boolean> callback) {
+        final ModelNode serverConfig = new ModelNode();
+        serverConfig.get(OP).set(ModelDescriptionConstants.REMOVE);
+        serverConfig.get(ADDRESS).add("host", host);
+        serverConfig.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, record.getName());
+
+
+        dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Failed to create server config: " + caught);
+                callback.onSuccess(Boolean.FALSE);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                String outcome = response.get("outcome").asString();
+
+                Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                callback.onSuccess(wasSuccessful);
+            }
+        });
     }
 }

@@ -19,4 +19,6 @@ public interface HostInformationStore {
     void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
 
     void saveServerConfig(String host,Server updatedEntity);
+
+    void deleteServerConfig(String selectedHost, Server selectedRecord, AsyncCallback<Boolean> asyncCallback);
 }

@@ -13,6 +13,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.Places;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class HostMgmtPresenter
         extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener {
+        implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
 
     private final PlaceManager placeManager;
 
@@ -65,6 +66,7 @@ public class HostMgmtPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
     @Override
@@ -120,5 +122,18 @@ public class HostMgmtPresenter
                 getView().updateServers(result);
             }
         });
+    }
+
+    @Override
+    public void onStaleModel(String modelName) {
+        if(modelName.equals(StaleModelEvent.SERVER_CONFIGURATIONS))
+        {
+            hostInfoStore.getServerConfigurations(hostSelection, new SimpleCallback<List<Server>>() {
+                @Override
+                public void onSuccess(List<Server> result) {
+                    getView().updateServers(result);
+                }
+            });
+        }
     }
 }

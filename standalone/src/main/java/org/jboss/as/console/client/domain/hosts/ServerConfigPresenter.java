@@ -183,12 +183,20 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
 
-        window.setWidget(
-                new NewServerConfigWizard(this, serverGroups).asWidget() // TODO: fragile (serverGroups==null)
-        );
 
-        window.setGlassEnabled(true);
-        window.center();
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                serverGroups = result;
+                window.setWidget(
+                        new NewServerConfigWizard(ServerConfigPresenter.this, serverGroups).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+
     }
 
     public void closeDialoge() {
@@ -271,6 +279,34 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         getView().setEnabled(true);
     }
 
+    public void deleteCurrentRecord() {
+        hostInfoStore.deleteServerConfig(selectedHost, selectedRecord, new AsyncCallback<Boolean>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Failed to delete server config "+selectedRecord.getName(), Message.Severity.Error)
+                );
+            }
+
+            @Override
+            public void onSuccess(Boolean wasSuccessful) {
+                if(wasSuccessful)
+                {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Successfully deleted server config "+selectedRecord.getName())
+                    );
+
+                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+                }
+                else
+                {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to delete server config "+selectedRecord.getName(), Message.Severity.Error)
+                    );
+                }
+            }
+        });
+    }
 
 
 }

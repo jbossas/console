@@ -96,11 +96,11 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             public void onClick(ClickEvent clickEvent) {
                 Feedback.confirm(
                         "Delete Server Configuration",
-                        "Do you want to delete this server configuration?",
+                        "Do you want to delete server config '"+form.getEditedEntity().getName()+"'?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-
+                                presenter.deleteCurrentRecord();
                             }
                         });
             }
