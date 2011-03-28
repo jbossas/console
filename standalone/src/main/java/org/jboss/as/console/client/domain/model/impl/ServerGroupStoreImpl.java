@@ -87,7 +87,14 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 ServerGroupRecord record = factory.serverGroup().as();
                 record.setGroupName(name);
                 record.setProfileName(payload.get("profile").asString());
-                record.setJvm(payload.get("jvm").asProperty().getName());
+
+                try {
+                    if(payload.has("jvm") && payload.get("jvm").isDefined())
+                        record.setJvm(payload.get("jvm").asProperty().getName());
+                } catch (IllegalArgumentException e) {
+                    // TODO: properly deal with the mode derivations
+                }
+
                 record.setSocketBinding(payload.get("socket-binding-group").asString());
 
                 callback.onSuccess(record);
@@ -128,7 +135,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
     @Override
     public void save(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
-
+        Log.warn("Save server-group not implemented yet!");
     }
 
     @Override
@@ -136,14 +143,11 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         final ModelNode group = new ModelNode();
         group.get(OP).set(ModelDescriptionConstants.ADD);
-        group.get(ADDRESS).set(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
+        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
 
         group.get("profile").set(record.getProfileName());
         //group.get("jvm").set(record.getJvm());
         //group.get("socket-binding").set(record.getSocketBinding());
-
-
-        System.out.println(group.toJSONString(false));
 
         dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
             @Override
@@ -157,14 +161,33 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 String outcome = response.get("outcome").asString();
 
-                Boolean returnValue = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
-                callback.onSuccess(returnValue);
+                Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                callback.onSuccess(wasSuccessful);
             }
         });
     }
 
     @Override
     public void delete(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
+        final ModelNode group = new ModelNode();
+        group.get(OP).set(ModelDescriptionConstants.REMOVE);
+        group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
 
+        dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Failed to remove server group: " + caught);
+                callback.onSuccess(Boolean.FALSE);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                String outcome = response.get("outcome").asString();
+
+                Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                callback.onSuccess(wasSuccessful);
+            }
+        });
     }
 }

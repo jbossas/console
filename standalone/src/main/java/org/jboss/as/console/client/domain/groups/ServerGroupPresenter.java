@@ -18,7 +18,12 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.domain.model.*;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
@@ -81,7 +86,7 @@ public class ServerGroupPresenter
         {
             selectedRecord = null;
             groupName = null;
-            createNewGroup();
+            launchNewGroupDialoge();
         }
     }
 
@@ -161,14 +166,25 @@ public class ServerGroupPresenter
         {
             serverGroupStore.delete(selectedRecord, new SimpleCallback<Boolean>() {
                 @Override
-                public void onSuccess(Boolean result) {
+                public void onSuccess(Boolean wasSuccessful) {
+                    if(wasSuccessful)
+                    {
+                        Console.MODULES.getMessageCenter().notify(
+                                new Message("Deleted server group "+selectedRecord.getGroupName())
+                        );
 
+                        getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+                    }
+                    else
+                    {
+                        Console.MODULES.getMessageCenter().notify(
+                                new Message("Failed to delete "+selectedRecord.getGroupName())
+                        );
+                    }
                 }
             });
 
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Deleted "+selectedRecord.getGroupName())
-            );
+
         }
 
         // switch to alternate record instead
@@ -195,7 +211,11 @@ public class ServerGroupPresenter
                             new Message("Created " + newGroup.getGroupName(), Message.Severity.Info)
                     );
 
+
+                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+
                     workOn(newGroup);
+
 
                 } else {
                     Console.MODULES.getMessageCenter().notify(
@@ -228,7 +248,7 @@ public class ServerGroupPresenter
         getView().setSelectedRecord(selectedRecord);
     }
 
-    public void createNewGroup() {
+    public void launchNewGroupDialoge() {
         window = new DefaultWindow("Create Server Group");
         window.setWidth(320);
         window.setHeight(240);

@@ -3,6 +3,9 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -46,12 +49,15 @@ class NewGroupWizard {
         form.setFields(nameField, basedOnSelection);
 
         Button submit = new DefaultButton("Save");
-        submit.getElement().setAttribute("style", "width:50px;height:25px");
+        submit.getElement().setAttribute("style", "width:50px;height:18px");
         submit.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-              // merge base
+                // merge base
                 ServerGroupRecord newGroup = form.getUpdatedEntity();
+                if(newGroup.getGroupName().equals("")
+                        || newGroup.getGroupName() == null) return;
+
                 ServerGroupRecord base = null;
                 for(ServerGroupRecord rec : existing)
                 {
@@ -72,12 +78,38 @@ class NewGroupWizard {
             }
         });
 
+
+        Label cancel = new Label("Cancel");
+        cancel.setStyleName("html-link");
+        cancel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+            }
+        });
+
+        HorizontalPanel options = new HorizontalPanel();
+        options.getElement().setAttribute("style", "width:100%");
+
+        HTML spacer = new HTML("&nbsp;");
+        options.add(spacer);
+        spacer.getElement().getParentElement().setAttribute("width", "100%");
+
+        options.add(submit);
+        options.add(spacer);
+        options.add(cancel);
+        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
+        submit.getElement().getParentElement().setAttribute("align", "right");
+        submit.getElement().getParentElement().setAttribute("width", "100%");
+
         // ----------------------------------------
 
         Widget formWidget = form.asWidget();
+
+        layout.add(new HTML("Create a new server group based on an existing one. " +
+                "The new group will inherit the properties of the selected group."));
         layout.add(formWidget);
-        layout.add(submit);
-        submit.getElement().getParentElement().setAttribute("align", "right");
+        layout.add(options);
 
     }
 

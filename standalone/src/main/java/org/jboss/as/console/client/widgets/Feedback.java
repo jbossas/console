@@ -31,6 +31,7 @@ public class Feedback {
         HTML text = new HTML(message);
 
         DefaultButton ok = new DefaultButton("OK");
+        ok.getElement().setAttribute("style", "width:50px;height:18px");
         ok.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -51,14 +52,17 @@ public class Feedback {
 
         HorizontalPanel options = new HorizontalPanel();
         options.getElement().setAttribute("style", "width:100%");
+
         HTML spacer = new HTML("&nbsp;");
         options.add(spacer);
         spacer.getElement().getParentElement().setAttribute("width", "100%");
 
         options.add(ok);
+        options.add(spacer);
         options.add(cancel);
-
-        cancel.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
+        ok.getElement().getParentElement().setAttribute("align", "right");
+        ok.getElement().getParentElement().setAttribute("width", "100%");
 
         panel.add(text);
         panel.add(options);

@@ -13,6 +13,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
@@ -43,6 +44,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private ComboBoxItem profileItem;
     private ComboBoxItem socketBindingItem;
+    private ComboBoxItem jvmField;
 
     private ToolButton edit;
 
@@ -130,7 +132,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.setNumColumns(2);
 
         TextItem nameField = new TextItem("groupName", "Group Name");
-        TextBoxItem jvmField = new TextBoxItem("jvm", "JVM");
+        jvmField = new ComboBoxItem("jvm", "Virtual Machine");
+        jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
 
         socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setDefaultToFirstOption(true);
