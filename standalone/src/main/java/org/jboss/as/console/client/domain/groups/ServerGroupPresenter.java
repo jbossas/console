@@ -268,4 +268,9 @@ public class ServerGroupPresenter
         window.center();
     }
 
+    public void closeDialoge()
+    {
+        if(window!=null) window.hide();
+    }
+
 }

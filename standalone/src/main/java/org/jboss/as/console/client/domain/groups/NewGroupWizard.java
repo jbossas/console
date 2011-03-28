@@ -84,7 +84,7 @@ class NewGroupWizard {
         cancel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.closeDialoge();
             }
         });
 
