@@ -1,7 +1,11 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -10,14 +14,18 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
 
@@ -36,6 +44,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private boolean hasBeenRevealed = false;
     private String serverName;
     private String hostName;
+
+    private DefaultWindow window = null;
+    private List<ServerGroupRecord> serverGroups;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -76,7 +88,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         if("new".equals(action))
         {
-            Window.alert("Not implemented yet.");
+            serverName = null;
+            selectedRecord = null;
+            launchNewConfigDialoge();
         }
     }
 
@@ -87,6 +101,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
+                serverGroups = result;
                 getView().updateServerGroups(result);
             }
         });
@@ -156,6 +171,33 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         //loadDefaultForHost(hostName);
     }
 
+    public void launchNewConfigDialoge() {
+        window = new DefaultWindow("Create Server Configuration");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                if(selectedRecord==null)
+                    History.back();
+            }
+        });
+
+        window.setWidget(
+                new NewServerConfigWizard(this, serverGroups).asWidget() // TODO: fragile (serverGroups==null)
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void closeDialoge() {
+        if(window!=null && window.isShowing())
+        {
+            window.hide();
+        }
+    }
+
     private void loadDefaultForHost(final String hostName) {
         hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
@@ -170,5 +212,49 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         });
     }
 
+    public void createServerConfig(final Server newServer) {
+
+        // close popup
+        closeDialoge();
+
+        hostInfoStore.createServerConfig(hostName, newServer, new AsyncCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean wasSuccessful) {
+                if (wasSuccessful) {
+
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Created server config " + newServer.getName())
+                    );
+
+                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+
+                    workOn(newServer);
+
+                } else {
+                    closeDialoge();
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to create server config " + newServer.getName(), Message.Severity.Error)
+                    );
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Failed to create server config " + newServer.getName(), Message.Severity.Error)
+                );
+
+            }
+        });
+    }
+
+    private void workOn(Server record) {
+        selectedRecord = record;
+        getView().setSelectedRecord(record);
+
+    }
 
 }

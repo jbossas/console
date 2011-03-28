@@ -20,6 +20,8 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -130,6 +132,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // ------------------------------------------------------
 
         socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
+        NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
         jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
 
@@ -137,7 +140,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
-                socketItem, jvmItem
+                socketItem, portOffset, jvmItem
         );
 
         panel.add(form.asWidget());

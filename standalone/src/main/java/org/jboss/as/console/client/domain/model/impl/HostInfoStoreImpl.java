@@ -1,8 +1,6 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -17,7 +15,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,13 +98,29 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setName(server.get("name").asString());
                     record.setGroup(server.get("group").asString());
-                    record.setAutoStart(server.get("auto-start").asBoolean());
+                    try {
+                        record.setPortOffset(server.get("socket-binding-port-offset").asInt());
+                    } catch (IllegalArgumentException e) {
+                        //
+                    }
+
+                    try {
+                        record.setAutoStart(server.get("auto-start").asBoolean());
+                    } catch (IllegalArgumentException e) {
+                        // TODO: https://issues.jboss.org/browse/JBAS-9163
+
+                    }
+
                     record.setStarted(server.get("status").asString().equals("STARTED"));
 
-                    if(server.get("jvm").isDefined())
-                    {
-                        ModelNode jvm = server.get("jvm").asObject();
-                        record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                    try {
+                        if(server.get("jvm").isDefined())
+                        {
+                            ModelNode jvm = server.get("jvm").asObject();
+                            record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // ignore
                     }
                     records.add(record);
                 }
@@ -202,5 +215,37 @@ public class HostInfoStoreImpl implements HostInformationStore {
             }
         });
 
+    }
+
+    @Override
+    public void createServerConfig(String host, Server record, final AsyncCallback<Boolean> callback) {
+        final ModelNode serverConfig = new ModelNode();
+        serverConfig.get(OP).set(ModelDescriptionConstants.ADD);
+        serverConfig.get(ADDRESS).add("host", host);
+        serverConfig.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, record.getName());
+
+        serverConfig.get("name").set(record.getName());
+        serverConfig.get("group").set(record.getGroup());
+        serverConfig.get("auto-start").set(record.isAutoStart());
+        serverConfig.get("socket-binding-port-offset").set(record.getPortOffset());
+
+        System.out.println(serverConfig.toJSONString(false));
+
+        dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Failed to create server config: " + caught);
+                callback.onSuccess(Boolean.FALSE);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                String outcome = response.get("outcome").asString();
+
+                Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
+                callback.onSuccess(wasSuccessful);
+            }
+        });
     }
 }

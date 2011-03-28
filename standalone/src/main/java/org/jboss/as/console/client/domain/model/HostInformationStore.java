@@ -15,4 +15,6 @@ public interface HostInformationStore {
     void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
 
     void startServer(String host, String configName, boolean startIt, final AsyncCallback<Boolean> callback);
+
+    void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
 }

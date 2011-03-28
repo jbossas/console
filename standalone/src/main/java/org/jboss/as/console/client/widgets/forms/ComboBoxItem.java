@@ -65,6 +65,9 @@ public class ComboBoxItem extends FormItem<String> {
         {
             comboBox.addItem(s);
         }
+
+        if(defaultToFirst)
+            comboBox.setItemSelected(0, true);
     }
 
     @Override

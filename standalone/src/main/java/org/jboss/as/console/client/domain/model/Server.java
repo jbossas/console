@@ -20,6 +20,9 @@ public interface Server {
     String getSocketBinding();
     void setSocketBinding(String socketBindingRef);
 
+    int getPortOffset();
+    void setPortOffset(int offset);
+
     String getJvm();
     void setJvm(String jvm);
 }

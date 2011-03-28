@@ -178,7 +178,7 @@ public class ServerGroupPresenter
                     else
                     {
                         Console.MODULES.getMessageCenter().notify(
-                                new Message("Failed to delete "+selectedRecord.getGroupName())
+                                new Message("Failed to delete "+selectedRecord.getGroupName(), Message.Severity.Error)
                         );
                     }
                 }
