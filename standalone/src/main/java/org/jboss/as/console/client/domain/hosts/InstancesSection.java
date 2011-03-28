@@ -56,10 +56,10 @@ public class InstancesSection implements HostSelectionEvent.HostSelectionListene
         // --------------------------------------------------
 
         layout.add(overview);
-        layout.add(startNew);
+        //layout.add(startNew);
 
         layout.setWidgetTopHeight(overview, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(startNew, 25, Style.Unit.PX, 25, Style.Unit.PX);
+        //layout.setWidgetTopHeight(startNew, 25, Style.Unit.PX, 25, Style.Unit.PX);
 
         // listen on host selection events
         Console.MODULES.getEventBus().addHandler(

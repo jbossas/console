@@ -7,6 +7,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
+import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -24,8 +25,7 @@ class LHSProfileNavigation {
 
     public LHSProfileNavigation() {
 
-        stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
+        stack = new DefaultStackLayoutPanel();
 
         profileSection = new ProfileSection();
         stack.add(profileSection.asWidget(), new StackSectionHeader("Subsystems"), 28);

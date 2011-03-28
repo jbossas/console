@@ -26,6 +26,7 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -183,8 +184,20 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
         enableItem.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ServerInstance instance = form.getEditedEntity();
-                presenter.startServer(instance.getServer(), !instance.isRunning());
+
+                String state = form.getEditedEntity().isRunning() ? "Stop" : "Start";
+                Feedback.confirm(state + " server instance", "Do you want to " + state + " this server "+form.getEditedEntity().getName()+"?",
+                        new Feedback.ConfirmationHandler()
+                        {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                {
+                                    ServerInstance instance = form.getEditedEntity();
+                                    presenter.startServer(instance.getServer(), !instance.isRunning());
+                                }
+                            }
+                        });
             }
         });
 

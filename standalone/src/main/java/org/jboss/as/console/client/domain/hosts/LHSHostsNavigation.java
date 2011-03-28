@@ -8,6 +8,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
+import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -36,8 +37,7 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
         selector = new HostSelector();
         final Widget selectorWidget = selector.asWidget();
 
-        stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
+        stack = new DefaultStackLayoutPanel();
 
         serversSection = new ServersSection();
         stack.add(serversSection.asWidget(), new StackSectionHeader("Server Configurations"), HEADER_SIZE);

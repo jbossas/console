@@ -209,16 +209,21 @@ a:link {
 .stack-section-header {
     font-family:Arial,Verdana,sans-serif;
     text-overflow:ellipsis;
-    /*background-image: url('images/sc/skins/Enterprise/images/SectionHeader/header_opened_stretch.png');*/
+    /*background-image: url('images/sc/skins/Enterprise/images/SectionHeader/header_Disabled_closed_stretch.png');*/
     background-color:#F8F8F8;
     padding-left:10px;
     padding-top:6px;
     padding-bottom:4px;
     height:20px;
-    color:#000;
+    color:#606060;
     font-size:12px;
     border-top:1px solid #A7ABB4;
     cursor:pointer;
+}
+
+.stack-section-header-selected {
+    /*background-image: url('images/sc/skins/Enterprise/images/SectionHeader/header_closed_stretch.png');*/
+    color:#000;
 }
 
 .stack-section-header-inline {

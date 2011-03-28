@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.StackSectionHeader;
+import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -22,8 +23,7 @@ class LHSServerGroupNavigation {
 
     public LHSServerGroupNavigation() {
 
-        stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
+        stack = new DefaultStackLayoutPanel();
 
         serverGroupSection = new ServerGroupSection();
         stack.add(serverGroupSection.asWidget(), new StackSectionHeader("Server Groups"), 28);
