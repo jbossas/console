@@ -43,11 +43,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private boolean hasBeenRevealed = false;
     private String serverName;
-    private String hostName;
+    private String selectedHost;
 
     private DefaultWindow window = null;
     private List<ServerGroupRecord> serverGroups;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -56,6 +55,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public interface MyView extends SuspendableView {
         void setPresenter(ServerConfigPresenter presenter);
+        void setEnabled(boolean isEnabled);
         void setSelectedRecord(Server selectedRecord);
         void updateServerGroups(List<ServerGroupRecord> serverGroupRecords);
         void updateSocketBindings(List<String> result);
@@ -82,7 +82,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void prepareFromRequest(PlaceRequest request) {
-        hostName = request.getParameter("host", null);
+        selectedHost = request.getParameter("host", null);
         serverName = request.getParameter("server", null);
         String action= request.getParameter("action", null);
 
@@ -113,11 +113,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
 
-        if(hostName!=null && serverName!=null)
+        if(selectedHost !=null && serverName!=null)
         {
-            loadJVMs(hostName);
+            loadJVMs(selectedHost);
 
-            hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
+            hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
                 @Override
                 public void onSuccess(List<Server> result) {
 
@@ -141,8 +141,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
                 @Override
                 public void onSuccess(List<Host> result) {
-                    hostName = result.get(0).getName();
-                    loadDefaultForHost(hostName);
+                    selectedHost = result.get(0).getName();
+                    loadDefaultForHost(selectedHost);
                 }
             });
         }
@@ -168,7 +168,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onHostSelection(String hostName) {
 
         // display first server config by default
-        //loadDefaultForHost(hostName);
+        //loadDefaultForHost(selectedHost);
     }
 
     public void launchNewConfigDialoge() {
@@ -217,7 +217,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         // close popup
         closeDialoge();
 
-        hostInfoStore.createServerConfig(hostName, newServer, new AsyncCallback<Boolean>() {
+        hostInfoStore.createServerConfig(selectedHost, newServer, new AsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
@@ -256,5 +256,21 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         getView().setSelectedRecord(record);
 
     }
+
+    public void onSaveChanges(Server updatedEntity) {
+
+        Console.MODULES.getMessageCenter().notify(
+                new Message("'Save' operation not implemented!", Message.Severity.Warning)
+        );
+
+
+        hostInfoStore.saveServerConfig(selectedHost, updatedEntity);
+    }
+
+    public void editCurrentRecord() {
+        getView().setEnabled(true);
+    }
+
+
 
 }

@@ -98,6 +98,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setName(server.get("name").asString());
                     record.setGroup(server.get("group").asString());
+                    record.setSocketBinding(server.get("socket-binding-group").asString());
+
                     try {
                         record.setPortOffset(server.get("socket-binding-port-offset").asInt());
                     } catch (IllegalArgumentException e) {
@@ -247,5 +249,10 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 callback.onSuccess(wasSuccessful);
             }
         });
+    }
+
+    @Override
+    public void saveServerConfig(String host, Server updatedEntity) {
+        Log.warn("Save server config not implemented yet!");
     }
 }

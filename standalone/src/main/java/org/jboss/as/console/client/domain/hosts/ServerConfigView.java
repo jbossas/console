@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.PropertyTable;
@@ -27,6 +28,7 @@ import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -44,6 +46,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private ComboBoxItem jvmItem;
 
     private LayoutPanel layout;
+    private ToolButton edit;
 
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
@@ -71,17 +74,17 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // --------------------------------------------------------
 
         final ToolStrip toolStrip = new ToolStrip();
-        final ToolButton edit = new ToolButton("Edit");
+        edit = new ToolButton("Edit");
         edit.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 if(edit.getText().equals("Edit"))
                 {
-
+                    onEdit();
                 }
                 else
                 {
-
+                    onSave();
                 }
             }
         });
@@ -144,6 +147,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         );
 
         panel.add(form.asWidget());
+        form.setEnabled(false);
 
         // ------------------------------------------------------
 
@@ -153,6 +157,15 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         panel.add(properties);
 
         return layout;
+    }
+
+    private void onSave() {
+        Server updatedEntity = form.getUpdatedEntity();
+        presenter.onSaveChanges(updatedEntity);
+    }
+
+    private void onEdit() {
+        presenter.editCurrentRecord();
     }
 
     @Override
@@ -182,5 +195,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     @Override
     public void updateVirtualMachines(List<String> result) {
         jvmItem.setValueMap(result);
+    }
+
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        form.setEnabled(isEnabled);
+
+        edit.setText(
+            isEnabled ? "Save" : "Edit"
+        );
     }
 }

@@ -232,7 +232,7 @@ public class ServerGroupPresenter
         getView().setEnabled(false);
 
         Console.MODULES.getMessageCenter().notify(
-                new Message("Saved " + updatedEntity.getGroupName(), Message.Severity.Info)
+                new Message("'Save' operation not implemented!", Message.Severity.Warning)
         );
 
         serverGroupStore.save(updatedEntity, new SimpleCallback<Boolean>() {
