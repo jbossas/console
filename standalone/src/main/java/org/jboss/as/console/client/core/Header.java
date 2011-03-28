@@ -33,14 +33,14 @@ public class Header implements ValueChangeHandler<String> {
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
             new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
-            new String[]{NameTokens.HostMgmtPresenter, "Hosts"},
-            new String[]{NameTokens.DebugToolsPresenter, "Debug"}
+            new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
+            //new String[]{NameTokens.DebugToolsPresenter, "Debug"}
     };
 
     public static final String[][] SECTIONS_STANADLONE = {
             new String[]{NameTokens.serverConfig, "Profile"},
-            new String[]{NameTokens.DeploymentMgmtPresenter, "Deployments"},
-            new String[]{NameTokens.DebugToolsPresenter, "Debug"}
+            new String[]{NameTokens.DeploymentMgmtPresenter, "Deployments"}
+            //new String[]{NameTokens.DebugToolsPresenter, "Debug"}
     };
 
     private MessageBar messageBar;
@@ -60,7 +60,30 @@ public class Header implements ValueChangeHandler<String> {
     public Widget asWidget() {
 
         LayoutPanel outerLayout = new LayoutPanel();
+
+        HorizontalPanel contentLayout = new HorizontalPanel();
+        contentLayout.setStyleName("fill-layout-width");
+        contentLayout.getElement().setAttribute("style", "height:34px");
+
         contentPanel = new LayoutPanel();
+        contentPanel.setStyleName("fill-layout");
+
+        contentLayout.add(contentPanel);
+        HTML debugLink = new HTML("Debug");
+        debugLink.setStyleName("cross-reference");
+        debugLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.DebugToolsPresenter)
+                );
+            }
+        });
+        contentLayout.add(debugLink);
+
+        debugLink.getElement().getParentElement().setAttribute("width", "50%");
+        debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
+        contentPanel.getElement().getParentElement().setAttribute("width", "50%");
 
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
@@ -75,10 +98,10 @@ public class Header implements ValueChangeHandler<String> {
         innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
-        outerLayout.add(contentPanel);
+        outerLayout.add(contentLayout);
 
         outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        outerLayout.setWidgetTopHeight(contentPanel , 34, Style.Unit.PX, 25, Style.Unit.PX);
+        outerLayout.setWidgetTopHeight(contentLayout , 34, Style.Unit.PX, 25, Style.Unit.PX);
 
         return outerLayout;
     }
