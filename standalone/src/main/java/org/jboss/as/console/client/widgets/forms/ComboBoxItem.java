@@ -13,6 +13,7 @@ public class ComboBoxItem extends FormItem<String> {
 
     private ComboBox comboBox;
     private boolean defaultToFirst;
+    private Widget widget = null;
 
     public ComboBoxItem(String name, String title) {
         super(name, title);
@@ -41,7 +42,9 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public Widget asWidget() {
-        return comboBox.asWidget();
+        if(null==widget)
+            widget = comboBox.asWidget();
+        return widget;
     }
 
     public void setDefaultToFirstOption(boolean b) {
@@ -73,5 +76,20 @@ public class ComboBoxItem extends FormItem<String> {
     @Override
     public void setEnabled(boolean b) {
         comboBox.setEnabled(b);
+    }
+
+    private ValidationHandler validationHandler = new ValidationHandler<String> () {
+        @Override
+        public ValidationResult validate(String value) {
+            if(isRequired() && comboBox.getSelectedValue().equals(""))
+                return new ValidationResult(false, "Field '"+title+ "' is required.");
+            else
+                return FormItem.VALIDATION_SUCCESS;
+        }
+    };
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return validationHandler;
     }
 }

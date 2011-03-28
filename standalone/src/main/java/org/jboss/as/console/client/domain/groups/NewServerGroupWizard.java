@@ -12,6 +12,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
 import java.util.List;
@@ -20,11 +21,11 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/1/11
  */
-class NewGroupWizard {
+class NewServerGroupWizard {
 
     VerticalPanel layout;
 
-    public NewGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
+    public NewServerGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
         layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("cellpadding", "10");
@@ -55,8 +56,10 @@ class NewGroupWizard {
             public void onClick(ClickEvent event) {
                 // merge base
                 ServerGroupRecord newGroup = form.getUpdatedEntity();
-                if(newGroup.getGroupName().equals("")
-                        || newGroup.getGroupName() == null) return;
+
+                FormValidation validation = form.validate();
+                if(validation.hasErrors())
+                    return;
 
                 ServerGroupRecord base = null;
                 for(ServerGroupRecord rec : existing)

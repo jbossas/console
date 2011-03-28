@@ -120,14 +120,14 @@ public class Form<T> {
 
                 for(Map<String, FormItem> groupItems : formItems.values())
                 {
-                   for(String key : groupItems.keySet()) // keys maybe used multiple times
-                   {
-                       if(key.startsWith(propertyName))
-                       {
-                           matchingField = groupItems.get(key);
-                           matchingField.setValue(value);
-                       }
-                   }
+                    for(String key : groupItems.keySet()) // keys maybe used multiple times
+                    {
+                        if(key.startsWith(propertyName))
+                        {
+                            matchingField = groupItems.get(key);
+                            matchingField.setValue(value);
+                        }
+                    }
                 }
 
                 if (null==matchingField && !"empty".equals(propertyName))
@@ -157,6 +157,30 @@ public class Form<T> {
         return values;
     }
 
+    public FormValidation validate()
+    {
+        FormValidation outcome = new FormValidation();
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            int i=0;
+            for(FormItem item : groupItems.values())
+            {
+                ValidationResult result = item.getValidationHandler().validate(item.getValue());
+                if(!result.isValid())
+                {
+                    outcome.addError(result);
+                    item.setErroneous(true);
+                }
+                else
+                {
+                    item.setErroneous(false);
+                }
+            }
+        }
+
+        return outcome;
+    }
+
     public T getUpdatedEntity() {
 
         StringBuilder builder = new StringBuilder("{");
@@ -184,7 +208,7 @@ public class Form<T> {
             }
 
             if(g<formItems.size()-1)
-                    builder.append(", ");
+                builder.append(", ");
 
             g++;
         }

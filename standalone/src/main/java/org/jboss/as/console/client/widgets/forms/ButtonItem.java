@@ -41,4 +41,14 @@ public class ButtonItem extends FormItem<Boolean> {
     {
         this.button.addClickHandler(handler);
     }
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return new ValidationHandler<Boolean> () {
+            @Override
+            public ValidationResult validate(Boolean value) {
+                return FormItem.VALIDATION_SUCCESS;
+            }
+        };
+    }
 }

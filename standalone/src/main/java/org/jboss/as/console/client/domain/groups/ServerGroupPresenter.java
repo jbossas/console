@@ -261,7 +261,7 @@ public class ServerGroupPresenter
         });
 
         window.setWidget(
-                new NewGroupWizard(this, serverGroups).asWidget()
+                new NewServerGroupWizard(this, serverGroups).asWidget()
         );
 
         window.setGlassEnabled(true);

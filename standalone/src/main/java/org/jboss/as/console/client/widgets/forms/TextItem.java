@@ -35,4 +35,14 @@ public class TextItem extends FormItem<String> {
     public void setEnabled(boolean b) {
         // it's not editable anyway
     }
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return new ValidationHandler<String> () {
+            @Override
+            public ValidationResult validate(String value) {
+                return FormItem.VALIDATION_SUCCESS;
+            }
+        };
+    }
 }

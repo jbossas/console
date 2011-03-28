@@ -13,6 +13,7 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
     public CheckBoxItem(String name, String title) {
         super(name, title);
+        checkBox = new CheckBox();
     }
 
     @Override
@@ -27,12 +28,21 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
     @Override
     public Widget asWidget() {
-        checkBox = new CheckBox();
         return checkBox;
     }
 
     @Override
     public void setEnabled(boolean b) {
         checkBox.setEnabled(b);
+    }
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return new ValidationHandler<Boolean> () {
+            @Override
+            public ValidationResult validate(Boolean value) {
+                return FormItem.VALIDATION_SUCCESS;
+            }
+        };
     }
 }

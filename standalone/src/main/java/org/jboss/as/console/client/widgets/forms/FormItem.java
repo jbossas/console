@@ -8,11 +8,22 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class FormItem<T> {
 
+    public final static ValidationResult VALIDATION_SUCCESS =
+            new ValidationResult(true, "");
+
+    public final static ValidationResult VALIDATION_FAILURE =
+            new ValidationResult(false, "");
+
     private T value;
     protected String name;
     protected String title;
 
     private boolean isKey;
+
+    protected ValidationHandler validationHandler;
+
+    private boolean isErroneous =   false;
+    private boolean isRequired =    true;
 
     public FormItem(String name, String title) {
         this.name = name;
@@ -47,8 +58,25 @@ public abstract class FormItem<T> {
         isKey = key;
     }
 
+    public void setErroneous(boolean b) {
+        this.isErroneous = b;
+    }
+
+    public void setRequired(boolean required) {
+        isRequired = required;
+    }
+
+    public boolean isErroneous() {
+        return isErroneous;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
     public abstract Widget asWidget();
 
     public abstract void setEnabled(boolean b);
 
+    public abstract ValidationHandler getValidationHandler();
 }

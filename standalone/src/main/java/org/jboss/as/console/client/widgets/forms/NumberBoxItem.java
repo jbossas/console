@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class NumberBoxItem extends FormItem<Integer> {
 
     private TextBox textBox;
+    private InputElementWrapper wrapper;
 
     public NumberBoxItem(String name, String title) {
         super(name, title);
@@ -17,16 +18,20 @@ public class NumberBoxItem extends FormItem<Integer> {
         textBox = new TextBox();
         textBox.setName(name);
         textBox.setTitle(title);
+
+        wrapper = new InputElementWrapper(textBox);
+
     }
 
     @Override
     public Widget asWidget() {
-        return textBox;
+        return wrapper;
     }
 
     @Override
     public Integer getValue() {
-        return Integer.valueOf(textBox.getValue());
+        String value = textBox.getValue().equals("") ? "0" : textBox.getValue();
+        return Integer.valueOf(value);
     }
 
     @Override
@@ -37,5 +42,27 @@ public class NumberBoxItem extends FormItem<Integer> {
     @Override
     public void setEnabled(boolean b) {
         textBox.setEnabled(b);
+    }
+
+    @Override
+    public void setErroneous(boolean b) {
+        super.setErroneous(b);
+        wrapper.setErroneous(b);
+    }
+
+    private ValidationHandler validationHandler = new ValidationHandler<Integer>()
+    {
+        @Override
+        public ValidationResult validate(Integer value) {
+            if(isRequired() && textBox.getValue().equals(""))
+                return new ValidationResult(false, "Field '"+title+ "' is required.");
+            else
+                return FormItem.VALIDATION_SUCCESS;
+        }
+    };
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return validationHandler;
     }
 }

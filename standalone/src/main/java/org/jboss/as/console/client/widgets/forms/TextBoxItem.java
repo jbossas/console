@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TextBoxItem extends FormItem<String> {
 
     private TextBox textBox;
+    private InputElementWrapper wrapper;
 
     public TextBoxItem(String name, String title) {
         super(name, title);
@@ -17,11 +18,13 @@ public class TextBoxItem extends FormItem<String> {
         textBox = new TextBox();
         textBox.setName(name);
         textBox.setTitle(title);
+
+        wrapper = new InputElementWrapper(textBox);
     }
 
     @Override
     public Widget asWidget() {
-        return textBox;
+        return wrapper;
     }
 
     @Override
@@ -37,5 +40,28 @@ public class TextBoxItem extends FormItem<String> {
     @Override
     public void setEnabled(boolean b) {
         textBox.setEnabled(b);
+    }
+
+    @Override
+    public void setErroneous(boolean b) {
+        super.setErroneous(b);
+        wrapper.setErroneous(b);
+
+    }
+
+    private ValidationHandler validationHandler = new ValidationHandler<String>()
+    {
+        @Override
+        public ValidationResult validate(String value) {
+            if(isRequired() && value.equals(""))
+                return new ValidationResult(false, "Field '"+title+ "' is required.");
+            else
+                return FormItem.VALIDATION_SUCCESS;
+        }
+    };
+
+    @Override
+    public ValidationHandler getValidationHandler() {
+        return validationHandler;
     }
 }

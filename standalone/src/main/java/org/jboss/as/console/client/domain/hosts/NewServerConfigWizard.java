@@ -13,6 +13,7 @@ import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
@@ -63,8 +64,9 @@ public class NewServerConfigWizard {
             public void onClick(ClickEvent event) {
                 Server newServer = form.getUpdatedEntity();
 
-                // TODO: proper validation
-                if(newServer.getName().equals("") || newServer.getName() == null) return;
+                FormValidation validation = form.validate();
+                if(validation.hasErrors())
+                    return;
 
                 presenter.createServerConfig(newServer);
 
