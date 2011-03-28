@@ -218,15 +218,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostMgmtView.class,
                 HostMgmtPresenter.MyProxy.class);
 
-        bindPresenter(ServerPresenter.class,
-                ServerPresenter.MyView.class,
-                ServerView.class,
-                ServerPresenter.MyProxy.class);
+        bindPresenter(ServerConfigPresenter.class,
+                ServerConfigPresenter.MyView.class,
+                ServerConfigView.class,
+                ServerConfigPresenter.MyProxy.class);
 
-        bindPresenter(InstancesPresenter.class,
-                InstancesPresenter.MyView.class,
-                InstancesView.class,
-                InstancesPresenter.MyProxy.class);
+        bindPresenter(ServerInstancesPresenter.class,
+                ServerInstancesPresenter.MyView.class,
+                ServerInstancesView.class,
+                ServerInstancesPresenter.MyProxy.class);
 
 
         // -------

@@ -31,7 +31,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/8/11
  */
-public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, InstancesPresenter.MyProxy>
+public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter.MyView, ServerInstancesPresenter.MyProxy>
         implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
@@ -43,18 +43,18 @@ public class InstancesPresenter extends Presenter<InstancesPresenter.MyView, Ins
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
-    public interface MyProxy extends Proxy<InstancesPresenter>, Place {
+    public interface MyProxy extends Proxy<ServerInstancesPresenter>, Place {
     }
 
     public interface MyView extends SuspendableView {
-        void setPresenter(InstancesPresenter presenter);
+        void setPresenter(ServerInstancesPresenter presenter);
         void setSelectedHost(String selectedHost);
         void updateInstances(List<ServerInstance> instances);
         void updateServerConfigurations(List<Server> servers);
     }
 
     @Inject
-    public InstancesPresenter(
+    public ServerInstancesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             HostInformationStore hostInfoStore) {

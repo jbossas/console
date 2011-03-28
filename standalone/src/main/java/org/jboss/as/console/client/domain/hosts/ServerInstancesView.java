@@ -41,9 +41,9 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/8/11
  */
-public class InstancesView extends SuspendableViewImpl implements InstancesPresenter.MyView {
+public class ServerInstancesView extends SuspendableViewImpl implements ServerInstancesPresenter.MyView {
 
-    private InstancesPresenter presenter;
+    private ServerInstancesPresenter presenter;
     private ContentHeaderLabel nameLabel;
     private ListDataProvider<ServerInstance> instanceProvider;
     private String selectedHost = null;
@@ -51,7 +51,7 @@ public class InstancesView extends SuspendableViewImpl implements InstancesPrese
     private CellTable<ServerInstance> instanceTable;
 
     @Override
-    public void setPresenter(InstancesPresenter presenter) {
+    public void setPresenter(ServerInstancesPresenter presenter) {
         this.presenter = presenter;
     }
 

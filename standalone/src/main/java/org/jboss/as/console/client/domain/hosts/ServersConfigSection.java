@@ -19,7 +19,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/2/11
  */
-class ServersSection {
+class ServersConfigSection {
 
     private TreeItem root;
     private Tree hostTree;
@@ -27,7 +27,7 @@ class ServersSection {
     private LayoutPanel layout;
     private String selectedHost = null;
 
-    public ServersSection() {
+    public ServersConfigSection() {
 
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");

@@ -31,10 +31,10 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/3/11
  */
-public class ServerView extends SuspendableViewImpl implements ServerPresenter.MyView{
+public class ServerConfigView extends SuspendableViewImpl implements ServerConfigPresenter.MyView{
 
 
-    private ServerPresenter presenter;
+    private ServerConfigPresenter presenter;
     private Form<Server> form;
     private ContentHeaderLabel nameLabel;
     private ComboBoxItem groupItem;
@@ -44,7 +44,7 @@ public class ServerView extends SuspendableViewImpl implements ServerPresenter.M
     private LayoutPanel layout;
 
     @Override
-    public void setPresenter(ServerPresenter presenter) {
+    public void setPresenter(ServerConfigPresenter presenter) {
         this.presenter = presenter;
     }
 

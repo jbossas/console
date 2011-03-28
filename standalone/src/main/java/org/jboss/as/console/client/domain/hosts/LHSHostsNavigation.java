@@ -21,8 +21,8 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
     private static final int SELECTOR_HEIGHT = 60;
     private static final int HEADER_SIZE = 28;
 
-    private ServersSection serversSection;
-    private InstancesSection instanceSection;
+    private ServersConfigSection serversSection;
+    private ServerInstancesSection instanceSection;
     private HostConfigSection hostConfigSection;
 
     private HostSelector selector;
@@ -39,10 +39,10 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
         stack = new DefaultStackLayoutPanel();
 
-        serversSection = new ServersSection();
+        serversSection = new ServersConfigSection();
         stack.add(serversSection.asWidget(), new StackSectionHeader("Server Configurations"), HEADER_SIZE);
 
-        instanceSection = new InstancesSection();
+        instanceSection = new ServerInstancesSection();
         stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), HEADER_SIZE);
 
         hostConfigSection = new HostConfigSection();

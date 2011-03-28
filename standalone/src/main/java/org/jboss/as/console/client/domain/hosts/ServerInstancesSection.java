@@ -15,13 +15,13 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  * @author Heiko Braun
  * @date 3/4/11
  */
-public class InstancesSection implements HostSelectionEvent.HostSelectionListener{
+public class ServerInstancesSection implements HostSelectionEvent.HostSelectionListener{
 
 
     private LayoutPanel layout;
     private String selectedHost = null;
 
-    public InstancesSection() {
+    public ServerInstancesSection() {
 
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");

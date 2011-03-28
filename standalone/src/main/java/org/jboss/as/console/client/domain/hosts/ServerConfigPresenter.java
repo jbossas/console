@@ -25,7 +25,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/3/11
  */
-public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
+public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyView, ServerConfigPresenter.MyProxy>
         implements HostSelectionEvent.HostSelectionListener {
 
     private HostInformationStore hostInfoStore;
@@ -39,11 +39,11 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
-    public interface MyProxy extends Proxy<ServerPresenter>, Place {
+    public interface MyProxy extends Proxy<ServerConfigPresenter>, Place {
     }
 
     public interface MyView extends SuspendableView {
-        void setPresenter(ServerPresenter presenter);
+        void setPresenter(ServerConfigPresenter presenter);
         void setSelectedRecord(Server selectedRecord);
         void updateServerGroups(List<ServerGroupRecord> serverGroupRecords);
         void updateSocketBindings(List<String> result);
@@ -51,7 +51,7 @@ public class ServerPresenter extends Presenter<ServerPresenter.MyView, ServerPre
     }
 
     @Inject
-    public ServerPresenter(
+    public ServerConfigPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             HostInformationStore hostInfoStore,
             ServerGroupStore serverGroupStore) {
