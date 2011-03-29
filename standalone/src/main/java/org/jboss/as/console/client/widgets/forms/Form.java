@@ -30,7 +30,7 @@ public class Form<T> {
     private Map<String, Map<String, FormItem>> formItems = new LinkedHashMap<String, Map<String, FormItem>>();
     private Map<String, Object> rememberedValues = new HashMap<String, Object>();
 
-    private int numColumns = 2;
+    private int numColumns = 1;
 
     private Map<String,GroupRenderer> registeredRenderer = new HashMap<String, GroupRenderer>();
 
