@@ -25,8 +25,8 @@ public class Feedback {
 
         window.setGlassEnabled(true);
 
-        LayoutPanel panel = new LayoutPanel();
-        panel.getElement().setAttribute("style", "width:"+(width-20)+"px; height:"+(height-30)+"px; margin:10px");
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
 
         HTML text = new HTML(message);
 
@@ -55,20 +55,22 @@ public class Feedback {
 
         HTML spacer = new HTML("&nbsp;");
         options.add(spacer);
-        spacer.getElement().getParentElement().setAttribute("width", "100%");
+        //spacer.getElement().getParentElement().setAttribute("width", "100%");
 
         options.add(ok);
         options.add(spacer);
         options.add(cancel);
         cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
+        ok.getElement().getParentElement().setAttribute("style","vertical-align:middle");
+
         ok.getElement().getParentElement().setAttribute("align", "right");
         ok.getElement().getParentElement().setAttribute("width", "100%");
 
         panel.add(text);
         panel.add(options);
 
-        panel.setWidgetBottomHeight(text, 30, Style.Unit.PX, height-60, Style.Unit.PX);
-        panel.setWidgetBottomHeight(options, 0, Style.Unit.PX, 30, Style.Unit.PX);
+        //panel.setWidgetBottomHeight(text, 30, Style.Unit.PX, height-60, Style.Unit.PX);
+        //panel.setWidgetBottomHeight(options, 0, Style.Unit.PX, 30, Style.Unit.PX);
 
         window.setWidget(panel);
 

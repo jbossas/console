@@ -23,7 +23,7 @@ public class DefaultWindow extends PopupPanel {
 
     public DefaultWindow(String title) {
 
-        LayoutPanel layout = new LayoutPanel();
+        DockLayoutPanel layout = new DockLayoutPanel(Style.Unit.PX);
         setStyleName("default-window");
 
         HorizontalPanel header = new HorizontalPanel();
@@ -51,9 +51,10 @@ public class DefaultWindow extends PopupPanel {
         //header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
         //header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
 
-        layout.add(header);
+        layout.addNorth(header, 25);
 
         content = new LayoutPanel();
+        content.getElement().setAttribute("style", "margin:5px;");
         layout.add(content);
 
         super.setWidget(layout);
@@ -65,8 +66,8 @@ public class DefaultWindow extends PopupPanel {
         setWidth(winWidth);
         setHeight(winHeight);
 
-        layout.setWidgetTopHeight(header, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(content, 25, Style.Unit.PX, 500, Style.Unit.PX);
+        //layout.setWidgetTopHeight(header, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        //layout.setWidgetTopHeight(content, 25, Style.Unit.PX, 500, Style.Unit.PX);
     }
 
     @Override
