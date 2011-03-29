@@ -32,7 +32,20 @@ class NewServerGroupWizard {
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
-        TextBoxItem nameField = new TextBoxItem("groupName", "Group Name");
+        TextBoxItem nameField = new TextBoxItem("groupName", "Group Name")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean hasWhitespace = value.contains(" ");
+                return hasValue && !hasWhitespace;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "Not empty, no whitespace";
+            }
+        };
 
         final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", "Based On");
 

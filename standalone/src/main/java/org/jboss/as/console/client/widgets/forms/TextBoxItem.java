@@ -19,7 +19,7 @@ public class TextBoxItem extends FormItem<String> {
         textBox.setName(name);
         textBox.setTitle(title);
 
-        wrapper = new InputElementWrapper(textBox);
+        wrapper = new InputElementWrapper(textBox, this);
     }
 
     @Override
@@ -49,19 +49,15 @@ public class TextBoxItem extends FormItem<String> {
 
     }
 
-    private ValidationHandler validationHandler = new ValidationHandler<String>()
-    {
-        @Override
-        public ValidationResult validate(String value) {
-            if(isRequired() && value.equals(""))
-                return new ValidationResult(false, "Field '"+title+ "' is required.");
-            else
-                return FormItem.VALIDATION_SUCCESS;
-        }
-    };
-
     @Override
-    public ValidationHandler getValidationHandler() {
-        return validationHandler;
+    public boolean validate(String value) {
+        if(isRequired() && value.equals(""))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }

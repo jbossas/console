@@ -78,4 +78,7 @@ public interface Icons extends ClientBundle {
     @Source("status_blue_small.png")
     ImageResource statusBlue_small();
 
+    @Source("exclamation.png")
+    ImageResource exclamation();
+
 }

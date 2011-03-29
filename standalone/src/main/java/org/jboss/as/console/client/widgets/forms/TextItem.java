@@ -37,12 +37,7 @@ public class TextItem extends FormItem<String> {
     }
 
     @Override
-    public ValidationHandler getValidationHandler() {
-        return new ValidationHandler<String> () {
-            @Override
-            public ValidationResult validate(String value) {
-                return FormItem.VALIDATION_SUCCESS;
-            }
-        };
+    public boolean validate(String value) {
+        return true;
     }
 }

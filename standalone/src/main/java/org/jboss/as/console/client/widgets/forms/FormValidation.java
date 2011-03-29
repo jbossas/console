@@ -9,20 +9,20 @@ import java.util.List;
  */
 public class FormValidation {
 
-    private List<ValidationResult> errors = new ArrayList<ValidationResult>();
+    private List<String> fieldNames = new ArrayList<String>();
 
-    public void addError(ValidationResult fieldResult)
+    public void addError(String name)
     {
-        errors.add(fieldResult);
+        fieldNames.add(name);
     }
 
     public boolean hasErrors()
     {
-        return errors.size()>0;
+        return fieldNames.size()>0;
     }
 
-    public List<ValidationResult> getErrors()
+    public List<String> getErrors()
     {
-        return errors;
+        return fieldNames;
     }
 }

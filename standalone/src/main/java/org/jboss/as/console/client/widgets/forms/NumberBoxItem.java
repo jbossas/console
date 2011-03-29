@@ -19,7 +19,7 @@ public class NumberBoxItem extends FormItem<Integer> {
         textBox.setName(name);
         textBox.setTitle(title);
 
-        wrapper = new InputElementWrapper(textBox);
+        wrapper = new InputElementWrapper(textBox, this);
 
     }
 
@@ -50,19 +50,29 @@ public class NumberBoxItem extends FormItem<Integer> {
         wrapper.setErroneous(b);
     }
 
-    private ValidationHandler validationHandler = new ValidationHandler<Integer>()
-    {
-        @Override
-        public ValidationResult validate(Integer value) {
-            if(isRequired() && textBox.getValue().equals(""))
-                return new ValidationResult(false, "Field '"+title+ "' is required.");
-            else
-                return FormItem.VALIDATION_SUCCESS;
-        }
-    };
+    @Override
+    public String getErrMessage() {
+        return "Invalid numeric value";
+    }
 
     @Override
-    public ValidationHandler getValidationHandler() {
-        return validationHandler;
+    public boolean validate(Integer value) {
+
+        boolean outcome = true;
+
+        if(isRequired() && textBox.getValue().equals(""))
+        {
+            outcome = false;
+        }
+        else if(isRequired())
+        {
+            try {
+                Integer.parseInt(textBox.getValue());
+            } catch (NumberFormatException e) {
+                outcome = false;
+            }
+        }
+
+        return outcome;
     }
 }

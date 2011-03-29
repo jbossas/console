@@ -6,13 +6,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Heiko Braun
  * @date 2/21/11
  */
-public abstract class FormItem<T> {
-
-    public final static ValidationResult VALIDATION_SUCCESS =
-            new ValidationResult(true, "");
-
-    public final static ValidationResult VALIDATION_FAILURE =
-            new ValidationResult(false, "");
+public abstract class FormItem<T> implements InputElement<T> {
 
     private T value;
     protected String name;
@@ -20,19 +14,14 @@ public abstract class FormItem<T> {
 
     private boolean isKey;
 
-    protected ValidationHandler validationHandler;
-
     private boolean isErroneous =   false;
     private boolean isRequired =    true;
+    private String errMessage = "Invalid input";
 
     public FormItem(String name, String title) {
         this.name = name;
         this.title = title;
     }
-
-    public abstract T getValue();
-
-    public abstract void setValue(T value);
 
     public String getName() {
         return name;
@@ -58,25 +47,39 @@ public abstract class FormItem<T> {
         isKey = key;
     }
 
+    @Override
     public void setErroneous(boolean b) {
         this.isErroneous = b;
     }
 
+    @Override
     public void setRequired(boolean required) {
         isRequired = required;
     }
 
+    @Override
     public boolean isErroneous() {
         return isErroneous;
     }
 
+    @Override
     public boolean isRequired() {
         return isRequired;
+    }
+
+    @Override
+    public String getErrMessage() {
+        return errMessage;
+    }
+
+    @Override
+    public void setErrMessage(String errMessage) {
+        this.errMessage = errMessage;
     }
 
     public abstract Widget asWidget();
 
     public abstract void setEnabled(boolean b);
 
-    public abstract ValidationHandler getValidationHandler();
+    public abstract boolean validate(T value);
 }

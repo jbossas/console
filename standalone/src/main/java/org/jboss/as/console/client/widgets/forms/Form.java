@@ -165,10 +165,9 @@ public class Form<T> {
             int i=0;
             for(FormItem item : groupItems.values())
             {
-                ValidationResult result = item.getValidationHandler().validate(item.getValue());
-                if(!result.isValid())
+                if(! item.validate(item.getValue()) )
                 {
-                    outcome.addError(result);
+                    outcome.addError(item.getName());
                     item.setErroneous(true);
                 }
                 else

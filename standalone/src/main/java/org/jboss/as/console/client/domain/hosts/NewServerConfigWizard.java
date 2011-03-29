@@ -39,7 +39,21 @@ public class NewServerConfigWizard {
         final Form<Server> form = new Form<Server>(Server.class);
         form.setNumColumns(1);
 
-        TextBoxItem nameItem = new TextBoxItem("name", "Server Name");
+        TextBoxItem nameItem = new TextBoxItem("name", "Server Name")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean hasWhitespace = value.contains(" ");
+                return hasValue && !hasWhitespace;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "Not empty, no whitespace";
+            }
+        };
+
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", "Start Instances?");
         NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
