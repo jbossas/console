@@ -62,6 +62,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
+import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
+import org.jboss.as.console.client.shared.subsys.jms.JMSView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -253,6 +255,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DataSourcePresenter.MyView.class,
                 DatasourceView.class,
                 DataSourcePresenter.MyProxy.class);
+
+        bindPresenter(JMSPresenter.class,
+                JMSPresenter.MyView.class,
+                JMSView.class,
+                JMSPresenter.MyProxy.class);
+
     }
 
 }

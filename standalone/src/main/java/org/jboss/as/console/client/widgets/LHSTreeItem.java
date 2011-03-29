@@ -27,7 +27,7 @@ public class LHSTreeItem extends TreeItem {
         horz.add(img);
         horz.add(label);
 
-        img.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        img.getElement().getParentElement().setAttribute("style", "vertical-align:middle;padding-right:5px;");
         label.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
 
         setWidget(horz);

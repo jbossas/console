@@ -37,8 +37,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
-
-    private BeanFactory factory = GWT.create(BeanFactory.class);
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -54,11 +53,13 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     @Inject
     public DataSourcePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, DispatchAsync dispatcher) {
+            PlaceManager placeManager, DispatchAsync dispatcher,
+            BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override

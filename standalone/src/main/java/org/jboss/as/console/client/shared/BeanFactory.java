@@ -8,6 +8,7 @@ import org.jboss.as.console.client.server.subsys.threads.ThreadFactoryRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
 
 
 /**
@@ -27,4 +28,5 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<ThreadFactoryRecord> threadFactory();
 
     AutoBean<DataSource> dataSource();
+    AutoBean<JMSEndpoint> jmsEndpoint();
 }

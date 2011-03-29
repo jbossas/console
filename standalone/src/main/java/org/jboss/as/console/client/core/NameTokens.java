@@ -12,6 +12,7 @@ public class NameTokens {
     public static final String ModelBrowserPresenter = "model-browser";
     public static final String MetricsPresenter = "invocation-metrics";
     public static final String DataSourcePresenter = "datasources";
+    public static final String JMSPresenter = "jms";
 
     public static String getMainLayout() {
         return mainLayout;

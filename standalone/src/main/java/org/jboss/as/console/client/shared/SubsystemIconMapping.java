@@ -16,6 +16,7 @@ public class SubsystemIconMapping {
 
     static {
         mapping.put("datasources", Icons.INSTANCE.database());
+        mapping.put("jms", Icons.INSTANCE.messaging());
     }
 
     public static ImageResource getIcon(String subsysName)

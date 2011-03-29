@@ -17,9 +17,6 @@ import java.util.List;
 public class DatasourceView extends DisposableViewImpl implements DataSourcePresenter.MyView {
 
     private DataSourcePresenter presenter;
-
-    LayoutPanel layout = null;
-
     private DataSourceEditor dataSourceEditor;
 
     @Override

@@ -48,6 +48,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -139,5 +140,6 @@ public interface CoreUI extends Ginjector {
     // ----------------------------------------------------------------------
     // shared subsystems
     AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
+    AsyncProvider<JMSPresenter> getMessagingPresenter();
 
 }

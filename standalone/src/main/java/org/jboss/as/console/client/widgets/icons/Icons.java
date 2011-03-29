@@ -87,4 +87,7 @@ public interface Icons extends ClientBundle {
     @Source("blank.png")
     ImageResource noIcon();
 
+    @Source("messaging.png")
+    ImageResource messaging();
+
 }
