@@ -6,6 +6,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -65,7 +67,15 @@ public class DataSourceEditor {
 
         // ---
 
-        layout.add(new ContentHeaderLabel("JDBC Data Source Configurations"));
+        HorizontalPanel horzPanel = new HorizontalPanel();
+        horzPanel.getElement().setAttribute("style", "width:100%;");
+        Image image = new Image(Icons.INSTANCE.database());
+        horzPanel.add(image);
+        horzPanel.add(new ContentHeaderLabel("JDBC Data Source Configurations"));
+        image.getElement().getParentElement().setAttribute("width", "25");
+
+        layout.add(horzPanel);
+
 
         dataSourceTable = new DefaultCellTable<DataSource>(20);
         dataSourceProvider = new ListDataProvider<DataSource>();

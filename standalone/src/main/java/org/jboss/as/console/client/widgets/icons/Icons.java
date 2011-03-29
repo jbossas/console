@@ -81,4 +81,10 @@ public interface Icons extends ClientBundle {
     @Source("exclamation.png")
     ImageResource exclamation();
 
+    @Source("database.png")
+    ImageResource database();
+
+    @Source("blank.png")
+    ImageResource noIcon();
+
 }

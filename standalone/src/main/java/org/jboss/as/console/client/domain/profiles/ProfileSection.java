@@ -7,12 +7,14 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.shared.SubsystemIconMapping;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.LHSNavItem;
@@ -36,7 +38,7 @@ class ProfileSection {
 
     public ProfileSection() {
 
-        layout = new LayoutPanel();
+        layout= new LayoutPanel();
         layout.setStyleName("stack-section");
 
 
@@ -109,7 +111,7 @@ class ProfileSection {
         for(SubsystemRecord subsys: subsystems)
         {
             String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
-            TreeItem item = new LHSTreeItem(subsys.getTitle(), token);
+            TreeItem item = new LHSTreeItem(subsys.getTitle(), SubsystemIconMapping.getIcon(subsys.getTitle()), token);
             root.addItem(item);
         }
 

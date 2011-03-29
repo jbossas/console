@@ -1,5 +1,9 @@
 package org.jboss.as.console.client.widgets;
 
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TreeItem;
 
 /**
@@ -9,6 +13,25 @@ import com.google.gwt.user.client.ui.TreeItem;
 public class LHSTreeItem extends TreeItem {
     public LHSTreeItem(String text, String token) {
         setText(text);
+        setStyleName("lhs-tree-item");
+        getElement().setAttribute("token", token);
+    }
+
+    public LHSTreeItem(String text, ImageResource icon, String token) {
+
+        Image img = new Image(icon);
+        Label label = new Label(text);
+
+        HorizontalPanel horz = new HorizontalPanel();
+        horz.getElement().setAttribute("style", "padding:0px;");
+        horz.add(img);
+        horz.add(label);
+
+        img.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        label.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+
+        setWidget(horz);
+
         setStyleName("lhs-tree-item");
         getElement().setAttribute("token", token);
     }

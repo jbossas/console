@@ -33,7 +33,6 @@ public class DatasourceView extends DisposableViewImpl implements DataSourcePres
 
         tabLayoutpanel.add(dataSourceEditor.asWidget(), "Data Sources");
         tabLayoutpanel.add(new HTML("Not implemented yet"), "XA Data Sources");
-        tabLayoutpanel.add(new HTML("Not implemented yet"), "JDBC Driver");
 
         tabLayoutpanel.selectTab(0);
 
