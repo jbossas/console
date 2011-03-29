@@ -164,13 +164,14 @@ public class ServerGroupPresenter
 
         if(selectedRecord!=null)
         {
-            serverGroupStore.delete(selectedRecord, new SimpleCallback<Boolean>() {
+            final ServerGroupRecord deletion = selectedRecord;
+            serverGroupStore.delete(deletion, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean wasSuccessful) {
                     if(wasSuccessful)
                     {
                         Console.MODULES.getMessageCenter().notify(
-                                new Message("Deleted server group "+selectedRecord.getGroupName())
+                                new Message("Deleted server group "+deletion.getGroupName())
                         );
 
                         getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
@@ -178,7 +179,7 @@ public class ServerGroupPresenter
                     else
                     {
                         Console.MODULES.getMessageCenter().notify(
-                                new Message("Failed to delete "+selectedRecord.getGroupName(), Message.Severity.Error)
+                                new Message("Failed to delete "+deletion.getGroupName(), Message.Severity.Error)
                         );
                     }
                 }
@@ -188,7 +189,13 @@ public class ServerGroupPresenter
         }
 
         // switch to alternate record instead
-        workOn(serverGroups.get(0));
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                if(result.size()>0)
+                    workOn(serverGroups.get(0));
+            }
+        });
 
     }
 
