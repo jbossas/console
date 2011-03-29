@@ -123,6 +123,7 @@ public class DataSourceEditor {
         // -----------
 
         Form<DataSource> form = new Form(DataSource.class);
+        form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
         CheckBoxItem enabledItem = new CheckBoxItem("enabled", "Is enabled?");

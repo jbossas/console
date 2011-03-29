@@ -109,7 +109,7 @@ class NewServerGroupWizard {
 
         HTML spacer = new HTML("&nbsp;");
         options.add(spacer);
-        spacer.getElement().getParentElement().setAttribute("width", "100%");
+        //spacer.getElement().getParentElement().setAttribute("width", "100%");
 
         options.add(submit);
         options.add(spacer);
@@ -125,6 +125,7 @@ class NewServerGroupWizard {
         layout.add(new HTML("Create a new server group based on an existing one. " +
                 "The new group will inherit the properties of the selected group."));
         layout.add(formWidget);
+
         layout.add(options);
 
     }

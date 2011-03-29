@@ -34,7 +34,7 @@ class DeploymentSection {
 
         LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");
 
-        addNavItems(current, createNew, plans);
+        addNavItems(createNew, current, plans);
     }
 
     private void addNavItems(LHSNavItem... items) {

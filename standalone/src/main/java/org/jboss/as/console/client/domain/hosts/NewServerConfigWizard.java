@@ -102,7 +102,7 @@ public class NewServerConfigWizard {
 
         HTML spacer = new HTML("&nbsp;");
         options.add(spacer);
-        spacer.getElement().getParentElement().setAttribute("width", "100%");
+        //spacer.getElement().getParentElement().setAttribute("width", "100%");
 
         options.add(submit);
         options.add(spacer);
