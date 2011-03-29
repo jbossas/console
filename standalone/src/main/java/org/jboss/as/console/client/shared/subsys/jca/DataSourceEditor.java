@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -8,6 +10,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -18,6 +22,8 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -38,9 +44,24 @@ public class DataSourceEditor {
     public Widget asWidget() {
 
         ScrollPanel scroll = new ScrollPanel();
+
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; width:90%");
+        layout.getElement().setAttribute("style", "margin:15px; width:95%");
+
         scroll.add(layout);
+
+        ToolStrip toolstrip = new ToolStrip();
+        toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Adding datasources not implemented",Message.Severity.Warning)
+                );
+            }
+        }));
+
+        layout.add(toolstrip);
 
         // ---
 
@@ -103,6 +124,7 @@ public class DataSourceEditor {
 
         form.setFields(nameItem, enabledItem, jndiItem, driverItem, userItem, passwordItem);
         form.bind(dataSourceTable);
+        form.setEnabled(false); // currently not editable
 
         Widget formWidget = form.asWidget();
 
