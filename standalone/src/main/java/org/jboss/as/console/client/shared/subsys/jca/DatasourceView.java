@@ -1,10 +1,14 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -16,17 +20,33 @@ public class DatasourceView extends DisposableViewImpl implements DataSourcePres
 
     LayoutPanel layout = null;
 
+    private DataSourceEditor dataSourceEditor;
 
     @Override
     public Widget createWidget() {
 
-        layout = new RHSContentPanel("DataSources");
-        layout.add(new Label("Needs to be implemented. But should act as a default landing page."));
-        return layout;
+        this.dataSourceEditor = new DataSourceEditor(presenter);
+
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+
+
+        tabLayoutpanel.add(dataSourceEditor.asWidget(), "Data Sources");
+        tabLayoutpanel.add(new HTML("Not implemented yet"), "XA Data Sources");
+        tabLayoutpanel.add(new HTML("Not implemented yet"), "JDBC Driver");
+
+        tabLayoutpanel.selectTab(0);
+
+        return tabLayoutpanel;
     }
 
     @Override
     public void setPresenter(DataSourcePresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void updateDataSources(List<DataSource> datasources) {
+        dataSourceEditor.updateDataSources(datasources);
     }
 }
