@@ -13,6 +13,7 @@ public class NameTokens {
     public static final String MetricsPresenter = "invocation-metrics";
     public static final String DataSourcePresenter = "datasources";
     public static final String JMSPresenter = "jms";
+    public static final String LoggingPresenter = "logging";
 
     public static String getMainLayout() {
         return mainLayout;
