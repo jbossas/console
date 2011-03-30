@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.AuthenticationEvent;
 import org.jboss.as.console.client.auth.AuthenticationListener;
+import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.widgets.icons.Icons;
 
@@ -17,18 +18,14 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  * @author Heiko Braun
  * @date 1/28/11
  */
-public class Footer implements AuthenticationListener {
+public class Footer {
 
     private Label userName;
 
     @Inject
-    public Footer(EventBus bus) {
-        bus.addHandler(AuthenticationEvent.TYPE, this);
-    }
-
-    @Override
-    public void onUserAuthenticated(AuthenticationEvent event) {
-        userName.setText(event.getUser().getUserName());
+    public Footer(EventBus bus, CurrentUser user) {
+        this.userName = new Label();
+        this.userName.setText(user.getUserName());
     }
 
     public Widget asWidget() {
@@ -38,7 +35,6 @@ public class Footer implements AuthenticationListener {
         Image userImg = new Image(Icons.INSTANCE.user());
         layout.add(userImg);
 
-        userName = new Label();
         userName.setStyleName("footer-item");
         layout.add(userName);
 

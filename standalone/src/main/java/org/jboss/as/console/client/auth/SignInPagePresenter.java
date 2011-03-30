@@ -2,8 +2,12 @@ package org.jboss.as.console.client.auth;
 
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.inject.Inject;
@@ -13,10 +17,13 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.*;
+import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealRootContentEvent;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.widgets.LoadingOverlay;
 
 
@@ -125,14 +132,6 @@ public class SignInPagePresenter extends
 
             PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);
             placeManager.revealPlace(myRequest);
-
-            // notify listeners
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    getEventBus().fireEvent(new AuthenticationEvent(getUser()));
-                }
-            });
         }
         else {
             showErrorDialog();
