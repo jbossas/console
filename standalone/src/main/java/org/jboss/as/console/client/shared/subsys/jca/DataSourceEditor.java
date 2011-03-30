@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -8,6 +9,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -45,12 +47,8 @@ public class DataSourceEditor {
 
     public Widget asWidget() {
 
-        ScrollPanel scroll = new ScrollPanel();
-
-        VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; width:95%");
-
-        scroll.add(layout);
+        LayoutPanel layout = new LayoutPanel();
+        layout.setStyleName("fill-layout");
 
         ToolStrip toolstrip = new ToolStrip();
         toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
@@ -65,6 +63,13 @@ public class DataSourceEditor {
 
         layout.add(toolstrip);
 
+        // ----
+
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
+
+        layout.add(vpanel);
+
         // ---
 
         HorizontalPanel horzPanel = new HorizontalPanel();
@@ -74,7 +79,7 @@ public class DataSourceEditor {
         horzPanel.add(new ContentHeaderLabel("JDBC Data Source Configurations"));
         image.getElement().getParentElement().setAttribute("width", "25");
 
-        layout.add(horzPanel);
+        vpanel.add(horzPanel);
 
 
         dataSourceTable = new DefaultCellTable<DataSource>(20);
@@ -117,7 +122,7 @@ public class DataSourceEditor {
         dataSourceTable.addColumn(jndiNameColumn, "JNDI");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
-        layout.add(dataSourceTable);
+        vpanel.add(dataSourceTable);
 
 
         // -----------
@@ -139,15 +144,19 @@ public class DataSourceEditor {
 
         Widget formWidget = form.asWidget();
 
-        layout.add(new ContentGroupLabel("Details"));
-        layout.add(formWidget);
-        return scroll;
+        vpanel.add(new ContentGroupLabel("Details"));
+        vpanel.add(formWidget);
+
+
+        layout.setWidgetTopHeight(toolstrip, 0, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        return layout;
     }
 
     public void updateDataSources(List<DataSource> datasources) {
         dataSourceProvider.setList(datasources);
 
-         if(!datasources.isEmpty())
+        if(!datasources.isEmpty())
             dataSourceTable.getSelectionModel().setSelected(datasources.get(0), true);
 
     }

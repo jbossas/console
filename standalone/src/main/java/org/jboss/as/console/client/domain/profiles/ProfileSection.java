@@ -111,7 +111,7 @@ class ProfileSection {
         for(SubsystemRecord subsys: subsystems)
         {
             String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
-            TreeItem item = new LHSTreeItem(subsys.getTitle(), SubsystemIconMapping.getIcon(subsys.getTitle()), token);
+            TreeItem item = new LHSTreeItem(subsys.getTitle(), token);
             root.addItem(item);
         }
 

@@ -11,7 +11,7 @@ public class ToolButton extends Button
 {
     public ToolButton(String title) {
         super(title);
-        setStyleName("default-button");
+        setStyleName("toolstrip-button");
     }
 
     public ToolButton(String title, ClickHandler handler) {

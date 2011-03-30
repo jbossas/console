@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -67,16 +68,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         TitleBar titleBar = new TitleBar("Server Group");
         layout.add(titleBar);
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
-
-        layout.add(panel);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 35, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        // ---------------------------------------------
+        // ----
 
         final ToolStrip toolStrip = new ToolStrip();
         edit = new ToolButton("Edit");
@@ -113,6 +105,28 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
         toolStrip.addToolButton(delete);
 
+        toolStrip.addToolButtonRight(new ToolButton("New Group", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewGroupDialoge();
+            }
+        }));
+
+        layout.add(toolStrip);
+        // ----
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
+        panel.getElement().setAttribute("style", "padding:15px;");
+
+        layout.add(panel);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(panel, 56, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        // ---------------------------------------------
+
         nameLabel = new ContentHeaderLabel("Name here ...");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
@@ -120,8 +134,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         Image image = new Image(Icons.INSTANCE.serverGroup());
         horzPanel.add(image);
         horzPanel.add(nameLabel);
-        horzPanel.add(toolStrip);
-        toolStrip.getElement().getParentElement().setAttribute("width", "50%");
         image.getElement().getParentElement().setAttribute("width", "25");
 
         panel.add(horzPanel);

@@ -1,42 +1,30 @@
 package org.jboss.as.console.client.widgets.tools;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 
 /**
  * @author Heiko Braun
  * @date 2/28/11
  */
-public class ToolStrip extends LayoutPanel {
+public class ToolStrip extends HTMLPanel {
 
+    private String ref = createUniqueId();
 
-    private HorizontalPanel innerPanel;
 
     public ToolStrip() {
-        super();
-        setStyleName("default-toolstrip");
-
-        innerPanel = new HorizontalPanel();
-        add(innerPanel);
-        innerPanel.getElement().setAttribute("style", "float:right");
-
-        setWidgetTopHeight(innerPanel, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        super("");
+        getElement().setInnerHTML("<div id='"+ref+"' class='default-toolstrip'>");
     }
 
     public void addToolButton(ToolButton button)
     {
-        innerPanel.add(button);
-        button.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
-        innerPanel.add(new HTML("&nbsp;"));
+        add(button, ref);
     }
 
-    public void reflectEditState(boolean isEditState)
+    public void addToolButtonRight(ToolButton button)
     {
-        if(isEditState)
-            addStyleName("default-toolstrip-edited");
-        else
-            removeStyleName("default-toolstrip-edited");
+        button.getElement().setAttribute("style", "float:right;border-color:#cccccc;");
+        add(button, ref);
+
     }
 }

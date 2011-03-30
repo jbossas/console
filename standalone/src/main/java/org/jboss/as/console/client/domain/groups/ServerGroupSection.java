@@ -33,16 +33,16 @@ class ServerGroupSection {
         root = new TreeItem("Available Groups:");
         serverGroupTree.addItem(root);
 
-        LHSNavItem createNew = new LHSNavItem(
+        /*LHSNavItem createNew = new LHSNavItem(
                 "Add Server Group",
                 "domain/" + NameTokens.ServerGroupPresenter + ";action=new",
                 Icons.INSTANCE.add_small());
 
-        layout.add(createNew);
+        layout.add(createNew);*/
         layout.add(serverGroupTree);
 
-        layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(serverGroupTree, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        //layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(serverGroupTree, 0, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
     public Widget asWidget()

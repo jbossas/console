@@ -84,8 +84,6 @@ public class ServerGroupPresenter
 
         if("new".equals(action))
         {
-            selectedRecord = null;
-            groupName = null;
             launchNewGroupDialoge();
         }
     }
@@ -256,6 +254,10 @@ public class ServerGroupPresenter
     }
 
     public void launchNewGroupDialoge() {
+
+        selectedRecord = null;
+        groupName = null;
+
         window = new DefaultWindow("Create Server Group");
         window.setWidth(320);
         window.setHeight(240);
