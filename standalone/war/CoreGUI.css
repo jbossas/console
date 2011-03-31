@@ -634,6 +634,7 @@ color:#C0C0C0;
 
 .toolstrip-button:hover {
     background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
+    color:#000!important;
 }
 
 .row-tools {

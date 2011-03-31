@@ -88,8 +88,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         if("new".equals(action))
         {
-            serverName = null;
-            selectedRecord = null;
             launchNewConfigDialoge();
         }
     }
@@ -172,14 +170,18 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void launchNewConfigDialoge() {
+
+        serverName = null;
+        selectedRecord = null;
+
         window = new DefaultWindow("Create Server Configuration");
         window.setWidth(320);
         window.setHeight(240);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
-                if(selectedRecord==null)
-                    History.back();
+                /*if(selectedRecord==null)
+                    History.back();*/
             }
         });
 

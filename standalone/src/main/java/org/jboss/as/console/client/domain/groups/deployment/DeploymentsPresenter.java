@@ -7,10 +7,13 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.model.*;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
@@ -34,6 +37,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     private EntityFilter<DeploymentRecord> filter = new EntityFilter<DeploymentRecord>();
 
     public List<DeploymentRecord> deployments;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
@@ -131,6 +135,12 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
             return groupMatch && typeMatch;
         }
+    }
+
+    public void launchNewDeploymentDialoge() {
+        Console.MODULES.getMessageCenter().notify(
+                new Message("Not implemented yet", Message.Severity.Warning)
+        );
     }
 
 }

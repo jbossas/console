@@ -61,17 +61,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         TitleBar titleBar = new TitleBar("Server Configuration");
         layout.add(titleBar);
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
-
-        layout.add(panel);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 35, Style.Unit.PX, 100, Style.Unit.PCT);
-
-
-        // --------------------------------------------------------
+        // ----
 
         final ToolStrip toolStrip = new ToolStrip();
         edit = new ToolButton("Edit");
@@ -106,7 +96,31 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                         });
             }
         });
+
         toolStrip.addToolButton(delete);
+        toolStrip.addToolButtonRight(new ToolButton("Create New", new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewConfigDialoge();
+            }
+        }));
+
+        layout.add(toolStrip);
+
+        // ---
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
+        panel.getElement().setAttribute("style", "padding:15px;");
+
+        layout.add(panel);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(panel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+
+
+        // --------------------------------------------------------
 
         nameLabel = new ContentHeaderLabel("Name here ...");
 
@@ -115,8 +129,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         Image image = new Image(Icons.INSTANCE.server());
         horzPanel.add(image);
         horzPanel.add(nameLabel);
-        horzPanel.add(toolStrip);
-        toolStrip.getElement().getParentElement().setAttribute("width", "50%");
         image.getElement().getParentElement().setAttribute("width", "25");
 
         panel.add(horzPanel);
@@ -203,7 +215,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         form.setEnabled(isEnabled);
 
         edit.setText(
-            isEnabled ? "Save" : "Edit"
+                isEnabled ? "Save" : "Edit"
         );
     }
 }

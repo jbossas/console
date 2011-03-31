@@ -54,6 +54,22 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
+        // --
+
+        final ToolStrip topLevelTools = new ToolStrip();
+        final ToolButton newButton= new ToolButton("New Deployment");
+        newButton.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                presenter.launchNewDeploymentDialoge();
+            }
+        });
+
+        topLevelTools.addToolButtonRight(newButton);
+        layout.add(topLevelTools);
+        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
+
+        // --
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding:15px;");
@@ -146,7 +162,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         scroll.add(vpanel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 65, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 65, Style.Unit.PCT);
 
         // ----------- --------------------------------------------------
 
@@ -212,6 +228,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         form.bind(deploymentTable);
 
         Widget formWidget = form.asWidget();
+        formWidget.getElement().setAttribute("style", "padding-top:15px");
         formPanel.add(formWidget);
         formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 

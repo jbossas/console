@@ -122,8 +122,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.add(panel);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 56, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(panel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---------------------------------------------
 

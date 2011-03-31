@@ -32,11 +32,11 @@ class ServersConfigSection {
         layout = new LayoutPanel();
         layout.setStyleName("stack-section");
 
-        LHSNavItem createNew = new LHSNavItem(
+        /*LHSNavItem createNew = new LHSNavItem(
                 "Create Server",
                 "hosts/" + NameTokens.ServerPresenter + ";action=new",
                 Icons.INSTANCE.add_small()
-        );
+        );*/
 
         // --------------------------------------------------
 
@@ -46,11 +46,11 @@ class ServersConfigSection {
 
         // --------------------------------------------------
 
-        layout.add(createNew);
+        //layout.add(createNew);
         layout.add(hostTree);
 
-        layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(hostTree, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        //layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
+        layout.setWidgetTopHeight(hostTree, 0, Style.Unit.PX, 100, Style.Unit.PCT);
     }
 
     public void setSelectedHost(String selectedHost) {

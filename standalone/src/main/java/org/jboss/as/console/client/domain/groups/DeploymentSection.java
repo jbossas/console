@@ -21,20 +21,20 @@ class DeploymentSection {
         layout.setStyleName("stack-section");
 
         LHSNavItem current = new LHSNavItem(
-                "Available Deployments",
+                "Current Deployments",
                 NameTokens.DeploymentsPresenter,
                 Icons.INSTANCE.inventory_small()
         );
 
-        LHSNavItem createNew = new LHSNavItem(
+        /*LHSNavItem createNew = new LHSNavItem(
                 "Add Deployment",
                 "current-deployments;action=new",
                 Icons.INSTANCE.add_small()
-        );
+        );*/
 
         LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");
 
-        addNavItems(createNew, current, plans);
+        addNavItems(current, plans);
     }
 
     private void addNavItems(LHSNavItem... items) {
