@@ -1,14 +1,13 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 
 import java.util.List;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 
 /**
  * @author Stan Silvert
@@ -44,7 +43,7 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     }
 
     @Override
-    public void updateDataSources(List<DataSource> datasources) {
-        loggingEditor.updateDataSources(datasources);
+    public void updateLoggingHandlers(List<LoggingHandler> handlers) {
+        loggingEditor.updateLoggingHandlers(handlers);
     }
 }

@@ -15,13 +15,13 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -48,7 +48,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     public interface MyView extends View {
         void setPresenter(LoggingPresenter presenter);
 
-        void updateDataSources(List<DataSource> datasources);
+        void updateLoggingHandlers(List<LoggingHandler> handlerss);
     }
 
     @Inject
@@ -71,7 +71,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     @Override
     protected void onReset() {
         super.onReset();
-        loadDataSources();
+        loadLogging();
     }
 
     @Override
@@ -79,15 +79,15 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
          RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
-    void loadDataSources() {
+    void loadLogging() {
 
-        // /profile=default/subsystem=datasources:read-children-resources(child-type=data-source)
+        // /profile=default/subsystem=logging:read-children-resources(child-type=handler)
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).add("profile", "default"); // TODO: selected profile
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(CHILD_TYPE).set("data-source");
+        operation.get(ADDRESS).add("subsystem", "logging");
+        operation.get(CHILD_TYPE).set("handler");
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -100,26 +100,25 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
 
-                List<DataSource> datasources = new ArrayList<DataSource>(payload.size());
+                List<LoggingHandler> handlers = new ArrayList<LoggingHandler>(payload.size());
                 for(ModelNode item : payload)
                 {
-                    // returned as type property (key=ds name)
+                    // returned as type property (key=handler name)
                     Property property = item.asProperty();
-                    ModelNode ds = property.getValue().asObject();
+                    ModelNode handler = property.getValue().asObject();
                     String name = property.getName();
-                    //System.out.println(ds.toJSONString(false));
 
                     try {
-                        DataSource model = factory.dataSource().as();
+                        LoggingHandler model = factory.loggingHandler().as();
                         model.setName(name);
-                        model.setConnectionUrl(ds.get("connection-url").asString());
-                        model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDriverClass(ds.get("driver-class").asString());
-                        model.setEnabled(ds.get("enabled").asBoolean());
-                        model.setUsername(ds.get("user-name").asString());
-                        model.setPassword(ds.get("password").asString());
+                        model.setAutoflush(handler.get("autoflush").asBoolean());
+                        model.setEncoding(handler.get("encoding").asString());
+                        model.setFormatter(handler.get("formatter").asString());
+                        model.setType(handler.get("handler-type").asString());
+                        model.setLevel(handler.get("level").asString());
+                        model.setQueueLength(handler.get("queue-length").asString());
 
-                        datasources.add(model);
+                        handlers.add(model);
 
                     } catch (IllegalArgumentException e) {
                         Log.error("Failed to parse data source representation", e);
@@ -127,7 +126,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
                 }
 
                 // finally update view
-                getView().updateDataSources(datasources);
+                getView().updateLoggingHandlers(handlers);
             }
         });
 

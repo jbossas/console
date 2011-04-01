@@ -48,11 +48,8 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
-<<<<<<< HEAD
 import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
-=======
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
->>>>>>> Add logging page
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
