@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -78,9 +79,17 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         if(!hasBeenRevealed)
         {
             hasBeenRevealed=true;
-            getEventBus().fireEvent(
-                    new LHSHighlightEvent(null, "datasources", "profiles")
-            );
+
+
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    getEventBus().fireEvent(
+                            new LHSHighlightEvent(null, "datasources", "profiles")
+                    );
+                }
+            });
+
         }
     }
 

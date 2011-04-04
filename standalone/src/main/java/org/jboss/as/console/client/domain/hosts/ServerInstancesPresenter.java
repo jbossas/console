@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -89,11 +90,15 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         refreshView();
 
 
-        getEventBus().fireEvent(
-                new LHSHighlightEvent(null, "Server Status", "hosts")
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                getEventBus().fireEvent(
+                        new LHSHighlightEvent(null, "Server Status", "hosts")
 
-        );
-
+                );
+            }
+        });
     }
 
     private void refreshView() {
@@ -196,7 +201,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
                 Message.Severity sev = wasSuccessful ? Message.Severity.Info : Message.Severity.Error;
                 Console.MODULES.getMessageCenter().notify(
-                    new Message(msg, sev)
+                        new Message(msg, sev)
                 );
 
                 if(wasSuccessful)
