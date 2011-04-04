@@ -8,11 +8,11 @@ public interface Icons extends ClientBundle {
 
     public static final Icons INSTANCE =  GWT.create(Icons.class);
 
-    @Source("opener_opened.png")
-    ImageResource opener_opened();
+    @Source("stack_opened.png")
+    ImageResource stack_opened();
 
-    @Source("opener_closed.png")
-    ImageResource opener_closed();
+    @Source("stack_closed.gif")
+    ImageResource stack_closed();
 
     @Source("inventory.png")
     ImageResource inventory();
