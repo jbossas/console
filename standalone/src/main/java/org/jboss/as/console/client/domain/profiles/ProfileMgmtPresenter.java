@@ -98,7 +98,9 @@ public class ProfileMgmtPresenter
             });
 
             if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+            {
                 placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -37,6 +38,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private boolean hasBeenRevealed = false;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -72,6 +74,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     protected void onReset() {
         super.onReset();
         loadDataSources();
+
+        if(!hasBeenRevealed)
+        {
+            hasBeenRevealed=true;
+            getEventBus().fireEvent(
+                    new LHSHighlightEvent(null, "datasources", "profiles")
+            );
+        }
     }
 
     @Override

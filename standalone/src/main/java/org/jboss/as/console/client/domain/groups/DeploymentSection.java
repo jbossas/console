@@ -19,7 +19,7 @@ class DeploymentSection {
     public DeploymentSection() {
 
         panel = new DisclosureStackHeader("Deployments").asWidget();
-        deploymentTree = new LHSNavTree();
+        deploymentTree = new LHSNavTree("groups");
         panel.setContent(deploymentTree);
 
         LHSNavTreeItem current = new LHSNavTreeItem( "Current Deployments", NameTokens.DeploymentsPresenter);

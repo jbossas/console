@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -19,40 +20,54 @@ import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
  * @author Heiko Braun
  * @date 3/24/11
  */
-public class LHSNavTree extends Tree implements LHSNavEvent.NavItemSelectionHandler{
+public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelectionHandler{
 
     private static final String TREE_ID_ATTRIBUTE = "treeid";
 
     private String treeId;
+    private String category;
 
-    public LHSNavTree() {
+    public LHSNavTree(final String category) {
         super(DefaultTreeResources.INSTANCE);
 
         this.treeId = "lhs-nav-tree_"+HTMLPanel.createUniqueId();
+        this.category = category;
 
         addStyleName("stack-section");
 
         addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> event) {
-                TreeItem item = event.getSelectedItem();
 
-                if(item.getElement().hasAttribute("token"))
+                final TreeItem selectedItem = event.getSelectedItem();
+
+                if(selectedItem.getElement().hasAttribute("token"))
                 {
-                    String token = item.getElement().getAttribute("token");
+                    String token = selectedItem.getElement().getAttribute("token");
                     Console.MODULES.getPlaceManager().revealPlaceHierarchy(
                             Places.fromString(token)
                     );
+
                 }
 
                 // highlight section
-                Console.MODULES.getEventBus().fireEvent(
-                        new LHSNavEvent(treeId)
-                );
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
+                    @Override
+                    public void execute() {
+                        Console.MODULES.getEventBus().fireEvent(
+                                new LHSHighlightEvent(treeId, selectedItem.getText(), category)
+                        );
+                    }
+                });
+
             }
         });
 
-        Console.MODULES.getEventBus().addHandler(LHSNavEvent.TYPE, this);
+        Console.MODULES.getEventBus().addHandler(LHSHighlightEvent.TYPE, this);
+    }
+
+    public String getTreeId() {
+        return treeId;
     }
 
     @Override
@@ -63,18 +78,33 @@ public class LHSNavTree extends Tree implements LHSNavEvent.NavItemSelectionHand
     }
 
     @Override
-    public void onSelectedNavTree(String selectedId) {
+    public void onSelectedNavTree(String selectedId, final String selectedItem, String selectedCategory) {
 
-        if(!selectedId.equals(treeId))
+        if(category.equals(selectedCategory))
         {
-            // deselect
-            for(int i=0; i<getItemCount(); i++)
-            {
-                LHSNavTreeItem item = (LHSNavTreeItem)getItem(i);
-                item.setSelected(false);
-            }
-        }
+            System.out.println(selectedId+" > "+selectedCategory);
 
-        // NOTE: select is handled by LHSTreeItem itself
+            applyStateChange(new StateChange()
+            {
+                @Override
+                public void applyTo(LHSNavTreeItem treeItem) {
+                    boolean isSelected = selectedItem.equals(treeItem.getText());
+                    treeItem.setSelected(isSelected);
+                }
+            });
+        }
+    }
+
+    void applyStateChange(StateChange stateChange)
+    {
+        for(int i=0; i<getItemCount(); i++)
+        {
+            LHSNavTreeItem navItem = (LHSNavTreeItem)getItem(i);
+            stateChange.applyTo(navItem);
+        }
+    }
+
+    interface StateChange {
+        void applyTo(LHSNavTreeItem item);
     }
 }

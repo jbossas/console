@@ -25,6 +25,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -127,10 +128,17 @@ public class ServerGroupPresenter
                     Log.warn("Parameter 'name' missing, fallback to default group");
                     groupName = result.get(0).getGroupName();
                     selectedRecord = result.get(0);
+
+                    getEventBus().fireEvent(
+                            new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
+
+                    );
+
                 }
 
                 loadServerGroup(selectedRecord.getGroupName());
                 getView().setEnabled(false);
+
             }
         });
 

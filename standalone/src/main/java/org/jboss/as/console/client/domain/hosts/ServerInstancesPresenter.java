@@ -22,6 +22,7 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -86,6 +87,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     protected void onReset() {
         super.onReset();
         refreshView();
+
+
+        getEventBus().fireEvent(
+                new LHSHighlightEvent(null, "Server Status", "hosts")
+
+        );
 
     }
 

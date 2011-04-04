@@ -86,6 +86,7 @@ public class HostMgmtPresenter
         ProfileHeader header = new ProfileHeader("Host Management");
         Console.MODULES.getHeader().setContent(header);
 
+        // first request, select default contents
         if(!hasBeenRevealed &&
                 NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
