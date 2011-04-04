@@ -278,8 +278,7 @@ public class ServerGroupPresenter
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
-                if(selectedRecord==null)
-                    History.back();
+
             }
         });
 
