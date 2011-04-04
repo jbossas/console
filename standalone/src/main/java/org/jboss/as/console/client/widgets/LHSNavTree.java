@@ -82,8 +82,6 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
 
         if(category.equals(selectedCategory))
         {
-            System.out.println(selectedId+" > "+selectedCategory);
-
             applyStateChange(new StateChange()
             {
                 @Override
