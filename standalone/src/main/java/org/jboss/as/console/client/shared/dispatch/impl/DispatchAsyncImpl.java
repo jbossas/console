@@ -2,7 +2,11 @@ package org.jboss.as.console.client.shared.dispatch.impl;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.*;
+import org.jboss.as.console.client.shared.dispatch.Action;
+import org.jboss.as.console.client.shared.dispatch.ActionHandler;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
+import org.jboss.as.console.client.shared.dispatch.Result;
 
 /**
  * @author Heiko Braun

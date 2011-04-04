@@ -4,7 +4,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The default renderer for a group of form items.

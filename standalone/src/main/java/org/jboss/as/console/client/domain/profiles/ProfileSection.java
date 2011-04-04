@@ -1,25 +1,23 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.shared.SubsystemIconMapping;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.LHSNavigationTree;
-import org.jboss.as.console.client.widgets.LHSTreeItem;
+import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 import java.util.List;
 
@@ -29,28 +27,18 @@ import java.util.List;
  */
 class ProfileSection {
 
-    private TreeItem root;
     private Tree subsysTree;
-
     private ComboBox selection;
-
-    private LayoutPanel layout;
+    private DisclosurePanel panel;
 
     public ProfileSection() {
 
-        layout= new LayoutPanel();
-        layout.setStyleName("stack-section");
+        panel = new DisclosureStackHeader("Profiles").asWidget();
+        subsysTree = new LHSNavTree();
+        panel.setContent(subsysTree);
 
-
-        subsysTree = new LHSNavigationTree();
-        root = new TreeItem("Subsystems in Profile:");
-        subsysTree.addItem(root);
-
-        LHSNavItem manage = new LHSNavItem(
-                "In-/Exclude Subsystems", "domain/manage-subsystems"
-        );
-
-        //layout.add(manage);
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         selection = new ComboBox();
         selection.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -64,20 +52,22 @@ class ProfileSection {
 
         HorizontalPanel horz = new HorizontalPanel();
         horz.getElement().setAttribute("width", "100%");
-        horz.add(new HTML("&nbsp;Profile:"));
+        HTML title = new HTML("Profile:&nbsp;");
+        horz.add(title);
         horz.add(dropDown);
+
+        title.getElement().getParentElement().setAttribute("style", "padding:2px;border-top:1px solid #A7ABB4; font-weight:bold;color:#4A5D75;vertical-align:middle; text-align:center");
 
         layout.add(horz);
         layout.add(subsysTree);
 
-        layout.setWidgetTopHeight(horz, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        //layout.setWidgetTopHeight(manage, 28, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(subsysTree, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        panel.setContent(layout);
+
     }
 
     public Widget asWidget()
     {
-        return layout;
+        return panel;
     }
 
     private void fireProfileSelection(String profileName) {
@@ -106,16 +96,14 @@ class ProfileSection {
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
-        root.removeItems();
+        subsysTree.removeItems();
 
         for(SubsystemRecord subsys: subsystems)
         {
             String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
-            TreeItem item = new LHSTreeItem(subsys.getTitle(), token);
-            root.addItem(item);
+            TreeItem item = new LHSNavTreeItem(subsys.getTitle(), token);
+            subsysTree.addItem(item);
         }
-
-        root.setState(true);
 
     }
 }

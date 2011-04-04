@@ -3,7 +3,6 @@ package org.jboss.as.console.client.widgets;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.layout.client.Layout;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -15,6 +14,7 @@ import org.jboss.as.console.client.core.Places;
  * @author Heiko Braun
  * @date 2/21/11
  */
+@Deprecated
 public class LHSNavItem extends LayoutPanel {
 
     public LHSNavItem(String title, final String token) {

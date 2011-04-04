@@ -8,8 +8,6 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.auth.AuthenticationEvent;
-import org.jboss.as.console.client.auth.AuthenticationListener;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.widgets.icons.Icons;

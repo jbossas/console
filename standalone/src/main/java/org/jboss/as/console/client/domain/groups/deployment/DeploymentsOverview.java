@@ -6,7 +6,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -25,7 +32,11 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -50,7 +61,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        RHSHeader title = new RHSHeader("Domain Deployments");
+        RHSHeader title = new RHSHeader("Current Deployments");
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 

@@ -1,13 +1,11 @@
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.widgets.StackSectionHeader;
-import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -19,25 +17,33 @@ import java.util.List;
  */
 class LHSProfileNavigation {
 
-    private StackLayoutPanel stack;
+    private LayoutPanel layout;
+    private VerticalPanel stack;
 
     private ProfileSection profileSection;
 
     public LHSProfileNavigation() {
 
-        stack = new DefaultStackLayoutPanel();
+        layout = new LayoutPanel();
+        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        layout.setStyleName("fill-layout");
+
+        stack = new VerticalPanel();
+        stack.setStyleName("fill-layout-width");
 
         profileSection = new ProfileSection();
-        stack.add(profileSection.asWidget(), new StackSectionHeader("Subsystems"), 28);
+        stack.add(profileSection.asWidget());
 
         CommonConfigSection commonSection = new CommonConfigSection();
-        stack.add(commonSection.asWidget(), new StackSectionHeader("General Config"), 28);
+        stack.add(commonSection.asWidget());
+
+        layout.add(stack);
 
     }
 
     public Widget asWidget()
     {
-        return stack;
+        return layout;
     }
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {

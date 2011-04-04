@@ -8,8 +8,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavigationTree;
-import org.jboss.as.console.client.widgets.LHSTreeItem;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 /**
  * @author Heiko Braun
@@ -21,15 +21,15 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
     private String selectedHost = null;
     private DisclosurePanel panel;
 
-    private LHSNavigationTree instanceTree;
+    private LHSNavTree instanceTree;
 
     public ServerInstancesSection() {
 
         panel = new DisclosureStackHeader("Server Instances").asWidget();
 
-        instanceTree = new LHSNavigationTree();
+        instanceTree = new LHSNavTree();
 
-        LHSTreeItem overview = new LHSTreeItem("Server Status", new ClickHandler()
+        LHSNavTreeItem overview = new LHSNavTreeItem("Server Status", new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event) {

@@ -1,16 +1,14 @@
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.LHSNavigationTree;
-import org.jboss.as.console.client.widgets.LHSTreeItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 import java.util.List;
 
@@ -20,49 +18,35 @@ import java.util.List;
  */
 class ServerGroupSection {
 
-    LayoutPanel layout;
+    DisclosurePanel panel;
     Tree serverGroupTree;
-    TreeItem root;
 
     public ServerGroupSection() {
 
-        layout = new LayoutPanel();
-        layout.setStyleName("stack-section");
+        panel = new DisclosureStackHeader("Server Groups").asWidget();
+        serverGroupTree = new LHSNavTree();
+        panel.setContent(serverGroupTree);
 
-        serverGroupTree = new LHSNavigationTree();
-        root = new TreeItem("Available Groups:");
-        serverGroupTree.addItem(root);
-
-        /*LHSNavItem createNew = new LHSNavItem(
-                "Add Server Group",
-                "domain/" + NameTokens.ServerGroupPresenter + ";action=new",
-                Icons.INSTANCE.add_small());
-
-        layout.add(createNew);*/
-        layout.add(serverGroupTree);
-
-        //layout.setWidgetTopHeight(createNew, 0, Style.Unit.PX, 25, Style.Unit.PX);
-        layout.setWidgetTopHeight(serverGroupTree, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+        serverGroupTree = new LHSNavTree();
+        panel.setContent(serverGroupTree);
     }
 
     public Widget asWidget()
     {
-        return layout;
+        return panel;
     }
 
     public void updateFrom(List<ServerGroupRecord> serverGroupRecords) {
 
-        root.removeItems();
+        serverGroupTree.removeItems();
 
         for(ServerGroupRecord record : serverGroupRecords)
         {
             String groupName = record.getGroupName();
             final String token = "domain/" + NameTokens.ServerGroupPresenter + ";name=" + groupName;
-            final TreeItem item = new LHSTreeItem(groupName, token);
-            root.addItem(item);
+            final TreeItem item = new LHSNavTreeItem(groupName, token);
+            serverGroupTree.addItem(item);
         }
-
-        root.setState(true);
     }
 
 

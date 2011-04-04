@@ -3,7 +3,6 @@ package org.jboss.as.console.client.shared.dispatch;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
