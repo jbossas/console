@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.widgets;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -9,10 +8,10 @@ import com.google.gwt.user.client.ui.Widget;
  * @date 3/2/11
  */
 public class SimpleLHSSection {
-    protected LayoutPanel layout;
+    protected VerticalPanel layout;
 
     public SimpleLHSSection() {
-        layout = new LayoutPanel();
+        layout = new VerticalPanel();
         layout.setStyleName("stack-section");
     }
 
@@ -22,7 +21,6 @@ public class SimpleLHSSection {
         for(LHSNavItem navItem : items)
         {
             layout.add(navItem);
-            layout.setWidgetTopHeight(navItem, i*height, Style.Unit.PX, height, Style.Unit.PX);
             i++;
         }
     }

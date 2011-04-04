@@ -23,6 +23,8 @@ public class LHSNavigationTree extends Tree {
     public LHSNavigationTree() {
         super(DefaultTreeResources.INSTANCE);
 
+        addStyleName("stack-section");
+
         addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> event) {

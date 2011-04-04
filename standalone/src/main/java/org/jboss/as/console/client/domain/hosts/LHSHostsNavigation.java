@@ -2,13 +2,11 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.widgets.StackSectionHeader;
-import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -26,27 +24,29 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
     private HostConfigSection hostConfigSection;
 
     private HostSelector selector;
-    private StackLayoutPanel stack;
+    private VerticalPanel stack;
     private DockLayoutPanel layout;
 
     public LHSHostsNavigation() {
 
         layout = new DockLayoutPanel(Style.Unit.PX);
         layout.setStyleName("fill-layout");
+        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
 
         selector = new HostSelector();
         final Widget selectorWidget = selector.asWidget();
 
-        stack = new DefaultStackLayoutPanel();
+        stack = new VerticalPanel();
+        stack.setStyleName("fill-layout-width");
 
         serversSection = new ServersConfigSection();
-        stack.add(serversSection.asWidget(), new StackSectionHeader("Server Configurations"), HEADER_SIZE);
+        stack.add(serversSection.asWidget());
 
         instanceSection = new ServerInstancesSection();
-        stack.add(instanceSection.asWidget(), new StackSectionHeader("Server Instances"), HEADER_SIZE);
+        stack.add(instanceSection.asWidget());
 
         hostConfigSection = new HostConfigSection();
-        stack.add(hostConfigSection.asWidget(), new StackSectionHeader("Host Settings"), HEADER_SIZE);
+        stack.add(hostConfigSection.asWidget());
 
         // -----------------------------
 
@@ -61,7 +61,7 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
 
         // show instances by default
-        stack.showWidget(1);
+        //stack.showWidget(1);
 
     }
 
