@@ -26,9 +26,6 @@ class ServerGroupSection {
         panel = new DisclosureStackHeader("Server Groups").asWidget();
         serverGroupTree = new LHSNavTree("groups");
         panel.setContent(serverGroupTree);
-
-        serverGroupTree = new LHSNavTree("groups");
-        panel.setContent(serverGroupTree);
     }
 
     public Widget asWidget()

@@ -1,19 +1,15 @@
 package org.jboss.as.console.client.server;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.StackSectionHeader;
+import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 import java.util.List;
 
@@ -25,108 +21,71 @@ import java.util.List;
  */
 public class LHSServerNavigation {
 
-    private StackLayoutPanel stack;
-    TreeItem subsysRoot;
+    private VerticalPanel stack;
+
+    private LayoutPanel layout;
+    private Tree subsysTree;
 
     public LHSServerNavigation() {
         super();
 
-        stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
-        stack.setWidth("250");
+        layout = new LayoutPanel();
+        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        layout.setStyleName("fill-layout");
 
-
-        // ----------------------------------------------------
-
-        LayoutPanel subsysLayout = new LayoutPanel();
-        subsysLayout.setStyleName("stack-section");
-
-        Tree subsysTree = new Tree();
-        subsysTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
-            @Override
-            public void onSelection(SelectionEvent<TreeItem> event) {
-                TreeItem selectedItem = event.getSelectedItem();
-                if(selectedItem.getElement().hasAttribute("token"))
-                {
-                    String token = selectedItem.getElement().getAttribute("token");
-                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
-                            Places.fromString(token)
-                    );
-                }
-            }
-        });
-
-        subsysRoot = new TreeItem("Subsystems:");
-        subsysTree.addItem(subsysRoot);
-
-        subsysLayout.add(subsysTree);
-        stack.add(subsysLayout, new StackSectionHeader("Profile"), 28);
+        stack = new VerticalPanel();
+        stack.setStyleName("fill-layout-width");
 
         // ----------------------------------------------------
 
-        LayoutPanel dplLayout = new LayoutPanel();
-        dplLayout.setStyleName("stack-section");
 
-        LHSNavItem[] dplItems = new LHSNavItem[] {
-                new LHSNavItem("Web Applications", "server-deployments;type=web"),
-                new LHSNavItem("Enterprise Applications", "server-deployments;type=ee"),
-                new LHSNavItem("Resource Adapters", "server-deployments;type=jca"),
-                new LHSNavItem("Other", "server-deployments;type=other")
+        subsysTree = new LHSNavTree("profile-standalone");
+
+        DisclosurePanel subsysPanel  = new DisclosureStackHeader("Profile").asWidget();
+        subsysPanel.setContent(subsysTree);
+        stack.add(subsysPanel);
+
+        // ----------------------------------------------------
+
+        Tree commonTree = new LHSNavTree("profile-standalone");
+
+        DisclosurePanel commonPanel  = new DisclosureStackHeader("General Configuration").asWidget();
+        commonPanel.setContent(commonTree);
+
+        LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
+                new LHSNavTreeItem("Paths", "server/server-paths"),
+                new LHSNavTreeItem("Interfaces", "server/server-interfaces"),
+                new LHSNavTreeItem("Socket Binding Groups", "server/server-sockets"),
+                new LHSNavTreeItem("System Properties", "server/server-properties")
         };
 
-        int i =0;
-        for(LHSNavItem item : dplItems)
+        for(LHSNavTreeItem item : commonItems)
         {
-            dplLayout.add(item);
-            dplLayout.setWidgetTopHeight(item, i, Style.Unit.PX, 25, Style.Unit.PX);
-            i+=25;
+            commonTree.addItem(item);
         }
 
-        //stack.add(dplLayout, new StackSectionHeader("Deployments"), 28);
+        stack.add(commonPanel);
 
-                       
-        // ----------------------------------------------------
-
-        LayoutPanel commonLayout = new LayoutPanel();
-         commonLayout.setStyleName("stack-section");
-
-        LHSNavItem[] commonItems = new LHSNavItem[] {
-                new LHSNavItem("Paths", "server/server-paths"),
-                new LHSNavItem("Interfaces", "server/server-interfaces"),
-                new LHSNavItem("Socket Binding Groups", "server/server-sockets"),
-                new LHSNavItem("System Properties", "server/server-properties")
-        };
-
-        i =0;
-        for(LHSNavItem item : commonItems)
-        {
-            commonLayout.add(item);
-            commonLayout.setWidgetTopHeight(item, i, Style.Unit.PX, 25, Style.Unit.PX);
-            i+=25;
-        }
-
-        stack.add(commonLayout, new StackSectionHeader("General Config"), 28);
+        layout.add(stack);
 
     }
 
     public Widget asWidget()
     {
-        return stack;
+        return layout;
     }
 
     public void updateFrom(List<SubsystemRecord> subsystems) {
 
-        subsysRoot.removeItems();
+        subsysTree.removeItems();
 
         for(SubsystemRecord subsys: subsystems)
         {
-            TreeItem item = new TreeItem(new HTML(subsys.getTitle()));
-            item.getElement().setAttribute("token", "server/"+subsys.getTitle().toLowerCase().replace(" ","_"));
-            item.setStyleName("lhs-tree-item");
-            subsysRoot.addItem(item);
+            // TODO: distinguish domain and standalone properly
+            String token = "server/_"+subsys.getTitle().toLowerCase().replace(" ","_");
+            TreeItem item = new LHSNavTreeItem(subsys.getTitle(), token);
+            subsysTree.addItem(item);
         }
-
-        subsysRoot.setState(true);
 
     }
 }
