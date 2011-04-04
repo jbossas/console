@@ -23,10 +23,10 @@ class DeploymentSection {
         panel.setContent(deploymentTree);
 
         LHSNavTreeItem current = new LHSNavTreeItem( "Current Deployments", NameTokens.DeploymentsPresenter);
-        LHSNavTreeItem plans= new LHSNavTreeItem("Deployment Plans", "deployment-plans");
+        //LHSNavTreeItem plans= new LHSNavTreeItem("Deployment Plans", "deployment-plans");
 
         deploymentTree.addItem(current);
-        deploymentTree.addItem(plans);
+        //deploymentTree.addItem(plans);
 
     }
 
