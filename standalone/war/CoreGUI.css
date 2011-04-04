@@ -611,7 +611,7 @@ color:#C0C0C0;
     width:100%;
     height:20px;
     padding: 4px 0px 4px 0px;
-    background:#B2D7FF url('/images/sc/skins/Enterprise/images/ToolStrip/background.png') repeat-x;
+    background:url('images/sc/skins/Enterprise/images/ToolStrip/background.png') repeat-x;
 }
 
 .toolstrip-button {
