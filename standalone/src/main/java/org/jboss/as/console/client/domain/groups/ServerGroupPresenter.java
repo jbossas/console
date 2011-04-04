@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -129,10 +130,15 @@ public class ServerGroupPresenter
                     groupName = result.get(0).getGroupName();
                     selectedRecord = result.get(0);
 
-                    getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            getEventBus().fireEvent(
+                                    new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
 
-                    );
+                            );
+                        }
+                    });
 
                 }
 
