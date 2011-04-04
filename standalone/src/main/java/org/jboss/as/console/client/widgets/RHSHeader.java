@@ -2,7 +2,6 @@ package org.jboss.as.console.client.widgets;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import org.jboss.as.console.client.widgets.TabHeader;
 
 /**
  * @author Heiko Braun

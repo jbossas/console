@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavigationTree;
-import org.jboss.as.console.client.widgets.LHSTreeItem;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 import java.util.List;
 
@@ -27,10 +27,7 @@ class ServersConfigSection {
     public ServersConfigSection() {
 
         panel = new DisclosureStackHeader("Server Configurations").asWidget();
-
-        hostTree = new LHSNavigationTree();
-
-
+        hostTree = new LHSNavTree();
         panel.setContent(hostTree);
     }
 
@@ -51,7 +48,7 @@ class ServersConfigSection {
         for(Server server: servers)
         {
             final String serverName = server.getName();
-            final TreeItem item = new LHSTreeItem(serverName, buildToken(serverName));
+            final TreeItem item = new LHSNavTreeItem(serverName, buildToken(serverName));
             hostTree.addItem(item);
         }
 

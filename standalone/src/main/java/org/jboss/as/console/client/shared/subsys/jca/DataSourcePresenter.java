@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -15,8 +14,6 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -27,6 +24,8 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**

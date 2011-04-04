@@ -3,8 +3,8 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavigationTree;
-import org.jboss.as.console.client.widgets.LHSTreeItem;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 /**
  * @author Heiko Braun
@@ -14,19 +14,19 @@ class HostConfigSection {
 
     private DisclosurePanel panel;
 
-    private LHSNavigationTree hostTree;
+    private LHSNavTree hostTree;
 
     public HostConfigSection() {
         super();
 
         panel = new DisclosureStackHeader("Host Configuration").asWidget();
 
-        hostTree = new LHSNavigationTree();
+        hostTree = new LHSNavTree();
 
-        LHSTreeItem paths = new LHSTreeItem("Paths", "hosts/host-paths");
-        LHSTreeItem jvms = new LHSTreeItem("Virtual Machines", "hosts/host-interfaces");
-        LHSTreeItem sockets = new LHSTreeItem("Socket Binding Groups", "hosts/host-socket-bindings");
-        LHSTreeItem properties = new LHSTreeItem("System Properties", "host/host-properties");
+        LHSNavTreeItem paths = new LHSNavTreeItem("Paths", "hosts/host-paths");
+        LHSNavTreeItem jvms = new LHSNavTreeItem("Virtual Machines", "hosts/host-interfaces");
+        LHSNavTreeItem sockets = new LHSNavTreeItem("Socket Binding Groups", "hosts/host-socket-bindings");
+        LHSNavTreeItem properties = new LHSNavTreeItem("System Properties", "host/host-properties");
 
         hostTree.addItem(paths);
         hostTree.addItem(jvms);

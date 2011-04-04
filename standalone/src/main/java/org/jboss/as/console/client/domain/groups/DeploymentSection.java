@@ -1,11 +1,11 @@
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 /**
  * @author Heiko Braun
@@ -13,42 +13,25 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  */
 class DeploymentSection {
 
-    private LayoutPanel layout;
+    private DisclosurePanel panel;
+    private LHSNavTree deploymentTree;
 
     public DeploymentSection() {
 
-        layout = new LayoutPanel();
-        layout.setStyleName("stack-section");
+        panel = new DisclosureStackHeader("Deployments").asWidget();
+        deploymentTree = new LHSNavTree();
+        panel.setContent(deploymentTree);
 
-        LHSNavItem current = new LHSNavItem(
-                "Current Deployments",
-                NameTokens.DeploymentsPresenter,
-                Icons.INSTANCE.inventory_small()
-        );
+        LHSNavTreeItem current = new LHSNavTreeItem( "Current Deployments", NameTokens.DeploymentsPresenter);
+        LHSNavTreeItem plans= new LHSNavTreeItem("Deployment Plans", "deployment-plans");
 
-        /*LHSNavItem createNew = new LHSNavItem(
-                "Add Deployment",
-                "current-deployments;action=new",
-                Icons.INSTANCE.add_small()
-        );*/
+        deploymentTree.addItem(current);
+        deploymentTree.addItem(plans);
 
-        LHSNavItem plans= new LHSNavItem("Deployment Plans", "deployment-plans");
-
-        addNavItems(current, plans);
     }
 
-    private void addNavItems(LHSNavItem... items) {
-        int i=0;
-        int height = 25;
-        for(LHSNavItem navItem : items)
-        {
-            layout.add(navItem);
-            layout.setWidgetTopHeight(navItem, i*height, Style.Unit.PX, height, Style.Unit.PX);
-            i++;
-        }
-    }
 
     public Widget asWidget() {
-        return layout;
+        return panel;
     }
 }

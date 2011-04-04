@@ -1,11 +1,9 @@
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.widgets.StackSectionHeader;
-import org.jboss.as.console.client.widgets.stack.DefaultStackLayoutPanel;
 
 import java.util.List;
 
@@ -17,25 +15,33 @@ import java.util.List;
  */
 class LHSServerGroupNavigation {
 
-    private StackLayoutPanel stack;
+    private LayoutPanel layout;
+
+    private VerticalPanel stack;
 
     private ServerGroupSection serverGroupSection;
 
     public LHSServerGroupNavigation() {
 
-        stack = new DefaultStackLayoutPanel();
+        layout = new LayoutPanel();
+        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        layout.setStyleName("fill-layout");
+
+        stack = new VerticalPanel();
+        stack.setStyleName("fill-layout-width");
 
         serverGroupSection = new ServerGroupSection();
-        stack.add(serverGroupSection.asWidget(), new StackSectionHeader("Server Groups"), 28);
+        stack.add(serverGroupSection.asWidget());
 
         DeploymentSection deploymentSection = new DeploymentSection();
-        stack.add(deploymentSection.asWidget(), new StackSectionHeader("Deployments"), 28);
+        stack.add(deploymentSection.asWidget());
 
+        layout.add(stack);
     }
 
     public Widget asWidget()
     {
-        return stack;
+        return layout;
     }
 
     public void updateFrom(List<ServerGroupRecord> serverGroupRecords) {

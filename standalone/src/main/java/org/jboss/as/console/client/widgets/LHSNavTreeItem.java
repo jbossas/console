@@ -12,23 +12,23 @@ import com.google.gwt.user.client.ui.TreeItem;
  * @author Heiko Braun
  * @date 3/24/11
  */
-public class LHSTreeItem extends TreeItem {
+public class LHSNavTreeItem extends TreeItem {
 
 
-    public LHSTreeItem(String text, String token) {
+    public LHSNavTreeItem(String text, String token) {
         setText(text);
         setStyleName("lhs-tree-item");
         getElement().setAttribute("token", token);
     }
 
-    public LHSTreeItem(String text, ClickHandler handler) {
+    public LHSNavTreeItem(String text, ClickHandler handler) {
         HTML html = new HTML(text);
         html.addClickHandler(handler);
         setWidget(html);
         setStyleName("lhs-tree-item");
     }
 
-    public LHSTreeItem(String text, ImageResource icon, String token) {
+    public LHSNavTreeItem(String text, ImageResource icon, String token) {
 
         Image img = new Image(icon);
         Label label = new Label(text);
@@ -54,4 +54,5 @@ public class LHSTreeItem extends TreeItem {
         else
             removeStyleName("lhs-tree-item-selected");
     }
+
 }
