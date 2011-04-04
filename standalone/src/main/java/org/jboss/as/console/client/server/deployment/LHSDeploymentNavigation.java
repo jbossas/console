@@ -1,13 +1,14 @@
 package org.jboss.as.console.client.server.deployment;
 
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.LHSNavItem;
-import org.jboss.as.console.client.widgets.StackSectionHeader;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSNavTree;
+import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 /**
  * LHS navigation for standalone deployment management.
@@ -17,53 +18,41 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  */
 public class LHSDeploymentNavigation {
 
-    private StackLayoutPanel stack;
+    private LayoutPanel layout;
+    private VerticalPanel stack;
 
     public LHSDeploymentNavigation () {
         super();
 
-        stack = new StackLayoutPanel(Style.Unit.PX);
-        stack.addStyleName("section-stack");
-        stack.setWidth("180");
+        layout = new LayoutPanel();
+        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
+        layout.setStyleName("fill-layout");
+
+        DisclosurePanel panel = new DisclosureStackHeader("Deployments").asWidget();
+
+        stack = new VerticalPanel();
+        stack.setStyleName("fill-layout-width");
 
         // ----------------------------------------------------
 
-        LayoutPanel dplLayout = new LayoutPanel();
-        dplLayout.setStyleName("stack-section");
+        Tree deploymentTree = new LHSNavTree("standalone-deployments");
 
-        LHSNavItem current = new LHSNavItem(
-                "Available Deployments",
-                NameTokens.DeploymentListPresenter,
-                Icons.INSTANCE.inventory_small()
+        LHSNavTreeItem current = new LHSNavTreeItem(
+                "Current Deployments",
+                NameTokens.DeploymentListPresenter
         );
 
-        LHSNavItem createNew = new LHSNavItem(
-                "Add Deployment",
-                "current-deployments;action=new",
-                Icons.INSTANCE.add_small()
-        );
+        deploymentTree.addItem(current);
+        stack.add(deploymentTree);
 
-        addNavItems(dplLayout, current, createNew);
+        panel.setContent(stack);
 
-        stack.add(dplLayout, new StackSectionHeader("Deployments"), 28);
-
+        layout.add(panel);
     }
-
-    private void addNavItems(LayoutPanel layout, LHSNavItem... items) {
-        int i=0;
-        int height = 25;
-        for(LHSNavItem navItem : items)
-        {
-            layout.add(navItem);
-            layout.setWidgetTopHeight(navItem, i*height, Style.Unit.PX, height, Style.Unit.PX);
-            i++;
-        }
-    }
-
 
     public Widget asWidget()
     {
-        return stack;
+        return layout;
     }
 
 }
