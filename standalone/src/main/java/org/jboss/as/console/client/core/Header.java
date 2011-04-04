@@ -39,13 +39,11 @@ public class Header implements ValueChangeHandler<String> {
             new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
             new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
             new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
-            //new String[]{NameTokens.DebugToolsPresenter, "Debug"}
     };
 
     public static final String[][] SECTIONS_STANADLONE = {
             new String[]{NameTokens.serverConfig, "Profile"},
             new String[]{NameTokens.DeploymentMgmtPresenter, "Deployments"}
-            //new String[]{NameTokens.DebugToolsPresenter, "Debug"}
     };
 
     private MessageBar messageBar;
@@ -139,6 +137,7 @@ public class Header implements ValueChangeHandler<String> {
                 }
             });
             linksPane.add(widget, id);
+
         }
         return linksPane;
     }
