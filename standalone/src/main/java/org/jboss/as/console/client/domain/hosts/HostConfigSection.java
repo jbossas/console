@@ -21,7 +21,7 @@ class HostConfigSection {
 
         panel = new DisclosureStackHeader("Host Configuration").asWidget();
 
-        hostTree = new LHSNavTree();
+        hostTree = new LHSNavTree("hosts");
 
         LHSNavTreeItem paths = new LHSNavTreeItem("Paths", "hosts/host-paths");
         LHSNavTreeItem jvms = new LHSNavTreeItem("Virtual Machines", "hosts/host-interfaces");

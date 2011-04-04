@@ -19,7 +19,7 @@ class CommonConfigSection {
         super();
 
         panel = new DisclosureStackHeader("General Configuration").asWidget();
-        commonTree = new LHSNavTree();
+        commonTree = new LHSNavTree("profiles");
         panel.setContent(commonTree);
 
         LHSNavTreeItem paths = new LHSNavTreeItem("Paths", "domain/paths");

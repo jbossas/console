@@ -11,16 +11,17 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author Heiko Braun
  * @date 2/7/11
  */
-public class LHSNavEvent extends GwtEvent<LHSNavEvent.NavItemSelectionHandler> {
+public class LHSHighlightEvent extends GwtEvent<LHSHighlightEvent.NavItemSelectionHandler> {
 
     public static final Type TYPE = new Type<NavItemSelectionHandler>();
 
-    private String treeId;
+    private String treeId, item, category;
 
-
-    public LHSNavEvent(String treeId) {
+    public LHSHighlightEvent(String treeId, String item, String category) {
         super();
         this.treeId = treeId;
+        this.item = item;
+        this.category = category;
     }
 
     @Override
@@ -30,15 +31,23 @@ public class LHSNavEvent extends GwtEvent<LHSNavEvent.NavItemSelectionHandler> {
 
     @Override
     protected void dispatch(NavItemSelectionHandler listener) {
-        listener.onSelectedNavTree(treeId);
+        listener.onSelectedNavTree(treeId, item, category);
     }
 
     public String getTreeId() {
         return treeId;
     }
 
+    public String getItem() {
+        return item;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
     public interface NavItemSelectionHandler extends EventHandler {
-        void onSelectedNavTree(String treeId);
+        void onSelectedNavTree(String treeId, String item, String category);
     }
 }
 

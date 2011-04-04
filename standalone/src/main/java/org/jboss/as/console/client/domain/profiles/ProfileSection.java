@@ -34,7 +34,7 @@ class ProfileSection {
     public ProfileSection() {
 
         panel = new DisclosureStackHeader("Profiles").asWidget();
-        subsysTree = new LHSNavTree();
+        subsysTree = new LHSNavTree("profiles");
         panel.setContent(subsysTree);
 
         VerticalPanel layout = new VerticalPanel();

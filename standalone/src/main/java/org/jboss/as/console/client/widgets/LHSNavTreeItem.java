@@ -22,13 +22,14 @@ public class LHSNavTreeItem extends TreeItem {
     }
 
     public LHSNavTreeItem(String text, ClickHandler handler) {
+        setText(text);
         HTML html = new HTML(text);
         html.addClickHandler(handler);
         setWidget(html);
         setStyleName("lhs-tree-item");
     }
 
-    public LHSNavTreeItem(String text, ImageResource icon, String token) {
+    /*public LHSNavTreeItem(String text, ImageResource icon, String token) {
 
         Image img = new Image(icon);
         Label label = new Label(text);
@@ -45,7 +46,7 @@ public class LHSNavTreeItem extends TreeItem {
 
         setStyleName("lhs-tree-item");
         getElement().setAttribute("token", token);
-    }
+    } */
 
     public void setSelected(boolean selected) {
         super.setSelected(selected);

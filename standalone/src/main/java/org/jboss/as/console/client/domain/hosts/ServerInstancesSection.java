@@ -27,7 +27,7 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
 
         panel = new DisclosureStackHeader("Server Instances").asWidget();
 
-        instanceTree = new LHSNavTree();
+        instanceTree = new LHSNavTree("hosts");
 
         LHSNavTreeItem overview = new LHSNavTreeItem("Server Status", new ClickHandler()
         {

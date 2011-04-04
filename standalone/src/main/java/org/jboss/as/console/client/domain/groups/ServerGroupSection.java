@@ -24,10 +24,10 @@ class ServerGroupSection {
     public ServerGroupSection() {
 
         panel = new DisclosureStackHeader("Server Groups").asWidget();
-        serverGroupTree = new LHSNavTree();
+        serverGroupTree = new LHSNavTree("groups");
         panel.setContent(serverGroupTree);
 
-        serverGroupTree = new LHSNavTree();
+        serverGroupTree = new LHSNavTree("groups");
         panel.setContent(serverGroupTree);
     }
 
