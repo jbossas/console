@@ -255,7 +255,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             names.add(server.getName());
         }
         configFilter.setValues(names);
-        configFilter.setItemSelected(0, true);
     }
 
     private String buildToken(String serverName) {
