@@ -119,6 +119,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
             @Override
             public void onSuccess(DMRResponse result) {
+
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode payload = response.get("result").asObject();
 
@@ -129,8 +130,6 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 {
 
                     ModelNode value = socket.asProperty().getValue();
-
-                    System.out.println(value.toJSONString(false));
 
                     SocketBinding sb = factory.socketBinding().as();
 
