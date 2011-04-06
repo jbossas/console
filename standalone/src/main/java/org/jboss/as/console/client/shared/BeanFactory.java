@@ -11,6 +11,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.server.subsys.threads.ThreadFactoryRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
@@ -35,4 +36,5 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<DataSource> dataSource();
     AutoBean<JMSEndpoint> jmsEndpoint();
     AutoBean<LoggingHandler> loggingHandler();
+    AutoBean<SocketBinding> socketBinding();
 }

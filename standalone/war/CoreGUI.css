@@ -318,6 +318,7 @@ color:#C0C0C0;
 
 .lhs-tree-item {
     cursor:pointer;
+    color:#404040;
 }
 
 .lhs-tree-item:hover {

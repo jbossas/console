@@ -204,7 +204,10 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         else
         {
             this.selectedItemIndex =  i;
-            currentValue.setText(values.get(selectedItemIndex));
+            String selectedValue = values.get(selectedItemIndex);
+            currentValue.setText(selectedValue);
+            onSelection(selectedValue);
+
         }
     }
 

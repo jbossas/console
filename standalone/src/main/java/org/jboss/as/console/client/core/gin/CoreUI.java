@@ -47,6 +47,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
@@ -143,4 +144,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
     AsyncProvider<JMSPresenter> getMessagingPresenter();
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
+    AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 }
