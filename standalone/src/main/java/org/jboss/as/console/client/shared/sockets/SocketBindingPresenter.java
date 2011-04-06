@@ -109,6 +109,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     private void loadBindings(final String groupName) {
+
         // /socket-binding-group=standard-sockets:read-resource(recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("socket-binding-group", groupName);
@@ -130,6 +131,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 {
 
                     ModelNode value = socket.asProperty().getValue();
+
+                    //System.out.println(value.toJSONString());
 
                     SocketBinding sb = factory.socketBinding().as();
 

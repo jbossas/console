@@ -1122,6 +1122,11 @@ public class ModelNode implements Cloneable {
     public String toJSONString(final boolean compact) {
         return value.toJSONString(compact);
     }
+
+    public String toJSONString() {
+        return value.toJSONString(false);
+    }
+
     
     public static ModelNode fromBase64(String encoded) {
     	ModelNode node = new ModelNode();

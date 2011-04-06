@@ -15,7 +15,7 @@ public class DataInput {
 	}
 
 	public boolean readBoolean() throws IOException {
-		return bytes[pos++] == 1;
+		 return readByte() != 0;
 	}
 
 	public byte readByte() throws IOException {
@@ -39,18 +39,18 @@ public class DataInput {
 	}
 
 	public int readInt() throws IOException {
-		return bytes[pos++] << 24 | bytes[pos++] << 16 | bytes[pos++] << 8 | bytes[pos++];
+        int a = bytes[pos++];
+        int b = bytes[pos++];
+        int c = bytes[pos++];
+        int d = readUnsignedByte();
+        return (a << 24) | (b << 16) | (c << 8) | d;
+
 	}
 
 	public long readLong() throws IOException {
-		return (long)(bytes[pos++] << 56) | 
-		       (long)(bytes[pos++] << 48) | 
-		       (long)(bytes[pos++] << 40) | 
-		       (long)(bytes[pos++] << 32) |
-		              bytes[pos++] << 24  |
-		              bytes[pos++] << 16  |
-		              bytes[pos++] << 8   |
-		              bytes[pos++];
+        long a = readInt();
+        long b = readInt() & 0x0ffffffff;
+        return (a << 32) | b;
 		              
 	}
 
@@ -71,12 +71,37 @@ public class DataInput {
 		return null;
 	}
 
-	public String readUTF() throws IOException {
-		int len = readUnsignedShort();
-		String string = new String(bytes, pos, len, "UTF-8");
-		pos += len;
-		return string;
-	}
+    public String readUTF() throws IOException {
+        int bytes = readUnsignedShort();
+        StringBuilder sb = new StringBuilder();
+
+        while (bytes > 0) {
+            bytes -= readUtfChar(sb);
+        }
+
+        return sb.toString();
+    }
+
+    private int readUtfChar(StringBuilder sb) throws IOException {
+        int a = readUnsignedByte();
+        if ((a & 0x80) == 0) {
+          sb.append((char) a);
+          return 1;
+        }
+        if ((a & 0xe0) == 0xb0) {
+          int b = readUnsignedByte();
+          sb.append((char)(((a& 0x1F) << 6) | (b & 0x3F)));
+          return 2;
+        }
+        if ((a & 0xf0) == 0xe0) {
+          int b = bytes[pos++];
+          int c = readUnsignedByte();
+          sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+          return 3;
+        }
+        throw new RuntimeException();
+      }
+
 
 	public void readFully(byte[] b) {
 		for (int i = 0; i < b.length; i++) {

@@ -65,14 +65,14 @@ package org.jboss.dmr.client;
  *  <li>v2.3.6 - Fixed bug when breaking lines and the final byte of the encoded
  *   string ended in the last column; the buffer was not properly shrunk and
  *   contained an extra (null) byte that made it into the string.</li>
- *  <li>v2.3.5 - Fixed bug in {@link #encodeFromFile} where estimated buffer size
+ *  <li>v2.3.5 - Fixed bug in {@link encodeFromFile} where estimated buffer size
  *   was wrong for files of size 31, 34, and 37 bytes.</li>
  *  <li>v2.3.4 - Fixed bug when working with gzipped streams whereby flushing
  *   the Base64.OutputStream closed the Base64 encoding (by padding with equals
  *   signs) too soon. Also added an option to suppress the automatic decoding
  *   of gzipped streams. Also added experimental support for specifying a
  *   class loader when using the
- *   {@link #decodeToObject(java.lang.String, int, java.lang.ClassLoader)}
+ *   {@link decodeToObject(java.lang.String, int, java.lang.ClassLoader)}
  *   method.</li>
  *  <li>v2.3.3 - Changed default char encoding to US-ASCII which reduces the internal Java
  *   footprint with its CharEncoders and so forth. Fixed some javadocs that were
