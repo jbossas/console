@@ -15,9 +15,24 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>uploadProxy</servlet-name>
+        <servlet-class>org.jboss.as.console.server.proxy.XmlHttpProxyServlet</servlet-class>
+        <init-param>
+            <param-name>config.name</param-name>
+            <param-value>upload-proxy.properties</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>gwtProxy</servlet-name>
         <url-pattern>/app/proxy/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>uploadProxy</servlet-name>
+        <url-pattern>/app/upload/*</url-pattern>
     </servlet-mapping>
 
 </web-app>
