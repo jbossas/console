@@ -38,6 +38,7 @@ public class BootstrapContext {
     public static final String INITIAL_TOKEN = "initial_token";
     public static final String STANDALONE = "standalone_usage";
     public static final String DOMAIN_API = "domain-api";
+    public static final String DEPLOYMENT_API = "add-content";
 
     private Map<String,String> ctx = new HashMap<String,String>();
 
@@ -53,13 +54,17 @@ public class BootstrapContext {
 
         loadPersistedProperties();
 
-        String domainApi = GWT.isScript() ? getHostUrl() : "http://127.0.0.1:8888/app/proxy"; //"http://localhost:9990/domain-api";
+        String domainApi = GWT.isScript() ? getBaseUrl()+"domain-api" : "http://127.0.0.1:8888/app/proxy"; //"http://localhost:9990/domain-api";
         setProperty(DOMAIN_API, domainApi);
+
+
+        String deploymentApi = GWT.isScript() ? getBaseUrl()+"domain-api/add-content" : "http://127.0.0.1:8888/app/upload";
+        setProperty(DEPLOYMENT_API, deploymentApi);
 
         Log.info("Domain API Endpoint: " + domainApi);
     }
 
-    private String getHostUrl() {
+    private String getBaseUrl() {
         // extract host
         String base = GWT.getHostPageBaseURL();
         String protocol = base.substring(0, base.indexOf("//")+2);
@@ -69,7 +74,7 @@ public class BootstrapContext {
                 remainder.substring(0, remainder.indexOf("/"));
 
         // default url
-        return protocol + host + ":9990/domain-api";
+        return protocol + host + ":9990/";   // TODO: configurable port number
 
     }
 
