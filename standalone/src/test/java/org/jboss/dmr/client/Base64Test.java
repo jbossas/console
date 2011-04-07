@@ -43,4 +43,18 @@ public class Base64Test {
         assertEquals(8080, reverse.get("port").asInt());
     }
 
+    @Test
+    public void testJBAS9165_part2() throws Exception
+    {
+        ModelNode value = new ModelNode();
+        value.get("name").set("http-port");
+        value.get("port").set(32768);
+
+        String base64 = value.toBase64String();
+        System.out.println(base64);
+
+        ModelNode reverse = ModelNode.fromBase64(base64);
+        assertEquals(32768, reverse.get("port").asInt());
+    }
+
 }

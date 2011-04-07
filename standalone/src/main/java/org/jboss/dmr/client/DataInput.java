@@ -58,9 +58,9 @@ public class DataInput {
 	}
 
 	public int readInt() throws IOException {
-        int a = bytes[pos++];
-        int b = bytes[pos++];
-        int c = bytes[pos++];
+        int a = readUnsignedByte();
+        int b = readUnsignedByte();
+        int c = readUnsignedByte();
         int d = readUnsignedByte();
         return (a << 24) | (b << 16) | (c << 8) | d;
 
