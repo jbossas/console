@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.groups.deployment;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
@@ -86,14 +87,21 @@ public class DeploymentStep2 {
             }
         });
 
-
         DefaultButton submit = new DefaultButton("Finish", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
                 FormValidation validation = form.validate();
                 if (!validation.hasErrors()) {
                     // proceed
-                    wizard.getPresenter().onDeployToGroup(form.getUpdatedEntity());
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                    {
+                        @Override
+                        public void execute() {
+                            wizard.getPresenter().onDeployToGroup(form.getUpdatedEntity());
+                        }
+                    });
+
                 }
             }
         });
