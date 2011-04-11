@@ -34,9 +34,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
@@ -145,18 +148,50 @@ public class DataSourceEditor {
 
         // -----------
 
-        Form<DataSource> form = new Form(DataSource.class);
+        final Form<DataSource> form = new Form(DataSource.class);
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
-        CheckBoxItem enabledItem = new CheckBoxItem("enabled", "Is enabled?");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
+
+        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
+
+        final ButtonItem enableItem = new ButtonItem("enabled", "Action") {
+            @Override
+            public void setValue(Boolean b) {
+
+                if(b)
+                    button.setText("Disable");
+                else
+                    button.setText("Enable");
+
+            }
+        };
+
+        enableItem.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                String state = form.getEditedEntity().isEnabled() ? "Disable" : "Enable";
+                Feedback.confirm(state + " datasource", "Do you want to " + state + " this datasource?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+
+                                }
+                            }
+                        });
+            }
+        });
+
         TextBoxItem driverItem = new TextBoxItem("driverClass", "Driver");
+        TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, enabledItem, jndiItem, driverItem, userItem, passwordItem);
+        form.setFields(nameItem, enableItem, jndiItem, driverItem, urlItem, userItem, passwordItem);
         form.bind(dataSourceTable);
         form.setEnabled(false); // currently not editable
 
