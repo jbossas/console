@@ -73,6 +73,12 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
             metrics.addInvocation(operation);
         }
 
+        Request requestHandle = executeRequest(resultCallback, operation);
+
+        return new DispatchRequestHandle(requestHandle);
+    }
+
+    private Request executeRequest(final AsyncCallback<DMRResponse> resultCallback, final ModelNode operation) {
         Request requestHandle = null;
         try {
             requestHandle = requestBuilder.sendRequest(operation.toBase64String(), new RequestCallback() {
@@ -105,8 +111,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         } catch (RequestException e) {
             resultCallback.onFailure(e);
         }
-
-        return new DispatchRequestHandle(requestHandle);
+        return requestHandle;
     }
 
     @Override
