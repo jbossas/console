@@ -66,6 +66,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private DefaultWindow window = null;
     private List<ServerGroupRecord> serverGroups;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
     public interface MyProxy extends Proxy<ServerConfigPresenter>, Place {
@@ -114,21 +115,35 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     protected void onReset() {
         super.onReset();
 
+        // step1
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
                 serverGroups = result;
                 getView().updateServerGroups(result);
+
+                // step2
+                loadSocketBindings();
             }
         });
 
+
+        hasBeenRevealed = true;
+    }
+
+    private void loadSocketBindings() {
         serverGroupStore.loadSocketBindingGroupNames(new SimpleCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> result) {
                 getView().updateSocketBindings(result);
+
+                // step3
+                loadServerConfigurations();
             }
         });
+    }
 
+    private void loadServerConfigurations() {
         if(selectedHost !=null && serverName!=null)
         {
             loadJVMs(selectedHost);
@@ -162,8 +177,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 }
             });
         }
-
-        hasBeenRevealed = true;
     }
 
     private void loadJVMs(String host) {
@@ -245,7 +258,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         // close popup
         closeDialoge();
 
-        hostInfoStore.createServerConfig(selectedHost, newServer, new AsyncCallback<Boolean>() {
+        hostInfoStore.createServerConfig(getSelectedHost(), newServer, new AsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
@@ -328,5 +341,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         });
     }
 
+
+    public String getSelectedHost() {
+        return selectedHost;
+    }
 
 }
