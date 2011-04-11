@@ -36,6 +36,5 @@ public class DefaultButton extends Button {
     public DefaultButton(String title, ClickHandler handler) {
         this(title);
         addClickHandler(handler);
-        addClickHandler(handler);
     }
 }
