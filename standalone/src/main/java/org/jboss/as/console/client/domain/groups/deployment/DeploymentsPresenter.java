@@ -122,6 +122,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     protected void onReset() {
         super.onReset();
 
+        refreshModel();
+    }
+
+    private void refreshModel() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
 
             @Override
@@ -311,7 +315,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                System.out.println(response.toJSONString());
+                refreshModel();
             }
         });
     }
