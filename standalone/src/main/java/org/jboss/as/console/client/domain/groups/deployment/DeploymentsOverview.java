@@ -40,7 +40,6 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -54,8 +53,6 @@ import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -108,7 +105,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         // -----------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Available Deployments");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Domain Deployments");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -282,21 +279,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     @Override
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {
-
-        Collections.sort(deploymentRecords, new Comparator<DeploymentRecord>() {
-
-            @Override
-            public int compare(DeploymentRecord first, DeploymentRecord second) {
-                if(first.getServerGroup().equals(second.getServerGroup()))
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        });
 
         deploymentProvider.setList(deploymentRecords);
 

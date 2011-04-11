@@ -21,6 +21,8 @@ package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -53,8 +55,9 @@ public class DeploymentStep2 {
     public Widget asWidget()
     {
         VerticalPanel layout = new VerticalPanel();
+        layout.getElement().setAttribute("style", "width:95%, margin:15px;");
 
-        layout.add(new Label("Step 2/2"));
+        layout.add(new HTML("<h3>Step 2/2: Chose Server Group</h3>"));
 
         List<String> groupNames = new ArrayList<String>();
         for(ServerGroupRecord sg : wizard.getPresenter().getServerGroups())
@@ -72,18 +75,43 @@ public class DeploymentStep2 {
 
         layout.add(form.asWidget());
 
-        layout.add(new DefaultButton("Submit", new ClickHandler()
-        {
+        // -----
+
+        Label cancel = new Label("Cancel");
+        cancel.setStyleName("html-link");
+        cancel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                wizard.getPresenter().closeDialoge();
+            }
+        });
+
+
+        DefaultButton submit = new DefaultButton("Finish", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 FormValidation validation = form.validate();
-                if(!validation.hasErrors())
-                {
+                if (!validation.hasErrors()) {
                     // proceed
                     wizard.getPresenter().onDeployToGroup(form.getUpdatedEntity());
                 }
             }
-        }));
+        });
+
+        HorizontalPanel options = new HorizontalPanel();
+        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
+
+        HTML spacer = new HTML("&nbsp;");
+        options.add(spacer);
+
+        options.add(submit);
+        options.add(spacer);
+        options.add(cancel);
+        cancel.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        submit.getElement().getParentElement().setAttribute("align", "right");
+        submit.getElement().getParentElement().setAttribute("width", "100%");
+
+        layout.add(options);
 
         return layout;
     }

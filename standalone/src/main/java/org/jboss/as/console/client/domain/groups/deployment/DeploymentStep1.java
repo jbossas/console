@@ -27,12 +27,15 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
+import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.dmr.client.Base64;
 
 /**
@@ -50,12 +53,11 @@ public class DeploymentStep1 {
     public Widget asWidget()
     {
         VerticalPanel layout = new VerticalPanel();
+        layout.getElement().setAttribute("style", "width:95%; margin:15px;");
 
         // Create a FormPanel and point it at a service.
         final FormPanel form = new FormPanel();
         String url = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.DEPLOYMENT_API);
-        System.out.println("Post to: "+url);
-
         form.setAction(url);
 
         form.setEncoding(FormPanel.ENCODING_MULTIPART);
@@ -63,6 +65,7 @@ public class DeploymentStep1 {
 
         // Create a panel to hold all of the form widgets.
         VerticalPanel panel = new VerticalPanel();
+        panel.getElement().setAttribute("style", "width:100%");
         form.setWidget(panel);
 
         // Create a FileUpload widget.
@@ -71,12 +74,37 @@ public class DeploymentStep1 {
         panel.add(upload);
 
         // Add a 'submit' button.
-        panel.add(new Button("Submit", new ClickHandler() {
+
+        Label cancel = new Label("Cancel");
+        cancel.setStyleName("html-link");
+        cancel.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                wizard.getPresenter().closeDialoge();
+            }
+        });
+
+        Button submit = new DefaultButton("Next &rsaquo;&rsaquo;", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 form.submit();
             }
-        }));
+        });
+
+        HorizontalPanel options = new HorizontalPanel();
+        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
+
+        HTML spacer = new HTML("&nbsp;");
+        options.add(spacer);
+
+        options.add(submit);
+        options.add(spacer);
+        options.add(cancel);
+        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
+        submit.getElement().getParentElement().setAttribute("align", "right");
+        submit.getElement().getParentElement().setAttribute("width", "100%");
+
+        panel.add(options);
 
         // Add an event handler to the form.
         form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
@@ -101,7 +129,8 @@ public class DeploymentStep1 {
             }
         });
 
-        layout.add(new Label("Step 1/2"));
+        layout.add(new HTML("<h3>Step 1/2: Deployment Selection</h3>"));
+        layout.add(new HTML("Please chose a file that you want to deploy."));
         layout.add(form);
         return layout;
     }

@@ -111,12 +111,12 @@ public class DomainOverviewPresenter
         refreshGroups();
 
         // TODO: this needs to reference a server group
-        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+        /*deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
             @Override
             public void onSuccess(List<DeploymentRecord> result) {
                 getView().updateDeployments(result);
             }
-        });
+        });*/
 
     }
 

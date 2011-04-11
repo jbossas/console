@@ -122,21 +122,24 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     protected void onReset() {
         super.onReset();
 
-        deploymentStore.loadDeployments(new SimpleCallback<List<DeploymentRecord>>() {
-
-            @Override
-            public void onSuccess(List<DeploymentRecord> result) {
-                deployments = result;
-                getView().updateDeployments(result);
-            }
-        });
-
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
 
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
                 serverGroups = result;
                 getView().updateGroups(result);
+
+
+                // load deployments
+
+                deploymentStore.loadDeployments(serverGroups, new SimpleCallback<List<DeploymentRecord>>() {
+
+                    @Override
+                    public void onSuccess(List<DeploymentRecord> result) {
+                        deployments = result;
+                        getView().updateDeployments(result);
+                    }
+                });
             }
         });
     }
@@ -206,6 +209,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         window.setGlassEnabled(true);
         window.center();
 
+    }
+
+    public void closeDialoge() {
+        window.hide();
     }
 
     public List<ServerGroupRecord> getServerGroups() {
