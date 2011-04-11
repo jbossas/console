@@ -151,7 +151,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         tableOptions.getElement().setAttribute("cellpadding", "2px");
 
         groupFilter = new ComboBox();
-        groupFilter.setValues(Arrays.asList(new String[] {"war", "ear", "rar", "other"}));
+
         groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
