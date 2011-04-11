@@ -117,7 +117,6 @@ public class ServerGroupMgmtPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        System.out.println("> "+request.getParameterNames());
     }
 
 
