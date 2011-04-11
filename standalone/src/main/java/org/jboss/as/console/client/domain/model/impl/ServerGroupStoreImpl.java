@@ -30,6 +30,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -54,8 +55,11 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
     @Override
     public void loadServerGroups(final AsyncCallback<List<ServerGroupRecord>> callback) {
+
+        // :read-children-resources(child-type=server-group)
+
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
         operation.get("child-type").set("server-group");
         operation.get(ModelDescriptionConstants.ADDRESS).setEmptyList();
 
@@ -68,15 +72,18 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> payload = response.get("result").asList();
+                List<ModelNode> propertyList= response.get("result").asList();
 
-                List<ServerGroupRecord> records = new ArrayList<ServerGroupRecord>(payload.size());
+                List<ServerGroupRecord> records = new ArrayList<ServerGroupRecord>(propertyList.size());
 
-                for(int i=0; i<payload.size(); i++)
+                for(int i=0; i<propertyList.size(); i++)
                 {
-                    ServerGroupRecord record = factory.serverGroup().as();
-                    record.setGroupName(payload.get(i).asString());
-                    record.setProfileName("default");  // TODO: remaining properties
+
+                    Property property = propertyList.get(i).asProperty();
+                    ServerGroupRecord record = model2ServerGroup(
+                            property.getName(),
+                            property.getValue()
+                    );
                     records.add(record);
                 }
 
@@ -84,6 +91,31 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             }
         });
 
+    }
+
+    /**
+     * Turns a server group DMR model into a strongly typed entity
+     * @param groupName
+     * @param model
+     * @return
+     */
+    private ServerGroupRecord model2ServerGroup(String groupName, ModelNode model) {
+        ServerGroupRecord record = factory.serverGroup().as();
+
+        //System.out.println(groupName +" > "+model.toJSONString());
+
+        record.setGroupName(groupName);
+        record.setProfileName(model.get("profile").asString());
+        record.setSocketBinding(model.get("socket-binding-group").asString());
+
+        try {
+            if(model.has("jvm") && model.get("jvm").isDefined())
+                record.setJvm(model.get("jvm").asProperty().getName());
+        } catch (IllegalArgumentException e) {
+            // TODO: properly deal with the mode derivations
+        }
+
+        return record;
     }
 
     @Override
@@ -103,18 +135,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode payload = response.get("result").asObject();
 
-                ServerGroupRecord record = factory.serverGroup().as();
-                record.setGroupName(name);
-                record.setProfileName(payload.get("profile").asString());
-
-                try {
-                    if(payload.has("jvm") && payload.get("jvm").isDefined())
-                        record.setJvm(payload.get("jvm").asProperty().getName());
-                } catch (IllegalArgumentException e) {
-                    // TODO: properly deal with the mode derivations
-                }
-
-                record.setSocketBinding(payload.get("socket-binding-group").asString());
+                ServerGroupRecord record = model2ServerGroup(name, payload);
 
                 callback.onSuccess(record);
 
@@ -165,8 +186,8 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         group.get(ADDRESS).add(ModelDescriptionConstants.SERVER_GROUP, record.getGroupName());
 
         group.get("profile").set(record.getProfileName());
-        //group.get("jvm").set(record.getJvm());
-        //group.get("socket-binding").set(record.getSocketBinding());
+        group.get("socket-binding-group").set(record.getSocketBinding());
+        group.get("jvm").set(record.getJvm());
 
         dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
             @Override
