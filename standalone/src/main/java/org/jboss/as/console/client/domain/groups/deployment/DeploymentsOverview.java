@@ -40,6 +40,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -69,6 +70,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     private ComboBox groupFilter;
     private Form<DeploymentRecord> form;
+
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -313,4 +315,5 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         groupFilter.setValues(names);
     }
+
 }
