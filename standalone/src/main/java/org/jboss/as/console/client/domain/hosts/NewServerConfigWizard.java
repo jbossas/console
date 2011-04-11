@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
@@ -50,7 +51,7 @@ public class NewServerConfigWizard {
     private ServerConfigPresenter presenter;
     private ComboBoxItem groupItem;
 
-    public NewServerConfigWizard(final ServerConfigPresenter presenter, List<ServerGroupRecord> serverGroups) {
+    public NewServerConfigWizard(final ServerConfigPresenter presenter, final List<ServerGroupRecord> serverGroups) {
         this.presenter = presenter;
 
         layout = new VerticalPanel();
@@ -74,8 +75,11 @@ public class NewServerConfigWizard {
         };
 
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", "Start Instances?");
-        NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
+        // 'socket-binding-group' inherited from group
+        // 'jvm' inherited from group
+
+        NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
         List<String> groups = new ArrayList<String>(serverGroups.size());
         for(ServerGroupRecord rec : serverGroups)
@@ -95,13 +99,26 @@ public class NewServerConfigWizard {
         DefaultButton submit = new DefaultButton("Save", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Server newServer = form.getUpdatedEntity();
+                final Server newServer = form.getUpdatedEntity();
 
                 FormValidation validation = form.validate();
                 if(validation.hasErrors())
                     return;
 
-                presenter.createServerConfig(newServer);
+                // merge inherited values
+                ServerGroupRecord selectedGroup =
+                        getSelectedServerGroup(serverGroups, newServer.getGroup());
+                newServer.setSocketBinding(selectedGroup.getSocketBinding());
+                newServer.setJvm(selectedGroup.getJvm());
+
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                {
+                    @Override
+                    public void execute() {
+                        presenter.createServerConfig(newServer);
+                    }
+                });
+
 
             }
         });
@@ -138,5 +155,20 @@ public class NewServerConfigWizard {
     public Widget asWidget() {
 
         return layout;
+    }
+
+    private ServerGroupRecord getSelectedServerGroup(List<ServerGroupRecord> available, String selectedName)
+    {
+        ServerGroupRecord match = null;
+        for(ServerGroupRecord rec : available)
+        {
+            if(rec.getGroupName().equals(selectedName))
+            {
+                match = rec;
+                break;
+            }
+        }
+
+        return match;
     }
 }
