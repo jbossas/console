@@ -89,6 +89,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {
 
+        assert host!=null : "Host parameter is null!";
+
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(CHILD_TYPE).set("server-config");
@@ -248,7 +250,18 @@ public class HostInfoStoreImpl implements HostInformationStore {
         serverConfig.get("name").set(record.getName());
         serverConfig.get("group").set(record.getGroup());
         serverConfig.get("auto-start").set(record.isAutoStart());
+
+        // TODO: can be null?
+        if(record.getJvm()!=null)
+            serverConfig.get("jvm").set(record.getJvm());
+        else
+            Log.warn("JVM null for server "+record.getName());
+
+        serverConfig.get("socket-binding-group").set(record.getSocketBinding());
         serverConfig.get("socket-binding-port-offset").set(record.getPortOffset());
+
+
+        System.out.println(serverConfig.toJSONString());
 
         dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
             @Override
