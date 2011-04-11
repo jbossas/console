@@ -261,7 +261,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         serverConfig.get("socket-binding-port-offset").set(record.getPortOffset());
 
 
-        System.out.println(serverConfig.toJSONString());
+        //System.out.println(serverConfig.toJSONString());
 
         dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
             @Override

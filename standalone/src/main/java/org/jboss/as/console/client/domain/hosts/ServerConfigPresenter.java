@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -59,7 +60,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private Server selectedRecord = null;
     private ServerGroupStore serverGroupStore;
 
-    private boolean hasBeenRevealed = false;
     private String serverName;
     private String selectedHost;
 
@@ -127,8 +127,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
 
-
-        hasBeenRevealed = true;
     }
 
     private void loadSocketBindings() {
@@ -243,7 +241,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
-                if(!result.isEmpty() && hasBeenRevealed) {
+                if(!result.isEmpty()) {
                     selectedRecord = result.get(0);
                     serverName = selectedRecord.getName();
                     loadJVMs(hostName);
@@ -258,6 +256,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         // close popup
         closeDialoge();
 
+        System.out.println("> create server-config");
         hostInfoStore.createServerConfig(getSelectedHost(), newServer, new AsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
@@ -267,7 +266,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                             new Message("Created server config " + newServer.getName())
                     );
 
-                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            System.out.println("> stale model event");
+                            getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+                        }
+                    });
 
                     workOn(newServer);
 

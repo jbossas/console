@@ -94,7 +94,7 @@ public class HostMgmtPresenter
 
     @Override
     public void prepareFromRequest(PlaceRequest request) {
-        hostSelection = request.getParameter("host", null);
+        hostSelection = request.getParameter("host", hostSelection);// set once and keep it
     }
 
     @Override
@@ -127,17 +127,13 @@ public class HostMgmtPresenter
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-    }
-
-    @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
     }
 
     @Override
     public void onHostSelection(String hostName) {
+
         hostSelection = hostName;
 
         hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
