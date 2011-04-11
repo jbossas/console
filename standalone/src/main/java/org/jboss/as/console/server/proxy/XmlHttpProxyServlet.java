@@ -225,7 +225,7 @@ public class XmlHttpProxyServlet extends HttpServlet
     {
 
         boolean isPost = XmlHttpProxy.POST.equals(method);
-        StringBuffer bodyContent = null;
+        StringBuilder bodyContent = null;
         OutputStream out = null;
         PrintWriter writer = null;
 
@@ -233,8 +233,8 @@ public class XmlHttpProxyServlet extends HttpServlet
             BufferedReader in = new BufferedReader(new InputStreamReader(req.getInputStream()));
             String line = null;
             while ((line = in.readLine()) != null) {
-                if (bodyContent == null) bodyContent = new StringBuffer();
-                bodyContent.append(line);
+                if (bodyContent == null) bodyContent = new StringBuilder();
+                bodyContent.append(line).append("\r\n");
             }
         } catch (Exception e) {
         }
@@ -320,7 +320,6 @@ public class XmlHttpProxyServlet extends HttpServlet
                 }
             }
 
-            String contentType = null;
             try
             {
                 String actualServiceKey = "default";
@@ -343,7 +342,6 @@ public class XmlHttpProxyServlet extends HttpServlet
                     if (service.containsKey(ProxyConfig.PASSTHROUGH))
                         passthrough = (Boolean)service.get(ProxyConfig.PASSTHROUGH);
 
-                    if(service.containsKey(ProxyConfig.CONTENT_TYPE)) contentType = (String)service.get(ProxyConfig.CONTENT_TYPE);
 
                     if(null==testUser)
                     {
@@ -441,34 +439,8 @@ public class XmlHttpProxyServlet extends HttpServlet
             if (urlString.indexOf("${") != -1) {
                 urlString = processURL(urlString, req, res);
             }
-            // default to JSON
-            String actualContentType = contentType!=null ? contentType : defaultContentType;
-            res.setContentType(actualContentType);
 
             out = res.getOutputStream();
-            // get the stream for the xsl stylesheet
-            if (xslURLString != null) {
-                // check the web root for the resource
-                URL xslURL = null;
-                xslURL = ctx.getResource(resourcesDir + "xsl/"+ xslURLString);
-                // if not in the web root check the classpath
-                if (xslURL == null) {
-                    xslURL = XmlHttpProxyServlet.class.getResource(classpathResourcesDir + "xsl/" + xslURLString);
-                }
-                if (xslURL != null) {
-                    xslInputStream  = xslURL.openStream();
-                } else {
-                    String message = "Could not locate the XSL stylesheet. Please check the XMLHttpProxy configuration.";
-                    getLogger().severe(message);
-                    res.setStatus(500);
-                    try {
-                        out.write(message.getBytes());
-                        out.flush();
-                        return;
-                    } catch (java.io.IOException iox){
-                    }
-                }
-            }
 
             if (!isPost)
             {
@@ -481,6 +453,8 @@ public class XmlHttpProxyServlet extends HttpServlet
                     getLogger().info("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
                 xhp.doPost(urlString, out, xslInputStream, paramsMap, headers, content, req.getContentType(), userName, password);
             }
+
+            res.setContentType(xhp.getContentType());
         }
         catch (Exception iox)
         {
