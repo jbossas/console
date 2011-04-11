@@ -221,6 +221,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
 
     public void onDeployToGroup(final DeploymentReference deployment) {
+
         window.hide();
 
 
@@ -249,6 +250,11 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             "name":"test.war"}
          */
 
+        assignDeploymentName(deployment);
+
+    }
+
+    private void assignDeploymentName(final DeploymentReference deployment) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("\"address\":[").append("{\"deployment\":\"").append(deployment.getName()).append("\"}],");
@@ -260,7 +266,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         sb.append("}");
 
         String requestJSO = sb.toString();
-        System.out.println(requestJSO);
+        //System.out.println(requestJSO);
 
         RequestBuilder rb = new RequestBuilder(
                 RequestBuilder.POST,
@@ -285,7 +291,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         } catch (RequestException e) {
             Log.error("Unknown error", e);
         }
-
     }
 
     private void assignToGroup(final DeploymentReference deployment) {
