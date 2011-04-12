@@ -68,17 +68,17 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<Host> host() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<Host>(new HostImpl());
     }
 
     @Override
     public AutoBean<Server> server() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<Server>(new ServerImpl());
     }
 
     @Override
     public AutoBean<ServerInstance> serverInstance() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<ServerInstance>(new ServerInstanceImpl());
     }
 
     @Override

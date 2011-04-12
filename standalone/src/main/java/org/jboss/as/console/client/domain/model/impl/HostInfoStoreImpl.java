@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.Host;
@@ -47,11 +46,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class HostInfoStoreImpl implements HostInformationStore {
 
     private DispatchAsync dispatcher;
-    private BeanFactory factory = GWT.create(BeanFactory.class);
+    private BeanFactory factory;
 
     @Inject
-    public HostInfoStoreImpl(DispatchAsync dispatcher) {
+    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override

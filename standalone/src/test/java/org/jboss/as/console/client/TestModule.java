@@ -21,8 +21,10 @@ package org.jboss.as.console.client;
 
 import com.google.inject.AbstractModule;
 import org.jboss.as.console.client.core.ApplicationProperties;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
 import org.jboss.as.console.client.model.BeanFactoryImpl;
@@ -54,6 +56,7 @@ public class TestModule extends AbstractModule {
         bind(SubsystemStore.class).to(SubsystemStoreImpl.class).in(Singleton.class);
         bind(ServerGroupStore.class).to(ServerGroupStoreImpl.class).in(Singleton.class);
         bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
+        bind(HostInformationStore.class).to(HostInfoStoreImpl.class).in(Singleton.class);
 
     }
 }
