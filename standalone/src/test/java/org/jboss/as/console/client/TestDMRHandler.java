@@ -24,19 +24,15 @@ import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.jboss.dmr.client.DispatchResult;
+import org.jboss.dmr.client.SimpleDispatcher;
 
 /**
  * @author Heiko Braun
  * @date 4/12/11
  */
 public class TestDMRHandler implements ActionHandler<DMRAction, DMRResponse> {
+
     private static final String DOMAIN_API_URL = "http://localhost:9990/domain-api";
     private static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
 
@@ -45,21 +41,8 @@ public class TestDMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
 
         try {
-            HttpURLConnection connection = createConnection();
-
-            OutputStreamWriter out = new OutputStreamWriter( connection.getOutputStream());
-            out.write(action.getOperation().toBase64String());
-            out.close();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-            in.close();
-
-            callback.onSuccess(new DMRResponse(response.toString(), APPLICATION_DMR_ENCODED) );
+            DispatchResult result = new SimpleDispatcher(DOMAIN_API_URL).execute(action.getOperation());
+            callback.onSuccess(new DMRResponse(result.getResponseText(), APPLICATION_DMR_ENCODED) );
 
         } catch (Exception e) {
             callback.onFailure(e);
@@ -77,16 +60,6 @@ public class TestDMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                 return false;
             }
         };
-    }
-
-    private HttpURLConnection createConnection() throws IOException {
-        URL url = new URL(DOMAIN_API_URL);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.addRequestProperty("Accept", APPLICATION_DMR_ENCODED);
-        connection.setRequestProperty("Content-Type", APPLICATION_DMR_ENCODED);
-        return connection;
     }
 
     @Override
