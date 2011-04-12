@@ -18,7 +18,7 @@
  */
 package org.jboss.dmr.client;
 
-import java.util.Formatter;
+import java.util.Arrays;
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
@@ -1045,7 +1045,8 @@ public class Base64
 
     static String format(String s, Object... args)
     {
-        return  new Formatter().format(s, args).toString();
+       // return  new Formatter().format(s, args).toString();
+        return s;
     }
 
     /**
