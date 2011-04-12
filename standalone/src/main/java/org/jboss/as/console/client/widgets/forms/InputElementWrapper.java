@@ -41,7 +41,7 @@ class InputElementWrapper extends HorizontalPanel {
         add(widget);
         add(img);
         img.setVisible(false);
-        img.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
+        img.getElement().getParentElement().setAttribute("style", "width:16px;vertical-align:middle");
 
         img.addClickHandler(new ClickHandler() {
 

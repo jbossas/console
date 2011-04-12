@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.icons.Icons;
 
 import java.util.List;
 
@@ -30,13 +32,18 @@ import java.util.List;
  */
 public class ComboBoxItem extends FormItem<String> {
 
+
     private ComboBox comboBox;
     private boolean defaultToFirst;
-    private Widget widget = null;
+
+    private InputElementWrapper wrapper;
 
     public ComboBoxItem(String name, String title) {
         super(name, title);
         this.comboBox = new ComboBox();
+        this.wrapper = new InputElementWrapper(comboBox.asWidget(), this);
+        wrapper.getElement().setAttribute("style", "width:100%");
+
     }
 
     @Override
@@ -61,9 +68,7 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public Widget asWidget() {
-        if(null==widget)
-            widget = comboBox.asWidget();
-        return widget;
+        return wrapper;
     }
 
     public void setDefaultToFirstOption(boolean b) {
@@ -109,4 +114,9 @@ public class ComboBoxItem extends FormItem<String> {
         }
     }
 
+    @Override
+    public void setErroneous(boolean b) {
+        super.setErroneous(b);
+        wrapper.setErroneous(b);
+    }
 }
