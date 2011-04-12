@@ -40,6 +40,10 @@ public class SimpleDispatcher implements Dispatcher {
         this.domainApiUrl = DOMAIN_API_URL;
     }
 
+    public SimpleDispatcher() {
+        this.domainApiUrl = "http://localhost:9990/domain-api";
+    }
+
     @Override
     public DispatchResult execute(ModelNode operation)
     {
