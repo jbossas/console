@@ -8,6 +8,8 @@ instance on your local host. You can download it here:
 
 You can run JBoss in either the 'domain' or 'standalone' scenario.
 
+
+
 Running in hosted mode:
 ----------------------
 
@@ -34,6 +36,8 @@ NOTE: Currently both the codebase for the 'standalone' and 'domain' usage scenar
 	  reside within the same module. A development switch at login prompt allows you to bootstrap one or the other.
       The codebases will be separated at a later point in time. But for now it's most productive way to move forward.
 
+
+
 Running in web mode:
 -------------------
 
@@ -41,6 +45,17 @@ mvn package
 
 Produces a war file in target/*-console.war,
 which can be deployed to a running jboss instance.
+
+
+
+Executing the Integration tests:
+-------------------------------
+
+1.) Start AS7 in domain mode
+2.) cd 'standalone'
+3.) mvn clean -Dsmoke test
+
+
 
 Problems?
 ---------
