@@ -33,12 +33,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 2/11/11
  */
-public class BootstrapContext {
-
-    public static final String INITIAL_TOKEN = "initial_token";
-    public static final String STANDALONE = "standalone_usage";
-    public static final String DOMAIN_API = "domain-api";
-    public static final String DEPLOYMENT_API = "add-content";
+public class BootstrapContext implements ApplicationProperties {
 
     private Map<String,String> ctx = new HashMap<String,String>();
 
@@ -87,6 +82,7 @@ public class BootstrapContext {
         }
     }
 
+    @Override
     public void setProperty(String key, String value)
     {
         if(isPersistent(key))
@@ -95,11 +91,13 @@ public class BootstrapContext {
         ctx.put(key, value);
     }
 
+    @Override
     public String getProperty(String key)
     {
         return ctx.get(key);
     }
 
+    @Override
     public boolean hasProperty(String key)
     {
         return getProperty(key)!=null;
@@ -112,6 +110,7 @@ public class BootstrapContext {
         return defaultPlace;
     }
 
+    @Override
     public void removeProperty(String key) {
 
         if(isPersistent(key))

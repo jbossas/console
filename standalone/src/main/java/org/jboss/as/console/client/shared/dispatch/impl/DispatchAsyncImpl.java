@@ -25,6 +25,7 @@ import org.jboss.as.console.client.shared.dispatch.Action;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
+import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.Result;
 
 /**
@@ -33,10 +34,10 @@ import org.jboss.as.console.client.shared.dispatch.Result;
  */
 public class DispatchAsyncImpl implements DispatchAsync {
 
-    HandlerRegistry registry;
+    HandlerMapping registry;
 
     @Inject
-    public DispatchAsyncImpl(HandlerRegistry registry) {
+    public DispatchAsyncImpl(HandlerMapping registry) {
         this.registry = registry;
     }
 

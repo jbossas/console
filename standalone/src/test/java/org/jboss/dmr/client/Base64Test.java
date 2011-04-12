@@ -37,7 +37,7 @@ public class Base64Test {
         value.get("port").set(8080);
 
         String base64 = value.toBase64String();
-        System.out.println(base64);
+        //System.out.println(base64);
 
         ModelNode reverse = ModelNode.fromBase64(base64);
         assertEquals(8080, reverse.get("port").asInt());
@@ -51,7 +51,7 @@ public class Base64Test {
         value.get("port").set(32768);
 
         String base64 = value.toBase64String();
-        System.out.println(base64);
+        //System.out.println(base64);
 
         ModelNode reverse = ModelNode.fromBase64(base64);
         assertEquals(32768, reverse.get("port").asInt());

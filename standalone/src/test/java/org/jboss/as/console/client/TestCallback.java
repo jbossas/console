@@ -17,38 +17,25 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.as.console.client;
 
-import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.Action;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.ActionType;
-import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author Heiko Braun
- * @date 3/17/11
+ * @date 4/12/11
  */
-public class HandlerRegistry implements HandlerMapping {
+public abstract class TestCallback<T> implements AsyncCallback<T> {
 
-    private Map<ActionType, ActionHandler> registry = new HashMap<ActionType, ActionHandler>();
-
-    @Inject
-    public HandlerRegistry(DMRHandler dmrhandler) {
-        register(ActionType.DMR, dmrhandler);
-    }
+    protected boolean didCallback = false;
 
     @Override
-    public ActionHandler resolve(Action action) {
-        return registry.get(action.getType());
+    public void onFailure(Throwable caught) {
+        didCallback = true;
+        throw new RuntimeException(caught);
     }
 
-    @Override
-    public void register(ActionType actionType, ActionHandler handler)
-    {
-        registry.put(actionType, handler);
+    public boolean hasBeenExecuted() {
+        return didCallback;
     }
 }

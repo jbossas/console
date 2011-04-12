@@ -18,6 +18,8 @@
  */
 package org.jboss.dmr.client;
 
+import java.util.Formatter;
+
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
  * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
@@ -756,7 +758,7 @@ public class Base64
 
         if( off + len > source.length  ){
             throw new IllegalArgumentException(
-                    //String.format( "Cannot have offset of %d and length of %d with array of length %d", off,len,source.length)
+                    format( "Cannot have offset of %d and length of %d with array of length %d", off,len,source.length)
                     );
         }   // end if: off < 0
 
@@ -868,12 +870,12 @@ public class Base64
         }   // end if
         if( srcOffset < 0 || srcOffset + 3 >= source.length ){
             throw new IllegalArgumentException(
-                    //String.format( "Source array with length %d cannot have offset of %d and still process four bytes.", source.length, srcOffset )
+                    format( "Source array with length %d cannot have offset of %d and still process four bytes.", source.length, srcOffset )
             );
         }   // end if
         if( destOffset < 0 || destOffset +2 >= destination.length ){
             throw new IllegalArgumentException(
-                    //String.format( "Destination array with length %d cannot have offset of %d and still store three bytes.", destination.length, destOffset )
+                    format( "Destination array with length %d cannot have offset of %d and still store three bytes.", destination.length, destOffset )
             );
         }   // end if
 
@@ -984,7 +986,7 @@ public class Base64
         }   // end if
         if( off < 0 || off + len > source.length ){
             throw new IllegalArgumentException(
-                    //String.format( "Source array with length %d cannot have offset of %d and process %d bytes.", source.length, off, len )
+                    format( "Source array with length %d cannot have offset of %d and process %d bytes.", source.length, off, len )
             );
         }   // end if
 
@@ -1030,7 +1032,7 @@ public class Base64
             else {
                 // There's a bad input character in the Base64 stream.
                 throw new java.io.IOException(
-                        //String.format( "Bad Base64 input character decimal %d in array position %d", ((int)source[i])&0xFF, i )
+                        format( "Bad Base64 input character decimal %d in array position %d", ((int)source[i])&0xFF, i )
                 );
             }   // end else:
         }   // each input character
@@ -1041,7 +1043,10 @@ public class Base64
     }   // end decode
 
 
-
+    static String format(String s, Object... args)
+    {
+        return  new Formatter().format(s, args).toString();
+    }
 
     /**
      * Decodes data from Base64 notation, automatically

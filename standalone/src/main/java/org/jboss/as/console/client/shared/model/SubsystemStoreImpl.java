@@ -19,9 +19,9 @@
 
 package org.jboss.as.console.client.shared.model;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -41,13 +41,14 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class SubsystemStoreImpl implements SubsystemStore {
 
     private DispatchAsync dispatcher;
-    private BeanFactory factory = GWT.create(BeanFactory.class);
-    private BootstrapContext bootstrap;
+    private BeanFactory factory;
+    private ApplicationProperties bootstrap;
 
     @Inject
-    public SubsystemStoreImpl(DispatchAsync dispatcher, BootstrapContext bootstrap) {
+    public SubsystemStoreImpl(DispatchAsync dispatcher, ApplicationProperties bootstrap, BeanFactory factory) {
         this.dispatcher = dispatcher;
         this.bootstrap = bootstrap;
+        this.factory = factory;
     }
 
     @Override
@@ -58,7 +59,7 @@ public class SubsystemStoreImpl implements SubsystemStore {
         operation.get(CHILD_TYPE).set("subsystem");
         operation.get(ADDRESS).setEmptyList();
 
-        if(bootstrap.getProperty(BootstrapContext.STANDALONE).equals("false"))
+        if(bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("false"))
         {
             operation.get(ADDRESS).add("profile", "default");  //TODO: doesn't work with multiple profiles
         }

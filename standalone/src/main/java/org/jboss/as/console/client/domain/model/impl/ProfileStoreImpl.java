@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.domain.model.impl;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -43,12 +42,13 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 public class ProfileStoreImpl implements ProfileStore {
 
     private DispatchAsync dispatcher;
-    private BeanFactory factory = GWT.create(BeanFactory.class);
+    private BeanFactory factory;
     private ModelNode operation;
 
     @Inject
-    public ProfileStoreImpl(DispatchAsync dispatcher) {
+    public ProfileStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
         this.dispatcher = dispatcher;
+        this.factory = factory;
 
         this.operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);

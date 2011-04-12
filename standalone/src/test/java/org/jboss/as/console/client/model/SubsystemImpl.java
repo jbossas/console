@@ -17,38 +17,25 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.as.console.client.model;
 
-import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.Action;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.ActionType;
-import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 /**
  * @author Heiko Braun
- * @date 3/17/11
+ * @date 4/12/11
  */
-public class HandlerRegistry implements HandlerMapping {
+public class SubsystemImpl implements SubsystemRecord {
 
-    private Map<ActionType, ActionHandler> registry = new HashMap<ActionType, ActionHandler>();
+    String title;
 
-    @Inject
-    public HandlerRegistry(DMRHandler dmrhandler) {
-        register(ActionType.DMR, dmrhandler);
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     @Override
-    public ActionHandler resolve(Action action) {
-        return registry.get(action.getType());
-    }
-
-    @Override
-    public void register(ActionType actionType, ActionHandler handler)
-    {
-        registry.put(actionType, handler);
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

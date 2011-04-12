@@ -17,38 +17,52 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.dispatch.impl;
+package org.jboss.as.console.client;
 
-import com.google.inject.Inject;
-import org.jboss.as.console.client.shared.dispatch.Action;
-import org.jboss.as.console.client.shared.dispatch.ActionHandler;
-import org.jboss.as.console.client.shared.dispatch.ActionType;
-import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import org.jboss.as.console.client.core.ApplicationProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Heiko Braun
- * @date 3/17/11
+ * @date 4/12/11
  */
-public class HandlerRegistry implements HandlerMapping {
+public class TestProperties implements ApplicationProperties {
+    private Map<String,String> ctx = new HashMap<String,String>();
 
-    private Map<ActionType, ActionHandler> registry = new HashMap<ActionType, ActionHandler>();
-
-    @Inject
-    public HandlerRegistry(DMRHandler dmrhandler) {
-        register(ActionType.DMR, dmrhandler);
+    public TestProperties() {
+        setProperty(ApplicationProperties.STANDALONE, "false");
     }
 
     @Override
-    public ActionHandler resolve(Action action) {
-        return registry.get(action.getType());
-    }
-
-    @Override
-    public void register(ActionType actionType, ActionHandler handler)
+    public void setProperty(String key, String value)
     {
-        registry.put(actionType, handler);
+        ctx.put(key, value);
     }
+
+    @Override
+    public String getProperty(String key)
+    {
+        return ctx.get(key);
+    }
+
+    @Override
+    public boolean hasProperty(String key)
+    {
+        return getProperty(key)!=null;
+    }
+
+    public PlaceRequest getDefaultPlace() {
+
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void removeProperty(String key) {
+
+        ctx.remove(key);
+    }
+
 }

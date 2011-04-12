@@ -34,6 +34,7 @@ import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.DefaultPlaceManager;
 import org.jboss.as.console.client.core.Footer;
@@ -89,6 +90,7 @@ import org.jboss.as.console.client.server.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementView;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
@@ -137,6 +139,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
         bind(CurrentUser.class).in(Singleton.class);
         bind(BootstrapContext.class).in(Singleton.class);
+        bind(ApplicationProperties.class).to(BootstrapContext.class).in(Singleton.class);
 
         // sign in
         bindPresenter(SignInPagePresenter.class, SignInPagePresenter.MyView.class,
@@ -151,7 +154,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         // ----------------------------------------------------------------------
 
         bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
-        bind(HandlerRegistry.class).in(Singleton.class);
+        bind(HandlerMapping.class).to(HandlerRegistry.class).in(Singleton.class);
         bind(DMRHandler.class).in(Singleton.class);
         bind(InvocationMetrics.class).in(Singleton.class);
 

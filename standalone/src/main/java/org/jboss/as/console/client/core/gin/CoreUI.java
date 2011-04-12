@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
@@ -61,6 +62,7 @@ import org.jboss.as.console.client.server.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.server.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.server.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
@@ -91,6 +93,7 @@ public interface CoreUI extends Ginjector {
     Gatekeeper getLoggedInGatekeeper();
     CurrentUser getCurrentUser();
     BootstrapContext getBootstrapContext();
+    ApplicationProperties getAppProperties();
 
     // ----------------------------------------------------------------------
 
@@ -104,7 +107,7 @@ public interface CoreUI extends Ginjector {
     // ----------------------------------------------------------------------
 
     DispatchAsync getDispatchAsync();
-    HandlerRegistry getDispatcherHandlerRegistry();
+    HandlerMapping getDispatcherHandlerRegistry();
     DMRHandler getDMRHandler();
     InvocationMetrics getInvocationMetrics();
 
