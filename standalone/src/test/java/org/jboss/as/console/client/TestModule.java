@@ -22,12 +22,16 @@ package org.jboss.as.console.client;
 import com.google.inject.AbstractModule;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
+import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
 import org.jboss.as.console.client.model.BeanFactoryImpl;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 
@@ -48,6 +52,8 @@ public class TestModule extends AbstractModule {
 
         bind(ProfileStore.class).to(ProfileStoreImpl.class).in(Singleton.class);
         bind(SubsystemStore.class).to(SubsystemStoreImpl.class).in(Singleton.class);
+        bind(ServerGroupStore.class).to(ServerGroupStoreImpl.class).in(Singleton.class);
+        bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
 
     }
 }

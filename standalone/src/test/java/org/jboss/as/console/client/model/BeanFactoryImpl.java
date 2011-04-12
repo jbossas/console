@@ -53,7 +53,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<ServerGroupRecord> serverGroup() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<ServerGroupRecord>(new ServerGroupImpl());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<DeploymentRecord> deployment() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<DeploymentRecord>(new DeploymentRecordImpl());
     }
 
     @Override

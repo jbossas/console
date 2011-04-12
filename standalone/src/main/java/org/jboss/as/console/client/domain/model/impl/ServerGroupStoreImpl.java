@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -46,11 +45,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 public class ServerGroupStoreImpl implements ServerGroupStore {
 
     private DispatchAsync dispatcher;
-    private BeanFactory factory = GWT.create(BeanFactory.class);
+    private BeanFactory factory;
 
     @Inject
-    public ServerGroupStoreImpl(DispatchAsync dispatcher) {
+    public ServerGroupStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override

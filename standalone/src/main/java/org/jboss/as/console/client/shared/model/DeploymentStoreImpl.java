@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.model;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -29,12 +28,11 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
 
 import javax.inject.Inject;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
