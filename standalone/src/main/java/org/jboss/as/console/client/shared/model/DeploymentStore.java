@@ -33,5 +33,6 @@ import java.util.List;
  */
 public interface DeploymentStore {
     void loadDeployments(List<ServerGroupRecord> serverGroups, AsyncCallback<List<DeploymentRecord>> callback);
+    void loadDomainDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void deleteDeployment(DeploymentRecord deploymentRecord, AsyncCallback<Boolean> callback);
 }

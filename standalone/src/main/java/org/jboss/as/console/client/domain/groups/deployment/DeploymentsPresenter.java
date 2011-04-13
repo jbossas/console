@@ -28,7 +28,6 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -84,6 +83,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     private DefaultWindow window;
     private DispatchAsync dispatcher;
+    
+    private DomainDeploymentInfo domainDeploymentInfo;
 
 
     @ProxyCodeSplit
@@ -93,8 +94,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     public interface MyView extends SuspendableView {
         void setPresenter(DeploymentsPresenter presenter);
-        void updateDeployments(List<DeploymentRecord> deploymentRecords);
-        void updateGroups(List<ServerGroupRecord> serverGroupRecords);
+        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo);
     }
 
     @Inject
@@ -109,6 +109,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         this.deploymentStore = deploymentStore;
         this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
+        
+        domainDeploymentInfo = new DomainDeploymentInfo(getView(), serverGroupStore, deploymentStore);
     }
 
     @Override
@@ -122,30 +124,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     protected void onReset() {
         super.onReset();
 
-        refreshModel();
-    }
-
-    private void refreshModel() {
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-
-            @Override
-            public void onSuccess(List<ServerGroupRecord> result) {
-                serverGroups = result;
-                getView().updateGroups(result);
-
-
-                // load deployments
-
-                deploymentStore.loadDeployments(serverGroups, new SimpleCallback<List<DeploymentRecord>>() {
-
-                    @Override
-                    public void onSuccess(List<DeploymentRecord> result) {
-                        deployments = result;
-                        getView().updateDeployments(result);
-                    }
-                });
-            }
-        });
+        domainDeploymentInfo.refreshView();
     }
 
     @Override
@@ -163,19 +142,12 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
 
-    public void onFilterGroup(final String groupName) {
-        this.groupFilter = groupName;
-        getView().updateDeployments(
-                filter.apply(new TypeAndGroupPredicate(), deployments)
-        );
-    }
-
     public void onFilterType(final String type) {
 
         this.typeFilter = type;
-        getView().updateDeployments(
+/*        getView().updateDeployments(
                 filter.apply(new TypeAndGroupPredicate(), deployments)
-        );
+        ); */
     }
 
     class TypeAndGroupPredicate implements Predicate<DeploymentRecord>
@@ -315,7 +287,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                refreshModel();
+                //refreshModel();
             }
         });
     }
