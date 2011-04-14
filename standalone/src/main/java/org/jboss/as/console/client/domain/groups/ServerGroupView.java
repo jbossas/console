@@ -83,6 +83,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private Button addProp;
 
     private LayoutPanel layout;
+    private VerticalPanel panel;
 
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
@@ -144,7 +145,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.add(toolStrip);
         // ----
 
-        VerticalPanel panel = new VerticalPanel();
+        panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
         panel.getElement().setAttribute("style", "padding:15px;");
 
@@ -345,6 +346,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     }
 
     public void setEnabled(boolean isEnabled) {
+
+        if(isEnabled)
+            panel.addStyleName("edit-panel");
+        else
+            panel.removeStyleName("edit-panel");
+
         form.setEnabled(isEnabled);
         propertyTable.setEnabled(isEnabled);
 

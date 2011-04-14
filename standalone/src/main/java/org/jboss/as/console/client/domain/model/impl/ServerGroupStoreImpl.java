@@ -175,7 +175,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
     @Override
     public void save(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
-        Log.warn("Save server-group not implemented yet!");
+
     }
 
     @Override
