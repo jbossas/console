@@ -38,16 +38,15 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
  */
 public class DomainDeploymentInfo {
 
-  private DeploymentsPresenter.MyView view;
+  private DeploymentsPresenter presenter;
   private ServerGroupStore serverGroupStore;
-  private List<ServerGroupRecord> serverGroupRecords;
   private DeploymentStore deploymentStore;
   private List<String> serverGroupNames = Collections.EMPTY_LIST;
   private List<DeploymentRecord> domainDeployments = Collections.EMPTY_LIST;
   private Map<String, List<DeploymentRecord>> serverGroupDeployments = Collections.EMPTY_MAP;
 
-  DomainDeploymentInfo(DeploymentsPresenter.MyView view, ServerGroupStore serverGroupStore, DeploymentStore deploymentStore) {
-    this.view = view;
+  DomainDeploymentInfo(DeploymentsPresenter presenter, ServerGroupStore serverGroupStore, DeploymentStore deploymentStore) {
+    this.presenter = presenter;
     this.serverGroupStore = serverGroupStore;
     this.deploymentStore = deploymentStore;
   }
@@ -69,7 +68,8 @@ public class DomainDeploymentInfo {
 
       @Override
       public void onSuccess(List<ServerGroupRecord> serverGroups) {
-        DomainDeploymentInfo.this.serverGroupRecords = serverGroups;
+        presenter.setServerGroups(serverGroups);
+        
         List<String> groupNames = new ArrayList();
         for (ServerGroupRecord record : serverGroups) {
           groupNames.add(record.getGroupName());
@@ -89,7 +89,7 @@ public class DomainDeploymentInfo {
               serverGroupDeployments.put(groupName, new ArrayList());
             }
             
-            // sort records
+            // put each record into a list for its server group
             for(DeploymentRecord record : result) {
               List<DeploymentRecord> deploymentList = serverGroupDeployments.get(record.getServerGroup());
               deploymentList.add(record);
@@ -101,7 +101,7 @@ public class DomainDeploymentInfo {
               @Override
               public void onSuccess(List<DeploymentRecord> result) {
                 DomainDeploymentInfo.this.domainDeployments = result;
-                DomainDeploymentInfo.this.view.updateDeploymentInfo(DomainDeploymentInfo.this);
+                DomainDeploymentInfo.this.presenter.getView().updateDeploymentInfo(DomainDeploymentInfo.this);
               }
             });
           }

@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.model;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.jboss.dmr.client.Property;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -50,11 +52,11 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
   @Override
   public void loadDomainDeployments(final AsyncCallback<List<DeploymentRecord>> callback) {
-    // /:read-children-names(child-type=deployment)
+    // /:read-children-resources(child-type=deployment)
     final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
     
     ModelNode operation = new ModelNode();
-    operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+    operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
     operation.get(CHILD_TYPE).set("deployment");
     
     dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -67,15 +69,23 @@ public class DeploymentStoreImpl implements DeploymentStore {
         @Override
         public void onSuccess(DMRResponse result) {
           ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
           if (response.get("result").isDefined()) {
             List<ModelNode> payload = response.get("result").asList();
 
-            for (ModelNode name : payload) {
-              DeploymentRecord rec = factory.deployment().as();
-              rec.setName(name.asString());
-
-              deployments.add(rec);
+            for (ModelNode item : payload) {
+              Property property = item.asProperty();
+              ModelNode handler = property.getValue().asObject();
+              String name = property.getName();
+              
+              try {
+                DeploymentRecord rec = factory.deployment().as();
+                rec.setName(name);
+                rec.setRuntimeName(handler.get("runtime-name").asString());
+                rec.setEnabled(true); // are domain deployments really "enabled"?
+                deployments.add(rec);
+              } catch (IllegalArgumentException e) {
+                Log.error("Failed to parse data source representation", e);
+              }
             }
 
           }
@@ -101,7 +111,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
       ModelNode operation = new ModelNode();
       operation.get(ADDRESS).add("server-group", group.getGroupName());
-      operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+      operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
       operation.get(CHILD_TYPE).set("deployment");
 
       dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -118,14 +128,22 @@ public class DeploymentStoreImpl implements DeploymentStore {
           if (response.get("result").isDefined()) {
             List<ModelNode> payload = response.get("result").asList();
 
-            for (ModelNode name : payload) {
-              DeploymentRecord rec = factory.deployment().as();
-              rec.setName(name.asString());
-              rec.setServerGroup(group.getGroupName());
-
-              deployments.add(rec);
+            for (ModelNode item : payload) {
+              Property property = item.asProperty();
+              ModelNode handler = property.getValue().asObject();
+              String name = property.getName();
+              
+              try {
+                DeploymentRecord rec = factory.deployment().as();
+                rec.setName(name);
+                rec.setServerGroup(group.getGroupName());
+                rec.setRuntimeName(handler.get("runtime-name").asString());
+                rec.setEnabled(handler.get("enabled").asBoolean());
+                deployments.add(rec);
+              } catch (IllegalArgumentException e) {
+                Log.error("Failed to parse data source representation", e);
+              }
             }
-
           }
 
           // exit if all server group are parsed

@@ -36,4 +36,7 @@ public interface DeploymentRecord  {
 
     public String getServerGroup();
     public void setServerGroup(String groupName);
+    
+    public boolean getEnabled();
+    public void setEnabled(boolean enabaled);
 }

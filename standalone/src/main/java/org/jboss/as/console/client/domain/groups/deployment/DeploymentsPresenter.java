@@ -110,7 +110,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
         
-        domainDeploymentInfo = new DomainDeploymentInfo(getView(), serverGroupStore, deploymentStore);
+        domainDeploymentInfo = new DomainDeploymentInfo(this, serverGroupStore, deploymentStore);
     }
 
     @Override
@@ -193,6 +193,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     public List<ServerGroupRecord> getServerGroups() {
         return serverGroups;
+    }
+    
+    void setServerGroups(List<ServerGroupRecord> serverGroups) {
+      this.serverGroups = serverGroups;
     }
 
 

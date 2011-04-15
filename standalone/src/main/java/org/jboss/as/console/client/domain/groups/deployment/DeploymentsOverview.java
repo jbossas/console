@@ -20,10 +20,15 @@ package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,13 +40,17 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jboss.as.console.client.widgets.tables.HyperlinkCell;
 import org.jboss.as.console.client.widgets.tables.OptionCell;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
  * @author Heiko Braun
@@ -53,13 +62,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
   private DeploymentsPresenter presenter;
   private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
   
-  private ComboBox groupFilter = new ComboBox();
-  private Form<DeploymentRecord> form;
   private TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-  private Widget domainDeployments;
-  private VerticalPanel topBottom1 = new VerticalPanel();
-  private VerticalPanel topBottom2 = new VerticalPanel();
-  private VerticalPanel topBottom3 = new VerticalPanel();
   private List<String> serverGroupNames;
   private Map<String, Widget> serverGroupTabsAdded = new HashMap<String, Widget>();
   private Map<String, ListDataProvider<DeploymentRecord>> serverGroupDeploymentProviders = new HashMap<String, ListDataProvider<DeploymentRecord>>();
@@ -71,8 +74,38 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
   @Override
   public Widget createWidget() {
+    LayoutPanel layout = new LayoutPanel();
+
+    RHSHeader title = new RHSHeader("Available Deployments");
+    layout.add(title);
+    layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
+
+    // --
+
+    final ToolStrip topLevelTools = new ToolStrip();
+    final ToolButton newButton = new ToolButton("New Deployment");
+    newButton.addClickHandler(new ClickHandler() {
+
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        presenter.launchNewDeploymentDialoge();
+      }
+    });
+
+    topLevelTools.addToolButtonRight(newButton);
+    layout.add(topLevelTools);
+    layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
+    
+    SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel();
+    deploymentsPanel.addNorth(makeDeploymentTable("Content Repository", domainDeploymentProvider, "add to selected server group", "remove content"), 200);
     tabLayoutpanel.addStyleName("default-tabpanel");
-    return tabLayoutpanel;
+    tabLayoutpanel.addStyleName("fill-layout-width");
+    deploymentsPanel.add(tabLayoutpanel);
+    
+    layout.add(deploymentsPanel);
+    layout.setWidgetTopHeight(deploymentsPanel, 50, Style.Unit.PX, 500, Style.Unit.PX);
+    
+    return layout;
   }
 
   private Widget makeDeploymentTable(String headerLabel, 
@@ -84,7 +117,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     // -----------
 
-    ContentHeaderLabel nameLabel = new ContentHeaderLabel("Deployments for " + headerLabel);
+    ContentHeaderLabel nameLabel = new ContentHeaderLabel(headerLabel);
 
     HorizontalPanel horzPanel = new HorizontalPanel();
     horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -114,19 +147,28 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         return record.getRuntimeName();
       }
     };
+    
+    TextColumn<DeploymentRecord> dplEnabledColumn = new TextColumn<DeploymentRecord>() {
+
+      @Override
+      public String getValue(DeploymentRecord record) {
+        return Boolean.toString(record.getEnabled());
+      }
+    };
 
     deploymentTable.addColumn(dplNameColumn, "Name");
     deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
+    deploymentTable.addColumn(dplEnabledColumn, "Enabled?");
 
     for (int i = 0; i < action.length; i++) {
-      OptionCell optionCell = new OptionCell(action[i], new ActionCell.Delegate<String>() {
+      HyperlinkCell hyperlinkCell = new HyperlinkCell(action[i], new ActionCell.Delegate<String>() {
             @Override
             public void execute(String rowNum) {
               System.out.println("Called for rownum =" + rowNum);
             }
         });
 
-        Column<DeploymentRecord, String> optionColumn = new Column<DeploymentRecord, String>(optionCell) {
+        Column<DeploymentRecord, String> optionColumn = new Column<DeploymentRecord, String>(hyperlinkCell) {
             @Override
             public String getValue(DeploymentRecord object) {
                 return "";
@@ -139,7 +181,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     
     vpanel.add(deploymentTable);
     
-    return vpanel;
+    return new ScrollPanel(vpanel);
   }
 
   @Override
@@ -170,12 +212,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
       
       VerticalPanel vPanel = new VerticalPanel();
       this.tabLayoutpanel.add(vPanel, serverGroupName);
+      System.out.println("added panel for " + serverGroupName);
       this.serverGroupTabsAdded.put(serverGroupName, vPanel);
       ListDataProvider<DeploymentRecord> serverGroupProvider = new ListDataProvider<DeploymentRecord>();
       this.serverGroupDeploymentProviders.put(serverGroupName, serverGroupProvider);
       
-      vPanel.add(makeDeploymentTable("Domain", domainDeploymentProvider, "deploy", "remove from domain"));
-      vPanel.add(makeDeploymentTable(serverGroupName, serverGroupProvider, "undeploy", "redeploy"));
+      vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", serverGroupProvider, "undeploy", "redeploy"));
     }
 
     // find server groups to remove
@@ -190,6 +232,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     // remove deleted server groups
     for (String serverGroupName : removals) {
       Widget widget = this.serverGroupTabsAdded.remove(serverGroupName);
+      System.out.println("removed panel for " + serverGroupName);
       this.tabLayoutpanel.remove(widget);
       this.serverGroupDeploymentProviders.remove(serverGroupName);
     }
