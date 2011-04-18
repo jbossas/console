@@ -34,15 +34,11 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 3/3/11
  */
-class DefaultGroupRenderer implements GroupRenderer
+public class DefaultGroupRenderer implements GroupRenderer
 {
     private final String id = "form-"+ HTMLPanel.createUniqueId()+"_";
     private final String tablePrefix = "<table border=0 id='"+id+"' border=0 cellpadding=0 cellspacing=0>";
     private final static String tableSuffix = "</table>";
-
-    DefaultGroupRenderer() {
-
-    }
 
     @Override
     public Widget render(RenderMetaData metaData, String groupName, Map<String, FormItem> groupItems)

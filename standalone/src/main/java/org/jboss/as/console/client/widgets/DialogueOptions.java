@@ -40,9 +40,8 @@ public class DialogueOptions extends HorizontalPanel {
             String submitText, ClickHandler submitHandler,
             String cancelText, ClickHandler cancelHandler) {
 
-        Button submit = new DefaultButton(submitText);
+        Button submit = new DefaultButton(submitText, submitHandler);
         submit.getElement().setAttribute("style", "width:50px;height:18px");
-        submit.addClickHandler(submitHandler);
 
         Label cancel = new Label(cancelText);
         cancel.setStyleName("html-link");

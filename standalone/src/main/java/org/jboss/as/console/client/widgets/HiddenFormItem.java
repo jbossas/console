@@ -19,22 +19,44 @@
 
 package org.jboss.as.console.client.widgets;
 
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
  * @author Heiko Braun
- * @date 3/1/11
+ * @date 4/18/11
  */
-public class DefaultButton extends Button {
+public class HiddenFormItem extends FormItem<Object> {
 
-    public DefaultButton(String title) {
-        setHTML(title);
-        setStyleName("default-button");
+    Object value;
+
+    public HiddenFormItem(String name, String title, Object value) {
+        super(name, title);
+        this.value = value;
     }
 
-    public DefaultButton(String title, ClickHandler handler) {
-        this(title);
-        addClickHandler(handler);
+    @Override
+    public Widget asWidget() {
+        throw new RuntimeException("Not supported");
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+
+    }
+
+    @Override
+    public boolean validate(Object value) {
+        return true;
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Object value) {
+        this.value = value;
     }
 }

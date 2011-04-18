@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class TextBoxItem extends FormItem<String> {
 
-    private TextBox textBox;
+    protected TextBox textBox;
     private InputElementWrapper wrapper;
 
     public TextBoxItem(String name, String title) {

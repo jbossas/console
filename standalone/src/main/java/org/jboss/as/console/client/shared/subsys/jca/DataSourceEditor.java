@@ -41,6 +41,8 @@ import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
+import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -183,13 +185,17 @@ public class DataSourceEditor {
             }
         });
 
-        TextBoxItem driverItem = new TextBoxItem("driverClass", "Driver");
+        TextBoxItem driverItem = new TextBoxItem("driverName", "Driver");
+        TextBoxItem driverClassItem = new TextBoxItem("driverClass", "Driver Class");
+
         TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, enableItem, jndiItem, driverItem, urlItem, userItem, passwordItem);
+        form.setFields(nameItem, jndiItem, enableItem);
+        form.setFieldsInGroup("Connection", userItem, passwordItem, urlItem);
+        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, driverClassItem);
         form.bind(dataSourceTable);
         form.setEnabled(false); // currently not editable
 
