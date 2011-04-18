@@ -19,18 +19,9 @@
 
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Heiko Braun
@@ -40,61 +31,63 @@ public class NewDatasourceWizard {
 
     private DataSourcePresenter presenter;
 
+    private DeckPanel deck;
+    private DatasourceStep2 step2;
+    private DataSourceStep3 step3;
+
+
+    private DataSource baseAttributes = null;
+    private DataSource driverAttributes = null;
+
     public NewDatasourceWizard(DataSourcePresenter presenter) {
         this.presenter = presenter;
     }
 
     public Widget asWidget() {
 
-        VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
 
-        final Form<DataSource> form = new Form<DataSource>(DataSource.class);
-        form.setNumColumns(2);
+        deck = new DeckPanel();
 
-        TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem connectionUrl = new TextBoxItem("connectionUrl", "Connection URL");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
-        CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
-        enabled.setValue(Boolean.TRUE);
+        deck.add(new DatasourceStep1(this).asWidget());
 
-        TextBoxItem driverClass = new TextBoxItem("driverClass", "Driver Class");
-        TextBoxItem driverName = new TextBoxItem("driver", "Driver Name");
+        step2 = new DatasourceStep2(this);
+        deck.add(step2.asWidget());
 
-        TextBoxItem user = new TextBoxItem("username", "Username");
-        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
-            {
-                isRequired = false;
-            }
-        };
+        step3 = new DataSourceStep3(this);
+        deck.add(step3.asWidget());
 
+        deck.showWidget(0);
 
-        form.setFieldsInGroup("Datasource", name, connectionUrl, jndiName,enabled);
-        form.setFieldsInGroup("Driver", driverClass, driverName);
-        form.setFieldsInGroup("Connection", user, pass);
-        layout.add(form.asWidget());
+        return deck;
+    }
 
-        ClickHandler submitHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                FormValidation validation = form.validate();
-                if(!validation.hasErrors())
-                {
-                    presenter.onCreateNewDatasource(form.getUpdatedEntity());
-                }
-            }
-        };
+    public DataSourcePresenter getPresenter() {
+        return presenter;
+    }
 
-        ClickHandler cancelHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.closeDialogue();
-            }
-        };
+    public void onConfigureBaseAttributes(DataSource entity) {
+        this.baseAttributes = entity;
+        step2.edit(entity);
+        deck.showWidget(1);
+    }
 
-        DialogueOptions options = new DialogueOptions(submitHandler, cancelHandler);
+    public void onConfigureDriver(DataSource entity) {
+        this.driverAttributes = entity;
+        step3.edit(entity);
+        deck.showWidget(2);
+    }
 
-        layout.add(options);
-        return layout;
+    public void onFinish(DataSource updatedEntity) {
+
+        // merge previous attributes into single entity
+
+        updatedEntity.setName(baseAttributes.getName());
+        updatedEntity.setJndiName(baseAttributes.getJndiName());
+        updatedEntity.setEnabled(baseAttributes.isEnabled());
+
+        updatedEntity.setDriverName(driverAttributes.getName());
+        updatedEntity.setDriverClass(driverAttributes.getDriverClass());
+
+        presenter.onCreateNewDatasource(updatedEntity);
     }
 }

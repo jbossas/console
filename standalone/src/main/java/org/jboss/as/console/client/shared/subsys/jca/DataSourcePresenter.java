@@ -159,6 +159,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                         model.setConnectionUrl(ds.get("connection-url").asString());
                         model.setJndiName(ds.get("jndi-name").asString());
                         model.setDriverClass(ds.get("driver-class").asString());
+                        model.setDriverName(ds.get("driver").asString());
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
                         model.setPassword(ds.get("password").asString());
@@ -180,8 +181,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     public void launchNewDatasourceWizard() {
 
         window = new DefaultWindow("Create Datasource");
-        window.setWidth(640);
-        window.setHeight(480);
+        window.setWidth(480);
+        window.setHeight(320);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -199,7 +200,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
 
     public void onCreateNewDatasource(DataSource datasource) {
+        window.hide();
+        // todo: persist entity
 
+
+        System.out.println("> "+datasource.getName());
     }
 
     public void closeDialogue() {
