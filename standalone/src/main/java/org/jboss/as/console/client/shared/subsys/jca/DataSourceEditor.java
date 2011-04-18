@@ -73,7 +73,6 @@ public class DataSourceEditor {
     public Widget asWidget() {
 
         LayoutPanel layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
 
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton("New DataSource", new ClickHandler() {
@@ -85,7 +84,6 @@ public class DataSourceEditor {
         }));
 
         layout.add(topLevelTools);
-        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
 
         // ----
 
@@ -93,6 +91,9 @@ public class DataSourceEditor {
         vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
 
         layout.add(vpanel);
+
+        layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -248,7 +249,7 @@ public class DataSourceEditor {
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
         form.setFields(nameItem, jndiItem, enableItem);
-        form.setFieldsInGroup("Connection", userItem, passwordItem, urlItem);
+        form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem, urlItem);
         form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, driverClassItem);
         form.bind(dataSourceTable);
         form.setEnabled(false); // currently not editable
@@ -259,9 +260,6 @@ public class DataSourceEditor {
 
         vpanel.add(detailPanel);
 
-
-        layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
         return layout;
     }
 
