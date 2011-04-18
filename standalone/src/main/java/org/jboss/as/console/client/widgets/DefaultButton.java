@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Button;
  */
 public class DefaultButton extends Button {
 
+
     public DefaultButton(String title) {
         setHTML(title);
         setStyleName("default-button");

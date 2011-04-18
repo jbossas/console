@@ -373,6 +373,7 @@ color:#C0C0C0;
     border:1px solid #A6ABB4;
     -moz-border-radius: 2px;
     border-radius: 2px;
+    white-space:nowrap;
 }
 
 .default-button:hover {
