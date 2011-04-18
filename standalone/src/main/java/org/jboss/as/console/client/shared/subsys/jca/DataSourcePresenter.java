@@ -21,8 +21,11 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -39,6 +42,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -59,6 +63,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private boolean hasBeenRevealed = false;
+    private DefaultWindow window;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -114,7 +120,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     @Override
     protected void revealInParent() {
-         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
     void loadDataSources() {
@@ -169,5 +175,34 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             }
         });
 
+    }
+
+    public void launchNewDatasourceWizard() {
+
+        window = new DefaultWindow("Create Datasource");
+        window.setWidth(640);
+        window.setHeight(480);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+                new NewDatasourceWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+
+    public void onCreateNewDatasource(DataSource datasource) {
+
+    }
+
+    public void closeDialogue() {
+        window.hide();
     }
 }

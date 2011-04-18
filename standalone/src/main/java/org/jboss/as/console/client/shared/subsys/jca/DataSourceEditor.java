@@ -76,9 +76,7 @@ public class DataSourceEditor {
 
             @Override
             public void onClick(ClickEvent event) {
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Adding datasources not implemented",Message.Severity.Warning)
-                );
+                presenter.launchNewDatasourceWizard();
             }
         }));
 

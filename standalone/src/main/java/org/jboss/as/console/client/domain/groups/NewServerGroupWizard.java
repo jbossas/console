@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.DefaultButton;
+import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
@@ -81,61 +82,48 @@ class NewServerGroupWizard {
 
         form.setFields(nameField, basedOnSelection);
 
-        Button submit = new DefaultButton("Save");
-        submit.getElement().setAttribute("style", "width:50px;height:18px");
-        submit.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // merge base
-                ServerGroupRecord newGroup = form.getUpdatedEntity();
+        DialogueOptions options = new DialogueOptions(
 
-                FormValidation validation = form.validate();
-                if(validation.hasErrors())
-                    return;
+                // save
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        // merge base
+                        ServerGroupRecord newGroup = form.getUpdatedEntity();
 
-                ServerGroupRecord base = null;
-                for(ServerGroupRecord rec : existing)
-                {
-                    if(rec.getGroupName().equals(basedOnSelection.getValue()))
-                    {
-                        base = rec;
-                        break;
+                        FormValidation validation = form.validate();
+                        if(validation.hasErrors())
+                            return;
+
+                        ServerGroupRecord base = null;
+                        for(ServerGroupRecord rec : existing)
+                        {
+                            if(rec.getGroupName().equals(basedOnSelection.getValue()))
+                            {
+                                base = rec;
+                                break;
+                            }
+                        }
+
+                        newGroup.setJvm(base.getJvm());
+                        newGroup.setSocketBinding(base.getSocketBinding());
+                        newGroup.setProfileName(base.getProfileName());
+                        newGroup.setProperties(base.getProperties());
+
+                        presenter.createNewGroup(newGroup);
+
+                    }
+                },
+
+                // cancel
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        presenter.closeDialoge();
                     }
                 }
 
-                newGroup.setJvm(base.getJvm());
-                newGroup.setSocketBinding(base.getSocketBinding());
-                newGroup.setProfileName(base.getProfileName());
-                newGroup.setProperties(base.getProperties());
-
-                presenter.createNewGroup(newGroup);
-
-            }
-        });
-
-
-        Label cancel = new Label("Cancel");
-        cancel.setStyleName("html-link");
-        cancel.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.closeDialoge();
-            }
-        });
-
-        HorizontalPanel options = new HorizontalPanel();
-        options.getElement().setAttribute("style", "width:100%");
-
-        HTML spacer = new HTML("&nbsp;");
-        options.add(spacer);
-        //spacer.getElement().getParentElement().setAttribute("width", "100%");
-
-        options.add(submit);
-        options.add(spacer);
-        options.add(cancel);
-        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
-        submit.getElement().getParentElement().setAttribute("align", "right");
-        submit.getElement().getParentElement().setAttribute("width", "100%");
+        );
 
         // ----------------------------------------
 

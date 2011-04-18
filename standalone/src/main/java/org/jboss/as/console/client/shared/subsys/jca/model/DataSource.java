@@ -34,6 +34,9 @@ public interface DataSource {
     String getDriverClass();
     void setDriverClass(String driverClass);
 
+    String getDriverName();
+    void setDriverName(String driver);
+
     String getJndiName();
     void setJndiName(String name);
 
