@@ -19,21 +19,31 @@
 package org.jboss.as.console.client.core.message;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.icons.Icons;
 
 import java.util.List;
@@ -53,30 +63,79 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         this.messageCenter = messageCenter;
     }
 
-    private static class MessageListPopup extends PopupPanel
+    private class MessageListPopup extends PopupPanel
     {
         private CellList<Message> messageList;
 
         public MessageListPopup()
         {
             super(true);
+            setStyleName("default-popup");
 
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
             emptyMessage.appendHtmlConstant("No recent messages!");
 
             MessageCell messageCell = new MessageCell();
             messageList = new CellList<Message>(messageCell);
-            messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
-
             messageList.setStyleName("message-list");
 
+            messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
+
+            final SingleSelectionModel<Message> selectionModel = new SingleSelectionModel<Message>();
+            messageList.setSelectionModel(selectionModel);
+            selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    Message selected = selectionModel.getSelectedObject();
+                    if (selected != null) {
+                        showDetail(selected);
+                    }
+                }
+            });
+
             setWidget(messageList);
-            setStyleName("default-popup");
         }
 
         public CellList<Message> getMessageList() {
             return messageList;
         }
+    }
+
+    private void showDetail(final Message msg) {
+
+        DefaultWindow window = new DefaultWindow("Message Detail");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.setGlassEnabled(true);
+
+
+        ImageResource icon = MessageCenterView.getSeverityIcon(msg.getSeverity());
+        AbstractImagePrototype prototype = AbstractImagePrototype.create(icon);
+
+        SafeHtmlBuilder html = new SafeHtmlBuilder();
+
+        html.appendHtmlConstant(prototype.getHTML());
+        html.appendHtmlConstant("&nbsp;");
+        html.appendEscaped(msg.getFired().toString());
+        html.appendHtmlConstant("<h3>").appendEscaped(msg.getConciseMessage()).appendHtmlConstant("</h3>");
+        html.appendHtmlConstant("<p/>");
+
+        String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : "(No detail message)";
+        html.appendEscaped(detail);
+        HTML widget = new HTML(html.toSafeHtml());
+        widget.getElement().setAttribute("style", "margin:5px");
+
+        window.setWidget(widget);
+
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                messagePopup.getMessageList().getSelectionModel().setSelected(msg, false);
+                messagePopup.hide();
+            }
+        });
+
+        window.center();
     }
 
     private MessageListPopup getMessagePopup() {
