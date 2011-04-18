@@ -35,7 +35,11 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -64,6 +68,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private BeanFactory factory;
     private boolean hasBeenRevealed = false;
     private DefaultWindow window;
+    private CurrentSelectedProfile currentProfile;
 
 
     @ProxyCodeSplit
@@ -81,12 +86,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     public DataSourcePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory,
+            CurrentSelectedProfile currentProfile) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.currentProfile = currentProfile;
     }
 
     @Override
@@ -163,6 +170,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
                         model.setPassword(ds.get("password").asString());
+                        model.setPoolName(ds.get("pool-name").asString());
 
                         datasources.add(model);
 
@@ -201,10 +209,75 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onCreateNewDatasource(DataSource datasource) {
         window.hide();
-        // todo: persist entity
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("data-source", datasource.getName());
 
 
-        System.out.println("> "+datasource.getName());
+        operation.get("name").set(datasource.getName());
+        operation.get("jndi-name").set(datasource.getJndiName());
+        operation.get("enabled").set(datasource.isEnabled());
+
+        operation.get("driver").set(datasource.getDriverName());
+        operation.get("driver-class").set(datasource.getDriverClass());
+        operation.get("pool-name").set(datasource.getName()+"_Pool");
+
+        operation.get("connection-url").set(datasource.getConnectionUrl());
+        operation.get("user-name").set(datasource.getUsername());
+
+        String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
+        operation.get("password").set(pw);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Error creating new datasource: "+  caught.getMessage(), Message.Severity.Error)
+                );
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                //ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                loadDataSources();
+            }
+        });
+
+    }
+
+    public void onDelete(DataSource entity) {
+
+        final String dataSourceName = entity.getName();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("data-source", dataSourceName);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Failed to remove datasource: " + caught.getMessage(), Message.Severity.Error)
+                );
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                loadDataSources();
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Successfully deleted DataSource " + dataSourceName)
+                );
+            }
+        });
+
+
     }
 
     public void closeDialogue() {

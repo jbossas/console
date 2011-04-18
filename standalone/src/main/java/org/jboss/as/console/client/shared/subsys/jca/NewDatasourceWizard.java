@@ -85,7 +85,7 @@ public class NewDatasourceWizard {
         updatedEntity.setJndiName(baseAttributes.getJndiName());
         updatedEntity.setEnabled(baseAttributes.isEnabled());
 
-        updatedEntity.setDriverName(driverAttributes.getName());
+        updatedEntity.setDriverName(driverAttributes.getDriverName());
         updatedEntity.setDriverClass(driverAttributes.getDriverClass());
 
         presenter.onCreateNewDatasource(updatedEntity);
