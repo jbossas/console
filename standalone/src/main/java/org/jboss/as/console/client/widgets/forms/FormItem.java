@@ -31,11 +31,11 @@ public abstract class FormItem<T> implements InputElement<T> {
     protected String name;
     protected String title;
 
-    private boolean isKey;
+    protected  boolean isKey;
 
-    private boolean isErroneous =   false;
-    private boolean isRequired =    true;
-    private String errMessage = "Invalid input";
+    protected boolean isErroneous =   false;
+    protected boolean isRequired =    true;
+    protected String errMessage = "Invalid input";
 
     public FormItem(String name, String title) {
         this.name = name;
