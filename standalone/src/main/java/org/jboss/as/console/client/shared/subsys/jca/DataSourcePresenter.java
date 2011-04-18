@@ -207,7 +207,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
 
-    public void onCreateNewDatasource(DataSource datasource) {
+    public void onCreateNewDatasource(final DataSource datasource) {
         window.hide();
 
         ModelNode operation = new ModelNode();
@@ -242,8 +242,10 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
             @Override
             public void onSuccess(DMRResponse result) {
-                //ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 loadDataSources();
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Successfully created DataSource " + datasource.getName())
+                );
             }
         });
 
@@ -272,12 +274,45 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(DMRResponse result) {
                 loadDataSources();
                 Console.MODULES.getMessageCenter().notify(
-                        new Message("Successfully deleted DataSource " + dataSourceName)
+                        new Message("Successfully removed DataSource " + dataSourceName)
                 );
             }
         });
 
 
+    }
+
+    // TODO: https://issues.jboss.org/browse/JBAS-9341
+    public void onDisable(DataSource entity, boolean isEnabled) {
+        final String dataSourceName = entity.getName();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("data-source", dataSourceName);
+        operation.get("name").set("enabled");
+        operation.get("value").set(isEnabled);
+
+        System.out.println(operation.toString());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Failed to modify datasource" , caught.getMessage(), Message.Severity.Error)
+                );
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                loadDataSources();
+                Console.MODULES.getMessageCenter().notify(
+                        new Message("Successfully modified DataSource " + dataSourceName)
+                );
+            }
+        });
     }
 
     public void closeDialogue() {

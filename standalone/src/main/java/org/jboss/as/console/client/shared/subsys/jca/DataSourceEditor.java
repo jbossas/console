@@ -32,11 +32,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -204,42 +200,34 @@ public class DataSourceEditor {
         deleteBtn.addClickHandler(clickHandler);
         detailToolStrip.addToolButton(deleteBtn);
 
-        detailPanel.add(detailToolStrip);
 
-        TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-
-        //CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
-
-        final ButtonItem enableItem = new ButtonItem("enabled", "Action") {
-            @Override
-            public void setValue(Boolean b) {
-
-                if(b)
-                    button.setText("Disable");
-                else
-                    button.setText("Enable");
-
-            }
-        };
-
-        enableItem.addClickHandler(new ClickHandler() {
+         ClickHandler disableHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isEnabled() ? "Disable" : "Enable";
-                Feedback.confirm(state + " datasource", "Do you want to " + state + " this datasource?",
+                final boolean nextState = !form.getEditedEntity().isEnabled();
+                Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-
+                                    presenter.onDisable(form.getEditedEntity(), nextState);
                                 }
                             }
                         });
             }
-        });
+        };
 
+        ToolButton enableBtn = new ToolButton("En/Disable");
+        enableBtn.addClickHandler(disableHandler);
+        detailToolStrip.addToolButtonRight(enableBtn);
+
+        detailPanel.add(detailToolStrip);
+
+        TextItem nameItem = new TextItem("name", "Name");
+        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
+        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
         TextBoxItem driverItem = new TextBoxItem("driverName", "Driver");
         TextBoxItem driverClassItem = new TextBoxItem("driverClass", "Driver Class");
 
@@ -248,7 +236,7 @@ public class DataSourceEditor {
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, jndiItem, enableItem);
+        form.setFields(nameItem, jndiItem, enabledFlagItem);
         form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem, urlItem);
         form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, driverClassItem);
         form.bind(dataSourceTable);
