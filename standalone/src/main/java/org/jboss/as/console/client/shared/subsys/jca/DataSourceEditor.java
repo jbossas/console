@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -73,8 +75,8 @@ public class DataSourceEditor {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("fill-layout");
 
-        ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
+        ToolStrip topLevelTools = new ToolStrip();
+        topLevelTools.addToolButtonRight(new ToolButton("New DataSource", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -82,7 +84,8 @@ public class DataSourceEditor {
             }
         }));
 
-        layout.add(toolstrip);
+        layout.add(topLevelTools);
+        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
 
         // ----
 
@@ -122,6 +125,13 @@ public class DataSourceEditor {
             }
         };
 
+        TextColumn<DataSource> poolColumn = new TextColumn<DataSource>() {
+            @Override
+            public String getValue(DataSource record) {
+                return record.getPoolName();
+            }
+        };
+
         Column<DataSource, ImageResource> statusColumn =
                 new Column<DataSource, ImageResource>(new ImageResourceCell()) {
                     @Override
@@ -141,6 +151,7 @@ public class DataSourceEditor {
 
         dataSourceTable.addColumn(nameColumn, "Name");
         dataSourceTable.addColumn(jndiNameColumn, "JNDI");
+        dataSourceTable.addColumn(poolColumn, "Pool");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
         vpanel.add(dataSourceTable);
@@ -148,13 +159,56 @@ public class DataSourceEditor {
 
         // -----------
 
+        VerticalPanel detailPanel = new VerticalPanel();
+        detailPanel.setStyleName("fill-layout-width");
+
+        detailPanel.add(new ContentGroupLabel("Details"));
+
         final Form<DataSource> form = new Form(DataSource.class);
         form.setNumColumns(2);
+
+        ToolStrip detailToolStrip = new ToolStrip();
+        detailToolStrip.addToolButton(
+                new ToolButton("Edit",
+                        new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+
+                            }
+                        }
+                )
+        );
+
+
+        ClickHandler clickHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                DataSource currentSelection = getCurrentSelection();
+
+                Feedback.confirm(
+                        "Delete DataSource",
+                        "Really delete this DataSource '"+currentSelection.getName()+"' ?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.onDelete(getCurrentSelection());
+                                }
+                            }
+                        });
+            }
+        };
+        ToolButton deleteBtn = new ToolButton("Delete");
+        deleteBtn.addClickHandler(clickHandler);
+        detailToolStrip.addToolButton(deleteBtn);
+
+        detailPanel.add(detailToolStrip);
 
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
 
-        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
+        //CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
 
         final ButtonItem enableItem = new ButtonItem("enabled", "Action") {
             @Override
@@ -201,11 +255,12 @@ public class DataSourceEditor {
 
         Widget formWidget = form.asWidget();
 
-        vpanel.add(new ContentGroupLabel("Details"));
-        vpanel.add(formWidget);
+        detailPanel.add(formWidget);
+
+        vpanel.add(detailPanel);
 
 
-        layout.setWidgetTopHeight(toolstrip, 0, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
         layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
         return layout;
     }
@@ -216,5 +271,10 @@ public class DataSourceEditor {
         if(!datasources.isEmpty())
             dataSourceTable.getSelectionModel().setSelected(datasources.get(0), true);
 
+    }
+
+    public DataSource getCurrentSelection() {
+        SingleSelectionModel<DataSource> selectionModel = (SingleSelectionModel<DataSource>)dataSourceTable.getSelectionModel();
+        return selectionModel.getSelectedObject();
     }
 }

@@ -39,6 +39,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
@@ -102,6 +103,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding:15px;");
+        layout.add(vpanel);
+
+        layout.setWidgetTopHeight(vpanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // -----------
 
@@ -187,17 +191,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         vpanel.add(deploymentTable);
 
 
-        ScrollPanel scroll = new ScrollPanel();
-        scroll.add(vpanel);
-
-        layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 65, Style.Unit.PCT);
-
         // ----------- --------------------------------------------------
 
 
-        LayoutPanel formPanel = new LayoutPanel();
-        formPanel.getElement().setAttribute("style", "padding:15px;");
+        VerticalPanel formPanel = new VerticalPanel();
+        formPanel.setStyleName("fill-layout-width");
+
+        formPanel.add(new ContentGroupLabel("Details"));
 
         final ToolStrip toolStrip = new ToolStrip();
         final ToolButton edit = new ToolButton("Edit");
@@ -242,7 +242,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         toolStrip.addToolButton(delete);
 
         formPanel.add(toolStrip);
-        formPanel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 30, Style.Unit.PX);
 
         form = new Form<DeploymentRecord>(DeploymentRecord.class);
         form.setNumColumns(2);
@@ -259,19 +258,10 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         Widget formWidget = form.asWidget();
         formWidget.getElement().setAttribute("style", "padding-top:15px");
         formPanel.add(formWidget);
-        formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ------------------------------------------
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
-
-        tabLayoutpanel.add(formPanel, "Deployment Details");
-        tabLayoutpanel.selectTab(0);
-
-        layout.add(tabLayoutpanel);
-
-        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 35, Style.Unit.PCT);
+        vpanel.add(formPanel);
 
         return layout;
     }

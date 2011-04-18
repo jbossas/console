@@ -42,7 +42,7 @@ public class ToolStrip extends HTMLPanel {
 
     public void addToolButtonRight(ToolButton button)
     {
-        button.getElement().setAttribute("style", "float:right;border-color:#cccccc;");
+        button.getElement().setAttribute("style", "float:right;border-color:#cccccc;margin-right:5px;");
         add(button, ref);
 
     }

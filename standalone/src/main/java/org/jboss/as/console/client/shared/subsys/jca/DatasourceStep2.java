@@ -56,7 +56,7 @@ public class DatasourceStep2 {
         form = new Form<DataSource>(DataSource.class);
 
         TextBoxItem driverClass = new TextBoxItem("driverClass", "Driver Class");
-        TextBoxItem driverName = new TextBoxItem("driver", "Driver Name");
+        TextBoxItem driverName = new TextBoxItem("driverName", "Driver Name");
 
         form.setFields(driverClass, driverName);
 

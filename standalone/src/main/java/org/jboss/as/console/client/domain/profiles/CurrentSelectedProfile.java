@@ -19,21 +19,19 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-
 /**
  * @author Heiko Braun
  * @date 2/28/11
  */
 public class CurrentSelectedProfile {
 
-    private ProfileRecord currentProfile;
+    private String name;
 
-    public ProfileRecord get() {
-        return currentProfile;
+    public String getName() {
+        return name;
     }
 
-    public void set(ProfileRecord currentProfile) {
-        this.currentProfile = currentProfile;
+    public void setName(String name) {
+        this.name = name;
     }
 }

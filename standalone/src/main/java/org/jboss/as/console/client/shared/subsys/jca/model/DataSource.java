@@ -48,4 +48,8 @@ public interface DataSource {
 
     String getPassword();
     void setPassword(String password);
+
+    String getPoolName();
+    void setPoolName(String name);
+
 }
