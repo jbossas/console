@@ -46,6 +46,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class ServerGroupPresenter
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
     private String groupName;
+    private PropertyMetaData propertyMeta;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -84,11 +87,13 @@ public class ServerGroupPresenter
     public ServerGroupPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             ServerGroupStore serverGroupStore,
-            ProfileStore profileStore) {
+            ProfileStore profileStore,
+            PropertyMetaData propertyMeta) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
+        this.propertyMeta = propertyMeta;
     }
 
     @Override
@@ -113,6 +118,9 @@ public class ServerGroupPresenter
     protected void onReset() {
 
         super.onReset();
+
+        List<PropertyBinding> propertyBinding = propertyMeta.getBindingsForType(ServerGroupRecord.class);
+        System.out.println("> " + propertyBinding);
 
         profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
             @Override

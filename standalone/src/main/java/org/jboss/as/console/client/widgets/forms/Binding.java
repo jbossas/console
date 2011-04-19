@@ -17,32 +17,20 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.widgets.forms;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Heiko Braun
- * @date 2/11/11
+ * @date 4/19/11
  */
-public interface ServerGroupRecord {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Binding {
 
-    public String getGroupName();
-    public void setGroupName(String name);
-
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
-
-    public void setProperties(Map<String,String> props);
-    public Map<String,String> getProperties();
-
-    public String getJvm();
-    public void setJvm(String jvm);
-
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
+    String detypedName();
 }

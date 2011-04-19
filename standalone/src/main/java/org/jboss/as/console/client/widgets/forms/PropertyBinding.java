@@ -17,32 +17,39 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
-
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.Map;
+package org.jboss.as.console.client.widgets.forms;
 
 /**
  * @author Heiko Braun
- * @date 2/11/11
+ * @date 4/19/11
  */
-public interface ServerGroupRecord {
+public class PropertyBinding {
+    private String detypedName;
+    private String javaName;
 
-    public String getGroupName();
-    public void setGroupName(String name);
+    public PropertyBinding(String javaName, String detypedName) {
+        this.detypedName = detypedName;
+        this.javaName = javaName;
+    }
 
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
+    public String getDetypedName() {
+        return detypedName;
+    }
 
-    public void setProperties(Map<String,String> props);
-    public Map<String,String> getProperties();
+    public void setDetypedName(String detypedName) {
+        this.detypedName = detypedName;
+    }
 
-    public String getJvm();
-    public void setJvm(String jvm);
+    public String getJavaName() {
+        return javaName;
+    }
 
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
+    public void setJavaName(String javaName) {
+        this.javaName = javaName;
+    }
+
+    @Override
+    public String toString() {
+        return javaName+">"+detypedName;
+    }
 }

@@ -17,32 +17,14 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.widgets.forms;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Heiko Braun
- * @date 2/11/11
+ * @date 4/19/11
  */
-public interface ServerGroupRecord {
-
-    public String getGroupName();
-    public void setGroupName(String name);
-
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
-
-    public void setProperties(Map<String,String> props);
-    public Map<String,String> getProperties();
-
-    public String getJvm();
-    public void setJvm(String jvm);
-
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
+public interface PropertyMetaData {
+    List<PropertyBinding> getBindingsForType(Class<?> type);
 }
