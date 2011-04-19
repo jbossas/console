@@ -96,10 +96,16 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     }
                     else
                     {
-                        resultCallback.onFailure(
-                                new Exception("Unexpected HTTP status " + response.getStatusCode()+
-                                ": "+operation.asString())
-                        );
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Unexpected HTTP status: ").append(response.getStatusCode());
+                        sb.append("\n\n");
+                        sb.append("Request\n");
+                        sb.append(operation.toString());
+
+                        sb.append("\n\nResponse\n");
+                        sb.append(response.getStatusText()).append("\n");
+                        sb.append(response.getText());
+                        resultCallback.onFailure( new Exception(sb.toString()));
                     }
                 }
 

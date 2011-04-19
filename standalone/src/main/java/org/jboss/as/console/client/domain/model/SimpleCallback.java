@@ -21,6 +21,8 @@ package org.jboss.as.console.client.domain.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.message.Message;
 
 /**
  * @author Heiko Braun
@@ -31,5 +33,8 @@ public abstract class SimpleCallback<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable caught) {
         Log.error("Unknown error", caught);
+        Console.MODULES.getMessageCenter().notify(
+                new Message("Unknown error", caught.getMessage(), Message.Severity.Error)
+        );
     }
 }
