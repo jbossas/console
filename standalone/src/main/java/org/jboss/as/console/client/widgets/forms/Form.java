@@ -47,7 +47,6 @@ public class Form<T> {
     private final static String DEFAULT_GROUP = "default";
 
     private Map<String, Map<String, FormItem>> formItems = new LinkedHashMap<String, Map<String, FormItem>>();
-    private Map<String, Object> rememberedValues = new HashMap<String, Object>();
 
     private int numColumns = 1;
 
@@ -158,22 +157,20 @@ public class Form<T> {
     }
 
     /**
-     * Take a value snapshot for later comparison
-     *
-     * @see #getChangedValues()
-     */
-    public void rememberValues() {
-        snapshot(rememberedValues);
-    }
-
-    /**
-     * Get changed values since last {@link #rememberValues()}
+     * Get changed values since last {@link #edit(Object)} ()}
      * @return
      */
     public Map<String, Object> getChangedValues() {
-        HashMap<String, Object> values = new HashMap<String, Object>();
-        snapshot(values);
-        return values;
+
+        final T updatedEntity = getUpdatedEntity();
+        final T editedEntity = getEditedEntity();
+
+        Map<String, Object> diff = AutoBeanUtils.diff(
+                AutoBeanUtils.getAutoBean(editedEntity),
+                AutoBeanUtils.getAutoBean(updatedEntity)
+        );
+
+        return diff;
     }
 
     public FormValidation validate()
@@ -240,18 +237,6 @@ public class Form<T> {
 
         return (T) decoded.as();
 
-    }
-
-    private void snapshot(Map<String, Object> buffer) {
-        buffer.clear();
-
-        for(Map<String, FormItem> groupItems : formItems.values())
-        {
-            for(FormItem item : groupItems.values())
-            {
-                buffer.put(item.getName(), item.getValue());
-            }
-        }
     }
 
     public Widget asWidget() {
