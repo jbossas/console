@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/24/11
  */
-public class DatasourceView extends DisposableViewImpl implements DataSourcePresenter.MyView {
+public class DatasourceView extends SuspendableViewImpl implements DataSourcePresenter.MyView {
 
     private DataSourcePresenter presenter;
     private DataSourceEditor dataSourceEditor;
