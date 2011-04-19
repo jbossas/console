@@ -61,6 +61,8 @@ public class DataSourceEditor {
     private DataSourcePresenter presenter;
     private DefaultCellTable<DataSource> dataSourceTable;
     private ListDataProvider<DataSource> dataSourceProvider;
+    private Form<DataSource> form;
+    private ToolButton editBtn;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -161,20 +163,22 @@ public class DataSourceEditor {
 
         detailPanel.add(new ContentGroupLabel("Details"));
 
-        final Form<DataSource> form = new Form(DataSource.class);
+        form = new Form(DataSource.class);
         form.setNumColumns(2);
 
         ToolStrip detailToolStrip = new ToolStrip();
-        detailToolStrip.addToolButton(
-                new ToolButton("Edit",
-                        new ClickHandler() {
-                            @Override
-                            public void onClick(ClickEvent event) {
-
-                            }
-                        }
-                )
-        );
+        editBtn = new ToolButton("Edit");
+        ClickHandler editHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if(editBtn.getText().equals("Edit"))
+                    presenter.onEdit(getCurrentSelection());
+                else
+                    presenter.onSave(getCurrentSelection());
+            }
+        };
+        editBtn.addClickHandler(editHandler);
+        detailToolStrip.addToolButton(editBtn);
 
 
         ClickHandler clickHandler = new ClickHandler() {
@@ -251,6 +255,7 @@ public class DataSourceEditor {
         return layout;
     }
 
+
     public void updateDataSources(List<DataSource> datasources) {
         dataSourceProvider.setList(datasources);
 
@@ -262,5 +267,11 @@ public class DataSourceEditor {
     public DataSource getCurrentSelection() {
         SingleSelectionModel<DataSource> selectionModel = (SingleSelectionModel<DataSource>)dataSourceTable.getSelectionModel();
         return selectionModel.getSelectedObject();
+    }
+
+    public void setEnabled(boolean isEnabled) {
+        form.setEnabled(isEnabled);
+        String btnLabel = isEnabled ? "Save" : "Edit";
+        editBtn.setText(btnLabel);
     }
 }

@@ -70,7 +70,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private DefaultWindow window;
     private CurrentSelectedProfile currentProfile;
 
-
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
     public interface MyProxy extends Proxy<DataSourcePresenter>, Place {
@@ -80,6 +79,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void setPresenter(DataSourcePresenter presenter);
 
         void updateDataSources(List<DataSource> datasources);
+
+        void setEnabled(boolean b);
     }
 
     @Inject
@@ -251,6 +252,18 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     }
 
+    public void onEdit(DataSource entity) {
+        getView().setEnabled(true);
+    }
+
+    public void onSave(DataSource entity) {
+        getView().setEnabled(false);
+        Console.MODULES.getMessageCenter().notify(
+                new Message("'Save' operation not implemented", Message.Severity.Warning)
+        );
+
+    }
+
     public void onDelete(DataSource entity) {
 
         final String dataSourceName = entity.getName();
@@ -293,8 +306,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         operation.get(ADDRESS).add("data-source", dataSourceName);
         operation.get("name").set("enabled");
         operation.get("value").set(isEnabled);
-
-        System.out.println(operation.toString());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

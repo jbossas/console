@@ -63,4 +63,9 @@ public class DatasourceView extends DisposableViewImpl implements DataSourcePres
     public void updateDataSources(List<DataSource> datasources) {
         dataSourceEditor.updateDataSources(datasources);
     }
+
+    @Override
+    public void setEnabled(boolean b) {
+        dataSourceEditor.setEnabled(b);
+    }
 }
