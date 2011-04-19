@@ -120,11 +120,15 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         html.appendHtmlConstant("<p/>");
 
         String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : "(No detail message)";
+        html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
         html.appendEscaped(detail);
+        html.appendHtmlConstant("</pre>");
         HTML widget = new HTML(html.toSafeHtml());
         widget.getElement().setAttribute("style", "margin:5px");
 
-        window.setWidget(widget);
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.add(widget);
+        window.setWidget(scroll);
 
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
 
