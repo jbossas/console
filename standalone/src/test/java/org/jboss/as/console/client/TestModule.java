@@ -36,6 +36,8 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourceStoreImpl;
 
 import javax.inject.Singleton;
 
@@ -57,6 +59,7 @@ public class TestModule extends AbstractModule {
         bind(ServerGroupStore.class).to(ServerGroupStoreImpl.class).in(Singleton.class);
         bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
         bind(HostInformationStore.class).to(HostInfoStoreImpl.class).in(Singleton.class);
+        bind(DataSourceStore.class).to(DataSourceStoreImpl.class).in(Singleton.class);
 
     }
 }

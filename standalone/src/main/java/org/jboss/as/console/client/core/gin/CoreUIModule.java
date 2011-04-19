@@ -102,6 +102,8 @@ import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.sockets.SocketBindingView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
 import org.jboss.as.console.client.shared.subsys.jms.JMSView;
@@ -299,6 +301,8 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DataSourcePresenter.MyView.class,
                 DatasourceView.class,
                 DataSourcePresenter.MyProxy.class);
+
+        bind(DataSourceStore.class).to(DataSourceStoreImpl.class).in(Singleton.class);
 
         bindPresenter(JMSPresenter.class,
                 JMSPresenter.MyView.class,

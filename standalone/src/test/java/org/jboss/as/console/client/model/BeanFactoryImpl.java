@@ -88,7 +88,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<DataSource> dataSource() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<DataSource>(new DataSourceImpl());
     }
 
     @Override
