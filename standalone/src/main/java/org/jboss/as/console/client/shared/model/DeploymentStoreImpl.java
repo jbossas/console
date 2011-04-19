@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.math.BigDecimal;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -155,7 +156,60 @@ public class DeploymentStoreImpl implements DeploymentStore {
     }
 
   }
+  
+  @Override
+  public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
+    doDeploymentCommand("remove", null, deploymentRecord, callback);
+  }
 
+  @Override 
+  public void removeDeploymentFromGroup(DeploymentRecord deployment,
+                                        AsyncCallback<DMRResponse> callback) {
+    doDeploymentCommand("remove", deployment.getServerGroup(), deployment, callback);
+  }
+  
+  @Override
+  public void enableDisableDeployment(DeploymentRecord deployment,
+                                      final AsyncCallback<DMRResponse> callback) {
+    String command = "deploy";
+    if (deployment.isEnabled()) {
+      command = "undeploy";
+    }
+    doDeploymentCommand(command, deployment.getServerGroup(), deployment, callback);
+  }
+  
+  @Override
+  public void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
+    doDeploymentCommand("add", serverGroup, deploymentRecord, callback);
+  }
+  
+  private void doDeploymentCommand(String command,
+                                   String serverGroup,
+                                   DeploymentRecord deployment,
+                                   final AsyncCallback<DMRResponse> callback) {
+      ModelNode operation = new ModelNode();
+      operation.get(OP).set(ADD);
+      if ((serverGroup != null) && (!serverGroup.equals(""))) {
+        operation.get(ADDRESS).add("server-group", serverGroup);
+      }
+      
+      operation.get(ADDRESS).add("deployment", deployment.getName());
+      operation.get(OP).set(command);
+
+      dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+          @Override
+          public void onFailure(Throwable caught) {
+              Log.error("Deployment failed", caught);
+          }
+
+          @Override
+          public void onSuccess(DMRResponse result) {
+              callback.onSuccess(result);
+          }
+      });
+    }
+  
   @Override
   public void deleteDeployment(DeploymentRecord deploymentRecord, AsyncCallback<Boolean> callback) {
   }

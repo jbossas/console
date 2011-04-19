@@ -44,7 +44,6 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.model.EntityFilter;
-import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -54,17 +53,16 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.dmr.client.Base64;
 import org.jboss.dmr.client.ModelNode;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/1/11
  */
 public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView, DeploymentsPresenter.MyProxy> {
@@ -95,6 +93,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     public interface MyView extends SuspendableView {
         void setPresenter(DeploymentsPresenter presenter);
         void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo);
+        String getSelectedServerGroup();
     }
 
     @Inject
@@ -132,38 +131,40 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         RevealContentEvent.fire(getEventBus(), ServerGroupMgmtPresenter.TYPE_MainContent, this);
     }
 
-    public void deleteDeployment(DeploymentRecord deploymentRecord) {
-        deploymentStore.deleteDeployment(deploymentRecord, new SimpleCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-
-            }
-        });
-    }
-
-
-    public void onFilterType(final String type) {
-
-        this.typeFilter = type;
-/*        getView().updateDeployments(
-                filter.apply(new TypeAndGroupPredicate(), deployments)
-        ); */
-    }
-
-    class TypeAndGroupPredicate implements Predicate<DeploymentRecord>
-    {
+    public void enableDisableDeployment(DeploymentRecord deployment) {
+      deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
         @Override
-        public boolean appliesTo(DeploymentRecord candidate) {
-
-
-            boolean groupMatch = groupFilter.equals("") ?
-                    true : candidate.getServerGroup().equals(groupFilter);
-
-            boolean typeMatch = typeFilter.equals("") ?
-                    true : candidate.getName().endsWith(typeFilter);
-
-            return groupMatch && typeMatch;
+        public void onSuccess(DMRResponse response) {
+          domainDeploymentInfo.refreshView();
         }
+      });
+    }
+    
+    public void removeDeploymentFromGroup(DeploymentRecord deployment) {
+      deploymentStore.removeDeploymentFromGroup(deployment, new SimpleCallback<DMRResponse>() {
+        @Override
+        public void onSuccess(DMRResponse response) {
+          domainDeploymentInfo.refreshView();
+        }
+      });
+    }
+    
+    public void addToServerGroup(String serverGroup, DeploymentRecord deployment) {
+      deploymentStore.addToServerGroup(serverGroup, deployment, new SimpleCallback<DMRResponse>() {
+        @Override
+        public void onSuccess(DMRResponse response) {
+          domainDeploymentInfo.refreshView();
+        }
+      });
+    }
+
+    public void removeContent(DeploymentRecord deployment) {
+      deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
+        @Override
+        public void onSuccess(DMRResponse response) {
+          domainDeploymentInfo.refreshView();
+        }
+      });
     }
 
     public void launchNewDeploymentDialoge() {

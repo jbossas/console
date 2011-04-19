@@ -30,6 +30,7 @@ public class DeploymentRecordImpl implements DeploymentRecord {
     String sha;
     String runtimeName;
     String serverGroup;
+    boolean enabled = true;
     
     @Override
     public String getName() {
@@ -70,4 +71,14 @@ public class DeploymentRecordImpl implements DeploymentRecord {
     public void setServerGroup(String groupName) {
         this.serverGroup = groupName;
     }
+
+  @Override
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 }
