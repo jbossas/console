@@ -39,6 +39,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -68,7 +69,6 @@ public class ServerGroupPresenter
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
     private String groupName;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -355,4 +355,27 @@ public class ServerGroupPresenter
         }
     }
 
+    public void onCreateJvm(final String groupName, Jvm jvm) {
+        serverGroupStore.createJvm(groupName, jvm, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                    if(success)
+                    {
+                        Console.info("Saved JVM settings");
+                        loadServerGroup(groupName);
+                    }
+                    else
+                        Console.error("Failed to saved JVM settings");
+                }
+            });
+    }
+
+     public void onDeleteJvm(final String groupName, Jvm editedEntity) {
+        serverGroupStore.removeJvm(groupName, editedEntity, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadServerGroup(groupName);
+            }
+        });
+    }
 }

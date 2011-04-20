@@ -287,4 +287,55 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             }
         });
     }
+
+    @Override
+    public void createJvm(String groupName, Jvm jvm, final AsyncCallback<Boolean> callback) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add(SERVER_GROUP, groupName);
+        operation.get(ADDRESS).add(JVM, jvm.getName());
+
+        ModelNode jvmModel = new ModelNode();
+        jvmModel.get("heap-size").set(jvm.getHeapSize());
+        jvmModel.get("max-heap-size").set(jvm.getMaxHeapSize());
+
+        operation.get("jvm").set(jvm.getName(), jvmModel);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+            }
+        });
+
+    }
+
+
+    @Override
+    public void removeJvm(String groupName, Jvm jvm, final AsyncCallback<Boolean> callback) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add(SERVER_GROUP, groupName);
+        operation.get(ADDRESS).add(JVM, jvm.getName());
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+            }
+        });
+
+    }
 }

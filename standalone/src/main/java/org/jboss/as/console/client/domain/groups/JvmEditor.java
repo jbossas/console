@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -46,6 +47,9 @@ public class JvmEditor {
     private ServerGroupRecord selectedRecord;
 
     BeanFactory factory = GWT.create(BeanFactory.class);
+    private boolean hasJvm;
+
+    Label label;
 
     public JvmEditor(ServerGroupPresenter presenter) {
         this.presenter = presenter;
@@ -75,11 +79,32 @@ public class JvmEditor {
         edit.addClickHandler(editHandler);
         toolStrip.addToolButton(edit);
 
+        ToolButton delete = new ToolButton("Delete", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if(hasJvm)
+                    presenter.onDeleteJvm(selectedRecord.getGroupName(), form.getEditedEntity());
+            }
+        });
+
+        toolStrip.addToolButton(delete);
         panel.add(toolStrip);
+
+        label = new Label("This group currently relies on inherited JVM settings");
+        panel.add(label);
 
         form = new Form<Jvm>(Jvm.class);
 
-        TextBoxItem nameItem = new TextBoxItem("name", "Name");
+        TextBoxItem nameItem = new TextBoxItem("name", "Name")
+        {
+            @Override
+            public void setEnabled(boolean b) {
+                if(b && !hasJvm)
+                    super.setEnabled(b);
+                else if (!b)
+                    super.setEnabled(b);
+            }
+        };
         TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
         TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
         //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
@@ -95,7 +120,11 @@ public class JvmEditor {
 
     private void onSave() {
         form.setEnabled(false);
-        presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
+
+        if(hasJvm)
+            presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
+        else
+            presenter.onCreateJvm(selectedRecord.getGroupName(), form.getUpdatedEntity());
     }
 
     private void onEdit() {
@@ -106,6 +135,10 @@ public class JvmEditor {
         this.selectedRecord = record;
 
         Jvm jvm = record.getJvm();
+        hasJvm = jvm!=null;
+
+        label.setVisible(!hasJvm);
+
         if(jvm!=null)
             form.edit(jvm);
         else
