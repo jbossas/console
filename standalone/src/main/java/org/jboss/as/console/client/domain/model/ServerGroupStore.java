@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.model;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -33,7 +34,7 @@ public interface ServerGroupStore {
     void loadServerGroup(String name, AsyncCallback<ServerGroupRecord> callback);
     void loadSocketBindingGroupNames(final AsyncCallback<List<String>> callback);
 
-    void save(ServerGroupRecord updatedEntity, AsyncCallback<Boolean> callback);
+    void save(String name, Map<String,Object> changeset , final AsyncCallback<Boolean> callback);
     void create(ServerGroupRecord record, final AsyncCallback<Boolean> callback);
     void delete(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
 }

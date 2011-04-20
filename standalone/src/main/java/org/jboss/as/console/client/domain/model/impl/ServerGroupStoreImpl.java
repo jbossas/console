@@ -27,6 +27,9 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.widgets.forms.ModelNodeAdapter;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -34,9 +37,9 @@ import org.jboss.dmr.client.Property;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -46,11 +49,13 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private PropertyMetaData propertyMetaData;
 
     @Inject
-    public ServerGroupStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
+    public ServerGroupStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -174,8 +179,28 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     }
 
     @Override
-    public void save(ServerGroupRecord record, final AsyncCallback<Boolean> callback) {
+    public void save(String name, Map<String,Object> changeset , final AsyncCallback<Boolean> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add(SERVER_GROUP, name);
 
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(ServerGroupRecord.class);
+        ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changeset, bindings);
+
+        System.out.println(operation.toString());
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+            }
+        });
     }
 
     @Override

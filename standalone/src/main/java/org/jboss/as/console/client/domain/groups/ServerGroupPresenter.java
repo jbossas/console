@@ -50,6 +50,7 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Maintains a single server group.
@@ -67,7 +68,6 @@ public class ServerGroupPresenter
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
     private String groupName;
-    private PropertyMetaData propertyMeta;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -93,7 +93,6 @@ public class ServerGroupPresenter
 
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
-        this.propertyMeta = propertyMeta;
     }
 
     @Override
@@ -118,9 +117,6 @@ public class ServerGroupPresenter
     protected void onReset() {
 
         super.onReset();
-
-        List<PropertyBinding> propertyBinding = propertyMeta.getBindingsForType(ServerGroupRecord.class);
-        System.out.println("> " + propertyBinding);
 
         profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
             @Override
@@ -274,19 +270,21 @@ public class ServerGroupPresenter
         });
     }
 
-    public void onSaveChanges(ServerGroupRecord updatedEntity) {
+    public void onSaveChanges(final String name, Map<String,Object> changeset) {
         getView().setEnabled(false);
 
-        Console.MODULES.getMessageCenter().notify(
-                new Message("'Save' operation not implemented!", Message.Severity.Warning)
-        );
-
-        serverGroupStore.save(updatedEntity, new SimpleCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-
-            }
-        });
+        if(changeset.size()>0)
+        {
+            serverGroupStore.save(name, changeset, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean wasSuccessful) {
+                    if(wasSuccessful)
+                        Console.info("Modified server-group "+name);
+                    else
+                        Console.error("Failed to modify server-group "+name);
+                }
+            });
+        }
     }
 
     private void workOn(ServerGroupRecord record) {

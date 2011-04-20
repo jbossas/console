@@ -20,6 +20,8 @@
 package org.jboss.as.console.client.widgets.forms;
 
 /**
+ * Represents the {@link Binding} meta data
+ *
  * @author Heiko Braun
  * @date 4/19/11
  */

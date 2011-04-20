@@ -32,6 +32,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.gin.CoreUI;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
@@ -138,5 +139,23 @@ public class Console implements EntryPoint {
 
     private void loadMainApp() {
         MODULES.getPlaceManager().revealCurrentPlace();
+    }
+
+    public static void info(String message) {
+        MODULES.getMessageCenter().notify(
+                new Message(message, Message.Severity.Info)
+        );
+    }
+
+    public static void error(String message) {
+        MODULES.getMessageCenter().notify(
+                new Message(message, Message.Severity.Error)
+        );
+    }
+
+    public static void warning(String message) {
+        MODULES.getMessageCenter().notify(
+                new Message(message, Message.Severity.Warning)
+        );
     }
 }
