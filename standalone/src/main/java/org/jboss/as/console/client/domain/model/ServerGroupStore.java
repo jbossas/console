@@ -37,4 +37,6 @@ public interface ServerGroupStore {
     void save(String name, Map<String,Object> changeset , final AsyncCallback<Boolean> callback);
     void create(ServerGroupRecord record, final AsyncCallback<Boolean> callback);
     void delete(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
+
+    void saveJvm(String groupName, String jvmName, Map<String,Object> changedValues, AsyncCallback <Boolean> simpleCallback);
 }

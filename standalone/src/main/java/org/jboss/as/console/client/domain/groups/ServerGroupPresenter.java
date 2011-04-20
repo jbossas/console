@@ -69,6 +69,7 @@ public class ServerGroupPresenter
     private DefaultWindow window;
     private String groupName;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
     public interface MyProxy extends Proxy<ServerGroupPresenter>, Place {
@@ -331,6 +332,27 @@ public class ServerGroupPresenter
     public void closeDialoge()
     {
         if(window!=null) window.hide();
+    }
+
+    public void onSaveJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
+
+        System.out.println(groupName+">"+changedValues);
+
+        if(changedValues.size()>0)
+        {
+            serverGroupStore.saveJvm(groupName, jvmName, changedValues, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                    if(success)
+                    {
+                        Console.info("Saved JVM settings");
+                        loadServerGroup(groupName);
+                    }
+                    else
+                        Console.error("Failed to saved JVM settings");
+                }
+            });
+        }
     }
 
 }

@@ -108,8 +108,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     private ServerGroupRecord model2ServerGroup(String groupName, ModelNode model) {
         ServerGroupRecord record = factory.serverGroup().as();
 
-        //System.out.println(groupName +" > "+model.toJSONString());
-
         record.setGroupName(groupName);
         record.setProfileName(model.get("profile").asString());
         record.setSocketBinding(model.get("socket-binding-group").asString());
@@ -118,11 +116,15 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             if(model.has("jvm") && model.get("jvm").isDefined())
             {
                 Jvm jvm = factory.jvm().as();
-                jvm.setName(model.get("jvm").asProperty().getName());
+                Property jvmProp = model.get("jvm").asProperty();
+                jvm.setName(jvmProp.getName());
+                ModelNode jvmPropValue = jvmProp.getValue();
+                if(jvmPropValue.has("heap-size")) jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
+                if(jvmPropValue.has("max-heap-size")) jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
                 record.setJvm(jvm);
             }
         } catch (IllegalArgumentException e) {
-            // TODO: properly deal with the mode derivations
+            // TODO: properly deal with the different representations
         }
 
         return record;
@@ -133,6 +135,8 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         ModelNode op = new ModelNode();
         op.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
         op.get(ModelDescriptionConstants.ADDRESS).add("server-group", name);
+        op.get(RECURSIVE).set(true);
+        op.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(op), new AsyncCallback<DMRResponse>() {
             @Override
@@ -215,7 +219,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         group.get("profile").set(record.getProfileName());
         group.get("socket-binding-group").set(record.getSocketBinding());
-        group.get("jvm").set(record.getJvm().getName());
 
         dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
             @Override
@@ -255,6 +258,32 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
                 callback.onSuccess(wasSuccessful);
+            }
+        });
+    }
+
+    @Override
+    public void saveJvm(String groupName, String jvmName, Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add(SERVER_GROUP, groupName);
+        proto.get(ADDRESS).add(JVM, jvmName);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
+        ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        System.out.println(operation.toString());
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
             }
         });
     }
