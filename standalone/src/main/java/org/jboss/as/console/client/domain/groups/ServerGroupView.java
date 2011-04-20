@@ -174,8 +174,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.setNumColumns(2);
 
         TextItem nameField = new TextItem("groupName", "Group Name");
-        jvmField = new ComboBoxItem("jvm", "Virtual Machine");
-        jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
+        //jvmField = new ComboBoxItem("jvm", "Virtual Machine");
+        //jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
 
         socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setDefaultToFirstOption(true);
@@ -183,7 +183,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         profileItem = new ComboBoxItem("profileName", "Profile");
 
         form.setFields(nameField, profileItem);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem, jvmField);
+        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
 
         panel.add(new ContentGroupLabel("Attributes"));
 

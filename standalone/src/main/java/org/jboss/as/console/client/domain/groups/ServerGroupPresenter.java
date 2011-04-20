@@ -283,13 +283,16 @@ public class ServerGroupPresenter
                 @Override
                 public void onSuccess(Boolean wasSuccessful) {
                     if(wasSuccessful)
+                    {
                         Console.info("Modified server-group "+name);
+                        refreshServerGroups();
+                    }
                     else
+                    {
                         Console.error("Failed to modify server-group "+name);
+                    }
                 }
             });
-
-            refreshServerGroups();
         }
         else
         {

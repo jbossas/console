@@ -24,6 +24,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -145,15 +146,18 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setStarted(server.get("status").asString().equals("STARTED"));
 
-                    try {
+                    /*try {
                         if(server.get("jvm").isDefined())
                         {
-                            ModelNode jvm = server.get("jvm").asObject();
-                            record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                            ModelNode jvmModel = server.get("jvm").asObject();
+                            Jvm jvm = factory.jvm().as();
+                            jvm.setName(jvmModel.keys().iterator().next()); // TODO: does blow up easily
+                            record.setJvm(jvm);
                         }
                     } catch (IllegalArgumentException e) {
                         // ignore
-                    }
+                    }*/
+
                     records.add(record);
                 }
 
@@ -262,7 +266,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
         // TODO: can be null?
         if(record.getJvm()!=null)
-            serverConfig.get("jvm").set(record.getJvm());
+            serverConfig.get("jvm").set(record.getJvm().getName());
         else
             Log.warn("JVM null for server "+record.getName());
 

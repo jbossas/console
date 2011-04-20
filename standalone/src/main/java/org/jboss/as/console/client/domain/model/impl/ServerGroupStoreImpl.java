@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -115,7 +116,11 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         try {
             if(model.has("jvm") && model.get("jvm").isDefined())
-                record.setJvm(model.get("jvm").asProperty().getName());
+            {
+                Jvm jvm = factory.jvm().as();
+                jvm.setName(model.get("jvm").asProperty().getName());
+                record.setJvm(jvm);
+            }
         } catch (IllegalArgumentException e) {
             // TODO: properly deal with the mode derivations
         }
@@ -210,7 +215,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         group.get("profile").set(record.getProfileName());
         group.get("socket-binding-group").set(record.getSocketBinding());
-        group.get("jvm").set(record.getJvm());
+        group.get("jvm").set(record.getJvm().getName());
 
         dispatcher.execute(new DMRAction(group), new AsyncCallback<DMRResponse>() {
             @Override

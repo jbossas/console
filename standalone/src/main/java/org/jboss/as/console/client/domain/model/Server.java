@@ -26,6 +26,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @date 3/2/11
  */
 public interface Server {
+
     String getName();
     void setName(String name);
     
@@ -48,6 +49,6 @@ public interface Server {
     int getPortOffset();
     void setPortOffset(int offset);
 
-    String getJvm();
-    void setJvm(String jvm);
+    Jvm getJvm();
+    void setJvm(Jvm jvm);
 }

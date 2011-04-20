@@ -166,13 +166,13 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
         NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
-        jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
+        //jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
 
         form.setFields(nameItem, startedItem, groupItem);
         form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
-                socketItem, portOffset, jvmItem
+                socketItem, portOffset
         );
 
         panel.add(form.asWidget());
@@ -223,7 +223,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void updateVirtualMachines(List<String> result) {
-        jvmItem.setValueMap(result);
+        //jvmItem.setValueMap(result);
     }
 
     @Override

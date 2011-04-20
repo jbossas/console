@@ -316,13 +316,17 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 @Override
                 public void onSuccess(Boolean wasSuccessful) {
                     if(wasSuccessful)
+                    {
                         Console.info("Successfully modified server-config " +name);
+                        loadServerConfigurations();
+                    }
                     else
+                    {
                         Console.error("Failed to modify server-config " +name);
+                    }
                 }
             });
 
-            loadServerConfigurations();
         }
         else
         {
