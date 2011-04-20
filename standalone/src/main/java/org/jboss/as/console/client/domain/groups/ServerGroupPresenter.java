@@ -131,6 +131,11 @@ public class ServerGroupPresenter
                 getView().updateSocketBindings(result);
             }
         });
+        refreshServerGroups();
+
+    }
+
+    private void refreshServerGroups() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
@@ -170,7 +175,6 @@ public class ServerGroupPresenter
 
             }
         });
-
     }
 
     private void loadServerGroup(String name)
@@ -284,6 +288,12 @@ public class ServerGroupPresenter
                         Console.error("Failed to modify server-group "+name);
                 }
             });
+
+            refreshServerGroups();
+        }
+        else
+        {
+            Console.warning("No changes applied!");
         }
     }
 
