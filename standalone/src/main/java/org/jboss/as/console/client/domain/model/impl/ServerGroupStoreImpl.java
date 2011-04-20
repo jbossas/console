@@ -187,8 +187,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(ServerGroupRecord.class);
         ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changeset, bindings);
 
-        System.out.println(operation.toString());
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {

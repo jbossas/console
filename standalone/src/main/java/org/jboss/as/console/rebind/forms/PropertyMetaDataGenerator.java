@@ -182,31 +182,42 @@ public class PropertyMetaDataGenerator extends Generator{
             if(methodName.startsWith("get"))
             {
                 String token = methodName.substring(3, methodName.length());
-                String firstLetter = token.substring(0,1);
-                String remainder   = token.substring(1);
-                String normalized = firstLetter.toLowerCase() + remainder;
-
-                String javaName = normalized;
-                String detypedName = javaName;
-
-                // @Binding can override the detyped name
-                Binding bindingDeclaration = method.getAnnotation(Binding.class);
-                if(bindingDeclaration!=null)
-                {
-                    detypedName = bindingDeclaration.detypedName();
-                }
-
-                sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
-                sourceWriter.indent();
-                sourceWriter.println("new PropertyBinding(\""+javaName+"\", \""+detypedName+"\")");
-                sourceWriter.outdent();
-                sourceWriter.println(");");
+                writeRegisterPropBinding(beanTypeClass, sourceWriter, method, token);
+            }
+            else if(methodName.startsWith("is"))
+            {
+                String token = methodName.substring(2, methodName.length());
+                writeRegisterPropBinding(beanTypeClass, sourceWriter, method, token);
             }
             else
             {
                 continue;
             }
         }
+    }
+
+    private void writeRegisterPropBinding(Class beanTypeClass, SourceWriter sourceWriter, Method method, String token) {
+        String firstLetter = token.substring(0,1);
+        String remainder   = token.substring(1);
+        String normalized = firstLetter.toLowerCase() + remainder;
+
+        String javaName = normalized;
+        String detypedName = javaName;
+
+        // @Binding can override the detyped name
+        Binding bindingDeclaration = method.getAnnotation(Binding.class);
+        if(bindingDeclaration!=null)
+        {
+            if(bindingDeclaration.ignore()) return; // skip
+
+            detypedName = bindingDeclaration.detypedName();
+        }
+
+        sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
+        sourceWriter.indent();
+        sourceWriter.println("new PropertyBinding(\""+javaName+"\", \""+detypedName+"\")");
+        sourceWriter.outdent();
+        sourceWriter.println(");");
     }
 
     private void generateMethods(SourceWriter sourceWriter)

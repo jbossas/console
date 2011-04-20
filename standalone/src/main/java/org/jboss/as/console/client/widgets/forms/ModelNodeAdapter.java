@@ -59,24 +59,24 @@ public class ModelNodeAdapter {
             if(value!=null)
             {
                 ModelNode step = prototype.clone();
-                step.get("name").set(binding.getDetypedName());
+                step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();
                 if(String.class == type)
                 {
-                    step.get("value").set((String)value);
+                    step.get(VALUE).set((String)value);
                 }
                 else if(Boolean.class == type)
                 {
-                    step.get("value").set((Boolean)value);
+                    step.get(VALUE).set((Boolean)value);
                 }
                 else if(Integer.class == type)
                 {
-                    step.get("value").set((Integer)value);
+                    step.get(VALUE).set((Integer)value);
                 }
                 else if(Double.class == type)
                 {
-                    step.get("value").set((Double)value);
+                    step.get(VALUE).set((Double)value);
                 }
                 else
                 {

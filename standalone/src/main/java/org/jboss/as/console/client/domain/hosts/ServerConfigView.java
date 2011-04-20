@@ -190,7 +190,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     private void onSave() {
         Server updatedEntity = form.getUpdatedEntity();
-        presenter.onSaveChanges(updatedEntity);
+        presenter.onSaveChanges(updatedEntity.getName(), form.getChangedValues());
     }
 
     private void onEdit() {

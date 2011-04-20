@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.model;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -37,7 +38,7 @@ public interface HostInformationStore {
 
     void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
 
-    void saveServerConfig(String host,Server updatedEntity);
+    void saveServerConfig(String host, String name, Map<String, Object> changedValues, AsyncCallback<Boolean> callback);
 
     void deleteServerConfig(String selectedHost, Server selectedRecord, AsyncCallback<Boolean> asyncCallback);
 }

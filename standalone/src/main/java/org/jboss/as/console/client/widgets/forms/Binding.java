@@ -33,4 +33,5 @@ import java.lang.annotation.Target;
 public @interface Binding {
 
     String detypedName();
+    boolean ignore() default false;
 }

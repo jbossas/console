@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 3/2/11
@@ -30,15 +32,19 @@ public interface Server {
     String getGroup();
     void setGroup(String group);
 
+    @Binding(detypedName = "auto-start")
     boolean isAutoStart();
     void setAutoStart(boolean b);
 
+    @Binding(detypedName = "none", ignore = true)
     boolean isStarted();
     void setStarted(boolean b);
 
+    @Binding(detypedName = "socket-binding-group")
     String getSocketBinding();
     void setSocketBinding(String socketBindingRef);
 
+    @Binding(detypedName = "socket-binding-port-offset")
     int getPortOffset();
     void setPortOffset(int offset);
 
