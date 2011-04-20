@@ -41,6 +41,7 @@ import java.util.Map.Entry;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
@@ -200,18 +201,42 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
    * Enumeration of commands available from deployment tables.
    */
   private enum DeploymentCommand {
-    ENABLE_DISABLE("enable/disable"),
-    REMOVE_FROM_GROUP("remove from group"),
-    ADD_TO_GROUP("add to selected server group"),
-    REMOVE_CONTENT("remove content");
+    ENABLE_DISABLE("enable/disable", "Enable or Disable", "for"),
+    REMOVE_FROM_GROUP("remove from group", "Remove", "from"),
+    ADD_TO_GROUP("add to selected server group", "Add", "to"),
+    REMOVE_CONTENT("remove content", "Remove", "from");
     
     private String label;
+    private String verb;
+    private String preposition;
     
-    private DeploymentCommand(String label) {
+    private DeploymentCommand(String label, String verb, String preposition) {
       this.label = label;
+      this.verb = verb;
+      this.preposition = preposition;
     }
     
     public void execute(DeploymentsPresenter presenter, DeploymentRecord record) {
+      String selectedGroup = presenter.getView().getSelectedServerGroup();
+      switch (this) {
+        case ENABLE_DISABLE: confirm(presenter, record, record.getServerGroup());    break;
+        case REMOVE_FROM_GROUP: confirm(presenter, record, record.getServerGroup()); break;
+        case ADD_TO_GROUP: confirm(presenter, record, selectedGroup);                break;
+        case REMOVE_CONTENT: confirm(presenter, record, record.getServerGroup());    break;
+      }
+    }
+    
+    private void confirm(final DeploymentsPresenter presenter, final DeploymentRecord record, String target) {
+      String confirmMessage = verb + " " + record.getName() + " " + preposition + " " + target + "?";
+      Feedback.confirm("Are you sure?", confirmMessage, new Feedback.ConfirmationHandler() {
+        @Override
+        public void onConfirmation(boolean isConfirmed) {
+          if (isConfirmed) doCommand(presenter, record);
+        }
+      });
+    }
+    
+    private void doCommand(DeploymentsPresenter presenter, DeploymentRecord record) {
       String selectedGroup = presenter.getView().getSelectedServerGroup();
       switch (this) {
         case ENABLE_DISABLE: presenter.enableDisableDeployment(record);       break;
@@ -310,201 +335,3 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
   }
   
 }
-
-// old code I might need later
-/*
-  private Widget getTabContents() {
-    LayoutPanel layout = new LayoutPanel();
-
-    RHSHeader title = new RHSHeader("Available Deployments");
-    layout.add(title);
-    layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
-
-    // --
-
-    final ToolStrip topLevelTools = new ToolStrip();
-    final ToolButton newButton = new ToolButton("New Deployment");
-    newButton.addClickHandler(new ClickHandler() {
-
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        presenter.launchNewDeploymentDialoge();
-      }
-    });
-
-    topLevelTools.addToolButtonRight(newButton);
-    layout.add(topLevelTools);
-    layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
-
-    // --
-    VerticalPanel vpanel = new VerticalPanel();
-    vpanel.setStyleName("fill-layout-width");
-    vpanel.getElement().setAttribute("style", "padding:15px;");
-
-    // -----------
-
-    ContentHeaderLabel nameLabel = new ContentHeaderLabel("Domain Deployments");
-
-    HorizontalPanel horzPanel = new HorizontalPanel();
-    horzPanel.getElement().setAttribute("style", "width:100%;");
-    Image image = new Image(Icons.INSTANCE.deployment());
-    horzPanel.add(image);
-    image.getElement().getParentElement().setAttribute("width", "25");
-
-    horzPanel.add(nameLabel);
-
-    vpanel.add(horzPanel);
-
-    domainDeploymentProvider.addDataDisplay(deploymentTable);
-
-    TextColumn<DeploymentRecord> dplNameColumn = new TextColumn<DeploymentRecord>() {
-
-      @Override
-      public String getValue(DeploymentRecord record) {
-        return record.getName();
-      }
-    };
-
-    TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
-
-      @Override
-      public String getValue(DeploymentRecord record) {
-        return record.getRuntimeName();
-      }
-    };
-
-    TextColumn<DeploymentRecord> groupColumn = new TextColumn<DeploymentRecord>() {
-
-      @Override
-      public String getValue(DeploymentRecord record) {
-        return record.getServerGroup();
-      }
-    };
-
-
-    deploymentTable.addColumn(dplNameColumn, "Name");
-    deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-    deploymentTable.addColumn(groupColumn, "Server Group");
-
-    HorizontalPanel tableOptions = new HorizontalPanel();
-    tableOptions.getElement().setAttribute("cellpadding", "2px");
-
-    groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-      @Override
-      public void onValueChange(ValueChangeEvent<String> event) {
-        presenter.onFilterGroup(event.getValue());
-      }
-    });
-    Widget groupFilterWidget = groupFilter.asWidget();
-    groupFilterWidget.getElement().setAttribute("style", "width:200px;");
-
-
-    tableOptions.add(new Label("Server Group:"));
-    tableOptions.add(groupFilterWidget);
-
-
-    ComboBox typeFilter = new ComboBox();
-    typeFilter.setValues(Arrays.asList(new String[]{"", "war", "ear", "rar", "other"}));
-    typeFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-      @Override
-      public void onValueChange(ValueChangeEvent<String> event) {
-        presenter.onFilterType(event.getValue());
-      }
-    });
-
-
-    Widget filterWidget = typeFilter.asWidget();
-    filterWidget.getElement().setAttribute("style", "width:60px;");
-
-    tableOptions.add(new Label("Type:"));
-    tableOptions.add(filterWidget);
-
-    tableOptions.getElement().setAttribute("style", "float:right;");
-    vpanel.add(tableOptions);
-    vpanel.add(deploymentTable);
-
-
-    ScrollPanel scroll = new ScrollPanel();
-    scroll.add(vpanel);
-
-    layout.add(scroll);
-    layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 65, Style.Unit.PCT);
-
-    // ----------- --------------------------------------------------
-
-
-    LayoutPanel formPanel = new LayoutPanel();
-    formPanel.getElement().setAttribute("style", "padding:15px;");
-
-    final ToolStrip toolStrip = new ToolStrip();
-    final ToolButton edit = new ToolButton("Edit");
-    edit.addClickHandler(new ClickHandler() {
-
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        if (edit.getText().equals("Edit")) {
-        } else {
-        }
-      }
-    });
-
-    toolStrip.addToolButton(edit);
-    ToolButton delete = new ToolButton("Delete");
-    delete.addClickHandler(new ClickHandler() {
-
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        Feedback.confirm(
-                "Delete Deployment",
-                "Do you want to delete this deployment?",
-                new Feedback.ConfirmationHandler() {
-
-                  @Override
-                  public void onConfirmation(boolean isConfirmed) {
-                    if (isConfirmed) {
-                      SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
-                      presenter.deleteDeployment(
-                              selectionModel.getSelectedObject());
-                    }
-                  }
-                });
-      }
-    });
-    toolStrip.addToolButton(delete);
-
-    formPanel.add(toolStrip);
-    formPanel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 30, Style.Unit.PX);
-
-    form = new Form<DeploymentRecord>(DeploymentRecord.class);
-    form.setNumColumns(2);
-
-    TextItem groupItem = new TextItem("serverGroup", "Deployed to Group");
-    TextItem nameItem = new TextItem("name", "Name");
-    TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
-    TextItem shaItem = new TextItem("sha", "Sha");
-    CheckBoxItem suspendedItem = new CheckBoxItem("suspended", "Suspended?");
-
-    form.setFields(groupItem, nameItem, runtimeName, shaItem, suspendedItem);
-    form.bind(deploymentTable);
-
-    Widget formWidget = form.asWidget();
-    formWidget.getElement().setAttribute("style", "padding-top:15px");
-    formPanel.add(formWidget);
-    formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
-
-    // ------------------------------------------
-
-    TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-    tabLayoutpanel.addStyleName("default-tabpanel");
-
-    tabLayoutpanel.add(formPanel, "Deployment Details");
-    tabLayoutpanel.selectTab(0);
-
-    layout.add(tabLayoutpanel);
-
-    layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 35, Style.Unit.PCT);
-
-    return layout;
-  } */

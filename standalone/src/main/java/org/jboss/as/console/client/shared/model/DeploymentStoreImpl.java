@@ -83,6 +83,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
                 rec.setName(name);
                 rec.setRuntimeName(handler.get("runtime-name").asString());
                 rec.setEnabled(true); // are domain deployments really "enabled"?
+                rec.setServerGroup("domain"); // using the name "domain" here.  Is that correct?
                 deployments.add(rec);
               } catch (IllegalArgumentException e) {
                 Log.error("Failed to parse data source representation", e);
