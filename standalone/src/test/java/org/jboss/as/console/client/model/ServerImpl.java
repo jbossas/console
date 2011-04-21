@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.model;
 
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
 
 /**
@@ -33,7 +34,7 @@ public class ServerImpl implements Server {
     boolean isStarted;
     String socketBinding;
     int portOffset;
-    String jvm;
+    Jvm jvm;
 
     @Override
     public String getName() {
@@ -96,12 +97,12 @@ public class ServerImpl implements Server {
     }
 
     @Override
-    public String getJvm() {
+    public Jvm getJvm() {
         return jvm;
     }
 
     @Override
-    public void setJvm(String jvm) {
+    public void setJvm(Jvm jvm) {
         this.jvm = jvm;
     }
 }
