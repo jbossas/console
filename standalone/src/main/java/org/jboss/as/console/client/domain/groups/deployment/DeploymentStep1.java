@@ -123,7 +123,7 @@ public class DeploymentStep1 {
                     wizard.onUploadComplete(upload.getFilename(), hash);
 
                 } catch (Exception e) {
-                    Log.error("Failed to decode response", e);
+                    Log.error("Failed to decode response: "+html, e);
                 }
 
             }
