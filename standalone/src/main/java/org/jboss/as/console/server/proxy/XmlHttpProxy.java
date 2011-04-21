@@ -113,7 +113,7 @@ public class XmlHttpProxy {
                        InputStream xslInputStream,
                        Map paramsMap,
                        Map headers,
-                       String postData,
+                       byte[] postData,
                        String postContentType,
                        String userName,
                        String password) throws IOException, MalformedURLException {
@@ -140,7 +140,7 @@ public class XmlHttpProxy {
                           Map paramsMap,
                           Map headers,
                           String method,
-                          String postData,
+                          byte[] postData,
                           String postContentType,
                           String userName,
                           String password) throws IOException, MalformedURLException {
