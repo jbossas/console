@@ -24,6 +24,7 @@ import com.google.gwt.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentReference;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -50,6 +51,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<DeploymentRecord> deployment();
     AutoBean<Host> host();
     AutoBean<Server> server();
+    AutoBean<Jvm> jvm();
     AutoBean<ServerInstance> serverInstance();
     AutoBean<ThreadFactoryRecord> threadFactory();
 

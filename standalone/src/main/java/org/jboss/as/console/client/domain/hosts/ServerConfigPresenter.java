@@ -47,6 +47,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -303,15 +304,36 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     }
 
-    public void onSaveChanges(Server updatedEntity) {
+    public void onSaveChanges(final String name, Map<String, Object> changedValues) {
 
-        Console.MODULES.getMessageCenter().notify(
-                new Message("'Save' operation not implemented!", Message.Severity.Warning)
-        );
+        getView().setEnabled(false);
 
+        if(changedValues.size()>0)
+        {
+            System.out.println("> " +changedValues);
 
-        hostInfoStore.saveServerConfig(selectedHost, updatedEntity);
+            hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean wasSuccessful) {
+                    if(wasSuccessful)
+                    {
+                        Console.info("Successfully modified server-config " +name);
+                        loadServerConfigurations();
+                    }
+                    else
+                    {
+                        Console.error("Failed to modify server-config " +name);
+                    }
+                }
+            });
+
+        }
+        else
+        {
+             Console.warning("No changes applied!");
+        }
     }
+
 
     public void editCurrentRecord() {
         getView().setEnabled(true);

@@ -17,28 +17,41 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.List;
-import java.util.Map;
+package org.jboss.as.console.client.widgets.forms;
 
 /**
+ * Represents the {@link Binding} meta data
+ *
  * @author Heiko Braun
- * @date 3/2/11
+ * @date 4/19/11
  */
-public interface HostInformationStore {
-    void getHosts(AsyncCallback<List<Host>> callback);
-    void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
-    void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
-    void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
+public class PropertyBinding {
+    private String detypedName;
+    private String javaName;
 
-    void startServer(String host, String configName, boolean startIt, final AsyncCallback<Boolean> callback);
+    public PropertyBinding(String javaName, String detypedName) {
+        this.detypedName = detypedName;
+        this.javaName = javaName;
+    }
 
-    void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
+    public String getDetypedName() {
+        return detypedName;
+    }
 
-    void saveServerConfig(String host, String name, Map<String, Object> changedValues, AsyncCallback<Boolean> callback);
+    public void setDetypedName(String detypedName) {
+        this.detypedName = detypedName;
+    }
 
-    void deleteServerConfig(String selectedHost, Server selectedRecord, AsyncCallback<Boolean> asyncCallback);
+    public String getJavaName() {
+        return javaName;
+    }
+
+    public void setJavaName(String javaName) {
+        this.javaName = javaName;
+    }
+
+    @Override
+    public String toString() {
+        return javaName+">"+detypedName;
+    }
 }

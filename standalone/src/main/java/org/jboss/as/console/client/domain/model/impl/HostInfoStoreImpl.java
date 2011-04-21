@@ -24,18 +24,24 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.widgets.forms.ModelNodeAdapter;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -47,11 +53,13 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private PropertyMetaData propertyMetaData;
 
     @Inject
-    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
+    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMeta) {
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.propertyMetaData = propertyMeta;
     }
 
     @Override
@@ -110,6 +118,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
 
+                //System.out.println(response.toString());
+
                 List<Server> records = new ArrayList<Server>(payload.size());
                 for(ModelNode item : payload)
                 {
@@ -136,15 +146,18 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setStarted(server.get("status").asString().equals("STARTED"));
 
-                    try {
+                    /*try {
                         if(server.get("jvm").isDefined())
                         {
-                            ModelNode jvm = server.get("jvm").asObject();
-                            record.setJvm(jvm.keys().iterator().next()); // TODO: does blow up easily
+                            ModelNode jvmModel = server.get("jvm").asObject();
+                            Jvm jvm = factory.jvm().as();
+                            jvm.setName(jvmModel.keys().iterator().next()); // TODO: does blow up easily
+                            record.setJvm(jvm);
                         }
                     } catch (IllegalArgumentException e) {
                         // ignore
-                    }
+                    }*/
+
                     records.add(record);
                 }
 
@@ -253,7 +266,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
         // TODO: can be null?
         if(record.getJvm()!=null)
-            serverConfig.get("jvm").set(record.getJvm());
+            serverConfig.get("jvm").set(record.getJvm().getName());
         else
             Log.warn("JVM null for server "+record.getName());
 
@@ -282,8 +295,29 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
     @Override
-    public void saveServerConfig(String host, Server updatedEntity) {
-        Log.warn("Save server config not implemented yet!");
+    public void saveServerConfig(String host, String name, Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("host", host);
+        proto.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
+        ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        System.out.println(operation.toString());
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+            }
+        });
     }
 
     @Override

@@ -39,6 +39,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -46,8 +47,11 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Maintains a single server group.
@@ -84,7 +88,8 @@ public class ServerGroupPresenter
     public ServerGroupPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             ServerGroupStore serverGroupStore,
-            ProfileStore profileStore) {
+            ProfileStore profileStore,
+            PropertyMetaData propertyMeta) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;
@@ -127,6 +132,11 @@ public class ServerGroupPresenter
                 getView().updateSocketBindings(result);
             }
         });
+        refreshServerGroups();
+
+    }
+
+    private void refreshServerGroups() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
@@ -166,7 +176,6 @@ public class ServerGroupPresenter
 
             }
         });
-
     }
 
     private void loadServerGroup(String name)
@@ -266,19 +275,30 @@ public class ServerGroupPresenter
         });
     }
 
-    public void onSaveChanges(ServerGroupRecord updatedEntity) {
+    public void onSaveChanges(final String name, Map<String,Object> changeset) {
         getView().setEnabled(false);
 
-        Console.MODULES.getMessageCenter().notify(
-                new Message("'Save' operation not implemented!", Message.Severity.Warning)
-        );
-
-        serverGroupStore.save(updatedEntity, new SimpleCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-
-            }
-        });
+        if(changeset.size()>0)
+        {
+            serverGroupStore.save(name, changeset, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean wasSuccessful) {
+                    if(wasSuccessful)
+                    {
+                        Console.info("Modified server-group "+name);
+                        refreshServerGroups();
+                    }
+                    else
+                    {
+                        Console.error("Failed to modify server-group "+name);
+                    }
+                }
+            });
+        }
+        else
+        {
+            Console.warning("No changes applied!");
+        }
     }
 
     private void workOn(ServerGroupRecord record) {
@@ -314,4 +334,48 @@ public class ServerGroupPresenter
         if(window!=null) window.hide();
     }
 
+    public void onSaveJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
+
+        System.out.println(groupName+">"+changedValues);
+
+        if(changedValues.size()>0)
+        {
+            serverGroupStore.saveJvm(groupName, jvmName, changedValues, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                    if(success)
+                    {
+                        Console.info("Saved JVM settings");
+                        loadServerGroup(groupName);
+                    }
+                    else
+                        Console.error("Failed to saved JVM settings");
+                }
+            });
+        }
+    }
+
+    public void onCreateJvm(final String groupName, Jvm jvm) {
+        serverGroupStore.createJvm(groupName, jvm, new SimpleCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                    if(success)
+                    {
+                        Console.info("Saved JVM settings");
+                        loadServerGroup(groupName);
+                    }
+                    else
+                        Console.error("Failed to saved JVM settings");
+                }
+            });
+    }
+
+     public void onDeleteJvm(final String groupName, Jvm editedEntity) {
+        serverGroupStore.removeJvm(groupName, editedEntity, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadServerGroup(groupName);
+            }
+        });
+    }
 }

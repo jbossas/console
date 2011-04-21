@@ -32,8 +32,10 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.BeanFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +56,7 @@ public class Form<T> {
 
     private Class<?> conversionType;
 
-    BeanFactory factory = GWT.create(BeanFactory.class);
+    private static BeanFactory factory = GWT.create(BeanFactory.class);
 
     private int nextId = 1;
     private T editedEntity;
@@ -131,8 +133,13 @@ public class Form<T> {
             throw new IllegalArgumentException("Not an auto bean: " + bean.getClass());
 
         autoBean.accept(new AutoBeanVisitor() {
+
+            private boolean isComplex = false;
+
             @Override
             public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
+
+                if(isComplex) return true; // skip complex types
 
                 FormItem matchingField = null;
 
@@ -151,6 +158,20 @@ public class Form<T> {
                 if (null==matchingField && !"empty".equals(propertyName))
                     Log.warn("No matching field for '" + propertyName + "' (" + ctx.getType() + ")");
 
+                return true;
+            }
+
+
+            @Override
+            public void endVisitReferenceProperty(String propertyName, AutoBean<?> value, PropertyContext ctx) {
+                //System.out.println("end reference "+propertyName);
+                isComplex = false;
+            }
+
+            @Override
+            public boolean visitReferenceProperty(String propertyName, AutoBean<?> value, PropertyContext ctx) {
+                isComplex = true;
+                //System.out.println("begin reference "+propertyName+ ": "+ctx.getType());
                 return true;
             }
         });

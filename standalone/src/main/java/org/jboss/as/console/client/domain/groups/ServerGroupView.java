@@ -19,24 +19,19 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
@@ -46,10 +41,6 @@ import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
-import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
-import org.jboss.as.console.client.widgets.tables.OptionCell;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -69,21 +60,20 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private ServerGroupPresenter presenter;
     private Form<ServerGroupRecord> form;
-    private DefaultCellTable<PropertyRecord> propertyTable;
     private ContentHeaderLabel nameLabel;
-
     private ComboBoxItem profileItem;
+
     private ComboBoxItem socketBindingItem;
     private ComboBoxItem jvmField;
-
     private ToolButton edit;
-
-    private ListDataProvider<PropertyRecord> propertyProvider;
-    private BeanFactory beanFactory = GWT.create(BeanFactory.class);
-    private Button addProp;
 
     private LayoutPanel layout;
     private VerticalPanel panel;
+
+    private TabLayoutPanel tabLayoutpanel;
+
+    PropertyEditor propertyEditor;
+    JvmEditor jvmEditor;
 
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
@@ -174,8 +164,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.setNumColumns(2);
 
         TextItem nameField = new TextItem("groupName", "Group Name");
-        jvmField = new ComboBoxItem("jvm", "Virtual Machine");
-        jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
+        //jvmField = new ComboBoxItem("jvm", "Virtual Machine");
+        //jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
 
         socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setDefaultToFirstOption(true);
@@ -183,7 +173,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         profileItem = new ComboBoxItem("profileName", "Profile");
 
         form.setFields(nameField, profileItem);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem, jvmField);
+        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
 
         panel.add(new ContentGroupLabel("Attributes"));
 
@@ -191,101 +181,20 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------------
 
-        panel.add(new ContentGroupLabel("System Properties"));
 
-        propertyTable = new DefaultCellTable<PropertyRecord>(5);
-        propertyProvider = new ListDataProvider<PropertyRecord>();
-        propertyProvider.addDataDisplay(propertyTable);
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
 
-        addProp = new Button("Add");
-        addProp.setStyleName("default-button");
+        propertyEditor = new PropertyEditor(presenter);
+        tabLayoutpanel.add(propertyEditor.asWidget(), "System Properties");
 
-        addProp.getElement().setAttribute("style", "float:right");
-        addProp.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                PropertyRecord newRecord = beanFactory.property().as();
-                newRecord.setKey("key");
-                newRecord.setValue("value");
-                propertyProvider.getList().add(newRecord);
-                propertyProvider.refresh();
-            }
-        });
-        panel.add(addProp);
+        jvmEditor = new JvmEditor(presenter);
+        tabLayoutpanel.add(jvmEditor.asWidget(), "Virtual Machine");
 
+        tabLayoutpanel.selectTab(0);
 
-        // Create columns
-        Column<PropertyRecord, String> keyColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
-
-            {
-                setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
-
-                    @Override
-                    public void update(int index, PropertyRecord object, String value) {
-                        object.setKey(value);
-                    }
-                });
-            }
-
-            @Override
-            public String getValue(PropertyRecord object) {
-                return object.getKey();
-            }
-
-        };
-
-        Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
-            {
-                setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
-
-                    @Override
-                    public void update(int index, PropertyRecord object, String value) {
-                        object.setValue(value);
-                    }
-                });
-            }
-
-            @Override
-            public String getValue(PropertyRecord object) {
-                return object.getValue();
-            }
-        };
-
-        OptionCell optionCell = new OptionCell("remove", new ActionCell.Delegate<String>()
-        {
-            @Override
-            public void execute(String rowNum) {
-                Integer row = Integer.valueOf(rowNum);
-                PropertyRecord propertyRecord = propertyProvider.getList().get(row);
-                propertyProvider.getList().remove(propertyRecord);
-                propertyProvider.refresh();
-            }
-        });
-
-        Column<PropertyRecord, String> optionColumn = new Column<PropertyRecord, String>(optionCell) {
-            @Override
-            public String getValue(PropertyRecord object) {
-                return "";
-            }
-
-        };
-
-        // Add the columns.
-        propertyTable.addColumn(keyColumn, "Key");
-        propertyTable.addColumn(valueColumn, "Value");
-        propertyTable.addColumn(optionColumn);
-
-
-        propertyTable.setColumnWidth(keyColumn, 50, Style.Unit.PCT);
-        propertyTable.setColumnWidth(valueColumn, 40, Style.Unit.PCT);
-        propertyTable.setColumnWidth(optionColumn, 10, Style.Unit.PCT);
-
-
-        propertyTable.setRowOverHandler(
-                new DefaultOptionRolloverHandler(propertyProvider, propertyTable)
-        );
-
-        panel.add(propertyTable);
+        layout.add(tabLayoutpanel);
+        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
 
         return layout;
     }
@@ -294,14 +203,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         ServerGroupRecord updatedEntity = form.getUpdatedEntity();
         updatedEntity.setProperties(new HashMap<String,String>());
 
-        for(PropertyRecord prop : propertyProvider.getList())
-        {
-            updatedEntity.getProperties().put(prop.getKey(), prop.getValue());
-        }
-
-        System.out.println(form.getChangedValues());
-
-        presenter.onSaveChanges(updatedEntity);
+        presenter.onSaveChanges(updatedEntity.getGroupName(), form.getChangedValues());
     }
 
     private void onEdit() {
@@ -318,22 +220,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // form
         form.edit(record);
 
-        // property records
-        final Map<String, String> properties = record.getProperties();
-        if (properties != null) {
-            List<PropertyRecord> propRecords = new ArrayList<PropertyRecord>(properties.size());
-            Set<String> strings = properties.keySet();
-
-            for (final String key : strings) {
-                PropertyRecord propertyRecord = beanFactory.property().as();
-                propertyRecord.setKey(key);
-                propertyRecord.setValue(properties.get(key));
-                propRecords.add(propertyRecord);
-            }
-
-            propertyProvider.setList(propRecords);
-
-        }
+        propertyEditor.setSelectedRecord(record);
+        jvmEditor.setSelectedRecord(record);
     }
 
     @Override
@@ -354,13 +242,11 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
             panel.removeStyleName("edit-panel");
 
         form.setEnabled(isEnabled);
-        propertyTable.setEnabled(isEnabled);
+
 
         edit.setText(
             isEnabled ? "Save" : "Edit"
         );
-
-        addProp.setVisible(isEnabled);
     }
 
     @Override

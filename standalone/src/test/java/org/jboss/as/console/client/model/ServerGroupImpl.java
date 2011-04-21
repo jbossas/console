@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.model;
 
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 import java.util.Map;
@@ -31,7 +32,7 @@ public class ServerGroupImpl implements ServerGroupRecord {
 
     String groupName;
     String profileName;
-    String jvm;
+    Jvm jvm;
     String socketBinding;
     
     @Override
@@ -65,12 +66,12 @@ public class ServerGroupImpl implements ServerGroupRecord {
     }
 
     @Override
-    public String getJvm() {
+    public Jvm getJvm() {
         return jvm;
     }
 
     @Override
-    public void setJvm(String jvm) {
+    public void setJvm(Jvm jvm) {
         this.jvm = jvm;
     }
 

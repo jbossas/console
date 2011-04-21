@@ -17,28 +17,21 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.widgets.forms;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.List;
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Heiko Braun
- * @date 3/2/11
+ * @date 4/19/11
  */
-public interface HostInformationStore {
-    void getHosts(AsyncCallback<List<Host>> callback);
-    void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
-    void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
-    void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Binding {
 
-    void startServer(String host, String configName, boolean startIt, final AsyncCallback<Boolean> callback);
-
-    void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
-
-    void saveServerConfig(String host, String name, Map<String, Object> changedValues, AsyncCallback<Boolean> callback);
-
-    void deleteServerConfig(String selectedHost, Server selectedRecord, AsyncCallback<Boolean> asyncCallback);
+    String detypedName();
+    boolean ignore() default false;
 }

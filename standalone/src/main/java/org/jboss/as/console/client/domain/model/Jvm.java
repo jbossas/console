@@ -19,26 +19,31 @@
 
 package org.jboss.as.console.client.domain.model;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.List;
-import java.util.Map;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
- * @date 3/2/11
+ * @date 4/20/11
  */
-public interface HostInformationStore {
-    void getHosts(AsyncCallback<List<Host>> callback);
-    void getServerConfigurations(String name, AsyncCallback<List<Server>> callback);
-    void getServerInstances(String host, AsyncCallback<List<ServerInstance>> callback);
-    void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) ;
+public interface Jvm {
 
-    void startServer(String host, String configName, boolean startIt, final AsyncCallback<Boolean> callback);
+    @Binding(detypedName = "none", ignore = true)
+    String getName();
+    void setName(String name);
 
-    void createServerConfig(String host, Server newServer, AsyncCallback<Boolean> callback);
+    @Binding(detypedName = "debug-enabled")
+    boolean isDebugEnabled();
+    void setDebugEnabled(boolean b);
 
-    void saveServerConfig(String host, String name, Map<String, Object> changedValues, AsyncCallback<Boolean> callback);
+    @Binding(detypedName = "debug-options")
+    String getDebugOptions();
+    void setDebugOptions(String options);
 
-    void deleteServerConfig(String selectedHost, Server selectedRecord, AsyncCallback<Boolean> asyncCallback);
+    @Binding(detypedName = "heap-size")
+    String getHeapSize();
+    void setHeapSize(String heap);
+
+    @Binding(detypedName = "max-heap-size")
+    String getMaxHeapSize();
+    void setMaxHeapSize(String maxHeap);
 }

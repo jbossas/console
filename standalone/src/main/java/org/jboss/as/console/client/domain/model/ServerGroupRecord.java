@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 import java.util.Map;
 
 /**
@@ -30,15 +32,17 @@ public interface ServerGroupRecord {
     public String getGroupName();
     public void setGroupName(String name);
 
-    public void setProfileName(String name);
+    @Binding(detypedName = "profile")
     public String getProfileName();
+    public void setProfileName(String name);
 
     public void setProperties(Map<String,String> props);
     public Map<String,String> getProperties();
 
-    public String getJvm();
-    public void setJvm(String jvm);
+    public Jvm getJvm();
+    public void setJvm(Jvm jvm);
 
+    @Binding(detypedName = "socket-binding-group")
     public String getSocketBinding();
     public void setSocketBinding(String socketBindingRef);
 }

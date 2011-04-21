@@ -23,6 +23,7 @@ import com.google.gwt.autobean.shared.AutoBean;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentReference;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -74,6 +75,11 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public AutoBean<Server> server() {
         return new AutoBeanStub<Server>(new ServerImpl());
+    }
+
+    @Override
+    public AutoBean<Jvm> jvm() {
+        throw new RuntimeException("not implemented");
     }
 
     @Override

@@ -87,7 +87,8 @@ public class ServerGroupModelTest {
         ServerGroupRecord group = new ServerGroupImpl();
         group.setGroupName("main-server-group");
         group.setProfileName("default");
-        group.setJvm("default");
+
+        //group.setJvm(new Jvm());
         group.setSocketBinding("standard-sockets");
         List<ServerGroupRecord> groups = new ArrayList<ServerGroupRecord>();
         groups.add(group);
