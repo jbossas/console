@@ -293,14 +293,27 @@ public class HttpClient {
      * @param contentType allows you to set the contentType of the request.
      * @return InputStream input stream from URLConnection
      */
-    public InputStream doPost(String postData, String contentType) {
+    public InputStream doPost(byte[] postData, String contentType) {
         this.urlConnection.setDoOutput(true);
         if (contentType != null) this.urlConnection.setRequestProperty( "Content-type", contentType );
 
-        OutputStream os = this.getOutputStream();
-        PrintStream ps = new PrintStream(os);
-        ps.print(postData);
-        ps.close();
+        OutputStream out = null;
+        try {
+            out = this.getOutputStream();
+            out.write(postData);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(out!=null)
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    //
+                }
+        }
+
+
         return (this.getInputStream());
     }
 

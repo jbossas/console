@@ -225,18 +225,27 @@ public class XmlHttpProxyServlet extends HttpServlet
     {
 
         boolean isPost = XmlHttpProxy.POST.equals(method);
-        StringBuilder bodyContent = null;
+
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] bodyContent = null;
+
         OutputStream out = null;
         PrintWriter writer = null;
 
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(req.getInputStream()));
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                if (bodyContent == null) bodyContent = new StringBuilder();
-                bodyContent.append(line).append("\r\n");
+
+            BufferedInputStream in = new BufferedInputStream(req.getInputStream());
+            int next = in.read();
+            while (next > -1) {
+                bos.write(next);
+                next = in.read();
             }
-        } catch (Exception e) {
+
+            bodyContent = bos.toByteArray();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try
@@ -448,10 +457,9 @@ public class XmlHttpProxyServlet extends HttpServlet
             }
             else
             {
-                final String content = bodyContent != null ? bodyContent.toString() : "";
                 if (bodyContent == null)
                     getLogger().info("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
-                xhp.doPost(urlString, out, xslInputStream, paramsMap, headers, content, req.getContentType(), userName, password);
+                xhp.doPost(urlString, out, xslInputStream, paramsMap, headers, bodyContent, req.getContentType(), userName, password);
             }
 
             res.setContentType(xhp.getContentType());
