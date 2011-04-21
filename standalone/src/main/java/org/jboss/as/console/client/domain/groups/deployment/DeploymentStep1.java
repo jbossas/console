@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
@@ -114,8 +115,12 @@ public class DeploymentStep1 {
 
                 // Step 1: upload content, retrieve hash value
                 try {
-                    // TODO: dirty, but mostly because of the Formpanel limitaions
-                    String json = html.substring(html.indexOf(">")+1, html.lastIndexOf("<"));
+
+                    String json = html;
+
+                    if(!GWT.isScript()) // TODO: Formpanel weirdness
+                        json = html.substring(html.indexOf(">")+1, html.lastIndexOf("<"));
+
                     JSONObject response  = JSONParser.parseLenient(json).isObject();
                     JSONObject result = response.get("result").isObject();
                     String hash= result.get("BYTES_VALUE").isString().stringValue();
