@@ -231,6 +231,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 @Override
                 public void onConfirmation(boolean isConfirmed) {
                     if (isConfirmed) doCommand(presenter, record);
+
                 }
             });
         }
@@ -248,6 +249,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         public String toString() {
             return this.label;
         }
+
     }
 
     private class DeploymentCommandActionCellDelegate<String> implements ActionCell.Delegate<String> {
