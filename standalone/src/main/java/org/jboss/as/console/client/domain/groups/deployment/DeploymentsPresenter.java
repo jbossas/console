@@ -69,10 +69,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     private final PlaceManager placeManager;
     private DeploymentStore deploymentStore;
-    private ServerGroupStore serverGroupStore;
-
-    private String groupFilter = "";
-    private String typeFilter= "";
 
     private EntityFilter<DeploymentRecord> filter = new EntityFilter<DeploymentRecord>();
 
@@ -106,7 +102,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
         this.placeManager = placeManager;
         this.deploymentStore = deploymentStore;
-        this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
         
         domainDeploymentInfo = new DomainDeploymentInfo(this, serverGroupStore, deploymentStore);
@@ -131,38 +126,68 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         RevealContentEvent.fire(getEventBus(), ServerGroupMgmtPresenter.TYPE_MainContent, this);
     }
 
-    public void enableDisableDeployment(DeploymentRecord deployment) {
+    public void enableDisableDeployment(final DeploymentRecord deployment) {
       deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(deployment, deployment.getServerGroup());
+        }
+        @Override
+        public void onFailure(Throwable t) {
+          super.onFailure(t);
+          domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(deployment, deployment.getServerGroup(), t);
         }
       });
+      
     }
     
-    public void removeDeploymentFromGroup(DeploymentRecord deployment) {
+    public void removeDeploymentFromGroup(final DeploymentRecord deployment) {
       deploymentStore.removeDeploymentFromGroup(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(deployment, deployment.getServerGroup());
+        }
+        @Override
+        public void onFailure(Throwable t) {
+          super.onFailure(t);
+          domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(deployment, deployment.getServerGroup(), t);
         }
       });
+      
     }
     
-    public void addToServerGroup(String serverGroup, DeploymentRecord deployment) {
+    public void addToServerGroup(final String serverGroup, final DeploymentRecord deployment) {
       deploymentStore.addToServerGroup(serverGroup, deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.ADD_TO_GROUP.displaySuccessMessage(deployment, serverGroup);
+        }
+        @Override
+        public void onFailure(Throwable t) {
+          super.onFailure(t);
+          domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.ADD_TO_GROUP.displayFailureMessage(deployment, serverGroup, t);
         }
       });
     }
 
-    public void removeContent(DeploymentRecord deployment) {
+    public void removeContent(final DeploymentRecord deployment) {
       deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.REMOVE_CONTENT.displaySuccessMessage(deployment, deployment.getServerGroup());
+        }
+        @Override
+        public void onFailure(Throwable t) {
+          super.onFailure(t);
+          domainDeploymentInfo.refreshView();
+          DeploymentsOverview.DeploymentCommand.REMOVE_CONTENT.displayFailureMessage(deployment, deployment.getServerGroup(), t);
         }
       });
     }
@@ -292,7 +317,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                //refreshModel();
+                DeploymentsPresenter.this.domainDeploymentInfo.refreshView();
             }
         });
     }

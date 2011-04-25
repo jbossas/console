@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright <YEAR> Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -20,6 +20,7 @@ package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -38,7 +39,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
@@ -71,12 +74,19 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
   public void setPresenter(DeploymentsPresenter presenter) {
     this.presenter = presenter;
   }
+  
+  @Override
+  public String getSelectedServerGroup() {
+    int selected = this.tabLayoutpanel.getSelectedIndex();
+    Label label = (Label)this.tabLayoutpanel.getTabWidget(selected);
+    return label.getText();
+  }
 
   @Override
   public Widget createWidget() {
     LayoutPanel layout = new LayoutPanel();
 
-    RHSHeader title = new RHSHeader("Available Deployments");
+    RHSHeader title = new RHSHeader("Manage Deployments");
     layout.add(title);
     layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
@@ -96,21 +106,41 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     layout.add(topLevelTools);
     layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
     
-    SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel();
+    SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel(100);
     
     String[] columnHeaders = new String[] {"Name", "Runtime Name", "Action", "Action"};
     List<Column> columns = makeNameAndRuntimeColumns();
     columns.addAll(makeActionColumns(domainDeploymentProvider, DeploymentCommand.ADD_TO_GROUP, DeploymentCommand.REMOVE_CONTENT));
-    deploymentsPanel.addNorth(makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders), 200);
+    
+    deploymentsPanel.addNorth(makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders), 250);
     
     tabLayoutpanel.addStyleName("default-tabpanel");
-    tabLayoutpanel.addStyleName("fill-layout-width");
+    deploymentsPanel.addStyleName("fill-layout-width");
     deploymentsPanel.add(tabLayoutpanel);
     
     layout.add(deploymentsPanel);
-    layout.setWidgetTopHeight(deploymentsPanel, 50, Style.Unit.PX, 500, Style.Unit.PX);
+    layout.setWidgetTopHeight(deploymentsPanel, 55, Style.Unit.PX, 700, Style.Unit.PX);
     
     return layout;
+  }
+  
+  @Override
+  public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo) {
+    serverGroupNames = domainDeploymentInfo.getServerGroupNames();
+    
+    createAndRemoveTabs();
+    
+    // Set the backing data for domain tables
+    domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
+    
+    // Set the backing data for server group tables
+    for(Entry<String, List<DeploymentRecord>> entry : domainDeploymentInfo.getServerGroupDeployments().entrySet()) {
+      this.serverGroupDeploymentProviders.get(entry.getKey()).setList(entry.getValue());
+    }
+    
+    //  if (!deploymentRecords.isEmpty()) {
+  //    deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
+  //  }
   }
 
   private Widget makeDeploymentTable(String headerLabel, 
@@ -119,7 +149,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                                      String[] columnHeaders) {
     VerticalPanel vpanel = new VerticalPanel();
     vpanel.setStyleName("fill-layout-width");
-    vpanel.getElement().setAttribute("style", "padding:15px;");
+    vpanel.getElement().setAttribute("style", "padding:25px;");
 
     // -----------
 
@@ -142,9 +172,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
       deploymentTable.addColumn(columns.get(i), columnHeaders[i]);
     }
     
-    vpanel.add(deploymentTable);
+    ScrollPanel scroller = new ScrollPanel(deploymentTable);
+    scroller.setAlwaysShowScrollBars(true);
+    vpanel.add(scroller);
     
-    return new ScrollPanel(vpanel);
+    return vpanel;
   }
   
   private List<Column> makeNameAndRuntimeColumns() {
@@ -180,7 +212,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     List<Column> columns = new ArrayList<Column>(commands.length);
     
     for (int i = 0; i < commands.length; i++) {
-      HyperlinkCell hyperlinkCell = new HyperlinkCell(commands[i].toString(), 
+      HyperlinkCell hyperlinkCell = new HyperlinkCell(commands[i].getLabel(), 
               new DeploymentCommandActionCellDelegate(commands[i], dataProvider));
 
         Column<DeploymentRecord, String> hyperlinkColumn = new Column<DeploymentRecord, String>(hyperlinkCell) {
@@ -200,7 +232,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
   /**
    * Enumeration of commands available from deployment tables.
    */
-  private enum DeploymentCommand {
+  enum DeploymentCommand {
     ENABLE_DISABLE("enable/disable", "Enable or Disable", "for"),
     REMOVE_FROM_GROUP("remove from group", "Remove", "from"),
     ADD_TO_GROUP("add to selected server group", "Add", "to"),
@@ -217,23 +249,25 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     }
     
     public void execute(DeploymentsPresenter presenter, DeploymentRecord record) {
-      String selectedGroup = presenter.getView().getSelectedServerGroup();
-      switch (this) {
-        case ENABLE_DISABLE: confirm(presenter, record, record.getServerGroup());    break;
-        case REMOVE_FROM_GROUP: confirm(presenter, record, record.getServerGroup()); break;
-        case ADD_TO_GROUP: confirm(presenter, record, selectedGroup);                break;
-        case REMOVE_CONTENT: confirm(presenter, record, record.getServerGroup());    break;
-      }
+      String target = record.getServerGroup();
+      if (this == ADD_TO_GROUP) target = presenter.getView().getSelectedServerGroup();
+      confirm(presenter, record, target);
     }
     
     private void confirm(final DeploymentsPresenter presenter, final DeploymentRecord record, String target) {
-      String confirmMessage = verb + " " + record.getName() + " " + preposition + " " + target + "?";
-      Feedback.confirm("Are you sure?", confirmMessage, new Feedback.ConfirmationHandler() {
+      Feedback.confirm("Are you sure?", confirmMessage(record, target), new Feedback.ConfirmationHandler() {
         @Override
         public void onConfirmation(boolean isConfirmed) {
           if (isConfirmed) doCommand(presenter, record);
         }
       });
+    }
+    
+    private String confirmMessage(DeploymentRecord record, String target) {
+      String action = verb;
+      if (this == ENABLE_DISABLE && record.isEnabled()) action = "Disable";
+      if (this == ENABLE_DISABLE && !record.isEnabled()) action = "Enable";
+      return action + " " + record.getName() + " " + preposition + " " + target + ".";
     }
     
     private void doCommand(DeploymentsPresenter presenter, DeploymentRecord record) {
@@ -246,7 +280,19 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
       }
     }
     
-    public String toString() {
+    public void displaySuccessMessage(DeploymentRecord record, String target) {
+      Console.MODULES.getMessageCenter().notify(
+                new Message("Success: " + confirmMessage(record, target), Message.Severity.Info)
+        );
+    }
+    
+    public void displayFailureMessage(DeploymentRecord record, String target, Throwable t) {
+      Console.MODULES.getMessageCenter().notify(
+                new Message("Failure: " + confirmMessage(record, target) + "; " + t.getMessage(), Message.Severity.Error)
+        );
+    }
+    
+    public String getLabel() {
       return this.label;
     }
   }
@@ -272,25 +318,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     }
   }
 
-  @Override
-  public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo) {
-    serverGroupNames = domainDeploymentInfo.getServerGroupNames();
-    
-    createAndRemoveTabs();
-    
-    // Set the backing data for domain tables
-    domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
-    
-    // Set the backing data for server group tables
-    for(Entry<String, List<DeploymentRecord>> entry : domainDeploymentInfo.getServerGroupDeployments().entrySet()) {
-      this.serverGroupDeploymentProviders.get(entry.getKey()).setList(entry.getValue());
-    }
-    
-    //  if (!deploymentRecords.isEmpty()) {
-  //    deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
-  //  }
-  }
-  
   private void createAndRemoveTabs() {
     // add new server groups
     for (String serverGroupName : serverGroupNames) {
@@ -326,12 +353,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
       this.tabLayoutpanel.remove(widget);
       this.serverGroupDeploymentProviders.remove(serverGroupName);
     }
-  }
-  
-  public String getSelectedServerGroup() {
-    int selected = this.tabLayoutpanel.getSelectedIndex();
-    Label label = (Label)this.tabLayoutpanel.getTabWidget(selected);
-    return label.getText();
   }
   
 }

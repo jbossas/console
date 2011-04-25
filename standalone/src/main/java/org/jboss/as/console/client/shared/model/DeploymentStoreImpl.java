@@ -201,7 +201,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
           @Override
           public void onFailure(Throwable caught) {
-              Log.error("Deployment failed", caught);
+              callback.onFailure(caught);
           }
 
           @Override
