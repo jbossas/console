@@ -62,7 +62,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private ServerConfigPresenter presenter;
     private Form<Server> form;
     private ContentHeaderLabel nameLabel;
-    private ComboBoxItem groupItem;
+    //private ComboBoxItem groupItem;
+
     private ComboBoxItem socketItem;
     private ComboBoxItem jvmItem;
 
@@ -165,7 +166,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         TextItem nameItem = new TextItem("name", "Server Name");
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", "Start Instances?");
-        groupItem = new ComboBoxItem("group", "Server Group");
+        //groupItem = new ComboBoxItem("group", "Server Group");
+
+        // TODO: https://issues.jboss.org/browse/AS7-661
+        TextItem groupItem = new TextItem("group", "Server Group");
 
         // ------------------------------------------------------
 
@@ -218,6 +222,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     @Override
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
 
+        /*
+
+        TODO: https://issues.jboss.org/browse/AS7-661
+
         String[] names = new String[serverGroupRecords.size()];
         int i=0;
         for(ServerGroupRecord group : serverGroupRecords)
@@ -225,7 +233,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             names[i] = group.getGroupName();
             i++;
         }
-        groupItem.setValueMap(names);
+        groupItem.setValueMap(names);*/
     }
 
     @Override
