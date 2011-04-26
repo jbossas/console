@@ -366,6 +366,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     );
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+
+                    loadDefaultForHost(selectedHost);
                 }
                 else
                 {
