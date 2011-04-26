@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -83,7 +84,9 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
+
         layout = new LayoutPanel();
+
 
         TitleBar titleBar = new TitleBar("Server Group");
         layout.add(titleBar);
@@ -193,10 +196,15 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         tabLayoutpanel.selectTab(0);
 
-        layout.add(tabLayoutpanel);
-        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
+        //layout.add(tabLayoutpanel);
+        //layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
 
-        return layout;
+
+        DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Style.Unit.PX);
+        dockLayoutPanel.addSouth(tabLayoutpanel, 300);
+        dockLayoutPanel.add(layout);
+
+        return dockLayoutPanel;
     }
 
     private void onSave() {

@@ -36,6 +36,8 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
 import org.jboss.as.console.client.widgets.tables.OptionCell;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
  * @author Heiko Braun
@@ -45,7 +47,7 @@ public class PropertyEditor {
 
     private ListDataProvider<PropertyRecord> propertyProvider;
     private DefaultCellTable<PropertyRecord> propertyTable;
-    private Button addProp;
+    private ToolButton addProp;
     private BeanFactory beanFactory = GWT.create(BeanFactory.class);
     private ServerGroupPresenter presenter;
     private ServerGroupRecord selectedRecord;
@@ -62,10 +64,11 @@ public class PropertyEditor {
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
-        addProp = new Button("Add");
-        addProp.setStyleName("default-button");
 
-        addProp.getElement().setAttribute("style", "float:right");
+        ToolStrip propTools = new ToolStrip();
+
+        addProp = new ToolButton("Add");
+
         addProp.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -76,8 +79,8 @@ public class PropertyEditor {
                 propertyProvider.refresh();
             }
         });
-        panel.add(addProp);
-
+        propTools.addToolButton(addProp);
+        panel.add(propTools);
 
         // Create columns
         Column<PropertyRecord, String> keyColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
