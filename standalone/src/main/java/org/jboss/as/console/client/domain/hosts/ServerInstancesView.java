@@ -46,6 +46,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -76,7 +77,9 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
     @Override
     public Widget createWidget() {
-        LayoutPanel layout = new LayoutPanel();
+
+        SplitEditorPanel editorPanel = new SplitEditorPanel();
+        LayoutPanel layout = editorPanel.getTopLayout();
 
         TitleBar titleBar = new TitleBar("Server Instances");
         layout.add(titleBar);
@@ -84,8 +87,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding:15px;");
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
         // ----------------------------------------------------------------------
 
@@ -174,13 +175,14 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         scroll.add(vpanel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 60, Style.Unit.PCT);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // ----------------------------------------------------------------------
 
-        LayoutPanel formPanel = new LayoutPanel();
-        //formPanel.getElement().setAttribute("style", "background-color:#ffffff;margin:15px;");
+        VerticalPanel formPanel = new VerticalPanel();
 
         final Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
         form.setNumColumns(2);
@@ -228,28 +230,15 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         formPanel.add(formWidget);
 
-
-        formPanel.setWidgetTopHeight(formWidget, 5, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        //layout.add(formPanel);
-        //layout.setWidgetBottomHeight(formPanel, 0, Style.Unit.PX, 30, Style.Unit.PCT);
-
-
         // ----------------------------------------------------------
+        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        bottomLayout.add(formPanel, "Instance Details");
+        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), "JVM Status");
 
-        tabLayoutpanel.add(formPanel, "Instance Details");
-        tabLayoutpanel.add(new HTML("This going to display heap, permgen, etc, "), "JVM Status");
-        //tabLayoutpanel.add(new HTML("Baz"), "Other");
+        bottomLayout.selectTab(0);
 
-        tabLayoutpanel.selectTab(0);
-
-        layout.add(tabLayoutpanel);
-        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
-
-        return layout;
+        return editorPanel.asWidget();
     }
 
     @Override

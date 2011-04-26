@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -34,7 +36,9 @@ import org.jboss.as.console.client.shared.PropertyTable;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.WidgetUtil;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
@@ -61,7 +65,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private ComboBoxItem socketItem;
     private ComboBoxItem jvmItem;
 
-    private LayoutPanel layout;
     private ToolButton edit;
 
     @Override
@@ -72,7 +75,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     @Override
     public Widget createWidget() {
 
-        layout = new LayoutPanel();
+        SplitEditorPanel editorPanel = new SplitEditorPanel();
+        LayoutPanel layout = editorPanel.getTopLayout();
 
         TitleBar titleBar = new TitleBar("Server Configuration");
         layout.add(titleBar);
@@ -129,11 +133,12 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         panel.setStyleName("fill-layout-width");
         panel.getElement().setAttribute("style", "padding:15px;");
 
-        layout.add(panel);
+        ScrollPanel scrollPanel = WidgetUtil.asScrollPanel(panel);
+        layout.add(scrollPanel);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
         layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scrollPanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // --------------------------------------------------------
@@ -180,12 +185,16 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // ------------------------------------------------------
 
-        panel.add(new ContentGroupLabel("System Properties"));
+        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
+
+        VerticalPanel propertyPanel = new VerticalPanel();
+        propertyPanel.setStyleName("fill-layout-width");
 
         PropertyTable properties = new PropertyTable();
-        panel.add(properties);
+        propertyPanel.add(properties);
 
-        return layout;
+        bottomLayout.add(propertyPanel, "System Properties");
+        return editorPanel.asWidget();
     }
 
     private void onSave() {

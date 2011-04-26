@@ -22,11 +22,10 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +35,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
@@ -48,8 +48,6 @@ import org.jboss.as.console.client.widgets.tools.ToolStrip;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Shows an editable view of a single server group.
@@ -68,10 +66,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ComboBoxItem jvmField;
     private ToolButton edit;
 
-    private LayoutPanel layout;
     private VerticalPanel panel;
-
-    private TabLayoutPanel tabLayoutpanel;
 
     PropertyEditor propertyEditor;
     JvmEditor jvmEditor;
@@ -84,9 +79,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-
-        layout = new LayoutPanel();
-
+        SplitEditorPanel editorPanel = new SplitEditorPanel();
+        LayoutPanel layout = editorPanel.getTopLayout();
 
         TitleBar titleBar = new TitleBar("Server Group");
         layout.add(titleBar);
@@ -136,17 +130,20 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         }));
 
         layout.add(toolStrip);
+
         // ----
 
         panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
         panel.getElement().setAttribute("style", "padding:15px;");
 
-        layout.add(panel);
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.add(panel);
+        layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
         layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(panel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---------------------------------------------
 
@@ -185,26 +182,17 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // ---------------------------------------------------
 
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
         propertyEditor = new PropertyEditor(presenter);
-        tabLayoutpanel.add(propertyEditor.asWidget(), "System Properties");
+        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
 
         jvmEditor = new JvmEditor(presenter);
-        tabLayoutpanel.add(jvmEditor.asWidget(), "Virtual Machine");
+        bottomLayout .add(jvmEditor.asWidget(), "Virtual Machine");
 
-        tabLayoutpanel.selectTab(0);
+        bottomLayout .selectTab(0);
 
-        //layout.add(tabLayoutpanel);
-        //layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 40, Style.Unit.PCT);
-
-
-        DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Style.Unit.PX);
-        dockLayoutPanel.addSouth(tabLayoutpanel, 300);
-        dockLayoutPanel.add(layout);
-
-        return dockLayoutPanel;
+        return editorPanel.asWidget();
     }
 
     private void onSave() {
