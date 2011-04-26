@@ -216,11 +216,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
     public void setItemSelected(int i, boolean isSelected) {
 
-        if(!isSelected){
-            currentValue.setText("");
-            this.selectedItemIndex = -1;
-        }
-        else
+        if(isSelected)
         {
             this.selectedItemIndex =  i;
             String selectedValue = values.get(selectedItemIndex);
@@ -283,9 +279,11 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     }
 
     public void clearSelection() {
-         for(int i=0; i< getItemCount(); i++)
+        currentValue.setText("");
+        for(int i=0; i< getItemCount(); i++)
         {
             setItemSelected(i, false);
         }
+        selectedItemIndex = -1;
     }
 }

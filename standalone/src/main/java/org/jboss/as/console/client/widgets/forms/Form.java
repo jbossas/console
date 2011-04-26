@@ -32,10 +32,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.BeanFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -150,6 +148,7 @@ public class Form<T> {
                         if(key.startsWith(propertyName))
                         {
                             matchingField = groupItems.get(key);
+                            matchingField.resetMetaData();
                             matchingField.setValue(value);
                         }
                     }
@@ -191,7 +190,20 @@ public class Form<T> {
                 AutoBeanUtils.getAutoBean(updatedEntity)
         );
 
-        return diff;
+        Map<String, Object> finalDiff = new HashMap<String,Object>();
+
+        // skip UNDEFINED
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            for(FormItem item : groupItems.values())
+            {
+                Object val = diff.get(item.getName());
+                if(val!=null && !item.isUndefined())
+                    finalDiff.put(item.getName(), val);
+            }
+        }
+
+        return finalDiff;
     }
 
     public FormValidation validate()
@@ -226,7 +238,6 @@ public class Form<T> {
             int i=0;
             for(FormItem item : groupItems.values())
             {
-
                 builder.append("\"");
                 builder.append(item.getName());
                 builder.append("\"");
@@ -239,6 +250,7 @@ public class Form<T> {
 
                 if(i<groupItems.size()-1)
                     builder.append(", ");
+
                 i++;
 
             }

@@ -37,6 +37,8 @@ public abstract class FormItem<T> implements InputElement<T> {
     protected boolean isRequired =    true;
     protected String errMessage = "Invalid input";
 
+    protected boolean isUndefined = true;
+
     public FormItem(String name, String title) {
         this.name = name;
         this.title = title;
@@ -94,6 +96,15 @@ public abstract class FormItem<T> implements InputElement<T> {
     @Override
     public void setErrMessage(String errMessage) {
         this.errMessage = errMessage;
+    }
+
+    public boolean isUndefined() {
+        return isUndefined;
+    }
+
+    protected void resetMetaData() {
+        isUndefined = true;
+        setErroneous(false);
     }
 
     public abstract Widget asWidget();

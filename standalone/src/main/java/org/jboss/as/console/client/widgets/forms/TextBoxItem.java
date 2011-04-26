@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,7 +39,12 @@ public class TextBoxItem extends FormItem<String> {
         textBox = new TextBox();
         textBox.setName(name);
         textBox.setTitle(title);
-
+        textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                isUndefined = false;
+            }
+        });
         wrapper = new InputElementWrapper(textBox, this);
     }
 
@@ -52,7 +59,15 @@ public class TextBoxItem extends FormItem<String> {
     }
 
     @Override
+    public void resetMetaData() {
+        super.resetMetaData();
+        textBox.setValue("");
+    }
+
+    @Override
     public void setValue(String value) {
+        if(value!=null && !value.equals(""))
+            isUndefined = false;
         textBox.setValue(value);
     }
 
@@ -70,7 +85,12 @@ public class TextBoxItem extends FormItem<String> {
 
     @Override
     public boolean validate(String value) {
-        if(isRequired() && value.equals(""))
+
+        if(isUndefined)
+        {
+            return true;
+        }
+        else if(isRequired() && value.equals(""))
         {
             return false;
         }

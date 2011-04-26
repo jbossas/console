@@ -43,7 +43,7 @@ public class SplitEditorPanel {
         bottomLayout = new TabLayoutPanel(25, Style.Unit.PX);
         bottomLayout.addStyleName("default-tabpanel");
 
-        dockLayout.addSouth(bottomLayout, 280);
+        dockLayout.addSouth(bottomLayout, 250);
         dockLayout.add(topLayout);
     }
 

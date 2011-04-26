@@ -19,10 +19,10 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.ComboBox;
-import org.jboss.as.console.client.widgets.icons.Icons;
 
 import java.util.List;
 
@@ -37,10 +37,20 @@ public class ComboBoxItem extends FormItem<String> {
     private boolean defaultToFirst;
 
     private InputElementWrapper wrapper;
+    private boolean postInit = false;
 
     public ComboBoxItem(String name, String title) {
         super(name, title);
         this.comboBox = new ComboBox();
+
+        this.comboBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                if(postInit)
+                    isUndefined = false;
+            }
+        });
+
         this.wrapper = new InputElementWrapper(comboBox.asWidget(), this);
         wrapper.getElement().setAttribute("style", "width:100%");
 
@@ -52,6 +62,12 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     @Override
+    public void resetMetaData() {
+        super.resetMetaData();
+        postInit = false;
+    }
+
+    @Override
     public void setValue(String value) {
 
         comboBox.clearSelection();
@@ -60,10 +76,17 @@ public class ComboBoxItem extends FormItem<String> {
         {
             if(comboBox.getValue(i).equals(value))
             {
-                comboBox.setItemSelected(i, true);
+                selectItem(i);
                 break;
             }
         }
+
+        postInit = true;
+    }
+
+    private void selectItem(int i) {
+        isUndefined = false;
+        comboBox.setItemSelected(i, true);
     }
 
     @Override
@@ -83,7 +106,7 @@ public class ComboBoxItem extends FormItem<String> {
         }
 
         if(defaultToFirst)
-            comboBox.setItemSelected(0, true);
+            selectItem(0);
     }
 
     public void setValueMap(List<String> values) {
@@ -94,7 +117,7 @@ public class ComboBoxItem extends FormItem<String> {
         }
 
         if(defaultToFirst)
-            comboBox.setItemSelected(0, true);
+            selectItem(0);
     }
 
     @Override
@@ -103,8 +126,17 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     @Override
+    public String getErrMessage() {
+        return "missing selection";
+    }
+
+    @Override
     public boolean validate(String value) {
-        if(isRequired() && comboBox.getSelectedValue().equals(""))
+        if(isUndefined)
+        {
+            return true;
+        }
+        else if(isRequired() && comboBox.getSelectedValue().equals(""))
         {
             return false;
         }

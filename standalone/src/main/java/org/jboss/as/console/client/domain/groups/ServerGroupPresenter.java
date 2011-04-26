@@ -286,12 +286,13 @@ public class ServerGroupPresenter
                     if(wasSuccessful)
                     {
                         Console.info("Modified server-group "+name);
-                        refreshServerGroups();
                     }
                     else
                     {
                         Console.error("Failed to modify server-group "+name);
                     }
+
+                    refreshServerGroups();
                 }
             });
         }

@@ -143,6 +143,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     private void loadServerConfigurations() {
+
+        System.out.println("reload server configs");
+
         if(selectedHost !=null && serverName!=null)
         {
             loadJVMs(selectedHost);
@@ -318,12 +321,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     if(wasSuccessful)
                     {
                         Console.info("Successfully modified server-config " +name);
-                        loadServerConfigurations();
                     }
                     else
                     {
                         Console.error("Failed to modify server-config " +name);
                     }
+
+                    loadServerConfigurations();
                 }
             });
 

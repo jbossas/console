@@ -52,7 +52,15 @@ public class PasswordBoxItem extends FormItem<String> {
     }
 
     @Override
+    public void resetMetaData() {
+        super.resetMetaData();
+        textBox.setValue("");
+    }
+
+    @Override
     public void setValue(String value) {
+        if(value!=null && !value.equals(""))
+            isUndefined = false;
         textBox.setValue(value);
     }
 

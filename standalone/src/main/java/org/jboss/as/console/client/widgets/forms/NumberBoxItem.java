@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -38,6 +40,13 @@ public class NumberBoxItem extends FormItem<Integer> {
         textBox.setName(name);
         textBox.setTitle(title);
 
+        textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                isUndefined = false;
+            }
+        });
+
         wrapper = new InputElementWrapper(textBox, this);
 
     }
@@ -54,8 +63,18 @@ public class NumberBoxItem extends FormItem<Integer> {
     }
 
     @Override
+    public void resetMetaData() {
+        super.resetMetaData();
+        textBox.setValue("");
+    }
+
+    @Override
     public void setValue(Integer number) {
-        textBox.setValue(String.valueOf(number));
+        if(number>0)
+        {
+            isUndefined = false;
+            textBox.setValue(String.valueOf(number));
+        }
     }
 
     @Override
@@ -79,14 +98,19 @@ public class NumberBoxItem extends FormItem<Integer> {
 
         boolean outcome = true;
 
-        if(isRequired() && textBox.getValue().equals(""))
+        if(isUndefined)
+        {
+            return true;
+        }
+        else if(isRequired() && textBox.getValue().equals(""))
         {
             outcome = false;
         }
         else if(isRequired())
         {
             try {
-                Integer.parseInt(textBox.getValue());
+                int i = Integer.parseInt(textBox.getValue());
+                outcome = (i>0);
             } catch (NumberFormatException e) {
                 outcome = false;
             }

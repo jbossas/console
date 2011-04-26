@@ -60,7 +60,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ServerGroupPresenter presenter;
     private Form<ServerGroupRecord> form;
     private ContentHeaderLabel nameLabel;
-    private ComboBoxItem profileItem;
+    //private ComboBoxItem profileItem;
 
     private ComboBoxItem socketBindingItem;
     private ComboBoxItem jvmField;
@@ -170,10 +170,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
         socketBindingItem.setDefaultToFirstOption(true);
 
-        profileItem = new ComboBoxItem("profileName", "Profile");
+        // TODO: https://issues.jboss.org/browse/AS7-663
+        //profileItem = new ComboBoxItem("profileName", "Profile");
+        TextItem profileItem = new TextItem("profileName", "Profile");
 
-        form.setFields(nameField, profileItem);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
+        form.setFields(nameField, profileItem, socketBindingItem);
+        //form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
 
         panel.add(new ContentGroupLabel("Attributes"));
 
@@ -223,11 +225,15 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public void updateProfiles(List<ProfileRecord> result) {
 
+        /*
+
+        TODO: https://issues.jboss.org/browse/AS7-663
+
         List<String> names = new ArrayList<String>(result.size());
         for(ProfileRecord rec : result)
             names.add(rec.getName());
 
-        profileItem.setValueMap(names);
+        profileItem.setValueMap(names);*/
     }
 
     public void setEnabled(boolean isEnabled) {

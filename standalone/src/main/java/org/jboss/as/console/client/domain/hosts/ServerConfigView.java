@@ -43,6 +43,7 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
@@ -173,8 +174,23 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // ------------------------------------------------------
 
-        socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
-        NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
+        final NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
+
+        socketItem = new ComboBoxItem("socketBinding", "Socket Binding")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean parentValid = super.validate(value);
+                //boolean portDefined = !portOffset.isUndefined();
+                return parentValid ;//&& portDefined;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return super.getErrMessage() + " or portOffset undefined";
+            }
+        };
+
 
         form.setFields(nameItem, startedItem, groupItem);
         form.setFieldsInGroup(
@@ -201,12 +217,22 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     }
 
     private void onSave() {
-        Server updatedEntity = form.getUpdatedEntity();
-        Map<String,Object> changedValues = form.getChangedValues();
-        if(changedValues.containsKey("portOffset"))
-            changedValues.put("socketBinding", updatedEntity.getSocketBinding());
 
-        presenter.onSaveChanges(updatedEntity.getName(), changedValues);
+        FormValidation validation = form.validate();
+
+        if(!validation.hasErrors())
+        {
+            Server updatedEntity = form.getUpdatedEntity();
+            Map<String,Object> changedValues = form.getChangedValues();
+
+            // https://issues.jboss.org/browse/AS7-662
+            if(changedValues.containsKey("portOffset"))
+                changedValues.put("socketBinding", updatedEntity.getSocketBinding());
+            else if(changedValues.containsKey("socketBinding"))
+                changedValues.put("portOffset", updatedEntity.getPortOffset());
+
+            presenter.onSaveChanges(updatedEntity.getName(), changedValues);
+        }
     }
 
     private void onEdit() {

@@ -34,11 +34,17 @@ public class ButtonItem extends FormItem<Boolean> {
     public ButtonItem(String name, String title) {
         super(name, title);
         this.button = new DefaultButton(title);
+        isUndefined = false;
     }
 
     @Override
     public Boolean getValue() {
         return true;
+    }
+
+    @Override
+    public void resetMetaData() {
+
     }
 
     @Override
