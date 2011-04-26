@@ -25,6 +25,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -280,7 +281,15 @@ public class ServerGroupPresenter
 
         if(changeset.size()>0)
         {
-            serverGroupStore.save(name, changeset, new SimpleCallback<Boolean>() {
+            serverGroupStore.save(name, changeset, new AsyncCallback<Boolean>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    // log and reset when something fails
+                    Console.error("Failed to modify server-group "+name);
+                    refreshServerGroups();
+                }
+
                 @Override
                 public void onSuccess(Boolean wasSuccessful) {
                     if(wasSuccessful)

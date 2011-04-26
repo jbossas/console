@@ -158,9 +158,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     {
                         if(server.getName().equals(serverName))
                         {
-                            selectedRecord = server;
+                            workOn(server);
                             serverName = selectedRecord.getName();
-                            getView().setSelectedRecord(selectedRecord);
 
                             break;
                         }
@@ -246,10 +245,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onSuccess(List<Server> result) {
                 if(!result.isEmpty()) {
-                    selectedRecord = result.get(0);
+                    workOn(result.get(0));
                     serverName = selectedRecord.getName();
                     loadJVMs(hostName);
-                    getView().setSelectedRecord(selectedRecord);
                 }
             }
         });
@@ -260,7 +258,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         // close popup
         closeDialoge();
 
-        System.out.println("> create server-config");
         hostInfoStore.createServerConfig(getSelectedHost(), newServer, new AsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
@@ -302,9 +299,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     private void workOn(Server record) {
+        getView().setEnabled(false); // default edit state
         selectedRecord = record;
         getView().setSelectedRecord(record);
-
     }
 
     public void onSaveChanges(final String name, Map<String, Object> changedValues) {
@@ -315,7 +312,15 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         {
             System.out.println("> " +changedValues);
 
-            hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new SimpleCallback<Boolean>() {
+            hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new AsyncCallback<Boolean>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    // log and reset when something fails
+                    Console.error("Failed to modify server-config " +name);
+                    loadServerConfigurations();
+                }
+
                 @Override
                 public void onSuccess(Boolean wasSuccessful) {
                     if(wasSuccessful)
