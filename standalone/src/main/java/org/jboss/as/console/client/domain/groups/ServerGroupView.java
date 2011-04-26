@@ -186,11 +186,11 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
-        propertyEditor = new PropertyEditor(presenter);
-        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
-
         jvmEditor = new JvmEditor(presenter);
         bottomLayout .add(jvmEditor.asWidget(), "Virtual Machine");
+
+        propertyEditor = new PropertyEditor(presenter);
+        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
 
         bottomLayout .selectTab(0);
 
