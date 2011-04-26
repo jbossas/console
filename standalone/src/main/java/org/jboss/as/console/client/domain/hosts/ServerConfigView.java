@@ -50,6 +50,7 @@ import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -171,8 +172,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         socketItem = new ComboBoxItem("socketBinding", "Socket Binding");
         NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
 
-        //jvmItem = new ComboBoxItem("jvm", "Virtual Machine");
-
         form.setFields(nameItem, startedItem, groupItem);
         form.setFieldsInGroup(
                 "Advanced",
@@ -199,7 +198,11 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     private void onSave() {
         Server updatedEntity = form.getUpdatedEntity();
-        presenter.onSaveChanges(updatedEntity.getName(), form.getChangedValues());
+        Map<String,Object> changedValues = form.getChangedValues();
+        if(changedValues.containsKey("portOffset"))
+            changedValues.put("socketBinding", updatedEntity.getSocketBinding());
+
+        presenter.onSaveChanges(updatedEntity.getName(), changedValues);
     }
 
     private void onEdit() {
