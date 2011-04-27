@@ -121,10 +121,10 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
                 ModelNode jvmPropValue = jvmProp.getValue();
 
-                if(ModelAdapter.hasDefined(jvmPropValue, "heap-size"))
+                if(jvmPropValue.hasDefined("heap-size"))
                     jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
 
-                if(ModelAdapter.hasDefined(jvmPropValue, "max-heap-size"))
+                if(jvmPropValue.hasDefined("max-heap-size"))
                     jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
 
                 record.setJvm(jvm);

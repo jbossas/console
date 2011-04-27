@@ -35,10 +35,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
  * @date 4/27/11
  */
 public class ModelAdapter {
-    public static boolean hasDefined(ModelNode node ,String key)
-    {
-        return node.has(key) && node.get(key).isDefined();
-    }
 
     /**
      * Turns a changeset into a composite write attribute operation.
