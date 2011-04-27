@@ -24,6 +24,7 @@ import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanCodex;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.autobean.shared.AutoBeanVisitor;
+import com.google.gwt.autobean.shared.impl.AbstractAutoBean;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -44,20 +45,16 @@ import java.util.Map;
  */
 public class Form<T> {
 
+    private final static BeanFactory factory = GWT.create(BeanFactory.class);
     private final static String DEFAULT_GROUP = "default";
 
-    private Map<String, Map<String, FormItem>> formItems = new LinkedHashMap<String, Map<String, FormItem>>();
+    private final Map<String, Map<String, FormItem>> formItems = new LinkedHashMap<String, Map<String, FormItem>>();
+    private final Map<String,GroupRenderer> renderer = new HashMap<String, GroupRenderer>();
 
     private int numColumns = 1;
-
-    private Map<String,GroupRenderer> registeredRenderer = new HashMap<String, GroupRenderer>();
-
-    private Class<?> conversionType;
-
-    private static BeanFactory factory = GWT.create(BeanFactory.class);
-
     private int nextId = 1;
-    private T editedEntity;
+    private T editedEntity = null;
+    private final Class<?> conversionType;
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
@@ -85,7 +82,7 @@ public class Form<T> {
         setFieldsInGroup(DEFAULT_GROUP, items);
     }
 
-    int maxTitleLength = 0;
+    int maxTitleLength = 0; // used for auto layout
     public void setFieldsInGroup(String group, FormItem... items) {
 
         // create new group
@@ -116,15 +113,19 @@ public class Form<T> {
 
     public void setFieldsInGroup(String group, GroupRenderer renderer, FormItem... items) {
 
-        registeredRenderer.put(group, renderer);
+        this.renderer.put(group, renderer);
 
         setFieldsInGroup(group, items);
     }
 
     public void edit(T bean) {
 
-        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
+        // Needs to be declared (i.e. when creating new instances)
+        if(null==bean)
+            throw new IllegalArgumentException("Invalid entity: null");
 
+        // Has to be an AutoBean
+        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
         if(null==autoBean)
             throw new IllegalArgumentException("Not an auto bean: " + bean.getClass());
 
@@ -133,6 +134,7 @@ public class Form<T> {
         autoBean.accept(new AutoBeanVisitor() {
 
             private boolean isComplex = false;
+            private boolean isTransient = true;
 
             @Override
             public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
@@ -143,10 +145,14 @@ public class Form<T> {
 
                 for(Map<String, FormItem> groupItems : formItems.values())
                 {
-                    for(String key : groupItems.keySet()) // keys maybe used multiple times
+                    for(String key : groupItems.keySet())
                     {
-                        if(key.startsWith(propertyName))
+                        if(key.startsWith(propertyName)) // keys maybe used multiple times
                         {
+                            // verify transient state
+                            if(isTransient) isTransient = (value==null);
+
+                            // update field values
                             matchingField = groupItems.get(key);
                             matchingField.resetMetaData();
                             matchingField.setValue(value);
@@ -173,7 +179,26 @@ public class Form<T> {
                 //System.out.println("begin reference "+propertyName+ ": "+ctx.getType());
                 return true;
             }
+
+            @Override
+            public boolean visit(AutoBean<?> bean, Context ctx) {
+                if(isComplex) return true;
+
+                boolean visit = super.visit(bean, ctx);
+                isTransient = true;
+                return visit;
+            }
+
+            @Override
+            public void endVisit(AutoBean<?> bean, Context ctx) {
+                if(!isComplex)
+                {
+                    //System.out.println(bean.getType() + " is transient: " + isTransient+"\n---\n");
+                    bean.setTag("transient", isTransient);
+                }
+            }
         });
+
     }
 
     /**
@@ -208,19 +233,22 @@ public class Form<T> {
 
     public FormValidation validate()
     {
+
         FormValidation outcome = new FormValidation();
+
         for(Map<String, FormItem> groupItems : formItems.values())
         {
             for(FormItem item : groupItems.values())
             {
-                if(! item.validate(item.getValue()) )
+                boolean validValue = item.validate(item.getValue());
+                if(validValue)
                 {
-                    outcome.addError(item.getName());
-                    item.setErroneous(true);
+                    item.setErroneous(false);
                 }
                 else
                 {
-                    item.setErroneous(false);
+                    outcome.addError(item.getName());
+                    item.setErroneous(true);
                 }
             }
         }
@@ -295,8 +323,8 @@ public class Form<T> {
             }
             else
             {
-                GroupRenderer groupRenderer = registeredRenderer.get(group)!=null ?
-                        registeredRenderer.get(group) : new FieldsetRenderer();
+                GroupRenderer groupRenderer = renderer.get(group)!=null ?
+                        renderer.get(group) : new FieldsetRenderer();
 
                 Widget widget = groupRenderer.render(metaData, group, groupItems);
                 parentPanel.add(widget);

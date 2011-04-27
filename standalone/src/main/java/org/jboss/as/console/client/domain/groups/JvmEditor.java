@@ -50,7 +50,8 @@ public class JvmEditor {
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
 
-    Label label;
+    private Label label;
+    private ToolButton edit;
 
     public JvmEditor(ServerGroupPresenter presenter) {
         this.presenter = presenter;
@@ -60,18 +61,16 @@ public class JvmEditor {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
         ToolStrip toolStrip = new ToolStrip();
-        final ToolButton edit = new ToolButton("Edit");
+        edit = new ToolButton("Edit");
         ClickHandler editHandler = new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 if(edit.getText().equals("Edit"))
                 {
-                    edit.setText("Save");
                     onEdit();
                 }
                 else
                 {
-                    edit.setText("Edit");
                     onSave();
                 }
             }
@@ -129,11 +128,13 @@ public class JvmEditor {
     }
 
     private void onSave() {
-        form.setEnabled(false);
 
         FormValidation validation = form.validate();
         if(!validation.hasErrors())
         {
+            form.setEnabled(false);
+            edit.setText("Edit");
+
             if(hasJvm)
                 presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
             else
@@ -142,7 +143,8 @@ public class JvmEditor {
     }
 
     private void onEdit() {
-      form.setEnabled(true);
+        edit.setText("Save");
+        form.setEnabled(true);
     }
 
     public void setSelectedRecord(ServerGroupRecord record) {
