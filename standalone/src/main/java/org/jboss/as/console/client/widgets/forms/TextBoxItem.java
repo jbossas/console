@@ -78,16 +78,18 @@ public class TextBoxItem extends FormItem<String> {
     public void setErroneous(boolean b) {
         super.setErroneous(b);
         wrapper.setErroneous(b);
-
     }
 
     @Override
     public boolean validate(String value) {
 
-        if(isUndefined || !isModified)
+        // meta data validation
+        if(!isModified)
         {
             return true;
         }
+
+        // value validation
         else if(isRequired() && value.equals(""))
         {
             return false;
