@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -370,6 +371,7 @@ public class ServerGroupPresenter
     }
 
     public void onCreateJvm(final String groupName, Jvm jvm) {
+
         serverGroupStore.createJvm(groupName, jvm, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean success) {

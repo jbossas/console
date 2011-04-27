@@ -159,7 +159,7 @@ public class Form<T> {
                             else
                             {
                                 matchingField.setUndefined(true);
-                                matchingField.setModified(true); // unescape validation
+                                matchingField.setModified(true); // don't escape validation
                             }
 
                         }

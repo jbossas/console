@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.forms.ModelNodeAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -118,9 +119,15 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 Jvm jvm = factory.jvm().as();
                 Property jvmProp = model.get("jvm").asProperty();
                 jvm.setName(jvmProp.getName());
+
                 ModelNode jvmPropValue = jvmProp.getValue();
-                if(jvmPropValue.has("heap-size")) jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
-                if(jvmPropValue.has("max-heap-size")) jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
+
+                if(ModelAdapter.hasDefined(jvmPropValue, "heap-size"))
+                    jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
+
+                if(ModelAdapter.hasDefined(jvmPropValue, "max-heap-size"))
+                    jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
+
                 record.setJvm(jvm);
             }
         } catch (IllegalArgumentException e) {
@@ -301,6 +308,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         operation.get("jvm").set(jvm.getName(), jvmModel);
 
+        System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
