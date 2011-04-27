@@ -20,14 +20,9 @@ package org.jboss.as.console.client.domain.groups.deployment;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -46,14 +41,14 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
-import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.jboss.as.console.client.widgets.tables.HyperlinkCell;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.as.console.client.widgets.tables.MenuList;
+import org.jboss.as.console.client.widgets.tables.NamedCommand;
+import org.jboss.as.console.client.widgets.tables.PopupColumn;
 
 /**
  * @author Heiko Braun
@@ -90,29 +85,44 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
-        // --
+        // ---------
 
-        final ToolStrip topLevelTools = new ToolStrip();
-        final ToolButton newButton = new ToolButton("New Deployment");
-        newButton.addClickHandler(new ClickHandler() {
 
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                presenter.launchNewDeploymentDialoge();
-            }
-        });
 
-        topLevelTools.addToolButtonRight(newButton);
-        layout.add(topLevelTools);
-        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        // ---------
 
         SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel(100);
 
-        String[] columnHeaders = new String[] {"Name", "Runtime Name", "Action", "Action"};
+        String[] columnHeaders = new String[] {"Name", "Runtime Name", "Action", "Action", "Custom"};
         List<Column> columns = makeNameAndRuntimeColumns();
         columns.addAll(makeActionColumns(domainDeploymentProvider, DeploymentCommand.ADD_TO_GROUP, DeploymentCommand.REMOVE_CONTENT));
 
-        deploymentsPanel.addNorth(makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders), 250);
+
+        MenuList menu = new MenuList();
+
+        NamedCommand deployCmd = new NamedCommand("Assign to Group") {
+            @Override
+            public void execute() {
+                System.out.println("> assign to group executed");
+            }
+        };
+
+        NamedCommand removeCmd = new NamedCommand("Remove") {
+            @Override
+            public void execute() {
+                System.out.println("> remove executed");
+            }
+        };
+
+        menu.setCommands(deployCmd, removeCmd);
+
+        PopupColumn menuCol = new PopupColumn("More ...", menu);
+        columns.add(menuCol);
+
+        Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
+        deploymentsPanel.addNorth(contentTable, 250);
+
+        // ---------
 
         tabLayoutpanel.addStyleName("default-tabpanel");
         deploymentsPanel.addStyleName("fill-layout-width");
@@ -143,27 +153,19 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         //  }
     }
 
-    private Widget makeDeploymentTable(String headerLabel,
-                                       ListDataProvider<DeploymentRecord> dataProvider,
-                                       List<Column> columns,
-                                       String[] columnHeaders) {
+    private Widget makeDeploymentTable(
+            String headerLabel,
+            ListDataProvider<DeploymentRecord> dataProvider,
+            List<Column> columns,
+            String[] columnHeaders) {
+
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding:25px;");
 
         // -----------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel(headerLabel);
-
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.deployment());
-        horzPanel.add(image);
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        horzPanel.add(nameLabel);
-
-        vpanel.add(horzPanel);
+        vpanel.add(new ContentHeaderLabel(headerLabel));
 
         DefaultCellTable<DeploymentRecord> deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         dataProvider.addDataDisplay(deploymentTable);
@@ -173,7 +175,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         }
 
         ScrollPanel scroller = new ScrollPanel(deploymentTable);
-        scroller.setAlwaysShowScrollBars(true);
         vpanel.add(scroller);
 
         return vpanel;
