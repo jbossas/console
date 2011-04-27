@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,6 +35,20 @@ public class CheckBoxItem extends FormItem<Boolean> {
     public CheckBoxItem(String name, String title) {
         super(name, title);
         checkBox = new CheckBox();
+        checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                isModified = true;
+            }
+        });
+        isUndefined = false;
+    }
+
+    @Override
+    protected void resetMetaData() {
+        super.resetMetaData();
+        isUndefined = false; // implicitly defined
+        checkBox.setValue(false);
     }
 
     @Override
@@ -42,7 +58,6 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
     @Override
     public void setValue(Boolean value) {
-        isModified = true;
         checkBox.setValue(value);
     }
 

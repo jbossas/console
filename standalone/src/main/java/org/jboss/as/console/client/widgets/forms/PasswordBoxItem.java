@@ -54,13 +54,11 @@ public class PasswordBoxItem extends FormItem<String> {
     @Override
     public void resetMetaData() {
         super.resetMetaData();
-        textBox.setValue("");
+        textBox.setValue(null);
     }
 
     @Override
     public void setValue(String value) {
-        if(value!=null && !value.equals(""))
-            isModified = true;
         textBox.setValue(value);
     }
 

@@ -35,6 +35,7 @@ public class ButtonItem extends FormItem<Boolean> {
         super(name, title);
         this.button = new DefaultButton(title);
         isModified = false;
+        isUndefined = false;
     }
 
     @Override

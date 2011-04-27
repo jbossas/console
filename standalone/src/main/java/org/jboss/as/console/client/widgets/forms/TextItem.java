@@ -43,7 +43,7 @@ public class TextItem extends FormItem<String> {
 
     @Override
     public void resetMetaData() {
-        // text items cannot be modified ...
+        isUndefined = true;
     }
 
     @Override

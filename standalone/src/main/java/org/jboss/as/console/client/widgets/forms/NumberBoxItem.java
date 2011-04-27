@@ -65,14 +65,13 @@ public class NumberBoxItem extends FormItem<Integer> {
     @Override
     public void resetMetaData() {
         super.resetMetaData();
-        textBox.setValue("");
+        textBox.setValue(null);
     }
 
     @Override
     public void setValue(Integer number) {
         if(number>=0)
         {
-            isModified = true;
             textBox.setValue(String.valueOf(number));
         }
     }

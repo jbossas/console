@@ -24,7 +24,6 @@ import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanCodex;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.autobean.shared.AutoBeanVisitor;
-import com.google.gwt.autobean.shared.impl.AbstractAutoBean;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -134,7 +133,6 @@ public class Form<T> {
         autoBean.accept(new AutoBeanVisitor() {
 
             private boolean isComplex = false;
-            private boolean isTransient = true;
 
             @Override
             public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
@@ -149,13 +147,20 @@ public class Form<T> {
                     {
                         if(key.startsWith(propertyName)) // keys maybe used multiple times
                         {
-                            // verify transient state
-                            if(isTransient) isTransient = (value==null);
-
                             // update field values
                             matchingField = groupItems.get(key);
                             matchingField.resetMetaData();
-                            matchingField.setValue(value);
+
+                            if(value!=null)
+                            {
+                                matchingField.setUndefined(false);
+                                matchingField.setValue(value);
+                            }
+                            else
+                            {
+                                matchingField.setUndefined(true);
+                            }
+
                         }
                     }
                 }
@@ -178,24 +183,6 @@ public class Form<T> {
                 isComplex = true;
                 //System.out.println("begin reference "+propertyName+ ": "+ctx.getType());
                 return true;
-            }
-
-            @Override
-            public boolean visit(AutoBean<?> bean, Context ctx) {
-                if(isComplex) return true;
-
-                boolean visit = super.visit(bean, ctx);
-                isTransient = true;
-                return visit;
-            }
-
-            @Override
-            public void endVisit(AutoBean<?> bean, Context ctx) {
-                if(!isComplex)
-                {
-                    //System.out.println(bean.getType() + " is transient: " + isTransient+"\n---\n");
-                    bean.setTag("transient", isTransient);
-                }
             }
         });
 

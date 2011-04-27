@@ -363,6 +363,10 @@ public class ServerGroupPresenter
                 }
             });
         }
+        else
+        {
+            Console.warning("No changes applied!");
+        }
     }
 
     public void onCreateJvm(final String groupName, Jvm jvm) {

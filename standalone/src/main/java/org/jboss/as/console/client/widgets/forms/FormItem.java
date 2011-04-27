@@ -35,6 +35,7 @@ public abstract class FormItem<T> implements InputElement<T> {
     protected boolean isErroneous = false;
     protected boolean isRequired = true;
     protected boolean isModified = false;
+    protected boolean isUndefined = true;
 
     protected String errMessage = "Invalid input";
 
@@ -85,8 +86,17 @@ public abstract class FormItem<T> implements InputElement<T> {
         return isModified;
     }
 
+    public boolean isUndefined() {
+        return isUndefined;
+    }
+
+    public void setUndefined(boolean undefined) {
+        isUndefined = undefined;
+    }
+
     protected void resetMetaData() {
         isModified = false;
+        isUndefined = true;
         setErroneous(false);
     }
 
