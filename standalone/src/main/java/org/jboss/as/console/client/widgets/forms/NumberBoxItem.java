@@ -70,7 +70,7 @@ public class NumberBoxItem extends FormItem<Integer> {
 
     @Override
     public void setValue(Integer number) {
-        if(number>0)
+        if(number>=0)
         {
             isUndefined = false;
             textBox.setValue(String.valueOf(number));
@@ -110,7 +110,7 @@ public class NumberBoxItem extends FormItem<Integer> {
         {
             try {
                 int i = Integer.parseInt(textBox.getValue());
-                outcome = (i>0);
+                outcome = (i>=0);
             } catch (NumberFormatException e) {
                 outcome = false;
             }
