@@ -79,7 +79,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<Jvm> jvm() {
-        throw new RuntimeException("not implemented");
+        return new AutoBeanStub<Jvm>(new JvmImpl());
     }
 
     @Override

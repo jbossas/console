@@ -29,7 +29,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
-import org.jboss.as.console.client.widgets.forms.ModelNodeAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
@@ -201,7 +200,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         proto.get(ADDRESS).add(SERVER_GROUP, name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(ServerGroupRecord.class);
-        ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changeset, bindings);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -277,7 +276,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         proto.get(ADDRESS).add(JVM, jvmName);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
-        ModelNode operation  = ModelNodeAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         System.out.println(operation.toString());
 

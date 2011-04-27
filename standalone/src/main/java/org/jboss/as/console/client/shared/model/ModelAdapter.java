@@ -19,7 +19,16 @@
 
 package org.jboss.as.console.client.shared.model;
 
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.STEPS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
 
 /**
  * @author Heiko Braun
@@ -29,5 +38,64 @@ public class ModelAdapter {
     public static boolean hasDefined(ModelNode node ,String key)
     {
         return node.has(key) && node.get(key).isDefined();
+    }
+
+    /**
+     * Turns a changeset into a composite write attribute operation.
+     *
+     * @param changeSet
+     * @param bindings
+     * @return composite operation
+     */
+    public static ModelNode detypedFromChangeset(ModelNode prototype, Map<String, Object> changeSet, List<PropertyBinding> bindings)
+    {
+        // pre requesites
+        prototype.require(ADDRESS);
+        prototype.require(OP);
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        for(PropertyBinding binding : bindings)
+        {
+
+            Object value = changeSet.get(binding.getJavaName());
+            if(value!=null)
+            {
+                ModelNode step = prototype.clone();
+                step.get(NAME).set(binding.getDetypedName());
+
+                Class type = value.getClass();
+                if(String.class == type)
+                {
+                    step.get(VALUE).set((String)value);
+                }
+                else if(Boolean.class == type)
+                {
+                    step.get(VALUE).set((Boolean)value);
+                }
+                else if(Integer.class == type)
+                {
+                    step.get(VALUE).set((Integer)value);
+                }
+                else if(Double.class == type)
+                {
+                    step.get(VALUE).set((Double)value);
+                }
+                else
+                {
+                    throw new RuntimeException("Unsupported type: "+type);
+                }
+
+                steps.add(step);
+            }
+        }
+
+
+        operation.get(STEPS).set(steps);
+        return operation;
     }
 }

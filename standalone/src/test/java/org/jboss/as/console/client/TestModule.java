@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourceStoreImpl;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 import javax.inject.Singleton;
 
@@ -53,6 +54,7 @@ public class TestModule extends AbstractModule {
         bind(HandlerMapping.class).to(TestHandlerRegistry.class).in(Singleton.class);
         bind(BeanFactory.class).to(BeanFactoryImpl.class).in(Singleton.class);
         bind(ApplicationProperties.class).to(TestProperties.class).in(Singleton.class);
+        bind(PropertyMetaData.class).to(ReflectionMetaData.class).in(Singleton.class);
 
         bind(ProfileStore.class).to(ProfileStoreImpl.class).in(Singleton.class);
         bind(SubsystemStore.class).to(SubsystemStoreImpl.class).in(Singleton.class);

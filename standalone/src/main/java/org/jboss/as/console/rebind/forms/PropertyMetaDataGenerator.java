@@ -35,6 +35,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -160,7 +162,18 @@ public class PropertyMetaDataGenerator extends Generator{
                         sourceWriter.println("registry.put("+beanTypeClass.getName()+".class, new ArrayList<PropertyBinding>());");
 
                         // map properties
-                        mapProperties(beanTypeClass, context, sourceWriter);
+                        List<BindingDeclaration> bindings = mapProperties(beanTypeClass);
+
+                        for(BindingDeclaration decl : bindings)
+                        {
+                            if(decl.isIgnore()) continue;
+
+                            sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
+                            sourceWriter.indent();
+                            sourceWriter.println("new PropertyBinding(\""+decl.getJavaName()+"\", \""+decl.getDetypedName()+"\")");
+                            sourceWriter.outdent();
+                            sourceWriter.println(");");
+                        }
                     }
                 }
 
@@ -174,29 +187,39 @@ public class PropertyMetaDataGenerator extends Generator{
         sourceWriter.println("}");
     }
 
-    private void mapProperties(Class beanTypeClass, GeneratorContext context, SourceWriter sourceWriter) {
+    public static List<BindingDeclaration> mapProperties(Class beanTypeClass) {
+
+        List<BindingDeclaration> bindings = new ArrayList<BindingDeclaration>();
 
         for(Method method : beanTypeClass.getDeclaredMethods())
         {
             String methodName = method.getName();
+            String token = null;
+
             if(methodName.startsWith("get"))
             {
-                String token = methodName.substring(3, methodName.length());
-                writeRegisterPropBinding(beanTypeClass, sourceWriter, method, token);
+                token = methodName.substring(3, methodName.length());
             }
             else if(methodName.startsWith("is"))
             {
-                String token = methodName.substring(2, methodName.length());
-                writeRegisterPropBinding(beanTypeClass, sourceWriter, method, token);
+                token = methodName.substring(2, methodName.length());
             }
-            else
+
+            if(token!=null)
             {
-                continue;
+                BindingDeclaration bindingDeclaration = createBindingDeclaration(beanTypeClass, method, token);
+                if(bindingDeclaration!=null)
+                    bindings.add(bindingDeclaration);
             }
+
         }
+
+        return bindings;
     }
 
-    private void writeRegisterPropBinding(Class beanTypeClass, SourceWriter sourceWriter, Method method, String token) {
+    private static BindingDeclaration createBindingDeclaration(Class beanTypeClass, Method method, String token) {
+
+
         String firstLetter = token.substring(0,1);
         String remainder   = token.substring(1);
         String normalized = firstLetter.toLowerCase() + remainder;
@@ -208,16 +231,10 @@ public class PropertyMetaDataGenerator extends Generator{
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
         if(bindingDeclaration!=null)
         {
-            if(bindingDeclaration.ignore()) return; // skip
-
             detypedName = bindingDeclaration.detypedName();
         }
 
-        sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
-        sourceWriter.indent();
-        sourceWriter.println("new PropertyBinding(\""+javaName+"\", \""+detypedName+"\")");
-        sourceWriter.outdent();
-        sourceWriter.println(");");
+        return new BindingDeclaration(detypedName, javaName, bindingDeclaration.ignore(), beanTypeClass.getName());
     }
 
     private void generateMethods(SourceWriter sourceWriter)
