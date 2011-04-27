@@ -33,11 +33,11 @@ public abstract class FormItem<T> implements InputElement<T> {
 
     protected  boolean isKey;
 
-    protected boolean isErroneous =   false;
-    protected boolean isRequired =    true;
+    protected boolean isErroneous = false;
+    protected boolean isRequired = true;
     protected String errMessage = "Invalid input";
 
-    protected boolean isUndefined = true;
+    protected boolean isModified = false;
 
     public FormItem(String name, String title) {
         this.name = name;
@@ -98,12 +98,12 @@ public abstract class FormItem<T> implements InputElement<T> {
         this.errMessage = errMessage;
     }
 
-    public boolean isUndefined() {
-        return isUndefined;
+    public boolean isModified() {
+        return isModified;
     }
 
     protected void resetMetaData() {
-        isUndefined = true;
+        isModified = false;
         setErroneous(false);
     }
 

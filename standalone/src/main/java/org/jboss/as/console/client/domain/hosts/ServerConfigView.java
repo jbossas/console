@@ -181,7 +181,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             @Override
             public boolean validate(String value) {
                 boolean parentValid = super.validate(value);
-                //boolean portDefined = !portOffset.isUndefined();
+                //boolean portDefined = !portOffset.isModified();
                 return parentValid ;//&& portDefined;
             }
 

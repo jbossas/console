@@ -125,10 +125,10 @@ public class Form<T> {
 
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(bean);
 
-        this.editedEntity = bean;
-
         if(null==autoBean)
             throw new IllegalArgumentException("Not an auto bean: " + bean.getClass());
+
+        this.editedEntity = bean;
 
         autoBean.accept(new AutoBeanVisitor() {
 
@@ -192,13 +192,13 @@ public class Form<T> {
 
         Map<String, Object> finalDiff = new HashMap<String,Object>();
 
-        // skip UNDEFINED
+        // skip unmodified fields
         for(Map<String, FormItem> groupItems : formItems.values())
         {
             for(FormItem item : groupItems.values())
             {
                 Object val = diff.get(item.getName());
-                if(val!=null && !item.isUndefined())
+                if(val!=null && item.isModified())
                     finalDiff.put(item.getName(), val);
             }
         }
@@ -211,7 +211,6 @@ public class Form<T> {
         FormValidation outcome = new FormValidation();
         for(Map<String, FormItem> groupItems : formItems.values())
         {
-            int i=0;
             for(FormItem item : groupItems.values())
             {
                 if(! item.validate(item.getValue()) )

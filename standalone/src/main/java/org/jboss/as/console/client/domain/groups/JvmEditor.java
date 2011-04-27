@@ -25,15 +25,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+
 
 /**
  * @author Heiko Braun
@@ -83,7 +84,16 @@ public class JvmEditor {
             @Override
             public void onClick(ClickEvent event) {
                 if(hasJvm)
-                    presenter.onDeleteJvm(selectedRecord.getGroupName(), form.getEditedEntity());
+                {
+                    Feedback.confirm("Delete JVM Settings", "Really delete the JVM settings?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if(isConfirmed)
+                                        presenter.onDeleteJvm(selectedRecord.getGroupName(), form.getEditedEntity());
+                                }
+                            });
+                }
             }
         });
 
@@ -121,10 +131,14 @@ public class JvmEditor {
     private void onSave() {
         form.setEnabled(false);
 
-        if(hasJvm)
-            presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
-        else
-            presenter.onCreateJvm(selectedRecord.getGroupName(), form.getUpdatedEntity());
+        FormValidation validation = form.validate();
+        if(!validation.hasErrors())
+        {
+            if(hasJvm)
+                presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
+            else
+                presenter.onCreateJvm(selectedRecord.getGroupName(), form.getUpdatedEntity());
+        }
     }
 
     private void onEdit() {
@@ -139,7 +153,7 @@ public class JvmEditor {
 
         label.setVisible(!hasJvm);
 
-        if(jvm!=null)
+        if(hasJvm)
             form.edit(jvm);
         else
             form.edit(factory.jvm().as());

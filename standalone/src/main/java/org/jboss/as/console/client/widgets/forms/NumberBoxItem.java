@@ -43,7 +43,7 @@ public class NumberBoxItem extends FormItem<Integer> {
         textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
-                isUndefined = false;
+                isModified = true;
             }
         });
 
@@ -72,7 +72,7 @@ public class NumberBoxItem extends FormItem<Integer> {
     public void setValue(Integer number) {
         if(number>=0)
         {
-            isUndefined = false;
+            isModified = true;
             textBox.setValue(String.valueOf(number));
         }
     }
@@ -98,7 +98,7 @@ public class NumberBoxItem extends FormItem<Integer> {
 
         boolean outcome = true;
 
-        if(isUndefined)
+        if(!isModified)
         {
             return true;
         }

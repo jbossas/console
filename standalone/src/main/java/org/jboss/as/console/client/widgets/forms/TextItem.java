@@ -33,7 +33,7 @@ public class TextItem extends FormItem<String> {
     public TextItem(String name, String title) {
         super(name, title);
         this.html = new HTML();
-        isUndefined = true; // will be ignored
+        isModified = false; // will be ignored
     }
 
     @Override
@@ -43,12 +43,11 @@ public class TextItem extends FormItem<String> {
 
     @Override
     public void resetMetaData() {
+        // text items cannot be modified ...
     }
 
     @Override
     public void setValue(String value) {
-        if(value!=null && !value.equals(""))
-            isUndefined = false;
         html.setText(value);
     }
 

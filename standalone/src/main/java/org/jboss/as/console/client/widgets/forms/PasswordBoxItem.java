@@ -60,7 +60,7 @@ public class PasswordBoxItem extends FormItem<String> {
     @Override
     public void setValue(String value) {
         if(value!=null && !value.equals(""))
-            isUndefined = false;
+            isModified = true;
         textBox.setValue(value);
     }
 

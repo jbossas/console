@@ -42,7 +42,7 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
     @Override
     public void setValue(Boolean value) {
-        isUndefined = false;
+        isModified = true;
         checkBox.setValue(value);
     }
 

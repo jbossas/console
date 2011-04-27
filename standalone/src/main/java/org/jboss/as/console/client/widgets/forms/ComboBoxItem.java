@@ -47,7 +47,7 @@ public class ComboBoxItem extends FormItem<String> {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 if(postInit)
-                    isUndefined = false;
+                    isModified = true;
             }
         });
 
@@ -85,7 +85,7 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
     private void selectItem(int i) {
-        isUndefined = false;
+        isModified = true;
         comboBox.setItemSelected(i, true);
     }
 
@@ -132,7 +132,7 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public boolean validate(String value) {
-        if(isUndefined)
+        if(!isModified)
         {
             return true;
         }
