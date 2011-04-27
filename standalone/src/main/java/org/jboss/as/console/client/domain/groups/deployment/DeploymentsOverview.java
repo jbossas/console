@@ -46,6 +46,7 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import java.util.ArrayList;
 import java.util.List;
 import org.jboss.as.console.client.widgets.tables.HyperlinkCell;
+import org.jboss.as.console.client.widgets.tables.MenuColumn;
 import org.jboss.as.console.client.widgets.tables.MenuList;
 import org.jboss.as.console.client.widgets.tables.NamedCommand;
 import org.jboss.as.console.client.widgets.tables.PopupColumn;
@@ -87,18 +88,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         // ---------
 
-
-
-        // ---------
-
         SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel(100);
 
-        String[] columnHeaders = new String[] {"Name", "Runtime Name", "Action", "Action", "Custom"};
+        String[] columnHeaders = new String[] {"Name", "Runtime Name", "Option"};
         List<Column> columns = makeNameAndRuntimeColumns();
-        columns.addAll(makeActionColumns(domainDeploymentProvider, DeploymentCommand.ADD_TO_GROUP, DeploymentCommand.REMOVE_CONTENT));
+        //columns.addAll(makeActionColumns(domainDeploymentProvider, DeploymentCommand.ADD_TO_GROUP, DeploymentCommand.REMOVE_CONTENT));
 
-
-        MenuList menu = new MenuList();
 
         NamedCommand deployCmd = new NamedCommand("Assign to Group") {
             @Override
@@ -114,9 +109,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             }
         };
 
-        menu.setCommands(deployCmd, removeCmd);
 
-        PopupColumn menuCol = new PopupColumn("More ...", menu);
+        MenuColumn menuCol = new MenuColumn("...", deployCmd, removeCmd);
         columns.add(menuCol);
 
         Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
@@ -160,8 +154,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             String[] columnHeaders) {
 
         VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-        vpanel.getElement().setAttribute("style", "padding:25px;");
+        vpanel.getElement().setAttribute("style", "padding:15px;width:90%");
 
         // -----------
 

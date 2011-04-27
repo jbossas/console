@@ -20,14 +20,13 @@
 package org.jboss.as.console.client.widgets.tables;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.core.message.MessageCenterView;
 
 /**
  * @author Heiko Braun
@@ -61,7 +60,7 @@ public class MenuCell extends AbstractCell<String> {
         //safeHtmlBuilder.appendHtmlConstant(prototype.getHTML());
         safeHtmlBuilder.appendHtmlConstant("</td><td width='100%'>");
 
-        safeHtmlBuilder.append(TEMPLATE.message("", text));
+        safeHtmlBuilder.append(TEMPLATE.message("menu-cell", text));
         safeHtmlBuilder.appendHtmlConstant("</td></tr></table>");
 
     }

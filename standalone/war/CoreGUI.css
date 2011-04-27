@@ -690,3 +690,12 @@ color:#C0C0C0;
 }
 
 
+.menu-cell {
+  background-color:#ffffff!important;
+}
+
+.menu-cell:hover {
+   background-color:#d9e4f6!important;
+}
+
+

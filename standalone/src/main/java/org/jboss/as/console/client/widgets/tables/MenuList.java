@@ -34,8 +34,15 @@ import java.util.List;
 public class MenuList extends CellList<String> {
 
     private NamedCommand[] commands;
+    private PopupPanel popup = null;
 
-    public MenuList() {
+    MenuList(NamedCommand... commands)
+    {
+        this();
+        setCommands(commands);
+    }
+
+    MenuList() {
         super(new MenuCell());
 
         final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
@@ -47,6 +54,9 @@ public class MenuList extends CellList<String> {
                    String cmdName = selectionModel.getSelectedObject();
                    if(cmd.name.equals(cmdName))
                    {
+                       if(popup!=null) popup.hide();
+
+                       selectionModel.setSelected(cmdName, false);
                        cmd.execute();
                        break;
                    }
@@ -65,5 +75,9 @@ public class MenuList extends CellList<String> {
             list.add(cmd.name);
 
         setRowData(list);
+    }
+
+    public void setPopup(PopupPanel popup) {
+        this.popup = popup;
     }
 }

@@ -19,22 +19,17 @@
 
 package org.jboss.as.console.client.widgets.tables;
 
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Widget;
-
 /**
  * @author Heiko Braun
  * @date 4/27/11
  */
-public class PopupColumn extends Column {
+public class MenuColumn extends PopupColumn {
+    public MenuColumn(String title, NamedCommand... commands) {
+        super(title, new MenuList(commands));
 
+        PopupCell cell = (PopupCell)getCell();
 
-    public PopupColumn(String title, Widget widget) {
-        super(new PopupCell(title, widget));
-    }
-
-    @Override
-    public Object getValue(Object object) {
-        return "";
+        MenuList menu = (MenuList)cell.getPopup().getWidget();
+        menu.setPopup(cell.getPopup());
     }
 }

@@ -46,6 +46,10 @@ public class PopupCell extends AbstractCell<String> {
         this.html = new SafeHtmlBuilder().appendHtmlConstant( "<div tabindex=\"-1\" class='cell-popup'>"+title+"</div>").toSafeHtml();
     }
 
+    public PopupPanel getPopup() {
+        return popup;
+    }
+
     @Override
     public void onBrowserEvent(Context context, Element parent, String value,
                                NativeEvent event, ValueUpdater<String> valueUpdater) {
@@ -64,9 +68,11 @@ public class PopupCell extends AbstractCell<String> {
     protected void onEnterKeyDown(Context context, Element parent, String value,
                                   NativeEvent event, ValueUpdater<String> valueUpdater) {
         //delegate.execute(String.valueOf(context.getIndex()));
-        popup.setPopupPosition(parent.getAbsoluteLeft(), parent.getAbsoluteTop());
+        popup.setPopupPosition(parent.getAbsoluteLeft()-5, parent.getAbsoluteTop()-5);
         popup.show();
         popup.setAutoHideEnabled(true);
+
+        System.out.println("row: "+context.getIndex());
     }
 
 }
