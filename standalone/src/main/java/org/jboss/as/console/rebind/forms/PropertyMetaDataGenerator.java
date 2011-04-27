@@ -229,12 +229,15 @@ public class PropertyMetaDataGenerator extends Generator{
 
         // @Binding can override the detyped name
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
+        boolean ignore = false;
+
         if(bindingDeclaration!=null)
         {
             detypedName = bindingDeclaration.detypedName();
+            ignore = bindingDeclaration.ignore();
         }
 
-        return new BindingDeclaration(detypedName, javaName, bindingDeclaration.ignore(), beanTypeClass.getName());
+        return new BindingDeclaration(detypedName, javaName, ignore, beanTypeClass.getName());
     }
 
     private void generateMethods(SourceWriter sourceWriter)
