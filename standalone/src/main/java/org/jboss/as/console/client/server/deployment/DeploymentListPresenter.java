@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.server.deployment;
 
 import com.google.gwt.event.shared.EventBus;
@@ -29,57 +28,106 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import java.util.List;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeployCommandDelegate;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
 
 /**
  * @author Heiko Braun
  * @date 3/14/11
  */
-public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy> {
+public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy>
+        implements DeployCommandDelegate {
 
-    private final PlaceManager placeManager;
+  private final PlaceManager placeManager;
+  private StandaloneDeploymentInfo deploymentInfo;
+  private DeploymentStore deploymentStore;
 
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DeploymentListPresenter)
-    public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
-    }
+  @ProxyCodeSplit
+  @NameToken(NameTokens.DeploymentListPresenter)
+  public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
+  }
 
-    public interface MyView extends View {
-        void setPresenter(DeploymentListPresenter presenter);
-    }
+  public interface MyView extends View {
 
-    @Inject
-    public DeploymentListPresenter(
-            EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager) {
+    void setPresenter(DeploymentListPresenter presenter);
 
-        super(eventBus, view, proxy);
-        this.placeManager = placeManager;
-    }
+    void updateDeploymentInfo(List<DeploymentRecord> deployments);
+  }
 
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
+  @Inject
+  public DeploymentListPresenter(
+          EventBus eventBus, MyView view, MyProxy proxy,
+          DeploymentStore deploymentStore,
+          PlaceManager placeManager) {
 
-    @Override
-    protected void onReset() {
-        super.onReset();
-    }
+    super(eventBus, view, proxy);
+    this.placeManager = placeManager;
+    this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
+    this.deploymentStore = deploymentStore;
+  }
 
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DeploymentMgmtPresenter.TYPE_MainContent, this);
-    }
+  @Override
+  protected void onBind() {
+    super.onBind();
+    getView().setPresenter(this);
+  }
 
-    public void onFilterType(String value) {
+  @Override
+  protected void onReset() {
+    super.onReset();
+    deploymentInfo.refreshView();
+  }
 
-    }
+  @Override
+  protected void revealInParent() {
+    RevealContentEvent.fire(getEventBus(), DeploymentMgmtPresenter.TYPE_MainContent, this);
+  }
 
-    public void deleteDeployment(DeploymentRecord selectedObject) {
+  public void onFilterType(String value) {
+  }
 
-    }
+  @Override
+  public void removeContent(DeploymentRecord record) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
+  @Override
+  public void enableDisableDeployment(final DeploymentRecord deployment) {
+    deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
+
+      @Override
+      public void onSuccess(DMRResponse response) {
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(deployment, deployment.getServerGroup());
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        super.onFailure(t);
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(deployment, deployment.getServerGroup(), t);
+      }
+    });
+  }
+
+  @Override
+  public void addToServerGroup(String selectedGroup, DeploymentRecord record) {
+    throw new UnsupportedOperationException("Not supported in standalone mode.");
+  }
+
+  @Override
+  public String getSelectedServerGroup() {
+    return null;
+  }
+
+  @Override
+  public void removeDeploymentFromGroup(DeploymentRecord record) {
+    throw new UnsupportedOperationException("Not supported in standalone mode.");
+  }
 }

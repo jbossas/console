@@ -97,7 +97,7 @@ public class DomainDeploymentInfo {
             
             DomainDeploymentInfo.this.serverGroupDeployments = serverGroupDeployments;
             
-            deploymentStore.loadDomainDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+            deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
               @Override
               public void onSuccess(List<DeploymentRecord> result) {
                 DomainDeploymentInfo.this.domainDeployments = result;
