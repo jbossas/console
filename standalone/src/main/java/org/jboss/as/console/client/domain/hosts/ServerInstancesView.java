@@ -196,8 +196,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             @Override
             public void onClick(ClickEvent event) {
 
-                String state = form.getEditedEntity().isRunning() ? "Stop" : "Start";
-                Feedback.confirm(state + " server instance", "Do you want to " + state + " this server "+form.getEditedEntity().getName()+"?",
+                String state = form.getEditedEntity().isRunning() ? "stop" : "start";
+                Feedback.confirm("Server State", "Do you want to <u>" + state + "</u> server <u>"+form.getEditedEntity().getName()+"</u>?",
                         new Feedback.ConfirmationHandler()
                         {
                             @Override

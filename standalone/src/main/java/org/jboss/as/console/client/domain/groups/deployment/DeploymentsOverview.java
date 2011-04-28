@@ -116,7 +116,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
                 final String groupName = getSelectedServerGroup();
 
-                Feedback.confirm("Assign Server Group", "Assign "+deployment.getName() + " to group "+groupName+"?",
+                Feedback.confirm("Assign Server Group", "Assign "+deployment.getName() + " to group <u>"+groupName+"</u>?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -132,7 +132,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             public void execute(int rownum) {
                 final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
 
-                Feedback.confirm("Remove Deployment", "Really remove "+deployment.getName() + "?",
+                Feedback.confirm("Remove Deployment", "Really remove <u>"+deployment.getName() + "</u>?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -344,7 +344,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                     final DeploymentRecord deployment = dataProvider.getList().get(rownum);
 
                     String state = deployment.isEnabled() ? "disable" : "enable";
-                    Feedback.confirm("Deployment State", "Really "+state+ " "+deployment.getName() + "?",
+                    Feedback.confirm("Deployment State", "Really <u>"+state+ "</u> <u>"+deployment.getName() + "</u>?",
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -360,7 +360,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                     final ListDataProvider<DeploymentRecord> dataProvider = serverGroupDeploymentProviders.get(getSelectedServerGroup());
                     final DeploymentRecord deployment = dataProvider.getList().get(rownum);
 
-                    Feedback.confirm("Remove Deployment", "Really remove "+deployment.getName() + " from server-group "+getSelectedServerGroup()+"?",
+                    Feedback.confirm("Remove Deployment", "Really remove <u>"+deployment.getName() + "</u> from server-group "+getSelectedServerGroup()+"?",
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {

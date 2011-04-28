@@ -52,6 +52,7 @@ public class Feedback {
         panel.setStyleName("fill-layout-width");
 
         HTML text = new HTML(message);
+        text.getElement().setAttribute("style", "margin:10px;");
 
         ClickHandler confirmHandler = new ClickHandler() {
             @Override

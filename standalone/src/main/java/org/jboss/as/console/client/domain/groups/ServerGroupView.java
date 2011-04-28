@@ -110,7 +110,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
             public void onClick(ClickEvent clickEvent) {
                 Feedback.confirm(
                         "Delete Server Group",
-                        "Do you want to delete server group '"+form.getEditedEntity().getGroupName()+"'?",
+                        "Do you want to delete server group <u>'"+form.getEditedEntity().getGroupName()+"'</u>?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
