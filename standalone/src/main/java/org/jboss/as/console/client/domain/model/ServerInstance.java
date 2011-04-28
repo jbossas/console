@@ -32,4 +32,7 @@ public interface ServerInstance {
 
     String getServer();
     void setServer(String server);
+
+    String getGroup();
+    void setGroup(String group);
 }

@@ -48,7 +48,6 @@ import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
@@ -70,7 +69,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private ContentHeaderLabel nameLabel;
     private ListDataProvider<ServerInstance> instanceProvider;
     private String selectedHost = null;
-    private ComboBox configFilter;
+    private ComboBox groupFilter;
     private CellTable<ServerInstance> instanceTable;
 
     @Override
@@ -111,19 +110,19 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
 
-        configFilter = new ComboBox();
-        configFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
+        groupFilter = new ComboBox();
+        groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.onFilterType(event.getValue());
+                presenter.onFilterByGroup(event.getValue());
             }
         });
 
-        Widget typeFilterWidget = configFilter.asWidget();
+        Widget typeFilterWidget = groupFilter.asWidget();
         typeFilterWidget.getElement().setAttribute("style", "width:200px;");
 
 
-        tableOptions.add(new Label("Config:"));
+        tableOptions.add(new Label("Server Group:"));
         tableOptions.add(typeFilterWidget);
 
         tableOptions.getElement().setAttribute("style", "float:right;");
@@ -144,10 +143,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         };
 
 
-        Column<ServerInstance, String> serverColumn = new Column<ServerInstance, String>(new TextCell()) {
+        Column<ServerInstance, String> groupColumn = new Column<ServerInstance, String>(new TextCell()) {
             @Override
             public String getValue(ServerInstance object) {
-                return object.getServer();
+                return object.getGroup();
             }
         };
 
@@ -167,8 +166,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         };
 
-        instanceTable.addColumn(nameColumn, "Instance Name");
-        instanceTable.addColumn(serverColumn, "Config");
+        instanceTable.addColumn(nameColumn, "Server");
+        instanceTable.addColumn(groupColumn, "Group");
         instanceTable.addColumn(statusColumn, "Status");
         vpanel.add(instanceTable);
 
@@ -260,9 +259,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         names.add(""); // de-select filter
         for(Server server : servers)
         {
-            names.add(server.getName());
+            if(!names.contains(server.getGroup())) // could be turned into Set based API
+                names.add(server.getGroup());
         }
-        configFilter.setValues(names);
+        groupFilter.setValues(names);
     }
 
     private String buildToken(String serverName) {

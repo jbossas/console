@@ -171,28 +171,28 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         refreshView();
     }
 
-    public void onFilterType(String serverConfig) {
+    public void onFilterByGroup(String serverConfig) {
 
         List<ServerInstance> filtered = filter.apply(
-                new ServerConfigPredicate(serverConfig),
+                new ServerGroupPredicate(serverConfig),
                 serverInstances
         );
 
         getView().updateInstances(filtered);
     }
 
-    class ServerConfigPredicate implements Predicate<ServerInstance> {
-        private String configFilter;
+    class ServerGroupPredicate implements Predicate<ServerInstance> {
+        private String groupFilter;
 
-        ServerConfigPredicate(String configFilter) {
-            this.configFilter = configFilter;
+        ServerGroupPredicate(String filter) {
+            this.groupFilter = filter;
         }
 
         @Override
         public boolean appliesTo(ServerInstance candidate) {
 
-            boolean configMatch = configFilter.equals("") ?
-                    true : candidate.getServer().equals(configFilter);
+            boolean configMatch = groupFilter.equals("") ?
+                    true : candidate.getGroup().equals(groupFilter);
 
             return configMatch;
         }

@@ -209,6 +209,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     instance.setName(handle.getName());
                     instance.setRunning(handle.isStarted());
                     instance.setServer(handle.getName());
+                    instance.setGroup(handle.getGroup());
 
                     instanceList.add(instance);
 
