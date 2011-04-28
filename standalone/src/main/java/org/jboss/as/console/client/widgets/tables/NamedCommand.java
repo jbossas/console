@@ -34,5 +34,10 @@ public abstract class NamedCommand implements Command {
     }
 
     @Override
-    public abstract void execute();
+    public void execute() {
+        throw new RuntimeException("Should not be called");
+    }
+
+    public abstract void execute(int selectedRow);
+
 }

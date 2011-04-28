@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.widgets.tables;
 
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author Heiko Braun
@@ -29,8 +28,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class PopupColumn extends Column {
 
 
-    public PopupColumn(String title, Widget widget) {
-        super(new PopupCell(title, widget));
+    public PopupColumn(String title, PopupCell.PopupCellDelegate delegate) {
+        super(new PopupCell(title, delegate));
     }
 
     @Override

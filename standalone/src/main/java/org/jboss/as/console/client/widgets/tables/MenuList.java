@@ -19,8 +19,11 @@
 
 package org.jboss.as.console.client.widgets.tables;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -31,11 +34,20 @@ import java.util.List;
  * @author Heiko Braun
  * @date 4/27/11
  */
-public class MenuList extends CellList<String> {
+public class MenuList extends CellList implements PopupCell.PopupCellDelegate{
 
     private NamedCommand[] commands;
     private PopupPanel popup = null;
 
+    private int selectedRow = -1;
+
+    // cell list customization
+    public interface Resources extends CellList.Resources { 		 		
+        @Source("org/jboss/as/console/client/widgets/tables/CellList.css") 		
+        CellList.Style cellListStyle(); 	
+    }
+ 	
+    
     MenuList(NamedCommand... commands)
     {
         this();
@@ -43,13 +55,14 @@ public class MenuList extends CellList<String> {
     }
 
     MenuList() {
-        super(new MenuCell());
+
+        super(new MenuCell(), (Resources) GWT.create(Resources.class));
 
         final SingleSelectionModel<String> selectionModel = new SingleSelectionModel<String>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-               for(NamedCommand cmd : commands){
+               for(final NamedCommand cmd : commands){
 
                    String cmdName = selectionModel.getSelectedObject();
                    if(cmd.name.equals(cmdName))
@@ -57,7 +70,15 @@ public class MenuList extends CellList<String> {
                        if(popup!=null) popup.hide();
 
                        selectionModel.setSelected(cmdName, false);
-                       cmd.execute();
+
+                       Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
+                       {
+                           @Override
+                           public void execute() {
+                               cmd.execute(selectedRow);
+                           }
+                       });
+
                        break;
                    }
                }
@@ -67,14 +88,24 @@ public class MenuList extends CellList<String> {
         setSelectionModel(selectionModel);
     }
 
+    @Override
+    public void onRowSelection(int rownum) {
+       selectedRow = rownum;
+    }
+
+    @Override
+    public Widget asWidget() {
+        return this;
+    }
+
     public void setCommands(NamedCommand... commands) {
 
         this.commands = commands;
-        List<String> list = new ArrayList<String>(commands.length);
+        List<String> cmdNames= new ArrayList<String>(commands.length);
         for(NamedCommand cmd : commands)
-            list.add(cmd.name);
+            cmdNames.add(cmd.name);
 
-        setRowData(list);
+        setRowData(cmdNames);
     }
 
     public void setPopup(PopupPanel popup) {

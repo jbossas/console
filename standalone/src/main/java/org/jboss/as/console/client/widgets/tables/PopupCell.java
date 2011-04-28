@@ -36,13 +36,16 @@ public class PopupCell extends AbstractCell<String> {
 
     private final SafeHtml html;
     private PopupPanel popup;
+    private PopupCellDelegate delegate;
 
-    public PopupCell(String title, Widget popupWidget) {
+    public PopupCell(String title, PopupCellDelegate delegate) {
         super("click", "keydown");
+
+        this.delegate = delegate;
 
         this.popup = new PopupPanel();
         this.popup.setStyleName("default-popup");
-        this.popup.setWidget(popupWidget);
+        this.popup.setWidget(delegate.asWidget());
         this.html = new SafeHtmlBuilder().appendHtmlConstant( "<div tabindex=\"-1\" class='cell-popup'>"+title+"</div>").toSafeHtml();
     }
 
@@ -67,12 +70,19 @@ public class PopupCell extends AbstractCell<String> {
     @Override
     protected void onEnterKeyDown(Context context, Element parent, String value,
                                   NativeEvent event, ValueUpdater<String> valueUpdater) {
-        //delegate.execute(String.valueOf(context.getIndex()));
+
         popup.setPopupPosition(parent.getAbsoluteLeft()-5, parent.getAbsoluteTop()-5);
         popup.show();
         popup.setAutoHideEnabled(true);
 
-        System.out.println("row: "+context.getIndex());
+        delegate.onRowSelection(context.getIndex());
+
+    }
+
+    public interface PopupCellDelegate
+    {
+        void onRowSelection(int rownum);
+        Widget asWidget();
     }
 
 }

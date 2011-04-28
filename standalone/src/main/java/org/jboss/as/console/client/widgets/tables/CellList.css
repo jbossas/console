@@ -17,21 +17,29 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.widgets.tables;
+.cellListWidget {
 
-/**
- * @author Heiko Braun
- * @date 4/27/11
- */
-public class MenuColumn extends PopupColumn {
-    public MenuColumn(String title, NamedCommand... commands) {
-        super(title, new MenuList(commands));
+}
 
-        PopupCell cell = (PopupCell)getCell();
+.cellListEvenItem {
+  cursor: pointer;
+}
 
-        MenuList menu = (MenuList)cell.getPopup().getWidget();
-        menu.setPopup(cell.getPopup());
-    }
+.cellListOddItem {
+  cursor: pointer;
+  border-top:1px solid #f2f2f2;
+}
 
+.cellListKeyboardSelectedItem {
+  border: none;
+  background-color:#ffffff ;
+}
 
+@sprite .cellListSelectedItem {
+  gwt-image: 'cellListSelectedBackground';
+  background-color: #ffffff;
+  background-position: top right;
+  height: auto;
+  width: 100%;
+  overflow: visible;
 }

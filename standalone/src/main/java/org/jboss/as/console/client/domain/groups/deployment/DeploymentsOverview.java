@@ -18,22 +18,21 @@
  */
 package org.jboss.as.console.client.domain.groups.deployment;
 
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.core.message.Message;
@@ -41,15 +40,18 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
+import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tables.MenuColumn;
+import org.jboss.as.console.client.widgets.tables.NamedCommand;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.jboss.as.console.client.widgets.tables.HyperlinkCell;
-import org.jboss.as.console.client.widgets.tables.MenuColumn;
-import org.jboss.as.console.client.widgets.tables.MenuList;
-import org.jboss.as.console.client.widgets.tables.NamedCommand;
-import org.jboss.as.console.client.widgets.tables.PopupColumn;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Heiko Braun
@@ -61,7 +63,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private DeploymentsPresenter presenter;
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
 
-    private TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+    private TabLayoutPanel tabLayoutpanel;
     private List<String> serverGroupNames;
     private Map<String, Widget> serverGroupTabsAdded = new HashMap<String, Widget>();
     private Map<String, ListDataProvider<DeploymentRecord>> serverGroupDeploymentProviders = new HashMap<String, ListDataProvider<DeploymentRecord>>();
@@ -86,26 +88,57 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
+
+        final ToolStrip toolStrip = new ToolStrip();
+
+        toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewDeploymentDialoge();
+            }
+        }));
+
+        layout.add(toolStrip);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+
         // ---------
 
-        SplitLayoutPanel deploymentsPanel = new SplitLayoutPanel(100);
+        DockLayoutPanel panel = new DockLayoutPanel(Style.Unit.PCT);
+        panel.addStyleName("fill-layout-width");
 
         String[] columnHeaders = new String[] {"Name", "Runtime Name", "Option"};
         List<Column> columns = makeNameAndRuntimeColumns();
-        //columns.addAll(makeActionColumns(domainDeploymentProvider, DeploymentCommand.ADD_TO_GROUP, DeploymentCommand.REMOVE_CONTENT));
 
 
-        NamedCommand deployCmd = new NamedCommand("Assign to Group") {
+        NamedCommand deployCmd = new NamedCommand("Assign Group") {
             @Override
-            public void execute() {
-                System.out.println("> assign to group executed");
+            public void execute(int rownum) {
+                final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
+                final String groupName = getSelectedServerGroup();
+
+                Feedback.confirm("Assign Server Group", "Assign "+deployment.getName() + " to group "+groupName+"?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed) presenter.addToServerGroup(groupName, deployment);
+                            }
+                        });
             }
+
         };
 
         NamedCommand removeCmd = new NamedCommand("Remove") {
             @Override
-            public void execute() {
-                System.out.println("> remove executed");
+            public void execute(int rownum) {
+                final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
+
+                Feedback.confirm("Remove Deployment", "Really remove "+deployment.getName() + "?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed) presenter.removeContent(deployment);
+                            }
+                        });
             }
         };
 
@@ -114,16 +147,17 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         columns.add(menuCol);
 
         Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
-        deploymentsPanel.addNorth(contentTable, 250);
 
         // ---------
 
+        tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
-        deploymentsPanel.addStyleName("fill-layout-width");
-        deploymentsPanel.add(tabLayoutpanel);
 
-        layout.add(deploymentsPanel);
-        layout.setWidgetTopHeight(deploymentsPanel, 55, Style.Unit.PX, 700, Style.Unit.PX);
+        panel.addSouth(tabLayoutpanel, 50);
+        panel.add(contentTable);
+
+        layout.add(panel);
+        layout.setWidgetTopHeight(panel, 55, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
@@ -145,6 +179,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         //  if (!deploymentRecords.isEmpty()) {
         //    deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
         //  }
+
+
     }
 
     private Widget makeDeploymentTable(
@@ -193,35 +229,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         return columns;
     }
 
-    private Column makeEnabledColumn() {
-        return new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return Boolean.toString(record.isEnabled());
-            }
-        };
-    }
 
-    private List<Column> makeActionColumns(ListDataProvider<DeploymentRecord> dataProvider, DeploymentCommand... commands) {
-        List<Column> columns = new ArrayList<Column>(commands.length);
-
-        for (int i = 0; i < commands.length; i++) {
-            HyperlinkCell hyperlinkCell = new HyperlinkCell(commands[i].getLabel(),
-                    new DeploymentCommandActionCellDelegate(commands[i], dataProvider));
-
-            Column<DeploymentRecord, String> hyperlinkColumn = new Column<DeploymentRecord, String>(hyperlinkCell) {
-                @Override
-                public String getValue(DeploymentRecord object) {
-                    return "";
-                }
-
-            };
-
-            columns.add(hyperlinkColumn);
-        }
-
-        return columns;
-    }
 
     /**
      * Enumeration of commands available from deployment tables.
@@ -291,27 +299,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         }
     }
 
-    private class DeploymentCommandActionCellDelegate<String> implements ActionCell.Delegate<String> {
-        private DeploymentCommand command;
-        private ListDataProvider<DeploymentRecord> deploymentRecords;
-
-        DeploymentCommandActionCellDelegate(DeploymentCommand command, ListDataProvider<DeploymentRecord> deploymentRecords) {
-            this.command = command;
-            this.deploymentRecords = deploymentRecords;
-        }
-
-        @Override
-        public void execute(String rowNum) {
-            int row = -1;
-            try {
-                row = Integer.parseInt(rowNum.toString());
-            } catch (NumberFormatException e) {
-                Log.error("Returned invalid row=" + rowNum, e);
-            }
-            command.execute(presenter, deploymentRecords.getList().get(row));
-        }
-    }
-
     private void createAndRemoveTabs() {
         // add new server groups
         for (String serverGroupName : serverGroupNames) {
@@ -320,15 +307,73 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             }
 
             VerticalPanel vPanel = new VerticalPanel();
+            vPanel.setStyleName("fill-layout-width");
+
             this.tabLayoutpanel.add(vPanel, serverGroupName);
             this.serverGroupTabsAdded.put(serverGroupName, vPanel);
             ListDataProvider<DeploymentRecord> serverGroupProvider = new ListDataProvider<DeploymentRecord>();
             this.serverGroupDeploymentProviders.put(serverGroupName, serverGroupProvider);
 
-            String[] columnHeaders = new String[] {"Name", "Runtime Name", "Enabled?", "Action", "Action"};
+            String[] columnHeaders = new String[] {"Name", "Runtime Name", "Enabled?", "Option"};
             List<Column> columns = makeNameAndRuntimeColumns();
-            columns.add(makeEnabledColumn());
-            columns.addAll(makeActionColumns(this.serverGroupDeploymentProviders.get(serverGroupName), DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_FROM_GROUP));
+
+            // status col
+            Column<DeploymentRecord, ImageResource> statusColumn =
+                    new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
+                        @Override
+                        public ImageResource getValue(DeploymentRecord deployment) {
+
+                            ImageResource res = null;
+
+                            if(deployment.isEnabled())
+                                res = Icons.INSTANCE.statusGreen_small();
+                            else
+                                res = Icons.INSTANCE.statusYellow_small();
+
+                            return res;
+                        }
+                    };
+
+            columns.add(statusColumn);
+
+            // options
+            NamedCommand toogleStateCmd = new NamedCommand("Enable/Disable") {
+                @Override
+                public void execute(int rownum) {
+                    final ListDataProvider<DeploymentRecord> dataProvider = serverGroupDeploymentProviders.get(getSelectedServerGroup());
+                    final DeploymentRecord deployment = dataProvider.getList().get(rownum);
+
+                    String state = deployment.isEnabled() ? "disable" : "enable";
+                    Feedback.confirm("Deployment State", "Really "+state+ " "+deployment.getName() + "?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if(isConfirmed) presenter.enableDisableDeployment(deployment);
+                                }
+                            });
+                }
+            };
+
+            NamedCommand removeCmd = new NamedCommand("Remove") {
+                @Override
+                public void execute(int rownum) {
+                    final ListDataProvider<DeploymentRecord> dataProvider = serverGroupDeploymentProviders.get(getSelectedServerGroup());
+                    final DeploymentRecord deployment = dataProvider.getList().get(rownum);
+
+                    Feedback.confirm("Remove Deployment", "Really remove "+deployment.getName() + " from server-group "+getSelectedServerGroup()+"?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if(isConfirmed) presenter.removeDeploymentFromGroup(deployment);
+                                }
+                            });
+                }
+            };
+
+
+            MenuColumn menuCol = new MenuColumn("...", toogleStateCmd, removeCmd);
+
+            columns.add(menuCol);
             vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", serverGroupProvider, columns, columnHeaders));
         }
 
