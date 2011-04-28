@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -112,6 +113,8 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         record.setProfileName(model.get("profile").asString());
         record.setSocketBinding(model.get("socket-binding-group").asString());
 
+
+        // JVM settings
         try {
             if(model.has("jvm") && model.get("jvm").isDefined())
             {
@@ -131,6 +134,25 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             }
         } catch (IllegalArgumentException e) {
             // TODO: properly deal with the different representations
+        }
+
+        // System properties
+        if(model.hasDefined("system-properties"))
+        {
+            List<ModelNode> properties = model.get("system-properties").asList();
+            List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+            for(ModelNode item : properties)
+            {
+                Property property = item.asProperty();
+                PropertyRecord propRecord = factory.property().as();
+                propRecord.setKey(property.getName());
+                ModelNode value = property.getValue();
+                propRecord.setValue(value.get("value").asString());
+                propRecord.setBootTime(value.get("boot-time").asBoolean());
+                records.add(propRecord);
+            }
+
+            record.setProperties(records);
         }
 
         return record;

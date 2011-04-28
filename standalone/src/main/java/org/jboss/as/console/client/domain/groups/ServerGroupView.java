@@ -199,8 +199,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private void onSave() {
         ServerGroupRecord updatedEntity = form.getUpdatedEntity();
-        updatedEntity.setProperties(new HashMap<String,String>());
-
         presenter.onSaveChanges(updatedEntity.getGroupName(), form.getChangedValues());
     }
 

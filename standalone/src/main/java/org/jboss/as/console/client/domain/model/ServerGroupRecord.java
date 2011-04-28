@@ -19,9 +19,10 @@
 
 package org.jboss.as.console.client.domain.model;
 
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -36,8 +37,8 @@ public interface ServerGroupRecord {
     public String getProfileName();
     public void setProfileName(String name);
 
-    public void setProperties(Map<String,String> props);
-    public Map<String,String> getProperties();
+    public void setProperties(List<PropertyRecord> props);
+    public List<PropertyRecord> getProperties();
 
     public Jvm getJvm();
     public void setJvm(Jvm jvm);

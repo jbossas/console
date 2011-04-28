@@ -20,12 +20,10 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -47,13 +45,18 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Maintains a single server group.
@@ -70,7 +73,9 @@ public class ServerGroupPresenter
     private List<ServerGroupRecord> serverGroups;
     private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
+    private DefaultWindow propertyWindow;
     private String groupName;
+    private DispatchAsync dispatcher;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -91,11 +96,12 @@ public class ServerGroupPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             ServerGroupStore serverGroupStore,
             ProfileStore profileStore,
-            PropertyMetaData propertyMeta) {
+            DispatchAsync dispatcher) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -373,20 +379,20 @@ public class ServerGroupPresenter
     public void onCreateJvm(final String groupName, Jvm jvm) {
 
         serverGroupStore.createJvm(groupName, jvm, new SimpleCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean success) {
-                    if(success)
-                    {
-                        Console.info("Saved JVM settings");
-                        loadServerGroup(groupName);
-                    }
-                    else
-                        Console.error("Failed to saved JVM settings");
+            @Override
+            public void onSuccess(Boolean success) {
+                if(success)
+                {
+                    Console.info("Saved JVM settings");
+                    loadServerGroup(groupName);
                 }
-            });
+                else
+                    Console.error("Failed to saved JVM settings");
+            }
+        });
     }
 
-     public void onDeleteJvm(final String groupName, Jvm editedEntity) {
+    public void onDeleteJvm(final String groupName, Jvm editedEntity) {
         serverGroupStore.removeJvm(groupName, editedEntity, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -394,4 +400,66 @@ public class ServerGroupPresenter
             }
         });
     }
+
+    public void launchNewPropertyDialoge(ServerGroupRecord group) {
+
+        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, group).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    public void onCreateProperty(final String groupName, final PropertyRecord prop)
+    {
+
+        if(propertyWindow!=null && propertyWindow.isShowing())
+        {
+            propertyWindow.hide();
+        }
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("add-system-property");
+        operation.get(ADDRESS).add("server-group", groupName);
+        operation.get("name").set(prop.getKey());
+        operation.get("value").set(prop.getValue());
+        operation.get("boot-time").set(prop.isBootTime());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Created property "+prop.getKey());
+                loadServerGroup(groupName);
+            }
+        });
+
+    }
+
+    public void onDeleteProperty(final String groupName, final PropertyRecord prop)
+    {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("remove-system-property");
+        operation.get(ADDRESS).add("server-group", groupName);
+        operation.get("name").set(prop.getKey());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed property "+prop.getKey());
+                loadServerGroup(groupName);
+            }
+        });
+    }
+
 }

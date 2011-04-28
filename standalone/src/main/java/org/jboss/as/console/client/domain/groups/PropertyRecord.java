@@ -30,4 +30,7 @@ public interface PropertyRecord {
 
     public String getValue();
     public void setValue(String value);
+
+    public void setBootTime(boolean b);
+    public boolean isBootTime();
 }

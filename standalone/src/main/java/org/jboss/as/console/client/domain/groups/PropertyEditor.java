@@ -19,23 +19,21 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
-import org.jboss.as.console.client.widgets.tables.OptionCell;
+import org.jboss.as.console.client.widgets.tables.MenuColumn;
+import org.jboss.as.console.client.widgets.tables.NamedCommand;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -48,7 +46,7 @@ public class PropertyEditor {
     private ListDataProvider<PropertyRecord> propertyProvider;
     private DefaultCellTable<PropertyRecord> propertyTable;
     private ToolButton addProp;
-    private BeanFactory beanFactory = GWT.create(BeanFactory.class);
+
     private ServerGroupPresenter presenter;
     private ServerGroupRecord selectedRecord;
 
@@ -61,6 +59,7 @@ public class PropertyEditor {
         panel.addStyleName("fill-layout-width");
 
         propertyTable = new DefaultCellTable<PropertyRecord>(5);
+        propertyTable.getElement().setAttribute("style", "margin-top:5px;");
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
@@ -72,14 +71,11 @@ public class PropertyEditor {
         addProp.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                PropertyRecord newRecord = beanFactory.property().as();
-                newRecord.setKey("key");
-                newRecord.setValue("value");
-                propertyProvider.getList().add(newRecord);
-                propertyProvider.refresh();
+                presenter.launchNewPropertyDialoge(selectedRecord);
             }
         });
         propTools.addToolButton(addProp);
+
         panel.add(propTools);
 
         // Create columns
@@ -119,34 +115,53 @@ public class PropertyEditor {
             }
         };
 
-        OptionCell optionCell = new OptionCell("remove", new ActionCell.Delegate<String>()
-        {
-            @Override
-            public void execute(String rowNum) {
-                Integer row = Integer.valueOf(rowNum);
-                PropertyRecord propertyRecord = propertyProvider.getList().get(row);
-                propertyProvider.getList().remove(propertyRecord);
-                propertyProvider.refresh();
-            }
-        });
+        Column<PropertyRecord, String> bootColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
+            {
+                setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
 
-        Column<PropertyRecord, String> optionColumn = new Column<PropertyRecord, String>(optionCell) {
+                    @Override
+                    public void update(int index, PropertyRecord object, String value) {
+                        object.setBootTime(Boolean.valueOf(value));
+                    }
+                });
+            }
+
             @Override
             public String getValue(PropertyRecord object) {
-                return "";
+                return String.valueOf(object.isBootTime());
             }
-
         };
+
+
+        NamedCommand removeCmd = new NamedCommand("Remove") {
+            @Override
+            public void execute(int rownum) {
+
+                final PropertyRecord property = propertyProvider.getList().get(rownum);
+                Feedback.confirm("Remove Property", "Really remove property <u>" + property.getKey() + "</u>?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                presenter.onDeleteProperty(selectedRecord.getGroupName(), property);
+                            }
+                        });
+            }
+        };
+
+
+        MenuColumn menuCol = new MenuColumn("...", removeCmd);
 
         // Add the columns.
         propertyTable.addColumn(keyColumn, "Key");
         propertyTable.addColumn(valueColumn, "Value");
-        propertyTable.addColumn(optionColumn);
+        propertyTable.addColumn(bootColumn, "Boot-Time?");
+        propertyTable.addColumn(menuCol, "Option");
 
 
-        propertyTable.setColumnWidth(keyColumn, 50, Style.Unit.PCT);
-        propertyTable.setColumnWidth(valueColumn, 40, Style.Unit.PCT);
-        propertyTable.setColumnWidth(optionColumn, 10, Style.Unit.PCT);
+        propertyTable.setColumnWidth(keyColumn, 30, Style.Unit.PCT);
+        propertyTable.setColumnWidth(valueColumn, 30, Style.Unit.PCT);
+        propertyTable.setColumnWidth(bootColumn, 20, Style.Unit.PCT);
+        propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
 
         propertyTable.setRowOverHandler(
@@ -160,5 +175,6 @@ public class PropertyEditor {
 
     public void setSelectedRecord(ServerGroupRecord record) {
         this.selectedRecord = record;
+        propertyProvider.setList(record.getProperties());
     }
 }
