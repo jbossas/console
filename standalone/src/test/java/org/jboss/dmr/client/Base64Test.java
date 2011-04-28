@@ -21,6 +21,8 @@ package org.jboss.dmr.client;
 
 import org.junit.Test;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -56,5 +58,21 @@ public class Base64Test {
         ModelNode reverse = ModelNode.fromBase64(base64);
         assertEquals(32768, reverse.get("port").asInt());
     }
+
+    @Test
+    public void testEncoding() throws Exception {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("add-system-property");
+        operation.get(ADDRESS).add("server-group", "mygroup");
+        operation.get("name").set("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9797");
+        operation.get("value").set("valueString");
+        operation.get("boot-time").set(true);
+
+
+        String base64 = operation.toBase64String();
+        System.out.println(base64);
+    }
+
 
 }

@@ -44,7 +44,7 @@ public class DataOutput {
 	
 	private void growToFit(int size) {
 		if (pos + size >= bytes.length) {
-			byte[] array = new byte[bytes.length + 50];
+			byte[] array = new byte[bytes.length + size];
 			for (int i = 0; i < bytes.length; i++) {
 				array[i] = bytes[i];
 			}
