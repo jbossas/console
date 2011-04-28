@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jboss.as.console.client.shared.BeanFactory;

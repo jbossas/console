@@ -19,9 +19,12 @@
 
 package org.jboss.as.console.client.model;
 
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +37,8 @@ public class ServerGroupImpl implements ServerGroupRecord {
     String profileName;
     Jvm jvm;
     String socketBinding;
-    
+    private List<PropertyRecord> props = Collections.EMPTY_LIST;
+
     @Override
     public String getGroupName() {
         return groupName;
@@ -56,13 +60,13 @@ public class ServerGroupImpl implements ServerGroupRecord {
     }
 
     @Override
-    public void setProperties(Map<String, String> props) {
-        throw new RuntimeException();
+    public void setProperties(List<PropertyRecord> props) {
+        this.props = props;
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        throw new RuntimeException();
+    public List<PropertyRecord>  getProperties() {
+        return props;
     }
 
     @Override

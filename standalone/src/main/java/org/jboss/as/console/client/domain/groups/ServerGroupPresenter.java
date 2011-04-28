@@ -77,6 +77,7 @@ public class ServerGroupPresenter
     private String groupName;
     private DispatchAsync dispatcher;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
     public interface MyProxy extends Proxy<ServerGroupPresenter>, Place {
@@ -401,6 +402,10 @@ public class ServerGroupPresenter
         });
     }
 
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
+
     public void launchNewPropertyDialoge(ServerGroupRecord group) {
 
         propertyWindow = new DefaultWindow("New System Property");
@@ -461,5 +466,6 @@ public class ServerGroupPresenter
             }
         });
     }
+
 
 }

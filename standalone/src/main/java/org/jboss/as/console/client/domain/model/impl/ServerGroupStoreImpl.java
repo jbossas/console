@@ -38,6 +38,7 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -153,6 +154,10 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             }
 
             record.setProperties(records);
+        }
+        else
+        {
+            record.setProperties(Collections.EMPTY_LIST);
         }
 
         return record;

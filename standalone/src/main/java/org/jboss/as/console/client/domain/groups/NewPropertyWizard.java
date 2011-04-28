@@ -75,6 +75,7 @@ public class NewPropertyWizard {
                     @Override
                     public void onClick(ClickEvent event) {
                         // cancel
+                        presenter.closePropertyDialoge();
                     }
                 }
         );
