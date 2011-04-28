@@ -49,10 +49,13 @@ import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,26 +186,13 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         // ----------------------------------------------------------------------
 
         VerticalPanel formPanel = new VerticalPanel();
+        formPanel.setStyleName("fill-layout-width");
 
         final Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
-        form.setNumColumns(2);
+        //form.setNumColumns(2);
 
-        TextItem nameItem = new TextItem("name", "Instance Name");
-        TextItem serverItem = new TextItem("server", "Server Configuration");
-
-        final ButtonItem enableItem = new ButtonItem("running", "Action") {
-            @Override
-            public void setValue(Boolean b) {
-
-                if(b)
-                    button.setText("Stop");
-                else
-                    button.setText("Start");
-
-            }
-        };
-
-        enableItem.addClickHandler(new ClickHandler() {
+        ToolStrip formTools = new ToolStrip();
+        formTools.addToolButton(new ToolButton("Start/Stop", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
@@ -220,13 +210,23 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
                             }
                         });
             }
-        });
+        }));
 
-        form.setFields(nameItem, enableItem, serverItem);
+        formPanel.add(formTools);
+
+        // -----
+
+
+        TextItem nameItem = new TextItem("name", "Instance Name");
+        TextItem serverItem = new TextItem("server", "Server Configuration");
+        CheckBoxItem enableItem = new CheckBoxItem("running", "Running?");
+
+        form.setFields(nameItem, serverItem, enableItem);
         form.bind(instanceTable);
+        form.setEnabled(false);
 
         Widget formWidget = form.asWidget();
-        formWidget.getElement().setAttribute("style", "margin-top:15px;");
+        //formWidget.getElement().setAttribute("style", "margin-top:15px;");
 
         formPanel.add(formWidget);
 
