@@ -19,8 +19,11 @@
 
 package org.jboss.as.console.client.model;
 
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -35,6 +38,7 @@ public class ServerImpl implements Server {
     String socketBinding;
     int portOffset;
     Jvm jvm;
+    private List<PropertyRecord> props;
 
     @Override
     public String getName() {
@@ -104,5 +108,15 @@ public class ServerImpl implements Server {
     @Override
     public void setJvm(Jvm jvm) {
         this.jvm = jvm;
+    }
+
+    @Override
+    public List<PropertyRecord> getProperties() {
+        return props;
+    }
+
+    @Override
+    public void setProperties(List<PropertyRecord> props) {
+        this.props = props;
     }
 }

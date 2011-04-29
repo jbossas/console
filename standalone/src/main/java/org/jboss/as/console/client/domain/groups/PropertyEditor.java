@@ -27,7 +27,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
@@ -36,6 +36,8 @@ import org.jboss.as.console.client.widgets.tables.MenuColumn;
 import org.jboss.as.console.client.widgets.tables.NamedCommand;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -47,10 +49,10 @@ public class PropertyEditor {
     private DefaultCellTable<PropertyRecord> propertyTable;
     private ToolButton addProp;
 
-    private ServerGroupPresenter presenter;
-    private ServerGroupRecord selectedRecord;
+    private PropertyManagement presenter;
+    private String reference;
 
-    public PropertyEditor(ServerGroupPresenter presenter) {
+    public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
     }
 
@@ -71,7 +73,7 @@ public class PropertyEditor {
         addProp.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewPropertyDialoge(selectedRecord);
+                presenter.launchNewPropertyDialoge(reference);
             }
         });
         propTools.addToolButton(addProp);
@@ -142,7 +144,7 @@ public class PropertyEditor {
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                presenter.onDeleteProperty(selectedRecord.getGroupName(), property);
+                                presenter.onDeleteProperty(reference, property);
                             }
                         });
             }
@@ -173,8 +175,8 @@ public class PropertyEditor {
         return panel;
     }
 
-    public void setSelectedRecord(ServerGroupRecord record) {
-        this.selectedRecord = record;
-        propertyProvider.setList(record.getProperties());
+    public void setSelectedRecord(String reference, List<PropertyRecord> properties) {
+        this.reference= reference;
+        propertyProvider.setList(properties);
     }
 }

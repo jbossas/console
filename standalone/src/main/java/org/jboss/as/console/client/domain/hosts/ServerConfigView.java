@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.groups.JvmEditor;
+import org.jboss.as.console.client.domain.groups.PropertyEditor;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.PropertyTable;
@@ -63,12 +65,11 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private ServerConfigPresenter presenter;
     private Form<Server> form;
     private ContentHeaderLabel nameLabel;
-    //private ComboBoxItem groupItem;
-
     private ComboBoxItem socketItem;
-    private ComboBoxItem jvmItem;
-
     private ToolButton edit;
+
+    private JvmEditor jvmEditor;
+    private PropertyEditor propertyEditor;
 
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
@@ -206,13 +207,13 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
-        VerticalPanel propertyPanel = new VerticalPanel();
-        propertyPanel.setStyleName("fill-layout-width");
+        // jvm editor
+        jvmEditor = new JvmEditor(presenter);
+        bottomLayout.add(jvmEditor.asWidget(), "Virtual Machine");
 
-        PropertyTable properties = new PropertyTable();
-        propertyPanel.add(properties);
+        propertyEditor = new PropertyEditor(presenter);
+        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
 
-        bottomLayout.add(propertyPanel, "System Properties");
         return editorPanel.asWidget();
     }
 
@@ -243,6 +244,9 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     public void setSelectedRecord(Server selectedRecord) {
         nameLabel.setText(selectedRecord.getName());
         form.edit(selectedRecord);
+
+        jvmEditor.setSelectedRecord(selectedRecord.getName(), selectedRecord.getJvm());
+        propertyEditor.setSelectedRecord(selectedRecord.getName(), selectedRecord.getProperties());
     }
 
     @Override

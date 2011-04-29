@@ -65,7 +65,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 2/16/11
  */
 public class ServerGroupPresenter
-        extends Presenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy> {
+        extends Presenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy>
+        implements JvmManagement, PropertyManagement {
 
     private ServerGroupStore serverGroupStore;
     private ProfileStore profileStore;
@@ -76,7 +77,6 @@ public class ServerGroupPresenter
     private DefaultWindow propertyWindow;
     private String groupName;
     private DispatchAsync dispatcher;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -352,7 +352,7 @@ public class ServerGroupPresenter
         if(window!=null) window.hide();
     }
 
-    public void onSaveJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
+    public void onUpdateJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
 
         System.out.println(groupName+">"+changedValues);
 
@@ -406,7 +406,7 @@ public class ServerGroupPresenter
         propertyWindow.hide();
     }
 
-    public void launchNewPropertyDialoge(ServerGroupRecord group) {
+    public void launchNewPropertyDialoge(String group) {
 
         propertyWindow = new DefaultWindow("New System Property");
         propertyWindow.setWidth(320);

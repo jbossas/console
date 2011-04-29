@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.Jvm;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -43,18 +42,19 @@ import org.jboss.as.console.client.widgets.tools.ToolStrip;
  */
 public class JvmEditor {
 
-    private ServerGroupPresenter presenter;
+    private JvmManagement presenter;
 
     private Form<Jvm> form;
-    private ServerGroupRecord selectedRecord;
 
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
 
     private Label label;
     private ToolButton edit;
+    private String reference;
+    private Widget formWidget;
 
-    public JvmEditor(ServerGroupPresenter presenter) {
+    public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
     }
 
@@ -90,7 +90,7 @@ public class JvmEditor {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
                                     if(isConfirmed)
-                                        presenter.onDeleteJvm(selectedRecord.getGroupName(), form.getEditedEntity());
+                                        presenter.onDeleteJvm(reference, form.getEditedEntity());
                                 }
                             });
                 }
@@ -124,7 +124,8 @@ public class JvmEditor {
         form.setFields(nameItem, heapItem, maxHeapItem, debugItem);
         form.setEnabled(false);
 
-        panel.add(form.asWidget());
+        formWidget = form.asWidget();
+        panel.add(formWidget);
 
         return panel;
     }
@@ -138,9 +139,9 @@ public class JvmEditor {
             edit.setText("Edit");
 
             if(hasJvm)
-                presenter.onSaveJvm(selectedRecord.getGroupName(), form.getEditedEntity().getName(), form.getChangedValues());
+                presenter.onUpdateJvm(reference, form.getEditedEntity().getName(), form.getChangedValues());
             else
-                presenter.onCreateJvm(selectedRecord.getGroupName(), form.getUpdatedEntity());
+                presenter.onCreateJvm(reference, form.getUpdatedEntity());
         }
     }
 
@@ -149,13 +150,13 @@ public class JvmEditor {
         form.setEnabled(true);
     }
 
-    public void setSelectedRecord(ServerGroupRecord record) {
-        this.selectedRecord = record;
+    public void setSelectedRecord(String reference, Jvm jvm) {
+        this.reference = reference;
 
-        Jvm jvm = record.getJvm();
         hasJvm = jvm!=null;
 
         label.setVisible(!hasJvm);
+        //formWidget.setVisible(hasJvm);
 
         if(hasJvm)
             form.edit(jvm);

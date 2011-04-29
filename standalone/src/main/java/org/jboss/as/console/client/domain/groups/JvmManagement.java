@@ -17,44 +17,19 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.domain.groups;
 
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.domain.model.Jvm;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
- * @date 3/2/11
+ * @date 4/29/11
  */
-public interface Server {
+public interface JvmManagement {
 
-    String getName();
-    void setName(String name);
-    
-    String getGroup();
-    void setGroup(String group);
-
-    @Binding(detypedName = "auto-start")
-    boolean isAutoStart();
-    void setAutoStart(boolean b);
-
-    @Binding(detypedName = "none", ignore = true)
-    boolean isStarted();
-    void setStarted(boolean b);
-
-    @Binding(detypedName = "socket-binding-group")
-    String getSocketBinding();
-    void setSocketBinding(String socketBindingRef);
-
-    @Binding(detypedName = "socket-binding-port-offset")
-    int getPortOffset();
-    void setPortOffset(int offset);
-
-    Jvm getJvm();
-    void setJvm(Jvm jvm);
-
-    List<PropertyRecord> getProperties();
-    void setProperties(List<PropertyRecord> props);
+    void onCreateJvm(String reference, Jvm jvm);
+    void onDeleteJvm(String reference, Jvm editedEntity);
+    void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues);
 }

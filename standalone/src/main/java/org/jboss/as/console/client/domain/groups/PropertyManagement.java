@@ -17,44 +17,17 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
+package org.jboss.as.console.client.domain.groups;
 
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.List;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 /**
  * @author Heiko Braun
- * @date 3/2/11
+ * @date 4/29/11
  */
-public interface Server {
-
-    String getName();
-    void setName(String name);
-    
-    String getGroup();
-    void setGroup(String group);
-
-    @Binding(detypedName = "auto-start")
-    boolean isAutoStart();
-    void setAutoStart(boolean b);
-
-    @Binding(detypedName = "none", ignore = true)
-    boolean isStarted();
-    void setStarted(boolean b);
-
-    @Binding(detypedName = "socket-binding-group")
-    String getSocketBinding();
-    void setSocketBinding(String socketBindingRef);
-
-    @Binding(detypedName = "socket-binding-port-offset")
-    int getPortOffset();
-    void setPortOffset(int offset);
-
-    Jvm getJvm();
-    void setJvm(Jvm jvm);
-
-    List<PropertyRecord> getProperties();
-    void setProperties(List<PropertyRecord> props);
+public interface PropertyManagement {
+    void onCreateProperty(String reference, final PropertyRecord prop);
+    void onDeleteProperty(String reference, final PropertyRecord prop);
+    void launchNewPropertyDialoge(String reference);
+    void closePropertyDialoge();
 }

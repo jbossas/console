@@ -38,8 +38,13 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
+import org.jboss.as.console.client.domain.groups.JvmManagement;
+import org.jboss.as.console.client.domain.groups.NewPropertyWizard;
+import org.jboss.as.console.client.domain.groups.PropertyManagement;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -54,7 +59,7 @@ import java.util.Map;
  * @date 3/3/11
  */
 public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyView, ServerConfigPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener {
+        implements HostSelectionEvent.HostSelectionListener, JvmManagement, PropertyManagement {
 
     private HostInformationStore hostInfoStore;
 
@@ -66,6 +71,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private DefaultWindow window = null;
     private List<ServerGroupRecord> serverGroups;
+
+    private DefaultWindow propertyWindow;
 
 
     @ProxyCodeSplit
@@ -143,8 +150,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     private void loadServerConfigurations() {
-
-        System.out.println("reload server configs");
 
         if(selectedHost !=null && serverName!=null)
         {
@@ -339,7 +344,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         }
         else
         {
-             Console.warning("No changes applied!");
+            Console.warning("No changes applied!");
         }
     }
 
@@ -384,4 +389,54 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         return selectedHost;
     }
 
+
+    @Override
+    public void onCreateJvm(String reference, Jvm jvm) {
+
+    }
+
+    @Override
+    public void onDeleteJvm(String reference, Jvm editedEntity) {
+
+    }
+
+    @Override
+    public void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues) {
+
+    }
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
 }

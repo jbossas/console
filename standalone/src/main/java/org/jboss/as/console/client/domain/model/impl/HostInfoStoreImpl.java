@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.model.impl;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -36,8 +37,10 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -129,6 +132,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     record.setGroup(server.get("group").asString());
                     record.setSocketBinding(server.get("socket-binding-group").asString());
 
+
                     try {
                         record.setPortOffset(server.get("socket-binding-port-offset").asInt());
                     } catch (IllegalArgumentException e) {
@@ -143,6 +147,31 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     }
 
                     record.setStarted(server.get("status").asString().equals("STARTED"));
+
+
+                    // System properties
+                    if(server.hasDefined("system-properties"))
+                    {
+                        List<ModelNode> properties = server.get("system-properties").asList();
+                        List<PropertyRecord> propertyRecords = new ArrayList<PropertyRecord>(properties.size());
+                        for(ModelNode propItem : properties)
+                        {
+                            Property property = propItem.asProperty();
+                            PropertyRecord propRecord = factory.property().as();
+                            propRecord.setKey(property.getName());
+                            ModelNode value = property.getValue();
+                            propRecord.setValue(value.get("value").asString());
+                            propRecord.setBootTime(value.get("boot-time").asBoolean());
+                            propertyRecords.add(propRecord);
+                        }
+
+                        record.setProperties(propertyRecords);
+                    }
+                    else
+                    {
+                        record.setProperties(Collections.EMPTY_LIST);
+                    }
+
 
                     /*try {
                         if(server.get("jvm").isDefined())

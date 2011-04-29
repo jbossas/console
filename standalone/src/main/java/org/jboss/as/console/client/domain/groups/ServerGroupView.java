@@ -38,15 +38,12 @@ import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -60,10 +57,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ServerGroupPresenter presenter;
     private Form<ServerGroupRecord> form;
     private ContentHeaderLabel nameLabel;
-    //private ComboBoxItem profileItem;
 
     private ComboBoxItem socketBindingItem;
-    private ComboBoxItem jvmField;
     private ToolButton edit;
 
     private VerticalPanel panel;
@@ -216,8 +211,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // form
         form.edit(record);
 
-        propertyEditor.setSelectedRecord(record);
-        jvmEditor.setSelectedRecord(record);
+        propertyEditor.setSelectedRecord(record.getGroupName(), record.getProperties());
+        jvmEditor.setSelectedRecord(record.getGroupName(), record.getJvm());
     }
 
     @Override

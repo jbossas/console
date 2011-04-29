@@ -22,10 +22,8 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -38,12 +36,12 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 public class NewPropertyWizard {
 
 
-    private ServerGroupRecord group;
-    private ServerGroupPresenter presenter;
+    private String reference;
+    private PropertyManagement presenter;
 
-    public NewPropertyWizard(ServerGroupPresenter presenter, ServerGroupRecord group) {
+    public NewPropertyWizard(PropertyManagement presenter, String reference) {
         this.presenter = presenter;
-        this.group = group;
+        this.reference = reference;
     }
 
     public Widget asWidget() {
@@ -51,7 +49,7 @@ public class NewPropertyWizard {
         panel.setStyleName("fill-layout-width");
         panel.getElement().setAttribute("style", "padding:10px;");
 
-        HTML description = new HTML("Specify system property for server-group <u>"+group.getGroupName()+"</u>");
+        HTML description = new HTML("Specify system property for <u>"+reference+"</u>");
         panel.add(description);
 
         final Form<PropertyRecord> form = new Form<PropertyRecord>(PropertyRecord.class);
@@ -68,7 +66,7 @@ public class NewPropertyWizard {
                     public void onClick(ClickEvent event) {
                          // save
                         PropertyRecord property = form.getUpdatedEntity();
-                        presenter.onCreateProperty(group.getGroupName(), property);
+                        presenter.onCreateProperty(reference, property);
                     }
                 },
                 new ClickHandler() {
