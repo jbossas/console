@@ -331,12 +331,12 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         operation.get(ADDRESS).add(SERVER_GROUP, groupName);
         operation.get(ADDRESS).add(JVM, jvm.getName());
 
-        ModelNode jvmModel = new ModelNode();
-        jvmModel.get("heap-size").set(jvm.getHeapSize());
-        jvmModel.get("max-heap-size").set(jvm.getMaxHeapSize());
-        jvmModel.get("debug-enabled").set(jvm.isDebugEnabled());
+        //ModelNode jvmModel = new ModelNode();
+        operation.get("heap-size").set(jvm.getHeapSize());
+        operation.get("max-heap-size").set(jvm.getMaxHeapSize());
+        operation.get("debug-enabled").set(jvm.isDebugEnabled());
 
-        operation.get("jvm").set(jvm.getName(), jvmModel);
+        //operation.get("jvm").set(jvm.getName(), jvmModel);
 
         System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
