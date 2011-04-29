@@ -59,7 +59,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<PropertyRecord> property() {
-        throw new RuntimeException("not implemented");  
+        return new AutoBeanStub<PropertyRecord>(new PropertyImpl());
     }
 
     @Override
