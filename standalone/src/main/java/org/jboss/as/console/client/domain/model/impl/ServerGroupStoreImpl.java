@@ -38,7 +38,6 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -114,57 +113,15 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         record.setProfileName(model.get("profile").asString());
         record.setSocketBinding(model.get("socket-binding-group").asString());
 
+        Jvm jvm = ModelAdapter.model2JVM(factory, model);
+        record.setJvm(jvm);
 
-        // JVM settings
-        try {
-            if(model.has("jvm") && model.get("jvm").isDefined())
-            {
-                Jvm jvm = factory.jvm().as();
-                Property jvmProp = model.get("jvm").asProperty();
-                jvm.setName(jvmProp.getName());
-
-                ModelNode jvmPropValue = jvmProp.getValue();
-
-                if(jvmPropValue.hasDefined("heap-size"))
-                    jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
-
-                if(jvmPropValue.hasDefined("max-heap-size"))
-                    jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
-
-                if(jvmPropValue.hasDefined("debug-enabled"))
-                    jvm.setDebugEnabled(jvmPropValue.get("debug-enabled").asBoolean());
-
-                record.setJvm(jvm);
-            }
-        } catch (IllegalArgumentException e) {
-            // TODO: properly deal with the different representations
-        }
-
-        // System properties
-        if(model.hasDefined("system-properties"))
-        {
-            List<ModelNode> properties = model.get("system-properties").asList();
-            List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
-            for(ModelNode item : properties)
-            {
-                Property property = item.asProperty();
-                PropertyRecord propRecord = factory.property().as();
-                propRecord.setKey(property.getName());
-                ModelNode value = property.getValue();
-                propRecord.setValue(value.get("value").asString());
-                propRecord.setBootTime(value.get("boot-time").asBoolean());
-                records.add(propRecord);
-            }
-
-            record.setProperties(records);
-        }
-        else
-        {
-            record.setProperties(Collections.EMPTY_LIST);
-        }
+        List<PropertyRecord> propertyRecords = ModelAdapter.model2Property(factory, model);
+        record.setProperties(propertyRecords);
 
         return record;
     }
+
 
     @Override
     public void loadServerGroup(final String name, final AsyncCallback<ServerGroupRecord> callback) {
@@ -307,8 +264,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
-        System.out.println(operation.toString());
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override

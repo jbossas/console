@@ -49,10 +49,19 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -73,6 +82,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private List<ServerGroupRecord> serverGroups;
 
     private DefaultWindow propertyWindow;
+    private DispatchAsync dispatcher;
+    private PropertyMetaData propertyMetaData;
 
 
     @ProxyCodeSplit
@@ -93,11 +104,15 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public ServerConfigPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             HostInformationStore hostInfoStore,
-            ServerGroupStore serverGroupStore) {
+            ServerGroupStore serverGroupStore,
+            DispatchAsync dispatcher,
+            PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.hostInfoStore = hostInfoStore;
         this.serverGroupStore = serverGroupStore;
+        this.dispatcher = dispatcher;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -392,27 +407,113 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void onCreateJvm(String reference, Jvm jvm) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("server-config", reference);
+        operation.get(ADDRESS).add(JVM, jvm.getName());
 
+        operation.get("heap-size").set(jvm.getHeapSize());
+        operation.get("max-heap-size").set(jvm.getMaxHeapSize());
+        operation.get("debug-enabled").set(jvm.isDebugEnabled());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Created JVM settings");
+                loadServerConfigurations();
+            }
+        });
     }
 
     @Override
-    public void onDeleteJvm(String reference, Jvm editedEntity) {
+    public void onDeleteJvm(String reference, Jvm jvm) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("server-config", reference);
+        operation.get(ADDRESS).add(JVM, jvm.getName());
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed JVM settings");
+                loadServerConfigurations();
+            }
+        });
     }
 
     @Override
     public void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues) {
+        if(changedValues.size()>0)
+        {
+            ModelNode proto = new ModelNode();
+            proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            proto.get(ADDRESS).add("host", selectedHost);
+            proto.get(ADDRESS).add("server-config", reference);
+            proto.get(ADDRESS).add(JVM, jvmName);
 
+            List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
+            ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+            System.out.println(operation.toString());
+
+            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+                @Override
+                public void onSuccess(DMRResponse result) {
+                    Console.info("Success: Updated JVM settings");
+                    loadServerConfigurations();
+                }
+            });
+        }
+        else
+        {
+            Console.warning("No changes applied!");
+        }
     }
 
     @Override
-    public void onCreateProperty(String reference, PropertyRecord prop) {
+    public void onCreateProperty(String reference, final PropertyRecord prop) {
+        if(propertyWindow!=null && propertyWindow.isShowing())
+        {
+            propertyWindow.hide();
+        }
 
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("add-system-property");
+        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("server-config", reference);
+        operation.get("name").set(prop.getKey());
+        operation.get("value").set(prop.getValue());
+        operation.get("boot-time").set(prop.isBootTime());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Created property "+prop.getKey());
+                loadServerConfigurations();
+            }
+        });
     }
 
     @Override
-    public void onDeleteProperty(String reference, PropertyRecord prop) {
+    public void onDeleteProperty(String reference, final PropertyRecord prop) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("remove-system-property");
+        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("server-config", reference);
+        operation.get("name").set(prop.getKey());
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed property "+prop.getKey());
+                loadServerConfigurations();
+            }
+        });
     }
 
     @Override

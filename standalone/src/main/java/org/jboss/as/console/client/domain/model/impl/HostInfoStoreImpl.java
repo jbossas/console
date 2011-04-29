@@ -25,6 +25,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -37,10 +38,8 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +104,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
         operation.get(CHILD_TYPE).set("server-config");
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
-        operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
+        operation.get(RECURSIVE).set(true);
+        //operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -149,41 +149,11 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     record.setStarted(server.get("status").asString().equals("STARTED"));
 
 
-                    // System properties
-                    if(server.hasDefined("system-properties"))
-                    {
-                        List<ModelNode> properties = server.get("system-properties").asList();
-                        List<PropertyRecord> propertyRecords = new ArrayList<PropertyRecord>(properties.size());
-                        for(ModelNode propItem : properties)
-                        {
-                            Property property = propItem.asProperty();
-                            PropertyRecord propRecord = factory.property().as();
-                            propRecord.setKey(property.getName());
-                            ModelNode value = property.getValue();
-                            propRecord.setValue(value.get("value").asString());
-                            propRecord.setBootTime(value.get("boot-time").asBoolean());
-                            propertyRecords.add(propRecord);
-                        }
+                    List<PropertyRecord> propertyRecords = ModelAdapter.model2Property(factory, server);
+                    record.setProperties(propertyRecords);
 
-                        record.setProperties(propertyRecords);
-                    }
-                    else
-                    {
-                        record.setProperties(Collections.EMPTY_LIST);
-                    }
-
-
-                    /*try {
-                        if(server.get("jvm").isDefined())
-                        {
-                            ModelNode jvmModel = server.get("jvm").asObject();
-                            Jvm jvm = factory.jvm().as();
-                            jvm.setName(jvmModel.keys().iterator().next()); // TODO: does blow up easily
-                            record.setJvm(jvm);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // ignore
-                    }*/
+                    Jvm jvm = ModelAdapter.model2JVM(factory, server);
+                    record.setJvm(jvm);
 
                     records.add(record);
                 }
@@ -232,19 +202,39 @@ public class HostInfoStoreImpl implements HostInformationStore {
         getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(final List<Server> serverNames) {
+
+
                 for(final Server handle : serverNames)
                 {
-                    ServerInstance instance = factory.serverInstance().as();
-                    instance.setName(handle.getName());
-                    instance.setRunning(handle.isStarted());
-                    instance.setServer(handle.getName());
-                    instance.setGroup(handle.getGroup());
 
-                    instanceList.add(instance);
+                    final ModelNode operation = new ModelNode();
+                    operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+                    operation.get(ADDRESS).setEmptyList();
+                    operation.get(ADDRESS).add("host", host);
+                    operation.get(ADDRESS).add("server-config", handle.getName());
+                    operation.get("name").set("status");
+
+                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                        @Override
+                        public void onSuccess(DMRResponse result) {
+
+                            ModelNode statusResponse = ModelNode.fromBase64(result.getResponseText());
+                            ModelNode payload = statusResponse.get("result");
+
+                            ServerInstance instance = factory.serverInstance().as();
+                            instance.setName(handle.getName());
+                            instance.setRunning(payload.asString().equals("STARTED"));
+                            instance.setServer(handle.getName());
+                            instance.setGroup(handle.getGroup());
+
+                            instanceList.add(instance);
+
+                            if(instanceList.size() == serverNames.size())
+                                 callback.onSuccess(instanceList);
+                        }
+                    });
 
                 }
-
-                callback.onSuccess(instanceList);
             }
         });
     }

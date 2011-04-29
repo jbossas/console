@@ -19,10 +19,15 @@
 
 package org.jboss.as.console.client.shared.model;
 
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.domain.model.Jvm;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,5 +98,62 @@ public class ModelAdapter {
 
         operation.get(STEPS).set(steps);
         return operation;
+    }
+
+
+    public static List<PropertyRecord> model2Property(BeanFactory factory, ModelNode model) {
+
+        List<PropertyRecord> records = Collections.EMPTY_LIST;
+
+        // System properties
+        if(model.hasDefined("system-properties"))
+        {
+            List<ModelNode> properties = model.get("system-properties").asList();
+            records = new ArrayList<PropertyRecord>(properties.size());
+            for(ModelNode item : properties)
+            {
+                Property property = item.asProperty();
+                PropertyRecord propRecord = factory.property().as();
+                propRecord.setKey(property.getName());
+                ModelNode value = property.getValue();
+                propRecord.setValue(value.get("value").asString());
+                propRecord.setBootTime(value.get("boot-time").asBoolean());
+                records.add(propRecord);
+            }
+        }
+
+        return records;
+
+    }
+
+    public static Jvm model2JVM(BeanFactory factory, ModelNode model) {
+
+        Jvm jvm = null;
+
+        try {
+            if(model.has("jvm") && model.get("jvm").isDefined())
+            {
+                jvm = factory.jvm().as();
+                Property jvmProp = model.get("jvm").asProperty();
+                jvm.setName(jvmProp.getName());
+
+                ModelNode jvmPropValue = jvmProp.getValue();
+
+                if(jvmPropValue.hasDefined("heap-size"))
+                    jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
+
+                if(jvmPropValue.hasDefined("max-heap-size"))
+                    jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
+
+                if(jvmPropValue.hasDefined("debug-enabled"))
+                    jvm.setDebugEnabled(jvmPropValue.get("debug-enabled").asBoolean());
+
+
+            }
+        } catch (IllegalArgumentException e) {
+            // TODO: properly deal with the different representations
+        }
+
+        return jvm;
     }
 }

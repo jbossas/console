@@ -354,8 +354,6 @@ public class ServerGroupPresenter
 
     public void onUpdateJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
 
-        System.out.println(groupName+">"+changedValues);
-
         if(changedValues.size()>0)
         {
             serverGroupStore.saveJvm(groupName, jvmName, changedValues, new SimpleCallback<Boolean>() {
