@@ -29,6 +29,7 @@ import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -103,6 +104,7 @@ public class JvmEditor {
         panel.add(label);
 
         form = new Form<Jvm>(Jvm.class);
+        form.setNumColumns(2);
 
         TextBoxItem nameItem = new TextBoxItem("name", "Name")
         {
@@ -116,10 +118,10 @@ public class JvmEditor {
         };
         TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
         TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
-        //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
+        CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
-        form.setFields(nameItem, heapItem, maxHeapItem);
+        form.setFields(nameItem, heapItem, maxHeapItem, debugItem);
         form.setEnabled(false);
 
         panel.add(form.asWidget());

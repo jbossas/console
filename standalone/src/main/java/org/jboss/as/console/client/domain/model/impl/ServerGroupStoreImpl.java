@@ -131,6 +131,9 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 if(jvmPropValue.hasDefined("max-heap-size"))
                     jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
 
+                if(jvmPropValue.hasDefined("debug-enabled"))
+                    jvm.setDebugEnabled(jvmPropValue.get("debug-enabled").asBoolean());
+
                 record.setJvm(jvm);
             }
         } catch (IllegalArgumentException e) {
@@ -331,6 +334,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         ModelNode jvmModel = new ModelNode();
         jvmModel.get("heap-size").set(jvm.getHeapSize());
         jvmModel.get("max-heap-size").set(jvm.getMaxHeapSize());
+        jvmModel.get("debug-enabled").set(jvm.isDebugEnabled());
 
         operation.get("jvm").set(jvm.getName(), jvmModel);
 
