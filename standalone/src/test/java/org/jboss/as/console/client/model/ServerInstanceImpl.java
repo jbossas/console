@@ -30,6 +30,7 @@ public class ServerInstanceImpl implements ServerInstance {
     String name;
     boolean isRunning;
     String server;
+    private String group;
 
     @Override
     public String getName() {
@@ -59,5 +60,15 @@ public class ServerInstanceImpl implements ServerInstance {
     @Override
     public void setServer(String server) {
         this.server = server;
+    }
+
+    @Override
+    public String getGroup() {
+        return group;
+    }
+
+    @Override
+    public void setGroup(String group) {
+        this.group = group;
     }
 }
