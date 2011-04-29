@@ -233,7 +233,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
         bottomLayout.add(formPanel, "Instance Details");
-        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), "JVM Status");
+        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), "Virtual Machine");
 
         bottomLayout.selectTab(0);
 
