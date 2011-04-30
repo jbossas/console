@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -41,6 +43,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 3/18/11
  */
 public class DeploymentStoreImpl implements DeploymentStore {
+  private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
 
   private DispatchAsync dispatcher;
   private BeanFactory factory;
@@ -82,7 +85,8 @@ public class DeploymentStoreImpl implements DeploymentStore {
                 DeploymentRecord rec = factory.deployment().as();
                 rec.setName(name);
                 rec.setRuntimeName(handler.get("runtime-name").asString());
-                rec.setEnabled(handler.get("enabled").asBoolean()); // are domain deployments really "enabled"?
+                if (isStandalone) rec.setEnabled(handler.get("enabled").asBoolean());
+                if (!isStandalone) rec.setEnabled(true);
                 rec.setServerGroup(null); 
                 deployments.add(rec);
               } catch (IllegalArgumentException e) {

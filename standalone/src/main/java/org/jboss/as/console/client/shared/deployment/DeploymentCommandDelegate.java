@@ -1,4 +1,4 @@
-/*
+/* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
@@ -16,59 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.jboss.as.console.client.shared.deployment;
 
-package org.jboss.as.console.client.model;
-
-import org.jboss.as.console.client.domain.model.ServerInstance;
+import com.google.gwt.cell.client.ActionCell;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
- * @author Heiko Braun
- * @date 4/12/11
+ *
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
-public class ServerInstanceImpl implements ServerInstance {
+public class DeploymentCommandDelegate implements ActionCell.Delegate<DeploymentRecord> {
 
-    String name;
-    boolean isRunning;
-    String server;
-    String group;
+    private DeploymentCommand command;
+    private DeployCommandExecutor executor;
 
-    @Override
-    public String getName() {
-        return name;
+    public DeploymentCommandDelegate(DeploymentCommand command, DeployCommandExecutor executor) {
+        this.command = command;
+        this.executor = executor;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    @Override
-    public void setRunning(boolean b) {
-        this.isRunning = b;
-    }
-
-    @Override
-    public String getServer() {
-        return server;
-    }
-
-    @Override
-    public void setServer(String server) {
-        this.server = server;
-    }
-    
-    @Override
-    public String getGroup() {
-        return this.group;
-    }
-    
-    @Override
-    public void setGroup(String group) {
-        this.group = group;
+    public void execute(DeploymentRecord record) {
+        command.execute(executor, record);
     }
 }

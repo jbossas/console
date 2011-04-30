@@ -22,7 +22,7 @@ package org.jboss.as.console.client.shared;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
-import org.jboss.as.console.client.domain.groups.deployment.DeploymentReference;
+import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;

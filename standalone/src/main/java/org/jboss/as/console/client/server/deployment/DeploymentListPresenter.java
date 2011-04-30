@@ -18,7 +18,10 @@
  */
 package org.jboss.as.console.client.server.deployment;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -30,24 +33,30 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import java.util.List;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.deployment.DeployCommandDelegate;
+import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 
 /**
  * @author Heiko Braun
  * @date 3/14/11
  */
 public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy>
-        implements DeployCommandDelegate {
+        implements DeployCommandExecutor {
 
   private final PlaceManager placeManager;
   private StandaloneDeploymentInfo deploymentInfo;
   private DeploymentStore deploymentStore;
 
+  private DefaultWindow window;
+  private DispatchAsync dispatcher;
+  
   @ProxyCodeSplit
   @NameToken(NameTokens.DeploymentListPresenter)
   public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
@@ -64,12 +73,14 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   public DeploymentListPresenter(
           EventBus eventBus, MyView view, MyProxy proxy,
           DeploymentStore deploymentStore,
-          PlaceManager placeManager) {
+          PlaceManager placeManager,
+          DispatchAsync dispatcher) {
 
     super(eventBus, view, proxy);
     this.placeManager = placeManager;
     this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
     this.deploymentStore = deploymentStore;
+    this.dispatcher = dispatcher;
   }
 
   @Override
@@ -93,25 +104,39 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   }
 
   @Override
-  public void removeContent(DeploymentRecord record) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void enableDisableDeployment(final DeploymentRecord deployment) {
-    deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
+  public void removeContent(final DeploymentRecord record) {
+    deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>() {
 
       @Override
       public void onSuccess(DMRResponse response) {
         deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(deployment, deployment.getServerGroup());
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(record);
       }
 
       @Override
       public void onFailure(Throwable t) {
         super.onFailure(t);
         deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(deployment, deployment.getServerGroup(), t);
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(record, t);
+      }
+    });
+  }
+
+  @Override
+  public void enableDisableDeployment(final DeploymentRecord record) {
+    deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
+
+      @Override
+      public void onSuccess(DMRResponse response) {
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(record);
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        super.onFailure(t);
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(record, t);
       }
     });
   }
@@ -130,4 +155,25 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   public void removeDeploymentFromGroup(DeploymentRecord record) {
     throw new UnsupportedOperationException("Not supported in standalone mode.");
   }
+  
+  public void launchNewDeploymentDialoge() {
+
+        window = new DefaultWindow("Create Deployment");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+            new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+
+    }
 }

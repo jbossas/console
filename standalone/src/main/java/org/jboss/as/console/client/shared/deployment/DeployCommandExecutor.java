@@ -27,7 +27,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
-public interface DeployCommandDelegate {
+public interface DeployCommandExecutor {
   /**
    * Toggle the enabled/disabled flag on the deployment.
    * 

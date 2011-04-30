@@ -21,6 +21,7 @@ package org.jboss.as.console.client.server.deployment;
 import java.util.Collections;
 import java.util.List;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 
@@ -29,7 +30,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
-public class StandaloneDeploymentInfo {
+public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
 
   private DeploymentListPresenter presenter;
   private DeploymentStore deploymentStore;
@@ -44,7 +45,7 @@ public class StandaloneDeploymentInfo {
     return this.deployments;
   }
 
-  void refreshView() {
+  public void refreshView() {
     // load deployments
     deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
 

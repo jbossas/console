@@ -19,9 +19,14 @@
 
 package org.jboss.as.console.client.server.deployment;
 
+import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -31,13 +36,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import java.util.List;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.deployment.ActionColumnFactory;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 
 /**
@@ -71,9 +78,20 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
-        VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-        vpanel.getElement().setAttribute("style", "padding:15px;");
+        final ToolStrip toolStrip = new ToolStrip();
+        toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewDeploymentDialoge();
+            }
+        }));
+        
+        layout.add(toolStrip);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
 
         // -----------
 
@@ -81,13 +99,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.deployment());
-        horzPanel.add(image);
-        image.getElement().getParentElement().setAttribute("width", "25");
 
         horzPanel.add(nameLabel);
 
-        vpanel.add(horzPanel);
+        panel.add(horzPanel);
 
         deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
@@ -116,22 +131,41 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         deploymentTable.addColumn(dplNameColumn, "Name");
         deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-        deploymentTable.addColumn(enabledDisabledColumn, "Enabled?");
+        deploymentTable.addColumn(makeEnabledColumn(), "Enabled?");
         
-        List<Column> actions = ActionColumnFactory.makeActionColumns(presenter, deploymentProvider, DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_CONTENT);
-        deploymentTable.addColumn(actions.get(0), "Action");
-        deploymentTable.addColumn(actions.get(1), "Action");
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), "Enable/Disable");
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), "Remove");
         
-        vpanel.add(deploymentTable);
+        panel.add(deploymentTable);
 
 
         ScrollPanel scroll = new ScrollPanel();
-        scroll.add(vpanel);
+        scroll.add(panel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 65, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 65, Style.Unit.PCT);
         
         return layout;
+    }
+    
+    // Refactor Me!  Copied from org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview
+    private Column makeEnabledColumn() {
+        return new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
+
+            @Override
+            public ImageResource getValue(DeploymentRecord deployment) {
+
+                ImageResource res = null;
+
+                if (deployment.isEnabled()) {
+                    res = Icons.INSTANCE.statusGreen_small();
+                } else {
+                    res = Icons.INSTANCE.statusRed_small();
+                }
+
+                return res;
+            }
+        };
     }
     
 }

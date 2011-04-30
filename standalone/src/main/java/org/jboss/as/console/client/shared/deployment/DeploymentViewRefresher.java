@@ -1,4 +1,4 @@
-/*
+/* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
@@ -17,58 +17,13 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.model;
-
-import org.jboss.as.console.client.domain.model.ServerInstance;
+package org.jboss.as.console.client.shared.deployment;
 
 /**
- * @author Heiko Braun
- * @date 4/12/11
+ * Defines a class that is capable of refreshing a deployment view.
+ *
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
-public class ServerInstanceImpl implements ServerInstance {
-
-    String name;
-    boolean isRunning;
-    String server;
-    String group;
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    @Override
-    public void setRunning(boolean b) {
-        this.isRunning = b;
-    }
-
-    @Override
-    public String getServer() {
-        return server;
-    }
-
-    @Override
-    public void setServer(String server) {
-        this.server = server;
-    }
-    
-    @Override
-    public String getGroup() {
-        return this.group;
-    }
-    
-    @Override
-    public void setGroup(String group) {
-        this.group = group;
-    }
+public interface DeploymentViewRefresher {
+    public void refreshView();
 }

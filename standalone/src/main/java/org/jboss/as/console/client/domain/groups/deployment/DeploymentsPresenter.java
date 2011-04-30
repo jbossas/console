@@ -19,15 +19,10 @@
 
 package org.jboss.as.console.client.domain.groups.deployment;
 
-import com.allen_sauer.gwt.log.client.Log;
+import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -37,25 +32,21 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.dmr.client.ModelNode;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +56,8 @@ import java.util.List;
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/1/11
  */
-public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView, DeploymentsPresenter.MyProxy> {
+public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView, DeploymentsPresenter.MyProxy> 
+                                  implements DeployCommandExecutor {
 
     private final PlaceManager placeManager;
     private DeploymentStore deploymentStore;
@@ -126,70 +118,79 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         RevealContentEvent.fire(getEventBus(), ServerGroupMgmtPresenter.TYPE_MainContent, this);
     }
 
+    @Override
     public void enableDisableDeployment(final DeploymentRecord deployment) {
       deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(deployment, deployment.getServerGroup());
+          DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(deployment);
         }
         @Override
         public void onFailure(Throwable t) {
           super.onFailure(t);
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(deployment, deployment.getServerGroup(), t);
+          DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(deployment, t);
         }
       });
       
     }
     
+    @Override
     public void removeDeploymentFromGroup(final DeploymentRecord deployment) {
       deploymentStore.removeDeploymentFromGroup(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(deployment, deployment.getServerGroup());
+          DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(deployment);
         }
         @Override
         public void onFailure(Throwable t) {
           super.onFailure(t);
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(deployment, deployment.getServerGroup(), t);
+          DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(deployment, t);
         }
       });
       
     }
     
+    @Override
     public void addToServerGroup(final String serverGroup, final DeploymentRecord deployment) {
       deploymentStore.addToServerGroup(serverGroup, deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.ADD_TO_GROUP.displaySuccessMessage(deployment, serverGroup);
+          DeploymentCommand.ADD_TO_GROUP.displaySuccessMessage(deployment);
         }
         @Override
         public void onFailure(Throwable t) {
           super.onFailure(t);
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.ADD_TO_GROUP.displayFailureMessage(deployment, serverGroup, t);
+          DeploymentCommand.ADD_TO_GROUP.displayFailureMessage(deployment, t);
         }
       });
     }
 
+    @Override
     public void removeContent(final DeploymentRecord deployment) {
       deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
         @Override
         public void onSuccess(DMRResponse response) {
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.REMOVE_CONTENT.displaySuccessMessage(deployment, deployment.getServerGroup());
+          DeploymentCommand.REMOVE_FROM_DOMAIN.displaySuccessMessage(deployment);
         }
         @Override
         public void onFailure(Throwable t) {
           super.onFailure(t);
           domainDeploymentInfo.refreshView();
-          DeploymentsOverview.DeploymentCommand.REMOVE_CONTENT.displayFailureMessage(deployment, deployment.getServerGroup(), t);
+          DeploymentCommand.REMOVE_FROM_DOMAIN.displayFailureMessage(deployment, t);
         }
       });
+    }
+    
+    @Override
+    public String getSelectedServerGroup() {
+      return getView().getSelectedServerGroup();
     }
 
     public void launchNewDeploymentDialoge() {
@@ -205,16 +206,12 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         });
 
         window.setWidget(
-                new NewDeploymentWizard(this).asWidget()
+                new NewDeploymentWizard(window, dispatcher, domainDeploymentInfo, domainDeploymentInfo.getServerGroupNames()).asWidget()
         );
 
         window.setGlassEnabled(true);
         window.center();
 
-    }
-
-    public void closeDialoge() {
-        window.hide();
     }
 
     public List<ServerGroupRecord> getServerGroups() {
@@ -226,106 +223,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
 
-    public void onDeployToGroup(final DeploymentReference deployment) {
-
-        window.hide();
-
-
-        /*ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("deployment", deployment.getName());
-
-        try {
-            byte[] decoded = Base64.decode(deployment.getHash());
-            operation.get(HASH).set(decoded);
-
-            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-                @Override
-                public void onSuccess(DMRResponse result) {
-                    ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                    System.out.println(response.toJSONString());
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
-
-        /*{"address":[{"deployment":"test.war"}],
-            "operation":"add","hash":{"BYTES_VALUE":"7jgpMVmynfxpqp8UDleKLmtgbrA="},
-            "name":"test.war"}
-         */
-
-        assignDeploymentName(deployment);
-
-    }
-
-    private void assignDeploymentName(final DeploymentReference deployment) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("\"address\":[").append("{\"deployment\":\"").append(deployment.getName()).append("\"}],");
-        sb.append("\"operation\":\"add\",\"hash\":");
-        sb.append("{");
-        sb.append("\"BYTES_VALUE\":\"").append(deployment.getHash()).append("\"");
-        sb.append("},");
-        sb.append("\"name\":\"").append(deployment.getName()).append("\"");
-        sb.append("}");
-
-        String requestJSO = sb.toString();
-        //System.out.println(requestJSO);
-
-        RequestBuilder rb = new RequestBuilder(
-                RequestBuilder.POST,
-                Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.DOMAIN_API)
-        );
-
-        try {
-            rb.sendRequest(requestJSO, new RequestCallback(){
-                @Override
-                public void onResponseReceived(Request request, Response response) {
-                    if(200 == response.getStatusCode())
-                        assignToGroup(deployment);
-                    else
-                        onDeploymentFailed(deployment);
-                }
-
-                @Override
-                public void onError(Request request, Throwable exception) {
-                    Log.error("Deployment failed", exception);
-                }
-            });
-        } catch (RequestException e) {
-            Log.error("Unknown error", e);
-        }
-    }
-
-    private void assignToGroup(final DeploymentReference deployment) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("server-group", deployment.getGroup());
-        operation.get(ADDRESS).add("deployment", deployment.getName());
-        operation.get("enabled").set(true);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Log.error("Deployment failed", caught);
-                onDeploymentFailed(deployment);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                DeploymentsPresenter.this.domainDeploymentInfo.refreshView();
-            }
-        });
-    }
-
-    private void onDeploymentFailed(DeploymentReference deployment) {
-        Console.MODULES.getMessageCenter().notify(
-                new Message("Deployment failed: "+deployment.getName(), Message.Severity.Error)
-        );
-    }
+    
 
 }
