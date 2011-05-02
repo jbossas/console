@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Heiko Braun
@@ -72,7 +72,7 @@ public class Base64Test {
 
 
         String base64 = operation.toBase64String();
-        assertNull(base64);
+        assertNotNull(base64);
     }
 
 
