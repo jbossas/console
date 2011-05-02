@@ -33,4 +33,20 @@ public interface UIMessages extends Messages {
     String deleteServerConfigConfirm(String name);
 
     String common_validation_portOffsetUndefined(String errMessage);
+
+    String common_validation_notEmptyNoSpace();
+
+    String deleteServerGroupConfirm(String groupName);
+
+    String deleteServerGroup();
+
+    String deleteJVM();
+
+    String deleteJVMConfirm();
+
+    String removeProperty();
+
+    String removePropertyConfirm(String key);
+
+    String commmon_description_newServerGroup();
 }

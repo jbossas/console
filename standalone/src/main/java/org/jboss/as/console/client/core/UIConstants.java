@@ -100,4 +100,20 @@ public interface UIConstants extends Constants {
     String common_label_messageDetail();
 
     String common_label_messages();
+
+    String common_label_newServerGroup();
+
+    String common_label_profile();
+
+    String common_label_add();
+
+    String common_label_value();
+
+    String common_label_key();
+
+    String common_label_option();
+
+    String common_label_basedOn();
+
+    String common_label_cancel();
 }

@@ -22,9 +22,9 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.Feedback;
@@ -49,7 +49,6 @@ public class JvmEditor {
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
 
-    private Label label;
     private ToolButton edit;
     private String reference;
     private Widget formWidget;
@@ -62,11 +61,11 @@ public class JvmEditor {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
         ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton("Edit");
+        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
-                if(edit.getText().equals("Edit"))
+                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
                 {
                     onEdit();
                 }
@@ -80,12 +79,12 @@ public class JvmEditor {
         edit.addClickHandler(editHandler);
         toolStrip.addToolButton(edit);
 
-        ToolButton delete = new ToolButton("Delete", new ClickHandler() {
+        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if(hasJvm)
                 {
-                    Feedback.confirm("Delete JVM Settings", "Really delete the JVM settings?",
+                    Feedback.confirm(Console.MESSAGES.deleteJVM(), Console.MESSAGES.deleteJVMConfirm(),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -100,13 +99,10 @@ public class JvmEditor {
         toolStrip.addToolButton(delete);
         panel.add(toolStrip);
 
-        label = new Label("This group currently relies on inherited JVM settings");
-        panel.add(label);
-
         form = new Form<Jvm>(Jvm.class);
         form.setNumColumns(2);
 
-        TextBoxItem nameItem = new TextBoxItem("name", "Name")
+        TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name())
         {
             @Override
             public void setEnabled(boolean b) {
@@ -136,7 +132,7 @@ public class JvmEditor {
         if(!validation.hasErrors())
         {
             form.setEnabled(false);
-            edit.setText("Edit");
+            edit.setText(Console.CONSTANTS.common_label_edit());
 
             if(hasJvm)
                 presenter.onUpdateJvm(reference, form.getEditedEntity().getName(), form.getChangedValues());
@@ -146,7 +142,7 @@ public class JvmEditor {
     }
 
     private void onEdit() {
-        edit.setText("Save");
+        edit.setText(Console.CONSTANTS.common_label_save());
         form.setEnabled(true);
     }
 
@@ -154,9 +150,6 @@ public class JvmEditor {
         this.reference = reference;
 
         hasJvm = jvm!=null;
-
-        label.setVisible(!hasJvm);
-        //formWidget.setVisible(hasJvm);
 
         if(hasJvm)
             form.edit(jvm);

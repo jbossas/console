@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -57,7 +58,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private ServerGroupPresenter presenter;
     private Form<ServerGroupRecord> form;
     private ContentHeaderLabel nameLabel;
-
     private ComboBoxItem socketBindingItem;
     private ToolButton edit;
 
@@ -77,17 +77,17 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         SplitEditorPanel editorPanel = new SplitEditorPanel();
         LayoutPanel layout = editorPanel.getTopLayout();
 
-        TitleBar titleBar = new TitleBar("Server Group");
+        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverGroup());
         layout.add(titleBar);
 
         // ----
 
         final ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton("Edit");
+        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
         edit.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals("Edit"))
+                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
                 {
                     onEdit();
                 }
@@ -99,13 +99,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
 
         toolStrip.addToolButton(edit);
-        ToolButton delete = new ToolButton("Delete");
+        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
         delete.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 Feedback.confirm(
-                        "Delete Server Group",
-                        "Do you want to delete server group <u>'"+form.getEditedEntity().getGroupName()+"'</u>?",
+                        Console.MESSAGES.deleteServerGroup(),
+                        Console.MESSAGES.deleteServerGroupConfirm(form.getEditedEntity().getGroupName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -117,7 +117,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
         toolStrip.addToolButton(delete);
 
-        toolStrip.addToolButtonRight(new ToolButton("New Group", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_newServerGroup(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewGroupDialoge();
@@ -142,7 +142,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------
 
-        nameLabel = new ContentHeaderLabel("Name here ...");
+        nameLabel = new ContentHeaderLabel("");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -158,21 +158,21 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
         form.setNumColumns(2);
 
-        TextItem nameField = new TextItem("groupName", "Group Name");
+        TextItem nameField = new TextItem("groupName", Console.CONSTANTS.common_label_name());
         //jvmField = new ComboBoxItem("jvm", "Virtual Machine");
         //jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
 
-        socketBindingItem = new ComboBoxItem("socketBinding", "Socket Binding");
+        socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());
         socketBindingItem.setDefaultToFirstOption(true);
 
         // TODO: https://issues.jboss.org/browse/AS7-663
         //profileItem = new ComboBoxItem("profileName", "Profile");
-        TextItem profileItem = new TextItem("profileName", "Profile");
+        TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
 
         form.setFields(nameField, profileItem, socketBindingItem);
         //form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
 
-        panel.add(new ContentGroupLabel("Attributes"));
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 
         panel.add(form.asWidget());
 
@@ -182,10 +182,10 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
         jvmEditor = new JvmEditor(presenter);
-        bottomLayout .add(jvmEditor.asWidget(), "Virtual Machine");
+        bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
-        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
+        bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
 
         bottomLayout .selectTab(0);
 
@@ -240,7 +240,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
         edit.setText(
-            isEnabled ? "Save" : "Edit"
+            isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
         );
     }
 

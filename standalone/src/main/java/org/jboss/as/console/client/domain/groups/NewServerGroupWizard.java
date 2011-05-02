@@ -21,14 +21,11 @@ package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -52,7 +49,7 @@ class NewServerGroupWizard {
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
-        TextBoxItem nameField = new TextBoxItem("groupName", "Group Name")
+        TextBoxItem nameField = new TextBoxItem("groupName", Console.CONSTANTS.common_label_name())
         {
             @Override
             public boolean validate(String value) {
@@ -63,11 +60,11 @@ class NewServerGroupWizard {
 
             @Override
             public String getErrMessage() {
-                return "Not empty, no whitespace";
+                return Console.MESSAGES.common_validation_notEmptyNoSpace();
             }
         };
 
-        final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", "Based On");
+        final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", Console.CONSTANTS.common_label_basedOn());
 
         String[] exists = new String[existing.size()];
         int i=0;
@@ -129,8 +126,7 @@ class NewServerGroupWizard {
 
         Widget formWidget = form.asWidget();
 
-        layout.add(new HTML("Create a new server group based on an existing one. " +
-                "The new group will inherit the properties of the selected group."));
+        layout.add(new HTML(Console.MESSAGES.commmon_description_newServerGroup()));
         layout.add(formWidget);
 
         layout.add(options);

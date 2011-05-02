@@ -27,7 +27,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
@@ -68,7 +68,7 @@ public class PropertyEditor {
 
         ToolStrip propTools = new ToolStrip();
 
-        addProp = new ToolButton("Add");
+        addProp = new ToolButton(Console.CONSTANTS.common_label_add());
 
         addProp.addClickHandler(new ClickHandler() {
             @Override
@@ -135,12 +135,12 @@ public class PropertyEditor {
         };
 
 
-        NamedCommand removeCmd = new NamedCommand("Remove") {
+        NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
             @Override
             public void execute(int rownum) {
 
                 final PropertyRecord property = propertyProvider.getList().get(rownum);
-                Feedback.confirm("Remove Property", "Really remove property <u>" + property.getKey() + "</u>?",
+                Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -154,10 +154,10 @@ public class PropertyEditor {
         MenuColumn menuCol = new MenuColumn("...", removeCmd);
 
         // Add the columns.
-        propertyTable.addColumn(keyColumn, "Key");
-        propertyTable.addColumn(valueColumn, "Value");
+        propertyTable.addColumn(keyColumn, Console.CONSTANTS.common_label_key());
+        propertyTable.addColumn(valueColumn, Console.CONSTANTS.common_label_value());
         propertyTable.addColumn(bootColumn, "Boot-Time?");
-        propertyTable.addColumn(menuCol, "Option");
+        propertyTable.addColumn(menuCol, Console.CONSTANTS.common_label_option());
 
 
         propertyTable.setColumnWidth(keyColumn, 30, Style.Unit.PCT);
