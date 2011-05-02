@@ -23,6 +23,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
@@ -49,8 +50,8 @@ public class DeploymentTable extends CellTable<DeploymentRecord> {
             }
         };
 
-        addColumn(dplNameColumn, "Name");
-        addColumn(dplRuntimeColumn, "Runtime Name");
+        addColumn(dplNameColumn, Console.CONSTANTS.common_label_name());
+        addColumn(dplRuntimeColumn, Console.CONSTANTS.common_label_runtimeName());
 
         // just an example
         final SingleSelectionModel<DeploymentRecord> selectionModel = new SingleSelectionModel<DeploymentRecord>();

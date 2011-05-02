@@ -29,6 +29,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
@@ -53,7 +54,7 @@ public class PropertyTable extends VerticalPanel {
         propertyProvider  = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
-        Button addProp = new Button("Add");
+        Button addProp = new Button(Console.CONSTANTS.common_label_add());
         addProp.setStyleName("default-button");
 
         addProp.getElement().setAttribute("style", "float:right");

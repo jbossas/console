@@ -116,4 +116,6 @@ public interface UIConstants extends Constants {
     String common_label_basedOn();
 
     String common_label_cancel();
+
+    String common_label_runtimeName();
 }
