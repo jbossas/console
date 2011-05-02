@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.groups.JvmEditor;
 import org.jboss.as.console.client.domain.groups.PropertyEditor;
@@ -82,17 +83,17 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         SplitEditorPanel editorPanel = new SplitEditorPanel();
         LayoutPanel layout = editorPanel.getTopLayout();
 
-        TitleBar titleBar = new TitleBar("Server Configuration");
+        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverConfig());
         layout.add(titleBar);
 
         // ----
 
         final ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton("Edit");
+        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
         edit.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals("Edit"))
+                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
                 {
                     onEdit();
                 }
@@ -104,13 +105,13 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         });
 
         toolStrip.addToolButton(edit);
-        ToolButton delete = new ToolButton("Delete");
+        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
         delete.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 Feedback.confirm(
-                        "Delete Server Configuration",
-                        "Do you want to delete server config '"+form.getEditedEntity().getName()+"'?",
+                        Console.MESSAGES.deleteServerConfig(),
+                        Console.MESSAGES.deleteServerConfigConfirm(form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -122,7 +123,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         });
 
         toolStrip.addToolButton(delete);
-        toolStrip.addToolButtonRight(new ToolButton("Create New", new ClickHandler(){
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_createNewServerConfig(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewConfigDialoge();
@@ -147,7 +148,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // --------------------------------------------------------
 
-        nameLabel = new ContentHeaderLabel("Name here ...");
+        nameLabel = new ContentHeaderLabel("");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -161,23 +162,23 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // ----------------------------------------------------------------------
 
 
-        panel.add(new ContentGroupLabel("Attributes"));
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 
         form = new Form<Server>(Server.class);
         form.setNumColumns(2);
 
-        TextItem nameItem = new TextItem("name", "Server Name");
-        CheckBoxItem startedItem = new CheckBoxItem("autoStart", "Start Instances?");
+        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
+        CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
         //groupItem = new ComboBoxItem("group", "Server Group");
 
         // TODO: https://issues.jboss.org/browse/AS7-661
-        TextItem groupItem = new TextItem("group", "Server Group");
+        TextItem groupItem = new TextItem("group", Console.CONSTANTS.common_label_serverGroup());
 
         // ------------------------------------------------------
 
-        final NumberBoxItem portOffset = new NumberBoxItem("portOffset", "Port Offset");
+        final NumberBoxItem portOffset = new NumberBoxItem("portOffset", Console.CONSTANTS.common_label_portOffset());
 
-        socketItem = new ComboBoxItem("socketBinding", "Socket Binding")
+        socketItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding())
         {
             @Override
             public boolean validate(String value) {
@@ -188,7 +189,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
             @Override
             public String getErrMessage() {
-                return super.getErrMessage() + " or portOffset undefined";
+                return Console.MESSAGES.common_validation_portOffsetUndefined(super.getErrMessage());
             }
         };
 
@@ -209,10 +210,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // jvm editor
         jvmEditor = new JvmEditor(presenter);
-        bottomLayout.add(jvmEditor.asWidget(), "Virtual Machine");
+        bottomLayout.add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
-        bottomLayout.add(propertyEditor.asWidget(), "System Properties");
+        bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
 
         return editorPanel.asWidget();
     }
@@ -281,7 +282,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         form.setEnabled(isEnabled);
 
         edit.setText(
-                isEnabled ? "Save" : "Edit"
+                isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
         );
     }
 }

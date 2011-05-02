@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
@@ -37,11 +38,11 @@ class DeploymentSection {
 
     public DeploymentSection() {
 
-        panel = new DisclosureStackHeader("Deployments").asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_deployments()).asWidget();
         deploymentTree = new LHSNavTree("groups");
         panel.setContent(deploymentTree);
 
-        LHSNavTreeItem current = new LHSNavTreeItem( "Manage Deployments", NameTokens.DeploymentsPresenter);
+        LHSNavTreeItem current = new LHSNavTreeItem( Console.CONSTANTS.common_label_manageDeployments(), NameTokens.DeploymentsPresenter);
         //LHSNavTreeItem plans= new LHSNavTreeItem("Deployment Plans", "deployment-plans");
 
         deploymentTree.addItem(current);

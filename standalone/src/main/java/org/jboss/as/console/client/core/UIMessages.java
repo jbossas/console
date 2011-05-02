@@ -27,4 +27,10 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface UIMessages extends Messages {
     String changeServerStatus(String state, String name);
+
+    String deleteServerConfig();
+
+    String deleteServerConfigConfirm(String name);
+
+    String common_validation_portOffsetUndefined(String errMessage);
 }

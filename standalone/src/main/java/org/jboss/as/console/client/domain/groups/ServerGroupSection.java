@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
@@ -42,7 +43,7 @@ class ServerGroupSection {
 
     public ServerGroupSection() {
 
-        panel = new DisclosureStackHeader("Server Groups").asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_serverGroups()).asWidget();
         serverGroupTree = new LHSNavTree("groups");
         panel.setContent(serverGroupTree);
     }

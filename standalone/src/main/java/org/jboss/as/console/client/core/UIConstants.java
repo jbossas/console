@@ -67,4 +67,27 @@ public interface UIConstants extends Constants {
     String common_label_virtualMachines();
 
     String common_label_paths();
+
+    String common_label_serverGroups();
+
+    String common_label_deployments();
+
+    String common_label_manageDeployments();
+
+    String common_label_edit();
+    String common_label_save();
+    String common_label_delete();
+
+    String common_label_createNewServerConfig();
+
+    String common_label_attributes();
+    String common_label_details();
+
+    String common_label_name();
+
+    String common_label_autoStart();
+
+    String common_label_socketBinding();
+
+    String common_label_portOffset();
 }
