@@ -125,7 +125,7 @@ public class ServerGroupMgmtPresenter
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
-        ProfileHeader header = new ProfileHeader("Group Management");
+        ProfileHeader header = new ProfileHeader(Console.CONSTANTS.common_label_groupManagement());
         Console.MODULES.getHeader().setContent(header);
     }
 

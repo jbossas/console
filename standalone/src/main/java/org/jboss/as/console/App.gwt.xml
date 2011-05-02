@@ -24,6 +24,7 @@
     <inherits name='com.google.gwt.user.theme.chrome.ChromeResources'/>
     <inherits name="com.google.gwt.editor.Editor"/>
     <inherits name="org.jboss.dmr.DMR"/>
+    <inherits name="com.google.gwt.i18n.I18N"/>
 
     <inherits name='com.gwtplatform.mvp.Mvp' />
 
@@ -50,6 +51,10 @@
     <generate-with class="org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator">
         <when-type-assignable class="org.jboss.as.console.client.widgets.forms.PropertyMetaData" />
     </generate-with>
+
+
+    <!--extend-property name="locale" values="en"/-->
+
     <!-- Specify the app entry point class.                   -->
     <entry-point class='org.jboss.as.console.client.Console'/>
 

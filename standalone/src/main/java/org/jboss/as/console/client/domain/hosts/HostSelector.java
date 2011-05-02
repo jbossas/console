@@ -45,7 +45,7 @@ public class HostSelector {
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<div class='host-selector'>");
-        builder.appendHtmlConstant("<div class='host-selector-header'>Selected Host:</div>");
+        builder.appendHtmlConstant("<div class='host-selector-header'>Host:</div>");
         builder.appendHtmlConstant("<div id='host-selector-content'/>");
         builder.appendHtmlConstant("</div>");
 

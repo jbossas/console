@@ -102,7 +102,7 @@ public class HostMgmtPresenter
         super.onReveal();
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
-        ProfileHeader header = new ProfileHeader("Host Management");
+        ProfileHeader header = new ProfileHeader(Console.CONSTANTS.common_label_hostManagement());
         Console.MODULES.getHeader().setContent(header);
 
         // first request, select default contents

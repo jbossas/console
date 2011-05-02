@@ -27,6 +27,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.shared.dispatch.ActionHandler;
 import org.jboss.as.console.client.shared.dispatch.DispatchRequest;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -46,11 +47,13 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private boolean trackInvocations = true; //!GWT.isScript(); TODO
     private InvocationMetrics metrics;
+    private UIConstants constants;
 
     @Inject
-    public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics) {
+    public DMRHandler(BootstrapContext bootstrap, InvocationMetrics metrics, UIConstants constants) {
 
         this.metrics = metrics;
+        this.constants = constants;
 
         requestBuilder = new RequestBuilder(
                 RequestBuilder.POST,
@@ -97,7 +100,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     else
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append("Unexpected HTTP status: ").append(response.getStatusCode());
+                        sb.append(constants.common_error_unexpectedHttpResponse()).append(response.getStatusCode());
                         sb.append("\n\n");
                         sb.append("Request\n");
                         sb.append(operation.toString());
@@ -105,7 +108,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                         sb.append("\n\nResponse\n\n");
                         sb.append(response.getStatusText()).append("\n");
 
-                        String payload = response.getText().equals("") ? "No detailed message" :
+                        String payload = response.getText().equals("") ? constants.common_error_detailsMissing() :
                                 ModelNode.fromBase64(response.getText()).toString();
 
                         sb.append(payload);

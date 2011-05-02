@@ -71,10 +71,6 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
             if(content!=null)
                 setContent(content);
 
-        } else {
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Unknown slot requested:" + slot)
-            );
         }
     }
 

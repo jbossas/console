@@ -39,6 +39,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
@@ -83,7 +84,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         SplitEditorPanel editorPanel = new SplitEditorPanel();
         LayoutPanel layout = editorPanel.getTopLayout();
 
-        TitleBar titleBar = new TitleBar("Server Instances");
+        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverInstances());
         layout.add(titleBar);
 
         VerticalPanel vpanel = new VerticalPanel();
@@ -92,7 +93,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        nameLabel = new ContentHeaderLabel("Server Status");
+        nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_serverStatus());
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -122,7 +123,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         typeFilterWidget.getElement().setAttribute("style", "width:200px;");
 
 
-        tableOptions.add(new Label("Server Group:"));
+        tableOptions.add(new Label(Console.CONSTANTS.common_label_serverGroup()+":"));
         tableOptions.add(typeFilterWidget);
 
         tableOptions.getElement().setAttribute("style", "float:right;");
@@ -166,9 +167,9 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         };
 
-        instanceTable.addColumn(nameColumn, "Server");
-        instanceTable.addColumn(groupColumn, "Group");
-        instanceTable.addColumn(statusColumn, "Status");
+        instanceTable.addColumn(nameColumn, Console.CONSTANTS.common_label_server());
+        instanceTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
+        instanceTable.addColumn(statusColumn, Console.CONSTANTS.common_label_status());
         vpanel.add(instanceTable);
 
 
@@ -196,7 +197,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isRunning() ? "stop" : "start";
-                Feedback.confirm("Server State", "Do you want to <u>" + state + "</u> server <u>"+form.getEditedEntity().getName()+"</u>?",
+                Feedback.confirm(Console.CONSTANTS.common_label_serverStatus(), Console.MESSAGES.changeServerStatus(state, form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler()
                         {
                             @Override
@@ -216,9 +217,9 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         // -----
 
 
-        TextItem nameItem = new TextItem("name", "Instance Name");
-        TextItem serverItem = new TextItem("server", "Server Configuration");
-        CheckBoxItem enableItem = new CheckBoxItem("running", "Running?");
+        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_serverInstance());
+        TextItem serverItem = new TextItem("server", Console.CONSTANTS.common_label_serverConfig());
+        CheckBoxItem enableItem = new CheckBoxItem("running", Console.CONSTANTS.common_label_status());
 
         form.setFields(nameItem, serverItem, enableItem);
         form.bind(instanceTable);
@@ -232,8 +233,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         // ----------------------------------------------------------
         TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
 
-        bottomLayout.add(formPanel, "Instance Details");
-        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), "Virtual Machine");
+        bottomLayout.add(formPanel, Console.CONSTANTS.common_label_instanceDetails());
+        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), Console.CONSTANTS.common_label_virtualMachine());
 
         bottomLayout.selectTab(0);
 

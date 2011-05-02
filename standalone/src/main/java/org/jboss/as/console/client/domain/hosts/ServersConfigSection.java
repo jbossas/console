@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
@@ -45,7 +46,7 @@ class ServersConfigSection {
 
     public ServersConfigSection() {
 
-        panel = new DisclosureStackHeader("Server Configurations").asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
         hostTree = new LHSNavTree("hosts");
         panel.setContent(hostTree);
     }
@@ -73,7 +74,7 @@ class ServersConfigSection {
 
         if(servers.isEmpty())
         {
-            TreeItem empty = new TreeItem(new HTML("(no servers)"));
+            TreeItem empty = new TreeItem(new HTML(Console.CONSTANTS.common_label_noRecords()));
             hostTree.addItem(empty);
         }
 

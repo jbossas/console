@@ -31,6 +31,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -52,6 +54,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class Console implements EntryPoint {
 
     public final static CoreUI MODULES = GWT.create(CoreUI.class);
+    public final static UIConstants CONSTANTS = GWT.create(UIConstants.class);
+    public final static UIMessages MESSAGES = GWT.create(UIMessages.class);
 
     public void onModuleLoad() {
         // Defer all application initialisation code to onModuleLoad2() so that the

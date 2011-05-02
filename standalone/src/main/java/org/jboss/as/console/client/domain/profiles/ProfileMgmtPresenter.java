@@ -130,7 +130,7 @@ public class ProfileMgmtPresenter
     protected void onReset() {
         super.onReset();
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
-        ProfileHeader header = new ProfileHeader("Configuration Profiles");
+        ProfileHeader header = new ProfileHeader(Console.CONSTANTS.common_label_profileManagement());
         Console.MODULES.getHeader().setContent(header);
 
     }
