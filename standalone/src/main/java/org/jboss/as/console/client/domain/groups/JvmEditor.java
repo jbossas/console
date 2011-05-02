@@ -102,16 +102,7 @@ public class JvmEditor {
         form = new Form<Jvm>(Jvm.class);
         form.setNumColumns(2);
 
-        TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name())
-        {
-            @Override
-            public void setEnabled(boolean b) {
-                if(b && !hasJvm)
-                    super.setEnabled(b);
-                else if (!b)
-                    super.setEnabled(b);
-            }
-        };
+        TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
         TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
         TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
         CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
@@ -150,6 +141,10 @@ public class JvmEditor {
         this.reference = reference;
 
         hasJvm = jvm!=null;
+
+        form.setEnabled(false);
+
+        edit.setText(Console.CONSTANTS.common_label_edit());
 
         if(hasJvm)
             form.edit(jvm);

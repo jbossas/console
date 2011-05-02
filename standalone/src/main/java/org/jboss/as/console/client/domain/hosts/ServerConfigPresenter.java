@@ -330,7 +330,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         if(changedValues.size()>0)
         {
-            System.out.println("> " +changedValues);
 
             hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new AsyncCallback<Boolean>() {
 
