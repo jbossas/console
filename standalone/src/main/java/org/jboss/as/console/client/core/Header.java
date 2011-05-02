@@ -55,9 +55,9 @@ public class Header implements ValueChangeHandler<String> {
     private String currentHighlightedSection = null;
 
     public static final String[][] SECTIONS = {
-            new String[]{NameTokens.ProfileMgmtPresenter, "Profiles"},
-            new String[]{NameTokens.ServerGroupMgmtPresenter, "Server Groups"},
-            new String[]{NameTokens.HostMgmtPresenter, "Hosts"}
+            new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
+            new String[]{NameTokens.ServerGroupMgmtPresenter, Console.CONSTANTS.common_label_serverGroups()},
+            new String[]{NameTokens.HostMgmtPresenter, Console.CONSTANTS.common_label_hosts()}
     };
 
     public static final String[][] SECTIONS_STANADLONE = {

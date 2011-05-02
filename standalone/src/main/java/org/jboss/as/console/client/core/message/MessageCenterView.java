@@ -43,6 +43,7 @@ import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.icons.Icons;
 
@@ -73,7 +74,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             setStyleName("default-popup");
 
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
-            emptyMessage.appendHtmlConstant("No recent messages!");
+            emptyMessage.appendHtmlConstant(Console.CONSTANTS.common_label_noRecentMessages());
 
             MessageCell messageCell = new MessageCell();
             messageList = new CellList<Message>(messageCell);
@@ -102,7 +103,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     private void showDetail(final Message msg) {
 
-        DefaultWindow window = new DefaultWindow("Message Detail");
+        DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetail());
         window.setWidth(320);
         window.setHeight(240);
         window.setGlassEnabled(true);
@@ -119,7 +120,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         html.appendHtmlConstant("<h3>").appendEscaped(msg.getConciseMessage()).appendHtmlConstant("</h3>");
         html.appendHtmlConstant("<p/>");
 
-        String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : "(No detail message)";
+        String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : Console.CONSTANTS.common_label_messageDetail();
         html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
         html.appendEscaped(detail);
         html.appendHtmlConstant("</pre>");
@@ -160,7 +161,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
         messageDisplay = new LayoutPanel();
 
-        final Button button = new Button("Messages");
+        final Button button = new Button(Console.CONSTANTS.common_label_messages());
         button.getElement().addClassName("default-button");
 
         ClickHandler clickHandler = new ClickHandler() {
