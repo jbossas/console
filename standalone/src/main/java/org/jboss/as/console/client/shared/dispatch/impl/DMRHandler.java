@@ -104,7 +104,10 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
                         sb.append("\n\nResponse\n\n");
                         sb.append(response.getStatusText()).append("\n");
-                        String payload = response.getText().equals("") ? "No detailed message" : response.getText();
+
+                        String payload = response.getText().equals("") ? "No detailed message" :
+                                ModelNode.fromBase64(response.getText()).toString();
+
                         sb.append(payload);
                         resultCallback.onFailure( new Exception(sb.toString()));
                     }
