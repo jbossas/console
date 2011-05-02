@@ -290,7 +290,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         public void displayFailureMessage(DeploymentRecord record, String target, Throwable t) {
             Console.MODULES.getMessageCenter().notify(
-                    new Message("Failure: " + confirmMessage(record, target) + "; " + t.getMessage(), Message.Severity.Error)
+                    new Message("Failure: " + confirmMessage(record, target), t.getMessage(), Message.Severity.Error)
             );
         }
 
