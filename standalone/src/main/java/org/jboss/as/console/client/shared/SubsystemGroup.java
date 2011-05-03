@@ -22,28 +22,37 @@ package org.jboss.as.console.client.shared;
 import com.google.gwt.resources.client.ImageResource;
 import org.jboss.as.console.client.widgets.icons.Icons;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
- * @date 3/29/11
+ * @date 5/3/11
  */
-public class SubsystemIconMapping {
+public class SubsystemGroup {
 
-    static Map<String, ImageResource> mapping = new HashMap<String,ImageResource>();
+    private String name;
+    private ImageResource icon;
+    private List<SubsystemGroupItem> items = new ArrayList<SubsystemGroupItem>();
 
-    static {
-        mapping.put("datasources", Icons.INSTANCE.database());
-        mapping.put("jms", Icons.INSTANCE.messaging());
+    public SubsystemGroup(String name, ImageResource icon) {
+        this.name = name;
+        this.icon = Icons.INSTANCE.noIcon();
     }
 
-    public static ImageResource getIcon(String subsysName)
-    {
-        ImageResource icon = mapping.get(subsysName);
-        if(null == icon)
-            icon = Icons.INSTANCE.noIcon();
+    public SubsystemGroup(String name) {
+        this(name, Icons.INSTANCE.noIcon());
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public ImageResource getIcon() {
         return icon;
+    }
+
+    public List<SubsystemGroupItem> getItems() {
+        return items;
     }
 }

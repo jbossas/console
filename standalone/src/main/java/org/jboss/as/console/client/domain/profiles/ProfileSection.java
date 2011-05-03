@@ -32,6 +32,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.shared.SubsystemGroup;
+import org.jboss.as.console.client.shared.SubsystemGroupItem;
+import org.jboss.as.console.client.shared.SubsystemGroups;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
@@ -117,11 +120,29 @@ class ProfileSection {
 
         subsysTree.removeItems();
 
-        for(SubsystemRecord subsys: subsystems)
+        // build groups first
+        for(SubsystemGroup group : SubsystemGroups.getGroups().values())
         {
-            String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
-            TreeItem item = new LHSNavTreeItem(subsys.getTitle(), token);
-            subsysTree.addItem(item);
+            TreeItem treeItem = new TreeItem(group.getName());
+
+            for(SubsystemGroupItem groupItem : group.getItems())
+            {
+                for(SubsystemRecord subsys: subsystems)
+                {
+                    if(subsys.getTitle().equals(groupItem.getKey())
+                            && groupItem.isDisabled()==false)
+                    {
+                        String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
+                        TreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
+                        treeItem.addItem(link);
+                    }
+                }
+            }
+
+            // skip empty groups
+            if(treeItem.getChildCount()>0)
+                subsysTree.addItem(treeItem);
+
         }
 
     }

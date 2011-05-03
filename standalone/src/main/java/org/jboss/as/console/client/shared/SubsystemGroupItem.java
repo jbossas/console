@@ -17,33 +17,50 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.widgets.resource;
+package org.jboss.as.console.client.shared;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.Tree;
+import org.jboss.as.console.client.widgets.icons.Icons;
 
 /**
- * Allows us to override Tree default images.
- * If we don't override one of the methods, the default will be used.
- *
  * @author Heiko Braun
- * @date 3/3/11
- *
+ * @date 5/3/11
  */
-public interface DefaultTreeResources extends Tree.Resources {
+public class SubsystemGroupItem {
 
-    public static final DefaultTreeResources INSTANCE =  GWT.create(DefaultTreeResources.class);
+    private String name;
+    private ImageResource icon;
+    private String key;
+    private boolean disabled = false;
 
-    /**
-     * An image indicating a closed branch.
-     */
-    @Source("opener_closed.png")
-    ImageResource treeClosed();
+    public SubsystemGroupItem(String name, String key, boolean disabled) {
+        this(name, Icons.INSTANCE.noIcon(), key);
+        this.disabled = disabled;
+    }
 
-    /**
-     * An image indicating an open branch.
-     */
-    @Source("opener_opened.png")
-    ImageResource treeOpen();
+    public SubsystemGroupItem(String name, String key) {
+        this(name, Icons.INSTANCE.noIcon(), key);
+    }
+
+    public SubsystemGroupItem(String name, ImageResource icon, String key) {
+        this.name = name;
+        this.icon = icon;
+        this.key = key;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ImageResource getIcon() {
+        return icon;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
 }

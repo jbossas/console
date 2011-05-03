@@ -116,8 +116,13 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
     {
         for(int i=0; i<getItemCount(); i++)
         {
-            LHSNavTreeItem navItem = (LHSNavTreeItem)getItem(i);
-            stateChange.applyTo(navItem);
+
+            TreeItem item = getItem(i);
+            if(item instanceof LHSNavTreeItem)
+            {
+                LHSNavTreeItem navItem = (LHSNavTreeItem) item;
+                stateChange.applyTo(navItem);
+            }
         }
     }
 
