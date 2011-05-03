@@ -35,7 +35,6 @@ import org.jboss.as.console.client.domain.groups.JvmEditor;
 import org.jboss.as.console.client.domain.groups.PropertyEditor;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.PropertyTable;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
