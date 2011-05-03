@@ -34,6 +34,7 @@ public class NameTokens {
     public static final String JMSPresenter = "jms";
     public static final String LoggingPresenter = "logging";
     public static final String SocketBindingPresenter = "socket-bindings";
+    public static final String SettingsPresenter = "settings";
 
     public static String getMainLayout() {
         return mainLayout;

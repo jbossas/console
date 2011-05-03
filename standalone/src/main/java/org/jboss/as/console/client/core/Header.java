@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.core;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -69,7 +70,7 @@ public class Header implements ValueChangeHandler<String> {
 
     private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
-    private LayoutPanel contentPanel;
+    private LayoutPanel headlineContainer;
     private BootstrapContext bootstrap;
 
     @Inject
@@ -87,10 +88,11 @@ public class Header implements ValueChangeHandler<String> {
         contentLayout.setStyleName("fill-layout-width");
         contentLayout.getElement().setAttribute("style", "height:34px");
 
-        contentPanel = new LayoutPanel();
-        contentPanel.setStyleName("fill-layout");
+        headlineContainer = new LayoutPanel();
+        headlineContainer.setStyleName("fill-layout");
 
-        contentLayout.add(contentPanel);
+        contentLayout.add(headlineContainer);
+
         HTML debugLink = new HTML("Debug");
         debugLink.setStyleName("cross-reference");
         debugLink.addClickHandler(new ClickHandler() {
@@ -103,9 +105,26 @@ public class Header implements ValueChangeHandler<String> {
         });
         contentLayout.add(debugLink);
 
+        HTML settingsLink = new HTML(Console.CONSTANTS.common_label_settings());
+        settingsLink.setStyleName("cross-reference");
+        settingsLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.SettingsPresenter)
+                );
+            }
+        });
+        contentLayout.add(settingsLink);
+
+
         debugLink.getElement().getParentElement().setAttribute("width", "50%");
         debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
-        contentPanel.getElement().getParentElement().setAttribute("width", "50%");
+
+        settingsLink.getElement().getParentElement().setAttribute("width", "50%");
+        settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
+
+        headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
 
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
@@ -176,7 +195,7 @@ public class Header implements ValueChangeHandler<String> {
             String styleAtt = "vertical-align:middle; text-align:center";
 
             String td =  "<td style='"+styleAtt+"' width='100px' id='" + id +"'"+
-                            " class='"+styleClass+"'></td>";
+                    " class='"+styleClass+"'></td>";
             headerString.appendHtmlConstant(td);
             //headerString.append(title);
 
@@ -225,7 +244,7 @@ public class Header implements ValueChangeHandler<String> {
     }
 
     public void setContent(Widget content) {
-        contentPanel.clear();
-        contentPanel.add(content);
+        headlineContainer.clear();
+        headlineContainer.add(content);
     }
 }

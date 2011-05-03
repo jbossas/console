@@ -41,6 +41,10 @@ import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.MainLayoutViewImpl;
+import org.jboss.as.console.client.core.settings.SettingsPresenter;
+import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
+import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
+import org.jboss.as.console.client.core.settings.SettingsView;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -152,6 +156,16 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutPresenter.MainLayoutView.class,
                 MainLayoutViewImpl.class,
                 MainLayoutPresenter.MainLayoutProxy.class);
+
+        bindPresenter(SettingsPresenter.class,
+                       SettingsPresenter.MyView.class,
+                       SettingsPresenterViewImpl.class,
+                       SettingsPresenter.MyProxy.class);
+
+        bindPresenterWidget(SettingsPresenterWidget.class,
+                SettingsPresenterWidget.MyView.class,
+                SettingsView.class
+                );
 
         // ----------------------------------------------------------------------
 

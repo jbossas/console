@@ -45,7 +45,7 @@ public class DialogueOptions extends HorizontalPanel {
         getElement().setAttribute("style", "margin-top:10px;width:100%");
 
         DefaultButton submit = new DefaultButton(submitText);
-        submit.getElement().setAttribute("style", "width:60px;height:18px");
+        submit.getElement().setAttribute("style", "min-width:60px;height:18px");
         submit.addClickHandler(submitHandler);
 
 

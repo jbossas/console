@@ -71,10 +71,6 @@ public class ServerGroupMgmtView extends SuspendableViewImpl implements ServerGr
             if(content!=null)
                 setContent(content);
 
-        } else {
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Unknown slot requested:" + slot)
-            );
         }
     }
 

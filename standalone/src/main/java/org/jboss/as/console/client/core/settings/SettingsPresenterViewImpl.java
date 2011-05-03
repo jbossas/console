@@ -17,38 +17,23 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.core;
+package org.jboss.as.console.client.core.settings;
 
-import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Heiko Braun
- * @date 5/2/11
+ * @date 5/3/11
  */
-public interface UIMessages extends Messages {
-    String changeServerStatus(String state, String name);
+public class SettingsPresenterViewImpl extends ViewImpl implements SettingsPresenter.MyView{
+    @Override
+    public void setPresenter(SettingsPresenter presenter) {
+    }
 
-    String deleteServerConfig();
-
-    String deleteServerConfigConfirm(String name);
-
-    String common_validation_portOffsetUndefined(String errMessage);
-
-    String common_validation_notEmptyNoSpace();
-
-    String deleteServerGroupConfirm(String groupName);
-
-    String deleteServerGroup();
-
-    String deleteJVM();
-
-    String deleteJVMConfirm();
-
-    String removeProperty();
-
-    String removePropertyConfirm(String key);
-
-    String commmon_description_newServerGroup();
-
-    String savedSettings();
+    @Override
+    public Widget asWidget() {
+        return new HTML("Should not be displayed");
+    }
 }

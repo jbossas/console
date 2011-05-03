@@ -35,6 +35,8 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
+import org.jboss.as.console.client.core.settings.SettingsPresenter;
+import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -65,7 +67,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
-import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
@@ -115,6 +116,8 @@ public interface CoreUI extends Ginjector {
     // ----------------------------------------------------------------------
     Provider<SignInPagePresenter> getSignInPagePresenter();
     AsyncProvider<MainLayoutPresenter> getMainLayoutPresenter();
+    AsyncProvider<SettingsPresenter> getSettingsPresenter();
+    AsyncProvider<SettingsPresenterWidget> getSettingsPresenterWidget();
 
     // ----------------------------------------------------------------------
     AsyncProvider<SystemApplicationPresenter> getSystemAppPresenter();

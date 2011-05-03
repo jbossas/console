@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.model;
 
 import com.google.gwt.autobean.shared.AutoBean;
+import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.domain.model.Host;
@@ -125,5 +126,10 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public <T, U extends T> AutoBean<T> create(Class<T> clazz, U delegate) {
         throw new RuntimeException("not implemented");  
+    }
+
+    @Override
+    public AutoBean<CommonSettings> settings() {
+        throw new RuntimeException("not implemented");
     }
 }

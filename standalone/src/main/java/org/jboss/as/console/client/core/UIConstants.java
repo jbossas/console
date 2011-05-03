@@ -118,4 +118,6 @@ public interface UIConstants extends Constants {
     String common_label_cancel();
 
     String common_label_runtimeName();
+
+    String common_label_settings();
 }

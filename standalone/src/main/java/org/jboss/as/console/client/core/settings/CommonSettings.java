@@ -17,38 +17,13 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.core;
-
-import com.google.gwt.i18n.client.Messages;
+package org.jboss.as.console.client.core.settings;
 
 /**
  * @author Heiko Braun
- * @date 5/2/11
+ * @date 5/3/11
  */
-public interface UIMessages extends Messages {
-    String changeServerStatus(String state, String name);
-
-    String deleteServerConfig();
-
-    String deleteServerConfigConfirm(String name);
-
-    String common_validation_portOffsetUndefined(String errMessage);
-
-    String common_validation_notEmptyNoSpace();
-
-    String deleteServerGroupConfirm(String groupName);
-
-    String deleteServerGroup();
-
-    String deleteJVM();
-
-    String deleteJVMConfirm();
-
-    String removeProperty();
-
-    String removePropertyConfirm(String key);
-
-    String commmon_description_newServerGroup();
-
-    String savedSettings();
+public interface CommonSettings {
+    String getLocale();
+    void setLocale(String locale);
 }
