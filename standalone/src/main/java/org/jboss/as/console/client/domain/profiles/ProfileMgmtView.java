@@ -70,10 +70,6 @@ public class ProfileMgmtView extends SuspendableViewImpl
             if(content!=null)
                 setContent(content);
 
-        } else {
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Unknown slot requested:" + slot)
-            );
         }
     }
 

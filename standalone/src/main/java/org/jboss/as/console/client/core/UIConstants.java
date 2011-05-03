@@ -120,4 +120,24 @@ public interface UIConstants extends Constants {
     String common_label_runtimeName();
 
     String common_label_settings();
+
+    String common_label_generalConfig();
+
+    String common_label_interfaces();
+
+    String subsys_jca_dataSources();
+
+    String subsys_jca_dataSourcesXA();
+
+    String subsys_jca_newDataSource();
+
+    String subsys_jca_dataSource();
+
+    String subsys_jca_existingDataSources();
+
+    String common_label_disable();
+
+    String common_label_enable();
+
+    String common_label_enOrDisable();
 }

@@ -130,7 +130,7 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
                         presenter.hideView();
 
-                        Feedback.confirm("Restart required", "Changing the settings does require a restart. Please reload this application.",
+                        Feedback.confirm(Console.MESSAGES.restartRequired(), Console.MESSAGES.restartRequiredConfirm(),
                                 new Feedback.ConfirmationHandler()
                                 {
                                     @Override

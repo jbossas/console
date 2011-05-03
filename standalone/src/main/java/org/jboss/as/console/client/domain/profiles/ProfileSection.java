@@ -52,7 +52,7 @@ class ProfileSection {
 
     public ProfileSection() {
 
-        panel = new DisclosureStackHeader("Profiles").asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_profiles()).asWidget();
         subsysTree = new LHSNavTree("profiles");
         panel.setContent(subsysTree);
 
@@ -71,7 +71,7 @@ class ProfileSection {
 
         HorizontalPanel horz = new HorizontalPanel();
         horz.getElement().setAttribute("width", "100%");
-        HTML title = new HTML("Profile:&nbsp;");
+        HTML title = new HTML(Console.CONSTANTS.common_label_profile()+":&nbsp;");
         horz.add(title);
         horz.add(dropDown);
 

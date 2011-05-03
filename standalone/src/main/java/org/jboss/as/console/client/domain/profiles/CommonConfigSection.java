@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
 import org.jboss.as.console.client.widgets.LHSNavTreeItem;
@@ -37,14 +38,14 @@ class CommonConfigSection {
     public CommonConfigSection() {
         super();
 
-        panel = new DisclosureStackHeader("General Configuration").asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_generalConfig()).asWidget();
         commonTree = new LHSNavTree("profiles");
         panel.setContent(commonTree);
 
-        LHSNavTreeItem paths = new LHSNavTreeItem("Paths", "domain/paths");
-        LHSNavTreeItem interfaces = new LHSNavTreeItem("Interfaces", "domain/domain-interfaces");
-        LHSNavTreeItem sockets = new LHSNavTreeItem("Socket Binding Groups", "domain/socket-bindings");
-        LHSNavTreeItem properties = new LHSNavTreeItem("System Properties", "domain/domain-properties");
+        LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "domain/paths");
+        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "domain/domain-interfaces");
+        LHSNavTreeItem sockets = new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBindingGroups(), "domain/socket-bindings");
+        LHSNavTreeItem properties = new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), "domain/domain-properties");
 
         commonTree.addItem(paths);
         commonTree.addItem(interfaces);

@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -73,7 +74,7 @@ public class DataSourceEditor {
         LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("New DataSource", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.subsys_jca_newDataSource(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -99,7 +100,7 @@ public class DataSourceEditor {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("JDBC Data Source Configurations"));
+        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_existingDataSources()));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
@@ -161,17 +162,17 @@ public class DataSourceEditor {
         VerticalPanel detailPanel = new VerticalPanel();
         detailPanel.setStyleName("fill-layout-width");
 
-        detailPanel.add(new ContentGroupLabel("Details"));
+        detailPanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
 
         form = new Form(DataSource.class);
         form.setNumColumns(2);
 
         ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton("Edit");
+        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if(editBtn.getText().equals("Edit"))
+                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEdit(getCurrentSelection());
                 else
                     presenter.onSave(getCurrentSelection());
@@ -200,7 +201,7 @@ public class DataSourceEditor {
                         });
             }
         };
-        ToolButton deleteBtn = new ToolButton("Delete");
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         detailToolStrip.addToolButton(deleteBtn);
 
@@ -209,7 +210,7 @@ public class DataSourceEditor {
             @Override
             public void onClick(ClickEvent event) {
 
-                String state = form.getEditedEntity().isEnabled() ? "Disable" : "Enable";
+                String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
                 final boolean nextState = !form.getEditedEntity().isEnabled();
                 Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
                         new Feedback.ConfirmationHandler() {
@@ -223,7 +224,7 @@ public class DataSourceEditor {
             }
         };
 
-        ToolButton enableBtn = new ToolButton("En/Disable");
+        ToolButton enableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
         enableBtn.addClickHandler(disableHandler);
         detailToolStrip.addToolButtonRight(enableBtn);
 

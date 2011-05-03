@@ -23,6 +23,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -47,8 +48,8 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 
-        tabLayoutpanel.add(dataSourceEditor.asWidget(), "Data Sources");
-        tabLayoutpanel.add(new HTML("Not implemented yet"), "XA Data Sources");
+        tabLayoutpanel.add(dataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSources());
+        tabLayoutpanel.add(new HTML("Not implemented yet"), Console.CONSTANTS.subsys_jca_dataSourcesXA());
 
         tabLayoutpanel.selectTab(0);
 

@@ -51,4 +51,8 @@ public interface UIMessages extends Messages {
     String commmon_description_newServerGroup();
 
     String savedSettings();
+
+    String restartRequired();
+
+    String restartRequiredConfirm();
 }

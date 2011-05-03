@@ -32,7 +32,6 @@ import org.jboss.as.console.client.Console;
  */
 public class DialogueOptions extends HorizontalPanel {
 
-
     public DialogueOptions(ClickHandler submitHandler, ClickHandler cancelHandler) {
         this(Console.CONSTANTS.common_label_save(), submitHandler, Console.CONSTANTS.common_label_cancel(), cancelHandler);
     }
@@ -40,7 +39,6 @@ public class DialogueOptions extends HorizontalPanel {
     public DialogueOptions(
             String submitText, ClickHandler submitHandler,
             String cancelText, ClickHandler cancelHandler) {
-
 
         getElement().setAttribute("style", "margin-top:10px;width:100%");
 
