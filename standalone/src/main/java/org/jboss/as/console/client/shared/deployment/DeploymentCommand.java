@@ -89,7 +89,7 @@ public enum DeploymentCommand {
 
     public void displayFailureMessage(DeploymentRecord record, Throwable t) {
         Console.MODULES.getMessageCenter().notify(
-                new Message(messageMaker.makeFailureMessage(record) + "; " + t.getMessage(), Message.Severity.Error));
+                new Message(messageMaker.makeFailureMessage(record), t.getMessage(), Message.Severity.Error));
     }
 
     public String getLabel(DeploymentRecord record) {
