@@ -30,7 +30,11 @@ public class ServerInstanceImpl implements ServerInstance {
     String name;
     boolean isRunning;
     String server;
+<<<<<<< HEAD
     private String group;
+=======
+    String group;
+>>>>>>> stan/standalone_deployments
 
     @Override
     public String getName() {
@@ -61,12 +65,21 @@ public class ServerInstanceImpl implements ServerInstance {
     public void setServer(String server) {
         this.server = server;
     }
+<<<<<<< HEAD
 
     @Override
     public String getGroup() {
         return group;
     }
 
+=======
+    
+    @Override
+    public String getGroup() {
+        return this.group;
+    }
+    
+>>>>>>> stan/standalone_deployments
     @Override
     public void setGroup(String group) {
         this.group = group;

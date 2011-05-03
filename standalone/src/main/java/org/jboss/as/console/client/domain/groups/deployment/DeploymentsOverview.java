@@ -33,17 +33,14 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.MenuColumn;
-import org.jboss.as.console.client.widgets.tables.NamedCommand;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -62,7 +59,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     private DeploymentsPresenter presenter;
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
-
     private TabLayoutPanel tabLayoutpanel;
     private List<String> serverGroupNames;
     private Map<String, Widget> serverGroupTabsAdded = new HashMap<String, Widget>();
@@ -76,7 +72,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     @Override
     public String getSelectedServerGroup() {
         int selected = this.tabLayoutpanel.getSelectedIndex();
-        Label label = (Label)this.tabLayoutpanel.getTabWidget(selected);
+        Label label = (Label) this.tabLayoutpanel.getTabWidget(selected);
         return label.getText();
     }
 
@@ -88,10 +84,10 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
-
         final ToolStrip toolStrip = new ToolStrip();
 
         toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewDeploymentDialoge();
@@ -101,54 +97,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(toolStrip);
         layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
 
-        // ---------
-
         DockLayoutPanel panel = new DockLayoutPanel(Style.Unit.PCT);
         panel.addStyleName("fill-layout-width");
 
-        String[] columnHeaders = new String[] {"Name", "Runtime Name", "Option"};
+        String[] columnHeaders = new String[]{"Name", "Runtime Name", "Add to Group", "Remove"};
         List<Column> columns = makeNameAndRuntimeColumns();
-
-
-        NamedCommand deployCmd = new NamedCommand("Assign Group") {
-            @Override
-            public void execute(int rownum) {
-                final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
-                final String groupName = getSelectedServerGroup();
-
-                Feedback.confirm("Assign Server Group", "Assign "+deployment.getName() + " to group <u>"+groupName+"</u>?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed) presenter.addToServerGroup(groupName, deployment);
-                            }
-                        });
-            }
-
-        };
-
-        NamedCommand removeCmd = new NamedCommand("Remove") {
-            @Override
-            public void execute(int rownum) {
-                final DeploymentRecord deployment = domainDeploymentProvider.getList().get(rownum);
-
-                Feedback.confirm("Remove Deployment", "Really remove <u>"+deployment.getName() + "</u>?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed) presenter.removeContent(deployment);
-                            }
-                        });
-            }
-        };
-
-
-        MenuColumn menuCol = new MenuColumn("...", deployCmd, removeCmd);
-        columns.add(menuCol);
+        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
+        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
 
         Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
-
-        // ---------
 
         tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
@@ -172,15 +129,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
 
         // Set the backing data for server group tables
-        for(Entry<String, List<DeploymentRecord>> entry : domainDeploymentInfo.getServerGroupDeployments().entrySet()) {
+        for (Entry<String, List<DeploymentRecord>> entry : domainDeploymentInfo.getServerGroupDeployments().entrySet()) {
             this.serverGroupDeploymentProviders.get(entry.getKey()).setList(entry.getValue());
         }
 
         //  if (!deploymentRecords.isEmpty()) {
         //    deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
         //  }
-
-
     }
 
     private Widget makeDeploymentTable(
@@ -213,90 +168,42 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         List<Column> columns = new ArrayList<Column>(2);
 
         columns.add(new TextColumn<DeploymentRecord>() {
+
             @Override
             public String getValue(DeploymentRecord record) {
                 return record.getName();
-            } }
-        );
+            }
+        });
 
         columns.add(new TextColumn<DeploymentRecord>() {
+
             @Override
             public String getValue(DeploymentRecord record) {
                 return record.getRuntimeName();
-            } }
-        );
+            }
+        });
 
         return columns;
     }
 
+    private Column makeEnabledColumn() {
+        return new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
 
+            @Override
+            public ImageResource getValue(DeploymentRecord deployment) {
 
-    /**
-     * Enumeration of commands available from deployment tables.
-     */
-    enum DeploymentCommand {
-        ENABLE_DISABLE("enable/disable", "Enable or Disable", "for"),
-        REMOVE_FROM_GROUP("remove from group", "Remove", "from"),
-        ADD_TO_GROUP("add to selected server group", "Add", "to"),
-        REMOVE_CONTENT("remove content", "Remove", "from");
+                ImageResource res = null;
 
-        private String label;
-        private String verb;
-        private String preposition;
-
-        private DeploymentCommand(String label, String verb, String preposition) {
-            this.label = label;
-            this.verb = verb;
-            this.preposition = preposition;
-        }
-
-        public void execute(DeploymentsPresenter presenter, DeploymentRecord record) {
-            String target = record.getServerGroup();
-            if (this == ADD_TO_GROUP) target = presenter.getView().getSelectedServerGroup();
-            confirm(presenter, record, target);
-        }
-
-        private void confirm(final DeploymentsPresenter presenter, final DeploymentRecord record, String target) {
-            Feedback.confirm("Are you sure?", confirmMessage(record, target), new Feedback.ConfirmationHandler() {
-                @Override
-                public void onConfirmation(boolean isConfirmed) {
-                    if (isConfirmed) doCommand(presenter, record);
+                if (deployment.isEnabled()) {
+                    res = Icons.INSTANCE.statusGreen_small();
+                } else {
+                    res = Icons.INSTANCE.statusRed_small();
                 }
-            });
-        }
 
-        private String confirmMessage(DeploymentRecord record, String target) {
-            String action = verb;
-            if (this == ENABLE_DISABLE && record.isEnabled()) action = "Disable";
-            if (this == ENABLE_DISABLE && !record.isEnabled()) action = "Enable";
-            return action + " " + record.getName() + " " + preposition + " " + target + ".";
-        }
-
-        private void doCommand(DeploymentsPresenter presenter, DeploymentRecord record) {
-            String selectedGroup = presenter.getView().getSelectedServerGroup();
-            switch (this) {
-                case ENABLE_DISABLE: presenter.enableDisableDeployment(record);       break;
-                case REMOVE_FROM_GROUP: presenter.removeDeploymentFromGroup(record);  break;
-                case ADD_TO_GROUP: presenter.addToServerGroup(selectedGroup, record); break;
-                case REMOVE_CONTENT: presenter.removeContent(record);                 break;
+                return res;
             }
-        }
 
-        public void displaySuccessMessage(DeploymentRecord record, String target) {
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Success: " + confirmMessage(record, target), Message.Severity.Info)
-            );
-        }
-
-        public void displayFailureMessage(DeploymentRecord record, String target, Throwable t) {
-            Console.MODULES.getMessageCenter().notify(
-                    new Message("Failure: " + confirmMessage(record, target), t.getMessage(), Message.Severity.Error)
-            );
-        }
-
-        public String getLabel() {
-            return this.label;
-        }
+        };
     }
 
     private void createAndRemoveTabs() {
@@ -314,66 +221,12 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             ListDataProvider<DeploymentRecord> serverGroupProvider = new ListDataProvider<DeploymentRecord>();
             this.serverGroupDeploymentProviders.put(serverGroupName, serverGroupProvider);
 
-            String[] columnHeaders = new String[] {"Name", "Runtime Name", "Enabled?", "Option"};
+            String[] columnHeaders = new String[]{"Name", "Runtime Name", "Enabled?", "Enable/Disable", "Remove"};
             List<Column> columns = makeNameAndRuntimeColumns();
-
-            // status col
-            Column<DeploymentRecord, ImageResource> statusColumn =
-                    new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
-                        @Override
-                        public ImageResource getValue(DeploymentRecord deployment) {
-
-                            ImageResource res = null;
-
-                            if(deployment.isEnabled())
-                                res = Icons.INSTANCE.statusGreen_small();
-                            else
-                                res = Icons.INSTANCE.statusYellow_small();
-
-                            return res;
-                        }
-                    };
-
-            columns.add(statusColumn);
-
-            // options
-            NamedCommand toogleStateCmd = new NamedCommand("Enable/Disable") {
-                @Override
-                public void execute(int rownum) {
-                    final ListDataProvider<DeploymentRecord> dataProvider = serverGroupDeploymentProviders.get(getSelectedServerGroup());
-                    final DeploymentRecord deployment = dataProvider.getList().get(rownum);
-
-                    String state = deployment.isEnabled() ? "disable" : "enable";
-                    Feedback.confirm("Deployment State", "Really <u>"+state+ "</u> <u>"+deployment.getName() + "</u>?",
-                            new Feedback.ConfirmationHandler() {
-                                @Override
-                                public void onConfirmation(boolean isConfirmed) {
-                                    if(isConfirmed) presenter.enableDisableDeployment(deployment);
-                                }
-                            });
-                }
-            };
-
-            NamedCommand removeCmd = new NamedCommand("Remove") {
-                @Override
-                public void execute(int rownum) {
-                    final ListDataProvider<DeploymentRecord> dataProvider = serverGroupDeploymentProviders.get(getSelectedServerGroup());
-                    final DeploymentRecord deployment = dataProvider.getList().get(rownum);
-
-                    Feedback.confirm("Remove Deployment", "Really remove <u>"+deployment.getName() + "</u> from server-group "+getSelectedServerGroup()+"?",
-                            new Feedback.ConfirmationHandler() {
-                                @Override
-                                public void onConfirmation(boolean isConfirmed) {
-                                    if(isConfirmed) presenter.removeDeploymentFromGroup(deployment);
-                                }
-                            });
-                }
-            };
-
-
-            MenuColumn menuCol = new MenuColumn("...", toogleStateCmd, removeCmd);
-
-            columns.add(menuCol);
+            columns.add(makeEnabledColumn());
+            columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
+            columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
+            //columns.addAll(ActionColumnFactory.makeActionColumns(presenter, this.serverGroupDeploymentProviders.get(serverGroupName), DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_FROM_GROUP));
             vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", serverGroupProvider, columns, columnHeaders));
         }
 
@@ -393,5 +246,4 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             this.serverGroupDeploymentProviders.remove(serverGroupName);
         }
     }
-
 }

@@ -20,7 +20,8 @@ package org.jboss.as.console.client.shared.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.math.BigDecimal;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -38,9 +39,11 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert
  * @date 3/18/11
  */
 public class DeploymentStoreImpl implements DeploymentStore {
+  private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
 
   private DispatchAsync dispatcher;
   private BeanFactory factory;
@@ -52,7 +55,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
   }
 
   @Override
-  public void loadDomainDeployments(final AsyncCallback<List<DeploymentRecord>> callback) {
+  public void loadDeploymentContent(final AsyncCallback<List<DeploymentRecord>> callback) {
     // /:read-children-resources(child-type=deployment)
     final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
     
@@ -82,8 +85,9 @@ public class DeploymentStoreImpl implements DeploymentStore {
                 DeploymentRecord rec = factory.deployment().as();
                 rec.setName(name);
                 rec.setRuntimeName(handler.get("runtime-name").asString());
-                rec.setEnabled(true); // are domain deployments really "enabled"?
-                rec.setServerGroup("domain"); // using the name "domain" here.  Is that correct?
+                if (isStandalone) rec.setEnabled(handler.get("enabled").asBoolean());
+                if (!isStandalone) rec.setEnabled(true);
+                rec.setServerGroup(null); 
                 deployments.add(rec);
               } catch (IllegalArgumentException e) {
                 Log.error("Failed to parse data source representation", e);
@@ -181,7 +185,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
   
   @Override
   public void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
-    doDeploymentCommand("add", serverGroup, deploymentRecord, callback);
+    doDeploymentCommand(ADD, serverGroup, deploymentRecord, callback);
   }
   
   private void doDeploymentCommand(String command,
@@ -189,7 +193,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
                                    DeploymentRecord deployment,
                                    final AsyncCallback<DMRResponse> callback) {
       ModelNode operation = new ModelNode();
-      operation.get(OP).set(ADD);
+      //operation.get(OP).set(ADD);
       if ((serverGroup != null) && (!serverGroup.equals(""))) {
         operation.get(ADDRESS).add("server-group", serverGroup);
       }

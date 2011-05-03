@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.DefaultButton;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
@@ -46,11 +47,15 @@ import java.util.List;
 public class DeploymentStep2 {
 
     private NewDeploymentWizard wizard;
+    private DefaultWindow window;
+    private List<String> serverGroupNames;
 
     private Form<DeploymentReference> form;
 
-    public DeploymentStep2(NewDeploymentWizard wizard) {
+    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, List<String> serverGroupNames) {
         this.wizard = wizard;
+        this.window = window;
+        this.serverGroupNames = serverGroupNames;
     }
 
     public Widget asWidget()
@@ -60,17 +65,13 @@ public class DeploymentStep2 {
 
         layout.add(new HTML("<h3>Step 2/2: Chose Server Group</h3>"));
 
-        List<String> groupNames = new ArrayList<String>();
-        for(ServerGroupRecord sg : wizard.getPresenter().getServerGroups())
-            groupNames.add(sg.getGroupName());
-
         form = new Form<DeploymentReference>(DeploymentReference.class);
 
         TextItem hashField = new TextItem("hash", "Key");
         TextBoxItem nameField = new TextBoxItem("name", "Name");
         ComboBoxItem groupSelector = new ComboBoxItem("group", "Server Group");
         groupSelector.setDefaultToFirstOption(true);
-        groupSelector.setValueMap(groupNames);
+        groupSelector.setValueMap(this.serverGroupNames);
 
         form.setFields(hashField, nameField, groupSelector);
 
@@ -83,7 +84,7 @@ public class DeploymentStep2 {
         cancel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                wizard.getPresenter().closeDialoge();
+                window.hide();
             }
         });
 
@@ -98,7 +99,7 @@ public class DeploymentStep2 {
                     {
                         @Override
                         public void execute() {
-                            wizard.getPresenter().onDeployToGroup(form.getUpdatedEntity());
+                            wizard.onDeployToGroup(form.getUpdatedEntity());
                         }
                     });
 

@@ -19,41 +19,37 @@
 
 package org.jboss.as.console.client.server.deployment;
 
+import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SingleSelectionModel;
+import java.util.List;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.RHSHeader;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
-import java.util.Arrays;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert
  * @date 3/14/11
  */
 public class DeploymentListView extends SuspendableViewImpl implements DeploymentListPresenter.MyView{
@@ -62,11 +58,15 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
     private DeploymentListPresenter presenter;
     private DefaultCellTable<DeploymentRecord> deploymentTable;
     private ListDataProvider<DeploymentRecord> deploymentProvider;
-    private Form<DeploymentRecord> form;
 
     @Override
     public void setPresenter(DeploymentListPresenter presenter) {
         this.presenter = presenter;
+    }
+    
+    @Override
+    public void updateDeploymentInfo(List<DeploymentRecord> deployments) {
+      deploymentProvider.setList(deployments);
     }
 
     @Override
@@ -78,9 +78,20 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
-        VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-        vpanel.getElement().setAttribute("style", "padding:15px;");
+        final ToolStrip toolStrip = new ToolStrip();
+        toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewDeploymentDialoge();
+            }
+        }));
+        
+        layout.add(toolStrip);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
 
         // -----------
 
@@ -88,13 +99,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.deployment());
-        horzPanel.add(image);
-        image.getElement().getParentElement().setAttribute("width", "25");
 
         horzPanel.add(nameLabel);
 
-        vpanel.add(horzPanel);
+        panel.add(horzPanel);
 
         deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
@@ -114,117 +122,50 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
             }
         };
 
+        TextColumn<DeploymentRecord> enabledDisabledColumn = new TextColumn<DeploymentRecord>() {
+             @Override
+             public String getValue(DeploymentRecord record) {
+               return Boolean.toString(record.isEnabled());
+             }
+        };
 
         deploymentTable.addColumn(dplNameColumn, "Name");
         deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-
-        HorizontalPanel tableOptions = new HorizontalPanel();
-        tableOptions.getElement().setAttribute("cellpadding", "2px");
-
-
-        ComboBox typeFilter = new ComboBox();
-        typeFilter.setValues(Arrays.asList(new String[]{"", "war", "ear", "rar", "other"}));
-        typeFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.onFilterType(event.getValue());
-            }
-        });
-
-
-        Widget filterWidget = typeFilter.asWidget();
-        filterWidget.getElement().setAttribute("style", "width:60px;");
-
-        tableOptions.add(new Label("Type:"));
-        tableOptions.add(filterWidget);
-
-        tableOptions.getElement().setAttribute("style", "float:right;");
-        vpanel.add(tableOptions);
-        vpanel.add(deploymentTable);
+        deploymentTable.addColumn(makeEnabledColumn(), "Enabled?");
+        
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), "Enable/Disable");
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), "Remove");
+        
+        panel.add(deploymentTable);
 
 
         ScrollPanel scroll = new ScrollPanel();
-        scroll.add(vpanel);
+        scroll.add(panel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 65, Style.Unit.PCT);
-
-        // ----------- --------------------------------------------------
-
-
-        LayoutPanel formPanel = new LayoutPanel();
-        formPanel.getElement().setAttribute("style", "padding:15px;");
-
-        final ToolStrip toolStrip = new ToolStrip();
-        final ToolButton edit = new ToolButton("Edit");
-        edit.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals("Edit"))
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-        });
-
-        toolStrip.addToolButton(edit);
-        ToolButton delete = new ToolButton("Delete");
-        delete.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                Feedback.confirm(
-                        "Delete Deployment",
-                        "Do you want to delete this deployment?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
-                                    presenter.deleteDeployment(
-                                            selectionModel.getSelectedObject()
-
-                                    );
-                                }
-                            }
-                        });
-            }
-        });
-        toolStrip.addToolButton(delete);
-
-        formPanel.add(toolStrip);
-        formPanel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 30, Style.Unit.PX);
-
-        form = new Form<DeploymentRecord>(DeploymentRecord.class);
-        form.setNumColumns(2);
-
-        TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem runtimeName = new TextBoxItem("runtimeName", "Runtime Name");
-        TextItem shaItem = new TextItem("sha", "Sha");
-        CheckBoxItem suspendedItem = new CheckBoxItem("suspended", "Suspended?");
-
-        form.setFields(nameItem,  runtimeName, shaItem, suspendedItem);
-        form.bind(deploymentTable);
-
-        Widget formWidget = form.asWidget();
-        formPanel.add(formWidget);
-        formPanel.setWidgetTopHeight(formWidget, 30, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        // ------------------------------------------
-
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
-
-        tabLayoutpanel.add(formPanel, "Deployment Details");
-        tabLayoutpanel.selectTab(0);
-
-        layout.add(tabLayoutpanel);
-
-        layout.setWidgetBottomHeight(tabLayoutpanel, 0, Style.Unit.PX, 35, Style.Unit.PCT);
-
+        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 65, Style.Unit.PCT);
+        
         return layout;
     }
+    
+    // Refactor Me!  Copied from org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview
+    private Column makeEnabledColumn() {
+        return new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
+
+            @Override
+            public ImageResource getValue(DeploymentRecord deployment) {
+
+                ImageResource res = null;
+
+                if (deployment.isEnabled()) {
+                    res = Icons.INSTANCE.statusGreen_small();
+                } else {
+                    res = Icons.INSTANCE.statusRed_small();
+                }
+
+                return res;
+            }
+        };
+    }
+    
 }

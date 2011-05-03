@@ -16,10 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.server.deployment;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -29,57 +31,149 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import java.util.List;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.deployment.NewDeploymentWizard;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
+import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.model.DeploymentStore;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 
 /**
  * @author Heiko Braun
  * @date 3/14/11
  */
-public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy> {
+public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy>
+        implements DeployCommandExecutor {
 
-    private final PlaceManager placeManager;
+  private final PlaceManager placeManager;
+  private StandaloneDeploymentInfo deploymentInfo;
+  private DeploymentStore deploymentStore;
 
-    @ProxyCodeSplit
-    @NameToken(NameTokens.DeploymentListPresenter)
-    public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
+  private DefaultWindow window;
+  private DispatchAsync dispatcher;
+  
+  @ProxyCodeSplit
+  @NameToken(NameTokens.DeploymentListPresenter)
+  public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
+  }
+
+  public interface MyView extends View {
+
+    void setPresenter(DeploymentListPresenter presenter);
+
+    void updateDeploymentInfo(List<DeploymentRecord> deployments);
+  }
+
+  @Inject
+  public DeploymentListPresenter(
+          EventBus eventBus, MyView view, MyProxy proxy,
+          DeploymentStore deploymentStore,
+          PlaceManager placeManager,
+          DispatchAsync dispatcher) {
+
+    super(eventBus, view, proxy);
+    this.placeManager = placeManager;
+    this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
+    this.deploymentStore = deploymentStore;
+    this.dispatcher = dispatcher;
+  }
+
+  @Override
+  protected void onBind() {
+    super.onBind();
+    getView().setPresenter(this);
+  }
+
+  @Override
+  protected void onReset() {
+    super.onReset();
+    deploymentInfo.refreshView();
+  }
+
+  @Override
+  protected void revealInParent() {
+    RevealContentEvent.fire(getEventBus(), DeploymentMgmtPresenter.TYPE_MainContent, this);
+  }
+
+  public void onFilterType(String value) {
+  }
+
+  @Override
+  public void removeContent(final DeploymentRecord record) {
+    deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>() {
+
+      @Override
+      public void onSuccess(DMRResponse response) {
+        deploymentInfo.refreshView();
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(record);
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        super.onFailure(t);
+        deploymentInfo.refreshView();
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(record, t);
+      }
+    });
+  }
+
+  @Override
+  public void enableDisableDeployment(final DeploymentRecord record) {
+    deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
+
+      @Override
+      public void onSuccess(DMRResponse response) {
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(record);
+      }
+
+      @Override
+      public void onFailure(Throwable t) {
+        super.onFailure(t);
+        deploymentInfo.refreshView();
+        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(record, t);
+      }
+    });
+  }
+
+  @Override
+  public void addToServerGroup(String selectedGroup, DeploymentRecord record) {
+    throw new UnsupportedOperationException("Not supported in standalone mode.");
+  }
+
+  @Override
+  public String getSelectedServerGroup() {
+    return null;
+  }
+
+  @Override
+  public void removeDeploymentFromGroup(DeploymentRecord record) {
+    throw new UnsupportedOperationException("Not supported in standalone mode.");
+  }
+  
+  public void launchNewDeploymentDialoge() {
+
+        window = new DefaultWindow("Create Deployment");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+            new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+
     }
-
-    public interface MyView extends View {
-        void setPresenter(DeploymentListPresenter presenter);
-    }
-
-    @Inject
-    public DeploymentListPresenter(
-            EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager) {
-
-        super(eventBus, view, proxy);
-        this.placeManager = placeManager;
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), DeploymentMgmtPresenter.TYPE_MainContent, this);
-    }
-
-    public void onFilterType(String value) {
-
-    }
-
-    public void deleteDeployment(DeploymentRecord selectedObject) {
-
-    }
-
 }

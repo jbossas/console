@@ -29,11 +29,12 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
  * and turning it a usable representation.
  *
  * @author Heiko Braun
+ * @author Stan Silvert
  * @date 1/31/11
  */
 public interface DeploymentStore {
     void loadDeployments(List<ServerGroupRecord> serverGroups, AsyncCallback<List<DeploymentRecord>> callback);
-    void loadDomainDeployments(AsyncCallback<List<DeploymentRecord>> callback);
+    void loadDeploymentContent(AsyncCallback<List<DeploymentRecord>> callback);
     void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void enableDisableDeployment(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

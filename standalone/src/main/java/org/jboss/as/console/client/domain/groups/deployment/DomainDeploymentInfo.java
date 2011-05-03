@@ -26,6 +26,7 @@ import java.util.Map;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 
@@ -36,7 +37,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
-public class DomainDeploymentInfo {
+public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
   private DeploymentsPresenter presenter;
   private ServerGroupStore serverGroupStore;
@@ -63,7 +64,7 @@ public class DomainDeploymentInfo {
     return this.serverGroupDeployments;
   }
 
-  void refreshView() {
+  public void refreshView() {
     serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
 
       @Override
@@ -97,7 +98,7 @@ public class DomainDeploymentInfo {
             
             DomainDeploymentInfo.this.serverGroupDeployments = serverGroupDeployments;
             
-            deploymentStore.loadDomainDeployments(new SimpleCallback<List<DeploymentRecord>>() {
+            deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
               @Override
               public void onSuccess(List<DeploymentRecord> result) {
                 DomainDeploymentInfo.this.domainDeployments = result;

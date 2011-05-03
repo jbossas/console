@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -37,6 +37,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.DefaultButton;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.Base64;
 
 /**
@@ -44,11 +45,14 @@ import org.jboss.dmr.client.Base64;
  * @date 4/8/11
  */
 public class DeploymentStep1 {
+    private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
 
     private NewDeploymentWizard wizard;
+    private DefaultWindow window;
 
-    public DeploymentStep1(NewDeploymentWizard wizard) {
+    public DeploymentStep1(NewDeploymentWizard wizard, DefaultWindow window) {
         this.wizard = wizard;
+        this.window = window;
     }
 
     public Widget asWidget()
@@ -81,11 +85,13 @@ public class DeploymentStep1 {
         cancel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                wizard.getPresenter().closeDialoge();
+                window.hide();
             }
         });
 
-        Button submit = new DefaultButton("Next &rsaquo;&rsaquo;", new ClickHandler() {
+        String okText = "Upload";
+        if (!isStandalone) okText = "Next &rsaquo;&rsaquo;";
+        Button submit = new DefaultButton(okText, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 form.submit();
@@ -134,7 +140,9 @@ public class DeploymentStep1 {
             }
         });
 
-        layout.add(new HTML("<h3>Step 1/2: Deployment Selection</h3>"));
+        String stepText = "<h3>Deployment Selection</h3>";
+        if (!isStandalone) stepText = "<h3>Step 1/2: Deployment Selection</h3>";
+        layout.add(new HTML(stepText));
         layout.add(new HTML("Please chose a file that you want to deploy."));
         layout.add(form);
         return layout;

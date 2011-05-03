@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups.deployment;
+package org.jboss.as.console.client.shared.deployment;
 
 /**
  * @author Heiko Braun
