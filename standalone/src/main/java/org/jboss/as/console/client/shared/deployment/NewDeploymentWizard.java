@@ -46,6 +46,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 4/7/11
  */
 public class NewDeploymentWizard  {
@@ -63,7 +64,6 @@ public class NewDeploymentWizard  {
     private DispatchAsync dispatcher;
     private DeploymentViewRefresher refresher;
     
-
     public NewDeploymentWizard(DefaultWindow window, DispatchAsync dispatcher, DeploymentViewRefresher refresher) {
         this.window = window;
         this.dispatcher = dispatcher;
@@ -89,7 +89,6 @@ public class NewDeploymentWizard  {
         deck.add(step2.asWidget());
 
         deck.showWidget(0);
-
     }
 
     public Widget asWidget() {
@@ -120,37 +119,8 @@ public class NewDeploymentWizard  {
     }
     
     public void onDeployToGroup(final DeploymentReference deployment) {
-
         window.hide();
-
-
-        /*ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("deployment", deployment.getName());
-
-        try {
-            byte[] decoded = Base64.decode(deployment.getHash());
-            operation.get(HASH).set(decoded);
-
-            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-                @Override
-                public void onSuccess(DMRResponse result) {
-                    ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                    System.out.println(response.toJSONString());
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
-
-        /*{"address":[{"deployment":"test.war"}],
-            "operation":"add","hash":{"BYTES_VALUE":"7jgpMVmynfxpqp8UDleKLmtgbrA="},
-            "name":"test.war"}
-         */
-
         assignDeploymentName(deployment);
-
     }
 
     private void assignDeploymentName(final DeploymentReference deployment) {
@@ -187,11 +157,11 @@ public class NewDeploymentWizard  {
 
                 @Override
                 public void onError(Request request, Throwable exception) {
-                    Log.error("Deployment failed", exception);
+                    Log.error(Console.CONSTANTS.common_error_deploymentFailed() + ": ", exception);
                 }
             });
         } catch (RequestException e) {
-            Log.error("Unknown error", e);
+            Log.error(Console.CONSTANTS.common_error_unknownError(), e);
         }
     }
 
@@ -206,7 +176,7 @@ public class NewDeploymentWizard  {
 
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Deployment failed", caught);
+                Log.error(Console.CONSTANTS.common_error_deploymentFailed() + ": ", caught);
                 onDeploymentFailed(deployment);
             }
 
@@ -220,7 +190,7 @@ public class NewDeploymentWizard  {
 
     private void onDeploymentFailed(DeploymentReference deployment) {
         Console.MODULES.getMessageCenter().notify(
-                new Message("Deployment failed: "+deployment.getName(), Message.Severity.Error)
+                new Message(Console.CONSTANTS.common_error_deploymentFailed() + ": " + deployment.getName(), Message.Severity.Error)
         );
     }
 }

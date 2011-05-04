@@ -32,6 +32,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -111,7 +112,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Failed to load datasource", caught);
+                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
             }
 
             @Override
@@ -140,7 +141,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
                         handlers.add(model);
 
                     } catch (IllegalArgumentException e) {
-                        Log.error("Failed to parse data source representation", e);
+                        Log.error(Console.CONSTANTS.common_error_failedToDecode(), e);
                     }
                 }
 

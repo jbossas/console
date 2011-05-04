@@ -23,12 +23,19 @@ import com.google.gwt.user.cellview.client.Column;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
+ * A column that renders cells giving the user the ability to fire off a
+ * DeploymentCommand.
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
-
  */
 public class DeploymentCommandColumn extends Column<DeploymentRecord, DeploymentRecord> {
 
+    /**
+     * Create a new Command Column.
+     * 
+     * @param executor The delegate that knows how to execute the command on the server.
+     * @param command The command that will be fired.
+     */
     public DeploymentCommandColumn(DeployCommandExecutor executor, DeploymentCommand command) {
         super(new DeploymentCommandCell(executor, command));
     }

@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -29,13 +27,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -62,6 +57,7 @@ public class LoggingEditor {
 
         scroll.add(layout);
 
+        /*
         ToolStrip toolstrip = new ToolStrip();
         toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
 
@@ -73,7 +69,7 @@ public class LoggingEditor {
             }
         }));
 
-        layout.add(toolstrip);
+        layout.add(toolstrip); */
 
         // ---
 
@@ -81,7 +77,7 @@ public class LoggingEditor {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("Handler Configurations"));
+        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_handlerConfigurations()));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         layout.add(horzPanel);
@@ -139,13 +135,13 @@ public class LoggingEditor {
             }
         };
 
-        handlerTable.addColumn(nameColumn, "Name");
-        handlerTable.addColumn(autoflushColumn, "Auto Flush");
-        handlerTable.addColumn(encodingColumn, "Encoding");
-        handlerTable.addColumn(formatterColumn, "Formatter");
-        handlerTable.addColumn(handlerTypeColumn, "Type");
-        handlerTable.addColumn(levelColumn, "Log Level");
-        handlerTable.addColumn(queueLengthColumn, "Queue Length");
+        handlerTable.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
+        handlerTable.addColumn(autoflushColumn, Console.CONSTANTS.subsys_logging_autoFlush());
+        handlerTable.addColumn(encodingColumn, Console.CONSTANTS.subsys_logging_encoding());
+        handlerTable.addColumn(formatterColumn, Console.CONSTANTS.subsys_logging_formatter());
+        handlerTable.addColumn(handlerTypeColumn, Console.CONSTANTS.subsys_logging_type());
+        handlerTable.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
+        handlerTable.addColumn(queueLengthColumn, Console.CONSTANTS.subsys_logging_queueLength());
 
         layout.add(handlerTable);
 

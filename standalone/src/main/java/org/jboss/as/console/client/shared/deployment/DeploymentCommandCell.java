@@ -25,16 +25,22 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
+ * Cell that renders a button capable of firing off a DeploymentCommand.
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
-
  */
 public class DeploymentCommandCell extends ActionCell<DeploymentRecord> {
 
     private DeploymentCommand command;
     
+    /**
+     * Create a new DeploymentCommandCell
+     * 
+     * @param executor The delegate that knows how to execute the command on the server.
+     * @param command The command that the button will fire.
+     */
     public DeploymentCommandCell(DeployCommandExecutor executor, DeploymentCommand command) {
-        super("", new DeploymentCommandDelegate(command, executor));
+        super("", new DeploymentCommandDelegate(executor, command));
         this.command = command;
     }
 

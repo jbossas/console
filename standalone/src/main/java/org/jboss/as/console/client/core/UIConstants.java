@@ -29,6 +29,9 @@ public interface UIConstants extends Constants {
 
     String common_error_unexpectedHttpResponse();
     String common_error_detailsMissing();
+    String common_error_failedToDecode();
+    String common_error_deploymentFailed();
+    String common_error_unknownError();
 
     String common_label_hostManagement();
     String common_label_profileManagement();
@@ -138,4 +141,50 @@ public interface UIConstants extends Constants {
     String common_label_enable();
 
     String common_label_enOrDisable();
+    
+    String common_label_areYouSure();
+    
+    String common_label_addToGroup();
+    
+    String common_label_remove();
+    
+    String common_label_domain();
+    
+    String common_label_upload();
+    
+    String common_label_next();
+    
+    String common_label_deploymentSelection();
+    
+    String common_label_step();
+    
+    String common_label_chooseFile();
+    
+    String common_label_chooseServerGroup();
+    
+    String common_label_finish();
+    
+    String common_label_addContent();
+    
+    String common_label_contentRepository();
+    
+    String common_label_enabled();
+    
+    String common_error_contentStillAssignedToGroup();
+    
+    String subsys_logging_logging();
+    
+    String subsys_logging_autoFlush();
+    
+    String subsys_logging_encoding();
+    
+    String subsys_logging_formatter();
+    
+    String subsys_logging_type();
+    
+    String subsys_logging_logLevel();
+    
+    String subsys_logging_queueLength();
+    
+    String subsys_logging_handlerConfigurations();
 }

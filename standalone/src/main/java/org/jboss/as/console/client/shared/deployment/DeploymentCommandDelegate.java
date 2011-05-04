@@ -22,6 +22,7 @@ import com.google.gwt.cell.client.ActionCell;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
+ * The delegate that is activated when the DeploymentCommandCell is clicked.
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
@@ -30,7 +31,13 @@ public class DeploymentCommandDelegate implements ActionCell.Delegate<Deployment
     private DeploymentCommand command;
     private DeployCommandExecutor executor;
 
-    public DeploymentCommandDelegate(DeploymentCommand command, DeployCommandExecutor executor) {
+    /**
+     * Create a new DeploymentCommandDelegate
+     * 
+     * @param executor The delegate that knows how to execute the command on the server.
+     * @param command The command that will be invoked.
+     */
+    public DeploymentCommandDelegate(DeployCommandExecutor executor, DeploymentCommand command) {
         this.command = command;
         this.executor = executor;
     }

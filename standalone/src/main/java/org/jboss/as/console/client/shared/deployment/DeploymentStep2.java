@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
@@ -39,6 +40,7 @@ import java.util.List;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 4/8/11
  */
 public class DeploymentStep2 {
@@ -60,13 +62,14 @@ public class DeploymentStep2 {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "width:95%, margin:15px;");
 
-        layout.add(new HTML("<h3>Step 2/2: Chose Server Group</h3>"));
+        layout.add(new HTML("<h3>" + Console.CONSTANTS.common_label_step() + " 2/2: " + 
+                                     Console.CONSTANTS.common_label_chooseServerGroup() + "</h3>"));
 
         form = new Form<DeploymentReference>(DeploymentReference.class);
 
-        TextItem hashField = new TextItem("hash", "Key");
-        TextBoxItem nameField = new TextBoxItem("name", "Name");
-        ComboBoxItem groupSelector = new ComboBoxItem("group", "Server Group");
+        TextItem hashField = new TextItem("hash", Console.CONSTANTS.common_label_key());
+        TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
+        ComboBoxItem groupSelector = new ComboBoxItem("group", Console.CONSTANTS.common_label_serverGroup());
         groupSelector.setDefaultToFirstOption(true);
         groupSelector.setValueMap(this.serverGroupNames);
 
@@ -76,7 +79,7 @@ public class DeploymentStep2 {
 
         // -----
 
-        Label cancel = new Label("Cancel");
+        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
         cancel.setStyleName("html-link");
         cancel.addClickHandler(new ClickHandler() {
             @Override
@@ -85,7 +88,7 @@ public class DeploymentStep2 {
             }
         });
 
-        DefaultButton submit = new DefaultButton("Finish", new ClickHandler() {
+        DefaultButton submit = new DefaultButton(Console.CONSTANTS.common_label_finish(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 

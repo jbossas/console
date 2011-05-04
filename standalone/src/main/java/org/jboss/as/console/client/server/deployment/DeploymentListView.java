@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
@@ -73,12 +74,12 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         LayoutPanel layout = new LayoutPanel();
 
-        RHSHeader title = new RHSHeader("Server Deployments");
+        RHSHeader title = new RHSHeader(Console.CONSTANTS.common_label_deployments());
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
         final ToolStrip toolStrip = new ToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -94,7 +95,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         // -----------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Available Deployments");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_deployments());
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -121,19 +122,12 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
             }
         };
 
-        TextColumn<DeploymentRecord> enabledDisabledColumn = new TextColumn<DeploymentRecord>() {
-             @Override
-             public String getValue(DeploymentRecord record) {
-               return Boolean.toString(record.isEnabled());
-             }
-        };
-
-        deploymentTable.addColumn(dplNameColumn, "Name");
-        deploymentTable.addColumn(dplRuntimeColumn, "Runtime Name");
-        deploymentTable.addColumn(makeEnabledColumn(), "Enabled?");
+        deploymentTable.addColumn(dplNameColumn, Console.CONSTANTS.common_label_name());
+        deploymentTable.addColumn(dplRuntimeColumn, Console.CONSTANTS.common_label_runtimeName());
+        deploymentTable.addColumn(makeEnabledColumn(), Console.CONSTANTS.common_label_enabled());
         
-        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), "Enable/Disable");
-        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), "Remove");
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), Console.CONSTANTS.common_label_enOrDisable());
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), Console.CONSTANTS.common_label_remove());
         
         panel.add(deploymentTable);
 

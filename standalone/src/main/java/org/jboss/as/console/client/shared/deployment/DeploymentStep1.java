@@ -40,6 +40,7 @@ import org.jboss.as.console.client.widgets.DefaultWindow;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 4/8/11
  */
 public class DeploymentStep1 {
@@ -78,7 +79,7 @@ public class DeploymentStep1 {
 
         // Add a 'submit' button.
 
-        Label cancel = new Label("Cancel");
+        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
         cancel.setStyleName("html-link");
         cancel.addClickHandler(new ClickHandler() {
             @Override
@@ -87,8 +88,8 @@ public class DeploymentStep1 {
             }
         });
 
-        String okText = "Upload";
-        if (!isStandalone) okText = "Next &rsaquo;&rsaquo;";
+        String okText = Console.CONSTANTS.common_label_upload();
+        if (!isStandalone) okText = Console.CONSTANTS.common_label_next() + " &rsaquo;&rsaquo;";
         Button submit = new DefaultButton(okText, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -132,16 +133,17 @@ public class DeploymentStep1 {
                     wizard.onUploadComplete(upload.getFilename(), hash);
 
                 } catch (Exception e) {
-                    Log.error("Failed to decode response: "+html, e);
+                    Log.error(Console.CONSTANTS.common_error_failedToDecode() + ": " + html, e);
                 }
 
             }
         });
 
-        String stepText = "<h3>Deployment Selection</h3>";
-        if (!isStandalone) stepText = "<h3>Step 1/2: Deployment Selection</h3>";
+        String stepText = "<h3>" + Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
+        if (!isStandalone) stepText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/2: " +
+                                       Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
         layout.add(new HTML(stepText));
-        layout.add(new HTML("Please chose a file that you want to deploy."));
+        layout.add(new HTML(Console.CONSTANTS.common_label_chooseFile()));
         layout.add(form);
         return layout;
     }

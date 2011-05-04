@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
@@ -80,13 +81,13 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        RHSHeader title = new RHSHeader("Manage Deployments");
+        RHSHeader title = new RHSHeader(Console.CONSTANTS.common_label_manageDeployments());
         layout.add(title);
         layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButtonRight(new ToolButton("Add Content", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -100,12 +101,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         DockLayoutPanel panel = new DockLayoutPanel(Style.Unit.PCT);
         panel.addStyleName("fill-layout-width");
 
-        String[] columnHeaders = new String[]{"Name", "Runtime Name", "Add to Group", "Remove"};
+        String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
+                                              Console.CONSTANTS.common_label_runtimeName(), 
+                                              Console.CONSTANTS.common_label_addToGroup(),
+                                              Console.CONSTANTS.common_label_remove()};
         List<Column> columns = makeNameAndRuntimeColumns();
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
 
-        Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
+        Widget contentTable = makeDeploymentTable(Console.CONSTANTS.common_label_contentRepository(), domainDeploymentProvider, columns, columnHeaders);
 
         tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
@@ -221,13 +225,17 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             ListDataProvider<DeploymentRecord> serverGroupProvider = new ListDataProvider<DeploymentRecord>();
             this.serverGroupDeploymentProviders.put(serverGroupName, serverGroupProvider);
 
-            String[] columnHeaders = new String[]{"Name", "Runtime Name", "Enabled?", "Enable/Disable", "Remove"};
+            String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
+                                                  Console.CONSTANTS.common_label_runtimeName(), 
+                                                  Console.CONSTANTS.common_label_enabled(), 
+                                                  Console.CONSTANTS.common_label_enOrDisable(), 
+                                                  Console.CONSTANTS.common_label_remove()};
             List<Column> columns = makeNameAndRuntimeColumns();
             columns.add(makeEnabledColumn());
             columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
             columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
-            //columns.addAll(ActionColumnFactory.makeActionColumns(presenter, this.serverGroupDeploymentProviders.get(serverGroupName), DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_FROM_GROUP));
-            vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", serverGroupProvider, columns, columnHeaders));
+            vPanel.add(makeDeploymentTable(serverGroupName + " " + Console.CONSTANTS.common_label_deployments(), 
+                                           serverGroupProvider, columns, columnHeaders));
         }
 
         // find server groups to remove

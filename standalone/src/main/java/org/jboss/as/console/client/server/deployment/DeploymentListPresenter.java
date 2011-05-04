@@ -31,6 +31,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
@@ -46,6 +47,7 @@ import java.util.List;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  * @date 3/14/11
  */
 public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy>
@@ -111,14 +113,14 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
       @Override
       public void onSuccess(DMRResponse response) {
         deploymentInfo.refreshView();
-        DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(record);
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentListPresenter.this, record);
       }
 
       @Override
       public void onFailure(Throwable t) {
         super.onFailure(t);
         deploymentInfo.refreshView();
-        DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(record, t);
+        DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(DeploymentListPresenter.this, record, t);
       }
     });
   }
@@ -130,14 +132,14 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
       @Override
       public void onSuccess(DMRResponse response) {
         deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(record);
+        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(DeploymentListPresenter.this, record);
       }
 
       @Override
       public void onFailure(Throwable t) {
         super.onFailure(t);
         deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(record, t);
+        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(DeploymentListPresenter.this, record, t);
       }
     });
   }
@@ -158,8 +160,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   }
   
   public void launchNewDeploymentDialoge() {
-
-        window = new DefaultWindow("Create Deployment");
+        window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(320);
         window.setHeight(240);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -175,6 +176,5 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
 
         window.setGlassEnabled(true);
         window.center();
-
     }
 }

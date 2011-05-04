@@ -55,4 +55,30 @@ public interface UIMessages extends Messages {
     String restartRequired();
 
     String restartRequiredConfirm();
+    
+    String removeFromConfirm(String entity, String target);
+    
+    String failedToRemoveFrom(String entity, String target);
+    
+    String removedFrom(String entity, String target);
+    
+    String enableConfirm(String entity);
+    
+    String disableConfirm(String entity);
+    
+    String failedToEnable(String entity);
+    
+    String failedToDisable(String entity);
+    
+    String successEnabled(String entity);
+    
+    String successDisabled(String entity);
+    
+    String addConfirm(String entity, String target);
+    
+    String failedToAdd(String entity, String target);
+    
+    String successAdd(String entity, String target);
+    
+    String alreadyAssignedTo(String deploymentName, String serverGroup);
 }
