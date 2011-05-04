@@ -36,8 +36,8 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
-import org.jboss.as.console.client.shared.subsys.jca.DataSourceStore;
-import org.jboss.as.console.client.shared.subsys.jca.DataSourceStoreImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 import javax.inject.Singleton;

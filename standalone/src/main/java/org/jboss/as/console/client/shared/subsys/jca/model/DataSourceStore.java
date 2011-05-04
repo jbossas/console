@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;

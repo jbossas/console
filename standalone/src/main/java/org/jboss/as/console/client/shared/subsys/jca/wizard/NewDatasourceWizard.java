@@ -17,11 +17,15 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.DataSourceStep3;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep1;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep2;
 
 /**
  * @author Heiko Braun

@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

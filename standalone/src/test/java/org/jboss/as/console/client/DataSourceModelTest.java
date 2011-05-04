@@ -22,7 +22,7 @@ package org.jboss.as.console.client;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.subsys.jca.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.junit.BeforeClass;
 import org.junit.Ignore;

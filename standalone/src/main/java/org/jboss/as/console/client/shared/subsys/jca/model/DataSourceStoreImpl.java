@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,7 +26,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 

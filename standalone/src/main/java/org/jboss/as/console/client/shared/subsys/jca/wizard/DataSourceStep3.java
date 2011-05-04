@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,21 +26,22 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
+import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Heiko Braun
  * @date 4/18/11
  */
-public class DatasourceStep1 {
+public class DataSourceStep3 {
 
 
     NewDatasourceWizard wizard;
+    Form<DataSource> form ;
 
-    public DatasourceStep1(NewDatasourceWizard wizard) {
+    public DataSourceStep3(NewDatasourceWizard wizard) {
         this.wizard = wizard;
     }
 
@@ -48,28 +49,20 @@ public class DatasourceStep1 {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
 
-        layout.add(new HTML("<h3>Step 1/3: Datasource Attributes</h3>"));
+        layout.add(new HTML("<h3>Step 3/3: Connection Settings</h3>"));
 
-        final Form<DataSource> form = new Form<DataSource>(DataSource.class);
+        form = new Form<DataSource>(DataSource.class);
 
-        TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-                boolean notEmpty = super.validate(value);
-
-                return notEmpty && !value.contains(":") && !value.startsWith("/");
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "Not empty, no prefix, no leading slash";
+        TextBoxItem connectionUrl = new TextBoxItem("connectionUrl", "Connection URL");
+        TextBoxItem user = new TextBoxItem("username", "Username");
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
+            {
+                isRequired = false;
             }
         };
-        CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
-        enabled.setValue(Boolean.TRUE);
 
-        form.setFields(name, jndiName, enabled);
+
+        form.setFields(connectionUrl,user,pass);
 
         layout.add(form.asWidget());
 
@@ -79,7 +72,7 @@ public class DatasourceStep1 {
                 FormValidation validation = form.validate();
                 if(!validation.hasErrors())
                 {
-                    wizard.onConfigureBaseAttributes(form.getUpdatedEntity());
+                    wizard.onFinish(form.getUpdatedEntity());
                 }
             }
         };
@@ -92,12 +85,17 @@ public class DatasourceStep1 {
         };
 
         DialogueOptions options = new DialogueOptions(
-                "Next &rsaquo;&rsaquo;",submitHandler,
+                "Done",submitHandler,
                 "cancel",cancelHandler
         );
 
         layout.add(options);
 
         return layout;
+    }
+
+    void edit(DataSource entity)
+    {
+        form.edit(entity);
     }
 }
