@@ -19,19 +19,14 @@
 
 package org.jboss.as.console.client.shared;
 
-import com.google.gwt.resources.client.ImageResource;
-import org.jboss.as.console.client.widgets.icons.Icons;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class SubsystemGroups {
+public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new HashMap<String, SubsystemGroup>();
 
@@ -64,7 +59,7 @@ public class SubsystemGroups {
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca"));
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector"));
+        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector", true));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
@@ -96,7 +91,7 @@ public class SubsystemGroups {
         return groups;
     }
 
-    public static SubsystemGroup getGroup(String subsysKey)
+    public static SubsystemGroup getGroupForKey(String subsysKey)
     {
         SubsystemGroup matchingGroup = null;
 

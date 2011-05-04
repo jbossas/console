@@ -22,6 +22,7 @@ package org.jboss.as.console.client.widgets;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -31,12 +32,12 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SplitEditorPanel {
 
-    private DockLayoutPanel dockLayout;
+    private SplitLayoutPanel dockLayout;
     private LayoutPanel topLayout;
     private TabLayoutPanel bottomLayout;
 
     public SplitEditorPanel() {
-        dockLayout = new DockLayoutPanel(Style.Unit.PX);
+        dockLayout = new SplitLayoutPanel(5);
 
         topLayout = new LayoutPanel();
 

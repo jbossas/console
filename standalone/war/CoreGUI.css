@@ -316,6 +316,10 @@ color:#C0C0C0;
     border-right:1px solid #A7ABB4!important;*/
 }
 
+.gwt-SplitLayoutPanel-VDragger {
+    cursor:row-resize;
+}
+
 .lhs-tree-item {
     cursor:pointer;
     color:#404040;

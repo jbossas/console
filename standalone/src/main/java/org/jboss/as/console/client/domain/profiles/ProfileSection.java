@@ -34,7 +34,7 @@ import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
-import org.jboss.as.console.client.shared.SubsystemGroups;
+import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
@@ -121,7 +121,7 @@ class ProfileSection {
         subsysTree.removeItems();
 
         // build groups first
-        for(SubsystemGroup group : SubsystemGroups.getGroups().values())
+        for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
         {
             TreeItem treeItem = new TreeItem(group.getName());
 

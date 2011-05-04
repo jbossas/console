@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -38,6 +39,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.forms.ButtonItem;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
@@ -62,8 +64,7 @@ public class DataSourceEditor {
     private DataSourcePresenter presenter;
     private DefaultCellTable<DataSource> dataSourceTable;
     private ListDataProvider<DataSource> dataSourceProvider;
-    private Form<DataSource> form;
-    private ToolButton editBtn;
+    private DataSourceDetails details;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -71,7 +72,8 @@ public class DataSourceEditor {
 
     public Widget asWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
+        SplitEditorPanel editorPanel = new SplitEditorPanel();
+        LayoutPanel layout = editorPanel.getTopLayout();
 
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.subsys_jca_newDataSource(), new ClickHandler() {
@@ -158,102 +160,13 @@ public class DataSourceEditor {
 
 
         // -----------
+        details = new DataSourceDetails(presenter);
+        Widget detailsPanel = details.asWidget();
+        details.bind(dataSourceTable);
+        editorPanel.getBottomLayout().add(detailsPanel, "Details");
+        editorPanel.getBottomLayout().add(new HTML("todo"), "Metrics");
 
-        VerticalPanel detailPanel = new VerticalPanel();
-        detailPanel.setStyleName("fill-layout-width");
-
-        detailPanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
-
-        form = new Form(DataSource.class);
-        form.setNumColumns(2);
-
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEdit(getCurrentSelection());
-                else
-                    presenter.onSave(getCurrentSelection());
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        detailToolStrip.addToolButton(editBtn);
-
-
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                DataSource currentSelection = getCurrentSelection();
-
-                Feedback.confirm(
-                        "Delete DataSource",
-                        "Really delete this DataSource '"+currentSelection.getName()+"' ?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDelete(getCurrentSelection());
-                                }
-                            }
-                        });
-            }
-        };
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.addClickHandler(clickHandler);
-        detailToolStrip.addToolButton(deleteBtn);
-
-
-         ClickHandler disableHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
-                final boolean nextState = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDisable(form.getEditedEntity(), nextState);
-                                }
-                            }
-                        });
-            }
-        };
-
-        ToolButton enableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
-        enableBtn.addClickHandler(disableHandler);
-        detailToolStrip.addToolButtonRight(enableBtn);
-
-        detailPanel.add(detailToolStrip);
-
-        TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
-        TextBoxItem driverItem = new TextBoxItem("driverName", "Driver");
-        TextBoxItem driverClassItem = new TextBoxItem("driverClass", "Driver Class");
-
-        TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
-
-        TextBoxItem userItem = new TextBoxItem("username", "Username");
-        PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
-
-        form.setFields(nameItem, jndiItem, enabledFlagItem);
-        form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem, urlItem);
-        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, driverClassItem);
-        form.bind(dataSourceTable);
-        form.setEnabled(false); // currently not editable
-
-        Widget formWidget = form.asWidget();
-
-        detailPanel.add(formWidget);
-
-        vpanel.add(detailPanel);
-
-        return layout;
+        return editorPanel.asWidget();
     }
 
 
@@ -265,14 +178,7 @@ public class DataSourceEditor {
 
     }
 
-    public DataSource getCurrentSelection() {
-        SingleSelectionModel<DataSource> selectionModel = (SingleSelectionModel<DataSource>)dataSourceTable.getSelectionModel();
-        return selectionModel.getSelectedObject();
-    }
-
     public void setEnabled(boolean isEnabled) {
-        form.setEnabled(isEnabled);
-        String btnLabel = isEnabled ? "Save" : "Edit";
-        editBtn.setText(btnLabel);
+        details.setEnabled(isEnabled);
     }
 }

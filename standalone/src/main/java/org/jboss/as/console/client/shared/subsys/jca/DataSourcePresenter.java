@@ -187,13 +187,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onEdit(DataSource entity) {
         getView().setEnabled(true);
+
+        // TODO: implement
     }
 
     public void onSave(DataSource entity) {
         getView().setEnabled(false);
-        Console.MODULES.getMessageCenter().notify(
-                new Message("'Save' operation not implemented", Message.Severity.Warning)
-        );
+
+        // TODO: implement
+
+
 
     }
 
