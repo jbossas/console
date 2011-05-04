@@ -21,37 +21,11 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 
 /**
  * @author Heiko Braun
- * @date 3/29/11
+ * @date 5/4/11
  */
-public interface DataSource {
+public interface XADataSource extends DataSource {
 
-    String getName();
-    void setName(String name);
-
-    String getJndiName();
-    void setJndiName(String name);
-
-    boolean isEnabled();
-    void setEnabled(boolean isEnabled);
-
-    String getUsername();
-    void setUsername(String user);
-
-    String getPassword();
-    void setPassword(String password);
-
-    String getPoolName();
-    void setPoolName(String name);
-
-    // regular DS attributes below
-
-    String getConnectionUrl();
-    void setConnectionUrl(String url);
-
-    String getDriverClass();
-    void setDriverClass(String driverClass);
-
-    String getDriverName();
-    void setDriverName(String driver);
+    String getDataSourceClass();
+    void setDataSourceClass(String dadaSourceClass);
 
 }

@@ -42,13 +42,13 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class DataSourceEditor {
+public class XADataSourceEditor {
 
     private DataSourcePresenter presenter;
     private DatasourceTable dataSourceTable;
-    private DataSourceDetails details;
+    private XADataSourceDetails details;
 
-    public DataSourceEditor(DataSourcePresenter presenter) {
+    public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -62,7 +62,7 @@ public class DataSourceEditor {
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewDatasourceWizard();
+
             }
         }));
 
@@ -84,7 +84,7 @@ public class DataSourceEditor {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_existingDataSources()));
+        horzPanel.add(new ContentHeaderLabel("XA Datasources"));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
@@ -95,7 +95,7 @@ public class DataSourceEditor {
 
 
         // -----------
-        details = new DataSourceDetails(presenter);
+        details = new XADataSourceDetails(presenter);
         details.bind(dataSourceTable.getCellTable());
 
         editorPanel.getBottomLayout().add(details.asWidget(), "Details");

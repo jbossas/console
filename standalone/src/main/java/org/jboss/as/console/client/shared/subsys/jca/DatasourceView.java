@@ -37,18 +37,20 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
 
     private DataSourcePresenter presenter;
     private DataSourceEditor dataSourceEditor;
+    private XADataSourceEditor xaDataSourceEditor;
 
     @Override
     public Widget createWidget() {
 
         this.dataSourceEditor = new DataSourceEditor(presenter);
+        this.xaDataSourceEditor = new XADataSourceEditor(presenter);
 
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 
         tabLayoutpanel.add(dataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSources());
-        tabLayoutpanel.add(new HTML("Not implemented yet"), Console.CONSTANTS.subsys_jca_dataSourcesXA());
+        tabLayoutpanel.add(xaDataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSourcesXA());
 
         tabLayoutpanel.selectTab(0);
 
