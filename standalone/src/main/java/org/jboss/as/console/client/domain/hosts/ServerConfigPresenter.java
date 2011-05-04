@@ -178,9 +178,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     {
                         if(server.getName().equals(serverName))
                         {
+                            serverName = server.getName();
                             workOn(server);
-                            serverName = selectedRecord.getName();
-
                             break;
                         }
                     }

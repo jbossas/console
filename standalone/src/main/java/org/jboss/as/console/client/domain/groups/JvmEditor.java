@@ -125,10 +125,11 @@ public class JvmEditor {
             form.setEnabled(false);
             edit.setText(Console.CONSTANTS.common_label_edit());
 
+            Jvm jvm = form.getUpdatedEntity();
             if(hasJvm)
-                presenter.onUpdateJvm(reference, form.getEditedEntity().getName(), form.getChangedValues());
+                presenter.onUpdateJvm(reference, jvm.getName(), form.getChangedValues());
             else
-                presenter.onCreateJvm(reference, form.getUpdatedEntity());
+                presenter.onCreateJvm(reference, jvm);
         }
     }
 
