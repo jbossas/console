@@ -19,18 +19,16 @@
 
 package org.jboss.as.console.server.proxy;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Security;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**

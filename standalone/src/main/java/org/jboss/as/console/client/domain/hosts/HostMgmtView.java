@@ -22,9 +22,7 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Server;
 

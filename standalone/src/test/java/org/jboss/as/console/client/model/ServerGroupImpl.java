@@ -25,7 +25,6 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun

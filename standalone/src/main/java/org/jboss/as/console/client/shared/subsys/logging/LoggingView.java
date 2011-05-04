@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 
 import java.util.List;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 
 /**
  * @author Stan Silvert

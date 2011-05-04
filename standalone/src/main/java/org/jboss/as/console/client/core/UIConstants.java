@@ -20,8 +20,6 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Heiko Braun

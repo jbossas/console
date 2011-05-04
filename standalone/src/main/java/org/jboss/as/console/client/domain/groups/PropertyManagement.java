@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-
 /**
  * @author Heiko Braun
  * @date 4/29/11

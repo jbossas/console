@@ -20,9 +20,10 @@
 package org.jboss.as.console.client.shared.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.List;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+
+import java.util.List;
 
 /**
  * Responsible for loading deployment data

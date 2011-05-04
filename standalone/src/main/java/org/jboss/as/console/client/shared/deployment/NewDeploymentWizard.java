@@ -29,7 +29,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.message.Message;
@@ -40,6 +39,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 

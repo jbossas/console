@@ -21,8 +21,9 @@ package org.jboss.dmr.client;
 
 import org.junit.Test;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-import static org.junit.Assert.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OUTCOME;
+import static org.junit.Assert.assertEquals;
 
 
 /**
