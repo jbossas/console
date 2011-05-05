@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 
 import java.util.List;
 
@@ -65,6 +66,11 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     @Override
     public void updateDataSources(List<DataSource> datasources) {
         dataSourceEditor.updateDataSources(datasources);
+    }
+
+    @Override
+    public void updateXADataSources(List<XADataSource> result) {
+        xaDataSourceEditor.updateDataSources(result);
     }
 
     @Override

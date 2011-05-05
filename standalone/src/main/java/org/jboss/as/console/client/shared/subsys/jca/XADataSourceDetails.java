@@ -146,11 +146,12 @@ public class XADataSourceDetails {
         return panel;
     }
 
-    public void bind(DefaultCellTable<DataSource> dataSourceTable) {
-        form.bind(dataSourceTable);
-    }
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
+    }
+
+    public void setSelectedRecord(XADataSource dataSource) {
+        form.edit(dataSource);
     }
 }

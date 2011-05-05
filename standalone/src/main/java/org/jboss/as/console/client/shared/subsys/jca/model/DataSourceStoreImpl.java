@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -31,6 +32,7 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -105,6 +107,82 @@ public class DataSourceStoreImpl implements DataSourceStore {
         });
     }
 
+    public void loadXADataSources(String profile, final AsyncCallback<List<XADataSource>> callback) {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(CHILD_TYPE).set("xa-data-source");
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> payload = response.get("result").asList();
+
+                List<XADataSource> datasources = new ArrayList<XADataSource>(payload.size());
+                for(ModelNode item : payload)
+                {
+                    // returned as type property (key=ds name)
+                    Property property = item.asProperty();
+                    ModelNode ds = property.getValue().asObject();
+                    String name = property.getName();
+                    //System.out.println(ds.toJSONString(false));
+
+                    try {
+                        XADataSource model = factory.xaDataSource().as();
+                        model.setName(name);
+                        model.setJndiName(ds.get("jndi-name").asString());
+                        model.setDataSourceClass(ds.get("xa-data-source-class").asString());
+
+                        if(ds.hasDefined("driver"))
+                            model.setDriverName(ds.get("driver").asString());
+
+                        model.setEnabled(ds.get("enabled").asBoolean());
+                        model.setUsername(ds.get("user-name").asString());
+                        model.setPassword(ds.get("password").asString());
+                        model.setPoolName(ds.get("pool-name").asString());
+
+
+                        List<PropertyRecord> xaProperties = Collections.EMPTY_LIST;
+
+                        // System properties
+                        if(ds.hasDefined("xa-data-source-properties"))
+                        {
+                            List<ModelNode> properties = ds.get("xa-data-source-properties").asList();
+                            xaProperties = new ArrayList<PropertyRecord>(properties.size());
+                            for(ModelNode xaProp : properties)
+                            {
+                                Property p = xaProp.asProperty();
+                                PropertyRecord propRecord = factory.property().as();
+
+                                propRecord.setKey(p.getName());
+                                ModelNode value = p.getValue();
+                                propRecord.setValue(value.asString());
+
+                                xaProperties.add(propRecord);
+                            }
+                        }
+
+                        model.setProperties(xaProperties);
+                        datasources.add(model);
+
+
+                    } catch (IllegalArgumentException e) {
+                        Log.error("Failed to parse xa data source representation", e);
+                    }
+                }
+
+                callback.onSuccess(datasources);
+            }
+        });
+    }
 
     @Override
     public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<Boolean> callback) {

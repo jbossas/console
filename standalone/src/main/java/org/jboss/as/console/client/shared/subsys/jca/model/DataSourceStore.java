@@ -31,6 +31,7 @@ import java.util.List;
 public interface DataSourceStore {
 
     void loadDataSources(String profile, AsyncCallback<List<DataSource>> callback);
+    void loadXADataSources(String profile, final AsyncCallback<List<XADataSource>> callback);
     void createDataSource(String profile, DataSource datasource, AsyncCallback<Boolean> callback);
     void deleteDataSource(String profile, DataSource dataSource, AsyncCallback<Boolean> callback);
     void enableDataSource(String profile, DataSource dataSource, boolean isEnabled, AsyncCallback<Boolean> callback);

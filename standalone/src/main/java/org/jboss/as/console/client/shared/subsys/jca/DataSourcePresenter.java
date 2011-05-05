@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
@@ -77,6 +78,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void updateDataSources(List<DataSource> datasources);
 
         void setEnabled(boolean b);
+
+        void updateXADataSources(List<XADataSource> result);
     }
 
     @Inject
@@ -143,6 +146,21 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(List<DataSource> result) {
                 getView().updateDataSources(result);
+            }
+        });
+
+
+        //  xa datasources
+
+        dataSourceStore.loadXADataSources(profile, new AsyncCallback<List<XADataSource>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error("Failed to load datasource", caught);
+            }
+
+            @Override
+            public void onSuccess(List<XADataSource> result) {
+                getView().updateXADataSources(result);
             }
         });
 

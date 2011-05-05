@@ -19,25 +19,35 @@
 
 package org.jboss.as.console.client.shared.subsys.jca;
 
+import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.groups.PropertyEditor;
 import org.jboss.as.console.client.domain.groups.PropertyManagement;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -50,7 +60,8 @@ import java.util.List;
 public class XADataSourceEditor implements PropertyManagement  {
 
     private DataSourcePresenter presenter;
-    private DatasourceTable dataSourceTable;
+    private DefaultCellTable<XADataSource> dataSourceTable;
+    private ListDataProvider<XADataSource> dataSourceProvider;
     private XADataSourceDetails details;
     private PropertyEditor propertyEditor;
 
@@ -78,10 +89,11 @@ public class XADataSourceEditor implements PropertyManagement  {
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
 
-        layout.add(vpanel);
+        ScrollPanel scroll = new ScrollPanel(vpanel);
+        layout.add(scroll);
 
         layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -94,16 +106,74 @@ public class XADataSourceEditor implements PropertyManagement  {
 
         vpanel.add(horzPanel);
 
-        dataSourceTable = new DatasourceTable();
+
+        dataSourceTable = new DefaultCellTable<XADataSource>(20);
+        dataSourceProvider = new ListDataProvider<XADataSource>();
+        dataSourceProvider.addDataDisplay(dataSourceTable);
+
+
+        TextColumn<DataSource> nameColumn = new TextColumn<DataSource>() {
+            @Override
+            public String getValue(DataSource record) {
+                return record.getName();
+            }
+        };
+
+        TextColumn<DataSource> jndiNameColumn = new TextColumn<DataSource>() {
+            @Override
+            public String getValue(DataSource record) {
+                return record.getJndiName();
+            }
+        };
+
+        TextColumn<DataSource> poolColumn = new TextColumn<DataSource>() {
+            @Override
+            public String getValue(DataSource record) {
+                return record.getPoolName();
+            }
+        };
+
+        Column<DataSource, ImageResource> statusColumn =
+                new Column<DataSource, ImageResource>(new ImageResourceCell()) {
+                    @Override
+                    public ImageResource getValue(DataSource dataSource) {
+
+                        ImageResource res = null;
+
+                        if(dataSource.isEnabled())
+                            res = Icons.INSTANCE.statusGreen_small();
+                        else
+                            res = Icons.INSTANCE.statusRed_small();
+
+                        return res;
+                    }
+                };
+
+
+        dataSourceTable.addColumn(nameColumn, "Name");
+        dataSourceTable.addColumn(jndiNameColumn, "JNDI");
+        dataSourceTable.addColumn(poolColumn, "Pool");
+        dataSourceTable.addColumn(statusColumn, "Enabled?");
+
         vpanel.add(new ContentGroupLabel("Registered XA Datasources"));
-        vpanel.add(dataSourceTable.asWidget());
+        vpanel.add(dataSourceTable);
 
 
         // -----------
         details = new XADataSourceDetails(presenter);
-        details.bind(dataSourceTable.getCellTable());
+        propertyEditor = new PropertyEditor(this,true);
 
-        propertyEditor = new PropertyEditor(this);
+        final SingleSelectionModel<XADataSource> selectionModel = new SingleSelectionModel<XADataSource>();
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                XADataSource dataSource = selectionModel.getSelectedObject();
+                details.setSelectedRecord(dataSource);
+                propertyEditor.setSelectedRecord(dataSource.getName(), dataSource.getProperties());
+            }
+        });
+        dataSourceTable.setSelectionModel(selectionModel);
+
 
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
@@ -120,11 +190,11 @@ public class XADataSourceEditor implements PropertyManagement  {
     }
 
 
-    public void updateDataSources(List<DataSource> datasources) {
-        dataSourceTable.getDataProvider().setList(datasources);
+    public void updateDataSources(List<XADataSource> datasources) {
+        dataSourceProvider.setList(datasources);
 
         if(!datasources.isEmpty())
-            dataSourceTable.getCellTable().getSelectionModel().setSelected(datasources.get(0), true);
+            dataSourceTable.getSelectionModel().setSelected(datasources.get(0), true);
 
     }
 

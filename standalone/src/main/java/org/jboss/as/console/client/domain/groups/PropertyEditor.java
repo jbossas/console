@@ -51,9 +51,15 @@ public class PropertyEditor {
 
     private PropertyManagement presenter;
     private String reference;
+    private boolean simpleView = false;
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
+    }
+
+    public PropertyEditor(PropertyManagement presenter, boolean simpleView) {
+        this.presenter = presenter;
+        this.simpleView = simpleView;
     }
 
     public Widget asWidget() {
@@ -156,13 +162,19 @@ public class PropertyEditor {
         // Add the columns.
         propertyTable.addColumn(keyColumn, Console.CONSTANTS.common_label_key());
         propertyTable.addColumn(valueColumn, Console.CONSTANTS.common_label_value());
-        propertyTable.addColumn(bootColumn, "Boot-Time?");
+
+        if(!simpleView)
+            propertyTable.addColumn(bootColumn, "Boot-Time?");
+
         propertyTable.addColumn(menuCol, Console.CONSTANTS.common_label_option());
 
 
         propertyTable.setColumnWidth(keyColumn, 30, Style.Unit.PCT);
         propertyTable.setColumnWidth(valueColumn, 30, Style.Unit.PCT);
-        propertyTable.setColumnWidth(bootColumn, 20, Style.Unit.PCT);
+
+        if(!simpleView)
+            propertyTable.setColumnWidth(bootColumn, 20, Style.Unit.PCT);
+
         propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
 

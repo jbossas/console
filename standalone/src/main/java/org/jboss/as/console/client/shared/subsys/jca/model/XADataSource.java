@@ -19,6 +19,10 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
+
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 5/4/11
@@ -27,5 +31,8 @@ public interface XADataSource extends DataSource {
 
     String getDataSourceClass();
     void setDataSourceClass(String dadaSourceClass);
+
+    List<PropertyRecord> getProperties();
+    void setProperties(List<PropertyRecord> props);
 
 }
