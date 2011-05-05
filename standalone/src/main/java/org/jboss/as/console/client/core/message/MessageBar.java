@@ -21,6 +21,7 @@ package org.jboss.as.console.client.core.message;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -43,19 +44,19 @@ public class MessageBar extends LayoutPanel implements MessageCenter.MessageList
 
     private static class MessagePopup extends PopupPanel
     {
-        private Label label;
+        private HTML label;
 
         public MessagePopup()
         {
             super(true);
 
-            label = new Label();
+            label = new HTML();
             setWidget(label);
             setStyleName(Message.Severity.Blank.getStyle());
         }
 
         public void setMessage(Message message) {
-            label.setText(message.getConciseMessage());
+            label.setHTML(message.getConciseMessage());
             setStyleName(Message.Severity.Blank.getStyle());
             addStyleName(message.getSeverity().getStyle());
         }

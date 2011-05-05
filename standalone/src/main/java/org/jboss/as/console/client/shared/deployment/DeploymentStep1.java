@@ -143,7 +143,9 @@ public class DeploymentStep1 {
         if (!isStandalone) stepText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/2: " +
                                        Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
         layout.add(new HTML(stepText));
-        layout.add(new HTML(Console.CONSTANTS.common_label_chooseFile()));
+        HTML description = new HTML();
+        description.setHTML(Console.CONSTANTS.common_label_chooseFile());
+        layout.add(description);
         layout.add(form);
         return layout;
     }

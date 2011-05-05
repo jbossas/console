@@ -115,13 +115,13 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         html.appendHtmlConstant(prototype.getHTML());
         html.appendHtmlConstant("&nbsp;");
         html.appendEscaped(msg.getFired().toString());
-        html.appendHtmlConstant("<h3>").appendEscaped(msg.getConciseMessage()).appendHtmlConstant("</h3>");
+        html.appendHtmlConstant("<h3>"+msg.getConciseMessage()+"</h3>");
         html.appendHtmlConstant("<p/>");
 
         String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : Console.CONSTANTS.common_label_messageDetail();
-        html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
-        html.appendEscaped(detail);
-        html.appendHtmlConstant("</pre>");
+        String detailText = "<pre style='font-family:tahoma, verdana, sans-serif;'>"+detail+"</pre>";
+        html.appendHtmlConstant(detailText);
+
         HTML widget = new HTML(html.toSafeHtml());
         widget.getElement().setAttribute("style", "margin:5px");
 
