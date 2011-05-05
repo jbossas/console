@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +37,7 @@ import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tabs.VerticalTabLayoutPanel;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -56,9 +58,7 @@ public class XADataSourceDetails {
     }
 
     public Widget asWidget() {
-        VerticalPanel detailPanel = new VerticalPanel();
-        detailPanel.setStyleName("fill-layout-width");
-
+        VerticalTabLayoutPanel detailPanel = new VerticalTabLayoutPanel();
 
         ToolStrip detailToolStrip = new ToolStrip();
         editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
@@ -121,7 +121,8 @@ public class XADataSourceDetails {
         enableBtn.addClickHandler(disableHandler);
         detailToolStrip.addToolButtonRight(enableBtn);
 
-        detailPanel.add(detailToolStrip);
+        VerticalPanel panel = new VerticalPanel();
+        panel.add(detailToolStrip);
 
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
@@ -139,11 +140,13 @@ public class XADataSourceDetails {
         form.setEnabled(false); // currently not editable
 
         Widget formWidget = form.asWidget();
+        panel.add(formWidget);
 
-        detailPanel.add(formWidget);
+        detailPanel.add(panel, "Common");
+        detailPanel.add(new HTML("lala"), "Properties");
+        detailPanel.add(new HTML("lala"), "Pool");
 
-        ScrollPanel scroll = new ScrollPanel(detailPanel);
-        return scroll;
+        return detailPanel.asWidget();
     }
 
     public void bind(DefaultCellTable<DataSource> dataSourceTable) {
