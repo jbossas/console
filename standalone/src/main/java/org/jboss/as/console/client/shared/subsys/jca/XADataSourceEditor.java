@@ -30,6 +30,9 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.groups.PropertyEditor;
+import org.jboss.as.console.client.domain.groups.PropertyManagement;
+import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -44,11 +47,12 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class XADataSourceEditor {
+public class XADataSourceEditor implements PropertyManagement  {
 
     private DataSourcePresenter presenter;
     private DatasourceTable dataSourceTable;
     private XADataSourceDetails details;
+    private PropertyEditor propertyEditor;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -99,12 +103,15 @@ public class XADataSourceEditor {
         details = new XADataSourceDetails(presenter);
         details.bind(dataSourceTable.getCellTable());
 
+        propertyEditor = new PropertyEditor(this);
 
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
         bottomPanel.add(details.asWidget(), "Attributes");
-        bottomPanel.add(new HTML("todo"), "Metrics");
+        bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
+        bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
+        bottomPanel.add(new HTML("Current pool size, connections in use, etc"), "Metrics");
 
         bottomPanel.selectTab(0);
         vpanel.add(new ContentGroupLabel("Datasource"));
@@ -123,5 +130,29 @@ public class XADataSourceEditor {
 
     public void setEnabled(boolean isEnabled) {
         details.setEnabled(isEnabled);
+    }
+
+
+    // property management below
+    // TODO: move to actual presenter
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+
     }
 }

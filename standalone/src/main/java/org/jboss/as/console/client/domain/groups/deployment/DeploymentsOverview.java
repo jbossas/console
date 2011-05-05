@@ -160,7 +160,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
-
+        vpanel.getElement().setAttribute("style", "padding-top:5px;");
         // -----------
 
         //vpanel.add(new ContentHeaderLabel(headerLabel));
@@ -232,8 +232,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
             this.tabLayoutpanel.add(vPanel, serverGroupName);
             this.serverGroupTabsAdded.put(serverGroupName, vPanel);
-            ListDataProvider<DeploymentRecord> serverGroupProvider = new ListDataProvider<DeploymentRecord>();
-            this.serverGroupDeploymentProviders.put(serverGroupName, serverGroupProvider);
+            ListDataProvider<DeploymentRecord> dataProvider = new ListDataProvider<DeploymentRecord>();
+            this.serverGroupDeploymentProviders.put(serverGroupName, dataProvider);
 
             String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
                                                   Console.CONSTANTS.common_label_runtimeName(), 
@@ -244,8 +244,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             columns.add(makeEnabledColumn());
             columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
             columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
-            vPanel.add(makeDeploymentTable(serverGroupName + " " + Console.CONSTANTS.common_label_deployments(), 
-                                           serverGroupProvider, columns, columnHeaders));
+            //columns.addAll(ActionColumnFactory.makeActionColumns(presenter, this.serverGroupDeploymentProviders.get(serverGroupName), DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_FROM_GROUP));
+            vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", dataProvider, columns, columnHeaders));
+
         }
 
         // find server groups to remove

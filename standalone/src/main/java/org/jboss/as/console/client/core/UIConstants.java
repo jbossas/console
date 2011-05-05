@@ -141,6 +141,8 @@ public interface UIConstants extends Constants {
     String common_label_enable();
 
     String common_label_enOrDisable();
+
+    String common_label_subsystems();
     
     String common_label_areYouSure();
     
@@ -187,4 +189,5 @@ public interface UIConstants extends Constants {
     String subsys_logging_queueLength();
     
     String subsys_logging_handlerConfigurations();
+
 }
