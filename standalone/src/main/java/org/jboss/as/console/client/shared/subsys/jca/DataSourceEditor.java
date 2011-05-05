@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -74,10 +75,11 @@ public class DataSourceEditor {
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
 
-        layout.add(vpanel);
+        ScrollPanel scroll = new ScrollPanel(vpanel);
+        layout.add(scroll);
 
         layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(vpanel, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -92,7 +94,7 @@ public class DataSourceEditor {
 
         dataSourceTable = new DatasourceTable();
 
-        vpanel.add(new ContentGroupLabel("Datasources"));
+        vpanel.add(new ContentGroupLabel("Registered Datasources"));
         vpanel.add(dataSourceTable.asWidget());
 
 
@@ -103,12 +105,11 @@ public class DataSourceEditor {
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
-        bottomPanel.add(details.asWidget(), "Details");
+        bottomPanel.add(details.asWidget(), "Attributes");
         bottomPanel.add(new HTML("todo"), "Metrics");
         bottomPanel.selectTab(0);
 
-
-        vpanel.add(new ContentGroupLabel("Subresources"));
+        vpanel.add(new ContentGroupLabel("Datasource"));
         vpanel.add(bottomPanel);
 
         return layout;

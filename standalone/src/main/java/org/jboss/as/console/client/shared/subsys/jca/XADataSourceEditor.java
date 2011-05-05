@@ -26,10 +26,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.icons.Icons;
@@ -54,8 +56,7 @@ public class XADataSourceEditor {
 
     public Widget asWidget() {
 
-        SplitEditorPanel editorPanel = new SplitEditorPanel();
-        LayoutPanel layout = editorPanel.getTopLayout();
+        LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.subsys_jca_newDataSource(), new ClickHandler() {
@@ -84,13 +85,13 @@ public class XADataSourceEditor {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("XA Datasources"));
+        horzPanel.add(new ContentHeaderLabel("XA Datasource Configurations"));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
 
         dataSourceTable = new DatasourceTable();
-
+        vpanel.add(new ContentGroupLabel("Registered XA Datasources"));
         vpanel.add(dataSourceTable.asWidget());
 
 
@@ -98,10 +99,17 @@ public class XADataSourceEditor {
         details = new XADataSourceDetails(presenter);
         details.bind(dataSourceTable.getCellTable());
 
-        editorPanel.getBottomLayout().add(details.asWidget(), "Details");
-        editorPanel.getBottomLayout().add(new HTML("todo"), "Metrics");
 
-        return editorPanel.asWidget();
+        TabPanel bottomPanel = new TabPanel();
+        bottomPanel.setStyleName("default-tabpanel");
+
+        bottomPanel.add(details.asWidget(), "Attributes");
+        bottomPanel.add(new HTML("todo"), "Metrics");
+
+        bottomPanel.selectTab(0);
+        vpanel.add(new ContentGroupLabel("Datasource"));
+        vpanel.add(bottomPanel);
+        return layout;
     }
 
 

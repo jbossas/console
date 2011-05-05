@@ -142,11 +142,7 @@ public class XADataSourceDetails {
         Widget formWidget = form.asWidget();
         panel.add(formWidget);
 
-        detailPanel.add(panel, "Common");
-        detailPanel.add(new HTML("lala"), "Properties");
-        detailPanel.add(new HTML("lala"), "Pool");
-
-        return detailPanel.asWidget();
+        return panel;
     }
 
     public void bind(DefaultCellTable<DataSource> dataSourceTable) {
