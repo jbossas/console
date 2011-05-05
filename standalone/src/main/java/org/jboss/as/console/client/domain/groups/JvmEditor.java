@@ -60,7 +60,7 @@ public class JvmEditor {
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
-        ToolStrip toolStrip = new ToolStrip();
+        ToolStrip toolStrip = new ToolStrip(true);
         edit = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler(){
             @Override

@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -38,6 +39,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSHeader;
 import org.jboss.as.console.client.widgets.icons.Icons;
@@ -60,7 +62,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     private DeploymentsPresenter presenter;
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
-    private TabLayoutPanel tabLayoutpanel;
+    private TabPanel tabLayoutpanel;
     private List<String> serverGroupNames;
     private Map<String, Widget> serverGroupTabsAdded = new HashMap<String, Widget>();
     private Map<String, ListDataProvider<DeploymentRecord>> serverGroupDeploymentProviders = new HashMap<String, ListDataProvider<DeploymentRecord>>();
@@ -72,8 +74,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     @Override
     public String getSelectedServerGroup() {
-        int selected = this.tabLayoutpanel.getSelectedIndex();
-        Label label = (Label) this.tabLayoutpanel.getTabWidget(selected);
+        int selected = this.tabLayoutpanel.getTabBar().getSelectedTab();
+        Label label = (Label) this.tabLayoutpanel.getWidget(selected);
         return label.getText();
     }
 
@@ -98,7 +100,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         layout.add(toolStrip);
         layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
 
-        DockLayoutPanel panel = new DockLayoutPanel(Style.Unit.PCT);
+        VerticalPanel panel = new VerticalPanel();
+        panel.getElement().setAttribute("style", "padding:15px");
         panel.addStyleName("fill-layout-width");
 
         String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
@@ -109,16 +112,23 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
 
-        Widget contentTable = makeDeploymentTable(Console.CONSTANTS.common_label_contentRepository(), domainDeploymentProvider, columns, columnHeaders);
 
-        tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        panel.add(new ContentHeaderLabel("Domain Deployments"));
 
-        panel.addSouth(tabLayoutpanel, 50);
+        Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
+
+        panel.add(new ContentGroupLabel("Content Repository"));
         panel.add(contentTable);
 
-        layout.add(panel);
-        layout.setWidgetTopHeight(panel, 55, Style.Unit.PX, 100, Style.Unit.PCT);
+        tabLayoutpanel = new TabPanel();
+        tabLayoutpanel.addStyleName("default-tabpanel");
+
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_serverGroups()));
+        panel.add(tabLayoutpanel);
+
+        ScrollPanel scroll = new ScrollPanel(panel);
+        layout.add(scroll);
+        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
@@ -149,11 +159,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             String[] columnHeaders) {
 
         VerticalPanel vpanel = new VerticalPanel();
-        vpanel.getElement().setAttribute("style", "padding:15px;width:90%");
+        vpanel.setStyleName("fill-layout-width");
 
         // -----------
 
-        vpanel.add(new ContentHeaderLabel(headerLabel));
+        //vpanel.add(new ContentHeaderLabel(headerLabel));
 
         DefaultCellTable<DeploymentRecord> deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
         dataProvider.addDataDisplay(deploymentTable);
@@ -253,5 +263,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             this.tabLayoutpanel.remove(widget);
             this.serverGroupDeploymentProviders.remove(serverGroupName);
         }
+
+
+        if(tabLayoutpanel.getTabBar().getSelectedTab()<0)
+            tabLayoutpanel.getTabBar().selectTab(0);
     }
 }

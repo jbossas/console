@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -79,8 +80,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     @Override
     public Widget createWidget() {
 
-        SplitEditorPanel editorPanel = new SplitEditorPanel();
-        LayoutPanel layout = editorPanel.getTopLayout();
+        LayoutPanel layout = new LayoutPanel();
 
         TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverConfig());
         layout.add(titleBar);
@@ -193,7 +193,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         };
 
 
-        form.setFields(nameItem, startedItem, groupItem);
+        form.setFields(nameItem, groupItem, startedItem);
         form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
@@ -205,7 +205,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // ------------------------------------------------------
 
-        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
+        TabPanel bottomLayout = new TabPanel();
+        bottomLayout.addStyleName("default-tabpanel");
 
         // jvm editor
         jvmEditor = new JvmEditor(presenter);
@@ -214,7 +215,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         propertyEditor = new PropertyEditor(presenter);
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
 
-        return editorPanel.asWidget();
+
+        panel.add(new ContentGroupLabel("Subresources"));
+
+        panel.add(bottomLayout);
+
+        bottomLayout.selectTab(0);
+
+        return layout;
     }
 
     private void onSave() {

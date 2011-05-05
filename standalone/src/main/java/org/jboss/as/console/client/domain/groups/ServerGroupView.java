@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -74,8 +75,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-        SplitEditorPanel editorPanel = new SplitEditorPanel();
-        LayoutPanel layout = editorPanel.getTopLayout();
+        LayoutPanel layout = new LayoutPanel();
 
         TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverGroup());
         layout.add(titleBar);
@@ -132,8 +132,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         panel.setStyleName("fill-layout-width");
         panel.getElement().setAttribute("style", "padding:15px;");
 
-        ScrollPanel scroll = new ScrollPanel();
-        scroll.add(panel);
+        ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
@@ -179,7 +178,9 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // ---------------------------------------------------
 
 
-        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
+        TabPanel bottomLayout = new TabPanel();
+        bottomLayout.addStyleName("default-tabpanel");
+
 
         jvmEditor = new JvmEditor(presenter);
         bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
@@ -189,7 +190,10 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         bottomLayout .selectTab(0);
 
-        return editorPanel.asWidget();
+        panel.add(new ContentGroupLabel("Subresources"));
+        panel.add(bottomLayout);
+
+        return layout;
     }
 
     private void onSave() {

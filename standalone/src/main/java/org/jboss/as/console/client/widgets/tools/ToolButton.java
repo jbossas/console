@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Button;
 public class ToolButton extends Button
 {
     public ToolButton(String title) {
-        super(title);
+        setHTML(title);
         setStyleName("toolstrip-button");
     }
 

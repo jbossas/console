@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -45,6 +46,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.SplitEditorPanel;
@@ -81,8 +83,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     @Override
     public Widget createWidget() {
 
-        SplitEditorPanel editorPanel = new SplitEditorPanel();
-        LayoutPanel layout = editorPanel.getTopLayout();
+        LayoutPanel layout = new LayoutPanel();
 
         TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverInstances());
         layout.add(titleBar);
@@ -107,6 +108,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
+        vpanel.add(new ContentGroupLabel("Server Instances"));
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
@@ -231,14 +233,20 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         formPanel.add(formWidget);
 
         // ----------------------------------------------------------
-        TabLayoutPanel bottomLayout = editorPanel.getBottomLayout();
+        TabPanel bottomLayout = new TabPanel();
+        bottomLayout.addStyleName("default-tabpanel");
+        bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
-        bottomLayout.add(formPanel, Console.CONSTANTS.common_label_instanceDetails());
+        bottomLayout.add(formPanel, "Availability");
         bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), Console.CONSTANTS.common_label_virtualMachine());
 
         bottomLayout.selectTab(0);
 
-        return editorPanel.asWidget();
+        vpanel.add(new ContentGroupLabel("Status"));
+
+        vpanel.add(bottomLayout);
+
+        return layout;
     }
 
     @Override

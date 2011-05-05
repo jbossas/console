@@ -35,6 +35,11 @@ public class ToolStrip extends HTMLPanel {
         getElement().setInnerHTML("<div id='"+ref+"' class='default-toolstrip'>");
     }
 
+    public ToolStrip(boolean secondary) {
+        super("");
+        getElement().setInnerHTML("<div id='"+ref+"' class='default-toolstrip-secondary'>");
+    }
+
     public void addToolButton(ToolButton button)
     {
         add(button, ref);
