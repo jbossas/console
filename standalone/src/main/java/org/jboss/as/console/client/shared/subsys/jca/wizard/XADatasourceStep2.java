@@ -55,7 +55,7 @@ public class XADatasourceStep2 {
 
         form = new Form<XADataSource>(XADataSource.class);
 
-        TextBoxItem driverClass = new TextBoxItem("datasourceClass", "DataSource Class");
+        TextBoxItem driverClass = new TextBoxItem("dataSourceClass", "DataSource Class");
         TextBoxItem driverName = new TextBoxItem("driverName", "Driver Name") {
             @Override
             public boolean isRequired() {

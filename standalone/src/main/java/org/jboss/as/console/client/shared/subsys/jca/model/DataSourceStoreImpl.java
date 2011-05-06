@@ -257,6 +257,61 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
+    public void createXADataSource(String profile, XADataSource datasource, final AsyncCallback<Boolean> callback) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("xa-data-source", datasource.getName());
+
+
+        operation.get("name").set(datasource.getName());
+        operation.get("jndi-name").set(datasource.getJndiName());
+        operation.get("enabled").set(datasource.isEnabled());
+
+        if(datasource.getDriverName()!=null && !datasource.getDriverName().equals(""))
+        {
+            operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
+        }
+
+        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
+        operation.get("pool-name").set(datasource.getName()+"_Pool");
+
+        operation.get("user-name").set(datasource.getUsername());
+
+        String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
+        operation.get("password").set(pw);
+
+
+        // properties
+        if(datasource.getProperties()!=null)
+        {
+            ModelNode props = new ModelNode();
+
+            for(PropertyRecord prop : datasource.getProperties()) {
+                ModelNode value = new ModelNode().set(prop.getValue());
+                props.add(prop.getKey(), value);
+            }
+            operation.get("xa-data-source-properties").set(props);
+
+        }
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                boolean wasSuccessful = responseIndicatesSuccess(result);
+                callback.onSuccess(wasSuccessful);
+            }
+        });
+    }
+
+    @Override
     public void deleteDataSource(String profile, final DataSource dataSource, final AsyncCallback<Boolean> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);

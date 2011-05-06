@@ -38,4 +38,6 @@ public interface DataSourceStore {
     void enableDataSource(String profile, DataSource dataSource, boolean doEnable, AsyncCallback<Boolean> callback);
 
     void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<Boolean> callback);
+
+    void createXADataSource(String profile, XADataSource datasource, AsyncCallback<Boolean> callback);
 }

@@ -46,6 +46,7 @@ public class NewXADatasourceWizard {
 
     private XADataSource baseAttributes = null;
     private XADataSource driverAttributes = null;
+    private List<PropertyRecord> properties;
 
     public NewXADatasourceWizard(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -96,8 +97,11 @@ public class NewXADatasourceWizard {
         updatedEntity.setJndiName(baseAttributes.getJndiName());
         updatedEntity.setEnabled(baseAttributes.isEnabled());
 
-        updatedEntity.setDriverClass(driverAttributes.getDriverClass());
+        updatedEntity.setDataSourceClass(driverAttributes.getDataSourceClass());
+        updatedEntity.setDriverName(driverAttributes.getDriverName());
+        updatedEntity.setDriverVersion(driverAttributes.getDriverVersion());
 
+        updatedEntity.setProperties(properties);
 
         presenter.onCreateNewXADatasource(updatedEntity);
     }
@@ -105,10 +109,7 @@ public class NewXADatasourceWizard {
     public void onConfigureProperties(List<PropertyRecord> properties) {
         // merge it right away
 
-        for(PropertyRecord prop : properties)
-            System.out.println(prop.getKey()+">"+prop.getValue());
-
-        driverAttributes.setProperties(properties);
+        this.properties = properties;
 
         step4.edit(driverAttributes);
         deck.showWidget(3);

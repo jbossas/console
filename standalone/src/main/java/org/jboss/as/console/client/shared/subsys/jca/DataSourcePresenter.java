@@ -302,11 +302,21 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onSaveXADetails(String name, Map<String, Object> changedValues) {
-        //To change body of created methods use File | Settings | File Templates.
+        Console.error("Not implemented");
     }
 
 
-    public void onCreateNewXADatasource(XADataSource updatedEntity) {
+    public void onCreateNewXADatasource(final XADataSource updatedEntity) {
+        window.hide();
+        dataSourceStore.createXADataSource(currentProfile.getName(), updatedEntity, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean wasSuccessful) {
+                if(wasSuccessful)
+                    Console.info("Succes: Created XA Datasource "+updatedEntity.getName());
+
+                loadDataSources();
+            }
+        });
 
     }
 }

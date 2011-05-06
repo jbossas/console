@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 import java.util.List;
 
@@ -29,9 +30,11 @@ import java.util.List;
  */
 public interface XADataSource extends DataSource {
 
+    @Binding(detypedName = "xa-data-source-class")
     String getDataSourceClass();
     void setDataSourceClass(String dadaSourceClass);
 
+    @Binding(detypedName = "none", ignore = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 
