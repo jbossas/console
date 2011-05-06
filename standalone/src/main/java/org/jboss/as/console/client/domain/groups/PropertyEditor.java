@@ -146,13 +146,21 @@ public class PropertyEditor {
             public void execute(int rownum) {
 
                 final PropertyRecord property = propertyProvider.getList().get(rownum);
-                Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                presenter.onDeleteProperty(reference, property);
-                            }
-                        });
+
+                if(simpleView)
+                {
+                    presenter.onDeleteProperty(reference, property);
+                }
+                else
+                {
+                    Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    presenter.onDeleteProperty(reference, property);
+                                }
+                            });
+                }
             }
         };
 
@@ -189,6 +197,8 @@ public class PropertyEditor {
 
     public void setSelectedRecord(String reference, List<PropertyRecord> properties) {
         this.reference= reference;
+        propertyTable.setRowCount(properties.size(), true);
         propertyProvider.setList(properties);
+
     }
 }

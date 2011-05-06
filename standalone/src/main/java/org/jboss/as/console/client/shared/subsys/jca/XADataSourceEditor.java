@@ -78,7 +78,7 @@ public class XADataSourceEditor implements PropertyManagement  {
 
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewXADatasourceWizard();
             }
         }));
 

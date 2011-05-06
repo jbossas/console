@@ -84,7 +84,7 @@ public class SubsystemMetaData {
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx"));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian"));
 
-        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security", "security"));
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Provider", "security"));
     }
 
     public static Map<String, SubsystemGroup> getGroups() {

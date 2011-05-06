@@ -47,6 +47,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 
@@ -68,24 +69,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private CurrentSelectedProfile currentProfile;
     private DataSourceStore dataSourceStore;
 
-    public void onEditDSDetails(DataSource editedEntity) {
-            getView().enableDSDetails(true);
-    }
-
-    public void onSaveDSDetails(String name, Map<String, Object> changedValues) {
-        getView().enableDSDetails(false);
-        if(changedValues.size()>0)
-        {
-            dataSourceStore.updateDataSource(currentProfile.getName(), name, changedValues, new SimpleCallback<Boolean> (){
-
-                @Override
-                public void onSuccess(Boolean successful) {
-                    if(successful)
-                        Console.info("Updated Datasource");
-                }
-            });
-        }
-    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -209,6 +192,26 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
 
+    public void launchNewXADatasourceWizard() {
+        window = new DefaultWindow("Create XA Datasource");
+        window.setWidth(480);
+        window.setHeight(320);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+                new NewXADatasourceWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+
     public void onCreateNewDatasource(final DataSource datasource) {
         window.hide();
 
@@ -290,5 +293,28 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void closeDialogue() {
         window.hide();
+    }
+
+    public void onEditDSDetails(DataSource editedEntity) {
+        getView().enableDSDetails(true);
+    }
+
+    public void onSaveDSDetails(String name, Map<String, Object> changedValues) {
+        getView().enableDSDetails(false);
+        if(changedValues.size()>0)
+        {
+            dataSourceStore.updateDataSource(currentProfile.getName(), name, changedValues, new SimpleCallback<Boolean> (){
+
+                @Override
+                public void onSuccess(Boolean successful) {
+                    if(successful)
+                        Console.info("Updated Datasource");
+                }
+            });
+        }
+    }
+
+    public void onCreateNewXADatasource(XADataSource updatedEntity) {
+
     }
 }
