@@ -97,11 +97,7 @@ public class NumberBoxItem extends FormItem<Integer> {
 
         boolean outcome = true;
 
-        if(!isModified)
-        {
-            return true;
-        }
-        else if(isRequired() && textBox.getValue().equals(""))
+        if(isRequired() && textBox.getValue().equals(""))
         {
             outcome = false;
         }

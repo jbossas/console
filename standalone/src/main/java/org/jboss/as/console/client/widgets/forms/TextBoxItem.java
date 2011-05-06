@@ -83,14 +83,7 @@ public class TextBoxItem extends FormItem<String> {
     @Override
     public boolean validate(String value) {
 
-        // meta data validation
-        if(!isModified)
-        {
-            return true;
-        }
-
-        // value validation
-        else if(isRequired() && value.equals(""))
+        if(isRequired() && value.equals(""))
         {
             return false;
         }

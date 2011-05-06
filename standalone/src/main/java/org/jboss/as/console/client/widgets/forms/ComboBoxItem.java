@@ -132,11 +132,8 @@ public class ComboBoxItem extends FormItem<String> {
 
     @Override
     public boolean validate(String value) {
-        if(!isModified)
-        {
-            return true;
-        }
-        else if(isRequired() && comboBox.getSelectedValue().equals(""))
+
+        if(isRequired() && comboBox.getSelectedValue().equals(""))
         {
             return false;
         }
