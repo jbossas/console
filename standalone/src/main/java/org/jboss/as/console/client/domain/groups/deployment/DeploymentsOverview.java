@@ -75,8 +75,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     @Override
     public String getSelectedServerGroup() {
         int selected = this.tabLayoutpanel.getTabBar().getSelectedTab();
-        Label label = (Label) this.tabLayoutpanel.getWidget(selected);
-        return label.getText();
+        return this.tabLayoutpanel.getTabBar().getTabHTML(selected);
     }
 
     @Override
