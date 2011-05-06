@@ -71,7 +71,7 @@ public class DataSourceDetails {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEdit(form.getEditedEntity());
                 else
-                    presenter.onSave(form.getUpdatedEntity());
+                    presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
             }
         };
         editBtn.addClickHandler(editHandler);
@@ -158,5 +158,11 @@ public class DataSourceDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
+
+
+        if(b)
+            editBtn.setText("Save");
+        else
+            editBtn.setText("Edit");
     }
 }

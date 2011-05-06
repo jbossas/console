@@ -68,7 +68,7 @@ public class XADataSourceDetails {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEdit(form.getEditedEntity());
                 else
-                    presenter.onSave(form.getUpdatedEntity());
+                    presenter.onSaveXADetails(form.getEditedEntity().getName(), form.getChangedValues());
             }
         };
         editBtn.addClickHandler(editHandler);
@@ -130,13 +130,14 @@ public class XADataSourceDetails {
 
         TextBoxItem datasourceItem = new TextBoxItem("dataSourceClass", "Datasource Class");
         TextBoxItem driverItem = new TextBoxItem("driver", "Driver");
+        TextBoxItem version = new TextBoxItem("driverVersion", "Version");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
         form.setFields(nameItem, jndiItem, enabledFlagItem);
         form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem);
-        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), datasourceItem, driverItem);
+        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, version, datasourceItem);
 
         form.setEnabled(false); // currently not editable
 

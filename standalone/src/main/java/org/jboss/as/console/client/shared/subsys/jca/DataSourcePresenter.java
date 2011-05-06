@@ -69,7 +69,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private CurrentSelectedProfile currentProfile;
     private DataSourceStore dataSourceStore;
 
-
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
     public interface MyProxy extends Proxy<DataSourcePresenter>, Place {
@@ -219,7 +218,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
             @Override
             public void onSuccess(Boolean success) {
-                if(success)
+                if (success)
                     loadDataSources();
                 else
                     Console.MODULES.getMessageCenter().notify(
@@ -231,16 +230,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onEdit(DataSource entity) {
-        getView().setEnabled(true);
-    }
-
-    public void onSave(DataSource entity) {
-        getView().setEnabled(false);
-
-        // TODO: implement
-
-
-
+        getView().enableDSDetails(true);
     }
 
     public void onDelete(final DataSource entity) {
@@ -273,14 +263,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
 
-                if(success)
-                {
+                if (success) {
                     Console.MODULES.getMessageCenter().notify(
                             new Message("Successfully modified datasource " + entity.getName())
                     );
-                }
-                else
-                {
+                } else {
                     Console.MODULES.getMessageCenter().notify(
                             new Message("Failed to modify datasource" + entity.getName())
                     );
@@ -313,6 +300,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             });
         }
     }
+
+    public void onSaveXADetails(String name, Map<String, Object> changedValues) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
 
     public void onCreateNewXADatasource(XADataSource updatedEntity) {
 
