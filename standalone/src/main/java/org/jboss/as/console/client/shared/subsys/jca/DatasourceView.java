@@ -77,4 +77,9 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     public void setEnabled(boolean b) {
         dataSourceEditor.setEnabled(b);
     }
+
+    @Override
+    public void enableDSDetails(boolean b) {
+        dataSourceEditor.enableDetails(b);
+    }
 }

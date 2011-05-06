@@ -51,6 +51,7 @@ import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -67,6 +68,25 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private CurrentSelectedProfile currentProfile;
     private DataSourceStore dataSourceStore;
 
+    public void onEditDSDetails(DataSource editedEntity) {
+            getView().enableDSDetails(true);
+    }
+
+    public void onSaveDSDetails(String name, Map<String, Object> changedValues) {
+        getView().enableDSDetails(false);
+        if(changedValues.size()>0)
+        {
+            dataSourceStore.updateDataSource(currentProfile.getName(), name, changedValues, new SimpleCallback<Boolean> (){
+
+                @Override
+                public void onSuccess(Boolean successful) {
+                    if(successful)
+                        Console.info("Updated Datasource");
+                }
+            });
+        }
+    }
+
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
     public interface MyProxy extends Proxy<DataSourcePresenter>, Place {
@@ -80,6 +100,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void setEnabled(boolean b);
 
         void updateXADataSources(List<XADataSource> result);
+
+        void enableDSDetails(boolean b);
     }
 
     @Inject
@@ -207,8 +229,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onEdit(DataSource entity) {
         getView().setEnabled(true);
-
-        // TODO: implement
     }
 
     public void onSave(DataSource entity) {
@@ -243,16 +263,15 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
-    // TODO: https://issues.jboss.org/browse/JBAS-9341
-    public void onDisable(final DataSource entity, boolean isEnabled) {
-        dataSourceStore.enableDataSource(currentProfile.getName(), entity, isEnabled, new SimpleCallback<Boolean>() {
+    // TODO: https://issues.jboss.org/browse/AS7-719
+    public void onDisable(final DataSource entity, boolean doEnable) {
+        dataSourceStore.enableDataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean success) {
 
                 if(success)
                 {
-                    loadDataSources();
                     Console.MODULES.getMessageCenter().notify(
                             new Message("Successfully modified datasource " + entity.getName())
                     );
@@ -263,6 +282,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                             new Message("Failed to modify datasource" + entity.getName())
                     );
                 }
+
+                loadDataSources();
             }
         });
     }

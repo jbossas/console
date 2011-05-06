@@ -106,7 +106,8 @@ public class DataSourceEditor {
         bottomPanel.setStyleName("default-tabpanel");
 
         bottomPanel.add(details.asWidget(), "Attributes");
-        bottomPanel.add(new HTML("todo"), "Metrics");
+        bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
+        bottomPanel.add(new HTML("Pool-size, connections in use, etc"), "Metrics");
         bottomPanel.selectTab(0);
 
         vpanel.add(new ContentGroupLabel("Datasource"));
@@ -125,6 +126,11 @@ public class DataSourceEditor {
     }
 
     public void setEnabled(boolean isEnabled) {
-        details.setEnabled(isEnabled);
+
+
+    }
+
+    public void enableDetails(boolean b) {
+        details.setEnabled(b);
     }
 }

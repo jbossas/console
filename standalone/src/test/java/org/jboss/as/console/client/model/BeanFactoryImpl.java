@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 
@@ -132,4 +133,10 @@ public class BeanFactoryImpl implements BeanFactory {
     public AutoBean<CommonSettings> settings() {
         throw new RuntimeException("not implemented");
     }
+
+    @Override
+    public AutoBean<XADataSource> xaDataSource() {
+        throw new RuntimeException("not implemented");
+    }
 }
+

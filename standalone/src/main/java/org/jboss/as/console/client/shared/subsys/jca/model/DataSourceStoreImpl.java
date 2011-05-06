@@ -22,11 +22,15 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -34,6 +38,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -46,11 +51,13 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private PropertyMetaData propertyMetaData;
 
     @Inject
-    public DataSourceStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
+    public DataSourceStoreImpl(DispatchAsync dispatcher, BeanFactory factory,PropertyMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -248,16 +255,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableDataSource(String profile, DataSource dataSource, boolean isEnabled, final AsyncCallback<Boolean> callback) {
+    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<Boolean> callback) {
+
         final String dataSourceName = dataSource.getName();
+        final String opName = doEnable ? "enable" : "disable";
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(OP).set(opName);
         operation.get(ADDRESS).add("profile", profile);
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("data-source", dataSourceName);
-        operation.get("name").set("enabled");
-        operation.get("value").set(isEnabled);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -276,5 +283,31 @@ public class DataSourceStoreImpl implements DataSourceStore {
     private boolean responseIndicatesSuccess(DMRResponse result) {
         ModelNode response = ModelNode.fromBase64(result.getResponseText());
         return response.get(OUTCOME).asString().equals(SUCCESS);
+    }
+
+    @Override
+    public void updateDataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("profile", profile);
+        proto.get(ADDRESS).add("subsystem", "datasources");
+        proto.get(ADDRESS).add("data-source", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                callback.onSuccess(responseIndicatesSuccess(result));
+            }
+        });
+
     }
 }

@@ -69,9 +69,9 @@ public class DataSourceDetails {
             @Override
             public void onClick(ClickEvent event) {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEdit(form.getEditedEntity());
+                    presenter.onEditDSDetails(form.getEditedEntity());
                 else
-                    presenter.onSave(form.getUpdatedEntity());
+                    presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
             }
         };
         editBtn.addClickHandler(editHandler);
@@ -85,8 +85,8 @@ public class DataSourceDetails {
                 DataSource currentSelection = form.getEditedEntity();
 
                 Feedback.confirm(
-                        "Delete DataSource",
-                        "Really delete this DataSource '" + currentSelection.getName() + "' ?",
+                        "Delete Datasource",
+                        "Really delete Datasource '" + currentSelection.getName() + "' ?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -107,13 +107,13 @@ public class DataSourceDetails {
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
-                final boolean nextState = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
+                final boolean doEnable = !form.getEditedEntity().isEnabled();
+                Feedback.confirm(state + " datasource", "Do you want to " + state + " this Datasource?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    presenter.onDisable(form.getEditedEntity(), nextState);
+                                    presenter.onDisable(form.getEditedEntity(), doEnable);
                                 }
                             }
                         });
@@ -157,5 +157,10 @@ public class DataSourceDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
+
+        if(b)
+            editBtn.setText("Save");
+        else
+            editBtn.setText("Edit");
     }
 }

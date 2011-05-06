@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -34,5 +35,7 @@ public interface DataSourceStore {
     void loadXADataSources(String profile, final AsyncCallback<List<XADataSource>> callback);
     void createDataSource(String profile, DataSource datasource, AsyncCallback<Boolean> callback);
     void deleteDataSource(String profile, DataSource dataSource, AsyncCallback<Boolean> callback);
-    void enableDataSource(String profile, DataSource dataSource, boolean isEnabled, AsyncCallback<Boolean> callback);
+    void enableDataSource(String profile, DataSource dataSource, boolean doEnable, AsyncCallback<Boolean> callback);
+
+    void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<Boolean> callback);
 }
