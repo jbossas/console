@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
-
 /**
  * @author Heiko Braun
  * @date 3/29/11
@@ -30,35 +28,33 @@ public interface DataSource {
     String getName();
     void setName(String name);
 
-    @Binding(detypedName = "jndi-name")
     String getJndiName();
     void setJndiName(String name);
 
     boolean isEnabled();
     void setEnabled(boolean isEnabled);
 
-    @Binding(detypedName = "user-name")
     String getUsername();
     void setUsername(String user);
 
     String getPassword();
     void setPassword(String password);
 
-    @Binding(detypedName = "pool-name")
     String getPoolName();
     void setPoolName(String name);
 
     // regular DS attributes below
 
-    @Binding(detypedName = "connection-url")
     String getConnectionUrl();
     void setConnectionUrl(String url);
 
-    @Binding(detypedName = "driver-class")
     String getDriverClass();
     void setDriverClass(String driverClass);
 
     String getDriverName();
     void setDriverName(String driver);
+
+    String getDriverVersion();
+    void setDriverVersion(String version);
 
 }

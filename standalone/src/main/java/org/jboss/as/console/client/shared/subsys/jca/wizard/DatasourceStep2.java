@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
+import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
 /**
@@ -54,8 +55,9 @@ public class DatasourceStep2 {
 
         TextBoxItem driverClass = new TextBoxItem("driverClass", "Driver Class");
         TextBoxItem driverName = new TextBoxItem("driverName", "Driver Name");
+        TextBoxItem version = new TextBoxItem("driverVersion", "Version");
 
-        form.setFields(driverClass, driverName);
+        form.setFields(driverClass, driverName, version);
 
         layout.add(form.asWidget());
 

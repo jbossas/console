@@ -96,7 +96,21 @@ public class DataSourceStoreImpl implements DataSourceStore {
                         model.setConnectionUrl(ds.get("connection-url").asString());
                         model.setJndiName(ds.get("jndi-name").asString());
                         model.setDriverClass(ds.get("driver-class").asString());
-                        model.setDriverName(ds.get("driver").asString());
+
+
+                        String driverToken = ds.get("driver").asString();
+
+                        if(driverToken.indexOf("#")!=-1)
+                        {
+                            String[] split = driverToken.split("#");
+                            model.setDriverName(split[0]);
+                            model.setDriverVersion(split[1]);
+                        }
+                        else
+                        {
+                            model.setDriverName(driverToken);
+                        }
+
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
                         model.setPassword(ds.get("password").asString());
@@ -149,7 +163,20 @@ public class DataSourceStoreImpl implements DataSourceStore {
                         model.setDataSourceClass(ds.get("xa-data-source-class").asString());
 
                         if(ds.hasDefined("driver"))
-                            model.setDriverName(ds.get("driver").asString());
+                        {
+                            String driverToken = ds.get("driver").asString();
+
+                            if(driverToken.indexOf("#")!=-1)
+                            {
+                                String[] split = driverToken.split("#");
+                                model.setDriverName(split[0]);
+                                model.setDriverVersion(split[1]);
+                            }
+                            else
+                            {
+                                model.setDriverName(driverToken);
+                            }
+                        }
 
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
@@ -204,7 +231,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        operation.get("driver").set(datasource.getDriverName());
+        operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
         operation.get("driver-class").set(datasource.getDriverClass());
         operation.get("pool-name").set(datasource.getName()+"_Pool");
 

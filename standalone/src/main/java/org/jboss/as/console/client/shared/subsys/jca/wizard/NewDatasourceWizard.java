@@ -90,6 +90,7 @@ public class NewDatasourceWizard {
         updatedEntity.setEnabled(baseAttributes.isEnabled());
 
         updatedEntity.setDriverName(driverAttributes.getDriverName());
+        updatedEntity.setDriverVersion(driverAttributes.getDriverVersion());
         updatedEntity.setDriverClass(driverAttributes.getDriverClass());
 
         presenter.onCreateNewDatasource(updatedEntity);
