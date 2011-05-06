@@ -19,8 +19,8 @@
 
 package org.jboss.as.console.client.shared;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Heiko Braun
@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class SubsystemMetaData {
 
-    static Map<String, SubsystemGroup> groups = new HashMap<String, SubsystemGroup>();
+    static Map<String, SubsystemGroup> groups = new TreeMap<String, SubsystemGroup>();
 
     private static final String INTEGRATION = "Integration";
 
@@ -59,14 +59,14 @@ public class SubsystemMetaData {
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca"));
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector", true));
+        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector"));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs"));
 
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "jms"));
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));

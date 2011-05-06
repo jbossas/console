@@ -55,7 +55,7 @@ class ProfileSection {
 
     public ProfileSection() {
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_subsystems()).asWidget();
+        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_profiles()).asWidget();
         subsysTree = new LHSNavTree("profiles");
         panel.setContent(subsysTree);
 
