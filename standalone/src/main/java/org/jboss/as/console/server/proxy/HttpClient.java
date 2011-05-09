@@ -230,7 +230,13 @@ public class HttpClient {
         return setCookieHeader;
     }
 
-
+    public int getResponseCode() {
+        try {
+            return this.urlConnection.getResponseCode();
+        } catch (IOException e) {
+            throw new RuntimeException("No response code", e);
+        }
+    }
     /**
      * returns the inputstream from URLConnection
      * @return InputStream
@@ -238,19 +244,13 @@ public class HttpClient {
     public InputStream getInputStream() {
         try
         {
-            // logger doesnt work, because it writes to stderr,
-            // which causes GwtTest to interpret it as failure
-            /*System.out.println(
-                this.urlConnection.getRequestMethod()+ " " +
-                    this.urlConnection.getURL() +": "+
-                    this.urlConnection.getResponseCode()
-            );*/
+            int responseCode = this.urlConnection.getResponseCode();
 
             try
             {
                 // HACK: manually follow redirects, for the login to work
                 // HTTPUrlConnection auto redirect doesn't respect the provided headers
-                if(this.urlConnection.getResponseCode()==302)
+                if(responseCode ==302)
                 {
                     HttpClient redirectClient =
                             new HttpClient(proxyHost,proxyPort, urlConnection.getHeaderField("Location"),
@@ -265,7 +265,11 @@ public class HttpClient {
 
             setCookieHeader = this.urlConnection.getHeaderField("Set-Cookie");
 
-            return (this.urlConnection.getInputStream());
+
+            InputStream in = responseCode != HttpURLConnection.HTTP_OK ?
+                    this.urlConnection.getErrorStream() : this.urlConnection.getInputStream();
+
+            return in;
         } catch (Exception e) {
             return null;
         }

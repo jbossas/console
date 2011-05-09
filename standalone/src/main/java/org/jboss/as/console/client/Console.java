@@ -134,7 +134,10 @@ public class Console implements EntryPoint {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                bootstrap.setProperty(BootstrapContext.STANDALONE, "true");
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean outcome = response.get("outcome").asString().equals("success");
+                bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(outcome).toString());
                 loadMainApp();
             }
         });

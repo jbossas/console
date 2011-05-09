@@ -60,8 +60,14 @@ public class XmlHttpProxy {
 
     private Map<String, Cookie> cookies = new HashMap<String, Cookie>();
 
+    int status = -1;
+
     public String getContentType() {
         return contentType;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
     public interface CookieCallback
@@ -257,10 +263,15 @@ public class XmlHttpProxy {
         }
         // get the content type
         this.contentType = httpclient.getContentType();
+        this.status = httpclient.getResponseCode();
+
         // write out the content type
         //http://www.ietf.org/rfc/rfc4627.txt
 
         try {
+
+            // response stream
+
             byte[] buffer = new byte[1024];
             int read = 0;
             if (xslInputStream == null) {

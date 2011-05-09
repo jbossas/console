@@ -474,6 +474,8 @@ public class XmlHttpProxyServlet extends HttpServlet
             }
 
             res.setContentType(xhp.getContentType());
+            res.setStatus(xhp.getStatus());
+
         }
         catch (Exception iox)
         {
