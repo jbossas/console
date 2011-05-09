@@ -37,7 +37,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
@@ -144,7 +143,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         dataSourceStore.loadDataSources(profile, new AsyncCallback<List<DataSource>>() {
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Failed to load datasource", caught);
+                Console.error("Failed to load datasource");
             }
 
             @Override
@@ -221,9 +220,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if (success)
                     loadDataSources();
                 else
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to create datasource", Message.Severity.Error)
-                    );
+                    Console.error("Failed to create datasource");
             }
         });
 
@@ -246,15 +243,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if(success)
                 {
                     loadDataSources();
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully removed datasource " + entity.getName())
-                    );
+                    Console.info("Successfully removed datasource " + entity.getName());
                 }
                 else
                 {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to remove datasource " + entity.getName())
-                    );
+                    Console.error("Failed to remove datasource " + entity.getName());
                 }
 
                 loadDataSources();
@@ -270,13 +263,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully modified datasource " + entity.getName())
-                    );
+                    Console.info("Successfully modified datasource " + entity.getName());
                 } else {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to modify datasource" + entity.getName())
-                    );
+                    Console.error("Failed to modify datasource" + entity.getName());
                 }
 
                 loadDataSources();
@@ -297,7 +286,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 @Override
                 public void onSuccess(Boolean successful) {
                     if(successful)
-                        Console.info("Updated Datasource");
+                        Console.info("Success: Updated Datasource");
                 }
             });
         }
@@ -331,13 +320,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully modified datasource " + entity.getName())
-                    );
+                    Console.info("Successfully modified datasource " + entity.getName());
                 } else {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to modify datasource" + entity.getName())
-                    );
+                    Console.error("Failed to modify datasource " + entity.getName());
                 }
 
                 loadDataSources();
@@ -346,25 +331,18 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDeleteXA(final XADataSource entity) {
-         dataSourceStore.deleteXADataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>(){
-            @Override
-            public void onSuccess(Boolean success) {
+         dataSourceStore.deleteXADataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>() {
+             @Override
+             public void onSuccess(Boolean success) {
 
-                if(success)
-                {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully removed datasource " + entity.getName())
-                    );
-                }
-                else
-                {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to remove datasource " + entity.getName())
-                    );
-                }
+                 if (success) {
+                     Console.info("Successfully removed datasource " + entity.getName());
+                 } else {
+                     Console.error("Failed to remove datasource " + entity.getName());
+                 }
 
-                loadDataSources();
-            }
-        });
+                 loadDataSources();
+             }
+         });
     }
 }
