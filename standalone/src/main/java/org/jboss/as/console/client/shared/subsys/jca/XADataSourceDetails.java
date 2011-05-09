@@ -84,7 +84,7 @@ public class XADataSourceDetails {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    presenter.onDelete(form.getEditedEntity());
+                                    presenter.onDeleteXA(form.getEditedEntity());
                                 }
                             }
                         });
@@ -100,13 +100,13 @@ public class XADataSourceDetails {
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
-                final boolean nextState = !form.getEditedEntity().isEnabled();
+                final boolean doEnable = !form.getEditedEntity().isEnabled();
                 Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    presenter.onDisable(form.getEditedEntity(), nextState);
+                                    presenter.onDisableXA(form.getEditedEntity(), doEnable);
                                 }
                             }
                         });

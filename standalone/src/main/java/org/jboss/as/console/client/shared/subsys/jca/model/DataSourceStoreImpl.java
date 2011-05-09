@@ -332,8 +332,29 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 callback.onSuccess(wasSuccessful);
             }
         });
+    }
 
+    @Override
+    public void deleteXADataSource(String profile, XADataSource dataSource, final AsyncCallback<Boolean> callback) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("xa-data-source", dataSource.getName());
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                boolean wasSuccessful = responseIndicatesSuccess(result);
+                callback.onSuccess(wasSuccessful);
+            }
+        });
     }
 
     @Override
@@ -347,6 +368,31 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get(ADDRESS).add("profile", profile);
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("data-source", dataSourceName);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                callback.onSuccess(responseIndicatesSuccess(result));
+            }
+        });
+    }
+
+    @Override
+    public void enableXADataSource(String profile, XADataSource dataSource, boolean doEnable, final AsyncCallback<Boolean> callback) {
+        final String dataSourceName = dataSource.getName();
+        final String opName = doEnable ? "enable" : "disable";
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(opName);
+        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("xa-data-source", dataSourceName);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -390,6 +436,5 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 callback.onSuccess(responseIndicatesSuccess(result));
             }
         });
-
     }
 }

@@ -237,7 +237,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         getView().enableXADetails(true);
     }
 
-
     public void onDelete(final DataSource entity) {
 
         dataSourceStore.deleteDataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>(){
@@ -257,6 +256,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                             new Message("Failed to remove datasource " + entity.getName())
                     );
                 }
+
+                loadDataSources();
             }
         });
     }
@@ -287,10 +288,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         window.hide();
     }
 
-    public void onEditDSDetails(DataSource editedEntity) {
-        getView().enableDSDetails(true);
-    }
-
     public void onSaveDSDetails(String name, Map<String, Object> changedValues) {
         getView().enableDSDetails(false);
         if(changedValues.size()>0)
@@ -307,6 +304,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onSaveXADetails(String name, Map<String, Object> changedValues) {
+
+        getView().enableXADetails(false);
+
         Console.error("Not implemented");
     }
 
@@ -322,6 +322,50 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 loadDataSources();
             }
         });
+    }
 
+    public void onDisableXA(final XADataSource entity, boolean doEnable) {
+        dataSourceStore.enableXADataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+
+            @Override
+            public void onSuccess(Boolean success) {
+
+                if (success) {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Successfully modified datasource " + entity.getName())
+                    );
+                } else {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to modify datasource" + entity.getName())
+                    );
+                }
+
+                loadDataSources();
+            }
+        });
+    }
+
+    public void onDeleteXA(final XADataSource entity) {
+         dataSourceStore.deleteXADataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>(){
+            @Override
+            public void onSuccess(Boolean success) {
+
+                if(success)
+                {
+                    loadDataSources();
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Successfully removed datasource " + entity.getName())
+                    );
+                }
+                else
+                {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to remove datasource " + entity.getName())
+                    );
+                }
+
+                loadDataSources();
+            }
+        });
     }
 }

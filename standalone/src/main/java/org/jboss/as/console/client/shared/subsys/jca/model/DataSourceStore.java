@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 
 import java.util.List;
@@ -40,4 +41,7 @@ public interface DataSourceStore {
     void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<Boolean> callback);
 
     void createXADataSource(String profile, XADataSource datasource, AsyncCallback<Boolean> callback);
+
+    void enableXADataSource(String name, XADataSource entity, boolean doEnable, AsyncCallback<Boolean> callback);
+    void deleteXADataSource(String name, XADataSource entity, AsyncCallback<Boolean> callback);
 }
