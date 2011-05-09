@@ -352,7 +352,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
                 if(success)
                 {
-                    loadDataSources();
                     Console.MODULES.getMessageCenter().notify(
                             new Message("Successfully removed datasource " + entity.getName())
                     );
