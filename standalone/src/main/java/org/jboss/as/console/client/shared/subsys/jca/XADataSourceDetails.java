@@ -21,8 +21,6 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -36,7 +34,6 @@ import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tabs.VerticalTabLayoutPanel;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
@@ -58,7 +55,6 @@ public class XADataSourceDetails {
     }
 
     public Widget asWidget() {
-        VerticalTabLayoutPanel detailPanel = new VerticalTabLayoutPanel();
 
         ToolStrip detailToolStrip = new ToolStrip();
         editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
@@ -66,7 +62,7 @@ public class XADataSourceDetails {
             @Override
             public void onClick(ClickEvent event) {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEdit(form.getEditedEntity());
+                    presenter.onEditXA(form.getEditedEntity());
                 else
                     presenter.onSaveXADetails(form.getEditedEntity().getName(), form.getChangedValues());
             }
@@ -150,6 +146,11 @@ public class XADataSourceDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
+
+        if(b)
+            editBtn.setText("Save");
+        else
+            editBtn.setText("Edit");
     }
 
     public void setSelectedRecord(XADataSource dataSource) {

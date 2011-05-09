@@ -79,11 +79,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
         void updateDataSources(List<DataSource> datasources);
 
-        void setEnabled(boolean b);
-
         void updateXADataSources(List<XADataSource> result);
 
         void enableDSDetails(boolean b);
+
+        void enableXADetails(boolean b);
     }
 
     @Inject
@@ -229,9 +229,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     }
 
-    public void onEdit(DataSource entity) {
+    public void onEditDS(DataSource entity) {
         getView().enableDSDetails(true);
     }
+
+    public void onEditXA(DataSource entity) {
+        getView().enableXADetails(true);
+    }
+
 
     public void onDelete(final DataSource entity) {
 

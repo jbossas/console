@@ -225,4 +225,8 @@ public class XADataSourceEditor implements PropertyManagement  {
     public void closePropertyDialoge() {
 
     }
+
+    public void enableDetails(boolean b) {
+        details.setEnabled(b);
+    }
 }
