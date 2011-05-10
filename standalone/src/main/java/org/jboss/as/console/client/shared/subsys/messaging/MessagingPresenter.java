@@ -19,7 +19,10 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -39,11 +42,13 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -56,6 +61,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private MessagingProvider providerEntity;
+    private DefaultWindow window = null;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -65,6 +73,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     public interface MyView extends View {
         void setPresenter(MessagingPresenter presenter);
         void setProviderDetails(MessagingProvider provider);
+
+        void editSecDetails(boolean b);
     }
 
     @Inject
@@ -100,10 +110,13 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 MessagingProvider provider = parseResponse(response);
+
+                providerEntity = provider;
                 getView().setProviderDetails(provider);
 
             }
@@ -193,4 +206,49 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
+
+    public void launchNewSecDialogue() {
+        window = new DefaultWindow("Create Messaging Security Pattern");
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+                new NewSecurityPatternWizard(this, providerEntity).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+
+    public void closeDialogue() {
+        window.hide();
+    }
+
+    public void onCreateSecPattern(SecurityPattern securityPattern) {
+        closeDialogue();
+    }
+
+    public void onEditSecDetails() {
+        getView().editSecDetails(true);
+    }
+
+    public void onSaveSecDetails(Map<String, Object> changedValues) {
+        getView().editSecDetails(false);
+
+        // TODO: implement
+    }
+
+    public void onDeleteSecDetails(SecurityPattern pattern) {
+        getView().editSecDetails(false);
+    }
+
+
+
 }

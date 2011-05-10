@@ -98,4 +98,9 @@ public class MessagingView extends DisposableViewImpl implements MessagingPresen
         addrDetails.setProvider(provider);
 
     }
+
+    @Override
+    public void editSecDetails(boolean b) {
+        secDetails.setEnabled(b);
+    }
 }

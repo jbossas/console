@@ -46,6 +46,7 @@ public class SecurityDetails {
     private Form<SecurityPattern> form;
     private MessagingProvider providerEntity;
     private DefaultCellTable<SecurityPattern> secTable;
+    private ToolButton edit ;
 
     public SecurityDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -58,17 +59,22 @@ public class SecurityDetails {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
-        toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
+        edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
+                if(edit.getText().equals("Edit"))
+                    presenter.onEditSecDetails();
+                else
+                    presenter.onSaveSecDetails(form.getChangedValues());
             }
-        }));
+        });
+        toolStrip.addToolButton(edit);
 
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.onDeleteSecDetails(form.getEditedEntity());
             }
         }));
 
@@ -76,7 +82,7 @@ public class SecurityDetails {
         toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewSecDialogue();
             }
         }));
 
@@ -143,5 +149,14 @@ public class SecurityDetails {
             secTable.getSelectionModel().setSelected(secPatterns.get(0), true);
 
         form.setEnabled(false);
+    }
+
+    public void setEnabled(boolean b) {
+        form.setEnabled(true);
+
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
     }
 }
