@@ -38,9 +38,11 @@ import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 
 
@@ -63,7 +65,10 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<DataSource> dataSource();
     AutoBean<XADataSource> xaDataSource();
-    AutoBean<JMSEndpoint> jmsEndpoint();
+    AutoBean<Queue> queue();
+    AutoBean<JMSEndpoint> topic();
+    AutoBean<ConnectionFactory> connectionFactory();
+
     AutoBean<LoggingHandler> loggingHandler();
     AutoBean<SocketBinding> socketBinding();
     AutoBean<DeploymentReference> deploymentReference();

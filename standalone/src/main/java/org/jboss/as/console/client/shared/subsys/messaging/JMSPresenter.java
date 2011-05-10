@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -30,19 +29,25 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -53,6 +58,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private CurrentSelectedProfile currentProfile;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JMSPresenter)
@@ -62,19 +68,23 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public interface MyView extends View {
         void setPresenter(JMSPresenter presenter);
 
-        void updateEndpoints(List<JMSEndpoint> endpoints);
+        void setQueues(List<Queue> queues);
+        void setTopics(List<JMSEndpoint> topics);
+
+        void setConnectionFactories(List<ConnectionFactory> factories);
     }
 
     @Inject
     public JMSPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory, CurrentSelectedProfile currentProfile) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.currentProfile = currentProfile;
     }
 
     @Override
@@ -87,7 +97,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-        loadEndpoints();
+        loadJMSConfig();
     }
 
     @Override
@@ -95,57 +105,101 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
-    void loadEndpoints() {
+    void loadJMSConfig() {
 
-        final List<JMSEndpoint> aggregated = new ArrayList<JMSEndpoint>();
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(RECURSIVE).set(Boolean.TRUE);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "jms");
 
-        ModelNode operation = new ReadEndpointOperation("default", "queue");
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<JMSEndpoint> queues= parseResponse(response);
-                aggregated.addAll(queues);
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode payload = response.get("result").asObject();
+
+                parseFactories(payload);
+                parseQueues(payload);
+                parseTopics(payload);
             }
         });
-
-        ModelNode topics = new ReadEndpointOperation("default", "topic");
-        dispatcher.execute(new DMRAction(topics), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<JMSEndpoint> topics= parseResponse(response);
-                aggregated.addAll(topics);
-
-                getView().updateEndpoints(aggregated);
-            }
-        });
-
 
     }
 
-    private List<JMSEndpoint> parseResponse(ModelNode response) {
-        List<ModelNode> payload = response.get("result").asList();
+    private void parseQueues(ModelNode response) {
 
-        List<JMSEndpoint> endpoints = new ArrayList<JMSEndpoint>(payload.size());
-        for(ModelNode item : payload)
+        List<Property> propList = response.get("queue").asPropertyList();
+        List<Queue> queues = new ArrayList<Queue>(propList.size());
+
+        for(Property prop : propList)
         {
-            // returned as type property (key=ds name)
-            Property property = item.asProperty();
-            ModelNode ep = property.getValue().asObject();
-            String name = property.getName();
+            Queue queue = factory.queue().as();
+            queue.setName(prop.getName());
 
-            try {
-                JMSEndpoint model = factory.jmsEndpoint().as();
-                model.setName(name);
-                model.setJndiName(ep.get("entries").asList().get(0).asString());// TODO: fragile crap
+            ModelNode propValue = prop.getValue();
+            String jndi = propValue.get("entries").asList().get(0).asString();
+            queue.setJndiName(jndi);
 
-                endpoints.add(model);
+            if(propValue.hasDefined("durable"))
+                queue.setDurable(propValue.get("durable").asBoolean());
 
-            } catch (IllegalArgumentException e) {
-                Log.error("Failed to parse data source representation", e);
-            }
+            if(propValue.hasDefined("selector"))
+                queue.setSelector(propValue.get("selector").asString());
+
+            queues.add(queue);
         }
-        return endpoints;
+
+        getView().setQueues(queues);
+    }
+
+    private void parseTopics(ModelNode response) {
+        List<Property> propList = response.get("topic").asPropertyList();
+        List<JMSEndpoint> topics = new ArrayList<JMSEndpoint>(propList.size());
+
+        for(Property prop : propList)
+        {
+            JMSEndpoint topic = factory.topic().as();
+            topic.setName(prop.getName());
+
+            ModelNode propValue = prop.getValue();
+            String jndi = propValue.get("entries").asList().get(0).asString();
+            topic.setJndiName(jndi);
+
+            topics.add(topic);
+        }
+
+        getView().setTopics(topics);
+
+    }
+
+    private void parseFactories(ModelNode response) {
+        try {
+
+            // factories
+            List<Property> factories = response.get("connection-factory").asPropertyList();
+            List<ConnectionFactory> factoryModels = new ArrayList<ConnectionFactory>(factories.size());
+
+            for(Property factoryProp : factories)
+            {
+                String name = factoryProp.getName();
+
+                ModelNode factoryValue = factoryProp.getValue();
+                String jndi = factoryValue.get("entries").asList().get(0).asString();
+
+                ConnectionFactory factoryModel = factory.connectionFactory().as();
+                factoryModel.setName(name);
+                factoryModel.setJndiName(jndi);
+
+                factoryModels.add(factoryModel);
+            }
+
+
+            getView().setConnectionFactories(factoryModels);
+
+        } catch (Throwable e) {
+            Console.error("Failed to parse response: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

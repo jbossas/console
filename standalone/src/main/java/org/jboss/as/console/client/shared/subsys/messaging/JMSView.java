@@ -19,12 +19,17 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
@@ -40,13 +45,15 @@ import java.util.List;
 public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
 
     private JMSPresenter presenter;
+    private TopicList topicList;
+    private QueueList queueList;
 
-    private DefaultCellTable<JMSEndpoint> endpointTable;
+    private DefaultCellTable<ConnectionFactory> factoryTable;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("JMS Management");
+        LayoutPanel layout = new RHSContentPanel("JMS");
 
         // ---
 
@@ -54,16 +61,53 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.messaging());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("JMS Endpoints"));
+        horzPanel.add(new ContentHeaderLabel("JMS Subsystem Configuration"));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         layout.add(horzPanel);
 
         // ----
 
-        layout.add(new ContentGroupLabel("Queues & Topics"));
-        endpointTable = new EndpointTable();
-        layout.add(endpointTable);
+        layout.add(new ContentGroupLabel("Connection Factories"));
+
+        factoryTable = new DefaultCellTable<ConnectionFactory>(10);
+
+        Column<ConnectionFactory, String> nameColumn = new Column<ConnectionFactory, String>(new TextCell()) {
+            @Override
+            public String getValue(ConnectionFactory object) {
+                return object.getName();
+            }
+        };
+
+        Column<ConnectionFactory, String> jndiColumn = new Column<ConnectionFactory, String>(new TextCell()) {
+            @Override
+            public String getValue(ConnectionFactory object) {
+                return object.getJndiName();
+            }
+        };
+
+        factoryTable.addColumn(nameColumn, "Name");
+        factoryTable.addColumn(jndiColumn, "JNDI");
+
+
+        layout.add(factoryTable);
+
+        // ----
+
+        layout.add(new ContentGroupLabel("Subresources"));
+        TabPanel bottomLayout = new TabPanel();
+        bottomLayout.addStyleName("default-tabpanel");
+        bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
+
+        queueList = new QueueList();
+        bottomLayout.add(queueList.asWidget(),"Queues");
+
+        topicList = new TopicList();
+        bottomLayout.add(topicList.asWidget(),"Topics");
+
+        bottomLayout.selectTab(0);
+
+        layout.add(bottomLayout);
 
         return layout;
     }
@@ -74,8 +118,16 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
     }
 
     @Override
-    public void updateEndpoints(List<JMSEndpoint> endpoints) {
-        endpointTable.setRowCount(endpoints.size());
-        endpointTable.setRowData(0, endpoints);
+    public void setTopics(List<JMSEndpoint> topics) {
+        topicList.table.setRowData(0, topics);
+    }
+
+    public void setQueues(List<Queue> queues) {
+        queueList.setQueues(queues);
+    }
+
+    @Override
+    public void setConnectionFactories(List<ConnectionFactory> factories) {
+        factoryTable.setRowData(0, factories);
     }
 }
