@@ -28,7 +28,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPatte
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
@@ -55,7 +54,7 @@ public class NewAddressPatternWizard {
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("cellpadding", "10");
 
-        layout.add(new HTML("<h3>Address Pattern</h3>"));
+        layout.add(new HTML("<h3>Create Address Pattern</h3>"));
 
         final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
 

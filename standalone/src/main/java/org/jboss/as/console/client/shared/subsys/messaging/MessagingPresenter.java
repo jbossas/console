@@ -213,7 +213,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewSecDialogue() {
-        window = new DefaultWindow("Create Security Pattern");
+        window = new DefaultWindow("Security Pattern");
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -261,7 +261,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewAddrDialogue() {
-        window = new DefaultWindow("Create Addressing Pattern");
+        window = new DefaultWindow("Addressing Pattern");
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {

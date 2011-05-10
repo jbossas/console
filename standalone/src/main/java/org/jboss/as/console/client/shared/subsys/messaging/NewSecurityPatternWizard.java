@@ -53,9 +53,10 @@ public class NewSecurityPatternWizard {
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("cellpadding", "10");
 
-        layout.add(new HTML("<h3>Security Pattern</h3>"));
+        layout.add(new HTML("<h3>Create Security Pattern</h3>"));
 
         final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
+        form.setNumColumns(2);
 
         TextBoxItem principal = new TextBoxItem("principal", "Principal");
         TextBoxItem pattern = new TextBoxItem("pattern", "Pattern");

@@ -125,11 +125,11 @@ public class SecurityDetails {
         CheckBoxItem consume = new CheckBoxItem("consume", "Consume?");
         CheckBoxItem manage= new CheckBoxItem("manage", "Manage?");
 
-        CheckBoxItem createDQ = new CheckBoxItem("createDurableQueue", "CreateDurableQueue?");
-        CheckBoxItem deleteDQ = new CheckBoxItem("deleteDurableQueue", "DeleteDurableQueue?");
+        CheckBoxItem createDQ = new CheckBoxItem("createDurableQueue", "CreateDurable?");
+        CheckBoxItem deleteDQ = new CheckBoxItem("deleteDurableQueue", "DeleteDurable?");
 
-        CheckBoxItem createNDQ = new CheckBoxItem("createNonDurableQueue", "CreateNonDurableQueue?");
-        CheckBoxItem deleteNDQ = new CheckBoxItem("deleteNonDurableQueue", "DeleteNonDurableQueue?");
+        CheckBoxItem createNDQ = new CheckBoxItem("createNonDurableQueue", "CreateNonDurable?");
+        CheckBoxItem deleteNDQ = new CheckBoxItem("deleteNonDurableQueue", "DeleteNonDurable?");
 
 
         form.setFields(send, consume, manage);
