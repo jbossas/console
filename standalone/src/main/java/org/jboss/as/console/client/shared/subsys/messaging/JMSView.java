@@ -119,7 +119,7 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
 
     @Override
     public void setTopics(List<JMSEndpoint> topics) {
-        topicList.table.setRowData(0, topics);
+        topicList.setTopics(topics);
     }
 
     public void setQueues(List<Queue> queues) {

@@ -19,8 +19,17 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -28,8 +37,11 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class TopicList {
 
-    EndpointTable table;
+    private EndpointTable table;
     private JMSPresenter presenter;
+    private ToolButton edit;
+
+    private Form<JMSEndpoint> form;
 
     public TopicList(JMSPresenter presenter) {
         this.presenter = presenter;
@@ -38,10 +50,68 @@ public class TopicList {
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
 
+        ToolStrip toolStrip = new ToolStrip();
+        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+
+        edit = new ToolButton("Edit", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                if(edit.getText().equals("Edit"))
+                    presenter.onEditTopic();
+                else
+                    presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
+            }
+        });
+
+        //toolStrip.addToolButton(edit);
+
+        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.onDeleteTopic(form.getEditedEntity());
+            }
+        }));
+
+
+        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewTopicDialogue();
+            }
+        }));
+
+
+        layout.add(toolStrip);
+
+        // -----
         table = new EndpointTable();
         table.getElement().setAttribute("style", "margin-top:10px");
 
         layout.add(table);
+
+
+        // -----
+
+        form = new Form(JMSEndpoint.class);
+        form.setNumColumns(2);
+
+        TextItem name = new TextItem("name", "Name");
+        TextItem jndi = new TextItem("jndiName", "JNDI");
+
+        form.setFields(name, jndi);
+
+        layout.add(form.asWidget());
+
+        form.bind(table);
+
         return layout;
+    }
+
+    public void setTopics(List<JMSEndpoint> topics) {
+        table.setRowData(0, topics);
+
+        if(!topics.isEmpty())
+            table.getSelectionModel().setSelected(topics.get(0), true);
     }
 }

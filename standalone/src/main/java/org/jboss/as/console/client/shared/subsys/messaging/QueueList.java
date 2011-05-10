@@ -54,7 +54,6 @@ public class QueueList {
 
         VerticalPanel layout = new VerticalPanel();
 
-
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
@@ -65,7 +64,7 @@ public class QueueList {
                 if(edit.getText().equals("Edit"))
                     presenter.onEditQueue();
                 else
-                    presenter.onSaveQueue(form.getChangedValues());
+                    presenter.onSaveQueue(form.getEditedEntity().getName(), form.getChangedValues());
             }
         });
         toolStrip.addToolButton(edit);
@@ -123,10 +122,10 @@ public class QueueList {
         TextBoxItem selector = new TextBoxItem("selector", "Selector");
 
         form.setFields(name, jndi, durable, selector);
+        form.bind(queueTable);
 
         layout.add(form.asWidget());
 
-        form.bind(queueTable);
 
         return layout;
     }

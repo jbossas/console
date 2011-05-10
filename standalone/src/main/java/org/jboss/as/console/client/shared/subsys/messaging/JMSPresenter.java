@@ -211,7 +211,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         getView().enableEditQueue(true);
     }
 
-    public void onSaveQueue(Map<String, Object> changedValues) {
+    public void onSaveQueue(String name, Map<String, Object> changedValues) {
         getView().enableEditQueue(false);
     }
 
@@ -220,6 +220,22 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     }
 
     public void launchNewQueueDialogue() {
+
+    }
+
+    public void onDeleteTopic(JMSEndpoint topic) {
+
+    }
+
+    public void onEditTopic() {
+
+    }
+
+    public void onSaveTopic(String name, Map<String, Object> changedValues) {
+
+    }
+
+    public void launchNewTopicDialogue() {
 
     }
 
