@@ -61,20 +61,26 @@ public class AddressingDetails {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
-        toolStrip.addToolButton(new ToolButton("Add", new ClickHandler() {
+        toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
             }
         }));
 
-        toolStrip.addToolButton(new ToolButton("Remove", new ClickHandler() {
+        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
             }
         }));
 
+         toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+            }
+        }));
 
         layout.add(toolStrip);
 
