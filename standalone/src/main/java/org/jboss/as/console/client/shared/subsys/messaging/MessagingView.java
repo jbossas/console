@@ -24,10 +24,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
+import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
+
 
 /**
  * @author Heiko Braun
@@ -44,6 +46,8 @@ public class MessagingView extends DisposableViewImpl implements MessagingPresen
     public Widget createWidget() {
 
         RHSContentPanel layout = new RHSContentPanel("Messaging Provider");
+
+        layout.add(new ContentHeaderLabel("Messaging Subsystem Configuration"));
 
         layout.add(new ContentGroupLabel("Attributes"));
 

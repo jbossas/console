@@ -19,9 +19,25 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -30,17 +46,79 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvid
 public class AddressingDetails {
 
     private MessagingPresenter presenter;
+    private Form<AddressingPattern> form;
     private MessagingProvider providerEntity;
+    private DefaultCellTable<SecurityPattern> addrTable;
 
     public AddressingDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
     }
 
     Widget asWidget() {
-        return new HTML("todo");
+
+        VerticalPanel layout = new VerticalPanel();
+
+        ToolStrip toolStrip = new ToolStrip();
+        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+
+        toolStrip.addToolButton(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+            }
+        }));
+
+        toolStrip.addToolButton(new ToolButton("Remove", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+            }
+        }));
+
+
+        layout.add(toolStrip);
+
+        // ----
+
+        addrTable = new DefaultCellTable<SecurityPattern>(10);
+
+        Column<AddressingPattern, String> patternColumn = new Column<AddressingPattern, String>(new TextCell()) {
+            @Override
+            public String getValue(AddressingPattern object) {
+                return object.getPattern();
+            }
+        };
+
+        addrTable.addColumn(patternColumn, "Pattern");
+
+        layout.add(addrTable);
+
+
+        // ---
+
+        form = new Form<AddressingPattern>(AddressingPattern.class);
+        form.setNumColumns(2);
+        form.bind(addrTable);
+
+        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
+        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
+        NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
+
+        form.setFields(dlQ, expQ, redelivery);
+
+        layout.add(form.asWidget());
+        return layout;
     }
 
-    public void setProvider(MessagingProvider provider) {
+    void setProvider(MessagingProvider provider)
+    {
         this.providerEntity = provider;
+
+        List<AddressingPattern> addrPatterns = provider.getAddressPatterns();
+        addrTable.setRowData(0, addrPatterns);
+        if(!addrPatterns.isEmpty())
+            addrTable.getSelectionModel().setSelected(addrPatterns.get(0), true);
+
+        form.setEnabled(false);
     }
 }

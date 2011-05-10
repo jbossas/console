@@ -29,14 +29,11 @@ public interface AddressingPattern {
     void setPattern(String pattern);
 
     String getDeadLetterQueue();
-
     void setDeadLetterQueue(String deadLetterQueue);
 
     String getExpiryQueue();
-
     void setExpiryQueue(String expiryQueue);
 
     int getRedeliveryDelay();
-
     void setRedeliveryDelay(int redeliveryDelay);
 }
