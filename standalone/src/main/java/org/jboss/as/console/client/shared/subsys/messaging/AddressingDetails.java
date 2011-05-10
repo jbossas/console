@@ -28,8 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -49,6 +47,7 @@ public class AddressingDetails {
     private Form<AddressingPattern> form;
     private MessagingProvider providerEntity;
     private DefaultCellTable<SecurityPattern> addrTable;
+    private ToolButton edit;
 
     public AddressingDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -61,24 +60,28 @@ public class AddressingDetails {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
-        toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
+        edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                if("Edit".equals(edit.getText()))
+                    presenter.onEditAddressDetails(form.getEditedEntity());
+                else
+                    presenter.onSaveAddressDetails(form.getChangedValues());
             }
-        }));
+        });
+        toolStrip.addToolButton(edit);
 
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.onDeleteAddressDetails(form.getEditedEntity());
             }
         }));
 
-         toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewAddrDialogue();
             }
         }));
 
@@ -126,5 +129,13 @@ public class AddressingDetails {
             addrTable.getSelectionModel().setSelected(addrPatterns.get(0), true);
 
         form.setEnabled(false);
+    }
+
+    public void setEnabled(boolean b) {
+        form.setEnabled(b);
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
     }
 }

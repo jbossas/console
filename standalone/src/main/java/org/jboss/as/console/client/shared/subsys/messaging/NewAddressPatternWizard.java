@@ -24,24 +24,26 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
+import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Heiko Braun
  * @date 5/10/11
  */
-public class NewSecurityPatternWizard {
+public class NewAddressPatternWizard {
 
     private MessagingPresenter presenter;
     private MessagingProvider provider;
 
-    public NewSecurityPatternWizard(MessagingPresenter presenter, MessagingProvider provider) {
+    public NewAddressPatternWizard (MessagingPresenter presenter, MessagingProvider provider) {
         this.presenter = presenter;
         this.provider = provider;
     }
@@ -53,18 +55,26 @@ public class NewSecurityPatternWizard {
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("cellpadding", "10");
 
-        layout.add(new HTML("<h3>Security Pattern</h3>"));
+        layout.add(new HTML("<h3>Address Pattern</h3>"));
 
         final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
 
-        TextBoxItem principal = new TextBoxItem("principal", "Principal");
+
         TextBoxItem pattern = new TextBoxItem("pattern", "Pattern");
-        CheckBoxItem send = new CheckBoxItem("send", "Send?");
-        CheckBoxItem consume = new CheckBoxItem("consume", "Consume?");
-        CheckBoxItem manage= new CheckBoxItem("manage", "Manage?");
 
-        form.setFields(principal, pattern, send, consume, manage);
+        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
+        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
+        NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
 
+        form.setFields(pattern, dlQ, expQ, redelivery);
+
+        // defaults
+        AddressingPattern defaultPattern = findDefaultPattern();
+        if(defaultPattern!=null) {
+            dlQ.setValue(defaultPattern.getDeadLetterQueue());
+            expQ.setValue(defaultPattern.getExpiryQueue());
+            redelivery.setValue(defaultPattern.getRedeliveryDelay());
+        }
         layout.add(form.asWidget());
 
         DialogueOptions options = new DialogueOptions(
@@ -75,7 +85,7 @@ public class NewSecurityPatternWizard {
                         FormValidation validation = form.validate();
                         if(!validation.hasErrors())
                         {
-                            presenter.onCreateSecPattern(form.getUpdatedEntity());
+                            presenter.onCreateAddressPattern(form.getUpdatedEntity());
                         }
                     }
                 },
@@ -91,5 +101,18 @@ public class NewSecurityPatternWizard {
         layout.add(options);
 
         return layout;
+    }
+
+    private AddressingPattern findDefaultPattern() {
+        AddressingPattern match = null;
+        for(AddressingPattern pattern : provider.getAddressPatterns()) {
+            if("#".equals(pattern.getPattern()))
+            {
+                match = pattern;
+                break;
+            }
+        }
+
+        return match;
     }
 }

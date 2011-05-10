@@ -65,6 +65,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private DefaultWindow window = null;
 
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
     public interface MyProxy extends Proxy<MessagingPresenter>, Place {
@@ -75,6 +76,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         void setProviderDetails(MessagingProvider provider);
 
         void editSecDetails(boolean b);
+
+        void editAddrDetails(boolean b);
     }
 
     @Inject
@@ -208,7 +211,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewSecDialogue() {
-        window = new DefaultWindow("Create Messaging Security Pattern");
+        window = new DefaultWindow("Create Security Pattern");
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -241,14 +244,44 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     public void onSaveSecDetails(Map<String, Object> changedValues) {
         getView().editSecDetails(false);
-
-        // TODO: implement
     }
 
     public void onDeleteSecDetails(SecurityPattern pattern) {
         getView().editSecDetails(false);
     }
 
+    public void onEditAddressDetails(AddressingPattern addressingPattern) {
+        getView().editAddrDetails(true);
+    }
 
+    public void onDeleteAddressDetails(AddressingPattern addressingPattern) {
 
+    }
+
+    public void launchNewAddrDialogue() {
+        window = new DefaultWindow("Create Addressing Pattern");
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.setWidget(
+                new NewAddressPatternWizard(this, providerEntity).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onSaveAddressDetails(Map<String, Object> changedValues) {
+        getView().editAddrDetails(false);
+    }
+
+    public void onCreateAddressPattern(SecurityPattern addrPattern) {
+
+    }
 }
