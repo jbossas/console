@@ -109,10 +109,12 @@ import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
-import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
-import org.jboss.as.console.client.shared.subsys.jms.JMSView;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSView;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
+import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -322,6 +324,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JMSPresenter.MyView.class,
                 JMSView.class,
                 JMSPresenter.MyProxy.class);
+
+         bindPresenter(MessagingPresenter.class,
+                MessagingPresenter.MyView.class,
+                MessagingView.class,
+                MessagingPresenter.MyProxy.class);
 
         bindPresenter(LoggingPresenter.class,
                 LoggingPresenter.MyView.class,

@@ -17,16 +17,38 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jms.model;
+package org.jboss.as.console.client.shared.subsys.messaging;
+
+import com.google.gwt.user.cellview.client.TextColumn;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**
  * @author Heiko Braun
  * @date 3/29/11
  */
-public interface JMSEndpoint {
-    String getName();
-    void setName(String name);
+class EndpointTable extends DefaultCellTable<JMSEndpoint>{
 
-    String getJndiName();
-    void setJndiName(String jndi);
+    public EndpointTable() {
+        super(20);
+
+        TextColumn<JMSEndpoint> nameColumn = new TextColumn<JMSEndpoint>() {
+            @Override
+            public String getValue(JMSEndpoint record) {
+                return record.getName();
+            }
+        };
+
+        TextColumn<JMSEndpoint> jndiNameColumn = new TextColumn<JMSEndpoint>() {
+            @Override
+            public String getValue(JMSEndpoint record) {
+                return record.getJndiName();
+            }
+        };
+
+
+        addColumn(nameColumn, "Name");
+        addColumn(jndiNameColumn, "JNDI");
+
+    }
 }

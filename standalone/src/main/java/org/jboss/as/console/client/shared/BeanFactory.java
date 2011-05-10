@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
+import com.google.gwt.dom.client.TableSectionElement;
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
@@ -36,8 +37,11 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 
 
 /**
@@ -65,4 +69,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<DeploymentReference> deploymentReference();
 
     AutoBean<CommonSettings> settings();
+    AutoBean<MessagingProvider> messagingProvider();
+    AutoBean<SecurityPattern> messagingSecurity();
+    AutoBean<AddressingPattern> messagingAddress();
 }

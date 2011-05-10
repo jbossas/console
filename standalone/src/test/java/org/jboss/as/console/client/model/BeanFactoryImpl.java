@@ -36,8 +36,10 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 
 /**
  * @author Heiko Braun
@@ -136,6 +138,16 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<XADataSource> xaDataSource() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<MessagingProvider> messagingProvider() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<SecurityPattern> messagingSecurity() {
         throw new RuntimeException("not implemented");
     }
 }

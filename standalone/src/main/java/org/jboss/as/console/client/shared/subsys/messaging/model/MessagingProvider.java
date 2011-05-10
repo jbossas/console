@@ -17,23 +17,32 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jms;
+package org.jboss.as.console.client.shared.subsys.messaging.model;
 
-import org.jboss.dmr.client.ModelNode;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import java.util.List;
 
 /**
  * @author Heiko Braun
- * @date 3/29/11
+ * @date 5/10/11
  */
-public class ReadEndpointOperation extends ModelNode{
+public interface MessagingProvider {
 
-    public ReadEndpointOperation(String profile, String type) {
-        super();
-        get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        get(ADDRESS).add("profile", profile);
-        get(ADDRESS).add("subsystem", "jms");
-        get(CHILD_TYPE).set(type);
-    }
+    String getName();
+    void setName(String name);
+
+    boolean isPersistenceEnabled();
+    void setPersistenceEnabled(boolean persistenceEnabled);
+
+    List<SecurityPattern> getSecurityPatterns();
+    void setSecurityPatterns(List<SecurityPattern> patterns);
+
+    List<AddressingPattern> getAddressPatterns();
+    void setAddressPatterns(List<AddressingPattern> addrPatterns);
+
+    String getConnectorBinding();
+    void setConnectorBinding(String binding);
+
+    String getAcceptorBinding();
+    void setAcceptorBinding(String binding);
+
 }

@@ -72,8 +72,9 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
-import org.jboss.as.console.client.shared.subsys.jms.JMSPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -170,7 +171,8 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
     DataSourceStore getDataSourceStore();
 
-    AsyncProvider<JMSPresenter> getMessagingPresenter();
+    AsyncProvider<JMSPresenter> getJMSPresenter();
+    AsyncProvider<MessagingPresenter> getMessagingPresenter();
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 }

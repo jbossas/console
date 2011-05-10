@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jms;
+package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -37,7 +37,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.jms.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
