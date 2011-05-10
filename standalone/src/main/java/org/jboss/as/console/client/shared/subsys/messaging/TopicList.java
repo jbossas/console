@@ -29,6 +29,11 @@ import com.google.gwt.user.client.ui.Widget;
 public class TopicList {
 
     EndpointTable table;
+    private JMSPresenter presenter;
+
+    public TopicList(JMSPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();

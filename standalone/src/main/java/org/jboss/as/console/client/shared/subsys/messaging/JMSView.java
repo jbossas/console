@@ -99,10 +99,10 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
         bottomLayout.addStyleName("default-tabpanel");
         bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
 
-        queueList = new QueueList();
+        queueList = new QueueList(presenter);
         bottomLayout.add(queueList.asWidget(),"Queues");
 
-        topicList = new TopicList();
+        topicList = new TopicList(presenter);
         bottomLayout.add(topicList.asWidget(),"Topics");
 
         bottomLayout.selectTab(0);
@@ -129,5 +129,10 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
         factoryTable.setRowData(0, factories);
+    }
+
+    @Override
+    public void enableEditQueue(boolean b) {
+        queueList.setEnabled(b);
     }
 }

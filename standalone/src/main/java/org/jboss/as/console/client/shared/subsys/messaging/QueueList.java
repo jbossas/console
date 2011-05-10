@@ -19,11 +19,19 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -33,14 +41,55 @@ import java.util.List;
  */
 public class QueueList {
 
-    DefaultCellTable<Queue> queueTable;
+    private DefaultCellTable<Queue> queueTable;
+    private ToolButton edit;
+    private JMSPresenter presenter;
+    private Form<Queue> form ;
+
+    public QueueList(JMSPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
-        
+
         VerticalPanel layout = new VerticalPanel();
-        
+
+
+        ToolStrip toolStrip = new ToolStrip();
+        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+
+        edit = new ToolButton("Edit", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                if(edit.getText().equals("Edit"))
+                    presenter.onEditQueue();
+                else
+                    presenter.onSaveQueue(form.getChangedValues());
+            }
+        });
+        toolStrip.addToolButton(edit);
+
+        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+               presenter.onDeleteQueue(form.getEditedEntity());
+            }
+        }));
+
+
+        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewQueueDialogue();
+            }
+        }));
+
+
+        layout.add(toolStrip);
+
         queueTable = new DefaultCellTable<Queue>(10);
-        queueTable.getElement().setAttribute("style", "margin-top:10px" );
+
         TextColumn<Queue> nameColumn = new TextColumn<Queue>() {
             @Override
             public String getValue(Queue record) {
@@ -54,34 +103,50 @@ public class QueueList {
                 return record.getJndiName();
             }
         };
-        
-        
-        TextColumn<Queue> durableColumn = new TextColumn<Queue>() {
-            @Override
-            public String getValue(Queue record) {
-                return String.valueOf(record.isDurable());
-            }
-        };
-        
-        TextColumn<Queue> selectorColumn = new TextColumn<Queue>() {
-            @Override
-            public String getValue(Queue record) {
-                return record.getSelector();
-            }
-        };
-        
+
         queueTable.addColumn(nameColumn, "Name");
         queueTable.addColumn(jndiNameColumn, "JNDI");
-        queueTable.addColumn(selectorColumn, "Selector");
-        queueTable.addColumn(durableColumn, "Durable?");
 
         layout.add(queueTable);
+
+
+        // ----
+
+
+        form = new Form(Queue.class);
+        form.setNumColumns(2);
+
+        TextItem name = new TextItem("name", "Name");
+        TextItem jndi = new TextItem("jndiName", "JNDI");
+
+        CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
+        TextBoxItem selector = new TextBoxItem("selector", "Selector");
+
+        form.setFields(name, jndi, durable, selector);
+
+        layout.add(form.asWidget());
+
+        form.bind(queueTable);
+
         return layout;
     }
 
     void setQueues(List<Queue> queues)
     {
         queueTable.setRowData(0, queues);
+
+        if(!queues.isEmpty())
+            queueTable.getSelectionModel().setSelected(queues.get(0), true);
+
+        form.setEnabled(false);
     }
 
+    public void setEnabled(boolean b) {
+        form.setEnabled(b);
+
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
+    }
 }

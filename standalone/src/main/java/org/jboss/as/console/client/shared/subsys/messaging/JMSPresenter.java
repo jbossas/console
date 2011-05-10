@@ -46,6 +46,7 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -72,6 +73,8 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         void setTopics(List<JMSEndpoint> topics);
 
         void setConnectionFactories(List<ConnectionFactory> factories);
+
+        void enableEditQueue(boolean b);
     }
 
     @Inject
@@ -202,4 +205,22 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
             e.printStackTrace();
         }
     }
+
+
+    public void onEditQueue() {
+        getView().enableEditQueue(true);
+    }
+
+    public void onSaveQueue(Map<String, Object> changedValues) {
+        getView().enableEditQueue(false);
+    }
+
+    public void onDeleteQueue(Queue queue) {
+
+    }
+
+    public void launchNewQueueDialogue() {
+
+    }
+
 }
