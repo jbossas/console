@@ -36,9 +36,12 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 
 /**
@@ -102,11 +105,6 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     @Override
-    public AutoBean<JMSEndpoint> jmsEndpoint() {
-        throw new RuntimeException("not implemented");  
-    }
-
-    @Override
     public AutoBean<LoggingHandler> loggingHandler() {
         throw new RuntimeException("not implemented");  
     }
@@ -148,6 +146,26 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<SecurityPattern> messagingSecurity() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<Queue> queue() {
+         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<JMSEndpoint> topic() {
+         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<ConnectionFactory> connectionFactory() {
+         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<AddressingPattern> messagingAddress() {
         throw new RuntimeException("not implemented");
     }
 }
