@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -58,18 +59,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
     private CurrentSelectedProfile currentProfile;
 
-    public void onEditConnector() {
-         getView().enableEditConnector(true);
-    }
-
-    public void onSaveConnector(String name, Map<String, Object> changedValues) {
-        getView().enableEditConnector(false);
-    }
-
-    public void onDeleteConnector(String name) {
-
-    }
-
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
     public interface MyProxy extends Proxy<WebPresenter>, Place {
@@ -81,6 +70,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void setConnectors(List<HttpConnector> connectors);
 
         void enableEditConnector(boolean b);
+
+        void setVirtualServers(List<VirtualServer> servers);
     }
 
     @Inject
@@ -110,6 +101,57 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         loadJSPConfig();
         loadConnectors();
+        loadVirtualServer();
+    }
+
+    private void loadVirtualServer() {
+        // /profile=default/subsystem=web:read-children-resources(child-type=virtual-server, recursive=true)
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "web");
+        operation.get(CHILD_TYPE).set("virtual-server");
+        operation.get(RECURSIVE).set(Boolean.TRUE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                System.out.println(response.get(RESULT));
+
+                List<Property> propList = response.get(RESULT).asPropertyList();
+                List<VirtualServer> servers = new ArrayList<VirtualServer>(propList.size());
+
+                for(Property prop : propList)
+                {
+                    String name = prop.getName();
+                    ModelNode propValue = prop.getValue();
+
+                    VirtualServer server = factory.virtualServer().as();
+                    server.setName(name);
+
+                    List<String> aliases = new ArrayList<String>();
+                    if(propValue.hasDefined("alias"))
+                    {
+                        List<ModelNode> aliasList = propValue.get("alias").asList();
+                        for(ModelNode alias : aliasList)
+                            aliases.add(alias.asString());
+                    }
+
+                    server.setAlias(aliases);
+
+                    if(propValue.hasDefined("default-web-module"))
+                        server.setDefaultWebModule(propValue.get("default-web-module").asString());
+
+                    servers.add(server);
+                }
+
+                getView().setVirtualServers(servers);
+
+            }
+        });
+
     }
 
     private void loadJSPConfig() {
@@ -135,7 +177,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                System.out.println(response.get(RESULT));
+
                 List<Property> propList = response.get(RESULT).asPropertyList();
                 List<HttpConnector> connectors = new ArrayList<HttpConnector>(propList.size());
 
@@ -163,4 +205,17 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             }
         });
     }
+
+    public void onEditConnector() {
+        getView().enableEditConnector(true);
+    }
+
+    public void onSaveConnector(String name, Map<String, Object> changedValues) {
+        getView().enableEditConnector(false);
+    }
+
+    public void onDeleteConnector(String name) {
+
+    }
+
 }

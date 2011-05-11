@@ -46,6 +46,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
+import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 
 
 /**
@@ -82,4 +83,5 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<HttpConnector> httpConnector();
     AutoBean<JSPContainerConfiguration> jspConfig();
+    AutoBean<VirtualServer> virtualServer();
 }

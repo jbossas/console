@@ -43,6 +43,9 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
+import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 
 /**
  * @author Heiko Braun
@@ -166,6 +169,21 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<AddressingPattern> messagingAddress() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<HttpConnector> httpConnector() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<JSPContainerConfiguration> jspConfig() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<VirtualServer> virtualServer() {
         throw new RuntimeException("not implemented");
     }
 }

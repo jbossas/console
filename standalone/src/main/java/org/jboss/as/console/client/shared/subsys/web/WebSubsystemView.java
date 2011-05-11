@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
+import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
@@ -50,6 +51,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     private WebPresenter presenter;
     private Form<JSPContainerConfiguration> form;
     private ConnectorList connectorList;
+    private VirtualServerList serverList;
 
     @Override
     public Widget createWidget() {
@@ -74,7 +76,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         CheckBoxItem listing = new CheckBoxItem("listings", "Listings?");
 
-        StateItem disabled= new StateItem("disabled", "Disabled?");
+        CheckBoxItem disabled= new CheckBoxItem("disabled", "Disabled?");
 
         CheckBoxItem development= new CheckBoxItem("development", "Development?");
 
@@ -105,9 +107,8 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         connectorList = new ConnectorList(presenter);
         bottomLayout.add(connectorList.asWidget(),"Connectors");
 
-        bottomLayout.add(new HTML(),"Virtual Servers");
-
-        bottomLayout.add(new HTML(),"Rewrite Rules");
+        serverList = new VirtualServerList(presenter);
+        bottomLayout.add(serverList.asWidget(),"Virtual Servers");
 
         bottomLayout.selectTab(0);
 
@@ -129,5 +130,10 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     @Override
     public void enableEditConnector(boolean b) {
         connectorList.setEnabled(b);
+    }
+
+    @Override
+    public void setVirtualServers(List<VirtualServer> servers) {
+        serverList.setVirtualServers(servers);
     }
 }
