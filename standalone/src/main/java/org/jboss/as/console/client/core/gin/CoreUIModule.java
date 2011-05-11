@@ -115,6 +115,8 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
+import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
+import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -160,14 +162,14 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutPresenter.MainLayoutProxy.class);
 
         bindPresenter(SettingsPresenter.class,
-                       SettingsPresenter.MyView.class,
-                       SettingsPresenterViewImpl.class,
-                       SettingsPresenter.MyProxy.class);
+                SettingsPresenter.MyView.class,
+                SettingsPresenterViewImpl.class,
+                SettingsPresenter.MyProxy.class);
 
         bindPresenterWidget(SettingsPresenterWidget.class,
                 SettingsPresenterWidget.MyView.class,
                 SettingsView.class
-                );
+        );
 
         // ----------------------------------------------------------------------
 
@@ -325,7 +327,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JMSView.class,
                 JMSPresenter.MyProxy.class);
 
-         bindPresenter(MessagingPresenter.class,
+        bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,
                 MessagingView.class,
                 MessagingPresenter.MyProxy.class);
@@ -339,6 +341,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 SocketBindingPresenter.MyView.class,
                 SocketBindingView.class,
                 SocketBindingPresenter.MyProxy.class);
+
+        bindPresenter(WebPresenter.class,
+                WebPresenter.MyView.class,
+                WebSubsystemView.class,
+                WebPresenter.MyProxy.class);
     }
 
 }

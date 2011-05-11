@@ -131,8 +131,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private MessagingProvider parseResponse(ModelNode response) {
         ModelNode model = response.get("result").asObject();
 
-        System.out.println(model.toString());
-
         MessagingProvider provider = factory.messagingProvider().as();
         provider.setName("HornetQ"); // TODO: can this be retrieved incl. version?
 

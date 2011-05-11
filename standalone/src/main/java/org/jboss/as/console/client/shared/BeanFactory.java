@@ -44,6 +44,8 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 
 
 /**
@@ -77,4 +79,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<MessagingProvider> messagingProvider();
     AutoBean<SecurityPattern> messagingSecurity();
     AutoBean<AddressingPattern> messagingAddress();
+
+    AutoBean<HttpConnector> httpConnector();
+    AutoBean<JSPContainerConfiguration> jspConfig();
 }
