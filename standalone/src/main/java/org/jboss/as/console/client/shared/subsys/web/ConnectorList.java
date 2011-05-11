@@ -27,11 +27,9 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.StateItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
@@ -49,6 +47,7 @@ public class ConnectorList {
     private DefaultCellTable<HttpConnector> connectorTable;
     private WebPresenter presenter;
     private ToolButton edit;
+    private Form<HttpConnector> form;
 
     public ConnectorList(WebPresenter presenter) {
         this.presenter = presenter;
@@ -67,9 +66,9 @@ public class ConnectorList {
             public void onClick(ClickEvent event) {
 
                 if(edit.getText().equals("Edit"))
-                    System.out.println("edit..");
+                   presenter.onEditConnector();
                 else
-                    System.out.println("save...");
+                    presenter.onSaveConnector(form.getEditedEntity().getName(), form.getChangedValues());
             }
         });
         toolStrip.addToolButton(edit);
@@ -77,7 +76,7 @@ public class ConnectorList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.onDeleteConnector(form.getEditedEntity().getName());
             }
         }));
 
@@ -138,7 +137,7 @@ public class ConnectorList {
 
         // ---
 
-        Form<HttpConnector> form = new Form<HttpConnector>(HttpConnector.class);
+        form = new Form<HttpConnector>(HttpConnector.class);
         form.setNumColumns(2);
 
         TextItem name = new TextItem("name", "Name");
@@ -162,5 +161,17 @@ public class ConnectorList {
 
         if(!connectors.isEmpty())
             connectorTable.getSelectionModel().setSelected(connectors.get(0), true);
+
+        form.setEnabled(false);
+    }
+
+    public void setEnabled(boolean b) {
+        form.setEnabled(true);
+
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
+
     }
 }

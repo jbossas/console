@@ -43,6 +43,7 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -57,6 +58,18 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
     private CurrentSelectedProfile currentProfile;
 
+    public void onEditConnector() {
+         getView().enableEditConnector(true);
+    }
+
+    public void onSaveConnector(String name, Map<String, Object> changedValues) {
+        getView().enableEditConnector(false);
+    }
+
+    public void onDeleteConnector(String name) {
+
+    }
+
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
     public interface MyProxy extends Proxy<WebPresenter>, Place {
@@ -66,6 +79,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void setPresenter(WebPresenter presenter);
 
         void setConnectors(List<HttpConnector> connectors);
+
+        void enableEditConnector(boolean b);
     }
 
     @Inject
@@ -93,7 +108,12 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     protected void onReset() {
         super.onReset();
 
+        loadJSPConfig();
         loadConnectors();
+    }
+
+    private void loadJSPConfig() {
+        // TODO: https://issues.jboss.org/browse/AS7-748
     }
 
     @Override

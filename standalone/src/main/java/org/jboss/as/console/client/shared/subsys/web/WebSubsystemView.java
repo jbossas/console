@@ -125,4 +125,9 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     public void setConnectors(List<HttpConnector> connectors) {
         connectorList.setConnectors(connectors);
     }
+
+    @Override
+    public void enableEditConnector(boolean b) {
+        connectorList.setEnabled(b);
+    }
 }
