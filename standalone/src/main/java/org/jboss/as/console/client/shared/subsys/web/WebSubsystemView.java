@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.web;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -39,6 +41,8 @@ import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.StateItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -70,6 +74,19 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         // ----
 
         layout.add(new ContentGroupLabel("JSP Container"));
+
+        ToolStrip toolStrip = new ToolStrip();
+        toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+            }
+        } ));
+
+        layout.add(toolStrip);
+
+        // ----
+
 
         form = new Form(JSPContainerConfiguration.class);
         form.setNumColumns(2);
