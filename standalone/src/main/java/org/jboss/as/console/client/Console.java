@@ -27,6 +27,7 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
@@ -113,14 +114,12 @@ public class Console implements EntryPoint {
         {
             identifyManagementModel();
         }
-
-
     }
 
     private void identifyManagementModel() {
         // distinguish standalone and domain mode
         final BootstrapContext bootstrap = MODULES.getBootstrapContext();
-        ModelNode operation = new ModelNode();
+        final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
         operation.get(CHILD_TYPE).set("subsystem");
         operation.get(ADDRESS).setEmptyList();
@@ -138,6 +137,8 @@ public class Console implements EntryPoint {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean outcome = response.get("outcome").asString().equals("success");
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(outcome).toString());
+
+                // proceed
                 loadMainApp();
             }
         });
@@ -160,9 +161,25 @@ public class Console implements EntryPoint {
         );
     }
 
+    public static void error(String message, String detail) {
+        MODULES.getMessageCenter().notify(
+                new Message(message, detail, Message.Severity.Error)
+        );
+    }
+
     public static void warning(String message) {
         MODULES.getMessageCenter().notify(
                 new Message(message, Message.Severity.Warning)
         );
+    }
+
+    public static void schedule(final Command cmd)
+    {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                cmd.execute();
+            }
+        });
     }
 }
