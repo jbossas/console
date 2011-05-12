@@ -73,6 +73,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
     private DefaultWindow window;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.JMSPresenter)
     public interface MyProxy extends Proxy<JMSPresenter>, Place {
@@ -87,6 +88,8 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         void setConnectionFactories(List<ConnectionFactory> factories);
 
         void enableEditQueue(boolean b);
+
+        void enableEditTopic(boolean b);
     }
 
     @Inject
@@ -228,6 +231,8 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public void onSaveQueue(final String name, Map<String, Object> changedValues) {
         getView().enableEditQueue(false);
 
+        if(changedValues.isEmpty()) return;
+
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).add("profile", currentProfile.getName());
@@ -267,6 +272,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         queue.get("entries").add(entity.getJndiName());
 
         queue.get("durable").set(entity.isDurable());
+
         if(entity.getSelector()!=null)
             queue.get("selector").set(entity.getSelector());
 
@@ -279,7 +285,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
                 if(successful)
                     Console.info("Created queue "+entity.getName());
                 else
-                    Console.error("Failed to update queue " + entity.getName(), response.toString());
+                    Console.error("Failed to create queue " + entity.getName(), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -340,24 +346,98 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         window.center();
     }
 
-    public void onDeleteTopic(JMSEndpoint topic) {
+    public void onDeleteTopic(final JMSEndpoint entity) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "jms");
+        operation.get(ADDRESS).add("topic", entity.getName());
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Removed topic "+entity.getName());
+                else
+                    Console.error("Failed to remove topic " + entity.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadJMSConfig();
+                    }
+                });
+            }
+        });
     }
 
     public void onEditTopic() {
-
+        getView().enableEditTopic(true);
     }
 
     public void onSaveTopic(String name, Map<String, Object> changedValues) {
-
+        getView().enableEditTopic(false);
     }
 
     public void launchNewTopicDialogue() {
+        window = new DefaultWindow("Create JMS Topic ");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
 
+            }
+        });
+
+        window.setWidget(
+                new NewTopicWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     public void closeDialogue() {
         window.hide();
     }
+
+    public void onCreateTopic(final JMSEndpoint entity) {
+        closeDialogue();
+
+        ModelNode queue = new ModelNode();
+        queue.get(OP).set(ADD);
+        queue.get(ADDRESS).add("profile", currentProfile.getName());
+        queue.get(ADDRESS).add("subsystem", "jms");
+        queue.get(ADDRESS).add("topic", entity.getName());
+
+        queue.get("entries").setEmptyList();
+        queue.get("entries").add(entity.getJndiName());
+
+        dispatcher.execute(new DMRAction(queue), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Created topic "+entity.getName());
+                else
+                    Console.error("Failed to create topic " + entity.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadJMSConfig();
+                    }
+                });
+
+            }
+        });
+    }
+
 
 }

@@ -136,4 +136,9 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
     public void enableEditQueue(boolean b) {
         queueList.setEnabled(b);
     }
+
+    @Override
+    public void enableEditTopic(boolean b) {
+        topicList.setEnabled(b);
+    }
 }

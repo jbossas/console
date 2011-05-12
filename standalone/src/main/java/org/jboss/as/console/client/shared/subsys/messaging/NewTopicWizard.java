@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -34,33 +35,24 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
  * @author Heiko Braun
  * @date 5/12/11
  */
-public class NewQueueWizard {
+public class NewTopicWizard {
 
     private JMSPresenter presenter;
 
-    public NewQueueWizard(final JMSPresenter presenter) {
+    public NewTopicWizard(final JMSPresenter presenter) {
         this.presenter = presenter;
     }
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-        final Form<Queue> form = new Form<Queue>(Queue.class);
+        final Form<JMSEndpoint> form = new Form<JMSEndpoint>(JMSEndpoint.class);
 
 
         TextBoxItem name = new TextBoxItem("name", "Name");
         TextBoxItem jndi = new TextBoxItem("jndiName", "JNDI");
 
-        CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
-        TextBoxItem selector = new TextBoxItem("selector", "Selector")
-        {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-
-        form.setFields(name, jndi, durable, selector);
+        form.setFields(name, jndi);
 
         layout.add(form.asWidget());
 
@@ -72,7 +64,7 @@ public class NewQueueWizard {
 
                     FormValidation validation = form.validate();
                     if(!validation.hasErrors())
-                        presenter.onCreateQueue(form.getUpdatedEntity());
+                        presenter.onCreateTopic(form.getUpdatedEntity());
                 }
             },
              new ClickHandler() {

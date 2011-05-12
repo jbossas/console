@@ -75,7 +75,7 @@ public class QueueList {
             public void onClick(ClickEvent event) {
 
                 final Queue queue = form.getEditedEntity();
-                Feedback.confirm("Remove Queue", "Really remove queue "+queue.getName(),
+                Feedback.confirm("Remove Queue", "Really remove queue "+queue.getName()+"?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {

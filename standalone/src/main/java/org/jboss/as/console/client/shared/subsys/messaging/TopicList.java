@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -69,7 +70,17 @@ public class TopicList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.onDeleteTopic(form.getEditedEntity());
+
+                final JMSEndpoint topic = form.getEditedEntity();
+                Feedback.confirm("Remove Topic", "Really remove topic " + topic.getName() + "?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteTopic(topic);
+                            }
+                        });
+
             }
         }));
 
@@ -114,5 +125,14 @@ public class TopicList {
 
         if(!topics.isEmpty())
             table.getSelectionModel().setSelected(topics.get(0), true);
+    }
+
+    public void setEnabled(boolean b) {
+        form.setEnabled(b);
+
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
     }
 }
