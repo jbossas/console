@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanCodex;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
@@ -32,6 +31,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.BeanFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -135,43 +135,31 @@ public class Form<T> {
             private boolean isComplex = false;
 
             @Override
-            public boolean visitValueProperty(String propertyName, Object value, PropertyContext ctx) {
+            public boolean visitValueProperty(String propertyName, final Object value, PropertyContext ctx) {
 
-                if(isComplex) return true; // skip complex types
+                if(isComplex ) return true; // skip complex types
 
-                FormItem matchingField = null;
+                visitItem(propertyName, new FormItemVisitor() {
+                    @Override
+                    public void visit(FormItem item) {
 
-                for(Map<String, FormItem> groupItems : formItems.values())
-                {
-                    for(String key : groupItems.keySet())
-                    {
-                        if(key.startsWith(propertyName)) // keys maybe used multiple times
+                        item.resetMetaData();
+
+                        if(value!=null)
                         {
-                            // update field values
-                            matchingField = groupItems.get(key);
-                            matchingField.resetMetaData();
-
-                            if(value!=null)
-                            {
-                                matchingField.setUndefined(false);
-                                matchingField.setValue(value);
-                            }
-                            else
-                            {
-                                matchingField.setUndefined(true);
-                                matchingField.setModified(true); // don't escape validation
-                            }
-
+                            item.setUndefined(false);
+                            item.setValue(value);
+                        }
+                        else
+                        {
+                            item.setUndefined(true);
+                            item.setModified(true); // don't escape validation
                         }
                     }
-                }
-
-                if (null==matchingField && !"empty".equals(propertyName))
-                    Log.warn("No matching field for '" + propertyName + "' (" + ctx.getType() + ")");
+                });
 
                 return true;
             }
-
 
             @Override
             public void endVisitReferenceProperty(String propertyName, AutoBean<?> value, PropertyContext ctx) {
@@ -185,8 +173,51 @@ public class Form<T> {
                 //System.out.println("begin reference "+propertyName+ ": "+ctx.getType());
                 return true;
             }
+
+            @Override
+            public boolean visitCollectionProperty(String propertyName, final AutoBean<Collection<?>> value, CollectionPropertyContext ctx) {
+
+                visitItem(propertyName, new FormItemVisitor() {
+                    @Override
+                    public void visit(FormItem item) {
+
+                        item.resetMetaData();
+
+                        if(value!=null)
+                        {
+                            item.setUndefined(false);
+                            item.setValue(value.as());
+                        }
+                        else
+                        {
+                            item.setUndefined(true);
+                            item.setModified(true); // don't escape validation
+                        }
+                    }
+                });
+
+                return true;
+            }
+
+            @Override
+            public void endVisitCollectionProperty(String propertyName, AutoBean<Collection<?>> value, CollectionPropertyContext ctx) {
+                super.endVisitCollectionProperty(propertyName, value, ctx);
+            }
         });
 
+    }
+
+    private void visitItem(final String name, FormItemVisitor visitor) {
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            for(String key : groupItems.keySet())
+            {
+                if(key.startsWith(name)) // keys maybe used multiple times
+                {
+                    visitor.visit(groupItems.get(key));
+                }
+            }
+        }
     }
 
     /**
@@ -356,5 +387,10 @@ public class Form<T> {
 
     public T getEditedEntity() {
         return editedEntity;
+    }
+
+
+    interface FormItemVisitor {
+        void visit(FormItem item);
     }
 }
