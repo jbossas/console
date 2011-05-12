@@ -68,6 +68,7 @@ public class ListItem extends FormItem<List> {
     @Override
     public void setValue(List list) {
         this.value = list;
+        this.textArea.setText("");
         this.textArea.setVisibleLines(list.size());
         for(Object item : list)
         {
