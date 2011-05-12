@@ -73,7 +73,9 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         // ----
 
-        layout.add(new ContentGroupLabel("JSP Container"));
+        ContentGroupLabel label = new ContentGroupLabel("JSP Container");
+        label.getElement().setAttribute("style", "margin-bottom:0px;");
+        layout.add(label);
 
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
@@ -103,7 +105,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         TextBoxItem workDir = new TextBoxItem("scratchDir", "Work Dir");
 
-        CheckBoxItem poweredBy= new CheckBoxItem("poweredBy", "Advertise JSP Engine?");
+        CheckBoxItem poweredBy= new CheckBoxItem("poweredBy", "Advertise?");
 
         CheckBoxItem sourceFragment= new CheckBoxItem("sourceFragment", "Display Source?");
 
