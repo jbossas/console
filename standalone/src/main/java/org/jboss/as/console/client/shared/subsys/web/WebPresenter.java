@@ -118,8 +118,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                System.out.println(response.get(RESULT));
-
                 List<Property> propList = response.get(RESULT).asPropertyList();
                 List<VirtualServer> servers = new ArrayList<VirtualServer>(propList.size());
 
