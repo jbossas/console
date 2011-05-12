@@ -86,7 +86,6 @@ public class TopicList {
 
         // -----
         table = new EndpointTable();
-        table.getElement().setAttribute("style", "margin-top:10px");
 
         layout.add(table);
 
