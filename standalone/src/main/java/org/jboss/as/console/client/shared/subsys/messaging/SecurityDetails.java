@@ -86,13 +86,13 @@ public class SecurityDetails {
             }
         }));
 
-
-        layout.add(toolStrip);
+        // TODO: https://issues.jboss.org/browse/AS7-759
+        //layout.add(toolStrip);
 
         // ----
 
         secTable = new DefaultCellTable<SecurityPattern>(10);
-
+        secTable.getElement().setAttribute("style", "margin-top:10px");
 
         Column<SecurityPattern, String> principalColumn = new Column<SecurityPattern, String>(new TextCell()) {
             @Override
@@ -153,7 +153,7 @@ public class SecurityDetails {
     }
 
     public void setEnabled(boolean b) {
-        form.setEnabled(true);
+        form.setEnabled(b);
 
         if(b)
             edit.setText("Save");

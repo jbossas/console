@@ -85,11 +85,13 @@ public class AddressingDetails {
             }
         }));
 
-        layout.add(toolStrip);
+        // TODO: https://issues.jboss.org/browse/AS7-759
+        //layout.add(toolStrip);
 
         // ----
 
         addrTable = new DefaultCellTable<SecurityPattern>(10);
+        addrTable.getElement().setAttribute("style", "margin-top:10px");
 
         Column<AddressingPattern, String> patternColumn = new Column<AddressingPattern, String>(new TextCell()) {
             @Override
