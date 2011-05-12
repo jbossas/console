@@ -27,6 +27,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.ListItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -104,11 +106,7 @@ public class VirtualServerList {
                     @Override
                     public String getValue(VirtualServer object) {
 
-                        StringBuffer sb = new StringBuffer();
-                        for(String s : object.getAlias())
-                            sb.append(s).append(" ");
-
-                        return sb.toString();
+                        return aliasToString(object);
                     }
                 };
 
@@ -127,14 +125,23 @@ public class VirtualServerList {
         form.setNumColumns(2);
 
         TextItem name = new TextItem("name", "Name");
+        ListItem alias = new ListItem("alias", "Alias");
+        TextBoxItem defaultModule = new TextBoxItem("defaultWebModule", "Default Module");
 
-
-        form.setFields(name);
+        form.setFields(name, alias, defaultModule);
         form.bind(table);
 
         layout.add(form.asWidget());
 
         return layout;
+    }
+
+    private String aliasToString(VirtualServer object) {
+        StringBuffer sb = new StringBuffer();
+        for(String s : object.getAlias())
+            sb.append(s).append(" ");
+
+        return sb.toString();
     }
 
     public void setVirtualServers(List<VirtualServer> servers) {
@@ -144,6 +151,7 @@ public class VirtualServerList {
             table.getSelectionModel().setSelected(servers.get(0), true);
 
         form.setEnabled(false);
+
     }
 
     public void setEnabled(boolean b) {
