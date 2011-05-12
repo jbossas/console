@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -72,7 +73,17 @@ public class QueueList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               presenter.onDeleteQueue(form.getEditedEntity());
+
+                final Queue queue = form.getEditedEntity();
+                Feedback.confirm("Remove Queue", "Really remove queue "+queue.getName(),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                    presenter.onDeleteQueue(queue);
+                            }
+                        });
+
             }
         }));
 
@@ -132,6 +143,7 @@ public class QueueList {
 
     void setQueues(List<Queue> queues)
     {
+        queueTable.setRowCount(queues.size(),true);
         queueTable.setRowData(0, queues);
 
         if(!queues.isEmpty())

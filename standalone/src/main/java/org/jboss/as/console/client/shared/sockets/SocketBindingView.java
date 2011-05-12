@@ -207,8 +207,8 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     @Override
     public void setBindings(String groupName, List<SocketBinding> bindings) {
-        socketTable.setRowData(0, bindings);
         socketTable.setRowCount(bindings.size(), true);
+        socketTable.setRowData(0, bindings);
         socketTable.getSelectionModel().setSelected(bindings.get(0), true);
     }
 }

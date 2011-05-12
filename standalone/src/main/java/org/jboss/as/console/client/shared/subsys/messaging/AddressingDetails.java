@@ -124,6 +124,8 @@ public class AddressingDetails {
         this.providerEntity = provider;
 
         List<AddressingPattern> addrPatterns = provider.getAddressPatterns();
+
+        addrTable.setRowCount(addrPatterns.size(),true);
         addrTable.setRowData(0, addrPatterns);
         if(!addrPatterns.isEmpty())
             addrTable.getSelectionModel().setSelected(addrPatterns.get(0), true);

@@ -202,6 +202,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     private int fetchMessages(MessageListPopup popup) {
         List<Message> messages = messageCenter.getMessages();
+        popup.getMessageList().setRowCount(messages.size(), true);
         popup.getMessageList().setRowData(0, messages);
         return messages.size();
     }

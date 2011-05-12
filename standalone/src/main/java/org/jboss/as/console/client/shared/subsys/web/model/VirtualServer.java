@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.web.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 import java.util.List;
 
 /**
@@ -30,9 +32,12 @@ public interface VirtualServer {
     String getName();
     void setName(String name);
 
+    // collections are currently not supported
+    @Binding(detypedName = "none", ignore = true)
     List<String> getAlias();
     void setAlias(List<String> alias);
 
+    @Binding(detypedName = "default-web-module")
     String getDefaultWebModule();
     void setDefaultWebModule(String module);
 }

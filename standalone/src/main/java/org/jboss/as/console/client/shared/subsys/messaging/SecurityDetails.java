@@ -144,6 +144,7 @@ public class SecurityDetails {
         this.providerEntity = provider;
 
         List<SecurityPattern> secPatterns = provider.getSecurityPatterns();
+        secTable.setRowCount(secPatterns.size(), true);
         secTable.setRowData(0, secPatterns);
         if(!secPatterns.isEmpty())
             secTable.getSelectionModel().setSelected(secPatterns.get(0), true);

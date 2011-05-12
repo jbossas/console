@@ -157,6 +157,8 @@ public class ConnectorList {
     }
 
     public void setConnectors(List<HttpConnector> connectors) {
+
+        connectorTable.setRowCount(connectors.size(), true);
         connectorTable.setRowData(0, connectors);
 
         if(!connectors.isEmpty())

@@ -128,6 +128,7 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
 
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
+        factoryTable.setRowCount(factories.size(), true);
         factoryTable.setRowData(0, factories);
     }
 

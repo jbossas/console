@@ -19,7 +19,12 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -38,9 +43,13 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -60,6 +69,9 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private CurrentSelectedProfile currentProfile;
+    private PropertyMetaData propertyMetaData;
+
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JMSPresenter)
@@ -81,13 +93,15 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public JMSPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, CurrentSelectedProfile currentProfile) {
+            BeanFactory factory, CurrentSelectedProfile currentProfile,
+            PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.currentProfile = currentProfile;
+        this.propertyMetaData  = propertyMetaData;
     }
 
     @Override
@@ -202,7 +216,6 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
         } catch (Throwable e) {
             Console.error("Failed to parse response: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -211,16 +224,120 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         getView().enableEditQueue(true);
     }
 
-    public void onSaveQueue(String name, Map<String, Object> changedValues) {
+    // TODO: https://issues.jboss.org/browse/AS7-756
+    public void onSaveQueue(final String name, Map<String, Object> changedValues) {
         getView().enableEditQueue(false);
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("profile", currentProfile.getName());
+        proto.get(ADDRESS).add("subsystem", "jms");
+        proto.get(ADDRESS).add("queue", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Updated queue "+name);
+                else
+                    Console.error("Failed to update queue " + name, response.toString());
+
+            }
+        });
+
     }
 
-    public void onDeleteQueue(Queue queue) {
+    public void onCreateQueue(final Queue entity) {
 
+        closeDialogue();
+
+        ModelNode queue = new ModelNode();
+        queue.get(OP).set(ADD);
+        queue.get(ADDRESS).add("profile", currentProfile.getName());
+        queue.get(ADDRESS).add("subsystem", "jms");
+        queue.get(ADDRESS).add("queue", entity.getName());
+
+        queue.get("entries").setEmptyList();
+        queue.get("entries").add(entity.getJndiName());
+
+        queue.get("durable").set(entity.isDurable());
+        if(entity.getSelector()!=null)
+            queue.get("selector").set(entity.getSelector());
+
+        dispatcher.execute(new DMRAction(queue), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Created queue "+entity.getName());
+                else
+                    Console.error("Failed to update queue " + entity.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadJMSConfig();
+                    }
+                });
+
+            }
+        });
+
+    }
+
+    public void onDeleteQueue(final Queue entity) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("subsystem", "jms");
+        operation.get(ADDRESS).add("queue", entity.getName());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Removed queue "+entity.getName());
+                else
+                    Console.error("Failed to remove queue " + entity.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadJMSConfig();
+                    }
+                });
+            }
+        });
     }
 
     public void launchNewQueueDialogue() {
+        window = new DefaultWindow("Create JMS Queue ");
+        window.setWidth(320);
+        window.setHeight(240);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
 
+            }
+        });
+
+        window.setWidget(
+                new NewQueueWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     public void onDeleteTopic(JMSEndpoint topic) {
@@ -237,6 +354,10 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
     public void launchNewTopicDialogue() {
 
+    }
+
+    public void closeDialogue() {
+        window.hide();
     }
 
 }

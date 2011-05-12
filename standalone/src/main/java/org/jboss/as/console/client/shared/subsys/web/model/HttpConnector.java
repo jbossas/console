@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.web.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/11/11
@@ -31,6 +33,7 @@ public interface HttpConnector {
     String getProtocol();
     void setProtocol(String protocol);
 
+    @Binding(detypedName = "socket-binding")
     String getSocketBinding();
     void setSocketBinding(String binding);
 

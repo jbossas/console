@@ -73,6 +73,7 @@ public class DefaultCellTable<T> extends CellTable {
     @Override
     public void setRowData(int start, List values) {
         setEmpty(values.isEmpty());
+        super.setRowCount(values.size(),true);
         super.setRowData(start, values);
     }
 

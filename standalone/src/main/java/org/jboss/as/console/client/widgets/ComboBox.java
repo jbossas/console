@@ -235,6 +235,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     }
 
     private void refeshCellList() {
+        cellList.setRowCount(this.values.size(),true);
         cellList.setRowData(0, this.values);
     }
 

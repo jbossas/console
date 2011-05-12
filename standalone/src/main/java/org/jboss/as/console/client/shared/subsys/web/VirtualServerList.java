@@ -144,6 +144,7 @@ public class VirtualServerList {
     }
 
     public void setVirtualServers(List<VirtualServer> servers) {
+        table.setRowCount(servers.size(), true);
         table.setRowData(0, servers);
 
         if(!servers.isEmpty())

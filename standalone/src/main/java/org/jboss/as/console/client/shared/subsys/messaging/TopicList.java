@@ -108,6 +108,8 @@ public class TopicList {
     }
 
     public void setTopics(List<JMSEndpoint> topics) {
+
+        table.setRowCount(topics.size(),true);
         table.setRowData(0, topics);
 
         if(!topics.isEmpty())
