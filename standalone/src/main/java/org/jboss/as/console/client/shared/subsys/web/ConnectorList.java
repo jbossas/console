@@ -84,7 +84,7 @@ public class ConnectorList {
         toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchConnectorDialogue();
             }
         }));
 
@@ -166,7 +166,7 @@ public class ConnectorList {
     }
 
     public void setEnabled(boolean b) {
-        form.setEnabled(true);
+        form.setEnabled(b);
 
         if(b)
             edit.setText("Save");

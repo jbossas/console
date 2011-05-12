@@ -62,11 +62,10 @@ public class VirtualServerList {
         edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
-                /*if(edit.getText().equals("Edit"))
-                   presenter.onEditConnector();
+                if(edit.getText().equals("Edit"))
+                   presenter.onEditVirtualServer();
                 else
-                    presenter.onSaveConnector(form.getEditedEntity().getName(), form.getChangedValues());*/
+                    presenter.onSaveVirtualServer(form.getEditedEntity().getName(), form.getChangedValues());
             }
         });
         toolStrip.addToolButton(edit);
@@ -74,7 +73,7 @@ public class VirtualServerList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               // presenter.onDeleteConnector(form.getEditedEntity().getName());
+               presenter.onDeleteVirtualServer(form.getEditedEntity().getName());
             }
         }));
 
@@ -82,7 +81,7 @@ public class VirtualServerList {
         toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchVirtualServerDialogue();
             }
         }));
 
@@ -155,7 +154,7 @@ public class VirtualServerList {
     }
 
     public void setEnabled(boolean b) {
-        form.setEnabled(true);
+        form.setEnabled(b);
 
         if(b)
             edit.setText("Save");

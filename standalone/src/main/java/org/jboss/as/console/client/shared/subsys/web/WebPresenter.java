@@ -59,6 +59,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
     private CurrentSelectedProfile currentProfile;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
     public interface MyProxy extends Proxy<WebPresenter>, Place {
@@ -72,6 +73,10 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void enableEditConnector(boolean b);
 
         void setVirtualServers(List<VirtualServer> servers);
+
+        void enableEditVirtualServer(boolean b);
+
+        void enableJSPConfig(boolean b);
     }
 
     @Inject
@@ -216,4 +221,32 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     }
 
+    public void launchConnectorDialogue() {
+
+    }
+
+
+    public void onEditVirtualServer() {
+        getView().enableEditVirtualServer(true);
+    }
+
+    public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
+        getView().enableEditVirtualServer(false);
+    }
+
+    public void onDeleteVirtualServer(String name) {
+
+    }
+
+    public void launchVirtualServerDialogue() {
+
+    }
+
+    public void onEditJSPConfig() {
+        getView().enableJSPConfig(true);
+    }
+
+    public void onSaveJSPConfig() {
+        getView().enableJSPConfig(false);
+    }
 }

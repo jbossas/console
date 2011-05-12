@@ -56,6 +56,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     private Form<JSPContainerConfiguration> form;
     private ConnectorList connectorList;
     private VirtualServerList serverList;
+    private ToolButton edit;
 
     @Override
     public Widget createWidget() {
@@ -78,12 +79,16 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         layout.add(label);
 
         ToolStrip toolStrip = new ToolStrip();
-        toolStrip.addToolButton(new ToolButton("Edit", new ClickHandler() {
+        edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                if(edit.getText().equals("Edit"))
+                    presenter.onEditJSPConfig();
+                else
+                    presenter.onSaveJSPConfig();
             }
-        } ));
+        });
+        toolStrip.addToolButton(edit);
 
         layout.add(toolStrip);
 
@@ -154,5 +159,18 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     @Override
     public void setVirtualServers(List<VirtualServer> servers) {
         serverList.setVirtualServers(servers);
+    }
+
+    @Override
+    public void enableEditVirtualServer(boolean b) {
+        serverList.setEnabled(b);
+    }
+
+    @Override
+    public void enableJSPConfig(boolean b) {
+        if(b)
+            edit.setText("Save");
+        else
+            edit.setText("Edit");
     }
 }
