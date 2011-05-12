@@ -378,8 +378,35 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         getView().enableEditTopic(true);
     }
 
-    public void onSaveTopic(String name, Map<String, Object> changedValues) {
+    public void onSaveTopic(final String name, Map<String, Object> changedValues) {
         getView().enableEditTopic(false);
+
+        if(changedValues.isEmpty()) return;
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("profile", currentProfile.getName());
+        proto.get(ADDRESS).add("subsystem", "jms");
+        proto.get(ADDRESS).add("topic", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(JMSEndpoint.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Updated topic "+name);
+                else
+                    Console.error("Failed to update topic " + name, response.toString());
+
+            }
+        });
+
+
     }
 
     public void launchNewTopicDialogue() {
