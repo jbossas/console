@@ -21,9 +21,6 @@ package org.jboss.as.console.client.shared.subsys.web;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,9 +35,7 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
-import org.jboss.as.console.client.widgets.forms.StateItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -63,14 +58,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         LayoutPanel layout = new RHSContentPanel("HTTP");
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.messaging());
-        horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("Web Subsystem Configuration"));
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        layout.add(horzPanel);
+        layout.add(new ContentHeaderLabel("Web Subsystem Configuration"));
 
         // ----
 

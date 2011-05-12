@@ -28,8 +28,11 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.StateItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
@@ -66,7 +69,7 @@ public class ConnectorList {
             public void onClick(ClickEvent event) {
 
                 if(edit.getText().equals("Edit"))
-                   presenter.onEditConnector();
+                    presenter.onEditConnector();
                 else
                     presenter.onSaveConnector(form.getEditedEntity().getName(), form.getChangedValues());
             }
@@ -76,7 +79,19 @@ public class ConnectorList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.onDeleteConnector(form.getEditedEntity().getName());
+
+                final HttpConnector connector = form.getEditedEntity();
+
+                Feedback.confirm("Remove Connector", "Really remove connector '" + connector.getName() + "'?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+
+                                    presenter.onDeleteConnector(connector.getName());
+                                }
+                            }
+                        });
             }
         }));
 
@@ -97,36 +112,36 @@ public class ConnectorList {
 
 
         Column<HttpConnector, String> nameColumn = new Column<HttpConnector, String>(new TextCell()) {
-                    @Override
-                    public String getValue(HttpConnector object) {
-                        return object.getName();
-                    }
-                };
+            @Override
+            public String getValue(HttpConnector object) {
+                return object.getName();
+            }
+        };
 
 
         Column<HttpConnector, String> protocolColumn = new Column<HttpConnector, String>(new TextCell()) {
-                    @Override
-                    public String getValue(HttpConnector object) {
-                        return object.getProtocol();
-                    }
-                };
+            @Override
+            public String getValue(HttpConnector object) {
+                return object.getProtocol();
+            }
+        };
 
 
         Column<HttpConnector, ImageResource> statusColumn =
                 new Column<HttpConnector, ImageResource>(new ImageResourceCell()) {
-            @Override
-            public ImageResource getValue(HttpConnector connector) {
+                    @Override
+                    public ImageResource getValue(HttpConnector connector) {
 
-                ImageResource res = null;
+                        ImageResource res = null;
 
-                if(connector.isEnabled())
-                    res = Icons.INSTANCE.statusGreen_small();
-                else
-                    res = Icons.INSTANCE.statusRed_small();
+                        if(connector.isEnabled())
+                            res = Icons.INSTANCE.statusGreen_small();
+                        else
+                            res = Icons.INSTANCE.statusRed_small();
 
-                return res;
-            }
-        };
+                        return res;
+                    }
+                };
 
         connectorTable.addColumn(nameColumn, "Name");
         connectorTable.addColumn(protocolColumn, "Protocol");
@@ -144,9 +159,9 @@ public class ConnectorList {
         TextItem protocol = new TextItem("protocol", "Protocol");
 
         TextItem scheme = new TextItem("scheme", "Scheme");
-        TextItem socketBinding = new TextItem("socketBinding", "Socket Binding");
+        TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
 
-        StateItem state = new StateItem("enabled", "Enabled?");
+        CheckBoxItem state = new CheckBoxItem("enabled", "Enabled?");
 
         form.setFields(name, protocol, scheme, socketBinding, state);
         form.bind(connectorTable);

@@ -405,8 +405,6 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
             }
         });
-
-
     }
 
     public void launchNewTopicDialogue() {

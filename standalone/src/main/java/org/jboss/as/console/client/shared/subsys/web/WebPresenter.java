@@ -19,7 +19,11 @@
 
 package org.jboss.as.console.client.shared.subsys.web;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -29,6 +33,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
@@ -37,8 +42,14 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.messaging.NewQueueWizard;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -59,6 +70,10 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
     private CurrentSelectedProfile currentProfile;
 
+    private DefaultWindow window;
+    private PropertyMetaData propertyMetaData;
+
+    private List<HttpConnector> connectors;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -84,13 +99,14 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             BeanFactory factory, DispatchAsync dispatcher,
-            CurrentSelectedProfile currentProfile) {
+            CurrentSelectedProfile currentProfile, PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
         this.currentProfile = currentProfile;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -177,6 +193,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         operation.get(RECURSIVE).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
@@ -195,6 +212,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                     // TODO: https://issues.jboss.org/browse/AS7-747
                     if(propValue.hasDefined("enabled"))
                         connector.setEnabled(propValue.get("enabled").asBoolean());
+                    else
+                        connector.setEnabled(true); // the default value
 
                     connector.setScheme(propValue.get("scheme").asString());
                     connector.setSocketBinding(propValue.get("socket-binding").asString());
@@ -203,26 +222,97 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                     connectors.add(connector);
                 }
 
+                setConnectors(connectors);
                 getView().setConnectors(connectors);
 
             }
         });
     }
 
+    private void setConnectors(List<HttpConnector> connectors) {
+        this.connectors = connectors;
+    }
+
     public void onEditConnector() {
         getView().enableEditConnector(true);
     }
 
-    public void onSaveConnector(String name, Map<String, Object> changedValues) {
+    public void onSaveConnector(final String name, Map<String, Object> changedValues) {
         getView().enableEditConnector(false);
+
+        if(changedValues.isEmpty()) return;
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("profile", currentProfile.getName());
+        proto.get(ADDRESS).add("subsystem", "web");
+        proto.get(ADDRESS).add("connector", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(HttpConnector.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Updated connector "+name);
+                else
+                    Console.error("Failed to update connector " + name, response.toString());
+
+                loadConnectors();
+            }
+        });
     }
 
-    public void onDeleteConnector(String name) {
+    public void onDeleteConnector(final String name) {
+        ModelNode connector = new ModelNode();
+        connector.get(OP).set(REMOVE);
+        connector.get(ADDRESS).add("profile", currentProfile.getName());
+        connector.get(ADDRESS).add("subsystem", "web");
+        connector.get(ADDRESS).add("connector", name);
 
+        dispatcher.execute(new DMRAction(connector), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Removed connector " + name);
+                else
+                    Console.error("Failed to remove connector " + name, response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadConnectors();
+                    }
+                });
+
+            }
+        });
     }
 
     public void launchConnectorDialogue() {
+        window = new DefaultWindow("Create Connector");
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
 
+            }
+        });
+
+        window.setWidget(
+                new NewConnectorWizard(this, connectors ).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
 
@@ -249,4 +339,45 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void onSaveJSPConfig() {
         getView().enableJSPConfig(false);
     }
+
+    public void onCreateConnector(final HttpConnector entity) {
+        closeDialogue();
+
+        ModelNode connector = new ModelNode();
+        connector.get(OP).set(ADD);
+        connector.get(ADDRESS).add("profile", currentProfile.getName());
+        connector.get(ADDRESS).add("subsystem", "web");
+        connector.get(ADDRESS).add("connector", entity.getName());
+
+        connector.get("protocol").set(entity.getProtocol());
+        connector.get("scheme").set(entity.getScheme());
+        connector.get("socket-binding").set(entity.getSocketBinding());
+        connector.get("enabled").set(entity.isEnabled());
+
+        dispatcher.execute(new DMRAction(connector), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Created connector " + entity.getName());
+                else
+                    Console.error("Failed to create connector " + entity.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadConnectors();
+                    }
+                });
+
+            }
+        });
+    }
+
+    public void closeDialogue() {
+        window.hide();
+    }
+
 }
