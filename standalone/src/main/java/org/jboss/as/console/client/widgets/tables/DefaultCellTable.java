@@ -99,6 +99,12 @@ public class DefaultCellTable<T> extends CellTable {
         this.isEmpty = isEmpty;
     }
 
+    @Override
+    public void setRowData(int start, List values) {
+        setEmpty(values.isEmpty());
+        super.setRowData(start, values);
+    }
+
     public void setEnabled(boolean b)
     {
         this.isEnabled = b;
