@@ -127,15 +127,15 @@ public class NewDeploymentWizard  {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("\"address\":[").append("{\"deployment\":\"").append(deployment.getName()).append("\"}],");
-        sb.append("\"operation\":\"add\",\"hash\":");
-        sb.append("{");
+        sb.append("\"operation\":\"add\",\"content\":");
+        sb.append("[{\"hash\":{");
         sb.append("\"BYTES_VALUE\":\"").append(deployment.getHash()).append("\"");
-        sb.append("},");
+        sb.append("}}],");
         sb.append("\"name\":\"").append(deployment.getName()).append("\"");
         sb.append("}");
 
         String requestJSO = sb.toString();
-        //System.out.println(requestJSO);
+        //System.out.println("requestJSO=" + requestJSO);
 
         RequestBuilder rb = new RequestBuilder(
                 RequestBuilder.POST,
@@ -150,7 +150,7 @@ public class NewDeploymentWizard  {
                         onDeploymentFailed(deployment);
                         return;
                     }
-                    
+
                     if (!isStandalone) assignToGroup(deployment);
                     if (isStandalone) window.hide();
                 }
