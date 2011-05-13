@@ -119,9 +119,7 @@ public class DataSourceEditor {
 
     public void updateDataSources(List<DataSource> datasources) {
 
-        dataSourceTable.getCellTable().setRowCount(datasources.size(), true);
-        dataSourceTable.getCellTable().setRowData(0, datasources);
-
+        dataSourceTable.getDataProvider().setList(datasources);
 
         if(!datasources.isEmpty())
             dataSourceTable.getCellTable().getSelectionModel().setSelected(datasources.get(0), true);

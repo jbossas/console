@@ -37,6 +37,7 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DefaultButton;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
@@ -51,6 +52,7 @@ public class DatasourceTable {
 
     private static final int PAGE_SIZE = 5;
     private CellTable<DataSource> dataSourceTable;
+    private ListDataProvider<DataSource> dataProvider;
 
     Widget asWidget() {
 
@@ -58,6 +60,8 @@ public class DatasourceTable {
         layout.setStyleName("fill-layout-width");
 
         dataSourceTable = new DefaultCellTable<DataSource>(PAGE_SIZE);
+        dataProvider = new ListDataProvider<DataSource>();
+        dataProvider.addDataDisplay(dataSourceTable);
 
         TextColumn<DataSource> nameColumn = new TextColumn<DataSource>() {
             @Override
@@ -107,19 +111,19 @@ public class DatasourceTable {
         // ---
         // http://code.google.com/p/google-web-toolkit/issues/detail?id=4988
 
-        SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-        SimplePager pager = new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true);
-        //pager.setPageSize(PAGE_SIZE);
-        //pager.setPageStart(0);
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(dataSourceTable);
 
-        //pager.setDisplay(dataSourceTable);
-
-        //layout.add(pager);
+        layout.add(pager);
 
         return layout;
     }
 
     public CellTable<DataSource> getCellTable() {
         return dataSourceTable;
+    }
+
+    public ListDataProvider<DataSource> getDataProvider() {
+        return dataProvider;
     }
 }
