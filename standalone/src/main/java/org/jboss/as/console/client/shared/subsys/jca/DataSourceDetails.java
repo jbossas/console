@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -148,7 +149,7 @@ public class DataSourceDetails {
         return scroll;
     }
 
-    public void bind(DefaultCellTable<DataSource> dataSourceTable) {
+    public void bind(CellTable<DataSource> dataSourceTable) {
         form.bind(dataSourceTable);
     }
 

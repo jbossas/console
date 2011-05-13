@@ -57,6 +57,7 @@ public class DefaultCellTable<T> extends CellTable {
     public DefaultCellTable(int pageSize) {
 
         super(pageSize, DEFAULT_CELL_TABLE_RESOURCES);
+
         setStyleName("default-cell-table");
         setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
 
