@@ -29,10 +29,10 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 4/12/11
  */
-public class TestProperties implements ApplicationProperties {
+public class ExecutionEnvironment implements ApplicationProperties {
     private Map<String,String> ctx = new HashMap<String,String>();
 
-    public TestProperties() {
+    public ExecutionEnvironment() {
         setProperty(ApplicationProperties.STANDALONE, "false");
     }
 

@@ -21,10 +21,13 @@ package org.jboss.dmr.client;
 
 import java.io.IOException;
 
+/**
+ * see also http://quake2-gwt-port.googlecode.com/hg/src/com/google/gwt/corp/emul/java/io/DataInputStream.java?r=5c7c4b545ff4a8875b4cab5d77492d37e150d46b
+ */
 public class DataInput {
 	private int pos = 0;
 	private byte[] bytes;
-	
+
 	public DataInput(byte[] bytes) {
 		this.bytes = bytes;
 	}
@@ -70,7 +73,7 @@ public class DataInput {
         long a = readInt();
         long b = readInt() & 0x0ffffffff;
         return (a << 32) | b;
-		              
+
 	}
 
 	public float readFloat() throws IOException {

@@ -53,7 +53,7 @@ public class TestModule extends AbstractModule {
         bind(DispatchAsync.class).to(DispatchAsyncImpl.class).in(Singleton.class);
         bind(HandlerMapping.class).to(TestHandlerRegistry.class).in(Singleton.class);
         bind(BeanFactory.class).to(BeanFactoryImpl.class).in(Singleton.class);
-        bind(ApplicationProperties.class).to(TestProperties.class).in(Singleton.class);
+        bind(ApplicationProperties.class).to(ExecutionEnvironment.class).in(Singleton.class);
         bind(PropertyMetaData.class).to(ReflectionMetaData.class).in(Singleton.class);
 
         bind(ProfileStore.class).to(ProfileStoreImpl.class).in(Singleton.class);

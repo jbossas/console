@@ -20,8 +20,7 @@ package org.jboss.as.console.client.shared.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -43,179 +42,181 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 3/18/11
  */
 public class DeploymentStoreImpl implements DeploymentStore {
-  private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
 
-  private DispatchAsync dispatcher;
-  private BeanFactory factory;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
+    private ApplicationProperties bootstrap;
+    private boolean isStandalone ;
+    @Inject
+    public DeploymentStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationProperties bootstrap) {
+        this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.bootstrap = bootstrap;
+        this.isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
+    }
 
-  @Inject
-  public DeploymentStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
-    this.dispatcher = dispatcher;
-    this.factory = factory;
-  }
+    @Override
+    public void loadDeploymentContent(final AsyncCallback<List<DeploymentRecord>> callback) {
+        // /:read-children-resources(child-type=deployment)
+        final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
 
-  @Override
-  public void loadDeploymentContent(final AsyncCallback<List<DeploymentRecord>> callback) {
-    // /:read-children-resources(child-type=deployment)
-    final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
-    
-    ModelNode operation = new ModelNode();
-    operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-    operation.get(CHILD_TYPE).set("deployment");
-    
-    dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("deployment");
 
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
-        @Override
-        public void onSuccess(DMRResponse result) {
-          ModelNode response = ModelNode.fromBase64(result.getResponseText());
-          if (response.get("result").isDefined()) {
-            List<ModelNode> payload = response.get("result").asList();
-
-            for (ModelNode item : payload) {
-              Property property = item.asProperty();
-              ModelNode handler = property.getValue().asObject();
-              String name = property.getName();
-              
-              try {
-                DeploymentRecord rec = factory.deployment().as();
-                rec.setName(name);
-                rec.setRuntimeName(handler.get("runtime-name").asString());
-                if (isStandalone) rec.setEnabled(handler.get("enabled").asBoolean());
-                if (!isStandalone) rec.setEnabled(true);
-                rec.setServerGroup(null); 
-                deployments.add(rec);
-              } catch (IllegalArgumentException e) {
-                Log.error("Failed to parse data source representation", e);
-              }
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
             }
 
-          }
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if (response.get("result").isDefined()) {
+                    List<ModelNode> payload = response.get("result").asList();
 
-          callback.onSuccess(deployments);
-        }
-      });
-  }
+                    for (ModelNode item : payload) {
+                        Property property = item.asProperty();
+                        ModelNode handler = property.getValue().asObject();
+                        String name = property.getName();
 
-  @Override
-  public void loadDeployments(
-          final List<ServerGroupRecord> serverGroups,
-          final AsyncCallback<List<DeploymentRecord>> callback) {
+                        try {
+                            DeploymentRecord rec = factory.deployment().as();
+                            rec.setName(name);
+                            rec.setRuntimeName(handler.get("runtime-name").asString());
+                            if (isStandalone) rec.setEnabled(handler.get("enabled").asBoolean());
+                            if (!isStandalone) rec.setEnabled(true);
+                            rec.setServerGroup(null);
+                            deployments.add(rec);
+                        } catch (IllegalArgumentException e) {
+                            Log.error("Failed to parse data source representation", e);
+                        }
+                    }
 
-    // /server-group=main-server-group:read-children-names(child-type=deployment)
+                }
 
-    // TODO: replace with composite operation
-    final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
-
-    final Iterator<ServerGroupRecord> iterator = serverGroups.iterator();
-    while (iterator.hasNext()) {
-      final ServerGroupRecord group = iterator.next();
-
-      ModelNode operation = new ModelNode();
-      operation.get(ADDRESS).add("server-group", group.getGroupName());
-      operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-      operation.get(CHILD_TYPE).set("deployment");
-
-      dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-        @Override
-        public void onFailure(Throwable caught) {
-          callback.onFailure(caught);
-        }
-
-        @Override
-        public void onSuccess(DMRResponse result) {
-          ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-          if (response.get("result").isDefined()) {
-            List<ModelNode> payload = response.get("result").asList();
-
-            for (ModelNode item : payload) {
-              Property property = item.asProperty();
-              ModelNode handler = property.getValue().asObject();
-              String name = property.getName();
-              
-              try {
-                DeploymentRecord rec = factory.deployment().as();
-                rec.setName(name);
-                rec.setServerGroup(group.getGroupName());
-                rec.setRuntimeName(handler.get("runtime-name").asString());
-                rec.setEnabled(handler.get("enabled").asBoolean());
-                deployments.add(rec);
-              } catch (IllegalArgumentException e) {
-                Log.error("Failed to parse data source representation", e);
-              }
+                callback.onSuccess(deployments);
             }
-          }
+        });
+    }
 
-          // exit if all server group are parsed
-          if (!iterator.hasNext()) {
-            callback.onSuccess(deployments);
-          }
+    @Override
+    public void loadDeployments(
+            final List<ServerGroupRecord> serverGroups,
+            final AsyncCallback<List<DeploymentRecord>> callback) {
+
+        // /server-group=main-server-group:read-children-names(child-type=deployment)
+
+        // TODO: replace with composite operation
+        final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
+
+        final Iterator<ServerGroupRecord> iterator = serverGroups.iterator();
+        while (iterator.hasNext()) {
+            final ServerGroupRecord group = iterator.next();
+
+            ModelNode operation = new ModelNode();
+            operation.get(ADDRESS).add("server-group", group.getGroupName());
+            operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+            operation.get(CHILD_TYPE).set("deployment");
+
+            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    callback.onFailure(caught);
+                }
+
+                @Override
+                public void onSuccess(DMRResponse result) {
+                    ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                    if (response.get("result").isDefined()) {
+                        List<ModelNode> payload = response.get("result").asList();
+
+                        for (ModelNode item : payload) {
+                            Property property = item.asProperty();
+                            ModelNode handler = property.getValue().asObject();
+                            String name = property.getName();
+
+                            try {
+                                DeploymentRecord rec = factory.deployment().as();
+                                rec.setName(name);
+                                rec.setServerGroup(group.getGroupName());
+                                rec.setRuntimeName(handler.get("runtime-name").asString());
+                                rec.setEnabled(handler.get("enabled").asBoolean());
+                                deployments.add(rec);
+                            } catch (IllegalArgumentException e) {
+                                Log.error("Failed to parse data source representation", e);
+                            }
+                        }
+                    }
+
+                    // exit if all server group are parsed
+                    if (!iterator.hasNext()) {
+                        callback.onSuccess(deployments);
+                    }
+                }
+            });
         }
-      });
+
     }
 
-  }
-  
-  @Override
-  public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
-    doDeploymentCommand("remove", null, deploymentRecord, callback);
-  }
-
-  @Override 
-  public void removeDeploymentFromGroup(DeploymentRecord deployment,
-                                        AsyncCallback<DMRResponse> callback) {
-    doDeploymentCommand("remove", deployment.getServerGroup(), deployment, callback);
-  }
-  
-  @Override
-  public void enableDisableDeployment(DeploymentRecord deployment,
-                                      final AsyncCallback<DMRResponse> callback) {
-    String command = "deploy";
-    if (deployment.isEnabled()) {
-      command = "undeploy";
+    @Override
+    public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
+        doDeploymentCommand("remove", null, deploymentRecord, callback);
     }
-    doDeploymentCommand(command, deployment.getServerGroup(), deployment, callback);
-  }
-  
-  @Override
-  public void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
-    doDeploymentCommand(ADD, serverGroup, deploymentRecord, callback);
-  }
-  
-  private void doDeploymentCommand(String command,
-                                   String serverGroup,
-                                   DeploymentRecord deployment,
-                                   final AsyncCallback<DMRResponse> callback) {
-      ModelNode operation = new ModelNode();
-      //operation.get(OP).set(ADD);
-      if ((serverGroup != null) && (!serverGroup.equals(""))) {
-        operation.get(ADDRESS).add("server-group", serverGroup);
-      }
-      
-      operation.get(ADDRESS).add("deployment", deployment.getName());
-      operation.get(OP).set(command);
 
-      dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-          @Override
-          public void onFailure(Throwable caught) {
-              callback.onFailure(caught);
-          }
-
-          @Override
-          public void onSuccess(DMRResponse result) {
-              callback.onSuccess(result);
-          }
-      });
+    @Override
+    public void removeDeploymentFromGroup(DeploymentRecord deployment,
+                                          AsyncCallback<DMRResponse> callback) {
+        doDeploymentCommand("remove", deployment.getServerGroup(), deployment, callback);
     }
-  
-  @Override
-  public void deleteDeployment(DeploymentRecord deploymentRecord, AsyncCallback<Boolean> callback) {
-  }
+
+    @Override
+    public void enableDisableDeployment(DeploymentRecord deployment,
+                                        final AsyncCallback<DMRResponse> callback) {
+        String command = "deploy";
+        if (deployment.isEnabled()) {
+            command = "undeploy";
+        }
+        doDeploymentCommand(command, deployment.getServerGroup(), deployment, callback);
+    }
+
+    @Override
+    public void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
+        doDeploymentCommand(ADD, serverGroup, deploymentRecord, callback);
+    }
+
+    private void doDeploymentCommand(String command,
+                                     String serverGroup,
+                                     DeploymentRecord deployment,
+                                     final AsyncCallback<DMRResponse> callback) {
+        ModelNode operation = new ModelNode();
+        //operation.get(OP).set(ADD);
+        if ((serverGroup != null) && (!serverGroup.equals(""))) {
+            operation.get(ADDRESS).add("server-group", serverGroup);
+        }
+
+        operation.get(ADDRESS).add("deployment", deployment.getName());
+        operation.get(OP).set(command);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                callback.onSuccess(result);
+            }
+        });
+    }
+
+    @Override
+    public void deleteDeployment(DeploymentRecord deploymentRecord, AsyncCallback<Boolean> callback) {
+    }
 }

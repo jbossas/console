@@ -27,6 +27,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.DispatchResult;
 import org.jboss.dmr.client.SimpleDispatcher;
 
+import java.io.IOException;
+
 /**
  * @author Heiko Braun
  * @date 4/12/11

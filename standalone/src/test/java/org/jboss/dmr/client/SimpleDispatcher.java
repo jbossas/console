@@ -22,6 +22,7 @@ package org.jboss.dmr.client;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -54,7 +55,10 @@ public class SimpleDispatcher implements Dispatcher {
             out.write(operation.toBase64String());
             safeClose(out);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            InputStream inputStream = connection.getResponseCode()==200 ?
+                    connection.getInputStream() : connection.getErrorStream();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder response = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {

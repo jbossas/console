@@ -122,12 +122,17 @@ public class DataSourceModelTest {
 
 
     private DataSource createEntity() {
+
+
+        // module should define jdbc driver with this format: <driver-name>#<major-version>.<minor-version>
+
         DataSource entity = injector.getInstance(BeanFactory.class).dataSource().as();
         entity.setName("myDS_"+System.currentTimeMillis());
         entity.setJndiName("jdbc/" + entity.getName());
         entity.setConnectionUrl("jdbc:h2:mem:anotherOne;DB_CLOSE_DELAY=-1");
         entity.setDriverClass("org.h2.Driver");
-        entity.setDriverName("org.h2.Driver#1.2");
+        entity.setDriverName("org.h2.Driver");
+        entity.setDriverVersion("1.2");
         entity.setEnabled(false);
         entity.setPoolName(entity.getName()+"_Pool");
         entity.setUsername("user");
