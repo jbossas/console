@@ -56,33 +56,33 @@ public class SubsystemMetaData {
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca"));
+        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca", Boolean.TRUE));
         groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector"));
+        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters", Boolean.TRUE));
+        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
 
-        groups.get(WEB).getItems().add(new SubsystemGroupItem("HTTP", "web"));
+        groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
-        groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs"));
+        groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
 
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "jms"));
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
-        groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting"));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
 
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee"));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3"));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming"));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld"));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa"));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("OSGI", "osgi"));
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar"));
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx"));
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian"));
+        groups.get(OTHER).getItems().add(new SubsystemGroupItem("OSGI", "osgi",Boolean.TRUE));
+        groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
+        groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
+        groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
 
         groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Provider", "security"));
     }
