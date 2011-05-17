@@ -127,6 +127,7 @@ public class DriverRegistry {
                                 for(ModelNode item : payload)
                                 {
 
+                                    System.out.println(item);
                                     JDBCDriver driver = factory.jdbcDriver().as();
                                     driver.setGroup(server.getGroup());
                                     driver.setDriverClass(item.get("driver-class").asString());
@@ -135,9 +136,10 @@ public class DriverRegistry {
                                     driver.setMajorVersion(item.get("major-version").asInt());
                                     driver.setMinorVersion(item.get("minor-version").asInt());
 
-                                    if(item.hasDefined("xa-datasource-class"))
-                                        driver.setXaDataSourceClass(item.get("xa-datasource-class").asString());
-
+                                    if(item.hasDefined("driver-xa-datasource-class-name"))
+                                        driver.setXaDataSourceClass(item.get("driver-xa-datasource-class-name").asString());
+                                    else // todo: remove test values
+                                        driver.setXaDataSourceClass("org.h2.jdbcx.JdbcDataSource");
 
                                     addIfNotExists(driver);
 

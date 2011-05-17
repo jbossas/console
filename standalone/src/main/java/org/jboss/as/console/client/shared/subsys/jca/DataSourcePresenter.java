@@ -204,22 +204,30 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void launchNewXADatasourceWizard() {
-        window = new DefaultWindow("Create XA Datasource");
-        window.setWidth(480);
-        window.setHeight(320);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
 
+
+        driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
+            @Override
+            public void onSuccess(List<JDBCDriver> drivers) {
+                window = new DefaultWindow("Create XA Datasource");
+                window.setWidth(480);
+                window.setHeight(320);
+                window.addCloseHandler(new CloseHandler<PopupPanel>() {
+                    @Override
+                    public void onClose(CloseEvent<PopupPanel> event) {
+
+                    }
+                });
+
+                window.setWidget(
+                        new NewXADatasourceWizard(DataSourcePresenter.this, drivers).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
             }
         });
 
-        window.setWidget(
-                new NewXADatasourceWizard(this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
     }
 
 
@@ -270,7 +278,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-719
     public void onDisable(final DataSource entity, boolean doEnable) {
         dataSourceStore.enableDataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<ResponseWrapper<Boolean>>() {
 

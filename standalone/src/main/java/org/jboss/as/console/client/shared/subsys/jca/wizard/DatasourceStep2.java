@@ -182,7 +182,6 @@ public class DatasourceStep2 {
         table.setRowCount(filtered.size(), true);
         table.setRowData(filtered);
 
-
         // clear selection
         JDBCDriver selectedDriver = selectionModel.getSelectedObject();
         if(selectedDriver!=null)

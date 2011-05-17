@@ -247,15 +247,15 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
+//        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
+
+        operation.get("driver-name").set(datasource.getDriverName());
         operation.get("driver-class-name").set(datasource.getDriverClass());
         operation.get("driver-major-version").set(datasource.getMajorVersion());
         operation.get("driver-minor-version").set(datasource.getMinorVersion());
 
         operation.get("pool-name").set(datasource.getName()+"_Pool");
-
         operation.get("user-name").set(datasource.getUsername());
-
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
 
