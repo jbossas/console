@@ -23,9 +23,14 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.DataSourceStep3;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep1;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep2;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -42,9 +47,11 @@ public class NewDatasourceWizard {
 
     private DataSource baseAttributes = null;
     private DataSource driverAttributes = null;
+    private List<JDBCDriver> drivers;
 
-    public NewDatasourceWizard(DataSourcePresenter presenter) {
+    public NewDatasourceWizard(DataSourcePresenter presenter, List<JDBCDriver> drivers) {
         this.presenter = presenter;
+        this.drivers = drivers;
     }
 
     public Widget asWidget() {
@@ -90,9 +97,14 @@ public class NewDatasourceWizard {
         updatedEntity.setEnabled(baseAttributes.isEnabled());
 
         updatedEntity.setDriverName(driverAttributes.getDriverName());
-        updatedEntity.setDriverVersion(driverAttributes.getDriverVersion());
         updatedEntity.setDriverClass(driverAttributes.getDriverClass());
+        updatedEntity.setMajorVersion(driverAttributes.getMajorVersion());
+        updatedEntity.setMinorVersion(driverAttributes.getMinorVersion());
 
         presenter.onCreateNewDatasource(updatedEntity);
+    }
+
+    public List<JDBCDriver> getDrivers() {
+        return drivers;
     }
 }

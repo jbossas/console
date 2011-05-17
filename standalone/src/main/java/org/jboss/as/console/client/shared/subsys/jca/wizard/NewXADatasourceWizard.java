@@ -99,7 +99,9 @@ public class NewXADatasourceWizard {
 
         updatedEntity.setDataSourceClass(driverAttributes.getDataSourceClass());
         updatedEntity.setDriverName(driverAttributes.getDriverName());
-        updatedEntity.setDriverVersion(driverAttributes.getDriverVersion());
+        updatedEntity.setDriverClass(driverAttributes.getDriverClass());
+        updatedEntity.setMajorVersion(driverAttributes.getMajorVersion());
+        updatedEntity.setMinorVersion(driverAttributes.getMinorVersion());
 
         updatedEntity.setProperties(properties);
 

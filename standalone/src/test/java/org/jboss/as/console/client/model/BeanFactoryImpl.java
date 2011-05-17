@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -185,6 +186,11 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public AutoBean<VirtualServer> virtualServer() {
         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public JDBCDriver jdbcDriver() {
+         throw new RuntimeException("not implemented");
     }
 }
 

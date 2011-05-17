@@ -22,7 +22,6 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -88,28 +87,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
                     Property property = item.asProperty();
                     ModelNode ds = property.getValue().asObject();
                     String name = property.getName();
-                    //System.out.println(ds.toJSONString(false));
+                    //System.out.println(ds);
 
                     try {
                         DataSource model = factory.dataSource().as();
                         model.setName(name);
                         model.setConnectionUrl(ds.get("connection-url").asString());
                         model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDriverClass(ds.get("driver-class").asString());
+                        model.setDriverClass(ds.get("driver-class-name").asString());
 
-
-                        String driverToken = ds.get("driver").asString();
-
-                        if(driverToken.indexOf("#")!=-1)
-                        {
-                            String[] split = driverToken.split("#");
-                            model.setDriverName(split[0]);
-                            model.setDriverVersion(split[1]);
-                        }
-                        else
-                        {
-                            model.setDriverName(driverToken);
-                        }
+                        model.setDriverName(ds.get("driver-name").asString());
 
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
@@ -160,23 +147,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                         XADataSource model = factory.xaDataSource().as();
                         model.setName(name);
                         model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDataSourceClass(ds.get("xa-data-source-class").asString());
-
-                        if(ds.hasDefined("driver"))
-                        {
-                            String driverToken = ds.get("driver").asString();
-
-                            if(driverToken.indexOf("#")!=-1)
-                            {
-                                String[] split = driverToken.split("#");
-                                model.setDriverName(split[0]);
-                                model.setDriverVersion(split[1]);
-                            }
-                            else
-                            {
-                                model.setDriverName(driverToken);
-                            }
-                        }
+                        model.setDriverName(ds.get("driver-name").asString());
 
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
@@ -231,8 +202,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
-        operation.get("driver-class").set(datasource.getDriverClass());
+        operation.get("driver-name").set(datasource.getDriverName());
+        operation.get("driver-class-name").set(datasource.getDriverClass());
+        operation.get("driver-major-version").set(datasource.getMajorVersion());
+        operation.get("driver-minor-version").set(datasource.getMinorVersion());
         operation.get("pool-name").set(datasource.getName()+"_Pool");
 
         operation.get("connection-url").set(datasource.getConnectionUrl());
@@ -240,6 +213,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
+
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -269,12 +245,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        if(datasource.getDriverName()!=null && !datasource.getDriverName().equals(""))
-        {
-            operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
-        }
-
         operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
+        operation.get("driver-class-name").set(datasource.getDriverClass());
+        operation.get("driver-major-version").set(datasource.getMajorVersion());
+        operation.get("driver-minor-version").set(datasource.getMinorVersion());
+
         operation.get("pool-name").set(datasource.getName()+"_Pool");
 
         operation.get("user-name").set(datasource.getUsername());
@@ -378,6 +353,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
+                System.out.println(ModelNode.fromBase64(result.getResponseText()));
                 callback.onSuccess(responseIndicatesSuccess(result));
             }
         });
@@ -433,6 +409,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
+                System.out.println(ModelNode.fromBase64(result.getResponseText()));
                 callback.onSuccess(responseIndicatesSuccess(result));
             }
         });

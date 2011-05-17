@@ -24,7 +24,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.ComboBox;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -109,7 +111,7 @@ public class ComboBoxItem extends FormItem<String> {
             selectItem(0);
     }
 
-    public void setValueMap(List<String> values) {
+    public void setValueMap(Collection<String> values) {
         comboBox.clearValues();
         for(String s : values)
         {

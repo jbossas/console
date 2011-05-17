@@ -46,6 +46,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.widgets.resource.WidgetResources;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -216,7 +217,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
     public void setItemSelected(int i, boolean isSelected) {
 
-        if(isSelected)
+        if(isSelected && !values.isEmpty())
         {
             this.selectedItemIndex =  i;
             String selectedValue = values.get(selectedItemIndex);
@@ -226,7 +227,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
         }
     }
 
-    public void setValues(List<String> values)
+    public void setValues(Collection<String> values)
     {
         clearValues();
         this.values.addAll(values);
@@ -235,7 +236,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
     }
 
     private void refeshCellList() {
-        cellList.setRowCount(this.values.size(),true);
+        cellList.setRowCount(this.values.size(), true);
         cellList.setRowData(0, this.values);
     }
 

@@ -123,17 +123,13 @@ public class XADataSourceDetails {
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
         CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
-
-        TextBoxItem datasourceItem = new TextBoxItem("dataSourceClass", "Datasource Class");
-        TextBoxItem driverItem = new TextBoxItem("driver", "Driver");
-        TextBoxItem version = new TextBoxItem("driverVersion", "Version");
+        TextItem driverItem = new TextItem("driverName", "Driver");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem);
+        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
         form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem);
-        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, version, datasourceItem);
 
         form.setEnabled(false); // currently not editable
 

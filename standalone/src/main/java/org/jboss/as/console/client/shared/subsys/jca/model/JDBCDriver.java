@@ -17,46 +17,41 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.widgets.forms;
+package org.jboss.as.console.client.shared.subsys.jca.model;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
- * @date 5/11/11
+ * @date 5/16/11
  */
-public class StateItem extends FormItem<Boolean> {
+public interface JDBCDriver {
 
-    private Label widget;
+    @Binding(detypedName = "driver-name")
+    String getName();
+    void setName(String name);
 
-    public StateItem(String name, String title) {
-        super(name, title);
-        this.widget = new Label();
-    }
+    @Binding(detypedName = "deployment-name")
+    String getDeploymentName();
+    void setDeploymentName(String name);
 
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
+    @Binding(detypedName = "major-version")
+    int getMajorVersion();
+    void setMajorVersion(int major);
 
-    @Override
-    public void setEnabled(boolean b) {
+    @Binding(detypedName = "minor-version")
+    int getMinorVersion();
+    void setMinorVersion(int minor);
 
-    }
+    @Binding(detypedName = "driver-class")
+    String getDriverClass();
+    void setDriverClass(String driverClass);
 
-    @Override
-    public boolean validate(Boolean value) {
-        return true;
-    }
+    @Binding(detypedName = "xa-datasource-class")
+    String getXaDataSourceClass();
+    void setXaDataSourceClass(String dataSourceClass);
 
-    @Override
-    public Boolean getValue() {
-        return Boolean.valueOf(widget.getText());
-    }
-
-    @Override
-    public void setValue(Boolean b) {
-        widget.setText(String.valueOf(b));
-    }
+    @Binding(detypedName = "none", ignore = true)
+    String getGroup();
+    void setGroup(String group);
 }
