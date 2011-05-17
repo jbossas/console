@@ -132,7 +132,8 @@ public class DataSourceModelTest {
         entity.setConnectionUrl("jdbc:h2:mem:anotherOne;DB_CLOSE_DELAY=-1");
         entity.setDriverClass("org.h2.Driver");
         entity.setDriverName("org.h2.Driver");
-        entity.setDriverVersion("1.2");
+        entity.setMajorVersion(1);
+        entity.setMinorVersion(2);
         entity.setEnabled(false);
         entity.setPoolName(entity.getName()+"_Pool");
         entity.setUsername("user");

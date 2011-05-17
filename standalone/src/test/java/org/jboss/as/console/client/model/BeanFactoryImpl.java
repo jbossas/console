@@ -189,7 +189,7 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     @Override
-    public JDBCDriver jdbcDriver() {
+    public AutoBean<JDBCDriver> jdbcDriver() {
          throw new RuntimeException("not implemented");
     }
 }

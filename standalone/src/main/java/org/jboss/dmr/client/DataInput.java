@@ -121,7 +121,7 @@ public class DataInput {
           sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
           return 3;
         }
-        throw new RuntimeException();
+        throw new RuntimeException("Illegal character "+a);
       }
 
 

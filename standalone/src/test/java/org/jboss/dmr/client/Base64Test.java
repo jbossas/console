@@ -75,5 +75,40 @@ public class Base64Test {
         assertNotNull(base64);
     }
 
+    @Test
+    public void testDSDeletionResponse() throws Exception
+    {
+
+        String base64 = "bwAAAAMAB291dGNvbWVzAAdzdWNjZXNzAAZyZXN1bHRvAAAAAQANc2VydmVyLWdyb3Vwc28AAAAC\n" +
+                "ABFtYWluLXNlcnZlci1ncm91cG8AAAACAApzZXJ2ZXItdHdvbwAAAAIABGhvc3RzAAVsb2NhbAAI\n" +
+                "cmVzcG9uc2VvAAAAAgAHb3V0Y29tZXMABmZhaWxlZAATZmFpbHVyZS1kZXNjcmlwdGlvbnMAqE5v\n" +
+                "IGhhbmRsZXIgZm9yIHJlbW92ZSBhdCBhZGRyZXNzIFsKICAgICgiaG9zdCIgPT4gImxvY2FsIiks\n" +
+                "CiAgICAoInNlcnZlciIgPT4gInNlcnZlci10d28iKSwKICAgICgic3Vic3lzdGVtIiA9PiAiZGF0\n" +
+                "YXNvdXJjZXMiKSwKICAgICgiZGF0YS1zb3VyY2UiID0+ICJkYXRhYmFzZS9NeURTIikKXQAKc2Vy\n" +
+                "dmVyLW9uZW8AAAACAARob3N0cwAFbG9jYWwACHJlc3BvbnNlbwAAAAIAB291dGNvbWVzAAZmYWls\n" +
+                "ZWQAE2ZhaWx1cmUtZGVzY3JpcHRpb25zAKhObyBoYW5kbGVyIGZvciByZW1vdmUgYXQgYWRkcmVz\n" +
+                "cyBbCiAgICAoImhvc3QiID0+ICJsb2NhbCIpLAogICAgKCJzZXJ2ZXIiID0+ICJzZXJ2ZXItb25l\n" +
+                "IiksCiAgICAoInN1YnN5c3RlbSIgPT4gImRhdGFzb3VyY2VzIiksCiAgICAoImRhdGEtc291cmNl\n" +
+                "IiA9PiAiZGF0YWJhc2UvTXlEUyIpCl0AEm90aGVyLXNlcnZlci1ncm91cG8AAAABAAxzZXJ2ZXIt\n" +
+                "dGhyZWVvAAAAAgAEaG9zdHMABWxvY2FsAAhyZXNwb25zZW8AAAACAAdvdXRjb21lcwAGZmFpbGVk\n" +
+                "ABNmYWlsdXJlLWRlc2NyaXB0aW9ucwB0b3JnLmpib3NzLm1zYy5zZXJ2aWNlLkR1cGxpY2F0ZVNl\n" +
+                "cnZpY2VFeGNlcHRpb246IFNlcnZpY2UgamJvc3MuZGF0YS1zb3VyY2UuamF2YTovZGF0YWJhc2Uv\n" +
+                "TXlEUyBpcyBhbHJlYWR5IHJlZ2lzdGVyZWQAFmNvbXBlbnNhdGluZy1vcGVyYXRpb25vAAAACgAJ\n" +
+                "b3BlcmF0aW9ucwADYWRkAAdhZGRyZXNzbAAAAANwAAdwcm9maWxlcwAHZGVmYXVsdHAACXN1YnN5\n" +
+                "c3RlbXMAC2RhdGFzb3VyY2VzcAALZGF0YS1zb3VyY2VzAA1kYXRhYmFzZS9NeURTAA5jb25uZWN0\n" +
+                "aW9uLXVybHMABG5vbmUACWpuZGktbmFtZXMADWRhdGFiYXNlL015RFMAC2RyaXZlci1uYW1lcwAC\n" +
+                "aDIACXBvb2wtbmFtZXMACW15RFNfUG9vbAAQdXNlLWphdmEtY29udGV4dFoBAAdlbmFibGVkWgAA\n" +
+                "CXVzZXItbmFtZXMAAnNhAAhwYXNzd29yZHMAAA==";
+
+        ModelNode modelNode = null;
+
+        try {
+            modelNode = ModelNode.fromBase64(base64);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(modelNode);
+    }
 
 }
