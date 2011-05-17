@@ -21,6 +21,7 @@ package org.jboss.as.console.client.model;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import org.jboss.as.console.client.core.settings.CommonSettings;
+import org.jboss.as.console.client.domain.general.model.Interface;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Jvm;
@@ -184,6 +185,11 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<VirtualServer> virtualServer() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<Interface> interfaceDeclaration() {
         throw new RuntimeException("not implemented");
     }
 }

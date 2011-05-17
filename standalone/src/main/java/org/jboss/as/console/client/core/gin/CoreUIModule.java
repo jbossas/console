@@ -54,6 +54,8 @@ import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsView;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserView;
+import org.jboss.as.console.client.domain.general.InterfacePresenter;
+import org.jboss.as.console.client.domain.general.InterfaceView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -241,6 +243,11 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         // ------------------------------------------------
         // domain management application
+
+        bindPresenter(InterfacePresenter.class,
+                InterfacePresenter.MyView.class,
+                InterfaceView.class,
+                InterfacePresenter.MyProxy.class);
 
         // profile management application
         bindPresenter(ProfileMgmtPresenter.class,

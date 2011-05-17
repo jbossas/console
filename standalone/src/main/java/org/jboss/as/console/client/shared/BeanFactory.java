@@ -23,6 +23,7 @@ import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
 import com.google.gwt.dom.client.TableSectionElement;
 import org.jboss.as.console.client.core.settings.CommonSettings;
+import org.jboss.as.console.client.domain.general.model.Interface;
 import org.jboss.as.console.client.domain.groups.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.Jvm;
@@ -84,4 +85,5 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<HttpConnector> httpConnector();
     AutoBean<JSPContainerConfiguration> jspConfig();
     AutoBean<VirtualServer> virtualServer();
+    AutoBean<Interface> interfaceDeclaration();
 }
