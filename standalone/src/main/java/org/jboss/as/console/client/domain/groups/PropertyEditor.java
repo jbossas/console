@@ -195,7 +195,7 @@ public class PropertyEditor {
         return panel;
     }
 
-    public void setSelectedRecord(String reference, List<PropertyRecord> properties) {
+    public void setProperties(String reference, List<PropertyRecord> properties) {
         this.reference= reference;
         propertyTable.setRowCount(properties.size(), true);
         propertyProvider.setList(properties);

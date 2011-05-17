@@ -54,6 +54,8 @@ import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsView;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserView;
+import org.jboss.as.console.client.domain.general.DomainPropertiesPresenter;
+import org.jboss.as.console.client.domain.general.DomainPropertiesView;
 import org.jboss.as.console.client.domain.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.general.InterfaceView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
@@ -249,6 +251,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
 
+        bindPresenter(DomainPropertiesPresenter.class,
+                DomainPropertiesPresenter.MyView.class,
+                DomainPropertiesView.class,
+                DomainPropertiesPresenter.MyProxy.class);
+
         // profile management application
         bindPresenter(ProfileMgmtPresenter.class,
                 ProfileMgmtPresenter.MyView.class,
@@ -260,6 +267,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainOverviewPresenter.MyView.class,
                 DomainOverview.class,
                 DomainOverviewPresenter.MyProxy.class);
+
         bind(CurrentSelectedProfile.class).in(Singleton.class);
 
         // domain/server-group

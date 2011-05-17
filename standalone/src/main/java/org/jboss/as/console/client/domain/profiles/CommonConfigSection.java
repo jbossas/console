@@ -42,12 +42,12 @@ class CommonConfigSection {
         commonTree = new LHSNavTree("profiles");
         panel.setContent(commonTree);
 
-        LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "domain/paths");
+        //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "domain/paths");
         LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "domain/domain-interfaces");
         LHSNavTreeItem sockets = new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBindingGroups(), "domain/socket-bindings");
         LHSNavTreeItem properties = new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), "domain/domain-properties");
 
-        commonTree.addItem(paths);
+        //commonTree.addItem(paths);
         commonTree.addItem(interfaces);
         commonTree.addItem(sockets);
         commonTree.addItem(properties);

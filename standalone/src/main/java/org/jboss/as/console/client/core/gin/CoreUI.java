@@ -43,6 +43,7 @@ import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.debug.DebugToolsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
+import org.jboss.as.console.client.domain.general.DomainPropertiesPresenter;
 import org.jboss.as.console.client.domain.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -181,4 +182,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<WebPresenter> getWebPresenter();
 
     AsyncProvider<InterfacePresenter> getInterfacePresenter();
+    AsyncProvider<DomainPropertiesPresenter> getDomainPropertiesPresenter();
 }

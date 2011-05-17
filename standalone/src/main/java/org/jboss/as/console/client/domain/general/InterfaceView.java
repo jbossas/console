@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.general;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
@@ -45,6 +46,11 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
         LayoutPanel layout = new RHSContentPanel("Interfaces");
 
         layout.add(new ContentHeaderLabel("Interface Declarations"));
+
+        HTML description = new HTML("A named network interface, but without any criteria for determining the IP address to associate with that interface. Acts as a placeholder in the model (e.g. at the domain level) until a fully specified interface definition is applied at a lower level (e.g. at the server level, where available addresses are known.)");
+        description.getElement().setAttribute("style", "margin-bottom:15px;");
+
+        layout.add(description);
 
         table = new DefaultCellTable<InterfaceView>(10);
 

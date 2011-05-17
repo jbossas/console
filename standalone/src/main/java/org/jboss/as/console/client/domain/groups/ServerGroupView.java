@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +36,6 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -215,7 +213,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // form
         form.edit(record);
 
-        propertyEditor.setSelectedRecord(record.getGroupName(), record.getProperties());
+        propertyEditor.setProperties(record.getGroupName(), record.getProperties());
         jvmEditor.setSelectedRecord(record.getGroupName(), record.getJvm());
     }
 

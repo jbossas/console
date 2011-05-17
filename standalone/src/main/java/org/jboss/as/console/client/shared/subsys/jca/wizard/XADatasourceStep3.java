@@ -63,7 +63,7 @@ public class XADatasourceStep3 implements PropertyManagement {
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
         properties.remove(prop);
-        propEditor.setSelectedRecord("", properties);
+        propEditor.setProperties("", properties);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class XADatasourceStep3 implements PropertyManagement {
         proto.setValue("value");
 
         properties.add(proto);
-        propEditor.setSelectedRecord("", properties);
+        propEditor.setProperties("", properties);
     }
 
     @Override

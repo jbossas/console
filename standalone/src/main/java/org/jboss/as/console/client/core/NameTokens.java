@@ -38,6 +38,7 @@ public class NameTokens {
     public static final String MessagingPresenter = "messaging";
     public static final String WebPresenter = "web";
     public static final String InterfacePresenter = "domain-interfaces";
+    public static final String DomainPropertiesPresenter = "domain-properties";
 
     public static String getMainLayout() {
         return mainLayout;

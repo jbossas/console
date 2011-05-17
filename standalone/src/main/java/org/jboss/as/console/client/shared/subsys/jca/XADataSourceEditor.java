@@ -45,7 +45,6 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.SplitEditorPanel;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -169,7 +168,7 @@ public class XADataSourceEditor implements PropertyManagement  {
             public void onSelectionChange(SelectionChangeEvent event) {
                 XADataSource dataSource = selectionModel.getSelectedObject();
                 details.setSelectedRecord(dataSource);
-                propertyEditor.setSelectedRecord(dataSource.getName(), dataSource.getProperties());
+                propertyEditor.setProperties(dataSource.getName(), dataSource.getProperties());
             }
         });
         dataSourceTable.setSelectionModel(selectionModel);
