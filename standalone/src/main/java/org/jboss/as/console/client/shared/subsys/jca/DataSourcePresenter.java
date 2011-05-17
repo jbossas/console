@@ -42,6 +42,7 @@ import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
@@ -225,16 +226,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     public void onCreateNewDatasource(final DataSource datasource) {
         window.hide();
 
-        dataSourceStore.createDataSource(currentProfile.getName(), datasource, new SimpleCallback<Boolean>() {
+        dataSourceStore.createDataSource(currentProfile.getName(), datasource, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-                if (success) {
-                    Console.info("Success: Create datasource "+datasource.getName());
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if (result.getUnderlying()) {
+                    Console.info("Success: Create datasource " + datasource.getName());
                     loadDataSources();
                 }
                 else
-                    Console.error("Failed to create datasource");
+                    Console.error("Failed to create datasource", result.getResponse().toString());
             }
         });
 
@@ -271,15 +272,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     // TODO: https://issues.jboss.org/browse/AS7-719
     public void onDisable(final DataSource entity, boolean doEnable) {
-        dataSourceStore.enableDataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+        dataSourceStore.enableDataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-
-                if (success) {
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if (result.getUnderlying()) {
                     Console.info("Successfully modified datasource " + entity.getName());
                 } else {
-                    Console.error("Failed to modify datasource" + entity.getName());
+                    Console.error("Failed to modify datasource" + entity.getName(), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -302,7 +302,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     if(successful)
                         Console.info("Success: Updated Datasource");
                     else
-                        Console.error("Failed: Update datasource "+name);
+                        Console.error("Failed: Update datasource " + name);
                 }
             });
         }

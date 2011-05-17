@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -190,7 +191,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<Boolean> callback) {
+    public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("profile", profile);
@@ -214,7 +215,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
 
-
         System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -226,8 +226,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                boolean wasSuccessful = responseIndicatesSuccess(result);
-                callback.onSuccess(wasSuccessful);
+                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                boolean wasSuccessful = modelNode.get(RESULT).equals(SUCCESS);
+
+                callback.onSuccess(new ResponseWrapper<Boolean>(wasSuccessful, modelNode));
             }
         });
     }
@@ -333,7 +335,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<Boolean> callback) {
+    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         final String dataSourceName = dataSource.getName();
         final String opName = doEnable ? "enable" : "disable";
@@ -353,8 +355,14 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                System.out.println(ModelNode.fromBase64(result.getResponseText()));
-                callback.onSuccess(responseIndicatesSuccess(result));
+
+                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                ResponseWrapper<Boolean> response =
+                        new ResponseWrapper<Boolean>(
+                                modelNode.get(OUTCOME).asString().equals(SUCCESS), modelNode
+                        );
+
+                callback.onSuccess(response);
             }
         });
     }

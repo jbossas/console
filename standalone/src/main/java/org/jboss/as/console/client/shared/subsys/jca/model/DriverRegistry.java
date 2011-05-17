@@ -92,6 +92,9 @@ public class DriverRegistry {
 
 
                 for(final ServerInstance server : result){
+
+                    if(!server.isRunning()) continue;
+
                     ModelNode operation = new ModelNode();
                     operation.get(OP).set("installed-drivers-list");
                     operation.get(ADDRESS).add("host", host);
