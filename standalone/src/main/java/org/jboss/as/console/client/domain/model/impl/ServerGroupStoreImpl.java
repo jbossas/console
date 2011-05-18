@@ -21,8 +21,8 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -281,58 +281,5 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
             }
         });
-    }
-
-    @Override
-    public void createJvm(String groupName, Jvm jvm, final AsyncCallback<Boolean> callback) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add(SERVER_GROUP, groupName);
-        operation.get(ADDRESS).add(JVM, jvm.getName());
-
-        //ModelNode jvmModel = new ModelNode();
-        operation.get("heap-size").set(jvm.getHeapSize());
-        operation.get("max-heap-size").set(jvm.getMaxHeapSize());
-        operation.get("debug-enabled").set(jvm.isDebugEnabled());
-
-        //operation.get("jvm").set(jvm.getName(), jvmModel);
-
-        System.out.println(operation.toString());
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
-            }
-        });
-
-    }
-
-
-    @Override
-    public void removeJvm(String groupName, Jvm jvm, final AsyncCallback<Boolean> callback) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add(SERVER_GROUP, groupName);
-        operation.get(ADDRESS).add(JVM, jvm.getName());
-
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
-            }
-        });
-
     }
 }

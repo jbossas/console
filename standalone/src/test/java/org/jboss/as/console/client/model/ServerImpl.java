@@ -19,8 +19,8 @@
 
 package org.jboss.as.console.client.model;
 
+import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.domain.model.Server;
 
 import java.util.List;

@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups;
+package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,7 +25,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -105,18 +104,8 @@ public class JvmEditor {
         form.setNumColumns(2);
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
+        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
+        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
         CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 

@@ -34,12 +34,15 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.apache.tools.ant.taskdefs.Exec;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
-import org.jboss.as.console.client.domain.model.Jvm;
+import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
+import org.jboss.as.console.client.shared.jvm.DeleteJvmCmd;
+import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -47,8 +50,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.jvm.JvmManagement;
+import org.jboss.as.console.client.shared.jvm.UpdateJvmCmd;
 import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
 import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
@@ -56,12 +59,11 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.LHSHighlightEvent;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Maintains a single server group.
@@ -83,6 +85,7 @@ public class ServerGroupPresenter
     private String groupName;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private PropertyMetaData propertyMetaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -94,7 +97,6 @@ public class ServerGroupPresenter
         void setSelectedRecord(ServerGroupRecord record);
         void setEnabled(boolean isEnabled);
         void updateProfiles(List<ProfileRecord> result);
-
         void updateSocketBindings(List<String> result);
     }
 
@@ -103,13 +105,15 @@ public class ServerGroupPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             ServerGroupStore serverGroupStore,
             ProfileStore profileStore,
-            DispatchAsync dispatcher, BeanFactory factory) {
+            DispatchAsync dispatcher, BeanFactory factory,
+            PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -363,43 +367,44 @@ public class ServerGroupPresenter
 
         if(changedValues.size()>0)
         {
-            serverGroupStore.saveJvm(groupName, jvmName, changedValues, new SimpleCallback<Boolean>() {
+            ModelNode address = new ModelNode();
+            address.add("server-group", groupName);
+            address.add("jvm", jvmName);
+
+            UpdateJvmCmd cmd = new UpdateJvmCmd(dispatcher, factory, propertyMetaData, address);
+            cmd.execute(changedValues, new SimpleCallback<Boolean>() {
                 @Override
-                public void onSuccess(Boolean success) {
-                    if(success)
-                    {
-                        Console.info("Saved JVM settings");
-                        loadServerGroup(groupName);
-                    }
-                    else
-                        Console.error("Failed to saved JVM settings");
+                public void onSuccess(Boolean result) {
+                    loadServerGroup(groupName);
                 }
             });
-        }
-        else
-        {
-            Console.warning("No changes applied!");
         }
     }
 
     public void onCreateJvm(final String groupName, Jvm jvm) {
 
-        serverGroupStore.createJvm(groupName, jvm, new SimpleCallback<Boolean>() {
+        ModelNode address = new ModelNode();
+        address.add("server-group", groupName);
+        address.add("jvm", jvm.getName());
+
+        CreateJvmCmd cmd = new CreateJvmCmd(dispatcher, factory, address);
+        cmd.execute(jvm, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(Boolean success) {
-                if(success)
-                {
-                    Console.info("Saved JVM settings");
-                    loadServerGroup(groupName);
-                }
-                else
-                    Console.error("Failed to saved JVM settings");
+            public void onSuccess(Boolean result) {
+                loadServerGroup(groupName);
             }
         });
+
     }
 
-    public void onDeleteJvm(final String groupName, Jvm editedEntity) {
-        serverGroupStore.removeJvm(groupName, editedEntity, new SimpleCallback<Boolean>() {
+    public void onDeleteJvm(final String groupName, Jvm jvm) {
+
+        ModelNode address = new ModelNode();
+        address.add("server-group", groupName);
+        address.add("jvm", jvm.getName());
+
+        DeleteJvmCmd cmd = new DeleteJvmCmd(dispatcher, factory, address);
+        cmd.execute(new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 loadServerGroup(groupName);

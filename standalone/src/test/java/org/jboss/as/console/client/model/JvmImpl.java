@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.model;
 
-import org.jboss.as.console.client.domain.model.Jvm;
+import org.jboss.as.console.client.shared.jvm.Jvm;
 
 /**
  * @author Heiko Braun

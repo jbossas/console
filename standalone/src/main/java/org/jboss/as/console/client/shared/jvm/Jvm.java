@@ -17,19 +17,33 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups;
+package org.jboss.as.console.client.shared.jvm;
 
-import org.jboss.as.console.client.domain.model.Jvm;
-
-import java.util.Map;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
- * @date 4/29/11
+ * @date 4/20/11
  */
-public interface JvmManagement {
+public interface Jvm {
 
-    void onCreateJvm(String reference, Jvm jvm);
-    void onDeleteJvm(String reference, Jvm editedEntity);
-    void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues);
+    @Binding(detypedName = "none", ignore = true)
+    String getName();
+    void setName(String name);
+
+    @Binding(detypedName = "debug-enabled")
+    boolean isDebugEnabled();
+    void setDebugEnabled(boolean b);
+
+    @Binding(detypedName = "debug-options")
+    String getDebugOptions();
+    void setDebugOptions(String options);
+
+    @Binding(detypedName = "heap-size")
+    String getHeapSize();
+    void setHeapSize(String heap);
+
+    @Binding(detypedName = "max-heap-size")
+    String getMaxHeapSize();
+    void setMaxHeapSize(String maxHeap);
 }
