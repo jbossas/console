@@ -67,8 +67,10 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get("child-type").set("server-group");
+        operation.get(RECURSIVE).set(Boolean.TRUE);
+        operation.get(CHILD_TYPE).set("server-group");
         operation.get(ModelDescriptionConstants.ADDRESS).setEmptyList();
+
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -78,7 +80,11 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
+
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                System.out.println(response);
+
                 List<ModelNode> propertyList= response.get("result").asList();
 
                 List<ServerGroupRecord> records = new ArrayList<ServerGroupRecord>(propertyList.size());

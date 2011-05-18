@@ -58,8 +58,7 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Maintains a single server group.
@@ -436,8 +435,9 @@ public class ServerGroupPresenter
         }
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("add-system-property");
+        operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("server-group", groupName);
+        operation.get(ADDRESS).add("system-property", prop.getValue());
         operation.get("name").set(prop.getKey());
         operation.get("value").set(prop.getValue());
         operation.get("boot-time").set(prop.isBootTime());
@@ -445,6 +445,7 @@ public class ServerGroupPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
+                System.out.println(ModelNode.fromBase64(result.getResponseText()));
                 Console.info("Success: Created property "+prop.getKey());
                 loadServerGroup(groupName);
             }
@@ -455,9 +456,9 @@ public class ServerGroupPresenter
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("remove-system-property");
+        operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).add("server-group", groupName);
-        operation.get("name").set(prop.getKey());
+        operation.get(ADDRESS).add("system-property", prop.getKey());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

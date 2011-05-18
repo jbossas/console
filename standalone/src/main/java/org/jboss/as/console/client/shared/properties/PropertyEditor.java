@@ -185,11 +185,7 @@ public class PropertyEditor {
 
         propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
-
-        propertyTable.setRowOverHandler(
-                new DefaultOptionRolloverHandler(propertyProvider, propertyTable)
-        );
-
+        propertyTable.setEnabled(false);
         panel.add(propertyTable);
 
         return panel;

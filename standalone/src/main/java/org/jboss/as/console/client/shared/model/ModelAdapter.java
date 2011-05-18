@@ -104,13 +104,12 @@ public class ModelAdapter {
         List<PropertyRecord> records = Collections.EMPTY_LIST;
 
         // System properties
-        if(model.hasDefined("system-properties"))
+        if(model.hasDefined("system-property"))
         {
-            List<ModelNode> properties = model.get("system-properties").asList();
-            records = new ArrayList<PropertyRecord>(properties.size());
-            for(ModelNode item : properties)
+            List<Property> propertyList = model.get("system-property").asPropertyList();
+            records = new ArrayList<PropertyRecord>(propertyList.size());
+            for(Property property : propertyList)
             {
-                Property property = item.asProperty();
                 PropertyRecord propRecord = factory.property().as();
                 propRecord.setKey(property.getName());
                 ModelNode value = property.getValue();

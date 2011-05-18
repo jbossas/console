@@ -101,10 +101,14 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     }
 
     private void loadProperties() {
+
+        // :read-children-resources(child-type=system-property, recursive=true)
+
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).setEmptyList();
-        operation.get(NAME).set("system-properties");
+        operation.get(CHILD_TYPE).set("system-property");
+        operation.get(RECURSIVE).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -171,9 +175,8 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
         }
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("add-system-property");
-        operation.get(ADDRESS).setEmptyList();
-        operation.get("name").set(prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("system-property", prop.getKey());
         operation.get("value").set(prop.getValue());
         operation.get("boot-time").set(prop.isBootTime());
 
@@ -190,9 +193,8 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("remove-system-property");
-        operation.get(ADDRESS).setEmptyList();
-        operation.get("name").set(prop.getKey());
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("system-property", prop.getKey());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
