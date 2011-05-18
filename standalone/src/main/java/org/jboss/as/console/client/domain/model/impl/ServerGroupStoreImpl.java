@@ -83,8 +83,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                System.out.println(response);
-
                 List<ModelNode> propertyList= response.get("result").asList();
 
                 List<ServerGroupRecord> records = new ArrayList<ServerGroupRecord>(propertyList.size());
