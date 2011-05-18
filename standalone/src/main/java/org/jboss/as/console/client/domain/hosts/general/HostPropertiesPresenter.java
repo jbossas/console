@@ -104,10 +104,13 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     }
 
     private void loadProperties() {
+
+        //  /host=local:read-children-resources(child-type=system-property, recursive=true)
+
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get(NAME).set("system-properties");
+        operation.get(CHILD_TYPE).set("system-property");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -178,9 +181,9 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
         }
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("add-system-property");
+        operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get("name").set(prop.getKey());
+        operation.get(ADDRESS).add("system-property", prop.getKey());
         operation.get("value").set(prop.getValue());
         operation.get("boot-time").set(prop.isBootTime());
 
@@ -197,9 +200,9 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
         ModelNode operation = new ModelNode();
-        operation.get(OP).set("remove-system-property");
+        operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get("name").set(prop.getKey());
+        operation.get(ADDRESS).add("system-property", prop.getKey());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
