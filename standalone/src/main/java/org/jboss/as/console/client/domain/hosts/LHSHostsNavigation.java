@@ -97,5 +97,7 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
     public void onHostSelection(String hostName) {
         serversSection.setSelectedHost(hostName);
         instanceSection.setSelectedHost(hostName);
+
+        Console.MODULES.getCurrentSelectedHost().setName(hostName);
     }
 }

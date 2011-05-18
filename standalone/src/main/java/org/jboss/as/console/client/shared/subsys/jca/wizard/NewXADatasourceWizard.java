@@ -21,13 +21,9 @@ package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DataSourceStep3;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep1;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep2;
 
 import java.util.List;
 

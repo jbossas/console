@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.shared.model;
 
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Jvm;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;

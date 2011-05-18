@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -38,7 +38,6 @@ import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -56,34 +55,36 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresenter.MyView, DomainPropertiesPresenter.MyProxy>
+public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.MyView, HostPropertiesPresenter.MyProxy>
         implements PropertyManagement {
 
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
     private DefaultWindow propertyWindow;
+    private CurrentHostSelection currentHost;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.DomainPropertiesPresenter)
-    public interface MyProxy extends Proxy<DomainPropertiesPresenter>, Place {
+    @NameToken(NameTokens.HostPropertiesPresenter)
+    public interface MyProxy extends Proxy<HostPropertiesPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(DomainPropertiesPresenter presenter);
+        void setPresenter(HostPropertiesPresenter presenter);
 
         void setProperties(List<PropertyRecord> properties);
     }
 
     @Inject
-    public DomainPropertiesPresenter(
+    public HostPropertiesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory, CurrentHostSelection currentHost) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
+        this.currentHost = currentHost;
         this.factory = factory;
     }
 
@@ -103,7 +104,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     private void loadProperties() {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", currentHost.getName());
         operation.get(NAME).set("system-properties");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -111,19 +112,23 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<Property> payload = response.get(RESULT).asPropertyList();
 
-                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(payload.size());
-                for(Property prop : payload)
-                {
-                    String key = prop.getName();
-                    ModelNode item = prop.getValue();
-                    PropertyRecord propertyRecord = factory.property().as();
-                    propertyRecord.setKey(key);
-                    propertyRecord.setValue(item.get("value").asString());
-                    propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+                List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
+                if(response.hasDefined(RESULT)) {
+                    List<Property> payload = response.get(RESULT).asPropertyList();
 
-                    properties.add(propertyRecord);
+                    for(Property prop : payload)
+                    {
+                        String key = prop.getName();
+                        ModelNode item = prop.getValue();
+                        PropertyRecord propertyRecord = factory.property().as();
+                        propertyRecord.setKey(key);
+                        propertyRecord.setValue(item.get("value").asString());
+                        propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+
+                        properties.add(propertyRecord);
+
+                    }
 
                 }
 
@@ -135,7 +140,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
     }
 
     public void closePropertyDialoge() {
@@ -172,7 +177,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set("add-system-property");
-        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", currentHost.getName());
         operation.get("name").set(prop.getKey());
         operation.get("value").set(prop.getValue());
         operation.get("boot-time").set(prop.isBootTime());
@@ -191,7 +196,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     {
         ModelNode operation = new ModelNode();
         operation.get(OP).set("remove-system-property");
-        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", currentHost.getName());
         operation.get("name").set(prop.getKey());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

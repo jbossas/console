@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.groups.JvmEditor;
-import org.jboss.as.console.client.domain.groups.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;

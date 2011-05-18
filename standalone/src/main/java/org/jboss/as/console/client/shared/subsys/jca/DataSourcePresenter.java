@@ -38,7 +38,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -65,7 +65,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private BeanFactory factory;
     private boolean hasBeenRevealed = false;
     private DefaultWindow window;
-    private CurrentSelectedProfile currentProfile;
+    private CurrentProfileSelection currentProfileSelection;
     private DataSourceStore dataSourceStore;
 
     @ProxyCodeSplit
@@ -90,14 +90,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory,
-            CurrentSelectedProfile currentProfile,
+            CurrentProfileSelection currentProfileSelection,
             DataSourceStore dataSourceStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.currentProfile = currentProfile;
+        this.currentProfileSelection = currentProfileSelection;
         this.dataSourceStore = dataSourceStore;
     }
 
@@ -138,7 +138,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     void loadDataSources() {
 
-        String profile = currentProfile.getName() == null ? "default" : currentProfile.getName();
+        String profile = currentProfileSelection.getName() == null ? "default" : currentProfileSelection.getName();
 
         dataSourceStore.loadDataSources(profile, new AsyncCallback<List<DataSource>>() {
             @Override
@@ -213,7 +213,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     public void onCreateNewDatasource(final DataSource datasource) {
         window.hide();
 
-        dataSourceStore.createDataSource(currentProfile.getName(), datasource, new SimpleCallback<Boolean>() {
+        dataSourceStore.createDataSource(currentProfileSelection.getName(), datasource, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean success) {
@@ -236,7 +236,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onDelete(final DataSource entity) {
 
-        dataSourceStore.deleteDataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>(){
+        dataSourceStore.deleteDataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>(){
             @Override
             public void onSuccess(Boolean success) {
 
@@ -257,7 +257,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     // TODO: https://issues.jboss.org/browse/AS7-719
     public void onDisable(final DataSource entity, boolean doEnable) {
-        dataSourceStore.enableDataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+        dataSourceStore.enableDataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean success) {
@@ -281,7 +281,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         getView().enableDSDetails(false);
         if(changedValues.size()>0)
         {
-            dataSourceStore.updateDataSource(currentProfile.getName(), name, changedValues, new SimpleCallback<Boolean> (){
+            dataSourceStore.updateDataSource(currentProfileSelection.getName(), name, changedValues, new SimpleCallback<Boolean> (){
 
                 @Override
                 public void onSuccess(Boolean successful) {
@@ -302,7 +302,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onCreateNewXADatasource(final XADataSource updatedEntity) {
         window.hide();
-        dataSourceStore.createXADataSource(currentProfile.getName(), updatedEntity, new SimpleCallback<Boolean>() {
+        dataSourceStore.createXADataSource(currentProfileSelection.getName(), updatedEntity, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
@@ -314,7 +314,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDisableXA(final XADataSource entity, boolean doEnable) {
-        dataSourceStore.enableXADataSource(currentProfile.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+        dataSourceStore.enableXADataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean success) {
@@ -331,7 +331,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDeleteXA(final XADataSource entity) {
-         dataSourceStore.deleteXADataSource(currentProfile.getName(), entity, new SimpleCallback<Boolean>() {
+         dataSourceStore.deleteXADataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>() {
              @Override
              public void onSuccess(Boolean success) {
 

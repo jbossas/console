@@ -64,8 +64,11 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
+import org.jboss.as.console.client.domain.hosts.HostPropertiesPresenter;
+import org.jboss.as.console.client.domain.hosts.HostPropertiesView;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigView;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
@@ -78,7 +81,7 @@ import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
 import org.jboss.as.console.client.domain.overview.DomainOverview;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
@@ -256,6 +259,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainPropertiesView.class,
                 DomainPropertiesPresenter.MyProxy.class);
 
+        bindPresenter(HostPropertiesPresenter.class,
+                HostPropertiesPresenter.MyView.class,
+                HostPropertiesView.class,
+                HostPropertiesPresenter.MyProxy.class);
+
         // profile management application
         bindPresenter(ProfileMgmtPresenter.class,
                 ProfileMgmtPresenter.MyView.class,
@@ -268,7 +276,8 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainOverview.class,
                 DomainOverviewPresenter.MyProxy.class);
 
-        bind(CurrentSelectedProfile.class).in(Singleton.class);
+        bind(CurrentProfileSelection.class).in(Singleton.class);
+        bind(CurrentHostSelection.class).in(Singleton.class);
 
         // domain/server-group
         bindPresenter(ServerGroupMgmtPresenter.class,

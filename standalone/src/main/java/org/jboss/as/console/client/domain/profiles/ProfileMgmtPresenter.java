@@ -60,7 +60,7 @@ public class ProfileMgmtPresenter
     private SubsystemStore subsysStore;
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
-    private CurrentSelectedProfile currentProfile;
+    private CurrentProfileSelection currentProfileSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -84,7 +84,7 @@ public class ProfileMgmtPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             SubsystemStore subsysStore,
             ServerGroupStore serverGroupStore,
-            CurrentSelectedProfile currentProfile) {
+            CurrentProfileSelection currentProfileSelection) {
 
         super(eventBus, view, proxy);
 
@@ -92,7 +92,7 @@ public class ProfileMgmtPresenter
         this.profileStore = profileStore;
         this.subsysStore = subsysStore;
         this.serverGroupStore = serverGroupStore;
-        this.currentProfile = currentProfile;
+        this.currentProfileSelection = currentProfileSelection;
     }
 
 
@@ -150,7 +150,7 @@ public class ProfileMgmtPresenter
     @Override
     public void onProfileSelection(String profileName) {
 
-        currentProfile.setName(profileName);
+        currentProfileSelection.setName(profileName);
         subsysStore.loadSubsystems(profileName, new SimpleCallback<List<SubsystemRecord>>() {
             @Override
             public void onSuccess(List<SubsystemRecord> result) {

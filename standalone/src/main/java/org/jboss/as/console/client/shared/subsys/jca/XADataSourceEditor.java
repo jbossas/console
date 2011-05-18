@@ -38,9 +38,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.groups.PropertyEditor;
-import org.jboss.as.console.client.domain.groups.PropertyManagement;
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
@@ -56,7 +56,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class XADataSourceEditor implements PropertyManagement  {
+public class XADataSourceEditor implements PropertyManagement {
 
     private DataSourcePresenter presenter;
     private DefaultCellTable<XADataSource> dataSourceTable;

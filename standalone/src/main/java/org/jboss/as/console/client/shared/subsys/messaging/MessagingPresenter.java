@@ -34,7 +34,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -64,7 +64,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private BeanFactory factory;
     private MessagingProvider providerEntity;
     private DefaultWindow window = null;
-    private CurrentSelectedProfile currentProfile;
+    private CurrentProfileSelection currentProfileSelection;
 
 
     @ProxyCodeSplit
@@ -85,13 +85,13 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     public MessagingPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, CurrentSelectedProfile currentProfile) {
+            BeanFactory factory, CurrentProfileSelection currentProfileSelection) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.currentProfile = currentProfile;
+        this.currentProfileSelection = currentProfileSelection;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private void loadProviderDetails() {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
         operation.get(ADDRESS).add("subsystem", "messaging");
 
 

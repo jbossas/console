@@ -48,14 +48,16 @@ import org.jboss.as.console.client.domain.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
+import org.jboss.as.console.client.domain.hosts.HostPropertiesPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.server.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.server.deployment.DeploymentListPresenter;
@@ -144,7 +146,8 @@ public interface CoreUI extends Ginjector {
     // ----------------------------------------------------------------------
     // domain config below
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
-    CurrentSelectedProfile getCurrentSelectedProfile();
+    CurrentProfileSelection getCurrentSelectedProfile();
+    CurrentHostSelection getCurrentSelectedHost();
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
     AsyncProvider<DomainOverviewPresenter> getProfileToolPresenter();
@@ -183,4 +186,6 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<InterfacePresenter> getInterfacePresenter();
     AsyncProvider<DomainPropertiesPresenter> getDomainPropertiesPresenter();
+
+    AsyncProvider<HostPropertiesPresenter> getHostPropertiesPresenter();
 }

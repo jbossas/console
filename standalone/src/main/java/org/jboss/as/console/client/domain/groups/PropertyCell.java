@@ -24,6 +24,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 
 public class PropertyCell extends AbstractCell<PropertyRecord> {

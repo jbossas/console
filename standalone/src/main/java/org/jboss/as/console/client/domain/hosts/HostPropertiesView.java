@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -34,18 +34,18 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class DomainPropertiesView extends DisposableViewImpl implements DomainPropertiesPresenter.MyView{
+public class HostPropertiesView extends DisposableViewImpl implements HostPropertiesPresenter.MyView{
 
-    private DomainPropertiesPresenter presenter;
+    private HostPropertiesPresenter presenter;
     private PropertyEditor propertyEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Domain Properties");
+        LayoutPanel layout = new RHSContentPanel("Host Properties");
         layout.add(new ContentHeaderLabel("Property Declarations"));
 
-        HTML description = new HTML("These properties will be inherited by any subresource in the domain (i.e. server-groups)");
+        HTML description = new HTML("These properties will be inherited by any server on this host");
         description.getElement().setAttribute("style", "margin-bottom:15px;");
         layout.add(description);
 
@@ -56,7 +56,7 @@ public class DomainPropertiesView extends DisposableViewImpl implements DomainPr
     }
 
     @Override
-    public void setPresenter(DomainPropertiesPresenter presenter) {
+    public void setPresenter(HostPropertiesPresenter presenter) {
         this.presenter = presenter;
     }
 

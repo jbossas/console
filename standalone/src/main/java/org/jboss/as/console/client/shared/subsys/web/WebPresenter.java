@@ -36,15 +36,13 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
-import org.jboss.as.console.client.shared.subsys.messaging.NewQueueWizard;
-import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.DefaultWindow;
@@ -68,7 +66,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
-    private CurrentSelectedProfile currentProfile;
+    private CurrentProfileSelection currentProfileSelection;
 
     private DefaultWindow window;
     private PropertyMetaData propertyMetaData;
@@ -99,13 +97,13 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             BeanFactory factory, DispatchAsync dispatcher,
-            CurrentSelectedProfile currentProfile, PropertyMetaData propertyMetaData) {
+            CurrentProfileSelection currentProfileSelection, PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
-        this.currentProfile = currentProfile;
+        this.currentProfileSelection = currentProfileSelection;
         this.propertyMetaData = propertyMetaData;
     }
 
@@ -125,11 +123,16 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         loadVirtualServer();
     }
 
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+    }
+
     private void loadVirtualServer() {
         // /profile=default/subsystem=web:read-children-resources(child-type=virtual-server, recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("virtual-server");
         operation.get(RECURSIVE).set(Boolean.TRUE);
@@ -177,17 +180,12 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         // TODO: https://issues.jboss.org/browse/AS7-748
     }
 
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
-    }
-
     private void loadConnectors() {
 
         // /profile=default/subsystem=web:read-children-resources(child-type=connector, recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", currentProfile.getName());
+        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("connector");
         operation.get(RECURSIVE).set(Boolean.TRUE);
@@ -244,7 +242,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", currentProfile.getName());
+        proto.get(ADDRESS).add("profile", currentProfileSelection.getName());
         proto.get(ADDRESS).add("subsystem", "web");
         proto.get(ADDRESS).add("connector", name);
 
@@ -270,7 +268,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void onDeleteConnector(final String name) {
         ModelNode connector = new ModelNode();
         connector.get(OP).set(REMOVE);
-        connector.get(ADDRESS).add("profile", currentProfile.getName());
+        connector.get(ADDRESS).add("profile", currentProfileSelection.getName());
         connector.get(ADDRESS).add("subsystem", "web");
         connector.get(ADDRESS).add("connector", name);
 
@@ -316,36 +314,12 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     }
 
 
-    public void onEditVirtualServer() {
-        getView().enableEditVirtualServer(true);
-    }
-
-    public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
-        getView().enableEditVirtualServer(false);
-    }
-
-    public void onDeleteVirtualServer(String name) {
-
-    }
-
-    public void launchVirtualServerDialogue() {
-
-    }
-
-    public void onEditJSPConfig() {
-        getView().enableJSPConfig(true);
-    }
-
-    public void onSaveJSPConfig() {
-        getView().enableJSPConfig(false);
-    }
-
     public void onCreateConnector(final HttpConnector entity) {
         closeDialogue();
 
         ModelNode connector = new ModelNode();
         connector.get(OP).set(ADD);
-        connector.get(ADDRESS).add("profile", currentProfile.getName());
+        connector.get(ADDRESS).add("profile", currentProfileSelection.getName());
         connector.get(ADDRESS).add("subsystem", "web");
         connector.get(ADDRESS).add("connector", entity.getName());
 
@@ -375,6 +349,33 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             }
         });
     }
+
+    public void onEditVirtualServer() {
+        getView().enableEditVirtualServer(true);
+    }
+
+    public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
+        getView().enableEditVirtualServer(false);
+    }
+
+    public void onDeleteVirtualServer(String name) {
+
+    }
+
+    public void launchVirtualServerDialogue() {
+
+    }
+
+    public void onEditJSPConfig() {
+        getView().enableJSPConfig(true);
+        //TODO: implement
+    }
+
+    public void onSaveJSPConfig() {
+        getView().enableJSPConfig(false);
+        //TODO: implement
+    }
+
 
     public void closeDialogue() {
         window.hide();

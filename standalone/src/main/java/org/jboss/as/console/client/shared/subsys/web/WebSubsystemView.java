@@ -56,9 +56,9 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("HTTP");
+        LayoutPanel layout = new RHSContentPanel("Servlet");
 
-        layout.add(new ContentHeaderLabel("Web Subsystem Configuration"));
+        layout.add(new ContentHeaderLabel("Servlet Subsystem Configuration"));
 
         // ----
 

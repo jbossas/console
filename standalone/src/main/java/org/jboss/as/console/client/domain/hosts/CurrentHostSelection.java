@@ -17,33 +17,22 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.model;
-
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.List;
+package org.jboss.as.console.client.domain.hosts;
 
 /**
  * @author Heiko Braun
- * @date 2/11/11
+ * @date 5/17/11
  */
-public interface ServerGroupRecord {
+public class CurrentHostSelection {
 
-    public String getGroupName();
-    public void setGroupName(String name);
+    private String name;
 
-    @Binding(detypedName = "profile")
-    public String getProfileName();
-    public void setProfileName(String name);
+    String getName() {
+        return name;
+    }
 
-    public void setProperties(List<PropertyRecord> props);
-    public List<PropertyRecord> getProperties();
+    void setName(String name) {
+        this.name = name;
+    }
 
-    public Jvm getJvm();
-    public void setJvm(Jvm jvm);
-
-    @Binding(detypedName = "socket-binding-group")
-    public String getSocketBinding();
-    public void setSocketBinding(String socketBindingRef);
 }

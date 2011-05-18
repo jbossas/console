@@ -17,21 +17,15 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.shared.properties;
 
 /**
  * @author Heiko Braun
- * @date 2/28/11
+ * @date 4/29/11
  */
-public class CurrentSelectedProfile {
-
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+public interface PropertyManagement {
+    void onCreateProperty(String reference, final PropertyRecord prop);
+    void onDeleteProperty(String reference, final PropertyRecord prop);
+    void launchNewPropertyDialoge(String reference);
+    void closePropertyDialoge();
 }

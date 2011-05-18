@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.client.model;
 
-import org.jboss.as.console.client.domain.groups.PropertyRecord;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 /**
  * @author Heiko Braun

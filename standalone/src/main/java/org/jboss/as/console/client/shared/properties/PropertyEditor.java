@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.groups;
+package org.jboss.as.console.client.shared.properties;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style;
