@@ -47,6 +47,7 @@ public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncComma
 
     @Override
     public void execute(final AsyncCallback<List<PropertyRecord>> callback) {
+
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).set(address);
@@ -65,23 +66,25 @@ public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncComma
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                System.out.println(response);
+                List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
 
-                List<Property> payload = response.get(RESULT).asPropertyList();
-
-                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(payload.size());
-
-                for(Property prop : payload)
+                if(response.hasDefined(RESULT))
                 {
-                    String key = prop.getName();
-                    ModelNode item = prop.getValue();
-                    PropertyRecord propertyRecord = factory.property().as();
-                    propertyRecord.setKey(key);
-                    propertyRecord.setValue(item.get("value").asString());
-                    propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+                    List<Property> payload = response.get(RESULT).asPropertyList();
 
-                    properties.add(propertyRecord);
 
+                    for(Property prop : payload)
+                    {
+                        String key = prop.getName();
+                        ModelNode item = prop.getValue();
+                        PropertyRecord propertyRecord = factory.property().as();
+                        propertyRecord.setKey(key);
+                        propertyRecord.setValue(item.get("value").asString());
+                        propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+
+                        properties.add(propertyRecord);
+
+                    }
                 }
 
                 callback.onSuccess(properties);

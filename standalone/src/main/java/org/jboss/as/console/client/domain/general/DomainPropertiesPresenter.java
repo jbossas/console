@@ -87,7 +87,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
         this.factory = factory;
 
         ModelNode address = new ModelNode();
-        address.get(ADDRESS).setEmptyList();
+        //address.get(ADDRESS).setEmptyList();
 
         loadPropCmd = new LoadPropertiesCmd(dispatcher, factory, address);
     }
