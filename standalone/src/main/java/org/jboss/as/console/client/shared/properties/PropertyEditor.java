@@ -157,7 +157,8 @@ public class PropertyEditor {
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
-                                    presenter.onDeleteProperty(reference, property);
+                                    if(isConfirmed)
+                                        presenter.onDeleteProperty(reference, property);
                                 }
                             });
                 }
