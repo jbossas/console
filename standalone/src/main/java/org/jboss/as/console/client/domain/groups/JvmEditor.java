@@ -97,14 +97,26 @@ public class JvmEditor {
         });
 
         toolStrip.addToolButton(delete);
+
         panel.add(toolStrip);
+
 
         form = new Form<Jvm>(Jvm.class);
         form.setNumColumns(2);
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
+        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size") {
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
+        };
+        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size") {
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
+        };
         CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
@@ -134,6 +146,7 @@ public class JvmEditor {
     }
 
     private void onEdit() {
+
         edit.setText(Console.CONSTANTS.common_label_save());
         form.setEnabled(true);
     }

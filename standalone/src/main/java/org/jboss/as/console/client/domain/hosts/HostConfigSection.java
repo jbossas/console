@@ -43,13 +43,15 @@ class HostConfigSection {
 
         hostTree = new LHSNavTree("hosts");
 
-        LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
-        LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "hosts/host-interfaces");
-        LHSNavTreeItem sockets = new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBindingGroups(), "hosts/host-socket-bindings");
+        //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
+        LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "hosts/host-jvms");
+        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "hosts/host-interfaces");
+        LHSNavTreeItem sockets = new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBindingGroups(), "hosts/host-sockets");
         LHSNavTreeItem properties = new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), "host/host-properties");
 
-        hostTree.addItem(paths);
+        //hostTree.addItem(paths);
         hostTree.addItem(jvms);
+        hostTree.addItem(interfaces);
         hostTree.addItem(sockets);
         hostTree.addItem(properties);
 

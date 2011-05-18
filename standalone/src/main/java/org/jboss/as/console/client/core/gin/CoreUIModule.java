@@ -65,14 +65,20 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
+import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostJVMView;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
-import org.jboss.as.console.client.domain.hosts.HostPropertiesPresenter;
-import org.jboss.as.console.client.domain.hosts.HostPropertiesView;
+import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostPropertiesView;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigView;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesView;
+import org.jboss.as.console.client.domain.hosts.general.HostSocketsPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostSocketsView;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -263,6 +269,21 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostPropertiesPresenter.MyView.class,
                 HostPropertiesView.class,
                 HostPropertiesPresenter.MyProxy.class);
+
+        bindPresenter(HostInterfacesPresenter.class,
+                HostInterfacesPresenter.MyView.class,
+                HostInterfacesView.class,
+                HostInterfacesPresenter.MyProxy.class);
+
+        bindPresenter(HostSocketsPresenter.class,
+                HostSocketsPresenter.MyView.class,
+                HostSocketsView.class,
+                HostSocketsPresenter.MyProxy.class);
+
+        bindPresenter(HostJVMPresenter.class,
+                HostJVMPresenter.MyView.class,
+                HostJVMView.class,
+                HostJVMPresenter.MyProxy.class);
 
         // profile management application
         bindPresenter(ProfileMgmtPresenter.class,

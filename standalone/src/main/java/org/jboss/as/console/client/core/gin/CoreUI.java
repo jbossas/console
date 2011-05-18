@@ -49,10 +49,13 @@ import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
-import org.jboss.as.console.client.domain.hosts.HostPropertiesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostSocketsPresenter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -188,4 +191,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<DomainPropertiesPresenter> getDomainPropertiesPresenter();
 
     AsyncProvider<HostPropertiesPresenter> getHostPropertiesPresenter();
+    AsyncProvider<HostJVMPresenter> getHostJVMPresenter();
+    AsyncProvider<HostInterfacesPresenter> getHostInterfacesPresenter();
+    AsyncProvider<HostSocketsPresenter> getHostSocketsPresenter();
 }

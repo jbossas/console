@@ -17,11 +17,10 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.domain.hosts.general;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
@@ -36,21 +35,16 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class InterfaceView extends DisposableViewImpl implements InterfacePresenter.MyView{
+public class HostInterfacesView extends DisposableViewImpl implements HostInterfacesPresenter.MyView{
 
-    private InterfacePresenter presenter;
+    private HostInterfacesPresenter presenter;
     private CellTable<Interface> table;
 
     @Override
     public Widget createWidget() {
-        LayoutPanel layout = new RHSContentPanel("Interfaces");
+        LayoutPanel layout = new RHSContentPanel("Host Interfaces");
 
-        layout.add(new ContentHeaderLabel("Interface Declarations"));
-
-        //HTML description = new HTML("A named network interface, but without any criteria for determining the IP address to associate with that interface. Acts as a placeholder in the model (e.g. at the domain level) until a fully specified interface definition is applied at a lower level (e.g. at the server level, where available addresses are known.)");
-        //description.getElement().setAttribute("style", "margin-bottom:15px;");
-
-        //layout.add(description);
+        layout.add(new ContentHeaderLabel("Host Interface Declarations"));
 
         table = new DefaultCellTable<Interface>(10);
 
@@ -77,7 +71,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
     }
 
     @Override
-    public void setPresenter(InterfacePresenter presenter) {
+    public void setPresenter(HostInterfacesPresenter presenter) {
         this.presenter = presenter;
     }
 

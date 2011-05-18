@@ -17,22 +17,35 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.hosts;
+package org.jboss.as.console.client.domain.hosts.general;
+
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 /**
  * @author Heiko Braun
- * @date 5/17/11
+ * @date 5/18/11
  */
-public class CurrentHostSelection {
+public class HostSocketsView extends DisposableViewImpl implements HostSocketsPresenter.MyView{
 
-    private String name;
+    private HostSocketsPresenter presenter;
 
-    public String getName() {
-        return name;
+    @Override
+    public Widget createWidget() {
+
+        LayoutPanel layout = new RHSContentPanel("Host Socket Bindings");
+        layout.add(new ContentHeaderLabel("Host Socket Binding Declarations"));
+
+        return layout;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public void setPresenter(HostSocketsPresenter presenter) {
+        this.presenter = presenter;
     }
+
 
 }
