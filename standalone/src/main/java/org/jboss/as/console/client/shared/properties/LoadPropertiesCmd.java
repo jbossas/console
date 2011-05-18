@@ -17,11 +17,11 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general.model;
+package org.jboss.as.console.client.shared.properties;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.AddressableModelCmd;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -38,18 +38,19 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/18/11
  */
-public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncCommand<List<Interface>>{
+public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncCommand<List<PropertyRecord>> {
 
-    public LoadInterfacesCmd(DispatchAsync dispatcher, BeanFactory factory, ModelNode address) {
+
+    public LoadPropertiesCmd(DispatchAsync dispatcher, BeanFactory factory, ModelNode address) {
         super(dispatcher, factory, address);
     }
 
     @Override
-    public void execute(final AsyncCallback<List<Interface>> callback) {
+    public void execute(final AsyncCallback<List<PropertyRecord>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).set(address);
-        operation.get(CHILD_TYPE).set("interface");
+        operation.get(CHILD_TYPE).set("system-property");
         operation.get(RECURSIVE).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -61,23 +62,31 @@ public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncComma
 
             @Override
             public void onSuccess(DMRResponse result) {
+
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                System.out.println(response);
+
                 List<Property> payload = response.get(RESULT).asPropertyList();
 
-                List<Interface> interfaces = new ArrayList<Interface>(payload.size());
-                for(Property property : payload)
-                {
-                    ModelNode item = property.getValue();
-                    Interface intf = factory.interfaceDeclaration().as();
-                    intf.setName(item.get("name").asString());
-                    intf.setCriteria(item.get("criteria").toString());
+                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(payload.size());
 
-                    interfaces.add(intf);
+                for(Property prop : payload)
+                {
+                    String key = prop.getName();
+                    ModelNode item = prop.getValue();
+                    PropertyRecord propertyRecord = factory.property().as();
+                    propertyRecord.setKey(key);
+                    propertyRecord.setValue(item.get("value").asString());
+                    propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+
+                    properties.add(propertyRecord);
+
                 }
 
-                callback.onSuccess(interfaces);
+                callback.onSuccess(properties);
             }
         });
-    }
 
+    }
 }

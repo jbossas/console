@@ -34,6 +34,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -45,9 +46,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -63,6 +62,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     private BeanFactory factory;
     private DispatchAsync dispatcher;
     private DefaultWindow propertyWindow;
+    private LoadPropertiesCmd loadPropCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainPropertiesPresenter)
@@ -85,6 +85,11 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).setEmptyList();
+
+        loadPropCmd = new LoadPropertiesCmd(dispatcher, factory, address);
     }
 
     @Override
@@ -102,39 +107,12 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
 
     private void loadProperties() {
 
-        // :read-children-resources(child-type=system-property, recursive=true)
-
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(CHILD_TYPE).set("system-property");
-        operation.get(RECURSIVE).set(Boolean.TRUE);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadPropCmd.execute(new SimpleCallback<List<PropertyRecord>>(){
             @Override
-            public void onSuccess(DMRResponse result) {
-
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<Property> payload = response.get(RESULT).asPropertyList();
-
-                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(payload.size());
-                for(Property prop : payload)
-                {
-                    String key = prop.getName();
-                    ModelNode item = prop.getValue();
-                    PropertyRecord propertyRecord = factory.property().as();
-                    propertyRecord.setKey(key);
-                    propertyRecord.setValue(item.get("value").asString());
-                    propertyRecord.setBootTime(item.get("boot-time").asBoolean());
-
-                    properties.add(propertyRecord);
-
-                }
-
-                getView().setProperties(properties);
+            public void onSuccess(List<PropertyRecord> result) {
+                getView().setProperties(result);
             }
         });
-
     }
 
     @Override
