@@ -31,7 +31,13 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.general.model.Interface;
+import org.jboss.as.console.client.domain.general.model.LoadInterfacesCmd;
+import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -42,6 +48,10 @@ import java.util.List;
 public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.MyView, HostInterfacesPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+    private LoadInterfacesCmd loadInterfacesCmd;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
+    private CurrentHostSelection currentHost;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostInterfacesPresenter)
@@ -54,11 +64,17 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     }
 
     @Inject
-    public HostInterfacesPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                                   PlaceManager placeManager) {
+    public HostInterfacesPresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, CurrentHostSelection currentHost,
+            DispatchAsync dispatcher, BeanFactory factory
+    ) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+        this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.currentHost = currentHost;
     }
 
     @Override
@@ -71,6 +87,23 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
+        loadInterfaces();
+    }
+
+    private void loadInterfaces() {
+
+
+        ModelNode address = new ModelNode();
+        address.add("host", currentHost.getName());
+        LoadInterfacesCmd loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, factory, address);
+
+        loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
+            @Override
+            public void onSuccess(List<Interface> result) {
+                getView().setInterfaces(result);
+            }
+        });
+
     }
 
     @Override

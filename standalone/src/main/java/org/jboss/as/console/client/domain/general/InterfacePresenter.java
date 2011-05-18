@@ -31,19 +31,14 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.general.model.Interface;
+import org.jboss.as.console.client.domain.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -54,6 +49,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
+    private LoadInterfacesCmd loadInterfacesCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
@@ -62,7 +58,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     public interface MyView extends View {
         void setPresenter(InterfacePresenter presenter);
-
         void setInterfaces(List<Interface> interfaces);
     }
 
@@ -77,6 +72,11 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
+
+        ModelNode address = new ModelNode();
+        address.setEmptyList();
+        loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, factory, address);
+
     }
 
     @Override
@@ -94,48 +94,10 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     private void loadInterfaces() {
 
-        // [domain@localhost:9999 /] :read-children-resources(child-type=interface, recursive=true)
-        /*
-{
-    "outcome" => "success",
-    "result" => [
-        ("loopback" => {
-    "name" => "loopback",
-    "criteria" => [("inet-address" => "127.0.0.1")]
-}),
-        ("external" => {
-    "name" => "external",
-    "criteria" => "any-ipv4-address"
-})
-    ],
-    "compensating-operation" => undefined
-}
-        */
-
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(CHILD_TYPE).set("interface");
-        operation.get(RECURSIVE).set(Boolean.TRUE);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<Property> payload = response.get(RESULT).asPropertyList();
-
-                List<Interface> interfaces = new ArrayList<Interface>(payload.size());
-                for(Property property : payload)
-                {
-                    ModelNode item = property.getValue();
-                    Interface intf = factory.interfaceDeclaration().as();
-                    intf.setName(item.get("name").asString());
-                    intf.setCriteria(item.get("criteria").toString());
-
-                    interfaces.add(intf);
-                }
-
-                getView().setInterfaces(interfaces);
+            public void onSuccess(List<Interface> result) {
+                getView().setInterfaces(result);
             }
         });
 
