@@ -39,6 +39,9 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.groups.JvmManagement;
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
+import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -84,6 +87,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private DefaultWindow propertyWindow;
     private DispatchAsync dispatcher;
     private PropertyMetaData propertyMetaData;
+    private BeanFactory factory;
 
 
     @ProxyCodeSplit
@@ -106,13 +110,14 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             HostInformationStore hostInfoStore,
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher,
-            PropertyMetaData propertyMetaData) {
+            PropertyMetaData propertyMetaData, BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.hostInfoStore = hostInfoStore;
         this.serverGroupStore = serverGroupStore;
         this.dispatcher = dispatcher;
         this.propertyMetaData = propertyMetaData;
+        this.factory = factory;
     }
 
     @Override
@@ -480,35 +485,32 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             propertyWindow.hide();
         }
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set("add-system-property");
-        operation.get(ADDRESS).add("host", selectedHost);
-        operation.get(ADDRESS).add("server-config", reference);
-        operation.get("name").set(prop.getKey());
-        operation.get("value").set(prop.getValue());
-        operation.get("boot-time").set(prop.isBootTime());
+        ModelNode address = new ModelNode();
+        address.add("host", selectedHost);
+        address.add("server-config", reference);
+        address.add("system-property", prop.getKey());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Created property "+prop.getKey());
-                loadServerConfigurations();
+            public void onSuccess(Boolean result) {
+               loadServerConfigurations();
             }
         });
     }
 
     @Override
     public void onDeleteProperty(String reference, final PropertyRecord prop) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set("remove-system-property");
-        operation.get(ADDRESS).add("host", selectedHost);
-        operation.get(ADDRESS).add("server-config", reference);
-        operation.get("name").set(prop.getKey());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        ModelNode address = new ModelNode();
+        address.add("host", selectedHost);
+        address.add("server-config", reference);
+        address.add("system-property", prop.getKey());
+
+        DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher,factory,address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed property "+prop.getKey());
+            public void onSuccess(Boolean result) {
                 loadServerConfigurations();
             }
         });

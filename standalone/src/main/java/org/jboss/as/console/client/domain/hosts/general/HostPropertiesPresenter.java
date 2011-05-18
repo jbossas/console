@@ -32,16 +32,15 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
+import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
+import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -49,8 +48,6 @@ import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -152,34 +149,31 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
             propertyWindow.hide();
         }
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get(ADDRESS).add("system-property", prop.getKey());
-        operation.get("value").set(prop.getValue());
-        operation.get("boot-time").set(prop.isBootTime());
+        ModelNode address = new ModelNode();
+        address.add("host", currentHost.getName());
+        address.add("system-property", prop.getKey());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Created property " + prop.getKey());
+            public void onSuccess(Boolean result) {
                 loadProperties();
             }
         });
+
 
     }
 
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get(ADDRESS).add("system-property", prop.getKey());
+        ModelNode address = new ModelNode();
+        address.add("host", currentHost.getName());
+        address.add("system-property", prop.getKey());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher, factory, address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed property "+prop.getKey());
+            public void onSuccess(Boolean result) {
                 loadProperties();
             }
         });

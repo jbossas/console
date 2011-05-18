@@ -45,9 +45,12 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
+import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -79,6 +82,7 @@ public class ServerGroupPresenter
     private DefaultWindow propertyWindow;
     private String groupName;
     private DispatchAsync dispatcher;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
@@ -99,12 +103,13 @@ public class ServerGroupPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             ServerGroupStore serverGroupStore,
             ProfileStore profileStore,
-            DispatchAsync dispatcher) {
+            DispatchAsync dispatcher, BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;
         this.profileStore = profileStore;
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override
@@ -434,36 +439,32 @@ public class ServerGroupPresenter
             propertyWindow.hide();
         }
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("server-group", groupName);
-        operation.get(ADDRESS).add("system-property", prop.getValue());
-        operation.get("name").set(prop.getKey());
-        operation.get("value").set(prop.getValue());
-        operation.get("boot-time").set(prop.isBootTime());
+        ModelNode address = new ModelNode();
+        address.add("server-group", groupName);
+        address.add("system-property", prop.getValue());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                System.out.println(ModelNode.fromBase64(result.getResponseText()));
-                Console.info("Success: Created property "+prop.getKey());
+            public void onSuccess(Boolean result) {
                 loadServerGroup(groupName);
             }
         });
+
 
     }
 
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("server-group", groupName);
-        operation.get(ADDRESS).add("system-property", prop.getKey());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        ModelNode address = new ModelNode();
+        address.add("server-group", groupName);
+        address.add("system-property", prop.getValue());
+
+        DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher,factory,address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed property "+prop.getKey());
+            public void onSuccess(Boolean result) {
                 loadServerGroup(groupName);
             }
         });
