@@ -38,33 +38,32 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
-import org.jboss.as.console.client.shared.jvm.Jvm;
-import org.jboss.as.console.client.shared.jvm.JvmManagement;
-import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
-import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
-import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
-import org.jboss.as.console.client.shared.properties.PropertyManagement;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
+import org.jboss.as.console.client.shared.jvm.DeleteJvmCmd;
+import org.jboss.as.console.client.shared.jvm.Jvm;
+import org.jboss.as.console.client.shared.jvm.JvmManagement;
+import org.jboss.as.console.client.shared.jvm.UpdateJvmCmd;
+import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
+import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.JVM;
 
 /**
  * @author Heiko Braun
@@ -410,21 +409,15 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void onCreateJvm(String reference, Jvm jvm) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("host", selectedHost);
-        operation.get(ADDRESS).add("server-config", reference);
-        operation.get(ADDRESS).add(JVM, jvm.getName());
+        ModelNode address = new ModelNode();
+        address.add("host", selectedHost);
+        address.add("server-config", reference);
+        address.add(JVM, jvm.getName());
 
-        operation.get("heap-size").set(jvm.getHeapSize());
-        operation.get("max-heap-size").set(jvm.getMaxHeapSize());
-        operation.get("debug-enabled").set(jvm.isDebugEnabled());
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
+        CreateJvmCmd cmd = new CreateJvmCmd(dispatcher, factory, address);
+        cmd.execute(jvm, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Created JVM settings");
+            public void onSuccess(Boolean result) {
                 loadServerConfigurations();
             }
         });
@@ -432,49 +425,39 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void onDeleteJvm(String reference, Jvm jvm) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("host", selectedHost);
-        operation.get(ADDRESS).add("server-config", reference);
-        operation.get(ADDRESS).add(JVM, jvm.getName());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        ModelNode address = new ModelNode();
+        address.add("host", selectedHost);
+        address.add("server-config", reference);
+        address.add(JVM, jvm.getName());
 
+        DeleteJvmCmd cmd = new DeleteJvmCmd(dispatcher, factory, address);
+        cmd.execute(new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed JVM settings");
+            public void onSuccess(Boolean result) {
                 loadServerConfigurations();
             }
         });
+
     }
 
     @Override
     public void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues) {
+
         if(changedValues.size()>0)
         {
-            ModelNode proto = new ModelNode();
-            proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-            proto.get(ADDRESS).add("host", selectedHost);
-            proto.get(ADDRESS).add("server-config", reference);
-            proto.get(ADDRESS).add(JVM, jvmName);
+            ModelNode address = new ModelNode();
+            address.add("host", selectedHost);
+            address.add("server-config", reference);
+            address.add(JVM, jvmName);
 
-            List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
-            ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
-            System.out.println(operation.toString());
-
-            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
+            UpdateJvmCmd cmd = new UpdateJvmCmd(dispatcher, factory, propertyMetaData, address);
+            cmd.execute(changedValues, new SimpleCallback<Boolean>() {
                 @Override
-                public void onSuccess(DMRResponse result) {
-                    Console.info("Success: Updated JVM settings");
+                public void onSuccess(Boolean result) {
                     loadServerConfigurations();
                 }
             });
-        }
-        else
-        {
-            Console.warning("No changes applied!");
         }
     }
 
@@ -494,7 +477,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-               loadServerConfigurations();
+                loadServerConfigurations();
             }
         });
     }
