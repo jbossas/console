@@ -36,7 +36,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileHeader;
+import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 
@@ -101,7 +101,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
-        ProfileHeader header = new ProfileHeader("Configuration Profile");
+        ApplicationHeader header = new ApplicationHeader("Configuration Profile");
         Console.MODULES.getHeader().setContent(header);
 
         subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {

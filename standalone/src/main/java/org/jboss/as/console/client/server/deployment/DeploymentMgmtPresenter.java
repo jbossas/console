@@ -35,7 +35,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.profiles.ProfileHeader;
+import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 
 /**
  * Manages deployments on a standalone server.
@@ -80,7 +80,7 @@ public class DeploymentMgmtPresenter extends Presenter<DeploymentMgmtPresenter.D
     protected void onReset() {
         super.onReset();
         Console.MODULES.getHeader().highlight(NameTokens.DeploymentMgmtPresenter);
-        ProfileHeader header = new ProfileHeader("Deployments");
+        ApplicationHeader header = new ApplicationHeader("Deployments");
         Console.MODULES.getHeader().setContent(header);
 
         if(!hasBeenRevealed)

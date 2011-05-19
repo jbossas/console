@@ -29,11 +29,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
  * @author Heiko Braun
  * @date 2/28/11
  */
-public class ProfileHeader extends HorizontalPanel {
+public class ApplicationHeader extends HorizontalPanel {
 
     HTML prefix;
 
-    public ProfileHeader(String title) {
+    public ApplicationHeader(String title) {
 
         prefix = new HTML("");
         prefix.setStyleName("header-content");

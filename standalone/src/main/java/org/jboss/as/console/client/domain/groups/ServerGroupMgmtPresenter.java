@@ -40,7 +40,7 @@ import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileHeader;
+import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 
 import java.util.List;
 
@@ -52,6 +52,7 @@ public class ServerGroupMgmtPresenter
         extends Presenter<ServerGroupMgmtPresenter.MyView, ServerGroupMgmtPresenter.MyProxy>
         implements StaleModelEvent.StaleModelListener{
 
+    private static final ApplicationHeader APPLICATION_HEADER = new ApplicationHeader(Console.CONSTANTS.common_label_groupManagement());
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
@@ -125,8 +126,7 @@ public class ServerGroupMgmtPresenter
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
-        ProfileHeader header = new ProfileHeader(Console.CONSTANTS.common_label_groupManagement());
-        Console.MODULES.getHeader().setContent(header);
+        Console.MODULES.getHeader().setContent(APPLICATION_HEADER);
     }
 
     @Override

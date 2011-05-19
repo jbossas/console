@@ -41,7 +41,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileHeader;
+import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 
 import java.util.List;
 
@@ -53,6 +53,7 @@ public class HostMgmtPresenter
         extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
         implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
 
+    private static final ApplicationHeader APPLICATION_HEADER = new ApplicationHeader(Console.CONSTANTS.common_label_hostManagement());
     private final PlaceManager placeManager;
 
     private HostInformationStore hostInfoStore;
@@ -102,8 +103,7 @@ public class HostMgmtPresenter
         super.onReveal();
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
-        ProfileHeader header = new ProfileHeader(Console.CONSTANTS.common_label_hostManagement());
-        Console.MODULES.getHeader().setContent(header);
+        Console.MODULES.getHeader().setContent(APPLICATION_HEADER);
 
         // first request, select default contents
         if(!hasBeenRevealed &&

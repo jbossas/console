@@ -36,7 +36,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.profiles.ProfileHeader;
+import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 
 /**
  * @author Heiko Braun
@@ -80,7 +80,7 @@ public class DebugToolsPresenter extends Presenter<DebugToolsPresenter.MyView, D
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.DebugToolsPresenter);
-        ProfileHeader header = new ProfileHeader("Development Tools");
+        ApplicationHeader header = new ApplicationHeader("Development Tools");
         Console.MODULES.getHeader().setContent(header);
 
         if(!hasBeenRevealed)
