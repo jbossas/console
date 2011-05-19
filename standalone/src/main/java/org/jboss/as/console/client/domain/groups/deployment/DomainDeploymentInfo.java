@@ -67,9 +67,11 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
 
     boolean isAssignedToGroup(String serverGroup, DeploymentRecord deployment) {
         for (DeploymentRecord record : serverGroupDeployments.get(serverGroup)) {
-            if (deployment.getName().equals(record.getName())) return true;
+            if (deployment.getName().equals(record.getName())) {
+                return true;
+            }
         }
-        
+
         return false;
     }
 
@@ -78,10 +80,21 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
      */
     boolean isAssignedToAnyGroup(DeploymentRecord deployment) {
         for (Map.Entry<String, List<DeploymentRecord>> entry : serverGroupDeployments.entrySet()) {
-            if (isAssignedToGroup(entry.getKey(), deployment)) return true;
+            if (isAssignedToGroup(entry.getKey(), deployment)) {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> getAllDeploymentNames() {
+        List<String> deploymentNames = new ArrayList<String>(domainDeployments.size());
+        for (DeploymentRecord record : domainDeployments) {
+            deploymentNames.add(record.getName());
+        }
+        return deploymentNames;
     }
 
     @Override

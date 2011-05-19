@@ -21,11 +21,15 @@ package org.jboss.as.console.client.shared.deployment;
 
 /**
  * @author Heiko Braun
+ * @author Stan Silvert
  * @date 4/8/11
  */
 public interface DeploymentReference {
     String getName();
     void setName(String name);
+    
+    String getRuntimeName();
+    void setRuntimeName(String name);
 
     String getHash();
     void setHash(String hash);

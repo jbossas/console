@@ -18,12 +18,13 @@
  */
 package org.jboss.as.console.client.server.deployment;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,15 +36,20 @@ public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
 
   private DeploymentListPresenter presenter;
   private DeploymentStore deploymentStore;
-  private List<DeploymentRecord> deployments = Collections.EMPTY_LIST;
+  private List<DeploymentRecord> allDeployments = Collections.EMPTY_LIST;
 
   StandaloneDeploymentInfo(DeploymentListPresenter presenter, DeploymentStore deploymentStore) {
     this.presenter = presenter;
     this.deploymentStore = deploymentStore;
   }
-
-  List<DeploymentRecord> getDeployments() {
-    return this.deployments;
+  
+  @Override
+  public List<String> getAllDeploymentNames() {
+      List<String> deploymentNames = new ArrayList<String>(allDeployments.size());
+      for (DeploymentRecord record : allDeployments) {
+          deploymentNames.add(record.getName());
+      }
+      return deploymentNames;
   }
 
   @Override
@@ -53,6 +59,7 @@ public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
 
       @Override
       public void onSuccess(List<DeploymentRecord> result) {
+        allDeployments = result;
         presenter.getView().updateDeploymentInfo(result);
       }
     });

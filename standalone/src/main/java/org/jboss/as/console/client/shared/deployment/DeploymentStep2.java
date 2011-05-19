@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.shared.deployment;
 
 import com.google.gwt.core.client.Scheduler;
@@ -27,6 +26,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.DefaultWindow;
@@ -47,33 +47,31 @@ public class DeploymentStep2 {
 
     private NewDeploymentWizard wizard;
     private DefaultWindow window;
-    private List<String> serverGroupNames;
-
     private Form<DeploymentReference> form;
+    private DeploymentViewRefresher refresher;
 
-    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, List<String> serverGroupNames) {
+    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, DeploymentViewRefresher refresher) {
         this.wizard = wizard;
         this.window = window;
-        this.serverGroupNames = serverGroupNames;
+        this.refresher = refresher;
     }
 
-    public Widget asWidget()
-    {
+    public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "width:95%, margin:15px;");
 
-        layout.add(new HTML("<h3>" + Console.CONSTANTS.common_label_step() + " 2/2: " + 
-                                     Console.CONSTANTS.common_label_chooseServerGroup() + "</h3>"));
+        layout.add(new HTML("<h3>" + Console.CONSTANTS.common_label_step() + " 2/2: "
+                + Console.CONSTANTS.common_label_verifyDeploymentNames() + "</h3>"));
 
         form = new Form<DeploymentReference>(DeploymentReference.class);
 
         TextItem hashField = new TextItem("hash", Console.CONSTANTS.common_label_key());
-        TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        ComboBoxItem groupSelector = new ComboBoxItem("group", Console.CONSTANTS.common_label_serverGroup());
-        groupSelector.setDefaultToFirstOption(true);
-        groupSelector.setValueMap(this.serverGroupNames);
+        DeploymentNameTextBoxItem nameField = new DeploymentNameTextBoxItem("name", 
+                                                                            Console.CONSTANTS.common_label_name(), 
+                                                                            refresher.getAllDeploymentNames());
+        RuntimeNameTextBoxItem runtimeNameField = new RuntimeNameTextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName());
 
-        form.setFields(hashField, nameField, groupSelector);
+        form.setFields(hashField, nameField, runtimeNameField);
 
         layout.add(form.asWidget());
 
@@ -82,6 +80,7 @@ public class DeploymentStep2 {
         Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
         cancel.setStyleName("html-link");
         cancel.addClickHandler(new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
                 window.hide();
@@ -89,14 +88,15 @@ public class DeploymentStep2 {
         });
 
         DefaultButton submit = new DefaultButton(Console.CONSTANTS.common_label_finish(), new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
 
                 FormValidation validation = form.validate();
                 if (!validation.hasErrors()) {
                     // proceed
-                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand()
-                    {
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
                         @Override
                         public void execute() {
                             wizard.onDeployToGroup(form.getUpdatedEntity());
@@ -125,9 +125,37 @@ public class DeploymentStep2 {
         return layout;
     }
 
-
-    void edit(DeploymentReference ref)
-    {
+    void edit(DeploymentReference ref) {
         form.edit(ref);
+    }
+
+    private static class DeploymentNameTextBoxItem extends TextBoxItem {
+        private List<String> currentDeploymentNames;
+        
+        public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames) {
+            super(name, title);
+            this.currentDeploymentNames = currentDeploymentNames;
+        }
+
+        @Override
+        public boolean validate(String name) {
+            // can't use the name of a current deployment
+            return super.validate(name)
+                    && (!currentDeploymentNames.contains(name));
+        }
+    }
+    
+    private static class RuntimeNameTextBoxItem extends TextBoxItem {
+
+        public RuntimeNameTextBoxItem(String name, String title) {
+            super(name, title);
+        }
+
+        @Override
+        public boolean validate(String name) {
+            // name must have 3 char extension ?*.???
+            return super.validate(name)
+                    && (name.matches(".+\\...."));
+        }
     }
 }

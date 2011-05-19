@@ -19,11 +19,14 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
+import java.util.List;
+
 /**
  * Defines a class that is capable of refreshing a deployment view.
  *
  * @author Stan Silvert <ssilvert@redhat.com> (C) 2011 Red Hat Inc.
  */
 public interface DeploymentViewRefresher {
+    public List<String> getAllDeploymentNames();
     public void refreshView();
 }
