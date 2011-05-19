@@ -66,7 +66,7 @@ public class DeletePropertyCmd extends AddressableModelCmd implements AsyncComma
                 if(success)
                     Console.info("Success: Remove property " + prop.getKey());
                 else
-                    Console.error("Failed: Remove property "+prop.getKey());
+                    Console.error("Failed: Remove property "+prop.getKey(), response.toString());
 
                 callback.onSuccess(success);
             }
