@@ -47,13 +47,15 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/15/11
  */
-class ProfileSection {
+class ProfileSection implements SubsystemRevealedEvent.SubsystemRevealedListener {
 
     private Tree subsysTree;
     private ComboBox selection;
     private DisclosurePanel panel;
+    private boolean isUpdated = false;
+    private String requestedKey;
 
-    public ProfileSection() {
+    public ProfileSection()  {
 
         panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_subsystems()).asWidget();
         subsysTree = new LHSNavTree("profiles");
@@ -84,6 +86,9 @@ class ProfileSection {
         layout.add(subsysTree);
 
         panel.setContent(layout);
+
+
+        Console.MODULES.getEventBus().addHandler(SubsystemRevealedEvent.TYPE, this);
 
     }
 
@@ -123,7 +128,7 @@ class ProfileSection {
         // build groups first
         for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
         {
-            TreeItem treeItem = new TreeItem(group.getName());
+            final TreeItem groupTreeItem = new TreeItem(group.getName());
 
             for(SubsystemGroupItem groupItem : group.getItems())
             {
@@ -132,18 +137,68 @@ class ProfileSection {
                     if(subsys.getTitle().equals(groupItem.getKey())
                             && groupItem.isDisabled()==false)
                     {
-                        String token = "domain/profile/" + subsys.getTitle().toLowerCase().replace(" ", "_");
-                        TreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
-                        treeItem.addItem(link);
+                        String key = subsys.getTitle().toLowerCase().replace(" ", "_");
+                        String token = "domain/profile/" + key;
+                        final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
+                        link.setKey(key);
+
+                        if(key.equals("datasources")) // the eventing currently doesn't work reliably
+                        {
+                            Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand()
+                                    {
+                                @Override
+                                public boolean execute() {
+                                    groupTreeItem.setState(true);
+                                    link.setSelected(true);
+                                    return true;
+                                }
+                            }, 500);
+                        }
+
+                        groupTreeItem.addItem(link);
                     }
                 }
             }
 
             // skip empty groups
-            if(treeItem.getChildCount()>0)
-                subsysTree.addItem(treeItem);
+            if(groupTreeItem.getChildCount()>0)
+                subsysTree.addItem(groupTreeItem);
 
         }
+
+        isUpdated = true;
+    }
+
+    @Override
+    public void onSubsystemRevealed(String subsystemKey) {
+
+
+        /*if(isUpdated) // listener registered before tree is build
+        {
+            for(int i=0; i<subsysTree.getItemCount(); i++)
+            {
+                TreeItem groupItem = subsysTree.getItem(i);
+                LHSNavTreeItem match = null;
+
+                for(int x=0; i<groupItem.getChildCount(); x++)
+                {
+                    LHSNavTreeItem child = (LHSNavTreeItem)groupItem.getChild(x);
+
+                    if(child!=null && child.getKey().equals(subsystemKey))
+                    {
+                        match = child;
+                        break;
+                    }
+                }
+
+                if(match!=null)
+                {
+                    groupItem.setState(true); // open parent
+                    match.setSelected(true);
+                    break;
+                }
+            }
+        }  */
 
     }
 }

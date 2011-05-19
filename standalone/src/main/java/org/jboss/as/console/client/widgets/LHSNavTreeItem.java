@@ -44,6 +44,16 @@ public class LHSNavTreeItem extends TreeItem {
         setStyleName("lhs-tree-item");
     }
 
+    public void setKey(String key) {
+        getElement().setAttribute("lhs-nav-key", key);
+    }
+
+    public String getKey() {
+        String key = getElement().getAttribute("lhs-nav-key");
+        if(null == key) key = ""; // graceful
+        return key;
+    }
+
     /*public LHSNavTreeItem(String text, ImageResource icon, String token) {
 
         Image img = new Image(icon);

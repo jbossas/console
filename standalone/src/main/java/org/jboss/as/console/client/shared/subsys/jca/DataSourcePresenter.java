@@ -24,6 +24,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -40,6 +41,7 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.domain.profiles.SubsystemRevealedEvent;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -75,13 +77,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public interface MyView extends SuspendableView {
         void setPresenter(DataSourcePresenter presenter);
-
         void updateDataSources(List<DataSource> datasources);
-
         void updateXADataSources(List<XADataSource> result);
-
         void enableDSDetails(boolean b);
-
         void enableXADetails(boolean b);
     }
 
@@ -117,23 +115,17 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         if(!hasBeenRevealed)
         {
             hasBeenRevealed=true;
-
-
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, "datasources", "profiles")
-                    );
-                }
-            });
-
         }
     }
 
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
     }
 
     void loadDataSources() {
@@ -331,18 +323,18 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDeleteXA(final XADataSource entity) {
-         dataSourceStore.deleteXADataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>() {
-             @Override
-             public void onSuccess(Boolean success) {
+        dataSourceStore.deleteXADataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
 
-                 if (success) {
-                     Console.info("Successfully removed datasource " + entity.getName());
-                 } else {
-                     Console.error("Failed to remove datasource " + entity.getName());
-                 }
+                if (success) {
+                    Console.info("Successfully removed datasource " + entity.getName());
+                } else {
+                    Console.error("Failed to remove datasource " + entity.getName());
+                }
 
-                 loadDataSources();
-             }
-         });
+                loadDataSources();
+            }
+        });
     }
 }
