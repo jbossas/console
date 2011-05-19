@@ -212,7 +212,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     public void launchNewDeploymentDialoge() {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(320);
-        window.setHeight(240);
+        window.setHeight(260);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
 
             @Override
@@ -221,7 +221,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         });
 
         window.setWidget(
-                new NewDeploymentWizard(window, dispatcher, domainDeploymentInfo, domainDeploymentInfo.getServerGroupNames()).asWidget());
+                new NewDeploymentWizard(window, dispatcher, domainDeploymentInfo).asWidget());
 
         window.setGlassEnabled(true);
         window.center();

@@ -32,17 +32,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.dmr.client.ModelNode;
-
-import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -50,8 +42,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 4/7/11
  */
 public class NewDeploymentWizard  {
-    private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
-
     private VerticalPanel layout;
     private DeckPanel deck;
 
@@ -70,20 +60,9 @@ public class NewDeploymentWizard  {
         this.refresher = refresher;
 
         deck = new DeckPanel();
-        step1 = new DeploymentStep1(this, window);
-        deck.add(step1.asWidget());
-        deck.showWidget(0);
-    }
-    
-    public NewDeploymentWizard(DefaultWindow window, DispatchAsync dispatcher, DeploymentViewRefresher refresher, List<String> serverGroupNames) {
-        this.window = window;
-        this.dispatcher = dispatcher;
-        this.refresher = refresher;
-
-        deck = new DeckPanel();
 
         step1 = new DeploymentStep1(this, window);
-        step2 = new DeploymentStep2(this, window, serverGroupNames);
+        step2 = new DeploymentStep2(this, window, refresher);
 
         deck.add(step1.asWidget());
         deck.add(step2.asWidget());
@@ -108,14 +87,10 @@ public class NewDeploymentWizard  {
         DeploymentReference deploymentRef = factory.deploymentReference().as();
         deploymentRef.setHash(hash);
         deploymentRef.setName(fileName);
-
-        if (isStandalone) {
-            assignDeploymentName(deploymentRef);
-            refresher.refreshView();
-        } else {
-            step2.edit(deploymentRef);
-            deck.showWidget(1); // proceed to step2
-        }
+        deploymentRef.setRuntimeName(fileName);
+        
+        step2.edit(deploymentRef);
+        deck.showWidget(1); // proceed to step2
     }
     
     public void onDeployToGroup(final DeploymentReference deployment) {
@@ -127,7 +102,9 @@ public class NewDeploymentWizard  {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("\"address\":[").append("{\"deployment\":\"").append(deployment.getName()).append("\"}],");
-        sb.append("\"operation\":\"add\",\"content\":");
+        sb.append("\"operation\":\"add\",");
+        sb.append("\"runtime-name\":\"").append(deployment.getRuntimeName()).append("\",");
+        sb.append("\"content\":");
         sb.append("[{\"hash\":{");
         sb.append("\"BYTES_VALUE\":\"").append(deployment.getHash()).append("\"");
         sb.append("}}],");
@@ -151,8 +128,8 @@ public class NewDeploymentWizard  {
                         return;
                     }
 
-                    if (!isStandalone) assignToGroup(deployment);
-                    if (isStandalone) window.hide();
+                    window.hide();
+                    refresher.refreshView();
                 }
 
                 @Override
@@ -163,29 +140,6 @@ public class NewDeploymentWizard  {
         } catch (RequestException e) {
             Log.error(Console.CONSTANTS.common_error_unknownError(), e);
         }
-    }
-
-    private void assignToGroup(final DeploymentReference deployment) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("server-group", deployment.getGroup());
-        operation.get(ADDRESS).add("deployment", deployment.getName());
-        operation.get("enabled").set(true);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_deploymentFailed() + ": ", caught);
-                onDeploymentFailed(deployment);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                refresher.refreshView();
-            }
-        });
     }
 
     private void onDeploymentFailed(DeploymentReference deployment) {

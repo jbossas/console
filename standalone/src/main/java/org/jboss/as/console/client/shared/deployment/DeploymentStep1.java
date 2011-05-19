@@ -44,8 +44,6 @@ import org.jboss.as.console.client.widgets.DefaultWindow;
  * @date 4/8/11
  */
 public class DeploymentStep1 {
-    private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
-
     private NewDeploymentWizard wizard;
     private DefaultWindow window;
 
@@ -88,8 +86,7 @@ public class DeploymentStep1 {
             }
         });
 
-        String okText = Console.CONSTANTS.common_label_upload();
-        if (!isStandalone) okText = Console.CONSTANTS.common_label_next() + " &rsaquo;&rsaquo;";
+        String okText = Console.CONSTANTS.common_label_next() + " &rsaquo;&rsaquo;";
         Button submit = new DefaultButton(okText, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -139,9 +136,8 @@ public class DeploymentStep1 {
             }
         });
 
-        String stepText = "<h3>" + Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
-        if (!isStandalone) stepText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/2: " +
-                                       Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
+        String stepText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/2: " +
+                          Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
         layout.add(new HTML(stepText));
         HTML description = new HTML();
         description.setHTML(Console.CONSTANTS.common_label_chooseFile());
