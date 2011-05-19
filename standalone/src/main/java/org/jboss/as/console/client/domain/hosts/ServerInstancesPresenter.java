@@ -60,6 +60,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private String selectedHost = null;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
+    private boolean hasBeenRevealed = false;
 
 
     @ProxyCodeSplit
@@ -118,9 +119,19 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                 );
             }
         });
+
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        hasBeenRevealed = true;
     }
 
     private void refreshView() {
+
+        // host selection event may cause this
+        if(!hasBeenRevealed) return;
 
         if(null== selectedHost)
         {
