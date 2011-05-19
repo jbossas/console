@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.profiles;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -38,6 +39,7 @@ import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
+import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 import org.jboss.as.console.client.widgets.LHSNavTree;
 import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
@@ -47,13 +49,11 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/15/11
  */
-class ProfileSection implements SubsystemRevealedEvent.SubsystemRevealedListener {
+class ProfileSection {
 
-    private Tree subsysTree;
+    private LHSNavTree subsysTree;
     private ComboBox selection;
     private DisclosurePanel panel;
-    private boolean isUpdated = false;
-    private String requestedKey;
 
     public ProfileSection()  {
 
@@ -86,9 +86,6 @@ class ProfileSection implements SubsystemRevealedEvent.SubsystemRevealedListener
         layout.add(subsysTree);
 
         panel.setContent(layout);
-
-
-        Console.MODULES.getEventBus().addHandler(SubsystemRevealedEvent.TYPE, this);
 
     }
 
@@ -137,22 +134,30 @@ class ProfileSection implements SubsystemRevealedEvent.SubsystemRevealedListener
                     if(subsys.getTitle().equals(groupItem.getKey())
                             && groupItem.isDisabled()==false)
                     {
-                        String key = subsys.getTitle().toLowerCase().replace(" ", "_");
+                        final String key = subsys.getTitle().toLowerCase().replace(" ", "_");
                         String token = "domain/profile/" + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
 
                         if(key.equals("datasources")) // the eventing currently doesn't work reliably
                         {
-                            Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand()
-                                    {
+                            Timer t = new Timer() {
                                 @Override
-                                public boolean execute() {
+                                public void run() {
                                     groupTreeItem.setState(true);
-                                    link.setSelected(true);
-                                    return true;
+                                    //link.setSelected(true);
+
+                                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
+                                        @Override
+                                        public void execute() {
+                                            Console.MODULES.getEventBus().fireEvent(
+                                                    new LHSHighlightEvent(subsysTree.getTreeId(), link.getText(), "profiles")
+                                            );
+                                        }
+                                    });
                                 }
-                            }, 500);
+                            };
+                            t.schedule(500);
                         }
 
                         groupTreeItem.addItem(link);
@@ -165,40 +170,5 @@ class ProfileSection implements SubsystemRevealedEvent.SubsystemRevealedListener
                 subsysTree.addItem(groupTreeItem);
 
         }
-
-        isUpdated = true;
-    }
-
-    @Override
-    public void onSubsystemRevealed(String subsystemKey) {
-
-
-        /*if(isUpdated) // listener registered before tree is build
-        {
-            for(int i=0; i<subsysTree.getItemCount(); i++)
-            {
-                TreeItem groupItem = subsysTree.getItem(i);
-                LHSNavTreeItem match = null;
-
-                for(int x=0; i<groupItem.getChildCount(); x++)
-                {
-                    LHSNavTreeItem child = (LHSNavTreeItem)groupItem.getChild(x);
-
-                    if(child!=null && child.getKey().equals(subsystemKey))
-                    {
-                        match = child;
-                        break;
-                    }
-                }
-
-                if(match!=null)
-                {
-                    groupItem.setState(true); // open parent
-                    match.setSelected(true);
-                    break;
-                }
-            }
-        }  */
-
     }
 }

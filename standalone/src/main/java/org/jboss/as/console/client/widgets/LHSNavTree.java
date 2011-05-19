@@ -60,8 +60,7 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
 
                 final TreeItem selectedItem = event.getSelectedItem();
 
-                if(selectedItem.getElement().hasAttribute("token"))
-                {
+                if (selectedItem.getElement().hasAttribute("token")) {
                     String token = selectedItem.getElement().getAttribute("token");
                     Console.MODULES.getPlaceManager().revealPlaceHierarchy(
                             Places.fromString(token)
@@ -70,7 +69,7 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
                 }
 
                 // highlight section
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
                         Console.MODULES.getEventBus().fireEvent(
@@ -116,13 +115,24 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
     {
         for(int i=0; i<getItemCount(); i++)
         {
+            dfsItem(stateChange, getItem(i));
+        }
+    }
 
-            TreeItem item = getItem(i);
-            if(item instanceof LHSNavTreeItem)
-            {
-                LHSNavTreeItem navItem = (LHSNavTreeItem) item;
-                stateChange.applyTo(navItem);
-            }
+    private void dfsItem(StateChange stateChange, TreeItem item) {
+
+        if(null==item) return;
+
+        if(item instanceof LHSNavTreeItem)
+        {
+            LHSNavTreeItem navItem = (LHSNavTreeItem) item;
+            stateChange.applyTo(navItem);
+            return;
+        }
+
+        for(int x=0; x<item.getChildCount(); x++)
+        {
+            dfsItem(stateChange, item.getChild(x));
         }
     }
 

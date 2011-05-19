@@ -20,11 +20,9 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -41,7 +39,6 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
-import org.jboss.as.console.client.domain.profiles.SubsystemRevealedEvent;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -50,7 +47,6 @@ import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 
 import java.util.List;
 import java.util.Map;
