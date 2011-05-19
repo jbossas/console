@@ -359,10 +359,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             });
 
         }
-        else
-        {
-            Console.warning("No changes applied!");
-        }
     }
 
 
