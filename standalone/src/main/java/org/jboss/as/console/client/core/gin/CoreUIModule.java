@@ -65,20 +65,18 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
-import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
-import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostJVMView;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
-import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostPropertiesView;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigView;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesView;
-import org.jboss.as.console.client.domain.hosts.general.HostSocketsPresenter;
-import org.jboss.as.console.client.domain.hosts.general.HostSocketsView;
+import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
+import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostJVMView;
+import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
+import org.jboss.as.console.client.domain.hosts.general.HostPropertiesView;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -119,13 +117,13 @@ import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.sockets.SocketBindingView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
-import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSView;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
@@ -274,11 +272,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostInterfacesPresenter.MyView.class,
                 HostInterfacesView.class,
                 HostInterfacesPresenter.MyProxy.class);
-
-        bindPresenter(HostSocketsPresenter.class,
-                HostSocketsPresenter.MyView.class,
-                HostSocketsView.class,
-                HostSocketsPresenter.MyProxy.class);
 
         bindPresenter(HostJVMPresenter.class,
                 HostJVMPresenter.MyView.class,
