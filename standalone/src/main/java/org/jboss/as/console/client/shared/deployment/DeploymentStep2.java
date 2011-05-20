@@ -66,9 +66,9 @@ public class DeploymentStep2 {
         form = new Form<DeploymentReference>(DeploymentReference.class);
 
         TextItem hashField = new TextItem("hash", Console.CONSTANTS.common_label_key());
-        DeploymentNameTextBoxItem nameField = new DeploymentNameTextBoxItem("name", 
-                                                                            Console.CONSTANTS.common_label_name(), 
-                                                                            refresher.getAllDeploymentNames());
+        DeploymentNameTextBoxItem nameField = new DeploymentNameTextBoxItem("name",
+                Console.CONSTANTS.common_label_name(),
+                refresher.getAllDeploymentNames());
         RuntimeNameTextBoxItem runtimeNameField = new RuntimeNameTextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName());
 
         form.setFields(hashField, nameField, runtimeNameField);
@@ -129,9 +129,31 @@ public class DeploymentStep2 {
         form.edit(ref);
     }
 
-    private static class DeploymentNameTextBoxItem extends TextBoxItem {
-        private List<String> currentDeploymentNames;
+    private static class Step2TextBoxItem extends TextBoxItem {
+        protected String errorMessage = "";
         
+        public Step2TextBoxItem(String name, String title) {
+            super(name, title);
+        }
+        
+        @Override
+        public boolean validate(String name) {
+            if (!super.validate(name)) {
+                errorMessage = Console.MESSAGES.common_validation_requiredField();
+                return false;
+            }
+            return true;
+        }
+        
+        @Override
+        public String getErrMessage() {
+            return errorMessage;
+        }
+    }
+    
+    private static class DeploymentNameTextBoxItem extends Step2TextBoxItem {
+        private List<String> currentDeploymentNames;
+
         public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames) {
             super(name, title);
             this.currentDeploymentNames = currentDeploymentNames;
@@ -139,23 +161,36 @@ public class DeploymentStep2 {
 
         @Override
         public boolean validate(String name) {
-            // can't use the name of a current deployment
-            return super.validate(name)
-                    && (!currentDeploymentNames.contains(name));
+            if (!super.validate(name)) return false;
+            
+            if (currentDeploymentNames.contains(name)) {
+                String nameField = Console.CONSTANTS.common_label_name();
+                errorMessage = Console.MESSAGES.alreadyExists(nameField);
+                return false;
+            }
+            
+            return true;
         }
     }
-    
-    private static class RuntimeNameTextBoxItem extends TextBoxItem {
 
+    private static class RuntimeNameTextBoxItem extends Step2TextBoxItem {
         public RuntimeNameTextBoxItem(String name, String title) {
             super(name, title);
         }
 
         @Override
         public boolean validate(String name) {
-            // name must have 3 char extension ?*.???
-            return super.validate(name)
-                    && (name.matches(".+\\...."));
+            if (!super.validate(name)) return false;
+            
+            // need actual list of acceptable extensions like *.war, *.ear, *.rar
+            // for now just make sure it is an archive name with 3 char extension
+            if (!name.matches(".+\\....")) {
+                String runtimeNameField = Console.CONSTANTS.common_label_runtimeName();
+                errorMessage = Console.MESSAGES.mustBeDeployableArchive(runtimeNameField);
+                return false;
+            }
+            
+            return true;
         }
     }
 }

@@ -47,6 +47,12 @@ public interface UIMessages extends Messages {
     String removeProperty();
 
     String removePropertyConfirm(String key);
+    
+    String common_validation_requiredField();
+    
+    String mustBeDeployableArchive(String fieldName);
+    
+    String alreadyExists(String fieldName);
 
     String commmon_description_newServerGroup();
 
