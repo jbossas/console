@@ -100,7 +100,7 @@ public interface CoreUI extends Ginjector {
     EventBus getEventBus();
     ProxyFailureHandler getProxyFailureHandler();
 
-    @DefaultGatekeeper
+    //@DefaultGatekeeper
     Gatekeeper getLoggedInGatekeeper();
     CurrentUser getCurrentUser();
     BootstrapContext getBootstrapContext();
