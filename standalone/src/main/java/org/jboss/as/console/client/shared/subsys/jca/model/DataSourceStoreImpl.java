@@ -225,7 +225,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
-                boolean wasSuccessful = modelNode.get(RESULT).equals(SUCCESS);
+                boolean wasSuccessful = modelNode.get(OUTCOME).asString().equals(SUCCESS);
 
                 callback.onSuccess(new ResponseWrapper<Boolean>(wasSuccessful, modelNode));
             }

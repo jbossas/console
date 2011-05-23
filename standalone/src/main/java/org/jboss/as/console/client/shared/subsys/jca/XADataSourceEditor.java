@@ -179,8 +179,8 @@ public class XADataSourceEditor implements PropertyManagement {
 
         bottomPanel.add(details.asWidget(), "Attributes");
         bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
-        bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
-        bottomPanel.add(new HTML("Current pool size, connections in use, etc"), "Metrics");
+        //bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
+        //bottomPanel.add(new HTML("Current pool size, connections in use, etc"), "Metrics");
 
         bottomPanel.selectTab(0);
         vpanel.add(new ContentGroupLabel("Datasource"));

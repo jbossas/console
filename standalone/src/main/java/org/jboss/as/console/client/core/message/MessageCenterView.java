@@ -72,7 +72,9 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             setStyleName("default-popup");
 
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
+            emptyMessage.appendHtmlConstant("<div style='padding:10px'>");
             emptyMessage.appendHtmlConstant(Console.CONSTANTS.common_label_noRecentMessages());
+            emptyMessage.appendHtmlConstant("</div>");
 
             MessageCell messageCell = new MessageCell();
             messageList = new CellList<Message>(messageCell);
