@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -103,14 +104,14 @@ public class DriverRegistry {
 
                     numRequests++;
 
-                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                    System.out.println(operation);
+                    dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            super.onFailure(caught);
-                            numResponses++;
 
-                            checkComplete(callback);
+                            numResponses++;
+                            checkComplete(callback, caught);
                         }
 
                         @Override
@@ -119,6 +120,7 @@ public class DriverRegistry {
                             numResponses++;
 
                             ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
                             if(SUCCESS.equals(response.get(OUTCOME).asString())) {
 
 
@@ -142,6 +144,9 @@ public class DriverRegistry {
 
                                 }
 
+                            }
+                            else {
+                                checkComplete(callback, new RuntimeException(response.toString()));
                             }
 
                             checkComplete(callback);
@@ -174,5 +179,12 @@ public class DriverRegistry {
     private void checkComplete(AsyncCallback<List<JDBCDriver>> callback) {
         if(numResponses==numRequests)
             callback.onSuccess(drivers);
+    }
+
+    private void checkComplete(AsyncCallback<List<JDBCDriver>> callback, Throwable caught) {
+        if(numResponses==numRequests)
+            callback.onFailure(caught);
+        else
+            Console.error("Failed to query JDBC drivers", caught.getMessage());
     }
 }
