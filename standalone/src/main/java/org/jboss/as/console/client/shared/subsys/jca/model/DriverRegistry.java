@@ -24,7 +24,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentSelectedProfile;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -45,7 +45,7 @@ public class DriverRegistry {
 
 
     private DispatchAsync dispatcher;
-    private CurrentSelectedProfile currentProfile;
+    private CurrentProfileSelection currentProfile;
     private HostInformationStore hostInformationStore;
     private BeanFactory factory;
 
@@ -56,7 +56,7 @@ public class DriverRegistry {
     @Inject
     public DriverRegistry(
             DispatchAsync dispatcher,
-            CurrentSelectedProfile currentProfile,
+            CurrentProfileSelection currentProfile,
             HostInformationStore hostInformationStore,
             BeanFactory factory) {
         this.dispatcher = dispatcher;
@@ -130,16 +130,14 @@ public class DriverRegistry {
                                     System.out.println(item);
                                     JDBCDriver driver = factory.jdbcDriver().as();
                                     driver.setGroup(server.getGroup());
-                                    driver.setDriverClass(item.get("driver-class").asString());
+                                    driver.setDriverClass(item.get("driver-class-name").asString());
                                     driver.setName(item.get("driver-name").asString());
                                     driver.setDeploymentName(item.get("deployment-name").asString());
-                                    driver.setMajorVersion(item.get("major-version").asInt());
-                                    driver.setMinorVersion(item.get("minor-version").asInt());
+                                    driver.setMajorVersion(item.get("driver-major-version").asInt());
+                                    driver.setMinorVersion(item.get("driver-minor-version").asInt());
 
                                     if(item.hasDefined("driver-xa-datasource-class-name"))
                                         driver.setXaDataSourceClass(item.get("driver-xa-datasource-class-name").asString());
-                                    else // todo: remove test values
-                                        driver.setXaDataSourceClass("org.h2.jdbcx.JdbcDataSource");
 
                                     addIfNotExists(driver);
 
