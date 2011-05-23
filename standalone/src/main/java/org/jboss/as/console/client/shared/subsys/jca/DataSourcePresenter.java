@@ -41,8 +41,11 @@ import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
@@ -65,6 +68,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private DefaultWindow window;
     private CurrentProfileSelection currentProfileSelection;
     private DataSourceStore dataSourceStore;
+    private DriverRegistry driverRegistry;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -85,7 +89,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory,
             CurrentProfileSelection currentProfileSelection,
-            DataSourceStore dataSourceStore) {
+            DataSourceStore dataSourceStore,
+            DriverRegistry driverRegistry) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -93,6 +98,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         this.factory = factory;
         this.currentProfileSelection = currentProfileSelection;
         this.dataSourceStore = dataSourceStore;
+        this.driverRegistry = driverRegistry;
     }
 
     @Override
@@ -159,56 +165,73 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void launchNewDatasourceWizard() {
 
-        window = new DefaultWindow("Create Datasource");
-        window.setWidth(480);
-        window.setHeight(320);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+        driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
             @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
+            public void onSuccess(List<JDBCDriver> drivers) {
+
+                window = new DefaultWindow("Create Datasource");
+                window.setWidth(480);
+                window.setHeight(320);
+                window.addCloseHandler(new CloseHandler<PopupPanel>() {
+                    @Override
+                    public void onClose(CloseEvent<PopupPanel> event) {
+
+                    }
+                });
+
+                window.setWidget(
+                        new NewDatasourceWizard(DataSourcePresenter.this, drivers).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
 
             }
         });
 
-        window.setWidget(
-                new NewDatasourceWizard(this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
     }
 
-
     public void launchNewXADatasourceWizard() {
-        window = new DefaultWindow("Create XA Datasource");
-        window.setWidth(480);
-        window.setHeight(320);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
 
+
+        driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
+            @Override
+            public void onSuccess(List<JDBCDriver> drivers) {
+                window = new DefaultWindow("Create XA Datasource");
+                window.setWidth(480);
+                window.setHeight(320);
+                window.addCloseHandler(new CloseHandler<PopupPanel>() {
+                    @Override
+                    public void onClose(CloseEvent<PopupPanel> event) {
+
+                    }
+                });
+
+                window.setWidget(
+                        new NewXADatasourceWizard(DataSourcePresenter.this, drivers).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
             }
         });
 
-        window.setWidget(
-                new NewXADatasourceWizard(this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
     }
 
 
     public void onCreateNewDatasource(final DataSource datasource) {
         window.hide();
 
-        dataSourceStore.createDataSource(currentProfileSelection.getName(), datasource, new SimpleCallback<Boolean>() {
+        dataSourceStore.createDataSource(currentProfileSelection.getName(), datasource, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-                if (success)
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if (result.getUnderlying()) {
+                    Console.info("Success: Create datasource " + datasource.getName());
                     loadDataSources();
+                }
                 else
-                    Console.error("Failed to create datasource");
+                    Console.error("Failed to create datasource", result.getResponse().toString());
             }
         });
 
@@ -243,17 +266,15 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-719
     public void onDisable(final DataSource entity, boolean doEnable) {
-        dataSourceStore.enableDataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+        dataSourceStore.enableDataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-
-                if (success) {
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if (result.getUnderlying()) {
                     Console.info("Successfully modified datasource " + entity.getName());
                 } else {
-                    Console.error("Failed to modify datasource" + entity.getName());
+                    Console.error("Failed to modify datasource" + entity.getName(), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -265,7 +286,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         window.hide();
     }
 
-    public void onSaveDSDetails(String name, Map<String, Object> changedValues) {
+    public void onSaveDSDetails(final String name, Map<String, Object> changedValues) {
         getView().enableDSDetails(false);
         if(changedValues.size()>0)
         {
@@ -275,6 +296,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 public void onSuccess(Boolean successful) {
                     if(successful)
                         Console.info("Success: Updated Datasource");
+                    else
+                        Console.error("Failed: Update datasource " + name);
                 }
             });
         }

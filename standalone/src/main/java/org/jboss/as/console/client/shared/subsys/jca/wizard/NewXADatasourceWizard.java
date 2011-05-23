@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 
 import java.util.List;
@@ -43,9 +44,15 @@ public class NewXADatasourceWizard {
     private XADataSource baseAttributes = null;
     private XADataSource driverAttributes = null;
     private List<PropertyRecord> properties;
+    private List<JDBCDriver> drivers;
 
-    public NewXADatasourceWizard(DataSourcePresenter presenter) {
+    public NewXADatasourceWizard(DataSourcePresenter presenter, List<JDBCDriver> drivers) {
         this.presenter = presenter;
+        this.drivers = drivers;
+    }
+
+    public List<JDBCDriver> getDrivers() {
+        return drivers;
     }
 
     public Widget asWidget() {
@@ -95,7 +102,9 @@ public class NewXADatasourceWizard {
 
         updatedEntity.setDataSourceClass(driverAttributes.getDataSourceClass());
         updatedEntity.setDriverName(driverAttributes.getDriverName());
-        updatedEntity.setDriverVersion(driverAttributes.getDriverVersion());
+        updatedEntity.setDriverClass(driverAttributes.getDriverClass());
+        updatedEntity.setMajorVersion(driverAttributes.getMajorVersion());
+        updatedEntity.setMinorVersion(driverAttributes.getMinorVersion());
 
         updatedEntity.setProperties(properties);
 

@@ -37,6 +37,7 @@ public class DataSourceImpl implements DataSource {
     String password;
     String poolname;
     String version;
+    int major, minor;
 
     @Override
     public String getName() {
@@ -129,12 +130,22 @@ public class DataSourceImpl implements DataSource {
     }
 
     @Override
-    public String getDriverVersion() {
-        return version;
+    public int getMajorVersion() {
+        return major;
     }
 
     @Override
-    public void setDriverVersion(String version) {
-        this.version = version;
+    public void setMajorVersion(int major) {
+        this.major = major;
+    }
+
+    @Override
+    public int getMinorVersion() {
+        return minor;
+    }
+
+    @Override
+    public void setMinorVersion(int minor) {
+        this.minor = minor;
     }
 }

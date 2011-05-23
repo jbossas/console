@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -87,28 +88,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
                     Property property = item.asProperty();
                     ModelNode ds = property.getValue().asObject();
                     String name = property.getName();
-                    //System.out.println(ds.toJSONString(false));
+                    //System.out.println(ds);
 
                     try {
                         DataSource model = factory.dataSource().as();
                         model.setName(name);
                         model.setConnectionUrl(ds.get("connection-url").asString());
                         model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDriverClass(ds.get("driver-class").asString());
+                        model.setDriverClass(ds.get("driver-class-name").asString());
 
-
-                        String driverToken = ds.get("driver").asString();
-
-                        if(driverToken.indexOf("#")!=-1)
-                        {
-                            String[] split = driverToken.split("#");
-                            model.setDriverName(split[0]);
-                            model.setDriverVersion(split[1]);
-                        }
-                        else
-                        {
-                            model.setDriverName(driverToken);
-                        }
+                        model.setDriverName(ds.get("driver-name").asString());
 
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
@@ -159,23 +148,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                         XADataSource model = factory.xaDataSource().as();
                         model.setName(name);
                         model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDataSourceClass(ds.get("xa-data-source-class").asString());
-
-                        if(ds.hasDefined("driver"))
-                        {
-                            String driverToken = ds.get("driver").asString();
-
-                            if(driverToken.indexOf("#")!=-1)
-                            {
-                                String[] split = driverToken.split("#");
-                                model.setDriverName(split[0]);
-                                model.setDriverVersion(split[1]);
-                            }
-                            else
-                            {
-                                model.setDriverName(driverToken);
-                            }
-                        }
+                        model.setDriverName(ds.get("driver-name").asString());
 
                         model.setEnabled(ds.get("enabled").asBoolean());
                         model.setUsername(ds.get("user-name").asString());
@@ -218,7 +191,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<Boolean> callback) {
+    public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("profile", profile);
@@ -230,8 +203,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
-        operation.get("driver-class").set(datasource.getDriverClass());
+        operation.get("driver-name").set(datasource.getDriverName());
+        operation.get("driver-class-name").set(datasource.getDriverClass());
+        operation.get("driver-major-version").set(datasource.getMajorVersion());
+        operation.get("driver-minor-version").set(datasource.getMinorVersion());
         operation.get("pool-name").set(datasource.getName()+"_Pool");
 
         operation.get("connection-url").set(datasource.getConnectionUrl());
@@ -239,6 +214,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -249,8 +226,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                boolean wasSuccessful = responseIndicatesSuccess(result);
-                callback.onSuccess(wasSuccessful);
+                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                boolean wasSuccessful = modelNode.get(RESULT).equals(SUCCESS);
+
+                callback.onSuccess(new ResponseWrapper<Boolean>(wasSuccessful, modelNode));
             }
         });
     }
@@ -268,16 +247,15 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get("jndi-name").set(datasource.getJndiName());
         operation.get("enabled").set(datasource.isEnabled());
 
-        if(datasource.getDriverName()!=null && !datasource.getDriverName().equals(""))
-        {
-            operation.get("driver").set(datasource.getDriverName()+"#"+datasource.getDriverVersion());
-        }
+//        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
 
-        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
+        operation.get("driver-name").set(datasource.getDriverName());
+        operation.get("driver-class-name").set(datasource.getDriverClass());
+        operation.get("driver-major-version").set(datasource.getMajorVersion());
+        operation.get("driver-minor-version").set(datasource.getMinorVersion());
+
         operation.get("pool-name").set(datasource.getName()+"_Pool");
-
         operation.get("user-name").set(datasource.getUsername());
-
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
 
@@ -357,7 +335,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<Boolean> callback) {
+    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         final String dataSourceName = dataSource.getName();
         final String opName = doEnable ? "enable" : "disable";
@@ -377,7 +355,14 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                callback.onSuccess(responseIndicatesSuccess(result));
+
+                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                ResponseWrapper<Boolean> response =
+                        new ResponseWrapper<Boolean>(
+                                modelNode.get(OUTCOME).asString().equals(SUCCESS), modelNode
+                        );
+
+                callback.onSuccess(response);
             }
         });
     }
@@ -432,6 +417,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
+                System.out.println(ModelNode.fromBase64(result.getResponseText()));
                 callback.onSuccess(responseIndicatesSuccess(result));
             }
         });

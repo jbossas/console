@@ -62,6 +62,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
+        requestBuilder.setHeader("Connection", "Keep-Alive");
     }
 
     @Override

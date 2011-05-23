@@ -30,7 +30,7 @@ public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new TreeMap<String, SubsystemGroup>();
 
-    private static final String INTEGRATION = "Integration";
+    private static final String INTEGRATION = "Connector";
 
     private static final String MESSAGING = "Messaging";
 

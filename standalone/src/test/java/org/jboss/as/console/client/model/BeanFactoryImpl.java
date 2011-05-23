@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -100,7 +101,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<ThreadFactoryRecord> threadFactory() {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -110,27 +111,27 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<LoggingHandler> loggingHandler() {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public AutoBean<SocketBinding> socketBinding() {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public AutoBean<DeploymentReference> deploymentReference() {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public <T> AutoBean<T> create(Class<T> clazz) {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public <T, U extends T> AutoBean<T> create(Class<T> clazz, U delegate) {
-        throw new RuntimeException("not implemented");  
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -155,17 +156,17 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<Queue> queue() {
-         throw new RuntimeException("not implemented");
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public AutoBean<JMSEndpoint> topic() {
-         throw new RuntimeException("not implemented");
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public AutoBean<ConnectionFactory> connectionFactory() {
-         throw new RuntimeException("not implemented");
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -188,9 +189,14 @@ public class BeanFactoryImpl implements BeanFactory {
         throw new RuntimeException("not implemented");
     }
 
-    @Override
+
     public AutoBean<Interface> interfaceDeclaration() {
         throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<JDBCDriver> jdbcDriver() {
+        throw new RuntimeException("not implemented");
+
     }
 }
 

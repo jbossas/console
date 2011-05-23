@@ -17,46 +17,29 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.widgets.forms;
+package org.jboss.as.console.client.shared.model;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
- * @date 5/11/11
+ * @date 5/17/11
  */
-public class StateItem extends FormItem<Boolean> {
+public final class ResponseWrapper<T> {
 
-    private Label widget;
+    T underlying;
+    private ModelNode response;
 
-    public StateItem(String name, String title) {
-        super(name, title);
-        this.widget = new Label();
+    public ResponseWrapper(T underlying, ModelNode response) {
+        this.underlying = underlying;
+        this.response = response;
     }
 
-    @Override
-    public Widget asWidget() {
-        return widget;
+    public T getUnderlying() {
+        return underlying;
     }
 
-    @Override
-    public void setEnabled(boolean b) {
-
-    }
-
-    @Override
-    public boolean validate(Boolean value) {
-        return true;
-    }
-
-    @Override
-    public Boolean getValue() {
-        return Boolean.valueOf(widget.getText());
-    }
-
-    @Override
-    public void setValue(Boolean b) {
-        widget.setText(String.valueOf(b));
+    public ModelNode getResponse() {
+        return response;
     }
 }

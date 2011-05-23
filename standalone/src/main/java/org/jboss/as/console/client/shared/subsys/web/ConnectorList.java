@@ -31,7 +31,6 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.StateItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;

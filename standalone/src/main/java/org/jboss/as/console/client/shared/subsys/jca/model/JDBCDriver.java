@@ -23,50 +23,35 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
- * @date 3/29/11
+ * @date 5/16/11
  */
-public interface DataSource {
+public interface JDBCDriver {
 
+    @Binding(detypedName = "driver-name")
     String getName();
     void setName(String name);
 
-    @Binding(detypedName = "jndi-name")
-    String getJndiName();
-    void setJndiName(String name);
+    @Binding(detypedName = "deployment-name")
+    String getDeploymentName();
+    void setDeploymentName(String name);
 
-    boolean isEnabled();
-    void setEnabled(boolean isEnabled);
+    @Binding(detypedName = "major-version")
+    int getMajorVersion();
+    void setMajorVersion(int major);
 
-    @Binding(detypedName = "user-name")
-    String getUsername();
-    void setUsername(String user);
-
-    String getPassword();
-    void setPassword(String password);
-
-    @Binding(detypedName = "pool-name")
-    String getPoolName();
-    void setPoolName(String name);
-
-    // regular DS attributes below
-
-    String getConnectionUrl();
-    void setConnectionUrl(String url);
+    @Binding(detypedName = "minor-version")
+    int getMinorVersion();
+    void setMinorVersion(int minor);
 
     @Binding(detypedName = "driver-class")
     String getDriverClass();
     void setDriverClass(String driverClass);
 
-    @Binding(detypedName = "driver-name")
-    String getDriverName();
-    void setDriverName(String driver);
+    @Binding(detypedName = "driver-xa-datasource-class-name")
+    String getXaDataSourceClass();
+    void setXaDataSourceClass(String dataSourceClass);
 
     @Binding(detypedName = "none", ignore = true)
-    int getMajorVersion();
-    void setMajorVersion(int major);
-
-    @Binding(detypedName = "none", ignore = true)
-    int getMinorVersion();
-    void setMinorVersion(int minor);
-
+    String getGroup();
+    void setGroup(String group);
 }

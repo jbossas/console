@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -84,5 +85,8 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<HttpConnector> httpConnector();
     AutoBean<JSPContainerConfiguration> jspConfig();
     AutoBean<VirtualServer> virtualServer();
+
     AutoBean<Interface> interfaceDeclaration();
+    AutoBean<JDBCDriver> jdbcDriver();
+
 }

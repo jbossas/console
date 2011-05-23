@@ -28,14 +28,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -125,19 +123,17 @@ public class DataSourceDetails {
 
         TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
-        TextBoxItem driverItem = new TextBoxItem("driverName", "Driver");
-        TextBoxItem driverVersion = new TextBoxItem("driverVersion", "Version");
-        TextBoxItem driverClassItem = new TextBoxItem("driverClass", "Driver Class");
+        StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
+        TextItem driverItem = new TextItem("driverName", "Driver");
 
         TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem);
+        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
         form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem, urlItem);
-        form.setFieldsInGroup("Driver", new DisclosureGroupRenderer(), driverItem, driverVersion, driverClassItem);
+
 
         form.setEnabled(false); // currently not editable
 
