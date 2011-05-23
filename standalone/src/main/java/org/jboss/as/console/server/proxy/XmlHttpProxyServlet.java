@@ -20,6 +20,7 @@
 package org.jboss.as.console.server.proxy;
 
 
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -481,7 +482,18 @@ public class XmlHttpProxyServlet extends HttpServlet
         {
             iox.printStackTrace();
             getLogger().severe("XmlHttpProxyServlet: caught " + iox);
-            res.setStatus(500);
+
+
+            if(iox instanceof XmlHttpProxy.AuthenticationException)
+            {
+                XmlHttpProxy.AuthenticationException authEx = (XmlHttpProxy.AuthenticationException)iox;
+                res.setHeader("WWW-Authenticate", authEx.getAuthHeader());
+                res.setStatus(authEx.getCode());
+            }
+            else
+            {
+                res.setStatus(500);
+            }
             /*try {
                writer = res.getWriter();
                writer.write("XmlHttpProxyServlet error loading service for " + serviceKey + " . Please notify the administrator.");
