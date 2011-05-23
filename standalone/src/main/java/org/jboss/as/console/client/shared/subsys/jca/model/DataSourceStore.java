@@ -39,10 +39,12 @@ public interface DataSourceStore {
     void deleteDataSource(String profile, DataSource dataSource, AsyncCallback<Boolean> callback);
     void enableDataSource(String profile, DataSource dataSource, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
-    void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<Boolean> callback);
+    void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
     void createXADataSource(String profile, XADataSource datasource, AsyncCallback<Boolean> callback);
 
     void enableXADataSource(String name, XADataSource entity, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
     void deleteXADataSource(String name, XADataSource entity, AsyncCallback<Boolean> callback);
+
+    void updateXADataSource(String profile, String name, Map<String, Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 }

@@ -198,4 +198,9 @@ public class PropertyEditor {
         propertyProvider.setList(properties);
 
     }
+
+    public void setEnabled(boolean enabled)
+    {
+        propertyTable.setEnabled(enabled);
+    }
 }

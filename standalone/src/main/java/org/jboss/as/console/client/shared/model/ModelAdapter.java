@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.model;
 
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -38,6 +39,15 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 4/27/11
  */
 public class ModelAdapter {
+
+    public static ResponseWrapper<Boolean> wrapBooleanResponse(DMRResponse response)
+    {
+        ModelNode model = ModelNode.fromBase64(response.getResponseText());
+        ResponseWrapper<Boolean> wrapper = new ResponseWrapper<Boolean>(
+            model.get(OUTCOME).asString().equals(SUCCESS), model
+        );
+        return wrapper;
+    }
 
     /**
      * Turns a changeset into a composite write attribute operation.

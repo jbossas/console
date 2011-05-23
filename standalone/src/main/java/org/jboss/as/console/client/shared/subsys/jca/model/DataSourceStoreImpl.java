@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -79,36 +80,44 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> payload = response.get("result").asList();
 
-                List<DataSource> datasources = new ArrayList<DataSource>(payload.size());
-                for(ModelNode item : payload)
-                {
-                    // returned as type property (key=ds name)
-                    Property property = item.asProperty();
-                    ModelNode ds = property.getValue().asObject();
-                    String name = property.getName();
-                    //System.out.println(ds);
+                List<DataSource> datasources = new ArrayList<DataSource>();
 
-                    try {
-                        DataSource model = factory.dataSource().as();
-                        model.setName(name);
-                        model.setConnectionUrl(ds.get("connection-url").asString());
-                        model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDriverClass(ds.get("driver-class-name").asString());
+                if(response.hasDefined("result")) {
 
-                        model.setDriverName(ds.get("driver-name").asString());
+                    List<ModelNode> payload = response.get("result").asList();
 
-                        model.setEnabled(ds.get("enabled").asBoolean());
-                        model.setUsername(ds.get("user-name").asString());
-                        model.setPassword(ds.get("password").asString());
-                        model.setPoolName(ds.get("pool-name").asString());
+                    for(ModelNode item : payload)
+                    {
+                        // returned as type property (key=ds name)
+                        Property property = item.asProperty();
+                        ModelNode ds = property.getValue().asObject();
+                        String name = property.getName();
+                        //System.out.println(ds);
 
-                        datasources.add(model);
+                        try {
+                            DataSource model = factory.dataSource().as();
+                            model.setName(name);
+                            model.setConnectionUrl(ds.get("connection-url").asString());
+                            model.setJndiName(ds.get("jndi-name").asString());
+                            model.setDriverClass(ds.get("driver-class-name").asString());
 
-                    } catch (IllegalArgumentException e) {
-                        Log.error("Failed to parse data source representation", e);
+                            model.setDriverName(ds.get("driver-name").asString());
+
+                            model.setEnabled(ds.get("enabled").asBoolean());
+                            model.setUsername(ds.get("user-name").asString());
+                            model.setPassword(ds.get("password").asString());
+                            model.setPoolName(ds.get("pool-name").asString());
+
+                            datasources.add(model);
+
+                        } catch (IllegalArgumentException e) {
+                            Log.error("Failed to parse data source representation", e);
+                        }
                     }
+                }
+                else {
+                    Console.error("DMR result is 'UNDEFINED'", response.toString());
                 }
 
                 callback.onSuccess(datasources);
@@ -133,56 +142,64 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> payload = response.get("result").asList();
 
-                List<XADataSource> datasources = new ArrayList<XADataSource>(payload.size());
-                for(ModelNode item : payload)
-                {
-                    // returned as type property (key=ds name)
-                    Property property = item.asProperty();
-                    ModelNode ds = property.getValue().asObject();
-                    String name = property.getName();
-                    //System.out.println(ds.toJSONString(false));
+                List<XADataSource> datasources = new ArrayList<XADataSource>();
 
-                    try {
-                        XADataSource model = factory.xaDataSource().as();
-                        model.setName(name);
-                        model.setJndiName(ds.get("jndi-name").asString());
-                        model.setDriverName(ds.get("driver-name").asString());
-
-                        model.setEnabled(ds.get("enabled").asBoolean());
-                        model.setUsername(ds.get("user-name").asString());
-                        model.setPassword(ds.get("password").asString());
-                        model.setPoolName(ds.get("pool-name").asString());
+                if(response.hasDefined("result")) {
+                    List<ModelNode> payload = response.get("result").asList();
 
 
-                        List<PropertyRecord> xaProperties = Collections.EMPTY_LIST;
+                    for(ModelNode item : payload)
+                    {
+                        // returned as type property (key=ds name)
+                        Property property = item.asProperty();
+                        ModelNode ds = property.getValue().asObject();
+                        String name = property.getName();
+                        //System.out.println(ds.toJSONString(false));
 
-                        // System properties
-                        if(ds.hasDefined("xa-data-source-properties"))
-                        {
-                            List<ModelNode> properties = ds.get("xa-data-source-properties").asList();
-                            xaProperties = new ArrayList<PropertyRecord>(properties.size());
-                            for(ModelNode xaProp : properties)
+                        try {
+                            XADataSource model = factory.xaDataSource().as();
+                            model.setName(name);
+                            model.setJndiName(ds.get("jndi-name").asString());
+                            model.setDriverName(ds.get("driver-name").asString());
+
+                            model.setEnabled(ds.get("enabled").asBoolean());
+                            model.setUsername(ds.get("user-name").asString());
+                            model.setPassword(ds.get("password").asString());
+                            model.setPoolName(ds.get("pool-name").asString());
+
+
+                            List<PropertyRecord> xaProperties = Collections.EMPTY_LIST;
+
+                            // System properties
+                            if(ds.hasDefined("xa-data-source-properties"))
                             {
-                                Property p = xaProp.asProperty();
-                                PropertyRecord propRecord = factory.property().as();
+                                List<ModelNode> properties = ds.get("xa-data-source-properties").asList();
+                                xaProperties = new ArrayList<PropertyRecord>(properties.size());
+                                for(ModelNode xaProp : properties)
+                                {
+                                    Property p = xaProp.asProperty();
+                                    PropertyRecord propRecord = factory.property().as();
 
-                                propRecord.setKey(p.getName());
-                                ModelNode value = p.getValue();
-                                propRecord.setValue(value.asString());
+                                    propRecord.setKey(p.getName());
+                                    ModelNode value = p.getValue();
+                                    propRecord.setValue(value.asString());
 
-                                xaProperties.add(propRecord);
+                                    xaProperties.add(propRecord);
+                                }
                             }
+
+                            model.setProperties(xaProperties);
+                            datasources.add(model);
+
+
+                        } catch (IllegalArgumentException e) {
+                            Log.error("Failed to parse xa data source representation", e);
                         }
-
-                        model.setProperties(xaProperties);
-                        datasources.add(model);
-
-
-                    } catch (IllegalArgumentException e) {
-                        Log.error("Failed to parse xa data source representation", e);
                     }
+                }
+                else {
+                    Console.error("DMR result is 'UNDEFINED'", response.toString());
                 }
 
                 callback.onSuccess(datasources);
@@ -400,7 +417,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void updateDataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
+    public void updateDataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).add("profile", profile);
@@ -419,7 +436,34 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                callback.onSuccess(responseIndicatesSuccess(result));
+
+                callback.onSuccess(ModelAdapter.wrapBooleanResponse(result));
+            }
+        });
+    }
+
+    @Override
+    public void updateXADataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("profile", profile);
+        proto.get(ADDRESS).add("subsystem", "datasources");
+        proto.get(ADDRESS).add("xa-data-source", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                callback.onSuccess(ModelAdapter.wrapBooleanResponse(result));
             }
         });
     }

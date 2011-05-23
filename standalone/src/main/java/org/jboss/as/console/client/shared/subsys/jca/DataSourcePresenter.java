@@ -287,24 +287,35 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         getView().enableDSDetails(false);
         if(changedValues.size()>0)
         {
-            dataSourceStore.updateDataSource(currentProfileSelection.getName(), name, changedValues, new SimpleCallback<Boolean> (){
+            dataSourceStore.updateDataSource(currentProfileSelection.getName(), name, changedValues, new SimpleCallback<ResponseWrapper<Boolean>> (){
 
                 @Override
-                public void onSuccess(Boolean successful) {
-                    if(successful)
+                public void onSuccess(ResponseWrapper<Boolean> response) {
+                    if(response.getUnderlying())
                         Console.info("Success: Updated Datasource");
                     else
-                        Console.error("Failed: Update datasource " + name);
+                        Console.error("Failed: Update datasource " + name, response.getResponse().toString());
                 }
             });
         }
     }
 
-    public void onSaveXADetails(String name, Map<String, Object> changedValues) {
+    public void onSaveXADetails(final String name, Map<String, Object> changedValues) {
 
         getView().enableXADetails(false);
+        if(changedValues.size()>0)
+        {
+            dataSourceStore.updateXADataSource(currentProfileSelection.getName(), name, changedValues, new SimpleCallback<ResponseWrapper<Boolean>> (){
 
-        Console.error("Not implemented");
+                @Override
+                public void onSuccess(ResponseWrapper<Boolean> response) {
+                    if(response.getUnderlying())
+                        Console.info("Success: Updated XA datasource");
+                    else
+                        Console.error("Failed: Update XA datasource " + name, response.getResponse().toString());
+                }
+            });
+        }
     }
 
 
