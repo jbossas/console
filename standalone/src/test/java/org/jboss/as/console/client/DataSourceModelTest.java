@@ -22,6 +22,7 @@ package org.jboss.as.console.client;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.junit.BeforeClass;
@@ -72,11 +73,11 @@ public class DataSourceModelTest {
     public void createDataSources() throws Exception
     {
         DataSourceStore store = injector.getInstance(DataSourceStore.class);
-        TestCallback<Boolean> callback = new TestCallback<Boolean>() {
+        TestCallback<ResponseWrapper<Boolean>> callback = new TestCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-                assertTrue("Expected successful outcome", success);
+            public void onSuccess(ResponseWrapper<Boolean> response) {
+                assertTrue("Expected successful outcome", response.getUnderlying());
 
                 didCallback = true;
             }
@@ -101,11 +102,11 @@ public class DataSourceModelTest {
 
         DataSource entity = createEntity();
         entity.setName("java:/H2DS"); // default DS should exist
-        TestCallback<Boolean> secondCallback = new TestCallback<Boolean>() {
+        TestCallback<ResponseWrapper<Boolean>> secondCallback = new TestCallback<ResponseWrapper<Boolean>>() {
 
             @Override
-            public void onSuccess(Boolean success) {
-                assertTrue("Expected successful outcome", success);
+            public void onSuccess(ResponseWrapper<Boolean> response) {
+                assertTrue("Expected successful outcome", response.getUnderlying());
 
                 didCallback = true;
             }
