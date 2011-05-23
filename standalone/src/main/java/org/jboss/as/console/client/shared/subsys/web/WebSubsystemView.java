@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
@@ -70,6 +71,9 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                Console.error("Not implemented yet!");
+
                 if(edit.getText().equals("Edit"))
                     presenter.onEditJSPConfig();
                 else
@@ -107,6 +111,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), listing, keepGenerated, checkInterval, workDir, poweredBy, sourceFragment);
 
         layout.add(form.asWidget());
+        form.setEnabled(false); // TODO:
 
         // ----
 
