@@ -43,6 +43,6 @@ public interface DataSourceStore {
 
     void createXADataSource(String profile, XADataSource datasource, AsyncCallback<Boolean> callback);
 
-    void enableXADataSource(String name, XADataSource entity, boolean doEnable, AsyncCallback<Boolean> callback);
+    void enableXADataSource(String name, XADataSource entity, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
     void deleteXADataSource(String name, XADataSource entity, AsyncCallback<Boolean> callback);
 }

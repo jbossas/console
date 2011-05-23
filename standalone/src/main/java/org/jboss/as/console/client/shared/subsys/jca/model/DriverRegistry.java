@@ -127,7 +127,6 @@ public class DriverRegistry {
                                 for(ModelNode item : payload)
                                 {
 
-                                    System.out.println(item);
                                     JDBCDriver driver = factory.jdbcDriver().as();
                                     driver.setGroup(server.getGroup());
                                     driver.setDriverClass(item.get("driver-class-name").asString());

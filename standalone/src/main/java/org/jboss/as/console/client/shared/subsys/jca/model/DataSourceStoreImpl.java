@@ -215,8 +215,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
         String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
         operation.get("password").set(pw);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -368,7 +366,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableXADataSource(String profile, XADataSource dataSource, boolean doEnable, final AsyncCallback<Boolean> callback) {
+    public void enableXADataSource(String profile, XADataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         final String dataSourceName = dataSource.getName();
         final String opName = doEnable ? "enable" : "disable";
 
@@ -387,7 +385,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                callback.onSuccess(responseIndicatesSuccess(result));
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                ResponseWrapper<Boolean> wrapper =
+                        new ResponseWrapper<Boolean>(response.get("outcome").asString().equals("success"), response);
+                callback.onSuccess(wrapper);
             }
         });
     }
@@ -417,7 +419,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                System.out.println(ModelNode.fromBase64(result.getResponseText()));
                 callback.onSuccess(responseIndicatesSuccess(result));
             }
         });

@@ -247,17 +247,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onDelete(final DataSource entity) {
 
-        dataSourceStore.deleteDataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>(){
+        dataSourceStore.deleteDataSource(currentProfileSelection.getName(), entity, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean success) {
 
-                if(success)
-                {
+                if (success) {
                     loadDataSources();
                     Console.info("Successfully removed datasource " + entity.getName());
-                }
-                else
-                {
+                } else {
                     Console.error("Failed to remove datasource " + entity.getName());
                 }
 
@@ -316,8 +313,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         dataSourceStore.createXADataSource(currentProfileSelection.getName(), updatedEntity, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
-                if(wasSuccessful)
-                    Console.info("Succes: Created XA Datasource "+updatedEntity.getName());
+                if (wasSuccessful)
+                    Console.info("Succes: Created XA Datasource " + updatedEntity.getName());
 
                 loadDataSources();
             }
@@ -325,15 +322,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDisableXA(final XADataSource entity, boolean doEnable) {
-        dataSourceStore.enableXADataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<Boolean>() {
+        dataSourceStore.enableXADataSource(currentProfileSelection.getName(), entity, doEnable, new SimpleCallback<ResponseWrapper<Boolean>>()
+        {
 
             @Override
-            public void onSuccess(Boolean success) {
+            public void onSuccess(ResponseWrapper<Boolean> result) {
 
-                if (success) {
+                if (result.getUnderlying()) {
                     Console.info("Successfully modified datasource " + entity.getName());
                 } else {
-                    Console.error("Failed to modify datasource " + entity.getName());
+                    Console.error("Failed to modify datasource " + entity.getName(), result.getResponse().toString());
                 }
 
                 loadDataSources();
