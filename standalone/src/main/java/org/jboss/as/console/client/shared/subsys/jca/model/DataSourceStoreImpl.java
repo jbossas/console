@@ -427,7 +427,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -453,7 +453,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
