@@ -186,7 +186,7 @@ public class PropertyEditor {
 
         propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
-        propertyTable.setEnabled(false);
+        //propertyTable.setEnabled(false);
         panel.add(propertyTable);
 
         return panel;
