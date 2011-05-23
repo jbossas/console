@@ -104,7 +104,6 @@ public class DriverRegistry {
 
                     numRequests++;
 
-                    System.out.println(operation);
                     dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
                         @Override
