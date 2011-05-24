@@ -111,6 +111,7 @@ public class XmlHttpProxyServlet extends HttpServlet
 
     private static String setCookie;
     private String configResource = null;
+    private String authHeader;
 
     public XmlHttpProxyServlet() {
         if (rDebug) {
@@ -339,6 +340,13 @@ public class XmlHttpProxyServlet extends HttpServlet
                     if("xtest-user".equals(name)) testUser = req.getHeader("xtest-user");
                     if("xtest-pass".equals(name)) testPass = req.getHeader("xtest-pass");
                 }
+
+                // auth header
+                else if(name.equals("Authorization"))
+                {
+                    // hack test capabilities for authentication
+                    authHeader = req.getHeader("Authorization");
+                }
             }
 
             try
@@ -471,7 +479,7 @@ public class XmlHttpProxyServlet extends HttpServlet
             {
                 if (bodyContent == null)
                     getLogger().info("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
-                xhp.doPost(urlString, out, xslInputStream, paramsMap, headers, bodyContent, req.getContentType(), userName, password);
+                xhp.doPost(urlString, out, xslInputStream, paramsMap, headers, bodyContent, req.getContentType(), userName, password, authHeader);
             }
 
             res.setContentType(xhp.getContentType());

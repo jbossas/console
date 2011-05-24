@@ -55,6 +55,7 @@ public class BootstrapCmd implements AsyncCommand<Boolean>{
             @Override
             public void onFailure(Throwable caught) {
                 bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
+                callback.onSuccess(false);
             }
 
             @Override

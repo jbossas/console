@@ -56,6 +56,7 @@ public class XmlHttpProxy {
     int proxyPort = -1;
     private Object config;
     private static String USAGE = "Usage:  -url service_URL  -id service_key [-url or -id required] -xslurl xsl_url [optional] -format json|xml [optional] -callback[optional] -config [optional] -resources base_directory_containing XSL stylesheets [optional]";
+    private String authHeader;
 
     public XmlHttpProxy() {}
 
@@ -118,6 +119,7 @@ public class XmlHttpProxy {
      *
      * @param urlString - The URL which you are looking up
      * @param out - The OutputStream to which the resulting document is written
+     * @param authHeader
      *
      */
     public void doPost(String urlString,
@@ -128,7 +130,8 @@ public class XmlHttpProxy {
                        byte[] postData,
                        String postContentType,
                        String userName,
-                       String password) throws IOException, MalformedURLException {
+                       String password, String authHeader) throws IOException, MalformedURLException {
+        this.authHeader = authHeader;
         doProcess(urlString, out, xslInputStream, paramsMap, headers, XmlHttpProxy.POST, postData, postContentType, userName, password);
     }
 
@@ -193,7 +196,7 @@ public class XmlHttpProxy {
         if (postData == null) {
             in = httpclient.getInputStream();
         } else {
-            in = httpclient.doPost(postData, postContentType);
+            in = httpclient.doPost(postData, postContentType, authHeader);
         }
 
         // Set-Cookie header

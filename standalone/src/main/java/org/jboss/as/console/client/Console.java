@@ -27,7 +27,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.core.BootstrapCmd;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
@@ -73,14 +75,14 @@ public class Console implements EntryPoint {
             }
 
             @Override
-            public void onSuccess(Boolean result) {
+            public void onSuccess(Boolean isStandalone) {
                 loadMainApp();
             }
         });
     }
 
     private void loadMainApp() {
-        MODULES.getPlaceManager().revealCurrentPlace();
+        MODULES.getPlaceManager().revealDefaultPlace();
     }
 
     public static void info(String message) {

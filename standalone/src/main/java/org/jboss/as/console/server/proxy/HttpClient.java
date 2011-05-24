@@ -291,13 +291,16 @@ public class HttpClient {
 
     /**
      * posts data to the inputstream and returns the InputStream.
+     *
      * @param postData data to be posted. must be url-encoded already.
      * @param contentType allows you to set the contentType of the request.
+     * @param authHeader
      * @return InputStream input stream from URLConnection
      */
-    public InputStream doPost(byte[] postData, String contentType) {
+    public InputStream doPost(byte[] postData, String contentType, String authHeader) {
         this.urlConnection.setDoOutput(true);
         if (contentType != null) this.urlConnection.setRequestProperty( "Content-type", contentType );
+        if (authHeader!= null) this.urlConnection.setRequestProperty( "Authorization", authHeader);
 
         OutputStream out = null;
         try {
