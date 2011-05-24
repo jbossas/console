@@ -100,7 +100,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                                 )
                         );
                     }
-                    else if(401 == statusCode)
+                    else if(401 == statusCode || 0 == statusCode)
                     {
                         Log.error("Authentication required. Could not execute "+operation.toString());
                     }
