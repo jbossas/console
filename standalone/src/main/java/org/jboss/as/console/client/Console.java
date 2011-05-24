@@ -27,9 +27,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.core.BootstrapCmd;
-import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
@@ -66,12 +64,15 @@ public class Console implements EntryPoint {
 
     public void onModuleLoad2() {
         DelayedBindRegistry.bind(MODULES);
+        bootstrap();
+    }
 
+    private void bootstrap() {
         BootstrapCmd cmd = new BootstrapCmd(MODULES.getBootstrapContext(), MODULES.getDispatchAsync());
         cmd.execute(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Error: "+caught.getMessage());
+                Window.alert("Error: " + caught.getMessage());
             }
 
             @Override
