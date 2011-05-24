@@ -60,12 +60,6 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
-import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
-import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
-import org.jboss.as.console.client.standalone.path.PathToolPresenter;
-import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
-import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -80,6 +74,12 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
+import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
+import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
+import org.jboss.as.console.client.standalone.path.PathToolPresenter;
+import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
+import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**

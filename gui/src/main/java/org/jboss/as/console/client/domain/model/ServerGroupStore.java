@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.domain.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.shared.jvm.Jvm;
 
 import java.util.List;
 import java.util.Map;

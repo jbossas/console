@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-import static org.jboss.dmr.client.ModelDescriptionConstants.SUCCESS;
 
 /**
  * @author Heiko Braun

@@ -18,13 +18,13 @@
  */
 package org.jboss.as.console.client.standalone.deployment;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeploymentViewRefresher;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**

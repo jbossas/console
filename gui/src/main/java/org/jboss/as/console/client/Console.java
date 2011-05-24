@@ -32,7 +32,6 @@ import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
-import org.mortbay.jetty.handler.StatisticsHandler;
 
 /**
  * Main application entry point.

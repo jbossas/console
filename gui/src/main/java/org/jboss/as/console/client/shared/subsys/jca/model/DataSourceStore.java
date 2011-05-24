@@ -20,9 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 
 import java.util.List;
 import java.util.Map;

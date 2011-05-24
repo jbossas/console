@@ -24,13 +24,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DataSourceStep3;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep1;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.DatasourceStep2;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Heiko Braun

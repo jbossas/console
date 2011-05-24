@@ -31,7 +31,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
-import org.jboss.as.console.client.widgets.tables.DefaultOptionRolloverHandler;
 import org.jboss.as.console.client.widgets.tables.MenuColumn;
 import org.jboss.as.console.client.widgets.tables.NamedCommand;
 import org.jboss.as.console.client.widgets.tools.ToolButton;

@@ -25,8 +25,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.ComboBox;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun

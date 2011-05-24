@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;

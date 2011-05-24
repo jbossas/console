@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.dispatch;
 
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.dmr.client.ModelNode;
 
 /**
