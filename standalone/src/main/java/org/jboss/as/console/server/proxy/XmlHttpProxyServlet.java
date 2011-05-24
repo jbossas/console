@@ -299,6 +299,8 @@ public class XmlHttpProxyServlet extends HttpServlet
             }
             // get the headers to pass through
             Map headers = null;
+            authHeader = null;
+
             // Forward all request headers starting with the header token jmaki-
             // and chop off the jmaki-
             Enumeration hnum = req.getHeaderNames();
