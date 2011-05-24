@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
@@ -38,14 +39,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 2/10/11
  */
-public class LHSServerNavigation {
+public class LHSStandaloneNavigation {
 
     private VerticalPanel stack;
 
     private LayoutPanel layout;
     private Tree subsysTree;
 
-    public LHSServerNavigation() {
+    public LHSStandaloneNavigation() {
         super();
 
         layout = new LayoutPanel();
@@ -66,8 +67,16 @@ public class LHSServerNavigation {
 
         // ----------------------------------------------------
 
-        Tree commonTree = new LHSNavTree("profile-standalone");
+        Tree deploymentTree = new LHSNavTree("deployment-standalone");
+        deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
+        DisclosurePanel deplPanel  = new DisclosureStackHeader("Deployments").asWidget();
+        deplPanel.setContent(deploymentTree);
 
+        stack.add(deplPanel);
+
+        // ----------------------------------------------------
+
+        Tree commonTree = new LHSNavTree("profile-standalone");
         DisclosurePanel commonPanel  = new DisclosureStackHeader("General Configuration").asWidget();
         commonPanel.setContent(commonTree);
 

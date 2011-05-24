@@ -62,7 +62,7 @@ public class Header implements ValueChangeHandler<String> {
 
     public static final String[][] SECTIONS_STANADLONE = {
             new String[]{NameTokens.serverConfig, "Profile"},
-            new String[]{NameTokens.DeploymentMgmtPresenter, "Deployments"}
+            new String[]{NameTokens.StandloneDeployments, "Deployments"}
     };
 
     private MessageBar messageBar;

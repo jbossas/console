@@ -33,7 +33,7 @@ import java.util.List;
  * Server management default view implementation.
  * Works on a LHS navigation and a all purpose content panel on the right.
  *
- * @see LHSServerNavigation
+ * @see LHSStandaloneNavigation
  *
  * @author Heiko Braun
  * @date 2/4/11
@@ -45,7 +45,7 @@ public class ServerMgmtApplicationView extends ViewImpl
 
     private SplitLayoutPanel layout;
     private LayoutPanel contentCanvas;
-    private LHSServerNavigation lhsNavigation;
+    private LHSStandaloneNavigation lhsNavigation;
 
     public ServerMgmtApplicationView() {
         super();
@@ -53,7 +53,7 @@ public class ServerMgmtApplicationView extends ViewImpl
         layout = new SplitLayoutPanel(4);
 
         contentCanvas = new LayoutPanel();
-        lhsNavigation = new LHSServerNavigation();
+        lhsNavigation = new LHSStandaloneNavigation();
 
         layout.addWest(lhsNavigation.asWidget(), 180);
         layout.add(contentCanvas);

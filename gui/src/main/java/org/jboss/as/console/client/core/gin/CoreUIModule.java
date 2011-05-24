@@ -92,8 +92,6 @@ import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationView;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
-import org.jboss.as.console.client.standalone.deployment.DeploymentMgmtPresenter;
-import org.jboss.as.console.client.standalone.deployment.DeploymentMgmtView;
 import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.standalone.interfaces.InterfaceToolViewImpl;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
@@ -206,12 +204,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerMgmtApplicationPresenter.ServerManagementView.class,
                 ServerMgmtApplicationView.class,
                 ServerMgmtApplicationPresenter.ServerManagementProxy.class);
-
-        // server deployments
-        bindPresenter(DeploymentMgmtPresenter.class,
-                DeploymentMgmtPresenter.DeploymentToolView.class,
-                DeploymentMgmtView.class,
-                DeploymentMgmtPresenter.DeploymentToolProxy.class);
 
         bindPresenter(DeploymentListPresenter.class,
                 DeploymentListPresenter.MyView.class,

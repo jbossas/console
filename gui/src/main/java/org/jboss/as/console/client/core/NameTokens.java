@@ -62,9 +62,9 @@ public class NameTokens {
         return serverConfig;
     }
 
-    public static final String DeploymentMgmtPresenter = "server-deployments";
-    public static String getDeploymentMgmtPresenter() {
-        return DeploymentMgmtPresenter;
+    public static final String StandloneDeployments = "server-deployments";
+    public static String getStandloneDeployments() {
+        return StandloneDeployments;
     }
 
     public static final String systemApp = "system";
