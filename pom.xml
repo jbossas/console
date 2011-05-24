@@ -82,9 +82,7 @@
     </properties>
 
     <modules>
-        <module>standalone</module>
-        <!--module>domain</module>        
-        <module>shared</module-->
+        <module>gui</module>
     </modules>
 
     <dependencyManagement>

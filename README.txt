@@ -17,7 +17,7 @@ Running in hosted mode:
 
 2.) Make sure you build the top level module first.
 
-3.) cd 'standalone'
+3.) cd 'gui'
 
 Start the GWT shell with 
 
@@ -30,11 +30,6 @@ hosted mode execution here: http://gwt.google.com/samples/MissingPlugin/MissingP
 NOTE: Really quick turnaround through 
 
 	mvn -Dhosted gwt:<run|debug>
-
-
-NOTE: Currently both the codebase for the 'standalone' and 'domain' usage scenario
-	  reside within the same module. A development switch at login prompt allows you to bootstrap one or the other.
-      The codebases will be separated at a later point in time. But for now it's most productive way to move forward.
 
 
 
@@ -52,7 +47,7 @@ Executing the Integration tests:
 -------------------------------
 
 1.) Start AS7 in domain mode
-2.) cd 'standalone'
+2.) cd 'gui'
 3.) mvn clean -Dsmoke test
 
 
