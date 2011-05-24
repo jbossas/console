@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.server.subsys.threads;
+package org.jboss.as.console.client.standalone.subsys.threads;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.TextColumn;

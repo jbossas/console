@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.server.deployment;
+package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;

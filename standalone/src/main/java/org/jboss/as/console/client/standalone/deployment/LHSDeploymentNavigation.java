@@ -17,76 +17,56 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.server;
+package org.jboss.as.console.client.standalone.deployment;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
 import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
-import java.util.List;
-
 /**
- * LHS navigation for standalone server management.
+ * LHS navigation for standalone deployment management.
  *
  * @author Heiko Braun
  * @date 2/10/11
  */
-public class LHSServerNavigation {
-
-    private VerticalPanel stack;
+public class LHSDeploymentNavigation {
 
     private LayoutPanel layout;
-    private Tree subsysTree;
+    private VerticalPanel stack;
 
-    public LHSServerNavigation() {
+    public LHSDeploymentNavigation () {
         super();
 
         layout = new LayoutPanel();
         layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
         layout.setStyleName("fill-layout");
 
+        DisclosurePanel panel = new DisclosureStackHeader("Deployments").asWidget();
+
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
 
         // ----------------------------------------------------
 
+        Tree deploymentTree = new LHSNavTree("standalone-deployments");
 
-        subsysTree = new LHSNavTree("profile-standalone");
+        LHSNavTreeItem current = new LHSNavTreeItem(
+                "Current Deployments",
+                NameTokens.DeploymentListPresenter
+        );
 
-        DisclosurePanel subsysPanel  = new DisclosureStackHeader("Profile").asWidget();
-        subsysPanel.setContent(subsysTree);
-        stack.add(subsysPanel);
+        deploymentTree.addItem(current);
+        stack.add(deploymentTree);
 
-        // ----------------------------------------------------
+        panel.setContent(stack);
 
-        Tree commonTree = new LHSNavTree("profile-standalone");
-
-        DisclosurePanel commonPanel  = new DisclosureStackHeader("General Configuration").asWidget();
-        commonPanel.setContent(commonTree);
-
-        LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
-                new LHSNavTreeItem("Paths", "server/server-paths"),
-                new LHSNavTreeItem("Interfaces", "server/server-interfaces"),
-                new LHSNavTreeItem("Socket Binding Groups", "server/server-sockets"),
-                new LHSNavTreeItem("System Properties", "server/server-properties")
-        };
-
-        for(LHSNavTreeItem item : commonItems)
-        {
-            commonTree.addItem(item);
-        }
-
-        stack.add(commonPanel);
-
-        layout.add(stack);
-
+        layout.add(panel);
     }
 
     public Widget asWidget()
@@ -94,17 +74,4 @@ public class LHSServerNavigation {
         return layout;
     }
 
-    public void updateFrom(List<SubsystemRecord> subsystems) {
-
-        subsysTree.removeItems();
-
-        for(SubsystemRecord subsys: subsystems)
-        {
-            // TODO: distinguish domain and standalone properly
-            String token = "server/_"+subsys.getTitle().toLowerCase().replace(" ","_");
-            TreeItem item = new LHSNavTreeItem(subsys.getTitle(), token);
-            subsysTree.addItem(item);
-        }
-
-    }
 }

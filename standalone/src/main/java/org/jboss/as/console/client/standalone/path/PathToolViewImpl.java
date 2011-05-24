@@ -17,28 +17,27 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.server.sockets;
+package org.jboss.as.console.client.standalone.path;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.core.DisposableViewImpl;
+import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 /**
  * @author Heiko Braun
  * @date 2/8/11
  */
-public class SocketToolViewImpl extends DisposableViewImpl implements SocketToolPresenter.MyView {
+public class PathToolViewImpl extends ViewImpl implements PathToolPresenter.MyView {
 
-    SocketToolPresenter presenter;
+    PathToolPresenter presenter;
 
     @Override
-    public void setPresenter(SocketToolPresenter presenter) {
+    public void setPresenter(PathToolPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public Widget createWidget() {
-
-        return new RHSContentPanel("Socket Binding Groups");
+    public Widget asWidget() {
+        return new RHSContentPanel("Paths");
     }
 }
