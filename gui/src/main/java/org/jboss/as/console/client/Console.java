@@ -27,10 +27,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapCmd;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
+import org.mortbay.jetty.handler.StatisticsHandler;
 
 /**
  * Main application entry point.
@@ -117,5 +119,10 @@ public class Console implements EntryPoint {
                 cmd.execute();
             }
         });
+    }
+
+    public static boolean isStandalone()
+    {
+        return MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
     }
 }

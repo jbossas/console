@@ -49,6 +49,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
+import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
@@ -122,7 +123,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+
+        if(Console.isStandalone())
+            RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
+        else
+            RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
     @Override

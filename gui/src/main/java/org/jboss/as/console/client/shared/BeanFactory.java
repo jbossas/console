@@ -30,7 +30,6 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.standalone.subsys.threads.ThreadFactoryRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
@@ -65,7 +64,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<Server> server();
     AutoBean<Jvm> jvm();
     AutoBean<ServerInstance> serverInstance();
-    AutoBean<ThreadFactoryRecord> threadFactory();
 
     AutoBean<DataSource> dataSource();
     AutoBean<XADataSource> xaDataSource();

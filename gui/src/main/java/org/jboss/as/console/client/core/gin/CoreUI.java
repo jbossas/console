@@ -66,7 +66,6 @@ import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
-import org.jboss.as.console.client.standalone.subsys.threads.ThreadManagementPresenter;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -139,9 +138,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<PathToolPresenter> getPathToolPresenter();
     AsyncProvider<PropertyToolPresenter> getPropertyToolPresenter();
     AsyncProvider<SocketToolPresenter> getSocketToolPresenter();
-
-    AsyncProvider<ThreadManagementPresenter> getThreadManagementPresenter();
-
 
     // ----------------------------------------------------------------------
     // domain config below

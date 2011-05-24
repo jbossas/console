@@ -91,7 +91,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         // reveal default sub page
         if(revealDefault && NameTokens.serverConfig.equals(request.getNameToken()))
         {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.ThreadManagementPresenter));
+            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
             revealDefault = false; // only once
         }
     }

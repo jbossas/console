@@ -100,8 +100,6 @@ import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.standalone.properties.PropertyToolViewImpl;
 import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.standalone.sockets.SocketToolViewImpl;
-import org.jboss.as.console.client.standalone.subsys.threads.ThreadManagementPresenter;
-import org.jboss.as.console.client.standalone.subsys.threads.ThreadManagementView;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -235,13 +233,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 SocketToolPresenter.MyView.class,
                 SocketToolViewImpl.class,
                 SocketToolPresenter.MyProxy.class);
-
-        // server/threads
-        bindPresenter(ThreadManagementPresenter.class,
-                ThreadManagementPresenter.MyView.class,
-                ThreadManagementView.class,
-                ThreadManagementPresenter.MyProxy.class);
-
 
         // ------------------------------------------------
         // domain management application
