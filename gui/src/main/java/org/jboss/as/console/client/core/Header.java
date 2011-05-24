@@ -61,8 +61,8 @@ public class Header implements ValueChangeHandler<String> {
     };
 
     public static final String[][] SECTIONS_STANADLONE = {
-            new String[]{NameTokens.serverConfig, "Profile"},
-            new String[]{NameTokens.StandloneDeployments, "Deployments"}
+            //new String[]{NameTokens.serverConfig, "Profile"},
+            //new String[]{NameTokens.StandloneDeployments, "Deployments"}
     };
 
     private MessageBar messageBar;
@@ -92,7 +92,7 @@ public class Header implements ValueChangeHandler<String> {
 
         contentLayout.add(headlineContainer);
 
-        HTML debugLink = new HTML("Debug");
+        /*HTML debugLink = new HTML("Debug");
         debugLink.setStyleName("cross-reference");
         debugLink.addClickHandler(new ClickHandler() {
             @Override
@@ -102,7 +102,7 @@ public class Header implements ValueChangeHandler<String> {
                 );
             }
         });
-        contentLayout.add(debugLink);
+        contentLayout.add(debugLink);*/
 
         HTML settingsLink = new HTML(Console.CONSTANTS.common_label_settings());
         settingsLink.setStyleName("cross-reference");
@@ -117,8 +117,8 @@ public class Header implements ValueChangeHandler<String> {
         contentLayout.add(settingsLink);
 
 
-        debugLink.getElement().getParentElement().setAttribute("width", "50%");
-        debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
+        //debugLink.getElement().getParentElement().setAttribute("width", "50%");
+        //debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
 
         settingsLink.getElement().getParentElement().setAttribute("width", "50%");
         settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
@@ -180,29 +180,34 @@ public class Header implements ValueChangeHandler<String> {
     }
 
     private String createLinks() {
-        SafeHtmlBuilder headerString = new SafeHtmlBuilder();
-        headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
-        headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
-        headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
         String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ? SECTIONS_STANADLONE : SECTIONS;
-        for (String[] section : sections) {
 
-            final String name = section[0];
-            final String id = "header-" + name;
-            String styleClass = "header-link";
-            String styleAtt = "vertical-align:middle; text-align:center";
+        SafeHtmlBuilder headerString = new SafeHtmlBuilder();
 
-            String td =  "<td style='"+styleAtt+"' width='100px' id='" + id +"'"+
-                    " class='"+styleClass+"'></td>";
-            headerString.appendHtmlConstant(td);
-            //headerString.append(title);
+        if(sections.length>0)
+        {
+            headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
+            headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
+            headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
+            for (String[] section : sections) {
 
-            headerString.appendHtmlConstant("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
+                final String name = section[0];
+                final String id = "header-" + name;
+                String styleClass = "header-link";
+                String styleAtt = "vertical-align:middle; text-align:center";
+
+                String td =  "<td style='"+styleAtt+"' width='100px' id='" + id +"'"+
+                        " class='"+styleClass+"'></td>";
+                headerString.appendHtmlConstant(td);
+                //headerString.append(title);
+
+                headerString.appendHtmlConstant("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
+            }
+
+            headerString.appendHtmlConstant("</tr></table>");
         }
-
-        headerString.appendHtmlConstant("</tr></table>");
 
         return headerString.toSafeHtml().asString();
     }

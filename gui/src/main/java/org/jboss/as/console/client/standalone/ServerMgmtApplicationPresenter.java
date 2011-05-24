@@ -101,7 +101,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
-        ApplicationHeader header = new ApplicationHeader("Configuration Profile");
+        ApplicationHeader header = new ApplicationHeader("Server Configuration");
         Console.MODULES.getHeader().setContent(header);
 
         subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {

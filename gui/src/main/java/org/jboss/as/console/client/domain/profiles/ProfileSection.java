@@ -22,26 +22,19 @@ package org.jboss.as.console.client.domain.profiles;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.shared.SubsystemGroup;
-import org.jboss.as.console.client.shared.SubsystemGroupItem;
-import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.standalone.subsys.SubsystemTreeBuilder;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSHighlightEvent;
 import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
 
 import java.util.List;
 
@@ -122,53 +115,6 @@ class ProfileSection {
 
         subsysTree.removeItems();
 
-        // build groups first
-        for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
-        {
-            final TreeItem groupTreeItem = new TreeItem(group.getName());
-
-            for(SubsystemGroupItem groupItem : group.getItems())
-            {
-                for(SubsystemRecord subsys: subsystems)
-                {
-                    if(subsys.getTitle().equals(groupItem.getKey())
-                            && groupItem.isDisabled()==false)
-                    {
-                        final String key = subsys.getTitle().toLowerCase().replace(" ", "_");
-                        String token = "domain/profile/" + key;
-                        final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
-                        link.setKey(key);
-
-                        if(key.equals("datasources")) // the eventing currently doesn't work reliably
-                        {
-                            Timer t = new Timer() {
-                                @Override
-                                public void run() {
-                                    groupTreeItem.setState(true);
-                                    //link.setSelected(true);
-
-                                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
-                                        @Override
-                                        public void execute() {
-                                            Console.MODULES.getEventBus().fireEvent(
-                                                    new LHSHighlightEvent(subsysTree.getTreeId(), link.getText(), "profiles")
-                                            );
-                                        }
-                                    });
-                                }
-                            };
-                            t.schedule(500);
-                        }
-
-                        groupTreeItem.addItem(link);
-                    }
-                }
-            }
-
-            // skip empty groups
-            if(groupTreeItem.getChildCount()>0)
-                subsysTree.addItem(groupTreeItem);
-
-        }
+        SubsystemTreeBuilder.build("domain/profile/", subsysTree, subsystems);
     }
 }

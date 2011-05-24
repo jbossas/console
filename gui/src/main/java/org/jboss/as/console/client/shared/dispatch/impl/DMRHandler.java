@@ -46,7 +46,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
     private final RequestBuilder requestBuilder;
 
-    private boolean trackInvocations = true; //!GWT.isScript(); TODO
+    private boolean trackInvocations = false; //!GWT.isScript(); TODO
     private InvocationMetrics metrics;
     private UIConstants constants;
 

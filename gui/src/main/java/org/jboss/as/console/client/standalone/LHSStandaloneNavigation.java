@@ -22,11 +22,11 @@ package org.jboss.as.console.client.standalone;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.standalone.subsys.SubsystemTreeBuilder;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
 import org.jboss.as.console.client.widgets.LHSNavTreeItem;
@@ -44,7 +44,7 @@ public class LHSStandaloneNavigation {
     private VerticalPanel stack;
 
     private LayoutPanel layout;
-    private Tree subsysTree;
+    private LHSNavTree subsysTree;
 
     public LHSStandaloneNavigation() {
         super();
@@ -107,13 +107,7 @@ public class LHSStandaloneNavigation {
 
         subsysTree.removeItems();
 
-        for(SubsystemRecord subsys: subsystems)
-        {
-            // TODO: distinguish domain and standalone properly
-            String token = "server/_"+subsys.getTitle().toLowerCase().replace(" ","_");
-            TreeItem item = new LHSNavTreeItem(subsys.getTitle(), token);
-            subsysTree.addItem(item);
-        }
+        SubsystemTreeBuilder.build("server/", subsysTree, subsystems);
 
     }
 }
