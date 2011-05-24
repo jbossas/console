@@ -24,7 +24,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapCmd;
@@ -32,7 +31,6 @@ import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 
 /**
  * Main application entry point.
@@ -73,7 +71,7 @@ public class Console implements EntryPoint {
         cmd.execute(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Error: " + caught.getMessage());
+                Log.error("Bootstrap failed: " + caught.getMessage());
             }
 
             @Override
