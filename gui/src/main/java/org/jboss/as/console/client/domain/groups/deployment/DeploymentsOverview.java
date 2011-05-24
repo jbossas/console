@@ -38,9 +38,8 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
-import org.jboss.as.console.client.widgets.TabHeader;
 import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -164,15 +163,19 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         //vpanel.add(new ContentHeaderLabel(headerLabel));
 
-        DefaultCellTable<DeploymentRecord> deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
+        DefaultCellTable<DeploymentRecord> deploymentTable = new DefaultCellTable<DeploymentRecord>(5);
         dataProvider.addDataDisplay(deploymentTable);
 
         for (int i = 0; i < columnHeaders.length; i++) {
             deploymentTable.addColumn(columns.get(i), columnHeaders[i]);
         }
 
-        ScrollPanel scroller = new ScrollPanel(deploymentTable);
-        vpanel.add(scroller);
+        vpanel.add(deploymentTable);
+        
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(deploymentTable);
+        
+        vpanel.add(pager);
 
         return vpanel;
     }

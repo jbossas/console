@@ -40,6 +40,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.TabHeader;
 import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -106,7 +107,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         panel.add(horzPanel);
 
-        deploymentTable = new DefaultCellTable<DeploymentRecord>(20);
+        deploymentTable = new DefaultCellTable<DeploymentRecord>(10);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
         deploymentProvider.addDataDisplay(deploymentTable);
 
@@ -133,6 +134,9 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         
         panel.add(deploymentTable);
 
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(deploymentTable);
+        panel.add(pager);
 
         ScrollPanel scroll = new ScrollPanel();
         scroll.add(panel);
