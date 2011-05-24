@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.widgets.ComboBox;
@@ -54,6 +55,7 @@ public class DatasourceStep2 {
     private NewDatasourceWizard wizard;
     private DataSource editedEntity;
     private SingleSelectionModel<JDBCDriver> selectionModel;
+    private CellTable<JDBCDriver> table;
 
     public DatasourceStep2(NewDatasourceWizard wizard) {
         this.wizard = wizard;
@@ -65,30 +67,39 @@ public class DatasourceStep2 {
 
         layout.add(new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers."));
 
-        ComboBox groupSelection = new ComboBox();
+        if(!Console.isStandalone())
+        {
+            ComboBox groupSelection = new ComboBox();
 
-        Set<String> groupNames = new HashSet<String>(wizard.getDrivers().size());
-        for(JDBCDriver driver : wizard.getDrivers())
-            groupNames.add(driver.getGroup());
-        groupSelection.setValues(groupNames);
-        groupSelection.setItemSelected(0, true);
+            Set<String> groupNames = new HashSet<String>(wizard.getDrivers().size());
+            for(JDBCDriver driver : wizard.getDrivers())
+                groupNames.add(driver.getGroup());
+            groupSelection.setValues(groupNames);
+            groupSelection.setItemSelected(0, true);
 
-        HorizontalPanel horz = new HorizontalPanel();
-        horz.setStyleName("fill-layout-width");
-        Label label = new HTML("Server Group"+":&nbsp;");
-        label.setStyleName("form-item-title");
-        horz.add(label);
-        Widget selector = groupSelection.asWidget();
-        horz.add(selector);
+            HorizontalPanel horz = new HorizontalPanel();
+            horz.setStyleName("fill-layout-width");
+            Label label = new HTML("Server Group"+":&nbsp;");
+            label.setStyleName("form-item-title");
+            horz.add(label);
+            Widget selector = groupSelection.asWidget();
+            horz.add(selector);
 
-        label.getElement().getParentElement().setAttribute("align", "right");
-        selector.getElement().getParentElement().setAttribute("width", "100%");
-        layout.add(horz);
+            label.getElement().getParentElement().setAttribute("align", "right");
+            selector.getElement().getParentElement().setAttribute("width", "100%");
+            layout.add(horz);
 
+            groupSelection.addValueChangeHandler(new ValueChangeHandler<String>() {
+                @Override
+                public void onValueChange(ValueChangeEvent<String> event) {
+                    filterTable(event.getValue(), getTable());
+                }
+            });
+        }
 
         // ---
 
-        final CellTable<JDBCDriver> table = new DefaultCellTable<JDBCDriver>(5);
+        table = new DefaultCellTable<JDBCDriver>(5);
 
         TextColumn<JDBCDriver> nameColumn = new TextColumn<JDBCDriver>() {
             @Override
@@ -111,20 +122,15 @@ public class DatasourceStep2 {
         table.setSelectionModel(selectionModel);
 
         // filter and select first record
-        filterTable(groupSelection.getSelectedValue(), table);
+        if(Console.isStandalone())
+            provisionTable(table);
+        // TODO: domain mode default selection
 
         layout.add(table);
 
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(table);
         layout.add(pager);
-
-        groupSelection.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                filterTable(event.getValue(), table);
-            }
-        });
 
         // ----
 
@@ -168,6 +174,25 @@ public class DatasourceStep2 {
         return layout;
     }
 
+     private void provisionTable(CellTable<JDBCDriver> table) {
+
+
+        List<JDBCDriver> drivers = wizard.getDrivers();
+
+        table.setRowCount(drivers.size(), true);
+        table.setRowData(drivers);
+
+        // clear selection
+        JDBCDriver selectedDriver = selectionModel.getSelectedObject();
+        if(selectedDriver!=null)
+            selectionModel.setSelected(selectedDriver, false);
+
+        // new default selection
+        if(drivers.size()>0) {
+            selectionModel.setSelected(drivers.get(0), true);
+        }
+    }
+
     private void filterTable(String group, CellTable<JDBCDriver> table) {
 
 
@@ -197,5 +222,9 @@ public class DatasourceStep2 {
     {
         this.editedEntity = entity;
 
+    }
+
+    private CellTable<JDBCDriver> getTable() {
+        return table;
     }
 }

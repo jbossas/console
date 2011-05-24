@@ -19,17 +19,14 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
-import org.jboss.as.console.client.Console;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 5/24/11
  */
-public class DriverRegistry {
-    public static DriverStrategy create() {
-        if(Console.isStandalone())
-            return Console.MODULES.getStandloneDriverStrategy();
-        else
-            return Console.MODULES.getDomainDriverStrategy();
-    }
+public interface DriverStrategy {
+    void refreshDrivers(AsyncCallback<List<JDBCDriver>> callback);
 }

@@ -34,12 +34,13 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
+import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
+import org.jboss.as.console.client.shared.subsys.jca.model.DriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
@@ -61,7 +62,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private DefaultWindow window;
 
     private DataSourceStore dataSourceStore;
-    private DriverRegistry driverRegistry;
+    private DriverStrategy driverRegistry;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -79,12 +80,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     @Inject
     public DataSourcePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            DataSourceStore dataSourceStore,
-            DriverRegistry driverRegistry) {
+            DataSourceStore dataSourceStore) {
         super(eventBus, view, proxy);
 
         this.dataSourceStore = dataSourceStore;
-        this.driverRegistry = driverRegistry;
+        this.driverRegistry = DriverRegistry.create(); // better Inject?
     }
 
     @Override
