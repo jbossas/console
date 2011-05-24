@@ -73,14 +73,7 @@ public class Console implements EntryPoint {
         cmd.execute(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
-
-                if (caught instanceof DMRHandler.AuthCancelledException) {
-                    // TODO: deal with it
-                }
-                else
-                {
-                    Window.alert("Error: " + caught.getMessage()+ ".\n\nHas the server been started?");
-                }
+                Window.alert("Error: " + caught.getMessage());
             }
 
             @Override

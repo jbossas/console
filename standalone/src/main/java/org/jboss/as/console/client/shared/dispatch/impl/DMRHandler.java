@@ -158,8 +158,4 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         }
     }
 
-    public class AuthCancelledException extends Exception {
-
-    }
-
 }
