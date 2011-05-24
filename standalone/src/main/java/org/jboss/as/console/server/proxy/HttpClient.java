@@ -305,8 +305,11 @@ public class HttpClient {
         OutputStream out = null;
         try {
             out = this.getOutputStream();
-            out.write(postData);
-            out.flush();
+            if(out!=null)
+            {
+                out.write(postData);
+                out.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }finally {

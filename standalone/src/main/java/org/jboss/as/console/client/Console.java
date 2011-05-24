@@ -32,6 +32,7 @@ import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 
 /**
  * Main application entry point.
@@ -72,7 +73,14 @@ public class Console implements EntryPoint {
         cmd.execute(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Error: " + caught.getMessage());
+
+                if (caught instanceof DMRHandler.AuthCancelledException) {
+                    // TODO: deal with it
+                }
+                else
+                {
+                    Window.alert("Error: " + caught.getMessage()+ ".\n\nHas the server been started?");
+                }
             }
 
             @Override

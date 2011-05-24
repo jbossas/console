@@ -89,7 +89,8 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
 
-                    if(200==response.getStatusCode())
+                    int statusCode = response.getStatusCode();
+                    if(200== statusCode)
                     {
                         resultCallback.onSuccess(
                                 new DMRResponse(
@@ -98,10 +99,14 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                                 )
                         );
                     }
+                    else if(0==statusCode) // cancel authentication prompt
+                    {
+                        resultCallback.onFailure(new AuthCancelledException());
+                    }
                     else
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(constants.common_error_unexpectedHttpResponse()).append(": ").append(response.getStatusCode());
+                        sb.append(constants.common_error_unexpectedHttpResponse()).append(": ").append(statusCode);
                         sb.append("\n\n");
                         sb.append("Request\n");
                         sb.append(operation.toString());
@@ -151,4 +156,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
             return delegate!=null ? delegate.isPending() : false;
         }
     }
+
+    public class AuthCancelledException extends Exception {
+
+    }
+
 }

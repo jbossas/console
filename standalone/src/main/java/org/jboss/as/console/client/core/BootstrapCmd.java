@@ -54,8 +54,7 @@ public class BootstrapCmd implements AsyncCommand<Boolean>{
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
-                callback.onSuccess(false);
+                callback.onFailure(caught);
             }
 
             @Override

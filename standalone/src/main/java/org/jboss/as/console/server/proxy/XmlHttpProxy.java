@@ -249,7 +249,7 @@ public class XmlHttpProxy {
         if(null==in)
         {
             int responseCode = httpclient.getResponseCode();
-            if(401== responseCode)
+            if(401== responseCode || 403==responseCode)
                 throw new AuthenticationException(responseCode, httpclient.getHeader("WWW-Authenticate"));
             else
                 throw new IOException("Failed to open input stream, status: "+responseCode);
