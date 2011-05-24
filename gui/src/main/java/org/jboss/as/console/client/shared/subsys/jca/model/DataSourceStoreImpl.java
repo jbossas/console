@@ -23,6 +23,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -53,21 +54,26 @@ public class DataSourceStoreImpl implements DataSourceStore {
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
+    private CurrentProfileSelection currentProfile;
 
     @Inject
-    public DataSourceStoreImpl(DispatchAsync dispatcher, BeanFactory factory,PropertyMetaData propertyMetaData) {
+    public DataSourceStoreImpl(
+            DispatchAsync dispatcher,
+            BeanFactory factory,
+            PropertyMetaData propertyMetaData,
+            CurrentProfileSelection currentProfile) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData = propertyMetaData;
+        this.currentProfile = currentProfile;
     }
 
     @Override
-    public void loadDataSources(String profile, final AsyncCallback<List<DataSource>> callback) {
-        // /profile=default/subsystem=datasources:read-children-resources(child-type=data-source)
+    public void loadDataSources(final AsyncCallback<List<DataSource>> callback) {
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(CHILD_TYPE).set("data-source");
 
@@ -125,11 +131,23 @@ public class DataSourceStoreImpl implements DataSourceStore {
         });
     }
 
-    public void loadXADataSources(String profile, final AsyncCallback<List<XADataSource>> callback) {
+    private ModelNode getBaseAddress() {
+        ModelNode baseAddress = new ModelNode();
+        baseAddress.setEmptyList();
+
+        if(currentProfile.getName()!=null)
+            baseAddress.add("profile", currentProfile.getName());
+
+        return baseAddress;
+    }
+
+    public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", profile);
+
+        operation.get(ADDRESS).set(getBaseAddress());
+
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(CHILD_TYPE).set("xa-data-source");
 
@@ -208,10 +226,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void createDataSource(String profile, final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void createDataSource(final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("data-source", datasource.getName());
 
@@ -250,10 +268,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void createXADataSource(String profile, XADataSource datasource, final AsyncCallback<Boolean> callback) {
+    public void createXADataSource(XADataSource datasource, final AsyncCallback<Boolean> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("xa-data-source", datasource.getName());
 
@@ -304,10 +322,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void deleteDataSource(String profile, final DataSource dataSource, final AsyncCallback<Boolean> callback) {
+    public void deleteDataSource(final DataSource dataSource, final AsyncCallback<Boolean> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("data-source", dataSource.getName());
 
@@ -327,10 +345,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void deleteXADataSource(String profile, XADataSource dataSource, final AsyncCallback<Boolean> callback) {
+    public void deleteXADataSource(XADataSource dataSource, final AsyncCallback<Boolean> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("xa-data-source", dataSource.getName());
 
@@ -350,14 +368,14 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableDataSource(String profile, DataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void enableDataSource(DataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         final String dataSourceName = dataSource.getName();
         final String opName = doEnable ? "enable" : "disable";
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(opName);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("data-source", dataSourceName);
 
@@ -383,13 +401,13 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void enableXADataSource(String profile, XADataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void enableXADataSource(XADataSource dataSource, boolean doEnable, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         final String dataSourceName = dataSource.getName();
         final String opName = doEnable ? "enable" : "disable";
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(opName);
-        operation.get(ADDRESS).add("profile", profile);
+        operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
         operation.get(ADDRESS).add("xa-data-source", dataSourceName);
 
@@ -417,10 +435,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void updateDataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void updateDataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", profile);
+        proto.get(ADDRESS).set(getBaseAddress());
         proto.get(ADDRESS).add("subsystem", "datasources");
         proto.get(ADDRESS).add("data-source", name);
 
@@ -443,10 +461,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void updateXADataSource(String profile, String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void updateXADataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", profile);
+        proto.get(ADDRESS).set(getBaseAddress());
         proto.get(ADDRESS).add("subsystem", "datasources");
         proto.get(ADDRESS).add("xa-data-source", name);
 

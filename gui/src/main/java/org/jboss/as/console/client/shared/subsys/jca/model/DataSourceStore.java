@@ -31,18 +31,18 @@ import java.util.Map;
  */
 public interface DataSourceStore {
 
-    void loadDataSources(String profile, AsyncCallback<List<DataSource>> callback);
-    void loadXADataSources(String profile, final AsyncCallback<List<XADataSource>> callback);
-    void createDataSource(String profile, DataSource datasource, AsyncCallback<ResponseWrapper<Boolean>> callback);
-    void deleteDataSource(String profile, DataSource dataSource, AsyncCallback<Boolean> callback);
-    void enableDataSource(String profile, DataSource dataSource, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void loadDataSources(AsyncCallback<List<DataSource>> callback);
+    void loadXADataSources(final AsyncCallback<List<XADataSource>> callback);
+    void createDataSource(DataSource datasource, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void deleteDataSource(DataSource dataSource, AsyncCallback<Boolean> callback);
+    void enableDataSource(DataSource dataSource, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
-    void updateDataSource(String profile, String name, Map<String,Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void updateDataSource(String name, Map<String,Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
-    void createXADataSource(String profile, XADataSource datasource, AsyncCallback<Boolean> callback);
+    void createXADataSource(XADataSource datasource, AsyncCallback<Boolean> callback);
 
-    void enableXADataSource(String name, XADataSource entity, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
-    void deleteXADataSource(String name, XADataSource entity, AsyncCallback<Boolean> callback);
+    void enableXADataSource(XADataSource entity, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void deleteXADataSource(XADataSource entity, AsyncCallback<Boolean> callback);
 
-    void updateXADataSource(String profile, String name, Map<String, Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void updateXADataSource(String name, Map<String, Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 }
