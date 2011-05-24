@@ -56,6 +56,7 @@ public class DatasourceStep2 {
     private DataSource editedEntity;
     private SingleSelectionModel<JDBCDriver> selectionModel;
     private CellTable<JDBCDriver> table;
+    private ComboBox groupSelection;
 
     public DatasourceStep2(NewDatasourceWizard wizard) {
         this.wizard = wizard;
@@ -69,7 +70,7 @@ public class DatasourceStep2 {
 
         if(!Console.isStandalone())
         {
-            ComboBox groupSelection = new ComboBox();
+            groupSelection = new ComboBox();
 
             Set<String> groupNames = new HashSet<String>(wizard.getDrivers().size());
             for(JDBCDriver driver : wizard.getDrivers())
@@ -124,7 +125,8 @@ public class DatasourceStep2 {
         // filter and select first record
         if(Console.isStandalone())
             provisionTable(table);
-        // TODO: domain mode default selection
+        else
+            filterTable(groupSelection.getSelectedValue(), table);
 
         layout.add(table);
 

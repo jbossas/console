@@ -55,6 +55,7 @@ public class XADatasourceStep2 {
     private SingleSelectionModel<JDBCDriver> selectionModel;
     private XADataSource editedEntity;
     private CellTable<JDBCDriver> table;
+    private ComboBox groupSelection;
 
     public XADatasourceStep2(NewXADatasourceWizard wizard) {
         this.wizard = wizard;
@@ -72,7 +73,7 @@ public class XADatasourceStep2 {
 
         if(!Console.isStandalone())
         {
-            ComboBox groupSelection = new ComboBox();
+            groupSelection = new ComboBox();
             Set<String> groupNames = new HashSet<String>(wizard.getDrivers().size());
             for(JDBCDriver driver : wizard.getDrivers())
                 groupNames.add(driver.getGroup());
@@ -125,9 +126,10 @@ public class XADatasourceStep2 {
         table.setSelectionModel(selectionModel);
 
         // filter and select first record
-        //filterTable(groupSelection.getSelectedValue(), table);
         if(Console.isStandalone())
             provisionTable(table);
+        else
+            filterTable(groupSelection.getSelectedValue(), table);
 
         layout.add(table);
 
