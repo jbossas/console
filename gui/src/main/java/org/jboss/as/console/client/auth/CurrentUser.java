@@ -19,10 +19,13 @@
 
 package org.jboss.as.console.client.auth;
 
+import javax.inject.Singleton;
+
 /**
  * @author Heiko Braun
  * @date 2/7/11
  */
+@Singleton
 public class CurrentUser {
 
     private boolean loggedIn;

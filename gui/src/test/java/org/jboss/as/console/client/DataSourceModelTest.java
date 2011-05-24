@@ -21,6 +21,7 @@ package org.jboss.as.console.client;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
@@ -44,6 +45,9 @@ public class DataSourceModelTest {
     @BeforeClass
     public static void init() {
         injector = Guice.createInjector(new TestModule());
+
+        CurrentProfileSelection profile = injector.getInstance(CurrentProfileSelection.class);
+        profile.setName("default");
     }
 
     @Test
@@ -60,7 +64,7 @@ public class DataSourceModelTest {
             }
         };
 
-        store.loadDataSources("default", callback);
+        store.loadDataSources(callback);
 
         synchronized (callback) {
             callback.wait(500);
@@ -84,7 +88,7 @@ public class DataSourceModelTest {
         };
 
         DataSource entity = createEntity();
-        store.createDataSource("default", entity, callback);
+        store.createDataSource(entity, callback);
 
         synchronized (callback) {
             callback.wait(500);
@@ -112,7 +116,7 @@ public class DataSourceModelTest {
             }
         };
 
-        store.enableDataSource("default", entity, false, secondCallback);
+        store.enableDataSource(entity, false, secondCallback);
 
         synchronized (secondCallback) {
             secondCallback.wait(500);

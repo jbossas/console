@@ -21,7 +21,6 @@ package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -123,7 +122,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                     }
                 }
                 else {
-                    Console.error("DMR result is 'UNDEFINED'", response.toString());
+                    Log.error("DMR result is 'UNDEFINED'", response.toString());
                 }
 
                 callback.onSuccess(datasources);
@@ -217,7 +216,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                     }
                 }
                 else {
-                    Console.error("DMR result is 'UNDEFINED'", response.toString());
+                    Log.error("DMR result is 'UNDEFINED'", response.toString());
                 }
 
                 callback.onSuccess(datasources);

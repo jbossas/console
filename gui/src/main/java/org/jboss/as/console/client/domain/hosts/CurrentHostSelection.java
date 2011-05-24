@@ -19,10 +19,13 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import javax.inject.Singleton;
+
 /**
  * @author Heiko Braun
  * @date 5/17/11
  */
+@Singleton
 public class CurrentHostSelection {
 
     private String name;

@@ -19,10 +19,13 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
+import javax.inject.Singleton;
+
 /**
  * @author Heiko Braun
  * @date 2/28/11
  */
+@Singleton
 public class CurrentProfileSelection {
 
     private String name;
