@@ -101,7 +101,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     else
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(constants.common_error_unexpectedHttpResponse()).append(response.getStatusCode());
+                        sb.append(constants.common_error_unexpectedHttpResponse()).append(": ").append(response.getStatusCode());
                         sb.append("\n\n");
                         sb.append("Request\n");
                         sb.append(operation.toString());
