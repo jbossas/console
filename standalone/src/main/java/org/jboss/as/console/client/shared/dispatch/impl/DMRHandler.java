@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.dispatch.impl;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -99,9 +100,9 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                                 )
                         );
                     }
-                    else if(0==statusCode) // cancel authentication prompt
+                    else if(401 == statusCode)
                     {
-                        resultCallback.onFailure(new AuthCancelledException());
+                        Log.error("Authentication required. Could not execute "+operation.toString());
                     }
                     else
                     {
