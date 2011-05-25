@@ -92,6 +92,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
+        panel.getElement().setAttribute("style", "padding:15px;");
 
         // -----------
 
