@@ -53,7 +53,7 @@ public class LoggingEditor {
         ScrollPanel scroll = new ScrollPanel();
 
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; width:95%");
+        layout.setStyleName("fill-layout-width");
 
         scroll.add(layout);
 
@@ -73,14 +73,7 @@ public class LoggingEditor {
 
         // ---
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.database());
-        horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_handlerConfigurations()));
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        layout.add(horzPanel);
+        layout.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_handlerConfigurations()));
 
         handlerTable = new DefaultCellTable<LoggingHandler>(20);
         handlerProvider = new ListDataProvider<LoggingHandler>();
