@@ -117,7 +117,9 @@ public class DatasourceStep2 {
         };
 
         table.addColumn(nameColumn, "Name");
-        table.addColumn(groupColumn, "Server Group");
+
+        if(!Console.isStandalone())
+            table.addColumn(groupColumn, "Server Group");
 
         selectionModel = new SingleSelectionModel<JDBCDriver>();
         table.setSelectionModel(selectionModel);
