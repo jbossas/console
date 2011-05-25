@@ -297,15 +297,20 @@ public class DataSourceStoreImpl implements DataSourceStore {
         if(datasource.getProperties()!=null)
         {
             ModelNode props = new ModelNode();
-            props.setEmptyList();
 
             for(PropertyRecord prop : datasource.getProperties()) {
                 ModelNode value = new ModelNode().set(prop.getValue());
                 props.add(prop.getKey(), value);
             }
+
+            if(datasource.getProperties().isEmpty())
+                props.setEmptyObject();
+
             operation.get("xa-data-source-properties").set(props);
 
         }
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
