@@ -70,7 +70,7 @@ public class DatasourceStep2 {
 
         layout.add(new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers."));
 
-        if(isStandalone)
+        if(!isStandalone)
         {
             groupSelection = new ComboBox();
 
