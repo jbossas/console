@@ -36,16 +36,17 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -67,9 +68,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private CurrentProfileSelection currentProfileSelection;
     private PropertyMetaData propertyMetaData;
-
     private DefaultWindow window;
 
 
@@ -80,14 +79,10 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
     public interface MyView extends View {
         void setPresenter(JMSPresenter presenter);
-
         void setQueues(List<Queue> queues);
         void setTopics(List<JMSEndpoint> topics);
-
         void setConnectionFactories(List<ConnectionFactory> factories);
-
         void enableEditQueue(boolean b);
-
         void enableEditTopic(boolean b);
     }
 
@@ -95,14 +90,12 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public JMSPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, CurrentProfileSelection currentProfileSelection,
-            PropertyMetaData propertyMetaData) {
+            BeanFactory factory, PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.currentProfileSelection = currentProfileSelection;
         this.propertyMetaData  = propertyMetaData;
     }
 
@@ -121,7 +114,10 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        if(Console.isStandalone())
+            RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
+        else
+            RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
     }
 
     void loadJMSConfig() {
@@ -129,7 +125,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(RECURSIVE).set(Boolean.TRUE);
-        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jms");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -234,7 +230,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "jms");
         proto.get(ADDRESS).add("queue", name);
 
@@ -263,7 +259,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
         ModelNode queue = new ModelNode();
         queue.get(OP).set(ADD);
-        queue.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        queue.get(ADDRESS).set(Baseadress.get());
         queue.get(ADDRESS).add("subsystem", "jms");
         queue.get(ADDRESS).add("queue", entity.getName());
 
@@ -301,7 +297,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public void onDeleteQueue(final Queue entity) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jms");
         operation.get(ADDRESS).add("queue", entity.getName());
 
@@ -348,7 +344,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public void onDeleteTopic(final JMSEndpoint entity) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jms");
         operation.get(ADDRESS).add("topic", entity.getName());
 
@@ -384,7 +380,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "jms");
         proto.get(ADDRESS).add("topic", name);
 
@@ -434,7 +430,7 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
 
         ModelNode queue = new ModelNode();
         queue.get(OP).set(ADD);
-        queue.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        queue.get(ADDRESS).set(Baseadress.get());
         queue.get(ADDRESS).add("subsystem", "jms");
         queue.get(ADDRESS).add("topic", entity.getName());
 
