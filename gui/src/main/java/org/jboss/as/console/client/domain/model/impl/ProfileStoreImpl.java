@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -44,11 +45,13 @@ public class ProfileStoreImpl implements ProfileStore {
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private ModelNode operation;
+    private CurrentProfileSelection currentProfile;
 
     @Inject
-    public ProfileStoreImpl(DispatchAsync dispatcher, BeanFactory factory) {
+    public ProfileStoreImpl(DispatchAsync dispatcher, BeanFactory factory, CurrentProfileSelection currentProfile) {
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.currentProfile = currentProfile;
 
         this.operation = new ModelNode();
         operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
@@ -77,6 +80,10 @@ public class ProfileStoreImpl implements ProfileStore {
                     record.setName(payload.get(i).asString());
                     records.add(record);
                 }
+
+                // early initialization
+                if(records.size()>0)
+                    currentProfile.setName(records.get(0).getName());
 
                 callback.onSuccess(records);
             }

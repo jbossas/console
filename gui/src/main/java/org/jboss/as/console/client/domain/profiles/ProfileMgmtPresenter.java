@@ -99,6 +99,7 @@ public class ProfileMgmtPresenter
 
     @Override
     protected void onReveal() {
+
         super.onReveal();
         if(!hasBeenRevealed)
         {

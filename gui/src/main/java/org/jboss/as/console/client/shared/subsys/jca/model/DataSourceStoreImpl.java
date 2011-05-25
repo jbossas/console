@@ -84,6 +84,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
+
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
                 List<DataSource> datasources = new ArrayList<DataSource>();

@@ -105,7 +105,7 @@ class ProfileSection {
             @Override
             public void execute() {
                 selection.setItemSelected(0, true);
-                fireProfileSelection(profileRecords.get(0).getName());
+                fireProfileSelection(selection.getSelectedValue());
             }
         });
 
