@@ -94,7 +94,7 @@
 
     <!-- Plugins -->
     <build>
-        <finalName>standalone-console</finalName>
+        <finalName>as7-console</finalName>
         <outputDirectory>war/WEB-INF/classes</outputDirectory>
 
         <resources>
@@ -301,7 +301,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>gwtplatform.plugin</id>
-            <name>Gwtplatform custom plugin epository</name>
+            <name>Gwtplatform custom plugin repository</name>
             <url>http://maven.gwt-platform.googlecode.com/hg/</url>
             <layout>default</layout>
         </pluginRepository>
