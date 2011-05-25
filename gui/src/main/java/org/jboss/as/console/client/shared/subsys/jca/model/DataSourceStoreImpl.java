@@ -297,6 +297,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         if(datasource.getProperties()!=null)
         {
             ModelNode props = new ModelNode();
+            props.setEmptyList();
 
             for(PropertyRecord prop : datasource.getProperties()) {
                 ModelNode value = new ModelNode().set(prop.getValue());
