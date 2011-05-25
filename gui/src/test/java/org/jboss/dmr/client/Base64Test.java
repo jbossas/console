@@ -19,6 +19,7 @@
 
 package org.jboss.dmr.client;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -76,6 +77,7 @@ public class Base64Test {
     }
 
     @Test
+    @Ignore
     public void testDSDeletionResponse() throws Exception
     {
 
