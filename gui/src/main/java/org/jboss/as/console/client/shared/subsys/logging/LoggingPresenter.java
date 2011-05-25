@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -31,14 +30,14 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -57,8 +56,8 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
-
-    private BeanFactory factory = GWT.create(BeanFactory.class);
+    private BeanFactory factory;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.LoggingPresenter)
@@ -67,18 +66,20 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
 
     public interface MyView extends View {
         void setPresenter(LoggingPresenter presenter);
-
         void updateLoggingHandlers(List<LoggingHandler> handlerss);
     }
 
     @Inject
     public LoggingPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, DispatchAsync dispatcher) {
+            PlaceManager placeManager, DispatchAsync dispatcher,
+            BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.revealStrategy = revealStrategy;
     }
 
     @Override
@@ -96,18 +97,16 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
 
     @Override
     protected void revealInParent() {
-         RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+         revealStrategy.revealInParent(this);
     }
 
     void loadLogging() {
 
-        // /profile=default/subsystem=logging:read-children-resources(child-type=handler)
-
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", "default"); // TODO: selected profile
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "logging");
-        operation.get(CHILD_TYPE).set("handler");
+        operation.get(CHILD_TYPE).set("console-handler"); // TODO: remaing handlers
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override

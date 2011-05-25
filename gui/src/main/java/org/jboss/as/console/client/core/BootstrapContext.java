@@ -134,4 +134,9 @@ public class BootstrapContext implements ApplicationProperties {
         return b;
 
     }
+
+    @Override
+    public boolean isStandalone() {
+        return getProperty(BootstrapContext.STANDALONE).equals("true");
+    }
 }

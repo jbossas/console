@@ -60,7 +60,7 @@ public class SubsystemStoreImpl implements SubsystemStore {
 
         if(bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("false"))
         {
-            operation.get(ADDRESS).add("profile", "default");  //TODO: doesn't work with multiple profiles
+            operation.get(ADDRESS).add("profile", profileName);
         }
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {

@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -43,10 +44,19 @@ public class NewDatasourceWizard {
     private DataSource baseAttributes = null;
     private DataSource driverAttributes = null;
     private List<JDBCDriver> drivers;
+    private ApplicationProperties bootstrap;
 
-    public NewDatasourceWizard(DataSourcePresenter presenter, List<JDBCDriver> drivers) {
+    public NewDatasourceWizard(
+            DataSourcePresenter presenter,
+            List<JDBCDriver> drivers,
+            ApplicationProperties bootstrap) {
         this.presenter = presenter;
         this.drivers = drivers;
+        this.bootstrap = bootstrap;
+    }
+
+    ApplicationProperties getBootstrap() {
+        return bootstrap;
     }
 
     public Widget asWidget() {

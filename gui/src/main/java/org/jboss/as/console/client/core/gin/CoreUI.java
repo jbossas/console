@@ -70,6 +70,7 @@ import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
@@ -176,6 +177,7 @@ public interface CoreUI extends Ginjector {
     DataSourceStore getDataSourceStore();
     DomainDriverStrategy getDomainDriverStrategy();
     StandaloneDriverStrategy getStandloneDriverStrategy();
+    DriverRegistry getDriverRegistry();
 
     AsyncProvider<JMSPresenter> getJMSPresenter();
     AsyncProvider<MessagingPresenter> getMessagingPresenter();

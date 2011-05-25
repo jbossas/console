@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.standalone.subsys;
+package org.jboss.as.console.client.shared.subsys;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;

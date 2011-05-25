@@ -36,15 +36,17 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -66,12 +68,12 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
-    private CurrentProfileSelection currentProfileSelection;
 
     private DefaultWindow window;
     private PropertyMetaData propertyMetaData;
 
     private List<HttpConnector> connectors;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -80,15 +82,10 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     public interface MyView extends View {
         void setPresenter(WebPresenter presenter);
-
         void setConnectors(List<HttpConnector> connectors);
-
         void enableEditConnector(boolean b);
-
         void setVirtualServers(List<VirtualServer> servers);
-
         void enableEditVirtualServer(boolean b);
-
         void enableJSPConfig(boolean b);
     }
 
@@ -97,14 +94,16 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             BeanFactory factory, DispatchAsync dispatcher,
-            CurrentProfileSelection currentProfileSelection, PropertyMetaData propertyMetaData) {
+            PropertyMetaData propertyMetaData,
+            RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
-        this.currentProfileSelection = currentProfileSelection;
         this.propertyMetaData = propertyMetaData;
+        this.revealStrategy = revealStrategy;
+
     }
 
     @Override
@@ -125,14 +124,14 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 
     private void loadVirtualServer() {
         // /profile=default/subsystem=web:read-children-resources(child-type=virtual-server, recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("virtual-server");
         operation.get(RECURSIVE).set(Boolean.TRUE);
@@ -185,7 +184,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         // /profile=default/subsystem=web:read-children-resources(child-type=connector, recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("connector");
         operation.get(RECURSIVE).set(Boolean.TRUE);
@@ -242,7 +241,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "web");
         proto.get(ADDRESS).add("connector", name);
 
@@ -268,7 +267,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void onDeleteConnector(final String name) {
         ModelNode connector = new ModelNode();
         connector.get(OP).set(REMOVE);
-        connector.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        connector.get(ADDRESS).set(Baseadress.get());
         connector.get(ADDRESS).add("subsystem", "web");
         connector.get(ADDRESS).add("connector", name);
 
@@ -319,7 +318,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         ModelNode connector = new ModelNode();
         connector.get(OP).set(ADD);
-        connector.get(ADDRESS).add("profile", currentProfileSelection.getName());
+        connector.get(ADDRESS).set(Baseadress.get());
         connector.get(ADDRESS).add("subsystem", "web");
         connector.get(ADDRESS).add("connector", entity.getName());
 

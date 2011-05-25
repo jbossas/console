@@ -120,8 +120,4 @@ public class Console implements EntryPoint {
         });
     }
 
-    public static boolean isStandalone()
-    {
-        return MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
-    }
 }

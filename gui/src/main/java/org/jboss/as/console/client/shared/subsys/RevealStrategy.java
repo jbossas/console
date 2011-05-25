@@ -17,31 +17,37 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca.model;
+package org.jboss.as.console.client.shared.subsys;
 
+import com.google.gwt.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.ApplicationProperties;
+import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 
 import javax.inject.Inject;
 
 /**
  * @author Heiko Braun
- * @date 5/24/11
+ * @date 5/25/11
  */
-public class DriverRegistry {
+public class RevealStrategy {
 
     private ApplicationProperties bootstrap;
-    private DriverStrategy chosenStrategy;
+    private EventBus eventBus;
+
 
     @Inject
-    public DriverRegistry(
-            ApplicationProperties bootstrap,
-            DomainDriverStrategy domainStrategy,
-            StandaloneDriverStrategy standaloneStrategy) {
+    public RevealStrategy(EventBus eventBus, ApplicationProperties bootstrap) {
         this.bootstrap = bootstrap;
-        this.chosenStrategy = bootstrap.isStandalone() ?  standaloneStrategy : domainStrategy;
+        this.eventBus = eventBus;
     }
 
-    public DriverStrategy create() {
-       return chosenStrategy;
+    public void revealInParent(Presenter presenter) {
+         if(bootstrap.isStandalone())
+            RevealContentEvent.fire(eventBus, ServerMgmtApplicationPresenter.TYPE_MainContent, presenter);
+        else
+            RevealContentEvent.fire(eventBus, ProfileMgmtPresenter.TYPE_MainContent, presenter);
     }
 }

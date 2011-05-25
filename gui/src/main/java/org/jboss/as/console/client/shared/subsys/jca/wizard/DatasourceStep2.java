@@ -57,9 +57,11 @@ public class DatasourceStep2 {
     private SingleSelectionModel<JDBCDriver> selectionModel;
     private CellTable<JDBCDriver> table;
     private ComboBox groupSelection;
+    private boolean isStandalone;
 
     public DatasourceStep2(NewDatasourceWizard wizard) {
         this.wizard = wizard;
+        this.isStandalone = wizard.getBootstrap().isStandalone();
     }
 
     Widget asWidget() {
@@ -68,7 +70,7 @@ public class DatasourceStep2 {
 
         layout.add(new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers."));
 
-        if(!Console.isStandalone())
+        if(isStandalone)
         {
             groupSelection = new ComboBox();
 
@@ -118,14 +120,14 @@ public class DatasourceStep2 {
 
         table.addColumn(nameColumn, "Name");
 
-        if(!Console.isStandalone())
+        if(!isStandalone)
             table.addColumn(groupColumn, "Server Group");
 
         selectionModel = new SingleSelectionModel<JDBCDriver>();
         table.setSelectionModel(selectionModel);
 
         // filter and select first record
-        if(Console.isStandalone())
+        if(isStandalone)
             provisionTable(table);
         else
             filterTable(groupSelection.getSelectedValue(), table);

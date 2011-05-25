@@ -55,6 +55,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private boolean revealDefault = true;
 
     private SubsystemStore subsysStore;
+    private boolean hasBeenRevealed;
 
     public interface ServerManagementView extends View {
 
@@ -100,16 +101,21 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     protected void onReset() {
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
-        ApplicationHeader header = new ApplicationHeader("Server Configuration");
-        Console.MODULES.getHeader().setContent(header);
+        if(!hasBeenRevealed)
+        {
+            Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+            ApplicationHeader header = new ApplicationHeader("Server Configuration");
+            Console.MODULES.getHeader().setContent(header);
 
-        subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
-            @Override
-            public void onSuccess(List<SubsystemRecord> result) {
-                getView().updateFrom(result);
-            }
-        });
+            subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
+                @Override
+                public void onSuccess(List<SubsystemRecord> result) {
+                    getView().updateFrom(result);
+                }
+            });
+
+            hasBeenRevealed = true;
+        }
     }
 
     @Override

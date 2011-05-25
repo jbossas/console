@@ -21,6 +21,7 @@ package org.jboss.as.console.client;
 
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.core.ApplicationProperties;
+import org.jboss.as.console.client.core.BootstrapContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,4 +66,8 @@ public class ExecutionEnvironment implements ApplicationProperties {
         ctx.remove(key);
     }
 
+    @Override
+    public boolean isStandalone() {
+        return getProperty(BootstrapContext.STANDALONE).equals("true");
+    }
 }

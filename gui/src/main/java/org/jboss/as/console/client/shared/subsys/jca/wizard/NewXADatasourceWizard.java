@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -45,10 +46,15 @@ public class NewXADatasourceWizard {
     private XADataSource driverAttributes = null;
     private List<PropertyRecord> properties;
     private List<JDBCDriver> drivers;
+    private ApplicationProperties bootstrap;
 
-    public NewXADatasourceWizard(DataSourcePresenter presenter, List<JDBCDriver> drivers) {
+    public NewXADatasourceWizard(
+            DataSourcePresenter presenter,
+            List<JDBCDriver> drivers,
+            ApplicationProperties bootstrap) {
         this.presenter = presenter;
         this.drivers = drivers;
+        this.bootstrap = bootstrap;
     }
 
     public List<JDBCDriver> getDrivers() {
@@ -118,5 +124,9 @@ public class NewXADatasourceWizard {
 
         step4.edit(driverAttributes);
         deck.showWidget(3);
+    }
+
+    public ApplicationProperties getBootstrap() {
+        return this.bootstrap;
     }
 }

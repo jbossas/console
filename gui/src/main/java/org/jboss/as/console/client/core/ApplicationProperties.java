@@ -36,4 +36,6 @@ public interface ApplicationProperties {
     boolean hasProperty(String key);
 
     void removeProperty(String key);
+
+    boolean isStandalone();
 }

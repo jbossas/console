@@ -29,23 +29,21 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
-import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
-import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 
 import java.util.List;
@@ -63,6 +61,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     private DataSourceStore dataSourceStore;
     private DriverStrategy driverRegistry;
+    private RevealStrategy revealStrategy;
+    private ApplicationProperties bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -80,11 +80,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     @Inject
     public DataSourcePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            DataSourceStore dataSourceStore) {
+            DataSourceStore dataSourceStore, DriverRegistry driverRegistry,
+            RevealStrategy revealStrategy, ApplicationProperties bootstrap) {
         super(eventBus, view, proxy);
 
         this.dataSourceStore = dataSourceStore;
-        this.driverRegistry = DriverRegistry.create(); // better Inject?
+        this.driverRegistry = driverRegistry.create();
+        this.revealStrategy = revealStrategy;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -108,11 +111,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     @Override
     protected void revealInParent() {
-
-        if(Console.isStandalone())
-            RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
-        else
-            RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 });
 
                 window.setWidget(
-                        new NewDatasourceWizard(DataSourcePresenter.this, drivers).asWidget()
+                        new NewDatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
                 );
 
                 window.setGlassEnabled(true);
@@ -188,7 +187,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 });
 
                 window.setWidget(
-                        new NewXADatasourceWizard(DataSourcePresenter.this, drivers).asWidget()
+                        new NewXADatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
                 );
 
                 window.setGlassEnabled(true);

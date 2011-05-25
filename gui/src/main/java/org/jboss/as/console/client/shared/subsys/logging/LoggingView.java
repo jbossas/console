@@ -19,13 +19,12 @@
 
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
 
 import java.util.List;
 
@@ -36,25 +35,17 @@ import java.util.List;
 public class LoggingView extends DisposableViewImpl implements LoggingPresenter.MyView {
 
     private LoggingPresenter presenter;
-
-    LayoutPanel layout = null;
-
     private LoggingEditor loggingEditor;
 
     @Override
     public Widget createWidget() {
 
-        this.loggingEditor = new LoggingEditor(presenter);
+        LayoutPanel layout = new RHSContentPanel(Console.CONSTANTS.subsys_logging_logging());
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        loggingEditor = new LoggingEditor(presenter);
+        layout.add(loggingEditor.asWidget());
 
-
-        tabLayoutpanel.add(loggingEditor.asWidget(), Console.CONSTANTS.subsys_logging_logging());
-
-        tabLayoutpanel.selectTab(0);
-
-        return tabLayoutpanel;
+        return layout;
     }
 
     @Override

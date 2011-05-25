@@ -43,6 +43,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -65,12 +66,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.MyProxy> {
 
-    private final PlaceManager placeManager;
+    private PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
     private DefaultWindow window;
-
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JMSPresenter)
@@ -90,13 +91,15 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
     public JMSPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, PropertyMetaData propertyMetaData) {
+            BeanFactory factory, PropertyMetaData propertyMetaData,
+            RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData  = propertyMetaData;
+        this.revealStrategy = revealStrategy;
     }
 
     @Override
@@ -112,12 +115,13 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         loadJMSConfig();
     }
 
+    public JMSPresenter(boolean autoBind, EventBus eventBus, MyView view, MyProxy proxy) {
+        super(autoBind, eventBus, view, proxy);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
     @Override
     protected void revealInParent() {
-        if(Console.isStandalone())
-            RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
-        else
-            RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 
     void loadJMSConfig() {
