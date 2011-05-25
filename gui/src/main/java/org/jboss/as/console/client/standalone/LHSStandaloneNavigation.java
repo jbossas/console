@@ -67,7 +67,7 @@ public class LHSStandaloneNavigation {
 
         // ----------------------------------------------------
 
-        Tree deploymentTree = new LHSNavTree("deployment-standalone");
+        Tree deploymentTree = new LHSNavTree("profiles");
         deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
         DisclosurePanel deplPanel  = new DisclosureStackHeader("Deployments").asWidget();
         deplPanel.setContent(deploymentTree);
@@ -76,7 +76,7 @@ public class LHSStandaloneNavigation {
 
         // ----------------------------------------------------
 
-        Tree commonTree = new LHSNavTree("profile-standalone");
+        Tree commonTree = new LHSNavTree("profiles");
         DisclosurePanel commonPanel  = new DisclosureStackHeader("General Configuration").asWidget();
         commonPanel.setContent(commonTree);
 
