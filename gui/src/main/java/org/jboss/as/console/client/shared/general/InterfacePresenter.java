@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -30,12 +30,13 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.general.model.Interface;
-import org.jboss.as.console.client.domain.general.model.LoadInterfacesCmd;
+import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -50,6 +51,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private BeanFactory factory;
     private DispatchAsync dispatcher;
     private LoadInterfacesCmd loadInterfacesCmd;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
@@ -66,12 +68,13 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
+        this.revealStrategy = revealStrategy;
 
         ModelNode address = new ModelNode();
         address.setEmptyList();
@@ -105,6 +108,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     @Override
     protected void revealInParent() {
-       RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+       revealStrategy.revealInParent(this);
     }
 }

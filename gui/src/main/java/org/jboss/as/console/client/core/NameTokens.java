@@ -37,8 +37,8 @@ public class NameTokens {
     public static final String SettingsPresenter = "settings";
     public static final String MessagingPresenter = "messaging";
     public static final String WebPresenter = "web";
-    public static final String InterfacePresenter = "domain-interfaces";
-    public static final String DomainPropertiesPresenter = "domain-properties";
+    public static final String InterfacePresenter = "interfaces";
+    public static final String PropertiesPresenter = "properties";
     public static final String HostPropertiesPresenter = "host-properties";
     public static final String HostJVMPresenter = "host-jvms";
     public static final String HostInterfacesPresenter = "host-interfaces";

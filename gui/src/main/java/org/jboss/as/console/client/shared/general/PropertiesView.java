@@ -17,11 +17,12 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -34,20 +35,23 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class DomainPropertiesView extends DisposableViewImpl implements DomainPropertiesPresenter.MyView{
+public class PropertiesView extends DisposableViewImpl implements PropertiesPresenter.MyView{
 
-    private DomainPropertiesPresenter presenter;
+    private PropertiesPresenter presenter;
     private PropertyEditor propertyEditor;
 
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new RHSContentPanel("Domain Properties");
+        LayoutPanel layout = new RHSContentPanel("System Properties");
         layout.add(new ContentHeaderLabel("Property Declarations"));
 
-        HTML description = new HTML("These properties will be inherited by any subresource in the domain (i.e. server-groups)");
-        description.getElement().setAttribute("style", "margin-bottom:15px;");
-        layout.add(description);
+        if(!Console.MODULES.getAppProperties().isStandalone())
+        {
+            HTML description = new HTML("These properties will be inherited by any subresource in the domain (i.e. server-groups)");
+            description.getElement().setAttribute("style", "margin-bottom:15px;");
+            layout.add(description);
+        }
 
         propertyEditor = new PropertyEditor(presenter);
         layout.add(propertyEditor.asWidget());
@@ -56,7 +60,7 @@ public class DomainPropertiesView extends DisposableViewImpl implements DomainPr
     }
 
     @Override
-    public void setPresenter(DomainPropertiesPresenter presenter) {
+    public void setPresenter(PropertiesPresenter presenter) {
         this.presenter = presenter;
     }
 

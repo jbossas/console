@@ -42,8 +42,8 @@ import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.debug.DebugToolsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
-import org.jboss.as.console.client.domain.general.DomainPropertiesPresenter;
-import org.jboss.as.console.client.domain.general.InterfacePresenter;
+import org.jboss.as.console.client.shared.general.PropertiesPresenter;
+import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
@@ -71,7 +71,6 @@ import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
-import org.jboss.as.console.client.shared.subsys.jca.model.DriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
@@ -79,7 +78,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
-import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
 import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
@@ -137,7 +135,6 @@ public interface CoreUI extends Ginjector {
 
     DeploymentStore getDeploymentStore();
 
-    AsyncProvider<InterfaceToolPresenter> getInterfaceToolPresenter();
     AsyncProvider<PathToolPresenter> getPathToolPresenter();
     AsyncProvider<PropertyToolPresenter> getPropertyToolPresenter();
     AsyncProvider<SocketToolPresenter> getSocketToolPresenter();
@@ -187,7 +184,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<WebPresenter> getWebPresenter();
 
     AsyncProvider<InterfacePresenter> getInterfacePresenter();
-    AsyncProvider<DomainPropertiesPresenter> getDomainPropertiesPresenter();
+    AsyncProvider<PropertiesPresenter> getDomainPropertiesPresenter();
 
     AsyncProvider<HostPropertiesPresenter> getHostPropertiesPresenter();
     AsyncProvider<HostJVMPresenter> getHostJVMPresenter();

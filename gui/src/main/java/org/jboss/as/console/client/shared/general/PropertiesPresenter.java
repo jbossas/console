@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.general;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -44,6 +44,7 @@ import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -55,7 +56,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresenter.MyView, DomainPropertiesPresenter.MyProxy>
+public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, PropertiesPresenter.MyProxy>
         implements PropertyManagement {
 
     private final PlaceManager placeManager;
@@ -63,28 +64,30 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
     private DispatchAsync dispatcher;
     private DefaultWindow propertyWindow;
     private LoadPropertiesCmd loadPropCmd;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.DomainPropertiesPresenter)
-    public interface MyProxy extends Proxy<DomainPropertiesPresenter>, Place {
+    @NameToken(NameTokens.PropertiesPresenter)
+    public interface MyProxy extends Proxy<PropertiesPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(DomainPropertiesPresenter presenter);
-
+        void setPresenter(PropertiesPresenter presenter);
         void setProperties(List<PropertyRecord> properties);
     }
 
     @Inject
-    public DomainPropertiesPresenter(
+    public PropertiesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.revealStrategy = revealStrategy;
+
 
         ModelNode address = new ModelNode();
         //address.get(ADDRESS).setEmptyList();
@@ -117,7 +120,7 @@ public class DomainPropertiesPresenter extends Presenter<DomainPropertiesPresent
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 
     public void closePropertyDialoge() {

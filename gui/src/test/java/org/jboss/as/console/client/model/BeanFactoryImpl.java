@@ -21,7 +21,7 @@ package org.jboss.as.console.client.model;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import org.jboss.as.console.client.core.settings.CommonSettings;
-import org.jboss.as.console.client.domain.general.model.Interface;
+import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.domain.model.Host;

@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.annotations.NameToken;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
@@ -81,10 +82,9 @@ public class LHSStandaloneNavigation {
         commonPanel.setContent(commonTree);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
-                new LHSNavTreeItem("Paths", "server/server-paths"),
-                new LHSNavTreeItem("Interfaces", "server/server-interfaces"),
+                new LHSNavTreeItem("Interfaces", NameTokens.InterfacePresenter),
                 new LHSNavTreeItem("Socket Binding Groups", "server/server-sockets"),
-                new LHSNavTreeItem("System Properties", "server/server-properties")
+                new LHSNavTreeItem("System Properties", NameTokens.PropertiesPresenter)
         };
 
         for(LHSNavTreeItem item : commonItems)

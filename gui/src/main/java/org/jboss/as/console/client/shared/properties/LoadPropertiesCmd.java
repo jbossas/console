@@ -75,12 +75,16 @@ public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncComma
 
                     for(Property prop : payload)
                     {
+
                         String key = prop.getName();
                         ModelNode item = prop.getValue();
+
                         PropertyRecord propertyRecord = factory.property().as();
                         propertyRecord.setKey(key);
                         propertyRecord.setValue(item.get("value").asString());
-                        propertyRecord.setBootTime(item.get("boot-time").asBoolean());
+
+                        if(item.hasDefined("boot-time"))
+                            propertyRecord.setBootTime(item.get("boot-time").asBoolean());
 
                         properties.add(propertyRecord);
 

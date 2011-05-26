@@ -54,10 +54,10 @@ import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
 import org.jboss.as.console.client.debug.InvocationMetricsView;
 import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.debug.ModelBrowserView;
-import org.jboss.as.console.client.domain.general.DomainPropertiesPresenter;
-import org.jboss.as.console.client.domain.general.DomainPropertiesView;
-import org.jboss.as.console.client.domain.general.InterfacePresenter;
-import org.jboss.as.console.client.domain.general.InterfaceView;
+import org.jboss.as.console.client.shared.general.PropertiesPresenter;
+import org.jboss.as.console.client.shared.general.PropertiesView;
+import org.jboss.as.console.client.shared.general.InterfacePresenter;
+import org.jboss.as.console.client.shared.general.InterfaceView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -118,8 +118,6 @@ import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationView;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
-import org.jboss.as.console.client.standalone.interfaces.InterfaceToolPresenter;
-import org.jboss.as.console.client.standalone.interfaces.InterfaceToolViewImpl;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
 import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
@@ -211,12 +209,6 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
 
-        // server/interfaces
-        bindPresenter(InterfaceToolPresenter.class,
-                InterfaceToolPresenter.MyView.class,
-                InterfaceToolViewImpl.class,
-                InterfaceToolPresenter.MyProxy.class);
-
         // server/path
         bindPresenter(PathToolPresenter.class,
                 PathToolPresenter.MyView.class,
@@ -243,10 +235,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
 
-        bindPresenter(DomainPropertiesPresenter.class,
-                DomainPropertiesPresenter.MyView.class,
-                DomainPropertiesView.class,
-                DomainPropertiesPresenter.MyProxy.class);
+        bindPresenter(PropertiesPresenter.class,
+                PropertiesPresenter.MyView.class,
+                PropertiesView.class,
+                PropertiesPresenter.MyProxy.class);
 
         bindPresenter(HostPropertiesPresenter.class,
                 HostPropertiesPresenter.MyView.class,
