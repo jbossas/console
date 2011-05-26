@@ -16,12 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -30,22 +27,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
@@ -55,9 +41,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
-    private DispatchAsync dispatcher;
-    private BeanFactory factory;
     private RevealStrategy revealStrategy;
+    private LoggingInfo loggingInfo;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.LoggingPresenter)
@@ -65,8 +50,10 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     }
 
     public interface MyView extends View {
+
         void setPresenter(LoggingPresenter presenter);
-        void updateLoggingHandlers(List<LoggingHandler> handlerss);
+
+        void updateLoggingInfo(LoggingInfo loggingInfo);
     }
 
     @Inject
@@ -77,9 +64,8 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
-        this.dispatcher = dispatcher;
-        this.factory = factory;
         this.revealStrategy = revealStrategy;
+        this.loggingInfo = new LoggingInfo(dispatcher, factory, view);
     }
 
     @Override
@@ -88,66 +74,15 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         getView().setPresenter(this);
     }
 
-
     @Override
     protected void onReset() {
         super.onReset();
-        loadLogging();
+        loggingInfo.refreshView();
     }
 
     @Override
     protected void revealInParent() {
-         revealStrategy.revealInParent(this);
+        revealStrategy.revealInParent(this);
     }
 
-    void loadLogging() {
-
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "logging");
-        operation.get(CHILD_TYPE).set("console-handler"); // TODO: remaing handlers
-
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> payload = response.get("result").asList();
-
-                List<LoggingHandler> handlers = new ArrayList<LoggingHandler>(payload.size());
-                for(ModelNode item : payload)
-                {
-                    // returned as type property (key=handler name)
-                    Property property = item.asProperty();
-                    ModelNode handler = property.getValue().asObject();
-                    String name = property.getName();
-
-                    try {
-                        LoggingHandler model = factory.loggingHandler().as();
-                        model.setName(name);
-                        model.setAutoflush(handler.get("autoflush").asBoolean());
-                        model.setEncoding(handler.get("encoding").asString());
-                        model.setFormatter(handler.get("formatter").asString());
-                        model.setType(handler.get("handler-type").asString());
-                        model.setLevel(handler.get("level").asString());
-                        model.setQueueLength(handler.get("queue-length").asString());
-
-                        handlers.add(model);
-
-                    } catch (IllegalArgumentException e) {
-                        Log.error(Console.CONSTANTS.common_error_failedToDecode(), e);
-                    }
-                }
-
-                // finally update view
-                getView().updateLoggingHandlers(handlers);
-            }
-        });
-
-    }
 }
