@@ -23,6 +23,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -275,7 +276,14 @@ public class JMSPresenter extends Presenter<JMSPresenter.MyView, JMSPresenter.My
         if(entity.getSelector()!=null)
             queue.get("selector").set(entity.getSelector());
 
-        dispatcher.execute(new DMRAction(queue), new SimpleCallback<DMRResponse>() {
+        System.out.println(queue);
+
+        dispatcher.execute(new DMRAction(queue), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Failed to create queue", caught.getMessage());
+            }
 
             @Override
             public void onSuccess(DMRResponse result) {
