@@ -83,7 +83,7 @@ public class LHSStandaloneNavigation {
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
                 new LHSNavTreeItem("Interfaces", NameTokens.InterfacePresenter),
-                new LHSNavTreeItem("Socket Binding Groups", "server/server-sockets"),
+                new LHSNavTreeItem("Socket Binding Groups", NameTokens.SocketBindingPresenter),
                 new LHSNavTreeItem("System Properties", NameTokens.PropertiesPresenter)
         };
 

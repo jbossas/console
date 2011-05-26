@@ -82,16 +82,6 @@ public class NameTokens {
         return PathToolPresenter;
     }
 
-    public final static String PropertyToolPresenter = "server-properties";
-    public static String getPropertyToolPresenter() {
-        return PropertyToolPresenter;
-    }
-
-    public final static String SocketToolPresenter = "server-sockets";
-    public static String getSocketToolPresenter() {
-        return SocketToolPresenter;
-    }
-
     public final static String SubsystemToolPresenter = "subsys";
     public static String getSubsystemToolPresenter() {
         return SubsystemToolPresenter;

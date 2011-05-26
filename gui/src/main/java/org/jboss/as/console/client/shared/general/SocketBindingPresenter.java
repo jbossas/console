@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.sockets;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -28,14 +28,14 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -52,6 +52,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -61,7 +62,6 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     public interface MyView extends View {
         void setPresenter(SocketBindingPresenter presenter);
         void updateGroups(List<String> groups);
-
         void setBindings(String groupName, List<SocketBinding> bindings);
     }
 
@@ -69,12 +69,13 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     public SocketBindingPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory) {
+            BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.revealStrategy = revealStrategy;
     }
 
     @Override
@@ -92,7 +93,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ProfileMgmtPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 
 

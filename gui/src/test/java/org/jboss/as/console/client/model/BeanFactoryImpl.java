@@ -21,6 +21,7 @@ package org.jboss.as.console.client.model;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import org.jboss.as.console.client.core.settings.CommonSettings;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -33,7 +34,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.shared.sockets.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;

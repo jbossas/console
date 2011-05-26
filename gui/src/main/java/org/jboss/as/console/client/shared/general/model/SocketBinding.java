@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.sockets;
+package org.jboss.as.console.client.shared.general.model;
 
 /**
  * @author Heiko Braun

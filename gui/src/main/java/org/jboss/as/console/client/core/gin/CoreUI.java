@@ -64,9 +64,9 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
+import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -79,8 +79,6 @@ import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
-import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
-import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -136,8 +134,6 @@ public interface CoreUI extends Ginjector {
     DeploymentStore getDeploymentStore();
 
     AsyncProvider<PathToolPresenter> getPathToolPresenter();
-    AsyncProvider<PropertyToolPresenter> getPropertyToolPresenter();
-    AsyncProvider<SocketToolPresenter> getSocketToolPresenter();
 
     // ----------------------------------------------------------------------
     // domain config below

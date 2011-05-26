@@ -94,12 +94,12 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
+import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
+import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
-import org.jboss.as.console.client.shared.sockets.SocketBindingPresenter;
-import org.jboss.as.console.client.shared.sockets.SocketBindingView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
@@ -120,10 +120,6 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
-import org.jboss.as.console.client.standalone.properties.PropertyToolPresenter;
-import org.jboss.as.console.client.standalone.properties.PropertyToolViewImpl;
-import org.jboss.as.console.client.standalone.sockets.SocketToolPresenter;
-import org.jboss.as.console.client.standalone.sockets.SocketToolViewImpl;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -214,18 +210,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 PathToolPresenter.MyView.class,
                 PathToolViewImpl.class,
                 PathToolPresenter.MyProxy.class);
-
-        // server/properties
-        bindPresenter(PropertyToolPresenter.class,
-                PropertyToolPresenter.MyView.class,
-                PropertyToolViewImpl.class,
-                PropertyToolPresenter.MyProxy.class);
-
-        // server/sockets
-        bindPresenter(SocketToolPresenter.class,
-                SocketToolPresenter.MyView.class,
-                SocketToolViewImpl.class,
-                SocketToolPresenter.MyProxy.class);
 
         // ------------------------------------------------
         // domain management application

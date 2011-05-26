@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.sockets;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -74,7 +75,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         // -----------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Current Socket Bindings");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Socket Binding Declarations");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
