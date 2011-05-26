@@ -185,6 +185,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         form.bind(socketTable);
 
         Widget formWidget = form.asWidget();
+        form.setEnabled(false);
 
         layout.add(new ContentGroupLabel("Details"));
         layout.add(formWidget);

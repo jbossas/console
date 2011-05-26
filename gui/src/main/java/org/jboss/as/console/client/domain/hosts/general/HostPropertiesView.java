@@ -51,6 +51,7 @@ public class HostPropertiesView extends DisposableViewImpl implements HostProper
 
         propertyEditor = new PropertyEditor(presenter);
         layout.add(propertyEditor.asWidget());
+        propertyEditor.setEnabled(false);
 
         return layout;
     }

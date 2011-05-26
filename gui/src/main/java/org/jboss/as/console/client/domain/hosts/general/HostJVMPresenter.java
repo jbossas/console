@@ -19,7 +19,10 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -66,7 +69,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     private CurrentHostSelection currentHost;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
-
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostJVMPresenter)
@@ -75,7 +78,6 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     public interface MyView extends View {
         void setPresenter(HostJVMPresenter presenter);
-
         void setJvms(List<Jvm> jvms);
     }
 
@@ -114,6 +116,9 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     @Override
     public void onCreateJvm(String reference, Jvm jvm) {
+
+        closeDialogue();
+
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("host", currentHost.getName());
@@ -222,7 +227,26 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     }
 
     public void launchNewJVMDialogue() {
+        window = new DefaultWindow("Create JVM Declaration");
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
 
+            }
+        });
+
+        window.setWidget(
+                new NewHostJvmWizard(this, currentHost).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
+    public void closeDialogue() {
+        if(window!=null && window.isShowing())
+            window.hide();
+    }
 }
