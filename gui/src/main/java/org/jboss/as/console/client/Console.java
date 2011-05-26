@@ -22,12 +22,15 @@ package org.jboss.as.console.client;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapCmd;
-import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.gin.CoreUI;
@@ -63,8 +66,25 @@ public class Console implements EntryPoint {
     }
 
     public void onModuleLoad2() {
-        DelayedBindRegistry.bind(MODULES);
-        bootstrap();
+
+        final Image loadingImage = new Image("images/loading_lite.gif");
+        loadingImage.getElement().setAttribute("style", "margin-top:200px;margin-left:auto;margin-right:auto;");
+
+        RootLayoutPanel.get().add(loadingImage);
+
+
+        GWT.runAsync(new RunAsyncCallback() {
+            public void onFailure(Throwable caught) {
+                Window.alert("Code download failed");
+            }
+
+            public void onSuccess() {
+                DelayedBindRegistry.bind(MODULES);
+                bootstrap();
+
+                RootLayoutPanel.get().remove(loadingImage);
+            }
+        });
     }
 
     private void bootstrap() {
