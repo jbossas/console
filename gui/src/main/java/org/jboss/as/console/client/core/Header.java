@@ -232,17 +232,22 @@ public class Header implements ValueChangeHandler<String> {
 
     public void highlight(String name)
     {
-        NodeList<Node> childNodes = linksPane.getElementById("header-links-ref").getChildNodes();
-        for(int i=0; i<childNodes.getLength(); i++)
+
+        com.google.gwt.user.client.Element target = linksPane.getElementById("header-links-ref");
+        if(target!=null) // standalone doesn't provide any top level links
         {
-            Node n = childNodes.getItem(i);
-            if(Node.ELEMENT_NODE == n.getNodeType())
+            NodeList<Node> childNodes = target.getChildNodes();
+            for(int i=0; i<childNodes.getLength(); i++)
             {
-                Element element = (Element) n;
-                if(element.getId().equals("header-"+name))
-                    element.addClassName("header-link-selected");
-                else
-                    element.removeClassName("header-link-selected");
+                Node n = childNodes.getItem(i);
+                if(Node.ELEMENT_NODE == n.getNodeType())
+                {
+                    Element element = (Element) n;
+                    if(element.getId().equals("header-"+name))
+                        element.addClassName("header-link-selected");
+                    else
+                        element.removeClassName("header-link-selected");
+                }
             }
         }
     }
