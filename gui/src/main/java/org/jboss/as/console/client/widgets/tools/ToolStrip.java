@@ -19,36 +19,41 @@
 
 package org.jboss.as.console.client.widgets.tools;
 
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**
  * @author Heiko Braun
  * @date 2/28/11
  */
-public class ToolStrip extends HTMLPanel {
+public class ToolStrip extends HorizontalPanel{
 
-    private String ref = createUniqueId();
-
+    private HorizontalPanel left;
+    private HorizontalPanel right;
 
     public ToolStrip() {
-        super("");
-        getElement().setInnerHTML("<div id='"+ref+"' class='default-toolstrip'>");
-    }
+        super();
+        setStyleName("default-toolstrip");
 
-    public ToolStrip(boolean secondary) {
-        super("");
-        getElement().setInnerHTML("<div id='"+ref+"' class='default-toolstrip-secondary'>");
+        left = new HorizontalPanel();
+        right = new HorizontalPanel();
+
+        add(left);
+        add(right);
+
+        left.getElement().getParentElement().setAttribute("width", "50%");
+        right.getElement().getParentElement().setAttribute("width", "50%");
+        right.getElement().getParentElement().setAttribute("align", "right");
     }
 
     public void addToolButton(ToolButton button)
     {
-        add(button, ref);
+        left.add(button);
     }
 
     public void addToolButtonRight(ToolButton button)
     {
-        button.getElement().setAttribute("style", "float:right;border-color:#cccccc;margin-right:5px;");
-        add(button, ref);
+        button.getElement().setAttribute("style", "border-color:#cccccc;margin-right:5px;");
+        right.add(button);
 
     }
 }

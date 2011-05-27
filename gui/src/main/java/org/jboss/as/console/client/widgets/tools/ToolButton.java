@@ -29,8 +29,9 @@ import com.google.gwt.user.client.ui.Button;
 public class ToolButton extends Button
 {
     public ToolButton(String title) {
-        setHTML(title);
-        setStyleName("toolstrip-button");
+        super(title);
+        //addStyleName("default-button");
+        addStyleName("toolstrip-button");
     }
 
     public ToolButton(String title, ClickHandler handler) {

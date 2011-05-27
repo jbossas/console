@@ -86,6 +86,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverInstances());
         layout.add(titleBar);
 
+
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding:15px;");

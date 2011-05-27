@@ -36,6 +36,7 @@ public class DisclosureStackHeader {
         panel.setOpen(true);
         panel.getElement().setAttribute("style", "width:100%;");
         panel.getHeader().setStyleName("stack-section-header");
+        panel.setWidth("100%"); // IE 7
 
     }
 

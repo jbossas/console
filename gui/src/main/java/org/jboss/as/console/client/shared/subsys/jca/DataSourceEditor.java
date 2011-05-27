@@ -71,6 +71,7 @@ public class DataSourceEditor {
         // ----
 
         VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
 
         ScrollPanel scroll = new ScrollPanel(vpanel);

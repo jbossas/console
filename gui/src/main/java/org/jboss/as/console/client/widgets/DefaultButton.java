@@ -30,8 +30,8 @@ public class DefaultButton extends Button {
 
 
     public DefaultButton(String title) {
-        setHTML(title);
-        setStyleName("default-button");
+        super(title);
+        addStyleName("default-button");
     }
 
     public DefaultButton(String title, ClickHandler handler) {
