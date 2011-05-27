@@ -76,6 +76,10 @@ public class Base64Test {
         assertNotNull(base64);
     }
 
+    /**
+     * TODO: IIRC this base64 string contains illegal characters?
+     * @throws Exception
+     */
     @Test
     @Ignore
     public void testDSDeletionResponse() throws Exception
