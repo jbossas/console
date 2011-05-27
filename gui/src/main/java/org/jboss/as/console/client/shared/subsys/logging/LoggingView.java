@@ -54,7 +54,7 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     }
 
     @Override
-    public void updateLoggingHandlers(List<LoggingHandler> handlers) {
-        loggingEditor.updateLoggingHandlers(handlers);
+    public void updateLoggingInfo(LoggingInfo loggingInfo) {
+        loggingEditor.updateLoggingHandlers(loggingInfo);
     }
 }
