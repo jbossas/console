@@ -44,7 +44,6 @@ class LHSProfileNavigation {
     public LHSProfileNavigation() {
 
         layout = new LayoutPanel();
-        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
         layout.setStyleName("fill-layout");
 
         stack = new VerticalPanel();

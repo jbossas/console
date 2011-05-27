@@ -50,13 +50,13 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
         layout = new DockLayoutPanel(Style.Unit.PX);
         layout.setStyleName("fill-layout");
-        layout.getElement().setAttribute("style", "width:99%;border-right:1px solid #E0E0E0");
 
         selector = new HostSelector();
         final Widget selectorWidget = selector.asWidget();
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
+
 
         serversSection = new ServersConfigSection();
         stack.add(serversSection.asWidget());

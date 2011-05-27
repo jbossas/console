@@ -314,6 +314,7 @@ a:link {
 /*background:url(images/sc/skins/Enterprise/images/Splitbar/vsplit_bg.png);*/
     /*border-left:1px solid #A7ABB4;
     border-right:1px solid #A7ABB4!important;*/
+    border-left:1px solid #E0E0E0!important;
 }
 
 .gwt-SplitLayoutPanel-VDragger {
@@ -681,7 +682,7 @@ a:link {
 }
 
 .host-selector {
-    border: 1px solid #A7ABB4;
+
 }
 
 .host-selector-header {
