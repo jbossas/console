@@ -121,7 +121,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         });
 
         Widget typeFilterWidget = groupFilter.asWidget();
-        typeFilterWidget.getElement().setAttribute("style", "width:200px;");
+        typeFilterWidget.getElement().setAttribute("width", "200px;");
 
 
         tableOptions.add(new Label(Console.CONSTANTS.common_label_serverGroup()+":"));
