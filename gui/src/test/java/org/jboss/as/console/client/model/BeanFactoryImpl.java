@@ -37,6 +37,7 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
@@ -191,6 +192,11 @@ public class BeanFactoryImpl implements BeanFactory {
     public AutoBean<JDBCDriver> jdbcDriver() {
         throw new RuntimeException("not implemented");
 
+    }
+
+    @Override
+    public AutoBean<LoggerConfig> logger() {
+        throw new RuntimeException("not implemented");
     }
 }
 
