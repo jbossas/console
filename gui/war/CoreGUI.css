@@ -7,6 +7,7 @@ body, p, td, th, option, input, textarea, select {
 
 a {
     outline : none;
+    text-decoration: none;
 }
 
 a:active {
@@ -98,19 +99,14 @@ a:focus {
     box-shadow: 3px 3px 4px #c3c3c3;
     margin-right:4px;
     margin-bottom:4px;
+    border-bottom:1px solid #C0C0C0;
 }
 
 .header-link {
-
     cursor: pointer;
     font-size: 12px;
-
     text-decoration: none;
-/*color: #4A5D75;*/
-
     background-color:#F8F8F8;
-/*background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
-/*background-image: url('images/sc/skins/Enterprise/images/Panel/panel_header.png');*/
 }
 
 .header-link:hover {

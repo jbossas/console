@@ -190,7 +190,7 @@ public class Header implements ValueChangeHandler<String> {
             headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
             headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
-            headerString.appendHtmlConstant("<td style=\"width:1px;height:25px\"><img src=\"images/header/header_bg_line.png\"/></td>");
+            headerString.appendHtmlConstant("<td><img src=\"images/header/header_bg_line.png\"/></td>");
             for (String[] section : sections) {
 
                 final String name = section[0];
@@ -203,7 +203,7 @@ public class Header implements ValueChangeHandler<String> {
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);
 
-                headerString.appendHtmlConstant("<td style=\"width: 1px;\"><img src=\"images/header/header_bg_line.png\"/></td>");
+                headerString.appendHtmlConstant("<td ><img src=\"images/header/header_bg_line.png\"/></td>");
             }
 
             headerString.appendHtmlConstant("</tr></table>");
