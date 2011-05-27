@@ -25,73 +25,66 @@ import java.io.IOException;
  * see also http://quake2-gwt-port.googlecode.com/hg/src/com/google/gwt/corp/emul/java/io/DataInputStream.java?r=5c7c4b545ff4a8875b4cab5d77492d37e150d46b
  */
 public class DataInput {
-	private int pos = 0;
-	private byte[] bytes;
+    private int pos = 0;
+    private byte[] bytes;
 
-	public DataInput(byte[] bytes) {
-		this.bytes = bytes;
-	}
+    public DataInput(byte[] bytes) {
+        this.bytes = bytes;
+    }
 
-	public int skipBytes(int n) throws IOException {
-		return pos += n;
-	}
+    public int read() throws IOException {
+        return bytes[pos++];
+    }
 
-	public boolean readBoolean() throws IOException {
-		 return readByte() != 0;
-	}
+    public boolean readBoolean() throws IOException {
+        return readByte() != 0;
+    }
 
-	public byte readByte() throws IOException {
-		return bytes[pos++];
-	}
+    public byte readByte() throws IOException {
+        int i = read();
+        if (i == -1) {
+            throw new RuntimeException("EOF");
+        }
+        return (byte) i;
+    }
 
-	public int readUnsignedByte() throws IOException {
-		return readByte() & 0xFF;
-	}
-
-	public short readShort() throws IOException {
-		return (short)(bytes[pos++] << 8 | bytes[pos++]);
-	}
-
-	public int readUnsignedShort() throws IOException {
-		return bytes[pos++] << 8 | bytes[pos++];
-	}
-
-	public char readChar() throws IOException {
-		return (char)(bytes[pos++] << 8 | bytes[pos++]);
-	}
-
-	public int readInt() throws IOException {
-        int a = readUnsignedByte();
+    public char readChar() throws IOException {
+        int a = readByte();
         int b = readUnsignedByte();
-        int c = readUnsignedByte();
+        return (char) ((a << 8) | b);
+    }
+
+    public double readDouble() throws IOException {
+        throw new RuntimeException("readDouble");
+    }
+
+    public float readFloat() throws IOException {
+        throw new RuntimeException("readFloat");
+    }
+
+    public int readInt() throws IOException {
+        int a = readByte();
+        int b = readByte();
+        int c = readByte();
         int d = readUnsignedByte();
         return (a << 24) | (b << 16) | (c << 8) | d;
+    }
 
-	}
+    public String readLine() throws IOException {
+        throw new RuntimeException("readline NYI");
+    }
 
-	public long readLong() throws IOException {
+    public long readLong() throws IOException {
         long a = readInt();
         long b = readInt() & 0x0ffffffff;
         return (a << 32) | b;
+    }
 
-	}
-
-	public float readFloat() throws IOException {
-		// TODO Auto-generated method stub
-		readInt();
-		return 0;
-	}
-
-	public double readDouble() throws IOException {
-		// TODO Auto-generated method stub
-		readLong();
-		return 0;
-	}
-
-	public String readLine() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public short readShort() throws IOException {
+        int a = readByte();
+        int b = readUnsignedByte();
+        return (short) ((a << 8) | b);
+    }
 
     public String readUTF() throws IOException {
         int bytes = readUnsignedShort();
@@ -107,28 +100,50 @@ public class DataInput {
     private int readUtfChar(StringBuilder sb) throws IOException {
         int a = readUnsignedByte();
         if ((a & 0x80) == 0) {
-          sb.append((char) a);
-          return 1;
+            sb.append((char) a);
+            return 1;
         }
         if ((a & 0xe0) == 0xb0) {
-          int b = readUnsignedByte();
-          sb.append((char)(((a& 0x1F) << 6) | (b & 0x3F)));
-          return 2;
+            int b = readUnsignedByte();
+            sb.append((char)(((a& 0x1F) << 6) | (b & 0x3F)));
+            return 2;
         }
         if ((a & 0xf0) == 0xe0) {
-          int b = bytes[pos++];
-          int c = readUnsignedByte();
-          sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
-          return 3;
+            int b = readByte();
+            int c = readUnsignedByte();
+            sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+            return 3;
         }
-        throw new RuntimeException("Illegal byte "+a);
-      }
+        throw new IllegalArgumentException("Illegal byte "+a);
+    }
 
+    /*public int readUnsignedByte() throws IOException {
+        int i = read();
+        if (i == -1) {
+            throw new RuntimeException("EOF");
+        }
+        return i;
+    } */
 
-	public void readFully(byte[] b) {
-		for (int i = 0; i < b.length; i++) {
-			b[i] = bytes[pos++];
-		}
-	}
+    public int readUnsignedByte() throws IOException {
+        return readByte() & 0xFF;
+    }
+
+    public int readUnsignedShort() throws IOException {
+        int a = readByte();
+        int b = readUnsignedByte();
+        return ((a << 8) | b);
+    }
+
+    public int skipBytes(int n) throws IOException {
+        // note: This is actually a valid implementation of this method, rendering it quite useless...
+        return 0;
+    }
+
+    public void readFully(byte[] b) {
+        for (int i = 0; i < b.length; i++) {
+            b[i] = bytes[pos++];
+        }
+    }
 
 }

@@ -19,7 +19,6 @@
 
 package org.jboss.dmr.client;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -48,20 +47,6 @@ public class Base64Test {
     }
 
     @Test
-    public void testJBAS9165_part2() throws Exception
-    {
-        ModelNode value = new ModelNode();
-        value.get("name").set("http-port");
-        value.get("port").set(32768);
-
-        String base64 = value.toBase64String();
-        //System.out.println(base64);
-
-        ModelNode reverse = ModelNode.fromBase64(base64);
-        assertEquals(32768, reverse.get("port").asInt());
-    }
-
-    @Test
     public void testEncoding() throws Exception {
 
         ModelNode operation = new ModelNode();
@@ -81,7 +66,6 @@ public class Base64Test {
      * @throws Exception
      */
     @Test
-    @Ignore
     public void testDSDeletionResponse() throws Exception
     {
 
@@ -105,6 +89,98 @@ public class Base64Test {
                 "aW9uLXVybHMABG5vbmUACWpuZGktbmFtZXMADWRhdGFiYXNlL015RFMAC2RyaXZlci1uYW1lcwAC\n" +
                 "aDIACXBvb2wtbmFtZXMACW15RFNfUG9vbAAQdXNlLWphdmEtY29udGV4dFoBAAdlbmFibGVkWgAA\n" +
                 "CXVzZXItbmFtZXMAAnNhAAhwYXNzd29yZHMAAA==";
+
+        ModelNode modelNode = null;
+
+        try {
+            modelNode = ModelNode.fromBase64(base64);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(modelNode);
+    }
+
+    @Test
+    public void testAS7912() throws Exception {
+        String base64 = "bwAAAAMAB291dGNvbWVzAAdzdWNjZXNzAAZyZXN1bHRvAAAABAAKYWN0aXZhdGlvbnMABGxhenkA\n" +
+                "DWNvbmZpZ3VyYXRpb25vAAAAAgADcGlkcwA4b3JnLmFwYWNoZS5mZWxpeC53ZWJjb25zb2xlLmlu\n" +
+                "dGVybmFsLnNlcnZsZXQuT3NnaU1hbmFnZXIAGGNvbmZpZ3VyYXRpb25fcHJvcGVydGllc28AAAAB\n" +
+                "AAxtYW5hZ2VyLnJvb3RzAApqYm9zcy1vc2dpAApwcm9wZXJ0aWVzbwAAAAIAHW9yZy5qYm9zcy5v\n" +
+                "c2dpLnN5c3RlbS5tb2R1bGVzcwS8b3JnLmFwYWNoZS5jb21tb25zLmxvZ2dpbmcsCiAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvcmcuYXBhY2hlLmxvZzRqLAogICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgb3JnLmpib3NzLmFzLm9zZ2ksCiAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICBvcmcuc2xmNGosAChvcmcub3NnaS5mcmFtZXdvcmsu\n" +
+                "c3lzdGVtLnBhY2thZ2VzLmV4dHJhcwneb3JnLmFwYWNoZS5jb21tb25zLmxvZ2dpbmc7dmVyc2lv\n" +
+                "bj0xLjEuMSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9yZy5hcGFjaGUu\n" +
+                "bG9nNGo7dmVyc2lvbj0xLjIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBv\n" +
+                "cmcuamJvc3MuYXMub3NnaS5zZXJ2aWNlO3ZlcnNpb249Ny4wLAogICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgb3JnLmpib3NzLm9zZ2kuc3BpLmNhcGFiaWxpdHk7dmVyc2lvbj0x\n" +
+                "LjAsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvcmcuamJvc3Mub3NnaS5z\n" +
+                "cGkudXRpbDt2ZXJzaW9uPTEuMCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "IG9yZy5qYm9zcy5vc2dpLnRlc3Rpbmc7dmVyc2lvbj0xLjAsCiAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg\n" +
+                "ICAgICAgICAgICAgICAgICBvcmcuc2xmNGo7dmVyc2lvbj0xLjUuMTAsAAdtb2R1bGVzbwAAAAoA\n" +
+                "IW9yZy5qYm9zcy5hcy5hcnF1aWxsaWFuLmFnZ3JlZ2F0ZXUAEW9yZy5qYm9zcy5sb2dnaW5ndQAU\n" +
+                "b3JnLmFwYWNoZS5hcmllcy5qbXhvAAAAAQAFc3RhcnRzAAR0cnVlABVvcmcuYXBhY2hlLmFyaWVz\n" +
+                "LnV0aWx1ABxvcmcuYXBhY2hlLmZlbGl4LmNvbmZpZ2FkbWlubwAAAAEABXN0YXJ0cwAEdHJ1ZQAU\n" +
+                "b3JnLmFwYWNoZS5mZWxpeC5sb2dvAAAAAQAFc3RhcnRzAAR0cnVlAB1vcmcuamJvc3MuYXMub3Nn\n" +
+                "aS5jb25maWdhZG1pbm8AAAABAAVzdGFydHMABHRydWUAEm9yZy5qYm9zcy5vc2dpLmpteG8AAAAB\n" +
+                "AAVzdGFydHMABHRydWUAFm9yZy5qYm9zcy5vc2dpLmxvZ2dpbmdvAAAAAQAFc3RhcnRzAAR0cnVl\n" +
+                "ABNvcmcub3NnaS5jb21wZW5kaXVtdQAWY29tcGVuc2F0aW5nLW9wZXJhdGlvbnU=";
 
         ModelNode modelNode = null;
 
