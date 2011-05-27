@@ -38,7 +38,9 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.RHSHeader;
+import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.as.console.client.widgets.TabHeader;
+import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -79,9 +81,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        RHSHeader title = new RHSHeader(Console.CONSTANTS.common_label_manageDeployments());
-        layout.add(title);
-        layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_manageDeployments());
+        layout.add(titleBar);
 
         final ToolStrip toolStrip = new ToolStrip();
 
@@ -94,11 +95,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         }));
 
         layout.add(toolStrip);
-        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
 
         VerticalPanel panel = new VerticalPanel();
-        panel.getElement().setAttribute("style", "padding:15px");
-        panel.addStyleName("fill-layout-width");
+        panel.setStyleName("rhs-content-panel");
 
         String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
                                               Console.CONSTANTS.common_label_runtimeName(), 
@@ -124,7 +123,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 100, Style.Unit.PCT);
+
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
