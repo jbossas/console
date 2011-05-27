@@ -202,7 +202,7 @@ public class ServerGroupPresenter
         serverGroupStore.loadServerGroup(name, new SimpleCallback<ServerGroupRecord>() {
             @Override
             public void onSuccess(ServerGroupRecord result) {
-                getView().setSelectedRecord(result);
+                workOn(result);
             }
         });
 
@@ -280,7 +280,7 @@ public class ServerGroupPresenter
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
 
-                    workOn(newGroup);
+                    loadServerGroup(newGroup.getGroupName());
 
 
                 } else {
