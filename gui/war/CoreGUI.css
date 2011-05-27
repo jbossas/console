@@ -17,6 +17,10 @@ a:link {
     outline : none;
 }
 
+a:focus {
+  -moz-outline-style: none;
+}
+
 .main-content-panel {
     border-bottom:1px solid #A7ABB4;
     margin-top:10px;
@@ -582,7 +586,6 @@ a:link {
     vertical-align:middle;
     font-size:12px;
     white-space:nowrap;
-    font-weight:bold;
 }
 
 .tab-right {
@@ -800,4 +803,15 @@ a:link {
     color:#000000!important;
     border-bottom:1px solid #ffffff!important;
 }
+
+.rhs-content-panel {
+    width:100%;
+    padding:15px;
+}
+
+.title-bar-panel {
+    width:100%;
+    border-bottom: 1px solid #A7ABB4;
+}
+
 

@@ -132,8 +132,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // ---
 
         VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
+        panel.setStyleName("rhs-content-panel");
 
         ScrollPanel scrollPanel = WidgetUtil.asScrollPanel(panel);
         layout.add(scrollPanel);

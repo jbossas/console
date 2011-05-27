@@ -76,8 +76,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         layout.add(toolStrip);
 
         VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
+        panel.setStyleName("rhs-content-panel");
 
         layout.add(panel);
 

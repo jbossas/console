@@ -91,8 +91,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
         
         VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
+        panel.setStyleName("rhs-content-panel");
 
         // -----------
 

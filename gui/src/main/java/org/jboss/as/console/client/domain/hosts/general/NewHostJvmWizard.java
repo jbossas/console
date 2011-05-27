@@ -47,8 +47,7 @@ public class NewHostJvmWizard {
     Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-        layout.getElement().setAttribute("style", "padding:15px;");
+        layout.setStyleName("rhs-content-panel");
 
         final Form<Jvm> form = new Form<Jvm>(Jvm.class);
 

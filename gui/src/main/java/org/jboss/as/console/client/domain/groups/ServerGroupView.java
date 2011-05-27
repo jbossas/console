@@ -129,8 +129,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // ----
 
         panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:15px;");
+        panel.setStyleName("rhs-content-panel");
 
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);

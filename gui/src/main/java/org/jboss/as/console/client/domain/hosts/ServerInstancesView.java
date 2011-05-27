@@ -86,10 +86,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverInstances());
         layout.add(titleBar);
 
-
         VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-        vpanel.getElement().setAttribute("style", "padding:15px;");
+        vpanel.setStyleName("rhs-content-panel");
 
         // ----------------------------------------------------------------------
 
@@ -181,7 +179,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 35, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // ----------------------------------------------------------------------

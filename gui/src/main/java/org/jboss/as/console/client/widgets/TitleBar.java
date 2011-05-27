@@ -35,17 +35,17 @@ public class TitleBar extends HorizontalPanel {
     public TitleBar(String title) {
         super();
 
-        getElement().setAttribute("style", "width:100%");
+        setStyleName("title-bar-panel");
 
         HTML spacerLeft = new HTML("&nbsp;");
         add(spacerLeft);
-        spacerLeft.getElement().getParentElement().setAttribute("style", "border-bottom:1px solid #A7ABB4;");
+        spacerLeft.getElement().getParentElement().setAttribute("style", "min-width:15px;width:15px;");
 
         add(new TabHeader(title));
 
         HTML spacerRight= new HTML("&nbsp;");
         add(spacerRight);
-        spacerRight.getElement().getParentElement().setAttribute("style", "width:100%;border-bottom:1px solid #A7ABB4;");
+        spacerRight.getElement().getParentElement().setAttribute("style", "width:100%;");
     }
 
     public void setIcon(ImageResource icon) {

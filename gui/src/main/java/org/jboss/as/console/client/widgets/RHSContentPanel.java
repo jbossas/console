@@ -44,8 +44,7 @@ public class RHSContentPanel extends LayoutPanel {
         ScrollPanel scroll = new ScrollPanel();
 
         delegate = new VerticalPanel();
-        delegate.setStyleName("fill-layout-width");
-        delegate.getElement().setAttribute("style", "padding:15px;");
+        delegate.setStyleName("rhs-content-panel");
 
         scroll.add(delegate);
         super.add(scroll);
