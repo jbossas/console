@@ -91,7 +91,7 @@ public class LoggingInfo {
     }
     
     private LoggerConfig makeLogger(ModelNode node, String name) {
-        LoggerConfig model = factory.logger().as();
+        LoggerConfig model = factory.loggerConfig().as();
         model.setName(name);
         model.setLevel(node.get("level").asString());
 

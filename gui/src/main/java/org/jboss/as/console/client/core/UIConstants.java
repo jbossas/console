@@ -176,7 +176,9 @@ public interface UIConstants extends Constants {
     
     String common_error_contentStillAssignedToGroup();
     
-    String subsys_logging_logging();
+    String subsys_logging_loggers();
+    
+    String subsys_logging_handlers();
     
     String subsys_logging_autoFlush();
     

@@ -195,7 +195,7 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     @Override
-    public AutoBean<LoggerConfig> logger() {
+    public AutoBean<LoggerConfig> loggerConfig() {
         throw new RuntimeException("not implemented");
     }
 }

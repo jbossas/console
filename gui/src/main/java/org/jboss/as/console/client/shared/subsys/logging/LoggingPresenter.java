@@ -31,6 +31,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 
 
 
@@ -83,6 +84,10 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+    
+    public void edit(LoggerConfig loggerConfig) {
+        
     }
 
 }

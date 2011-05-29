@@ -73,7 +73,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<ConnectionFactory> connectionFactory();
 
     AutoBean<LoggingHandler> loggingHandler();
-    AutoBean<LoggerConfig> logger();
+    AutoBean<LoggerConfig> loggerConfig();
     AutoBean<SocketBinding> socketBinding();
     AutoBean<DeploymentReference> deploymentReference();
 

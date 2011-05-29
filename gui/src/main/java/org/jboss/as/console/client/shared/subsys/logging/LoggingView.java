@@ -19,14 +19,12 @@
 
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
 
-import java.util.List;
 
 /**
  * @author Stan Silvert
@@ -35,17 +33,21 @@ import java.util.List;
 public class LoggingView extends DisposableViewImpl implements LoggingPresenter.MyView {
 
     private LoggingPresenter presenter;
-    private LoggingEditor loggingEditor;
+    private LoggerEditor loggingEditor;
+    private HandlerEditor handlerEditor;
 
     @Override
     public Widget createWidget() {
+        loggingEditor = new LoggerEditor(presenter);
+        handlerEditor = new HandlerEditor(presenter);
+        
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+        
+        tabLayoutpanel.add(loggingEditor.asWidget(), Console.CONSTANTS.subsys_logging_loggers());
+        tabLayoutpanel.add(handlerEditor.asWidget(), Console.CONSTANTS.subsys_logging_handlers());
 
-        LayoutPanel layout = new RHSContentPanel(Console.CONSTANTS.subsys_logging_logging());
-
-        loggingEditor = new LoggingEditor(presenter);
-        layout.add(loggingEditor.asWidget());
-
-        return layout;
+        return tabLayoutpanel;
     }
 
     @Override
@@ -56,5 +58,6 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     @Override
     public void updateLoggingInfo(LoggingInfo loggingInfo) {
         loggingEditor.updateLoggingHandlers(loggingInfo);
+        handlerEditor.updateHandlers(loggingInfo);
     }
 }
