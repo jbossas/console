@@ -27,7 +27,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
@@ -68,10 +67,7 @@ public class LoggingInfo {
     }
     
     private void setRootLogger() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "logging");
+        ModelNode operation = LoggingOperation.make(READ_RESOURCE_OPERATION);
         
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -115,14 +111,9 @@ public class LoggingInfo {
         final List<LoggingHandler> handlers = new ArrayList<LoggingHandler>();
         final List<LoggerConfig> loggers = new ArrayList<LoggerConfig>();
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_TYPES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "logging");
-
+        ModelNode operation = LoggingOperation.make(READ_CHILDREN_TYPES_OPERATION);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
             @Override
             public void onFailure(Throwable caught) {
                 Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
@@ -134,10 +125,7 @@ public class LoggingInfo {
                 List<ModelNode> payload = response.get("result").asList();
                 for (ModelNode node : payload) {
                     final String handlerType = node.asString();
-                    ModelNode operation = new ModelNode();
-                    operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-                    operation.get(ADDRESS).set(Baseadress.get());
-                    operation.get(ADDRESS).add("subsystem", "logging");
+                    ModelNode operation = LoggingOperation.make(READ_CHILDREN_RESOURCES_OPERATION);
                     operation.get(CHILD_TYPE).set(handlerType);
 
                     dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -195,7 +183,6 @@ public class LoggingInfo {
 
                             return model;
                         }
-                        
                         
                     });
                 }

@@ -24,10 +24,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
@@ -42,6 +44,8 @@ public class LoggerEditor {
     private LoggingPresenter presenter;
     
     private ListDataProvider<LoggerConfig> loggerProvider;
+    private DefaultCellTable<LoggerConfig> loggerConfigTable;
+    LoggerConfigDetails details;
 
     public LoggerEditor(LoggingPresenter presenter) {
         this.presenter = presenter;
@@ -74,9 +78,10 @@ public class LoggerEditor {
 
         layout.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_loggers()));
         
-        DefaultCellTable<LoggerConfig> loggerTable = new DefaultCellTable<LoggerConfig>(20);
+        loggerConfigTable = new DefaultCellTable<LoggerConfig>(20);
+        loggerConfigTable.setSelectionModel(new SingleSelectionModel<LoggerConfig>());
         loggerProvider = new ListDataProvider<LoggerConfig>();
-        loggerProvider.addDataDisplay(loggerTable);
+        loggerProvider.addDataDisplay(loggerConfigTable);
         
         TextColumn<LoggerConfig> nameColumn = new TextColumn<LoggerConfig>() {
             @Override
@@ -105,26 +110,31 @@ public class LoggerEditor {
             }
         };
         
-        loggerTable.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
-        loggerTable.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        loggerTable.addColumn(handlersColumn, Console.CONSTANTS.subsys_logging_handlers());
+        loggerConfigTable.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
+        loggerConfigTable.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
+        loggerConfigTable.addColumn(handlersColumn, Console.CONSTANTS.subsys_logging_handlers());
         
-        layout.add(loggerTable);
+        layout.add(loggerConfigTable);
+        
+        details = new LoggerConfigDetails(presenter);
+        details.bind(loggerConfigTable);
+        layout.add(new ContentGroupLabel("Logger"));
+        layout.add(details.asWidget());
         
         return scroll;
     }
-    
-    
 
-    public void updateLoggingHandlers(LoggingInfo loggingInfo) {
+    public void updateLoggerConfigs(LoggingInfo loggingInfo) {
         List<LoggerConfig> loggers = new ArrayList();
         loggers.add(loggingInfo.getRootLogger());
         loggers.addAll(loggingInfo.getLoggers());
         loggerProvider.setList(loggers); 
 
-        // FIXME - NPE - handlerTable null on first display?
-       //  if(!handlers.isEmpty())
-       //     handlerTable.getSelectionModel().setSelected(handlers.get(0), true);
-
+        if(!this.loggerConfigTable.isEmpty())
+            loggerConfigTable.getSelectionModel().setSelected(loggers.get(0), true);
+    }
+    
+    public void enableLoggerDetails(boolean isEnabled) {
+        this.details.setEnabled(isEnabled);
     }
 }

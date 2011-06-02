@@ -18,28 +18,32 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+
 /**
- * This enum is used in the console to avoid importing the whole jboss logging project.
- * We just need something to pass around that will generate the proper toString() values.
+ * Static factory to provide a ModelNode with proper address
+ * for logging.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public enum LogLevel {
-    FATAL,
-    ERROR,
-    WARN,
-    INFO,
-    DEBUG,
-    TRACE;
+public class LoggingOperation {
     
-    public static final String[] STRINGS;
+    private LoggingOperation() {} // don't allow instances
     
-    static {
-        LogLevel[] values = LogLevel.values();
-        String[] array = new String[values.length];
-        for (int i=0; i < values.length; i++) {
-            array[i] = values[i].toString();
-        }
-        STRINGS = array;
+    /**
+     * Make a ModelNode for the operation.
+     * 
+     * @param operation A management operation from ModelDescriptionConstants.
+     * @return A ModelNode with the operation for the logging subsystem.
+     */
+    public static ModelNode make(String operation) {
+        ModelNode node = new ModelNode();
+        node.get(OP).set(operation);
+        node.get(ADDRESS).set(Baseadress.get());
+        node.get(ADDRESS).add("subsystem", "logging");
+        return node;
     }
 }

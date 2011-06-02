@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
+import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -71,6 +73,7 @@ public class HandlerEditor {
         layout.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_handlerConfigurations()));
 
         handlerTable = new DefaultCellTable<LoggingHandler>(20);
+        handlerTable.setSelectionModel(new SingleSelectionModel<LoggingHandler>());
         handlerProvider = new ListDataProvider<LoggingHandler>();
         handlerProvider.addDataDisplay(handlerTable);
 
@@ -138,6 +141,10 @@ public class HandlerEditor {
     
     
     public void updateHandlers(LoggingInfo loggingInfo) {
-        handlerProvider.setList(loggingInfo.getHandlers());
+        List<LoggingHandler> handlers = loggingInfo.getHandlers();
+        handlerProvider.setList(handlers);
+        
+        if(!handlerTable.isEmpty())
+            handlerTable.getSelectionModel().setSelected(handlers.get(0), true);
     }
 }
