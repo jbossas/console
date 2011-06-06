@@ -85,8 +85,7 @@ public class XADataSourceEditor implements PropertyManagement {
         // ----
 
         VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-        vpanel.getElement().setAttribute("style", "margin:15px; width:95%");
+        vpanel.setStyleName("rhs-content-panel");
 
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);

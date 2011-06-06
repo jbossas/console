@@ -73,7 +73,7 @@ class ProfileSection {
         horz.add(title);
         horz.add(dropDown);
 
-        title.getElement().getParentElement().setAttribute("style", "padding:2px;border-top:1px solid #A7ABB4; font-weight:bold;color:#4A5D75;vertical-align:middle; text-align:center");
+        title.getElement().getParentElement().setAttribute("class", "profile-selector");
 
         layout.add(horz);
         layout.add(subsysTree);

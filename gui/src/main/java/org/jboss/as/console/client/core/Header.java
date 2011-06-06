@@ -121,6 +121,7 @@ public class Header implements ValueChangeHandler<String> {
         //debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
 
         settingsLink.getElement().getParentElement().setAttribute("width", "50%");
+        settingsLink.getElement().getParentElement().setAttribute("align", "right");
         settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
 
         headlineContainer.getElement().getParentElement().setAttribute("width", "50%");

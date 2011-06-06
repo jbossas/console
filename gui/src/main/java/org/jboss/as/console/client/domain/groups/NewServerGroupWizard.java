@@ -45,7 +45,7 @@ class NewServerGroupWizard {
     public NewServerGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
         layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-        layout.getElement().setAttribute("cellpadding", "10");
+        layout.getElement().setAttribute("style", "padding:10px");
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
