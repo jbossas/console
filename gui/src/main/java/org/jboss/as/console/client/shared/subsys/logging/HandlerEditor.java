@@ -28,7 +28,13 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**
@@ -40,7 +46,8 @@ public class HandlerEditor {
     private LoggingPresenter presenter;
     private DefaultCellTable<LoggingHandler> handlerTable;
     private ListDataProvider<LoggingHandler> handlerProvider;
-    
+    private Form<LoggingHandler> form;
+
     public HandlerEditor(LoggingPresenter presenter) {
         this.presenter = presenter;
     }
@@ -50,7 +57,7 @@ public class HandlerEditor {
         ScrollPanel scroll = new ScrollPanel();
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("rhs-content-panel");
         
         scroll.add(layout);
 
@@ -84,26 +91,6 @@ public class HandlerEditor {
             }
         };
 
-        TextColumn<LoggingHandler> autoflushColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return Boolean.toString(record.isAutoflush());
-            }
-        };
-        
-        TextColumn<LoggingHandler> encodingColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getEncoding();
-            }
-        };
-        
-        TextColumn<LoggingHandler> formatterColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getFormatter();
-            }
-        };
         
         TextColumn<LoggingHandler> handlerTypeColumn = new TextColumn<LoggingHandler>() {
             @Override
@@ -119,22 +106,33 @@ public class HandlerEditor {
             }
         };
         
-        TextColumn<LoggingHandler> queueLengthColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getQueueLength();
-            }
-        };
 
         handlerTable.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
         handlerTable.addColumn(handlerTypeColumn, Console.CONSTANTS.subsys_logging_type());
         handlerTable.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        handlerTable.addColumn(autoflushColumn, Console.CONSTANTS.subsys_logging_autoFlush());
-        handlerTable.addColumn(encodingColumn, Console.CONSTANTS.subsys_logging_encoding());
-        handlerTable.addColumn(formatterColumn, Console.CONSTANTS.subsys_logging_formatter());
-        handlerTable.addColumn(queueLengthColumn, Console.CONSTANTS.subsys_logging_queueLength());
 
         layout.add(handlerTable);
+
+
+        form = new Form<LoggingHandler>(LoggingHandler.class);
+        form.setNumColumns(2);
+
+        TextItem nameItem = new TextItem("name", "Name");
+        TextItem typeItem = new TextItem("type", "Type");
+
+        TextItem levelItem = new TextItem("level", "Level");
+        StatusItem flushItem = new StatusItem("autoflush", "Autoflush?");
+
+        TextBoxItem formatterItem = new TextBoxItem("formatter", "Formatter");
+        TextBoxItem encodingItem = new TextBoxItem("encoding", "Encoding");
+        TextBoxItem queueItem = new TextBoxItem("queueLength", "Queue Length");
+
+
+        form.setFields(nameItem, typeItem, levelItem, flushItem, formatterItem,encodingItem,queueItem);
+        form.bind(handlerTable);
+
+        layout.add(new ContentGroupLabel("Details"));
+        layout.add(form.asWidget());
 
         return scroll;
     }

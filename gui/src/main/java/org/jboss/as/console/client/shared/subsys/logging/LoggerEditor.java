@@ -56,7 +56,7 @@ public class LoggerEditor {
         ScrollPanel scroll = new ScrollPanel();
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("rhs-content-panel");
         
         scroll.add(layout);
 
