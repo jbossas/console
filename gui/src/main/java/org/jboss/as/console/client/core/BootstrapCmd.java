@@ -46,9 +46,10 @@ public class BootstrapCmd implements AsyncCommand<Boolean>{
     @Override
     public void execute(final AsyncCallback<Boolean> callback) {
 
+        // :read-attribute(name=process-type)
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
-        operation.get(CHILD_TYPE).set("subsystem");
+        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("process-type");
         operation.get(ADDRESS).setEmptyList();
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -62,10 +63,10 @@ public class BootstrapCmd implements AsyncCommand<Boolean>{
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                boolean outcome = response.get("outcome").asString().equals("success");
-                bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(outcome).toString());
+                boolean isServer = response.get(RESULT).asString().equals("Server");
+                bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
-                callback.onSuccess(outcome);
+                callback.onSuccess(isServer);
 
             }
         });
