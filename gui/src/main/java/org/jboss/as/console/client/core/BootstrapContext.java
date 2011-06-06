@@ -49,11 +49,11 @@ public class BootstrapContext implements ApplicationProperties {
 
         loadPersistedProperties();
 
-        String domainApi = GWT.isScript() ? getBaseUrl()+"domain-api" : "http://192.168.0.12:8888/app/proxy"; //"http://localhost:9990/domain-api";
+        String domainApi = GWT.isScript() ? getBaseUrl()+"domain-api" : "http://127.0.0.1:8888/app/proxy"; //"http://localhost:9990/domain-api";
         setProperty(DOMAIN_API, domainApi);
 
 
-        String deploymentApi = GWT.isScript() ? getBaseUrl()+"domain-api/add-content" : "http://192.168.0.12:8888/app/upload";
+        String deploymentApi = GWT.isScript() ? getBaseUrl()+"domain-api/add-content" : "http://127.0.0.1:8888/app/upload";
         setProperty(DEPLOYMENT_API, deploymentApi);
 
         Log.info("Domain API Endpoint: " + domainApi);
