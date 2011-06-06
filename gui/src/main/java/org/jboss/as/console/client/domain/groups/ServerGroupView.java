@@ -186,6 +186,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         propertyEditor = new PropertyEditor(presenter);
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
+        propertyEditor.setEnabled(false);
 
         bottomLayout .selectTab(0);
 
