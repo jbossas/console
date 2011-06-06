@@ -114,8 +114,8 @@
                     <logLevel>TRACE</logLevel>
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
-                    <bindAddress>192.168.0.12</bindAddress>
-	 	    <extraJvmArgs>-Xmx512m -DDEBUG</extraJvmArgs>
+                    <!--bindAddress>192.168.0.12</bindAddress-->
+	 	            <extraJvmArgs>-Xmx512m -DDEBUG</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
                     <soyc>false</soyc>
                     <style>OBF</style>
