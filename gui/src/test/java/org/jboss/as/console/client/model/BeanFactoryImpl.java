@@ -48,6 +48,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.standalone.StandaloneServer;
 
 /**
  * @author Heiko Braun
@@ -197,6 +198,11 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public AutoBean<LoggerConfig> loggerConfig() {
         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<StandaloneServer> standaloneServer() {
+         throw new RuntimeException("not implemented");
     }
 }
 

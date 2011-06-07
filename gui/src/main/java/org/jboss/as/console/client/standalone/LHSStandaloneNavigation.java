@@ -81,6 +81,7 @@ public class LHSStandaloneNavigation {
         commonPanel.setContent(commonTree);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
+                new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter),
                 new LHSNavTreeItem("Interfaces", NameTokens.InterfacePresenter),
                 new LHSNavTreeItem("Socket Binding Groups", NameTokens.SocketBindingPresenter),
                 new LHSNavTreeItem("System Properties", NameTokens.PropertiesPresenter)

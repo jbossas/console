@@ -48,6 +48,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.standalone.StandaloneServer;
 
 
 /**
@@ -88,5 +89,7 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<Interface> interfaceDeclaration();
     AutoBean<JDBCDriver> jdbcDriver();
+
+    AutoBean<StandaloneServer> standaloneServer();
 
 }

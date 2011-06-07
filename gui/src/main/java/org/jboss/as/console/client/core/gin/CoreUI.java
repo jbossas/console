@@ -77,6 +77,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
@@ -185,4 +186,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<HostPropertiesPresenter> getHostPropertiesPresenter();
     AsyncProvider<HostJVMPresenter> getHostJVMPresenter();
     AsyncProvider<HostInterfacesPresenter> getHostInterfacesPresenter();
+
+    AsyncProvider<StandaloneServerPresenter> getStandaloneServerPresenter();
 }
