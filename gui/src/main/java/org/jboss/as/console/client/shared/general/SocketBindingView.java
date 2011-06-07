@@ -23,7 +23,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -37,7 +36,6 @@ import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
@@ -51,7 +49,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     private SocketBindingPresenter presenter;
 
-    private DefaultCellTable<SocketBinding> socketTable;
+    private SocketTable socketTable;
     private ComboBox groupFilter;
 
     @Override
@@ -70,9 +68,6 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         //layout.add(toolstrip);
 
-
-        // --
-
         // -----------
 
         ContentHeaderLabel nameLabel = new ContentHeaderLabel("Socket Binding Declarations");
@@ -87,24 +82,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         layout.add(horzPanel);
 
-        socketTable = new DefaultCellTable<SocketBinding>(20);
-
-        TextColumn<SocketBinding> nameColumn = new TextColumn<SocketBinding>() {
-            @Override
-            public String getValue(SocketBinding record) {
-                return record.getName();
-            }
-        };
-
-        TextColumn<SocketBinding> portColumn = new TextColumn<SocketBinding>() {
-            @Override
-            public String getValue(SocketBinding record) {
-                return String.valueOf(record.getPort());
-            }
-        };
-
-        socketTable.addColumn(nameColumn, "Name");
-        socketTable.addColumn(portColumn, "Port");
+        socketTable = new SocketTable();
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
@@ -126,52 +104,9 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         tableOptions.getElement().setAttribute("style", "float:right;");
         layout.add(tableOptions);
-        layout.add(socketTable);
+        layout.add(socketTable.asWidget());
 
         // -----------
-
-        /*final ToolStrip toolStrip = new ToolStrip();
-        final ToolButton edit = new ToolButton("Edit");
-        edit.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals("Edit"))
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-        });
-
-        toolStrip.addToolButton(edit);
-        ToolButton delete = new ToolButton("Delete");
-        delete.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                Feedback.confirm(
-                        "Delete Deployment",
-                        "Do you want to delete this deployment?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    SingleSelectionModel<DeploymentRecord> selectionModel = (SingleSelectionModel) deploymentTable.getSelectionModel();
-                                    presenter.deleteDeployment(
-                                            selectionModel.getSelectedObject()
-
-                                    );
-                                }
-                            }
-                        });
-            }
-        });
-        toolStrip.addToolButton(delete);
-
-        formPanel.add(toolStrip);
-        formPanel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 30, Style.Unit.PX);*/
 
         Form<SocketBinding> form = new Form<SocketBinding>(SocketBinding.class);
         form.setNumColumns(2);
@@ -183,7 +118,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         NumberBoxItem multicastPortItem = new NumberBoxItem("multiCastPort", "Multicast Port");
 
         form.setFields(nameItem, portItem, interfaceItem, multicastItem, multicastPortItem);
-        form.bind(socketTable);
+        form.bind(socketTable.getCellTable());
 
         Widget formWidget = form.asWidget();
         form.setEnabled(false);
@@ -209,8 +144,6 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     @Override
     public void setBindings(String groupName, List<SocketBinding> bindings) {
-        socketTable.setRowCount(bindings.size(), true);
-        socketTable.setRowData(0, bindings);
-        socketTable.getSelectionModel().setSelected(bindings.get(0), true);
+        socketTable.updateFrom(groupName, bindings);
     }
 }

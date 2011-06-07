@@ -127,6 +127,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             }
         }));
 
+        toolStrip.addToolButtonRight(new ToolButton("Ports", new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.onShowEffectivePorts();
+            }
+        }));
+
+
         layout.add(toolStrip);
 
         // ---

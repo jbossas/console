@@ -46,6 +46,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
 import org.jboss.as.console.client.shared.jvm.DeleteJvmCmd;
 import org.jboss.as.console.client.shared.jvm.Jvm;
@@ -87,7 +89,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private DispatchAsync dispatcher;
     private PropertyMetaData propertyMetaData;
     private BeanFactory factory;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -519,4 +520,24 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void closePropertyDialoge() {
         propertyWindow.hide();
     }
+
+    public void onShowEffectivePorts() {
+        window = new DefaultWindow("Server Ports");
+        window.setWidth(480);
+        window.setHeight(360);
+
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, selectedRecord.getSocketBinding());
+        cmd.execute(new SimpleCallback<List<SocketBinding>>() {
+            @Override
+            public void onSuccess(List<SocketBinding> result) {
+                window.setWidget(
+                        new EffectivePortsDialogue(ServerConfigPresenter.this, result, selectedRecord).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+    }
+
 }

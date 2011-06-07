@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -28,12 +29,14 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
@@ -130,49 +133,12 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     private void loadBindings(final String groupName) {
 
-        // /socket-binding-group=standard-sockets:read-resource(recursive=true)
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("socket-binding-group", groupName);
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(RECURSIVE).set(true);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, groupName);
+        cmd.execute(new SimpleCallback<List<SocketBinding>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode payload = response.get("result").asObject();
-
-                List<ModelNode> socketDescriptions= payload.get("socket-binding").asList();
-
-                List<SocketBinding> bindings= new ArrayList<SocketBinding>();
-                for(ModelNode socket : socketDescriptions)
-                {
-
-                    ModelNode value = socket.asProperty().getValue();
-
-                    //System.out.println(value.toJSONString());
-
-                    SocketBinding sb = factory.socketBinding().as();
-
-                    sb.setName(value.get("name").asString());
-                    sb.setPort(value.get("port").asInt());
-                    String interfaceValue = value.get("interface").isDefined() ?
-                            value.get("interface").asString() : "not set";
-
-                    sb.setInterface(interfaceValue);
-                    // TODO: multicast properties
-                    sb.setMultiCastAddress("not set");
-                    sb.setMultiCastPort(-1);
-
-                    bindings.add(sb);
-                }
-
-                getView().setBindings(groupName, bindings);
-
+            public void onSuccess(List<SocketBinding> result) {
+                getView().setBindings(groupName, result);
             }
         });
-
     }
 }
