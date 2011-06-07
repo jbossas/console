@@ -39,6 +39,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.TabHeader;
+import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -74,9 +75,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         LayoutPanel layout = new LayoutPanel();
 
-        TabHeader title = new TabHeader(Console.CONSTANTS.common_label_deployments());
-        layout.add(title);
-        layout.setWidgetTopHeight(title, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_deployments());
+        layout.add(titleBar);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
 
         final ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
