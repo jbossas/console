@@ -211,7 +211,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         }));
 
-
+        /* https://issues.jboss.org/browse/AS7-953
         formTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -232,6 +232,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         }));
 
+        */
         formPanel.add(formTools);
 
         // -----
