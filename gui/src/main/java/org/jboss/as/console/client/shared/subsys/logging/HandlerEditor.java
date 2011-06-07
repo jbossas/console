@@ -30,11 +30,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.StatusItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**
@@ -42,11 +38,14 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
  * @date 3/29/11
  */
 public class HandlerEditor {
+    private static int PAGE_SIZE = 15;
 
     private LoggingPresenter presenter;
     private DefaultCellTable<LoggingHandler> handlerTable;
     private ListDataProvider<LoggingHandler> handlerProvider;
-    private Form<LoggingHandler> form;
+    private HandlerDetails details;
+    private boolean doneInitialSelection = false;
+    private DefaultPager pager;
 
     public HandlerEditor(LoggingPresenter presenter) {
         this.presenter = presenter;
@@ -61,26 +60,11 @@ public class HandlerEditor {
         
         scroll.add(layout);
 
-        /*
-        ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Adding logging handlers not implemented",Message.Severity.Warning)
-                );
-            }
-        }));
-
-        layout.add(toolstrip); */
-
-        // ---
-
         layout.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_handlerConfigurations()));
 
-        handlerTable = new DefaultCellTable<LoggingHandler>(20);
-        handlerTable.setSelectionModel(new SingleSelectionModel<LoggingHandler>());
+        handlerTable = new DefaultCellTable<LoggingHandler>(PAGE_SIZE);
+        SingleSelectionModel<LoggingHandler> selectionModel = new SingleSelectionModel<LoggingHandler>();
+        handlerTable.setSelectionModel(selectionModel);
         handlerProvider = new ListDataProvider<LoggingHandler>();
         handlerProvider.addDataDisplay(handlerTable);
 
@@ -105,44 +89,63 @@ public class HandlerEditor {
                 return record.getLevel();
             }
         };
-        
 
         handlerTable.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
         handlerTable.addColumn(handlerTypeColumn, Console.CONSTANTS.subsys_logging_type());
         handlerTable.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
 
         layout.add(handlerTable);
+        
+        pager = new DefaultPager();
+        pager.setDisplay(handlerTable);
+        layout.add(pager);
 
+        details = new HandlerDetails(presenter);
+        details.bind(handlerTable);
 
-        form = new Form<LoggingHandler>(LoggingHandler.class);
-        form.setNumColumns(2);
-
-        TextItem nameItem = new TextItem("name", "Name");
-        TextItem typeItem = new TextItem("type", "Type");
-
-        TextItem levelItem = new TextItem("level", "Level");
-        StatusItem flushItem = new StatusItem("autoflush", "Autoflush?");
-
-        TextBoxItem formatterItem = new TextBoxItem("formatter", "Formatter");
-        TextBoxItem encodingItem = new TextBoxItem("encoding", "Encoding");
-        TextBoxItem queueItem = new TextBoxItem("queueLength", "Queue Length");
-
-
-        form.setFields(nameItem, typeItem, levelItem, flushItem, formatterItem,encodingItem,queueItem);
-        form.bind(handlerTable);
-
-        layout.add(new ContentGroupLabel("Details"));
-        layout.add(form.asWidget());
+        layout.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
+        layout.add(details.asWidget());
 
         return scroll;
     }
-    
     
     public void updateHandlers(LoggingInfo loggingInfo) {
         List<LoggingHandler> handlers = loggingInfo.getHandlers();
         handlerProvider.setList(handlers);
         
-        if(!handlerTable.isEmpty())
-            handlerTable.getSelectionModel().setSelected(handlers.get(0), true);
+        if (handlerTable.isEmpty()) return;
+        
+        if (!doneInitialSelection) {
+            setSelected(handlers.get(0));
+            return;
+        }
+        
+        if (details.getEditedLogger() == null) {
+            setSelected(handlers.get(0));
+            return;
+        }
+        
+        // LoggingHandler instances were rebuilt from the server, so find the new one that
+        // corresponds to the one that was just edited.
+        LoggingHandler clone = loggingInfo.findHandler(details.getEditedLogger().getName());
+        if (clone == null) {
+            setSelected(handlers.get(0));
+            return;
+        }
+        
+        setSelected(clone);
+    }
+    
+    private void setSelected(LoggingHandler handler) {
+        handlerTable.getSelectionModel().setSelected(handler, true);
+        doneInitialSelection = true;
+        List<LoggingHandler> handlers = handlerProvider.getList();
+        int position = handlers.indexOf(handler);
+        int page = position/PAGE_SIZE;
+        pager.setPage(page);
+    }
+    
+    public void enableHandlerDetails(boolean isEnabled) {
+        this.details.setEnabled(isEnabled);
     }
 }

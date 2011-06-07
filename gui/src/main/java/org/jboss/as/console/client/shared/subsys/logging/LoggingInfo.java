@@ -21,6 +21,8 @@ package org.jboss.as.console.client.shared.subsys.logging;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -41,8 +43,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class LoggingInfo {
     
     private LoggerConfig rootLogger;
-    private List<LoggerConfig> loggers;
-    private List<LoggingHandler> handlers;
+    private List<LoggerConfig> loggers = Collections.EMPTY_LIST;
+    private List<LoggingHandler> handlers = Collections.EMPTY_LIST;
     
     private DispatchAsync dispatcher;
     private BeanFactory factory;
@@ -64,6 +66,22 @@ public class LoggingInfo {
     
     public List<LoggingHandler> getHandlers() {
         return handlers;
+    }
+    
+    public LoggingHandler findHandler(String name) {
+        for (LoggingHandler handler : handlers) {
+            if (handler.getName().equals(name)) return handler;
+        }
+        
+        return null;
+    }
+    
+    public LoggerConfig findLoggerConfig(String name) {
+        for (LoggerConfig logger : loggers) {
+            if (logger.getName().equals(name)) return logger;
+        }
+        
+        return null;
     }
     
     private void setRootLogger() {
@@ -123,7 +141,7 @@ public class LoggingInfo {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
-                for (ModelNode node : payload) {
+                for (final ModelNode node : payload) {
                     final String handlerType = node.asString();
                     ModelNode operation = LoggingOperation.make(READ_CHILDREN_RESOURCES_OPERATION);
                     operation.get(CHILD_TYPE).set(handlerType);

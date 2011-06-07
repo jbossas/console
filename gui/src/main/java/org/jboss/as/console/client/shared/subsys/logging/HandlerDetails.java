@@ -1,22 +1,21 @@
-/*
- * JBoss, Home of Professional Open Source
+/* 
+ * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
+ * as indicated by the @author tags. All rights reserved. 
+ * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * This copyrighted material is made available to anyone wishing to use, 
+ * modify, copy, or redistribute it subject to the terms and conditions 
+ * of the GNU Lesser General Public License, v. 2.1. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+ * You should have received a copy of the GNU Lesser General Public License, 
+ * v.2.1 along with this distribution; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,45 +25,46 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.ListItem;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class LoggerConfigDetails {
-
+public class HandlerDetails {
+    
     private LoggingPresenter presenter;
-    private Form<LoggerConfig> form;
+    private Form<LoggingHandler> form;
     private ToolButton editBtn;
     private ToolButton cancelBtn;
-    private LoggerConfig editedLogger;
-
-    public LoggerConfigDetails(LoggingPresenter presenter) {
+    private LoggingHandler editedHandler;
+    
+    public HandlerDetails(LoggingPresenter presenter) {
         this.presenter = presenter;
-        form = new Form(LoggerConfig.class);
-        form.setNumColumns(1);
+        form = new Form(LoggingHandler.class);
+        form.setNumColumns(2);
     }
-
+    
     public Widget asWidget() {
         VerticalPanel detailPanel = new VerticalPanel();
         detailPanel.setStyleName("fill-layout-width");
-
+        
         ToolStrip detailToolStrip = new ToolStrip();
         editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditLogger();
+                    presenter.onEditHandler();
                 else {
-                    editedLogger = form.getEditedEntity();
-                    presenter.onSaveLoggerDetails(form.getEditedEntity().getName(), form.getChangedValues());
+                    editedHandler = form.getEditedEntity();
+                    presenter.onSaveHandlerDetails(form.getEditedEntity().getName(), form.getEditedEntity().getType(), form.getChangedValues());
                 }
             }
         };
@@ -75,47 +75,54 @@ public class LoggerConfigDetails {
             @Override
             public void onClick(ClickEvent event) {
                 form.cancel();
-                LoggerConfigDetails.this.setEnabled(false);
+                HandlerDetails.this.setEnabled(false);
             }        
         };
         cancelBtn.addClickHandler(cancelHandler);
+        cancelBtn.setVisible(false);
         
         detailToolStrip.addToolButton(editBtn);
         detailToolStrip.addToolButton(cancelBtn);
-
         detailPanel.add(detailToolStrip);
-
-        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
         
+        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
+        TextItem typeItem = new TextItem("type", Console.CONSTANTS.subsys_logging_type());
+
         ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
         logLevelItem.setValueMap(LogLevel.STRINGS);
         
-        ListItem handlersItem = new ListItem("handlers", Console.CONSTANTS.subsys_logging_handlers(), true);
+        StatusItem flushItem = new StatusItem("autoflush", Console.CONSTANTS.subsys_logging_autoFlush());
 
-        form.setFields(nameItem, logLevelItem, handlersItem);
+        TextItem formatterItem = new TextItem("formatter", Console.CONSTANTS.subsys_logging_formatter());
+        TextItem encodingItem = new TextItem("encoding", Console.CONSTANTS.subsys_logging_encoding());
+        TextItem queueItem = new TextItem("queueLength", Console.CONSTANTS.subsys_logging_queueLength());
+
+        form.setFields(nameItem, typeItem, logLevelItem, flushItem, formatterItem, encodingItem, queueItem);
+        
+        setEnabled(false);
+        
         detailPanel.add(form.asWidget());
-
-        setEnabled(false);  // initially don't allow edit
         
         ScrollPanel scroll = new ScrollPanel(detailPanel);
         return scroll;
     }
-
-    public void bind(CellTable<LoggerConfig> loggerConfigTable) {
-        form.bind(loggerConfigTable);
+    
+    public void bind(CellTable<LoggingHandler> handlerTable) {
+        form.bind(handlerTable);
     }
 
     public void setEnabled(boolean isEnabled) {
         form.setEnabled(isEnabled);
         cancelBtn.setVisible(isEnabled);
 
-        if(isEnabled)
+        if(isEnabled) {
             editBtn.setText(Console.CONSTANTS.common_label_save());
-        else
+        } else {
             editBtn.setText(Console.CONSTANTS.common_label_edit());
+        }
     }
     
-    public LoggerConfig getEditedLoggerConfig() {
-        return editedLogger;
+    public LoggingHandler getEditedLogger() {
+        return this.editedHandler;
     }
 }

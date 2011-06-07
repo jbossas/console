@@ -64,6 +64,8 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         void updateLoggingInfo(LoggingInfo loggingInfo);
         
         void enableLoggerDetails(boolean isEnabled);
+        
+        void enableHandlerDetails(boolean isEnabled);
     }
 
     @Inject
@@ -94,6 +96,37 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+    
+    public void onEditHandler() {
+        getView().enableHandlerDetails(true);
+    }
+    
+    public void onSaveHandlerDetails(final String name, String handlerType, Map<String, Object> changedValues) {
+        getView().enableHandlerDetails(false);
+        if (changedValues.isEmpty()) return;
+        
+        String newLevel = (String)changedValues.get("level");
+        if (newLevel == null) return;
+        
+        // can only change level for now
+        ModelNode operation = LoggingOperation.make("change-log-level");
+        operation.get(ADDRESS).add(handlerType, name);
+        operation.get("level").set(newLevel);
+        
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Updated Log Level");
+                loggingInfo.refreshView();
+            }
+        });
     }
     
     public void onEditLogger() {

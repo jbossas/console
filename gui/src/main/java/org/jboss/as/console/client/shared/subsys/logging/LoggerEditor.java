@@ -31,6 +31,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -40,12 +41,15 @@ import java.util.List;
  * @date 3/29/11
  */
 public class LoggerEditor {
+    private static int PAGE_SIZE = 15;
 
     private LoggingPresenter presenter;
     
     private ListDataProvider<LoggerConfig> loggerProvider;
     private DefaultCellTable<LoggerConfig> loggerConfigTable;
-    LoggerConfigDetails details;
+    private LoggerConfigDetails details;
+    private boolean doneInitialSelection = false;
+    private DefaultPager pager;
 
     public LoggerEditor(LoggingPresenter presenter) {
         this.presenter = presenter;
@@ -60,25 +64,9 @@ public class LoggerEditor {
         
         scroll.add(layout);
 
-        /*
-        ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButton(new ToolButton("Add", new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getMessageCenter().notify(
-                        new Message("Adding logging handlers not implemented",Message.Severity.Warning)
-                );
-            }
-        }));
-
-        layout.add(toolstrip); */
-
-        // ---
-
         layout.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_logging_loggers()));
         
-        loggerConfigTable = new DefaultCellTable<LoggerConfig>(20);
+        loggerConfigTable = new DefaultCellTable<LoggerConfig>(PAGE_SIZE);
         loggerConfigTable.setSelectionModel(new SingleSelectionModel<LoggerConfig>());
         loggerProvider = new ListDataProvider<LoggerConfig>();
         loggerProvider.addDataDisplay(loggerConfigTable);
@@ -116,9 +104,13 @@ public class LoggerEditor {
         
         layout.add(loggerConfigTable);
         
+        pager = new DefaultPager();
+        pager.setDisplay(loggerConfigTable);
+        layout.add(pager);
+        
         details = new LoggerConfigDetails(presenter);
         details.bind(loggerConfigTable);
-        layout.add(new ContentGroupLabel("Logger"));
+        layout.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         layout.add(details.asWidget());
         
         return scroll;
@@ -130,8 +122,34 @@ public class LoggerEditor {
         loggers.addAll(loggingInfo.getLoggers());
         loggerProvider.setList(loggers); 
 
-        if(!this.loggerConfigTable.isEmpty())
-            loggerConfigTable.getSelectionModel().setSelected(loggers.get(0), true);
+        if (loggerConfigTable.isEmpty()) return;
+        
+        if (!doneInitialSelection) {
+            setSelected(loggers.get(0));
+            return;
+        }
+        
+        if (details.getEditedLoggerConfig() == null) {
+            setSelected(loggers.get(0));
+            return;
+        }
+        
+        LoggerConfig clone = loggingInfo.findLoggerConfig(details.getEditedLoggerConfig().getName());
+        if(clone == null) {
+            setSelected(loggers.get(0));
+            return;
+        }
+        
+        setSelected(clone);
+    }
+    
+    private void setSelected(LoggerConfig logger) {
+        loggerConfigTable.getSelectionModel().setSelected(logger, true);
+        doneInitialSelection = true;
+        List<LoggerConfig> loggers = loggerProvider.getList();
+        int position = loggers.indexOf(logger);
+        int page = position/PAGE_SIZE;
+        pager.setPage(page);
     }
     
     public void enableLoggerDetails(boolean isEnabled) {

@@ -32,12 +32,26 @@ public class ListItem extends FormItem<List> {
 
     private TextArea textArea;
     private List value;
+    private boolean displayOnly;
+
 
     public ListItem(String name, String title) {
+        this(name, title, false);
+    }
+    
+    /**
+     * Create a new ListItem.
+     * 
+     * @param name The item name.
+     * @param title The displayed title for the item.
+     * @param displayOnly If true, never allow editing.
+     */
+    public ListItem(String name, String title, boolean displayOnly) {
         super(name, title);
         this.textArea = new TextArea();
+        this.displayOnly = displayOnly;
     }
-
+    
     @Override
     public Widget asWidget() {
         return textArea;
@@ -45,7 +59,7 @@ public class ListItem extends FormItem<List> {
 
     @Override
     public void setEnabled(boolean b) {
-        this.textArea.setEnabled(b);
+        this.textArea.setEnabled(b && !displayOnly);
     }
 
     @Override

@@ -65,4 +65,9 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     public void enableLoggerDetails(boolean isEnabled) {
         loggingEditor.enableLoggerDetails(isEnabled);
     }
+    
+    @Override
+    public void enableHandlerDetails(boolean isEnabled) {
+        handlerEditor.enableHandlerDetails(isEnabled);
+    }
 }
