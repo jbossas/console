@@ -168,6 +168,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             public void onClick(ClickEvent event) {
 
                 int numMessages = fetchMessages(messagePopup);
+                if(numMessages==0)numMessages=1;
 
                 int width = 200;
                 int height = numMessages*35;
