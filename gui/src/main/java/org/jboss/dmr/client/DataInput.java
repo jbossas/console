@@ -42,9 +42,9 @@ public class DataInput {
 
     public byte readByte() throws IOException {
         int i = read();
-        if (i == -1) {
+        /*if (i == -1) {
             throw new RuntimeException("EOF");
-        }
+        } */
         return (byte) i;
     }
 
