@@ -495,9 +495,9 @@ a:focus {
     border: 1px solid #A7ABB4;
     background-color:#ffffff;
 
-    -moz-box-shadow: 3px 3px 4px #c3c3c3;
-    -webkit-box-shadow: 3px 3px 4px #c3c3c3;
-    box-shadow: 3px 3px 4px #c3c3c3;
+    -moz-box-shadow: 2px 2px 3px #000000;
+    -webkit-box-shadow: 2px 2px 3px #000000;
+    box-shadow: 2px 2px 3px #000000;
 }
 
 .default-window-header {
