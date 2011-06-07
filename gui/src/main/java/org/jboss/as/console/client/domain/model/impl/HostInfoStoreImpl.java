@@ -230,7 +230,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                             instanceList.add(instance);
 
                             if(instanceList.size() == serverNames.size())
-                                 callback.onSuccess(instanceList);
+                                callback.onSuccess(instanceList);
                         }
                     });
 
@@ -266,6 +266,35 @@ public class HostInfoStoreImpl implements HostInformationStore {
             public void onFailure(Throwable caught) {
                 callback.onSuccess(Boolean.FALSE);
                 Log.error("Failed to "+actualOp + " server " +configName);
+            }
+        });
+
+    }
+
+    @Override
+    public void reloadServer(String host, final String configName, final AsyncCallback<Boolean> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set("reload");
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add("server", configName);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if(response.get("outcome").asString().equals("success"))
+                {
+                    callback.onSuccess(Boolean.TRUE);
+                }
+                else
+                {
+                    callback.onSuccess(Boolean.FALSE);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onSuccess(Boolean.FALSE);
             }
         });
 

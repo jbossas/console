@@ -211,6 +211,27 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         }));
 
+
+        formTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                Feedback.confirm("Reload server configuration",
+                        "Do you want ot reload the server configuration for server "+form.getEditedEntity().getName()+"?",
+                        new Feedback.ConfirmationHandler()
+                        {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                {
+                                    ServerInstance instance = form.getEditedEntity();
+                                    presenter.reloadServer(instance.getServer());
+                                }
+                            }
+                        });
+            }
+        }));
+
         formPanel.add(formTools);
 
         // -----

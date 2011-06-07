@@ -236,7 +236,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
                 if(wasSuccessful)
                 {
-                    // if the operation was success we merge the local state changes into the mdoel
+                    // if the operation was success we merge the local state changes into the model
                     // to avoid a polling request (server started async)
 
                     hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
@@ -252,6 +252,18 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                         }
                     });
                 }
+            }
+        });
+    }
+
+    public void reloadServer(final String server) {
+        hostInfoStore.reloadServer(selectedHost, server, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                if(result)
+                    Console.info("Success: Reload server configuration " + server);
+                else
+                    Console.error("Error: Failed to reload server configuration " + server);
             }
         });
     }
