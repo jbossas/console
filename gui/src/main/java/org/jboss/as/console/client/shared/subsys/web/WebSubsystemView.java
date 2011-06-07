@@ -115,7 +115,6 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         // ----
 
-        layout.add(new ContentGroupLabel("Subresources"));
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
         bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
