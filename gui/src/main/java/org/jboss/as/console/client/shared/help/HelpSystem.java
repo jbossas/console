@@ -59,6 +59,8 @@ public class HelpSystem {
                 fieldNames.add(binding.getDetypedName());
         }
 
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -66,25 +68,12 @@ public class HelpSystem {
 
                 if(response.get(OUTCOME).asString().equals("success"))
                 {
-
+                    System.out.println(response);
                     List<Property> steps = response.get(RESULT).asPropertyList();
                     ModelNode prototype = steps.get(0).getValue().asObject();
 
-                    List<Property> attributes = prototype.get(RESULT).asObject().get("attributes").asPropertyList();
-
-                    for(Property prop : attributes)
-                    {
-                        String attName = prop.getName();
-                        ModelNode value = prop.getValue();
-
-                        if(fieldNames.contains(attName))
-                        {
-                            html.appendHtmlConstant("<li>");
-                            html.appendEscaped(attName).appendEscaped(": ");
-                            html.appendEscaped(value.get("description").asString());
-                            html.appendHtmlConstant("</li>");
-                        }
-                    }
+                    matchAttributes(prototype, fieldNames, html);
+                    matchChildren(prototype, fieldNames, html);
 
                     html.appendHtmlConstant("</ul>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
@@ -102,5 +91,41 @@ public class HelpSystem {
                 callback.onFailure(caught);
             }
         });
+    }
+
+    private void matchAttributes(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
+        List<Property> attributes = prototype.get(RESULT).asObject().get("attributes").asPropertyList();
+
+        for(Property prop : attributes)
+        {
+            String attName = prop.getName();
+            ModelNode value = prop.getValue();
+
+            if(fieldNames.contains(attName))
+            {
+                html.appendHtmlConstant("<li>");
+                html.appendEscaped(attName).appendEscaped(": ");
+                html.appendEscaped(value.get("description").asString());
+                html.appendHtmlConstant("</li>");
+            }
+        }
+    }
+
+     private void matchChildren(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
+        List<Property> attributes = prototype.get(RESULT).asObject().get("children").asPropertyList();
+
+        for(Property prop : attributes)
+        {
+            String childName = prop.getName();
+            ModelNode value = prop.getValue();
+
+            if(fieldNames.contains(childName))
+            {
+                html.appendHtmlConstant("<li>");
+                html.appendEscaped(childName).appendEscaped(": ");
+                html.appendEscaped(value.get("description").asString());
+                html.appendHtmlConstant("</li>");
+            }
+        }
     }
 }

@@ -206,16 +206,15 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
         jvmEditor = new JvmEditor(presenter);
-        /*jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {     TODO: doesn't work atm (child resources)
+        jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
                 address.add("server-group", nameLabel.getText());
-                String jvmName = "default";
-                address.add("jvm", jvmName);
+                address.add("jvm", "*");
                 return address;
             }
-        });*/
+        });
         bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);

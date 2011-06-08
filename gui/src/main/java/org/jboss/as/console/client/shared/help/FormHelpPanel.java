@@ -43,16 +43,16 @@ public class FormHelpPanel {
         helpPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
             @Override
-            public void onOpen(OpenEvent<DisclosurePanel> disclosurePanelOpenEvent) {
-                helpPanel.addStyleName("help-panel-open");
+            public void onOpen(OpenEvent<DisclosurePanel> event) {
+                event.getTarget().addStyleName("help-panel-open");
                 buildAttributeHelp();
             }
         });
 
         helpPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
             @Override
-            public void onClose(CloseEvent<DisclosurePanel> disclosurePanelCloseEvent) {
-                helpPanel.removeStyleName("help-panel-open");
+            public void onClose(CloseEvent<DisclosurePanel> event) {
+                event.getTarget().removeStyleName("help-panel-open");
             }
         });
 
