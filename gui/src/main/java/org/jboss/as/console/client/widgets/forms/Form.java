@@ -54,8 +54,6 @@ public class Form<T> {
     private int nextId = 1;
     private T editedEntity = null;
     private final Class<?> conversionType;
-    
-    private SingleSelectionModel<T> selectionModel;
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
@@ -120,9 +118,7 @@ public class Form<T> {
     }
 
     public void cancel() {
-        if (selectionModel != null) {
-            edit(selectionModel.getSelectedObject());
-        }
+        edit(editedEntity);
     }
     
     public void edit(T bean) {
@@ -383,7 +379,7 @@ public class Form<T> {
      * @param instanceTable
      */
     public void bind(CellTable<T> instanceTable) {
-        selectionModel = new SingleSelectionModel<T>();
+        final SingleSelectionModel<T> selectionModel = new SingleSelectionModel<T>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
