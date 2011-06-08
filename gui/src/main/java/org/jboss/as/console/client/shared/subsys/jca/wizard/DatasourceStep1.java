@@ -24,12 +24,15 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -52,7 +55,7 @@ public class DatasourceStep1 {
 
         final Form<DataSource> form = new Form<DataSource>(DataSource.class);
 
-        TextBoxItem name = new TextBoxItem("name", "Name");
+        final TextBoxItem name = new TextBoxItem("name", "Name");
         TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
             @Override
             public boolean validate(String value) {
@@ -70,6 +73,20 @@ public class DatasourceStep1 {
         enabled.setValue(Boolean.TRUE);
 
         form.setFields(name, jndiName, enabled);
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "datasources");
+                        address.add("data-source", name.getValue());
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

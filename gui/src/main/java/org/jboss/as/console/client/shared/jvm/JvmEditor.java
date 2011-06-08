@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -33,6 +34,7 @@ import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 
 /**
@@ -51,9 +53,14 @@ public class JvmEditor {
     private ToolButton edit;
     private String reference;
     private Widget formWidget;
+    private FormHelpPanel.AddressCallback addressCallback;
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
+    }
+
+    public void setAddressCallback(FormHelpPanel.AddressCallback addressCallback) {
+        this.addressCallback = addressCallback;
     }
 
     public Widget asWidget() {
@@ -99,7 +106,6 @@ public class JvmEditor {
 
         panel.add(toolStrip);
 
-
         form = new Form<Jvm>(Jvm.class);
         form.setNumColumns(2);
 
@@ -111,6 +117,16 @@ public class JvmEditor {
 
         form.setFields(nameItem, heapItem, maxHeapItem, debugItem);
         form.setEnabled(false);
+
+        // ---
+
+        if(addressCallback!=null)
+        {
+            final FormHelpPanel helpPanel = new FormHelpPanel(addressCallback, form);
+            panel.add(helpPanel.asWidget());
+        }
+
+        // ---
 
         formWidget = form.asWidget();
         panel.add(formWidget);

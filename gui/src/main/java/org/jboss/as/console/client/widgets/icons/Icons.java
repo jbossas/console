@@ -109,4 +109,7 @@ public interface Icons extends ClientBundle {
     @Source("messaging.png")
     ImageResource messaging();
 
+    @Source("help.png")
+    ImageResource help();
+
 }

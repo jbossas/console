@@ -822,6 +822,17 @@ a:focus {
     text-align:center;
 }
 
+.help-panel {
+    width:100%;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.help-panel-open {
+    background-color: #FFFFCC;
+    border:1px solid #cccccc;
+}
+
 
 
 

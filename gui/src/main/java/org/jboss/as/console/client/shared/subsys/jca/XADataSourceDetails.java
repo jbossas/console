@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.Feedback;
@@ -35,6 +36,7 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -118,7 +120,7 @@ public class XADataSourceDetails {
         VerticalPanel panel = new VerticalPanel();
         panel.add(detailToolStrip);
 
-        TextItem nameItem = new TextItem("name", "Name");
+        final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
         CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
@@ -130,6 +132,21 @@ public class XADataSourceDetails {
         form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem);
 
         form.setEnabled(false); // currently not editable
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "datasources");
+                        address.add("xa-data-source", nameItem.getValue());
+                        return address;
+                    }
+                }, form
+        );
+        panel.add(helpPanel.asWidget());
 
         Widget formWidget = form.asWidget();
         panel.add(formWidget);

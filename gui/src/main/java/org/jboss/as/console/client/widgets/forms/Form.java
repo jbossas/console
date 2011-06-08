@@ -31,9 +31,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.BeanFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +59,10 @@ public class Form<T> {
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
+    }
+
+    public Class<?> getConversionType() {
+        return conversionType;
     }
 
     /**
@@ -393,8 +399,22 @@ public class Form<T> {
         return editedEntity;
     }
 
-
     interface FormItemVisitor {
         void visit(FormItem item);
+    }
+
+
+    public List<String> getFormItemNames() {
+        List<String> result = new ArrayList<String>();
+
+        for(Map<String, FormItem> groupItems : formItems.values())
+        {
+            for(FormItem item : groupItems.values())
+            {
+                result.add(item.getName());
+            }
+        }
+
+        return result;
     }
 }

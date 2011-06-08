@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.groups;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -33,6 +34,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
@@ -45,7 +48,9 @@ import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -64,8 +69,15 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     private VerticalPanel panel;
 
-    PropertyEditor propertyEditor;
-    JvmEditor jvmEditor;
+    private PropertyEditor propertyEditor;
+    private JvmEditor jvmEditor;
+    private HelpSystem help;
+    private DisclosurePanel helpPanel ;
+
+    @Inject
+    public ServerGroupView(HelpSystem help) {
+        this.help = help;
+    }
 
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
@@ -156,7 +168,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
         form.setNumColumns(2);
 
-        TextItem nameField = new TextItem("groupName", Console.CONSTANTS.common_label_name());
+        final TextItem nameField = new TextItem("groupName", Console.CONSTANTS.common_label_name());
         //jvmField = new ComboBoxItem("jvm", "Virtual Machine");
         //jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
 
@@ -172,6 +184,18 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("server-group", nameLabel.getText());
+                        return address;
+                    }
+                }, form
+        );
+        panel.add(helpPanel.asWidget());
+
         panel.add(form.asWidget());
 
         // ---------------------------------------------------
@@ -182,6 +206,16 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
         jvmEditor = new JvmEditor(presenter);
+        /*jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {     TODO: doesn't work atm (child resources)
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = new ModelNode();
+                address.add("server-group", nameLabel.getText());
+                String jvmName = "default";
+                address.add("jvm", jvmName);
+                return address;
+            }
+        });*/
         bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
@@ -195,6 +229,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         return layout;
     }
+
 
     private void onSave() {
         ServerGroupRecord updatedEntity = form.getUpdatedEntity();
@@ -244,7 +279,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
         edit.setText(
-            isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
+                isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
         );
     }
 

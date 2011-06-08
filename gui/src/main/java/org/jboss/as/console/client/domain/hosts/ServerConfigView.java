@@ -33,6 +33,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
@@ -50,6 +51,7 @@ import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
@@ -204,6 +206,20 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                 new DisclosureGroupRenderer(),
                 socketItem, portOffset
         );
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("host", presenter.getSelectedHost());
+                        address.add("server-config", nameLabel.getText());
+                        return address;
+                    }
+                }, form
+        );
+        panel.add(helpPanel.asWidget());
 
         panel.add(form.asWidget());
         form.setEnabled(false);
