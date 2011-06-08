@@ -33,6 +33,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
@@ -41,6 +43,7 @@ import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -89,7 +92,10 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         // ---
 
         panel.add(new ContentHeaderLabel("Host JVM Declarations"));
-        panel.add(new HTML("These JVM settings will be inherited by any server on this host"));
+        StaticHelpPanel helpPanel = new StaticHelpPanel(
+                "These JVM settings will be inherited by any server on this host."
+        );
+        panel.add(helpPanel.asWidget());
 
         panel.add(new ContentGroupLabel("Available JVM Declarations"));
 
@@ -120,6 +126,15 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         panel.add(new ContentGroupLabel("JVM Details"));
 
         jvmEditor = new JvmEditor(presenter);
+        jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = new ModelNode();
+                address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                address.add("jvm", "*");
+                return address;
+            }
+        });
         panel.add(jvmEditor.asWidget());
 
         final SingleSelectionModel<Jvm> selectionModel = new SingleSelectionModel<Jvm>();

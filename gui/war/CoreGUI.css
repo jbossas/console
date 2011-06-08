@@ -824,6 +824,11 @@ a:focus {
 
 .help-panel {
     width:99%;
+    opacity:0.4;filter:alpha(opacity=40)
+}
+
+.help-panel:hover {
+    opacity:1.0;
 }
 
 .help-panel-open {
@@ -835,6 +840,8 @@ a:focus {
     -moz-box-shadow: 2px 2px 3px #c3c3c3;
     -webkit-box-shadow: 2px 2px 3px #c3c3c3;
     box-shadow: 2px 2px 3px #c3c3c3;
+
+    opacity:1.0;
 }
 
 

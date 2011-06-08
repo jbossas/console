@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -43,11 +44,12 @@ public class HostPropertiesView extends DisposableViewImpl implements HostProper
     public Widget createWidget() {
 
         LayoutPanel layout = new RHSContentPanel("Host Properties");
-        layout.add(new ContentHeaderLabel("Property Declarations"));
+        layout.add(new ContentHeaderLabel("System Property Declarations"));
 
-        HTML description = new HTML("These properties will be inherited by any server on this host");
-        description.getElement().setAttribute("style", "margin-bottom:15px;");
-        layout.add(description);
+        StaticHelpPanel helpPanel = new StaticHelpPanel(
+                "These properties will be inherited by any server on this host."
+        );
+        layout.add(helpPanel.asWidget());
 
         propertyEditor = new PropertyEditor(presenter);
         layout.add(propertyEditor.asWidget());

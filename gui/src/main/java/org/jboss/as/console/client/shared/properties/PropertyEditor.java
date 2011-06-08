@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
@@ -51,6 +52,7 @@ public class PropertyEditor {
     private PropertyManagement presenter;
     private String reference;
     private boolean simpleView = false;
+    private String helpText;
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
@@ -185,10 +187,21 @@ public class PropertyEditor {
 
         propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
+
+        if(helpText!=null)
+        {
+            StaticHelpPanel helpPanel = new StaticHelpPanel(helpText);
+            panel.add(helpPanel.asWidget());
+        }
+
         //propertyTable.setEnabled(false);
         panel.add(propertyTable);
 
         return panel;
+    }
+
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
     }
 
     public void setProperties(String reference, List<PropertyRecord> properties) {

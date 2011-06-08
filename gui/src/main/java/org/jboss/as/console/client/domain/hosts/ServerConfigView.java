@@ -231,9 +231,20 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         // jvm editor
         jvmEditor = new JvmEditor(presenter);
+        jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = new ModelNode();
+                address.add("host", presenter.getSelectedHost());
+                address.add("server-config", nameLabel.getText());
+                address.add("jvm", "*");
+                return address;
+            }
+        });
         bottomLayout.add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
+        propertyEditor.setHelpText("A system property to set on this server.");
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
 
 

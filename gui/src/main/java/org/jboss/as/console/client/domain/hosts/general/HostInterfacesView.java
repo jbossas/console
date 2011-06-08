@@ -44,7 +44,7 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
     public Widget createWidget() {
         LayoutPanel layout = new RHSContentPanel("Host Interfaces");
 
-        layout.add(new ContentHeaderLabel("Host Interface Declarations"));
+        layout.add(new ContentHeaderLabel("Interface Declarations"));
 
         table = new DefaultCellTable<Interface>(10);
 

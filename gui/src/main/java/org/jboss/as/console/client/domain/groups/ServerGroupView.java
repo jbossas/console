@@ -218,6 +218,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
+        propertyEditor.setHelpText("A system property to set on all servers in this server-group.");
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
         propertyEditor.setEnabled(false);
 
