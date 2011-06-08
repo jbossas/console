@@ -149,7 +149,7 @@ public class DataSourceDetails {
                         ModelNode address = new ModelNode();
                         address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
                         address.add("subsystem", "datasources");
-                        address.add("data-source", nameItem.getValue());
+                        address.add("data-source", "*");
                         return address;
                     }
                 }, form

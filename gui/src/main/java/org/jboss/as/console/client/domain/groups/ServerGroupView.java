@@ -189,7 +189,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                     @Override
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
-                        address.add("server-group", nameLabel.getText());
+                        address.add("server-group", "*");
                         return address;
                     }
                 }, form

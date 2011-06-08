@@ -66,7 +66,11 @@ public class HelpSystem {
 
                 if(response.get(OUTCOME).asString().equals("success"))
                 {
-                    List<Property> attributes = response.get(RESULT).asObject().get("attributes").asPropertyList();
+
+                    List<Property> steps = response.get(RESULT).asPropertyList();
+                    ModelNode prototype = steps.get(0).getValue().asObject();
+
+                    List<Property> attributes = prototype.get(RESULT).asObject().get("attributes").asPropertyList();
 
                     for(Property prop : attributes)
                     {

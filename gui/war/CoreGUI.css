@@ -823,14 +823,18 @@ a:focus {
 }
 
 .help-panel {
-    width:100%;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    width:99%;
 }
 
 .help-panel-open {
     background-color: #FFFFCC;
     border:1px solid #cccccc;
+     -moz-border-radius: 3px;
+    border-radius: 3px;
+
+    -moz-box-shadow: 2px 2px 3px #c3c3c3;
+    -webkit-box-shadow: 2px 2px 3px #c3c3c3;
+    box-shadow: 2px 2px 3px #c3c3c3;
 }
 
 

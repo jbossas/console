@@ -214,7 +214,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
                         address.add("host", presenter.getSelectedHost());
-                        address.add("server-config", nameLabel.getText());
+                        address.add("server-config", "*");
                         return address;
                     }
                 }, form

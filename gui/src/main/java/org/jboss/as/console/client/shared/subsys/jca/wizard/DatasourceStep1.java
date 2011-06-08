@@ -81,7 +81,7 @@ public class DatasourceStep1 {
                         ModelNode address = new ModelNode();
                         address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
                         address.add("subsystem", "datasources");
-                        address.add("data-source", name.getValue());
+                        address.add("data-source", "*");
                         return address;
                     }
                 }, form

@@ -37,6 +37,7 @@ public class FormHelpPanel {
     {
         ImageResource helpIcon = Icons.INSTANCE.help();
         helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
+
         helpPanel.addStyleName("help-panel");
         helpPanel.getHeader().getElement().setAttribute("style", "float:right");
         helpPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
