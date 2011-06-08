@@ -68,6 +68,7 @@ public class FormHelpPanel {
                     address.getAddress(), form, new AsyncCallback<Widget>() {
                 @Override
                 public void onSuccess(Widget result) {
+                    helpPanel.clear();
                     helpPanel.add(result);
                     hasBeenBuild = true;
                 }
@@ -76,7 +77,6 @@ public class FormHelpPanel {
                 public void onFailure(Throwable caught) {
                     Console.error("Failed to retrieve attribute description", caught.getMessage());
                     helpPanel.add(new HTML("<ul><li>Failed to retrieve attribute descriptions.</li></ul>"));
-                    hasBeenBuild = true;
                 }
             });
         }

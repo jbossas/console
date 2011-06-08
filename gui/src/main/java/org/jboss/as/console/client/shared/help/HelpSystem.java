@@ -66,7 +66,8 @@ public class HelpSystem {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                if(response.get(OUTCOME).asString().equals("success"))
+                if(response.get(OUTCOME).asString().equals("success")
+                        && response.hasDefined(RESULT))
                 {
                     System.out.println(response);
                     List<Property> steps = response.get(RESULT).asPropertyList();
