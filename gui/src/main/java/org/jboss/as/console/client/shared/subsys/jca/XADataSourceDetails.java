@@ -141,7 +141,7 @@ public class XADataSourceDetails {
                         ModelNode address = new ModelNode();
                         address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
                         address.add("subsystem", "datasources");
-                        address.add("xa-data-source", nameItem.getValue());
+                        address.add("xa-data-source", "*");
                         return address;
                     }
                 }, form

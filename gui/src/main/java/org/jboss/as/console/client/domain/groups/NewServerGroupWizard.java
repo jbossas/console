@@ -26,11 +26,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -126,7 +129,12 @@ class NewServerGroupWizard {
 
         Widget formWidget = form.asWidget();
 
-        layout.add(new HTML(Console.MESSAGES.commmon_description_newServerGroup()));
+        StaticHelpPanel helpPanel = new StaticHelpPanel(
+                Console.MESSAGES.commmon_description_newServerGroup()
+        );
+
+        layout.add(helpPanel.asWidget());
+
         layout.add(formWidget);
 
         layout.add(options);

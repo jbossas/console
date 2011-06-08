@@ -112,20 +112,25 @@ public class HelpSystem {
         }
     }
 
-     private void matchChildren(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        List<Property> attributes = prototype.get(RESULT).asObject().get("children").asPropertyList();
+    private void matchChildren(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
 
-        for(Property prop : attributes)
+        ModelNode modelNode = prototype.get(RESULT).asObject();
+        if(modelNode.hasDefined("children"))
         {
-            String childName = prop.getName();
-            ModelNode value = prop.getValue();
+            List<Property> attributes = modelNode.get("children").asPropertyList();
 
-            if(fieldNames.contains(childName))
+            for(Property prop : attributes)
             {
-                html.appendHtmlConstant("<li>");
-                html.appendEscaped(childName).appendEscaped(": ");
-                html.appendEscaped(value.get("description").asString());
-                html.appendHtmlConstant("</li>");
+                String childName = prop.getName();
+                ModelNode value = prop.getValue();
+
+                if(fieldNames.contains(childName))
+                {
+                    html.appendHtmlConstant("<li>");
+                    html.appendEscaped(childName).appendEscaped(": ");
+                    html.appendEscaped(value.get("description").asString());
+                    html.appendHtmlConstant("</li>");
+                }
             }
         }
     }

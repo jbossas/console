@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
@@ -34,6 +35,7 @@ import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,7 @@ public class NewServerConfigWizard {
         this.presenter = presenter;
 
         layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         final Form<Server> form = new Form<Server>(Server.class);
         form.setNumColumns(1);
@@ -88,6 +91,19 @@ public class NewServerConfigWizard {
         groupItem.setValueMap(groups);
 
         form.setFields(nameItem, groupItem, portOffset, startedItem);
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                        address.add("server-config", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 
