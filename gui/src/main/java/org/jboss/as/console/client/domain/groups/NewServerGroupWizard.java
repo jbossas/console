@@ -19,23 +19,19 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -45,15 +41,17 @@ import java.util.List;
  */
 class NewServerGroupWizard {
 
-    VerticalPanel layout;
-    DockLayoutPanel wrapper;
+    private ServerGroupPresenter presenter;
+    private List<ServerGroupRecord> existing;
 
     public NewServerGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
+        this.presenter = presenter;
+        this.existing = existing;
+    }
 
+    public Widget asWidget() {
 
-        wrapper = new DockLayoutPanel(Style.Unit.PX);
-
-        layout = new VerticalPanel();
+        VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
@@ -143,12 +141,6 @@ class NewServerGroupWizard {
 
         layout.add(formWidget);
 
-        wrapper.addSouth(options, 35);
-        wrapper.add(layout);
-
-    }
-
-    public Widget asWidget() {
-        return wrapper;
+        return new WindowContentBuilder(layout, options).build();
     }
 }

@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,6 +30,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
@@ -48,8 +51,9 @@ public class DatasourceStep1 {
     }
 
     Widget asWidget() {
+
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>Step 1/3: Datasource Attributes</h3>"));
 
@@ -113,8 +117,6 @@ public class DatasourceStep1 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 }

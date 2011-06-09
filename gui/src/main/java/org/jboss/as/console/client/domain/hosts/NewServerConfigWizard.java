@@ -20,10 +20,8 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -31,6 +29,7 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -48,19 +47,18 @@ import java.util.List;
  */
 public class NewServerConfigWizard {
 
-    private VerticalPanel layout;
-
     private ServerConfigPresenter presenter;
     private ComboBoxItem groupItem;
-
-    DockLayoutPanel wrapper;
+    private List<ServerGroupRecord> serverGroups;
 
     public NewServerConfigWizard(final ServerConfigPresenter presenter, final List<ServerGroupRecord> serverGroups) {
         this.presenter = presenter;
+        this.serverGroups = serverGroups;
+    }
 
-        wrapper = new DockLayoutPanel(Style.Unit.PX);
+    public Widget asWidget() {
 
-        layout = new VerticalPanel();
+        VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
         final Form<Server> form = new Form<Server>(Server.class);
@@ -151,14 +149,9 @@ public class NewServerConfigWizard {
         };
 
         DialogueOptions options = new DialogueOptions(saveHandler, cancelHandler);
-        wrapper.addSouth(options, 35);
-        wrapper.add(layout);
 
-    }
+        return new WindowContentBuilder(layout, options).build();
 
-    public Widget asWidget() {
-
-        return wrapper;
     }
 
     private ServerGroupRecord getSelectedServerGroup(List<ServerGroupRecord> available, String selectedName)

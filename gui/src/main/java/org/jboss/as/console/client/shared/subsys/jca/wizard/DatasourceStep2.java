@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;
@@ -175,9 +176,7 @@ public class DatasourceStep2 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 
      private void provisionTable(CellTable<JDBCDriver> table) {

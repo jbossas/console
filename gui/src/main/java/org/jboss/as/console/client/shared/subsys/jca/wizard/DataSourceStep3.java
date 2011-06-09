@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
@@ -89,9 +90,7 @@ public class DataSourceStep3 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 
     void edit(DataSource entity)
