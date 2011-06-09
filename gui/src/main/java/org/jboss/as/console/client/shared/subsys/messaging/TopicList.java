@@ -23,12 +23,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -110,6 +113,25 @@ public class TopicList {
         TextItem jndi = new TextItem("jndiName", "JNDI");
 
         form.setFields(name, jndi);
+
+       /*
+
+        no notable docs. Excluded for now.
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "jms");
+                        address.add("topic", "*");
+                        return address;
+                    }
+                }, form
+        );
+
+        layout.add(helpPanel.asWidget());    */
 
         layout.add(form.asWidget());
 

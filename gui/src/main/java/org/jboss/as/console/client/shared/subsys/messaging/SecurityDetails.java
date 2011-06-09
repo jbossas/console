@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -134,6 +136,10 @@ public class SecurityDetails {
 
         form.setFields(send, consume, manage);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), createDQ, deleteDQ, createNDQ, deleteNDQ);
+
+
+        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getSecurityDescription());
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
         return layout;

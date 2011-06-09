@@ -19,9 +19,13 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -29,6 +33,7 @@ import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
+
 
 
 /**
@@ -61,6 +66,10 @@ public class MessagingView extends DisposableViewImpl implements MessagingPresen
         TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
 
         form.setFields(name, connector, persistenceItem, acceptor);
+
+        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getProviderDescription());
+
+        layout.add(helpPanel.asWidget());
         layout.add(form.asWidget());
 
         // ------

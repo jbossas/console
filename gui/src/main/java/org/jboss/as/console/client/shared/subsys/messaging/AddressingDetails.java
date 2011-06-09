@@ -25,7 +25,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -116,6 +118,9 @@ public class AddressingDetails {
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
 
         form.setFields(dlQ, expQ, redelivery);
+
+        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getAddressingDescription());
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
         return layout;

@@ -24,6 +24,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -33,6 +35,7 @@ import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -134,6 +137,22 @@ public class QueueList {
 
         form.setFields(name, jndi, durable, selector);
         form.bind(queueTable);
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "jms");
+                        address.add("queue", "*");
+                        return address;
+                    }
+                }, form
+        );
+
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

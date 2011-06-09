@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ public interface MessagingProvider {
     String getName();
     void setName(String name);
 
+    @Binding(detypedName = "persistence-enabled")
     boolean isPersistenceEnabled();
     void setPersistenceEnabled(boolean persistenceEnabled);
 

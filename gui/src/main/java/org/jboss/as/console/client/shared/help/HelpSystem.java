@@ -71,13 +71,20 @@ public class HelpSystem {
                 {
                     //System.out.println(response);
                     List<Property> steps = response.get(RESULT).asPropertyList();
-                    ModelNode prototype = steps.get(0).getValue().asObject();
+                    if(steps.size()>0)
+                    {
+                        ModelNode prototype = steps.get(0).getValue().asObject();
 
-                    matchAttributes(prototype, fieldNames, html);
-                    matchChildren(prototype, fieldNames, html);
+                        matchAttributes(prototype, fieldNames, html);
+                        matchChildren(prototype, fieldNames, html);
 
-                    html.appendHtmlConstant("</ul>");
-                    callback.onSuccess(new HTML(html.toSafeHtml()));
+                        html.appendHtmlConstant("</ul>");
+                        callback.onSuccess(new HTML(html.toSafeHtml()));
+                    }
+                    else
+                    {
+                        onFailure(new Exception("No steps to iterate on: "+response));
+                    }
                 }
                 else
                 {

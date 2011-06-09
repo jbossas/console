@@ -5,6 +5,8 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,21 +21,28 @@ import org.jboss.as.console.client.widgets.icons.Icons;
 public class StaticHelpPanel {
 
     private DisclosurePanel helpPanel;
-    private HTML helpText;
+    private SafeHtml helpText;
 
-    public StaticHelpPanel(HTML helpText) {
+    public StaticHelpPanel(SafeHtml helpText) {
         this.helpText = helpText;
     }
 
     public StaticHelpPanel(String helpText) {
-        this.helpText = new HTML("<ul class='help-attribute-descriptions'><li>"+helpText+"</li></ul>");
+
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendHtmlConstant("<ul class='help-attribute-descriptions'>");
+        builder.appendHtmlConstant("<li>");
+        builder.appendEscaped(helpText);
+        builder.appendHtmlConstant("</li>");
+        builder.appendHtmlConstant("</ul>");
+        this.helpText = builder.toSafeHtml();
     }
 
     public Widget asWidget()
     {
         ImageResource helpIcon = Icons.INSTANCE.help();
         helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
-        helpPanel.add(helpText);
+        helpPanel.add(new HTML(helpText));
         helpPanel.addStyleName("help-panel");
         helpPanel.getHeader().getElement().setAttribute("style", "float:right");
         helpPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
