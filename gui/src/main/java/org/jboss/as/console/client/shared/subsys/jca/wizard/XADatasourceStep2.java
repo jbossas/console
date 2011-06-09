@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class XADatasourceStep2 {
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>Step 2/4: Datasource Class</h3>"));
 
@@ -173,9 +174,7 @@ public class XADatasourceStep2 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout,options).build();
     }
 
     private void provisionTable(CellTable<JDBCDriver> table) {

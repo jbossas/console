@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
@@ -47,7 +48,7 @@ public class XADatasourceStep4 {
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>Step 4/4: Connection Settings</h3>"));
 
@@ -88,9 +89,7 @@ public class XADatasourceStep4 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout,options).build();
     }
 
     void edit(XADataSource entity)

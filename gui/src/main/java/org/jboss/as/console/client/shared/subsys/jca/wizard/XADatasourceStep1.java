@@ -24,12 +24,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -46,7 +50,7 @@ public class XADatasourceStep1 {
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>Step 1/4: Datasource Attributes</h3>"));
 
@@ -70,6 +74,22 @@ public class XADatasourceStep1 {
         enabled.setValue(Boolean.TRUE);
 
         form.setFields(name, jndiName, enabled);
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "datasources");
+                        address.add("xa-data-source", "*");
+                        return address;
+                    }
+                }, form
+        );
+
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 
@@ -96,8 +116,6 @@ public class XADatasourceStep1 {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout,options).build();
     }
 }

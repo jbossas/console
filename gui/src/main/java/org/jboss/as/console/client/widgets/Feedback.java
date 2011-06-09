@@ -69,7 +69,7 @@ public class Feedback {
 
         DialogueOptions options = new DialogueOptions("OK", confirmHandler, "Cancel", cancelHandler);
         options.getElement().setAttribute("style", "margin-bottom:10px;");
-        panel.addSouth(options, 30);
+        panel.addSouth(options, 35);
         panel.add(text);
 
 

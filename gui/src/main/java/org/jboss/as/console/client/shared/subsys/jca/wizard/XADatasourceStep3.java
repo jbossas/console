@@ -31,6 +31,7 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +84,7 @@ public class XADatasourceStep3 implements PropertyManagement {
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
+        layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>Step 3/4: XA Properties</h3>"));
 
@@ -111,8 +112,6 @@ public class XADatasourceStep3 implements PropertyManagement {
                 "cancel",cancelHandler
         );
 
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout,options).build();
     }
 }
