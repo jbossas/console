@@ -47,4 +47,14 @@ public class MessagingDescription {
 
         return builder.toSafeHtml();
     }
+
+    public static SafeHtml getFactoryDescription() {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendHtmlConstant("<ul>");
+        builder.appendHtmlConstant("<li>");
+        builder.appendEscaped("The JMS connection factories.");
+        builder.appendHtmlConstant("</ul>");
+
+        return builder.toSafeHtml();
+    }
 }

@@ -27,8 +27,10 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -89,6 +91,9 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
         factoryTable.addColumn(nameColumn, "Name");
         factoryTable.addColumn(jndiColumn, "JNDI");
 
+        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getFactoryDescription());
+
+        layout.add(helpPanel.asWidget());
 
         layout.add(factoryTable);
 
