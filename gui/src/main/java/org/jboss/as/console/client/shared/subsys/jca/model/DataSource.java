@@ -50,6 +50,7 @@ public interface DataSource {
 
     // regular DS attributes below
 
+    @Binding(detypedName = "connection-url")
     String getConnectionUrl();
     void setConnectionUrl(String url);
 

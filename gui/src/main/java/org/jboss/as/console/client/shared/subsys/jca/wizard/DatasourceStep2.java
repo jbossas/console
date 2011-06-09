@@ -69,7 +69,10 @@ public class DatasourceStep2 {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "margin:10px; vertical-align:center;width:95%");
 
-        layout.add(new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers."));
+        HTML desc = new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers.");
+        desc.getElement().setAttribute("style", "padding-bottom:10px;");
+
+        layout.add(desc);
 
         if(!isStandalone)
         {

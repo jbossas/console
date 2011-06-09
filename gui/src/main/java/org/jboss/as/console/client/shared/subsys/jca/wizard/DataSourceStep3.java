@@ -24,6 +24,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.WindowContentBuilder;
@@ -31,18 +33,19 @@ import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
  * @date 4/18/11
  */
-public class DataSourceStep3 {
+public class DatasourceStep3 {
 
 
     NewDatasourceWizard wizard;
     Form<DataSource> form ;
 
-    public DataSourceStep3(NewDatasourceWizard wizard) {
+    public DatasourceStep3(NewDatasourceWizard wizard) {
         this.wizard = wizard;
     }
 
@@ -64,6 +67,20 @@ public class DataSourceStep3 {
 
 
         form.setFields(connectionUrl,user,pass);
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        address.add("subsystem", "datasources");
+                        address.add("data-source", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

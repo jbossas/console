@@ -38,7 +38,7 @@ public class NewDatasourceWizard {
 
     private DeckPanel deck;
     private DatasourceStep2 step2;
-    private DataSourceStep3 step3;
+    private DatasourceStep3 step3;
 
 
     private DataSource baseAttributes = null;
@@ -69,7 +69,7 @@ public class NewDatasourceWizard {
         step2 = new DatasourceStep2(this);
         deck.add(step2.asWidget());
 
-        step3 = new DataSourceStep3(this);
+        step3 = new DatasourceStep3(this);
         deck.add(step3.asWidget());
 
         deck.showWidget(0);
