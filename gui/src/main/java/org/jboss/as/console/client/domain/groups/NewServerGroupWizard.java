@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,11 +46,15 @@ import java.util.List;
 class NewServerGroupWizard {
 
     VerticalPanel layout;
+    DockLayoutPanel wrapper;
 
     public NewServerGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
+
+
+        wrapper = new DockLayoutPanel(Style.Unit.PX);
+
         layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-        layout.getElement().setAttribute("style", "padding:10px");
+        layout.setStyleName("window-content");
 
         final Form<ServerGroupRecord> form = new Form(ServerGroupRecord.class);
 
@@ -137,11 +143,12 @@ class NewServerGroupWizard {
 
         layout.add(formWidget);
 
-        layout.add(options);
+        wrapper.addSouth(options, 35);
+        wrapper.add(layout);
 
     }
 
     public Widget asWidget() {
-        return layout;
+        return wrapper;
     }
 }

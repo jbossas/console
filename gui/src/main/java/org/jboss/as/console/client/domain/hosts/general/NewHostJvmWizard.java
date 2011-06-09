@@ -19,17 +19,21 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -46,8 +50,10 @@ public class NewHostJvmWizard {
 
     Widget asWidget() {
 
+        DockLayoutPanel wrapper = new DockLayoutPanel(Style.Unit.PX);
+
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("rhs-content-panel");
+        layout.setStyleName("window-content");
 
         final Form<Jvm> form = new Form<Jvm>(Jvm.class);
 
@@ -58,6 +64,20 @@ public class NewHostJvmWizard {
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
         form.setFields(nameItem, heapItem, maxHeapItem, debugItem);
+
+
+         final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                        address.add("jvm", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 
@@ -78,8 +98,10 @@ public class NewHostJvmWizard {
                 }
         );
 
-        layout.add(options);
 
-        return layout;
+        wrapper.addSouth(options, 35);
+        wrapper.add(layout);
+
+        return wrapper;
     }
 }

@@ -20,8 +20,10 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -51,11 +53,15 @@ public class NewServerConfigWizard {
     private ServerConfigPresenter presenter;
     private ComboBoxItem groupItem;
 
+    DockLayoutPanel wrapper;
+
     public NewServerConfigWizard(final ServerConfigPresenter presenter, final List<ServerGroupRecord> serverGroups) {
         this.presenter = presenter;
 
+        wrapper = new DockLayoutPanel(Style.Unit.PX);
+
         layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("window-content");
 
         final Form<Server> form = new Form<Server>(Server.class);
         form.setNumColumns(1);
@@ -145,13 +151,14 @@ public class NewServerConfigWizard {
         };
 
         DialogueOptions options = new DialogueOptions(saveHandler, cancelHandler);
-        layout.add(options);
+        wrapper.addSouth(options, 35);
+        wrapper.add(layout);
 
     }
 
     public Widget asWidget() {
 
-        return layout;
+        return wrapper;
     }
 
     private ServerGroupRecord getSelectedServerGroup(List<ServerGroupRecord> available, String selectedName)

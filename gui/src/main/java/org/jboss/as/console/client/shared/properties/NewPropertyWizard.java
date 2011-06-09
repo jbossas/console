@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.shared.properties;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -45,12 +47,11 @@ public class NewPropertyWizard {
     }
 
     public Widget asWidget() {
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
-        panel.getElement().setAttribute("style", "padding:10px;");
 
-        HTML description = new HTML("Specify system property for <u>"+reference+"</u>");
-        panel.add(description);
+        DockLayoutPanel wrapper = new DockLayoutPanel(Style.Unit.PX);
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("window-content");
 
         final Form<PropertyRecord> form = new Form<PropertyRecord>(PropertyRecord.class);
 
@@ -79,7 +80,9 @@ public class NewPropertyWizard {
         );
 
         panel.add(form.asWidget());
-        panel.add(options);
-        return panel;
+
+        wrapper.addSouth(options, 35);
+        wrapper.add(panel);
+        return wrapper;
     }
 }

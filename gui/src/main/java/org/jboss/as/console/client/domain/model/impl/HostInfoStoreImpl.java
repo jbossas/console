@@ -130,8 +130,9 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     record.setName(server.get("name").asString());
                     record.setGroup(server.get("group").asString());
-                    record.setSocketBinding(server.get("socket-binding-group").asString());
 
+                    if(server.hasDefined("socket-binding-group"))
+                        record.setSocketBinding(server.get("socket-binding-group").asString());
 
                     try {
                         record.setPortOffset(server.get("socket-binding-port-offset").asInt());
