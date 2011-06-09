@@ -104,7 +104,7 @@ public class Header implements ValueChangeHandler<String> {
         });
         contentLayout.add(debugLink);*/
 
-        HTML settingsLink = new HTML(Console.CONSTANTS.common_label_settings());
+        /*HTML settingsLink = new HTML(Console.CONSTANTS.common_label_settings());
         settingsLink.setStyleName("cross-reference");
         settingsLink.addClickHandler(new ClickHandler() {
             @Override
@@ -124,6 +124,7 @@ public class Header implements ValueChangeHandler<String> {
         settingsLink.getElement().getParentElement().setAttribute("align", "right");
         settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
 
+        */
         headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
 
         Widget logo = getLogoSection();
