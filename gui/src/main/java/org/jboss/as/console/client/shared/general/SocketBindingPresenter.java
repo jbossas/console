@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -38,11 +37,13 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -57,6 +58,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private BeanFactory factory;
     private RevealStrategy revealStrategy;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
     public interface MyProxy extends Proxy<SocketBindingPresenter>, Place {
@@ -66,6 +68,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         void setPresenter(SocketBindingPresenter presenter);
         void updateGroups(List<String> groups);
         void setBindings(String groupName, List<SocketBinding> bindings);
+        void setEnabled(boolean b);
     }
 
     @Inject
@@ -140,5 +143,39 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 getView().setBindings(groupName, result);
             }
         });
+    }
+
+    public void editSocketBinding(SocketBinding editedEntity) {
+        getView().setEnabled(true);
+    }
+
+    public void saveSocketBinding(String name, Map<String, Object> changedValues) {
+        getView().setEnabled(false);
+    }
+
+    public void onDelete(final SocketBinding editedEntity) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("socket-binding-group", editedEntity.getGroup());
+        operation.get(ADDRESS).add("socket-binding", editedEntity.getName());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info("Success: remove socket binding " + editedEntity.getName());
+                else
+                    Console.error("Error: Failed to remove socket binding", response.toString());
+
+                loadBindingGroups();
+            }
+        });
+    }
+
+    public void launchNewSocketDialogue() {
+
     }
 }

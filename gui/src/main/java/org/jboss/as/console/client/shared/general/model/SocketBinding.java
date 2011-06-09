@@ -39,4 +39,7 @@ public interface SocketBinding {
 
     int getMultiCastPort();
     void setMultiCastPort(int port);
+
+    void setGroup(String name);
+    String getGroup();
 }

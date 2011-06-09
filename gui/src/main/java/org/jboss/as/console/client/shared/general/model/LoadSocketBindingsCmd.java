@@ -57,6 +57,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                     SocketBinding sb = factory.socketBinding().as();
 
                     sb.setName(value.get("name").asString());
+                    sb.setGroup(groupName);
                     sb.setPort(value.get("port").asInt());
                     String interfaceValue = value.get("interface").isDefined() ?
                             value.get("interface").asString() : "not set";
