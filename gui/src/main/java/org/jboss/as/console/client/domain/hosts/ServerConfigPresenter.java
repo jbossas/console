@@ -526,7 +526,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         window.setWidth(480);
         window.setHeight(360);
 
-        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, selectedRecord.getSocketBinding());
+        String socketBinding = selectedRecord.getSocketBinding()!=null ?
+                selectedRecord.getSocketBinding() : "standard-sockets";
+
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, socketBinding);
         cmd.execute(new SimpleCallback<List<SocketBinding>>() {
             @Override
             public void onSuccess(List<SocketBinding> result) {
