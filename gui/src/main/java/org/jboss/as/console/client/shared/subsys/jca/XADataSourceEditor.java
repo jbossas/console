@@ -160,6 +160,7 @@ public class XADataSourceEditor implements PropertyManagement {
         // -----------
         details = new XADataSourceDetails(presenter);
         propertyEditor = new PropertyEditor(this,true);
+        propertyEditor.setHelpText("Properties to assign to the XADataSource implementation class.");
 
         final SingleSelectionModel<XADataSource> selectionModel = new SingleSelectionModel<XADataSource>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -212,7 +213,7 @@ public class XADataSourceEditor implements PropertyManagement {
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-
+        Console.error("Not implemented yet!");
     }
 
     @Override
