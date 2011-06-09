@@ -189,7 +189,7 @@ public class PropertyMetaDataGenerator extends Generator{
 
         List<BindingDeclaration> bindings = new ArrayList<BindingDeclaration>();
 
-        for(Method method : beanTypeClass.getDeclaredMethods())
+        for(Method method : beanTypeClass.getMethods())
         {
             String methodName = method.getName();
             String token = null;
