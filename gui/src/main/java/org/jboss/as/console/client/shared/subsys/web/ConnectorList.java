@@ -27,6 +27,8 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
@@ -37,6 +39,7 @@ import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -164,6 +167,19 @@ public class ConnectorList {
 
         form.setFields(name, protocol, scheme, socketBinding, state);
         form.bind(connectorTable);
+
+         final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "web");
+                        address.add("connector", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

@@ -355,14 +355,15 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
         getView().enableEditVirtualServer(false);
+        Console.error("Not implemented yet");
     }
 
     public void onDeleteVirtualServer(String name) {
-
+        Console.error("Not implemented yet");
     }
 
     public void launchVirtualServerDialogue() {
-
+        Console.error("Not implemented yet");
     }
 
     public void onEditJSPConfig() {
