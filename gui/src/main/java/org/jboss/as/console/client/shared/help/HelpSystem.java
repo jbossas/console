@@ -59,7 +59,7 @@ public class HelpSystem {
                 fieldNames.add(binding.getDetypedName());
         }
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -69,7 +69,7 @@ public class HelpSystem {
                 if(response.get(OUTCOME).asString().equals("success")
                         && response.hasDefined(RESULT))
                 {
-                    System.out.println(response);
+                    //System.out.println(response);
                     List<Property> steps = response.get(RESULT).asPropertyList();
                     ModelNode prototype = steps.get(0).getValue().asObject();
 
