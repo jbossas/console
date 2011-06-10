@@ -416,7 +416,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
-        proto.get(ADDRESS).add("queue", name);
+        proto.get(ADDRESS).add("jms-queue", name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
@@ -445,7 +445,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         queue.get(OP).set(ADD);
         queue.get(ADDRESS).set(Baseadress.get());
         queue.get(ADDRESS).add("subsystem", "messaging");
-        queue.get(ADDRESS).add("queue", entity.getName());
+        queue.get(ADDRESS).add("jms-queue", entity.getName());
 
         queue.get("entries").setEmptyList();
         queue.get("entries").add(entity.getJndiName());
@@ -490,7 +490,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("queue", entity.getName());
+        operation.get(ADDRESS).add("jms-queue", entity.getName());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -537,7 +537,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("topic", entity.getName());
+        operation.get(ADDRESS).add("jms-topic", entity.getName());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -573,7 +573,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
-        proto.get(ADDRESS).add("topic", name);
+        proto.get(ADDRESS).add("jms-topic", name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(JMSEndpoint.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
@@ -623,7 +623,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         queue.get(OP).set(ADD);
         queue.get(ADDRESS).set(Baseadress.get());
         queue.get(ADDRESS).add("subsystem", "messaging");
-        queue.get(ADDRESS).add("topic", entity.getName());
+        queue.get(ADDRESS).add("jms-topic", entity.getName());
 
         queue.get("entries").setEmptyList();
         queue.get("entries").add(entity.getJndiName());

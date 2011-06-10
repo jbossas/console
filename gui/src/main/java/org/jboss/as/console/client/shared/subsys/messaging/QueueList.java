@@ -145,8 +145,8 @@ public class QueueList {
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
                         address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
-                        address.add("subsystem", "jms");
-                        address.add("queue", "*");
+                        address.add("subsystem", "messaging");
+                        address.add("jms-queue", "*");
                         return address;
                     }
                 }, form
