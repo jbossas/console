@@ -76,6 +76,7 @@ public class FormHelpPanel {
                 @Override
                 public void onFailure(Throwable caught) {
                     //Console.error("Failed to retrieve attribute description", caught.getMessage());
+                    helpPanel.clear();
                     helpPanel.add(new HTML("<ul><li>Failed to retrieve attribute descriptions.</li></ul>"));
                 }
             });
