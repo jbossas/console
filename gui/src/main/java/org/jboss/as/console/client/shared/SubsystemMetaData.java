@@ -83,7 +83,7 @@ public class SubsystemMetaData {
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
 
-        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Provider", "security"));
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Provider", "security",Boolean.TRUE));
     }
 
     public static Map<String, SubsystemGroup> getGroups() {
