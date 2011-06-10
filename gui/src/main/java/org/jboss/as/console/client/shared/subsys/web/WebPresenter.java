@@ -401,9 +401,34 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     }
 
-    public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
+    public void onSaveVirtualServer(final String name, Map<String, Object> changedValues) {
         getView().enableEditVirtualServer(false);
-        Console.error("Not implemented yet");
+
+        if(changedValues.isEmpty()) return;
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "web");
+        proto.get(ADDRESS).add("virtual-server", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(VirtualServer.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Updated virtual server "+name);
+                else
+                    Console.error("Failed to update virtual server " + name, response.toString());
+
+                loadConnectors();
+            }
+        });
     }
 
     public void onDeleteVirtualServer(final String name) {
