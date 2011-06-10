@@ -316,8 +316,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode payload = response.get("result").asObject();
 
-                System.out.println(payload);
-
                 parseFactories(payload);
                 parseQueues(payload);
                 parseTopics(payload);
