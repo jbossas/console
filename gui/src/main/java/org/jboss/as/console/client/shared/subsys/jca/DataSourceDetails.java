@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
@@ -146,8 +147,7 @@ public class DataSourceDetails {
                 new FormHelpPanel.AddressCallback() {
                     @Override
                     public ModelNode getAddress() {
-                        ModelNode address = new ModelNode();
-                        address.add("profile", Console.MODULES.getCurrentSelectedProfile().getName());
+                        ModelNode address = Baseadress.get();
                         address.add("subsystem", "datasources");
                         address.add("data-source", "*");
                         return address;
