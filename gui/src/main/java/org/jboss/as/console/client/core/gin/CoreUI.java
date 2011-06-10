@@ -76,6 +76,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrat
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
+import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
@@ -189,4 +190,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<HostInterfacesPresenter> getHostInterfacesPresenter();
 
     AsyncProvider<StandaloneServerPresenter> getStandaloneServerPresenter();
+
+    AsyncProvider<WebServicePresenter> getWebServicePresenter();
 }

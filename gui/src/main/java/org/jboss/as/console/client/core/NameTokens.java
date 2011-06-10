@@ -43,6 +43,7 @@ public class NameTokens {
     public static final String HostJVMPresenter = "host-jvms";
     public static final String HostInterfacesPresenter = "host-interfaces";
     public static final String StandaloneServerPresenter = "standalone-server";
+    public static final String WebServicePresenter = "webservices";
 
     public static String getMainLayout() {
         return mainLayout;

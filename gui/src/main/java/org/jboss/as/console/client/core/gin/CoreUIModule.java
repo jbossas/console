@@ -113,6 +113,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
+import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
+import org.jboss.as.console.client.shared.subsys.ws.WebServiceView;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationView;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
@@ -350,6 +352,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 StandaloneServerPresenter.MyView.class,
                 StandaloneServerView.class,
                 StandaloneServerPresenter.MyProxy.class);
+
+         bindPresenter(WebServicePresenter.class,
+                WebServicePresenter.MyView.class,
+                WebServiceView.class,
+                WebServicePresenter.MyProxy.class);
     }
 
 }
