@@ -44,7 +44,7 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
         
-        tabLayoutpanel.add(loggingEditor.asWidget(), Console.CONSTANTS.subsys_logging_loggers());
+        tabLayoutpanel.add(loggingEditor.asWidget(), "Logger");
         tabLayoutpanel.add(handlerEditor.asWidget(), Console.CONSTANTS.subsys_logging_handlers());
 
         return tabLayoutpanel;

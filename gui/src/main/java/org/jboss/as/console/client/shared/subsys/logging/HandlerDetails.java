@@ -25,6 +25,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -32,6 +34,7 @@ import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  *
@@ -100,7 +103,20 @@ public class HandlerDetails {
         form.setFields(nameItem, typeItem, logLevelItem, flushItem, formatterItem, encodingItem, queueItem);
         
         setEnabled(false);
-        
+
+         final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "logging");
+                        address.add("console-handler", "*");
+                        return address;
+                    }
+                }, form
+        );
+        detailPanel.add(helpPanel.asWidget());
+
         detailPanel.add(form.asWidget());
         
         ScrollPanel scroll = new ScrollPanel(detailPanel);

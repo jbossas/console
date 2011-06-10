@@ -26,6 +26,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -33,6 +36,7 @@ import org.jboss.as.console.client.widgets.forms.ListItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
@@ -48,7 +52,7 @@ public class LoggerConfigDetails {
     public LoggerConfigDetails(LoggingPresenter presenter) {
         this.presenter = presenter;
         form = new Form(LoggerConfig.class);
-        form.setNumColumns(1);
+        form.setNumColumns(2);
     }
 
     public Widget asWidget() {
@@ -69,34 +73,39 @@ public class LoggerConfigDetails {
             }
         };
         editBtn.addClickHandler(editHandler);
-        
+
         cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
         ClickHandler cancelHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 form.cancel();
                 LoggerConfigDetails.this.setEnabled(false);
-            }        
+            }
         };
         cancelBtn.addClickHandler(cancelHandler);
-        
+
         detailToolStrip.addToolButton(editBtn);
         detailToolStrip.addToolButton(cancelBtn);
 
         detailPanel.add(detailToolStrip);
 
         TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
-        
+
         ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
         logLevelItem.setValueMap(LogLevel.STRINGS);
-        
+
         ListItem handlersItem = new ListItem("handlers", Console.CONSTANTS.subsys_logging_handlers(), true);
 
         form.setFields(nameItem, logLevelItem, handlersItem);
+
+
+        StaticHelpPanel helpPanel = new StaticHelpPanel("Defines a logger category.");
+        detailPanel.add(helpPanel.asWidget());
+
         detailPanel.add(form.asWidget());
 
         setEnabled(false);  // initially don't allow edit
-        
+
         ScrollPanel scroll = new ScrollPanel(detailPanel);
         return scroll;
     }
@@ -114,7 +123,7 @@ public class LoggerConfigDetails {
         else
             editBtn.setText(Console.CONSTANTS.common_label_edit());
     }
-    
+
     public LoggerConfig getEditedLoggerConfig() {
         return editedLogger;
     }

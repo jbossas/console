@@ -453,8 +453,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         if(entity.getSelector()!=null)
             queue.get("selector").set(entity.getSelector());
 
-        System.out.println(queue);
-
         dispatcher.execute(new DMRAction(queue), new AsyncCallback<DMRResponse>() {
 
             @Override
