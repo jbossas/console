@@ -42,6 +42,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private PropertyMetaData propertyMetaData;
+    private EndpointRegistry endpointRegistry;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebServicePresenter)
@@ -58,7 +59,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            PropertyMetaData propertyMetaData) {
+            PropertyMetaData propertyMetaData, EndpointRegistry registry) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -66,6 +67,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
         this.factory = factory;
         this.revealStrategy = revealStrategy;
         this.propertyMetaData = propertyMetaData;
+        this.endpointRegistry = registry;
     }
 
     @Override
@@ -83,36 +85,10 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     }
 
     private void loadEndpoints() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "webservices");
-        operation.get(CHILD_TYPE).set("endpoint");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        endpointRegistry.create().refreshEndpoints(new SimpleCallback<List<WebServiceEndpoint>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-                List<WebServiceEndpoint> endpoints = new ArrayList<WebServiceEndpoint>();
-                if(response.hasDefined(RESULT))
-                {
-                    List<Property> props = response.get(RESULT).asPropertyList();
-                    for(Property prop : props)
-                    {
-                        ModelNode value = prop.getValue();
-                        WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
-                        endpoint.setName(value.get("name").asString());
-                        endpoint.setClassName(value.get("class").asString());
-                        endpoint.setContext(value.get("context").asString());
-                        endpoint.setType(value.get("type").asString());
-                        endpoint.setWsdl(value.get("wsdl-url").asString());
-
-                        endpoints.add(endpoint);
-                    }
-                }
-
-                getView().updateEndpoints(endpoints);
+            public void onSuccess(List<WebServiceEndpoint> result) {
+                getView().updateEndpoints(result);
             }
         });
     }

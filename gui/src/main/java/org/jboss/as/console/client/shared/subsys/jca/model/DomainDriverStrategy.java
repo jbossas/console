@@ -46,7 +46,6 @@ public class DomainDriverStrategy implements DriverStrategy {
 
 
     private DispatchAsync dispatcher;
-    private CurrentProfileSelection currentProfile;
     private HostInformationStore hostInformationStore;
     private BeanFactory factory;
 
@@ -57,11 +56,9 @@ public class DomainDriverStrategy implements DriverStrategy {
     @Inject
     public DomainDriverStrategy(
             DispatchAsync dispatcher,
-            CurrentProfileSelection currentProfile,
             HostInformationStore hostInformationStore,
             BeanFactory factory) {
         this.dispatcher = dispatcher;
-        this.currentProfile = currentProfile;
         this.hostInformationStore = hostInformationStore;
         this.factory = factory;
     }

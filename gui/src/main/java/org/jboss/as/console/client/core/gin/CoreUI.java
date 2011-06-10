@@ -76,6 +76,9 @@ import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrat
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
+import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
+import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
+import org.jboss.as.console.client.shared.subsys.ws.StandaloneEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
@@ -172,6 +175,7 @@ public interface CoreUI extends Ginjector {
     // shared subsystems
     AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
     DataSourceStore getDataSourceStore();
+
     DomainDriverStrategy getDomainDriverStrategy();
     StandaloneDriverStrategy getStandloneDriverStrategy();
     DriverRegistry getDriverRegistry();
@@ -192,4 +196,9 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<StandaloneServerPresenter> getStandaloneServerPresenter();
 
     AsyncProvider<WebServicePresenter> getWebServicePresenter();
+
+    EndpointRegistry getEndpointRegistry();
+    DomainEndpointStrategy getDomainEndpointStrategy();
+    StandaloneEndpointStrategy getStandaloneEndpointStrategy();
+
 }
