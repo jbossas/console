@@ -2,6 +2,7 @@ package org.jboss.as.console.client.widgets;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -21,7 +22,10 @@ public class WindowContentBuilder {
     public Widget build() {
         DockLayoutPanel wrapper = new DockLayoutPanel(Style.Unit.PX);
         wrapper.addSouth(options, 35);
-        wrapper.add(content);
+
+        ScrollPanel scroll = new ScrollPanel(content);
+        wrapper.add(scroll);
+
         return wrapper;
     }
 }

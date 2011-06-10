@@ -23,12 +23,16 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -86,36 +90,50 @@ public class NewConnectorWizard {
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
 
         // defaults
-        protocol.setValue("http");
+        protocol.setValue("HTTP/1.1");
         scheme.setValue("http");
         enabled.setValue(Boolean.TRUE);
 
         form.setFields(name,enabled,socket,protocol,scheme);
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "web");
+                        address.add("connector", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
+
+
         layout.add(form.asWidget());
 
         DialogueOptions options = new DialogueOptions(
-            new ClickHandler() {
+                new ClickHandler() {
 
-                @Override
-                public void onClick(ClickEvent event) {
+                    @Override
+                    public void onClick(ClickEvent event) {
 
-                    FormValidation validation = form.validate();
-                    if(!validation.hasErrors())
-                        presenter.onCreateConnector(form.getUpdatedEntity());
+                        FormValidation validation = form.validate();
+                        if(!validation.hasErrors())
+                            presenter.onCreateConnector(form.getUpdatedEntity());
+                    }
+                },
+                new ClickHandler() {
+
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        presenter.closeDialogue();
+                    }
                 }
-            },
-             new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                   presenter.closeDialogue();
-                }
-            }
         );
 
         layout.add(options);
 
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 }

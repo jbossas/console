@@ -300,9 +300,7 @@ public class Form<T> {
 
                 builder.append(":");
 
-                builder.append("\"");
-                builder.append(item.getValue());
-                builder.append("\"");
+                builder.append(encodeValue(item.getValue()));
 
                 if(i<groupItems.size()-1)
                     builder.append(", ");
@@ -326,6 +324,37 @@ public class Form<T> {
 
         return (T) decoded.as();
 
+    }
+
+    private String encodeValue(Object object) {
+        StringBuilder sb = new StringBuilder();
+
+        if(object instanceof List)     // list objects
+        {
+            List listObject = (List)object;
+            sb.append("[");
+            int c = 0;
+            for(Object item : listObject)
+            {
+                sb.append("\"");
+                sb.append(item.toString());
+                sb.append("\"");
+
+                if(c<listObject.size()-1)
+                    sb.append(", ");
+
+                c++;
+            }
+            sb.append("]");
+        }
+        else
+        {
+            sb.append("\"");
+            sb.append(object.toString());
+            sb.append("\"");
+        }
+
+        return sb.toString();
     }
 
     public Widget asWidget() {

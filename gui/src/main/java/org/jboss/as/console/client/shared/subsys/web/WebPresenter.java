@@ -75,6 +75,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private List<HttpConnector> connectors;
     private RevealStrategy revealStrategy;
 
+    private List<VirtualServer> virtualServers;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
     public interface MyProxy extends Proxy<WebPresenter>, Place {
@@ -137,6 +139,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         operation.get(RECURSIVE).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
@@ -168,6 +171,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                     servers.add(server);
                 }
 
+                virtualServers = servers;
                 getView().setVirtualServers(servers);
 
             }
@@ -353,17 +357,97 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         getView().enableEditVirtualServer(true);
     }
 
+    public void onCreateVirtualServer(final VirtualServer server) {
+        closeDialogue();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "web");
+        operation.get(ADDRESS).add("virtual-server", server.getName());
+
+        if(server.getAlias()!= null && server.getAlias().size()>0)
+        {
+            for(String alias : server.getAlias())
+                operation.get("alias").add(alias);
+
+        }
+
+        if(server.getDefaultWebModule()!=null)
+            operation.get("default-web-module").set(server.getDefaultWebModule());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Created virtual server " + server.getName());
+                else
+                    Console.error("Failed to create virtual server" + server.getName(), response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadVirtualServer();
+                    }
+                });
+
+            }
+        });
+
+    }
+
     public void onSaveVirtualServer(String name, Map<String, Object> changedValues) {
         getView().enableEditVirtualServer(false);
         Console.error("Not implemented yet");
     }
 
-    public void onDeleteVirtualServer(String name) {
-        Console.error("Not implemented yet");
+    public void onDeleteVirtualServer(final String name) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "web");
+        operation.get(ADDRESS).add("virtual-server", name);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Success: Delete virtual server " + name);
+                else
+                    Console.error("Error: Failed to delete virtual server" + name, response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadVirtualServer();
+                    }
+                });
+
+            }
+        });
+
     }
 
     public void launchVirtualServerDialogue() {
-        Console.error("Not implemented yet");
+
+        window = new DefaultWindow("Create Virtual Server");
+        window.setWidth(480);
+        window.setHeight(360);
+        window.setWidget(
+                new NewVirtualServerWizard(this,  virtualServers).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+
     }
 
     public void onEditJSPConfig() {

@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.ListItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -66,7 +67,7 @@ public class VirtualServerList {
             @Override
             public void onClick(ClickEvent event) {
                 if(edit.getText().equals("Edit"))
-                   presenter.onEditVirtualServer();
+                    presenter.onEditVirtualServer();
                 else
                     presenter.onSaveVirtualServer(form.getEditedEntity().getName(), form.getChangedValues());
             }
@@ -76,7 +77,20 @@ public class VirtualServerList {
         toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               presenter.onDeleteVirtualServer(form.getEditedEntity().getName());
+
+                final String serverName = form.getEditedEntity().getName();
+
+                Feedback.confirm("Remove Virtual Server", "Really remove virtual server '" + serverName + "'?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+
+                                    presenter.onDeleteVirtualServer(serverName);
+
+                                }
+                            }
+                        });
             }
         }));
 
@@ -97,20 +111,20 @@ public class VirtualServerList {
 
 
         Column<VirtualServer, String> nameColumn = new Column<VirtualServer, String>(new TextCell()) {
-                    @Override
-                    public String getValue(VirtualServer object) {
-                        return object.getName();
-                    }
-                };
+            @Override
+            public String getValue(VirtualServer object) {
+                return object.getName();
+            }
+        };
 
 
         Column<VirtualServer, String> aliasColumn = new Column<VirtualServer, String>(new TextCell()) {
-                    @Override
-                    public String getValue(VirtualServer object) {
+            @Override
+            public String getValue(VirtualServer object) {
 
-                        return aliasToString(object);
-                    }
-                };
+                return aliasToString(object);
+            }
+        };
 
 
 
@@ -133,7 +147,7 @@ public class VirtualServerList {
         form.setFields(name, alias, defaultModule);
         form.bind(table);
 
-         final FormHelpPanel helpPanel = new FormHelpPanel(
+        final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
                     @Override
                     public ModelNode getAddress() {

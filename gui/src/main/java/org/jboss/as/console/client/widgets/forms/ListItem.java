@@ -22,6 +22,7 @@ package org.jboss.as.console.client.widgets.forms;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ import java.util.List;
 public class ListItem extends FormItem<List> {
 
     private TextArea textArea;
-    private List value;
+    private List value = new ArrayList();
     private boolean displayOnly;
 
 
