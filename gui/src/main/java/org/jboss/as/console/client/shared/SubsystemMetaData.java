@@ -65,15 +65,15 @@ public class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
 
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("HornetQ", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
-        groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads"));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
 
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
