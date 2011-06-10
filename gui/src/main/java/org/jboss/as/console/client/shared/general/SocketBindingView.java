@@ -37,11 +37,13 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
@@ -117,7 +119,15 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         tableOptions.getElement().setAttribute("style", "float:right;");
         panel.add(tableOptions);
-        panel.add(socketTable.asWidget());
+        DefaultCellTable socketTableWidget = socketTable.asWidget();
+        panel.add(socketTableWidget);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setPage(0);
+        pager.setPageSize(6);
+        pager.setDisplay(socketTableWidget);
+        panel.add(pager);
+
 
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);

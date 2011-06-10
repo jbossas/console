@@ -28,7 +28,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
  */
 public class DefaultPager extends SimplePager {
 
-    static SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);;
+    static SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 
     public DefaultPager() {
         super(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true);

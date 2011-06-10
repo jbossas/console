@@ -3,7 +3,9 @@ package org.jboss.as.console.client.shared.general;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class SocketTable {
 
     private DefaultCellTable<SocketBinding> table;
+    private ListDataProvider<SocketBinding> dataProvider;
     private int portOffset = 0;
 
     public SocketTable() {
@@ -24,9 +27,11 @@ public class SocketTable {
         this.portOffset = portOffset;
     }
 
-    public Widget asWidget() {
+    public DefaultCellTable asWidget() {
 
-        table = new DefaultCellTable<SocketBinding>(20);
+        table = new DefaultCellTable<SocketBinding>(6);
+        dataProvider = new ListDataProvider<SocketBinding>();
+        dataProvider.addDataDisplay(table);
 
         TextColumn<SocketBinding> nameColumn = new TextColumn<SocketBinding>() {
             @Override
@@ -53,9 +58,7 @@ public class SocketTable {
     }
 
     public void updateFrom(String groupName, List<SocketBinding> bindings) {
-        table.setRowCount(bindings.size(), true);
-        table.setRowData(0, bindings);
-
+        dataProvider.setList(bindings);
         if(!bindings.isEmpty() && table.getSelectionModel()!=null)
             table.getSelectionModel().setSelected(bindings.get(0), true);
     }

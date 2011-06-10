@@ -101,7 +101,6 @@ public class DatasourceTable {
 
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(dataSourceTable);
-
         layout.add(pager);
 
         return layout;
