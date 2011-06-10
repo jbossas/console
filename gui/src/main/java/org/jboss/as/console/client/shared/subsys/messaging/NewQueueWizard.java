@@ -36,9 +36,9 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
  */
 public class NewQueueWizard {
 
-    private JMSPresenter presenter;
+    private MessagingPresenter presenter;
 
-    public NewQueueWizard(final JMSPresenter presenter) {
+    public NewQueueWizard(final MessagingPresenter presenter) {
         this.presenter = presenter;
     }
 

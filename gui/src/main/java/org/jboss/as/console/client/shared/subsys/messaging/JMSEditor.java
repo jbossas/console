@@ -20,13 +20,17 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
@@ -44,18 +48,29 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
+public class JMSEditor implements MessagingPresenter.JMSView{
 
-    private JMSPresenter presenter;
+    private MessagingPresenter presenter;
     private TopicList topicList;
     private QueueList queueList;
 
     private DefaultCellTable<ConnectionFactory> factoryTable;
 
-    @Override
-    public Widget createWidget() {
+    public JMSEditor(MessagingPresenter presenter) {
+        this.presenter = presenter;
+    }
 
-        LayoutPanel layout = new RHSContentPanel("JMS");
+    public Widget asWidget() {
+
+        LayoutPanel layout = new LayoutPanel();
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("rhs-content-panel");
+
+        ScrollPanel scroll = new ScrollPanel(panel);
+        layout.add(scroll);
+
+        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -66,11 +81,11 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
         horzPanel.add(new ContentHeaderLabel("JMS Subsystem Configuration"));
         image.getElement().getParentElement().setAttribute("width", "25");
 
-        layout.add(horzPanel);
+        panel.add(horzPanel);
 
         // ----
 
-        layout.add(new ContentGroupLabel("Connection Factories"));
+        panel.add(new ContentGroupLabel("Connection Factories"));
 
         factoryTable = new DefaultCellTable<ConnectionFactory>(10);
 
@@ -93,13 +108,13 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getFactoryDescription());
 
-        layout.add(helpPanel.asWidget());
+        panel.add(helpPanel.asWidget());
 
-        layout.add(factoryTable);
+        panel.add(factoryTable);
 
         // ----
 
-        layout.add(new ContentGroupLabel("Subresources"));
+        panel.add(new ContentGroupLabel("Subresources"));
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
         bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
@@ -112,14 +127,9 @@ public class JMSView extends DisposableViewImpl implements JMSPresenter.MyView{
 
         bottomLayout.selectTab(0);
 
-        layout.add(bottomLayout);
+        panel.add(bottomLayout);
 
         return layout;
-    }
-
-    @Override
-    public void setPresenter(JMSPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override

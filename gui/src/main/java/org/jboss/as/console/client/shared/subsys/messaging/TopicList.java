@@ -42,12 +42,12 @@ import java.util.List;
 public class TopicList {
 
     private EndpointTable table;
-    private JMSPresenter presenter;
+    private MessagingPresenter presenter;
     private ToolButton edit;
 
     private Form<JMSEndpoint> form;
 
-    public TopicList(JMSPresenter presenter) {
+    public TopicList(MessagingPresenter presenter) {
         this.presenter = presenter;
     }
 

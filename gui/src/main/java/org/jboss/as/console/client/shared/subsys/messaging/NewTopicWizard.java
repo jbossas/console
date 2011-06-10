@@ -35,9 +35,9 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
  */
 public class NewTopicWizard {
 
-    private JMSPresenter presenter;
+    private MessagingPresenter  presenter;
 
-    public NewTopicWizard(final JMSPresenter presenter) {
+    public NewTopicWizard(final MessagingPresenter  presenter) {
         this.presenter = presenter;
     }
 

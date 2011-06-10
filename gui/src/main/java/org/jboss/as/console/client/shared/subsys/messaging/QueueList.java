@@ -47,10 +47,10 @@ public class QueueList {
 
     private DefaultCellTable<Queue> queueTable;
     private ToolButton edit;
-    private JMSPresenter presenter;
+    private MessagingPresenter presenter;
     private Form<Queue> form ;
 
-    public QueueList(JMSPresenter presenter) {
+    public QueueList(MessagingPresenter presenter) {
         this.presenter = presenter;
     }
 

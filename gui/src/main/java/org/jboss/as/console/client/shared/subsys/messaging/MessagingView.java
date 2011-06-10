@@ -19,14 +19,19 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
@@ -34,63 +39,33 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 
-
+import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 5/10/11
  */
-public class MessagingView extends DisposableViewImpl implements MessagingPresenter.MyView{
+public class MessagingView extends SuspendableViewImpl implements MessagingPresenter.MyView, MessagingPresenter.JMSView{
 
     private MessagingPresenter presenter;
-    private Form<MessagingProvider> form;
-    private SecurityDetails secDetails;
-    private AddressingDetails addrDetails;
+    private MessagingProviderEditor providerEditor;
+    private JMSEditor jmsEditor;
 
     @Override
     public Widget createWidget() {
 
-        RHSContentPanel layout = new RHSContentPanel("Messaging Provider");
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
 
-        layout.add(new ContentHeaderLabel("Messaging Subsystem Configuration"));
+        providerEditor = new MessagingProviderEditor(presenter);
+        jmsEditor = new JMSEditor(presenter);
 
-        layout.add(new ContentGroupLabel("Attributes"));
+        tabLayoutpanel.add(providerEditor.asWidget(), "Messaging Provider");
+        tabLayoutpanel.add(jmsEditor.asWidget(), "JMS");
 
-        form = new Form(MessagingProvider.class);
-        form.setNumColumns(2);
+        tabLayoutpanel.selectTab(0);
 
-        TextItem name = new TextItem("name", "Provider");
-        CheckBoxItem persistenceItem = new CheckBoxItem("persistenceEnabled", "Persistence enabled?");
-
-        TextItem connector = new TextItem("connectorBinding", "Connector Binding");
-        TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
-
-        form.setFields(name, connector, persistenceItem, acceptor);
-
-        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getProviderDescription());
-
-        layout.add(helpPanel.asWidget());
-        layout.add(form.asWidget());
-
-        // ------
-
-        layout.add(new ContentGroupLabel("Subresources"));
-
-        TabPanel bottomLayout = new TabPanel();
-        bottomLayout.addStyleName("default-tabpanel");
-        bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
-
-        secDetails = new SecurityDetails(presenter);
-        bottomLayout.add(secDetails.asWidget(), "Security");
-
-        addrDetails = new AddressingDetails(presenter);
-        bottomLayout.add(addrDetails.asWidget(), "Addressing");
-
-        bottomLayout.selectTab(0);
-
-        layout.add(bottomLayout);
-
-        return layout;
+        return tabLayoutpanel;
     }
 
     @Override
@@ -100,21 +75,41 @@ public class MessagingView extends DisposableViewImpl implements MessagingPresen
 
     @Override
     public void setProviderDetails(MessagingProvider provider) {
-        form.edit(provider);
-        form.setEnabled(false);
-
-        secDetails.setProvider(provider);
-        addrDetails.setProvider(provider);
-
+        providerEditor.setProviderDetails(provider);
     }
 
     @Override
     public void editSecDetails(boolean b) {
-        secDetails.setEnabled(b);
+        providerEditor.editSecDetails(b);
     }
 
     @Override
     public void editAddrDetails(boolean b) {
-        addrDetails.setEnabled(b);
+        providerEditor.editAddrDetails(b);
+    }
+
+    @Override
+    public void setQueues(List<Queue> queues) {
+        jmsEditor.setQueues(queues);
+    }
+
+    @Override
+    public void setTopics(List<JMSEndpoint> topics) {
+        jmsEditor.setTopics(topics);
+    }
+
+    @Override
+    public void setConnectionFactories(List<ConnectionFactory> factories) {
+        jmsEditor.setConnectionFactories(factories);
+    }
+
+    @Override
+    public void enableEditQueue(boolean b) {
+        jmsEditor.enableEditQueue(b);
+    }
+
+    @Override
+    public void enableEditTopic(boolean b) {
+        jmsEditor.enableEditTopic(b);
     }
 }

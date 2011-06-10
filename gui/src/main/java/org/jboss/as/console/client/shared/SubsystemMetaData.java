@@ -65,8 +65,7 @@ public class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
 
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "jms"));
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("HornetQ", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));

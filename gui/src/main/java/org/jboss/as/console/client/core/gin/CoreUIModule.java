@@ -109,8 +109,6 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSPresenter;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
@@ -327,11 +325,6 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DataSourceStore.class).to(DataSourceStoreImpl.class).in(Singleton.class);
         bind(DomainDriverStrategy.class).in(Singleton.class);
         bind(StandaloneDriverStrategy.class).in(Singleton.class);
-
-        bindPresenter(JMSPresenter.class,
-                JMSPresenter.MyView.class,
-                JMSView.class,
-                JMSPresenter.MyProxy.class);
 
         bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,
