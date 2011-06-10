@@ -39,13 +39,13 @@ import org.jboss.dmr.client.ModelNode;
  * @author Heiko Braun
  * @date 4/18/11
  */
-public class DatasourceStep3 {
+public class DataSourceStep3 {
 
 
     NewDatasourceWizard wizard;
     Form<DataSource> form ;
 
-    public DatasourceStep3(NewDatasourceWizard wizard) {
+    public DataSourceStep3(NewDatasourceWizard wizard) {
         this.wizard = wizard;
     }
 
