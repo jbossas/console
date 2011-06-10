@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -30,6 +31,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -39,6 +41,9 @@ import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -57,7 +62,9 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private RevealStrategy revealStrategy;
-
+    private DefaultWindow window;
+    private List<String> bindingGroups;
+    private PropertyMetaData propertyMetaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -75,13 +82,15 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     public SocketBindingPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, RevealStrategy revealStrategy) {
+            BeanFactory factory, RevealStrategy revealStrategy,
+            PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -120,11 +129,11 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<String> groups = new ArrayList<String>();
-                for(ModelNode group : payload)
-                {
+                for (ModelNode group : payload) {
                     groups.add(group.asString());
                 }
 
+                bindingGroups = groups;
                 getView().updateGroups(groups);
             }
         });
@@ -149,8 +158,28 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         getView().setEnabled(true);
     }
 
-    public void saveSocketBinding(String name, Map<String, Object> changedValues) {
+    public void saveSocketBinding(final String name, String group, Map<String, Object> changeset) {
         getView().setEnabled(false);
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("socket-binding-group", group);
+        proto.get(ADDRESS).add("socket-binding", name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(SocketBinding.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info("Success: Updated socket binding "+name);
+                else
+                    Console.error("Failed: Update socket binding "+name, response.toString());
+            }
+        });
     }
 
     public void onDelete(final SocketBinding editedEntity) {
@@ -158,8 +187,6 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).add("socket-binding-group", editedEntity.getGroup());
         operation.get(ADDRESS).add("socket-binding", editedEntity.getName());
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -170,12 +197,55 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 else
                     Console.error("Error: Failed to remove socket binding", response.toString());
 
-                loadBindingGroups();
+                reload();
             }
         });
     }
 
     public void launchNewSocketDialogue() {
+        window = new DefaultWindow("Create Socket Binding");
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.setWidget(
+                new NewSocketWizard(this, bindingGroups).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void createNewSocketBinding(final SocketBinding socketBinding) {
+        closeDialoge();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("socket-binding-group", socketBinding.getGroup());
+        operation.get(ADDRESS).add("socket-binding", socketBinding.getName());
+        operation.get("port").set(socketBinding.getPort());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info("Success: Created socket binding "+socketBinding.getName());
+                else
+                    Console.error("Error: Failed to created socket binding " + socketBinding.getName(), response.toString());
+
+                reload();
+            }
+        });
+
+
+    }
+
+    private void reload() {
+        loadBindingGroups();
+        loadBindings(bindingGroups.get(0));
+    }
+
+    public void closeDialoge() {
+        window.hide();
     }
 }

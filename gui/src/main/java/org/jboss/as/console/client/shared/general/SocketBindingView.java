@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
@@ -43,6 +44,7 @@ import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -131,10 +133,13 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.editSocketBinding(form.getEditedEntity());
-                else
-                    presenter.saveSocketBinding(form.getEditedEntity().getName(), form.getChangedValues());
+                SocketBinding editedEntity = form.getEditedEntity();
+                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
+                    presenter.editSocketBinding(editedEntity);
+                }
+                else {
+                    presenter.saveSocketBinding(editedEntity.getName(), editedEntity.getGroup(), form.getChangedValues());
+                }
             }
         };
         editBtn.addClickHandler(editHandler);
@@ -183,6 +188,21 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         Widget formWidget = form.asWidget();
         form.setEnabled(false);
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("socket-binding-group", form.getEditedEntity().getGroup());
+                        address.add("socket-binding", "*");
+                        return address;
+                    }
+                }, form
+        );
+        panel.add(helpPanel.asWidget());
+
         panel.add(formWidget);
 
         // ------------------------------------------

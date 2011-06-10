@@ -59,7 +59,11 @@ public class NumberBoxItem extends FormItem<Integer> {
     @Override
     public Integer getValue() {
         String value = textBox.getValue().equals("") ? "0" : textBox.getValue();
-        return Integer.valueOf(value);
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     @Override
