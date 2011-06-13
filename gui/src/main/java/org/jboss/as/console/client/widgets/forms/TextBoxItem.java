@@ -66,7 +66,7 @@ public class TextBoxItem extends FormItem<String> {
 
     @Override
     public void setValue(String value) {
-        textBox.setValue(value);
+        textBox.setValue(value.trim());
     }
 
     @Override
@@ -81,6 +81,11 @@ public class TextBoxItem extends FormItem<String> {
     }
 
     @Override
+    public String getErrMessage() {
+        return super.getErrMessage()+": no whitespace, no special chars";
+    }
+
+    @Override
     public boolean validate(String value) {
 
         if(isRequired() && value.equals(""))
@@ -89,7 +94,8 @@ public class TextBoxItem extends FormItem<String> {
         }
         else
         {
-            return true;
+            String updated = value.replace(" ", ""); // contains white space?
+            return updated.equals(value);
         }
     }
 }
