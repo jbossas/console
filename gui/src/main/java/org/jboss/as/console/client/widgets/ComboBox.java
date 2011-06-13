@@ -229,6 +229,7 @@ public class ComboBox implements HasValueChangeHandlers<String> {
 
     public void setValues(Collection<String> values)
     {
+        clearSelection();
         clearValues();
         this.values.addAll(values);
 
