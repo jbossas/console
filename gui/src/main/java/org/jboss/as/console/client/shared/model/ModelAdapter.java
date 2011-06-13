@@ -138,8 +138,13 @@ public class ModelAdapter {
         Jvm jvm = null;
 
         try {
-            if(model.has("jvm") && model.get("jvm").isDefined())
+            if(model.hasDefined("jvm"))
             {
+
+                // TODO: sometimes it returns "jvm={}" ...
+                if(model.get("jvm").asPropertyList().isEmpty()) // empty object
+                    return null;
+
                 jvm = factory.jvm().as();
                 Property jvmProp = model.get("jvm").asProperty();
                 jvm.setName(jvmProp.getName());
