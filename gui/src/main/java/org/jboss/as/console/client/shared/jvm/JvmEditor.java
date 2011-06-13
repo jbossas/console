@@ -112,10 +112,10 @@ public class JvmEditor {
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
         TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
         TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
-        CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
+        //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
-        form.setFields(nameItem, heapItem, maxHeapItem, debugItem);
+        form.setFields(nameItem, heapItem, maxHeapItem);
         form.setEnabled(false);
 
         // ---
