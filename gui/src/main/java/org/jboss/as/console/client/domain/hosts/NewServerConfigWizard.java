@@ -39,6 +39,7 @@ import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -127,8 +128,8 @@ public class NewServerConfigWizard {
                 ServerGroupRecord selectedGroup =
                         getSelectedServerGroup(serverGroups, newServer.getGroup());
                 newServer.setSocketBinding(selectedGroup.getSocketBinding());
-                newServer.setJvm(selectedGroup.getJvm());
-
+                newServer.setJvm(null);//newServer.setJvm(selectedGroup.getJvm());
+                newServer.setProperties(Collections.EMPTY_LIST);
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
