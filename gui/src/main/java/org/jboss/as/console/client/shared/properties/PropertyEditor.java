@@ -205,6 +205,7 @@ public class PropertyEditor {
     }
 
     public void setProperties(String reference, List<PropertyRecord> properties) {
+        assert properties!=null : "properties cannot be null!";
         this.reference= reference;
         propertyTable.setRowCount(properties.size(), true);
         propertyProvider.setList(properties);
