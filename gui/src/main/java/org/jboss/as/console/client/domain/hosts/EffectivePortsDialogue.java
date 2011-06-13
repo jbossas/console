@@ -7,6 +7,8 @@ import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.shared.general.SocketTable;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.widgets.DefaultPager;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
 
@@ -35,10 +37,15 @@ public class EffectivePortsDialogue {
         layout.add(new ContentHeaderLabel("Effective ports on server: "+server.getName()));
 
         SocketTable socketTable = new SocketTable(server.getPortOffset());
-        ScrollPanel scroll = new ScrollPanel(socketTable.asWidget());
+        DefaultCellTable tableWidget = socketTable.asWidget();
+        ScrollPanel scroll = new ScrollPanel(tableWidget);
         layout.add(scroll);
         socketTable.updateFrom("none", socketBindings);
 
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(tableWidget);
+
+        layout.add(pager);
         return layout;
     }
 }
