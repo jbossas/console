@@ -34,6 +34,7 @@ import org.jboss.as.console.client.widgets.ContentHeaderLabel;
 import org.jboss.as.console.client.widgets.RHSContentPanel;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 
 /**
@@ -70,7 +71,7 @@ public class MessagingProviderEditor {
         form.setNumColumns(2);
 
         TextItem name = new TextItem("name", "Provider");
-        CheckBoxItem persistenceItem = new CheckBoxItem("persistenceEnabled", "Persistence enabled?");
+        StatusItem persistenceItem = new StatusItem("persistenceEnabled", "Persistence enabled?");
 
         TextItem connector = new TextItem("connectorBinding", "Connector Binding");
         TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
