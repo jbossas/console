@@ -51,6 +51,7 @@ import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
@@ -188,7 +189,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         formPanel.setStyleName("fill-layout-width");
 
         final Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
-        //form.setNumColumns(2);
+        form.setNumColumns(2);
 
         ToolStrip formTools = new ToolStrip();
         formTools.addToolButton(new ToolButton("Start/Stop", new ClickHandler() {
@@ -240,7 +241,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_serverInstance());
         TextItem serverItem = new TextItem("server", Console.CONSTANTS.common_label_serverConfig());
-        CheckBoxItem enableItem = new CheckBoxItem("running", Console.CONSTANTS.common_label_status());
+        StatusItem enableItem = new StatusItem("running", "Running?");
 
         form.setFields(nameItem, serverItem, enableItem);
         form.bind(instanceTable);
@@ -257,7 +258,9 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
         bottomLayout.add(formPanel, "Availability");
-        bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), Console.CONSTANTS.common_label_virtualMachine());
+
+        // TODO: server VM metrics
+        //bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), Console.CONSTANTS.common_label_virtualMachine());
 
         bottomLayout.selectTab(0);
 
