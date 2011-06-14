@@ -19,9 +19,7 @@
 
 package org.jboss.as.console.client.core;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.shared.Preferences;
 
@@ -43,10 +41,10 @@ public class BootstrapContext implements ApplicationProperties {
 
     @Inject
     public BootstrapContext() {
-        String token = History.getToken();
+        /*String token = History.getToken();
         if(token!=null && !token.equals("") && !token.equals(NameTokens.signInPage))
             setProperty(INITIAL_TOKEN, token);
-
+        */
         loadPersistedProperties();
 
         String domainApi = GWT.isScript() ? getBaseUrl()+"domain-api" : "http://127.0.0.1:8888/app/proxy"; //"http://localhost:9990/domain-api";
@@ -56,7 +54,7 @@ public class BootstrapContext implements ApplicationProperties {
         String deploymentApi = GWT.isScript() ? getBaseUrl()+"domain-api/add-content" : "http://127.0.0.1:8888/app/upload";
         setProperty(DEPLOYMENT_API, deploymentApi);
 
-        Log.info("Domain API Endpoint: " + domainApi);
+        //Log.info("Domain API Endpoint: " + domainApi);
     }
 
     private String getBaseUrl() {
