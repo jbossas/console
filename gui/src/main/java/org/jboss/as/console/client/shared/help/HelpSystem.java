@@ -59,8 +59,6 @@ public class HelpSystem {
                 fieldNames.add(binding.getDetypedName());
         }
 
-        //System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -70,21 +68,13 @@ public class HelpSystem {
                         && response.hasDefined(RESULT))
                 {
                     //System.out.println(response);
-                    List<Property> steps = response.get(RESULT).asPropertyList();
-                    if(steps.size()>0)
-                    {
-                        ModelNode prototype = steps.get(0).getValue().asObject();
 
-                        matchAttributes(prototype, fieldNames, html);
-                        matchChildren(prototype, fieldNames, html);
+                    matchAttributes(response, fieldNames, html);
+                    matchChildren(response, fieldNames, html);
 
-                        html.appendHtmlConstant("</ul>");
-                        callback.onSuccess(new HTML(html.toSafeHtml()));
-                    }
-                    else
-                    {
-                        onFailure(new Exception("No steps to iterate on: "+response));
-                    }
+                    html.appendHtmlConstant("</ul>");
+                    callback.onSuccess(new HTML(html.toSafeHtml()));
+
                 }
                 else
                 {
