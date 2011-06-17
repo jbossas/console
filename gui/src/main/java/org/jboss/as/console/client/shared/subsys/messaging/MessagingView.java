@@ -60,8 +60,8 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
         providerEditor = new MessagingProviderEditor(presenter);
         jmsEditor = new JMSEditor(presenter);
 
-        tabLayoutpanel.add(providerEditor.asWidget(), "Messaging Provider");
         tabLayoutpanel.add(jmsEditor.asWidget(), "JMS");
+        tabLayoutpanel.add(providerEditor.asWidget(), "Messaging Provider");
 
         tabLayoutpanel.selectTab(0);
 
