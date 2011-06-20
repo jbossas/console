@@ -73,12 +73,15 @@ public class DomainEndpointStrategy implements EndpointStrategy {
 
                     if(!server.isRunning()) continue;
 
+                    //  /host=local/server=server-one/deployment="*"/subsystem=webservices/endpoint="*":read-resource
+
                     ModelNode operation = new ModelNode();
-                    operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+                    operation.get(OP).set(READ_RESOURCE_OPERATION);
                     operation.get(ADDRESS).add("host", host);
                     operation.get(ADDRESS).add("server", server.getName());
+                    operation.get(ADDRESS).add("deployment", "*");
                     operation.get(ADDRESS).add("subsystem", "webservices");
-                    operation.get(CHILD_TYPE).set("endpoint");
+                    operation.get(ADDRESS).add("endpoint", "*");
 
                     numRequests++;
 
@@ -100,19 +103,23 @@ public class DomainEndpointStrategy implements EndpointStrategy {
 
                             if(SUCCESS.equals(response.get(OUTCOME).asString())) {
 
+                                try {
+                                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+                                    for(ModelNode node : modelNodes)
+                                    {
+                                        ModelNode value = node.get(RESULT).asObject();
+                                        WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
+                                        endpoint.setName(value.get("name").asString());
+                                        endpoint.setClassName(value.get("class").asString());
+                                        endpoint.setContext(value.get("context").asString());
+                                        endpoint.setType(value.get("type").asString());
+                                        endpoint.setWsdl(value.get("wsdl-url").asString());
 
-                                List<Property> props = response.get(RESULT).asPropertyList();
-                                for(Property prop : props)
-                                {
-                                    ModelNode value = prop.getValue();
-                                    WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
-                                    endpoint.setName(value.get("name").asString());
-                                    endpoint.setClassName(value.get("class").asString());
-                                    endpoint.setContext(value.get("context").asString());
-                                    endpoint.setType(value.get("type").asString());
-                                    endpoint.setWsdl(value.get("wsdl-url").asString());
+                                        addIfNotExists(endpoint);
+                                    }
+                                } catch (Throwable e) {
 
-                                    addIfNotExists(endpoint);
+                                    checkComplete(callback, new RuntimeException("Failed to retrieve endpoints: "+response.toString()));
                                 }
 
                             }
