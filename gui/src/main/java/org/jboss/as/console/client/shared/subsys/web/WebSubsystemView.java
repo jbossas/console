@@ -68,7 +68,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         label.getElement().setAttribute("style", "margin-bottom:0px;");
         layout.add(label);
 
-        ToolStrip toolStrip = new ToolStrip();
+        /*ToolStrip toolStrip = new ToolStrip();
         edit = new ToolButton("Edit", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -83,7 +83,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         });
         toolStrip.addToolButton(edit);
 
-        layout.add(toolStrip);
+        layout.add(toolStrip);*/
 
         // ----
 
