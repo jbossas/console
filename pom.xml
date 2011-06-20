@@ -88,12 +88,6 @@
     <dependencyManagement>
         <dependencies>
 
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon</artifactId>
-                <version>1.0-beta-7_jboss</version>
-            </dependency>
-
             <!-- GWT related -->
             <dependency>
                 <groupId>com.google.gwt</groupId>
@@ -194,12 +188,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon</artifactId>
-                <version>1.0-beta-7_jboss</version>
             </plugin>
 
             <plugin>
