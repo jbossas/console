@@ -84,7 +84,7 @@ public class ComboBoxItem extends FormItem<String> {
         postInit = true;
     }
 
-    private void selectItem(int i) {
+    public void selectItem(int i) {
         isUndefined = false;
         comboBox.setItemSelected(i, true);
     }

@@ -40,8 +40,18 @@ public class NewSocketWizard {
         TextBoxItem nameItem = new TextBoxItem("name", "Name");
         NumberBoxItem portItem = new NumberBoxItem("port", "Port");
         final ComboBoxItem groupItem = new ComboBoxItem("group", "Binding Group");
-        groupItem.setDefaultToFirstOption(true);
+
         groupItem.setValueMap(bindingGroups);
+
+
+        int i=0;
+        for(String group : bindingGroups)
+        {
+            if(group.equals("standard-sockets"))
+                break;
+            i++;
+        }
+        groupItem.selectItem(i);
 
         form.setFields(nameItem, portItem, groupItem);
 

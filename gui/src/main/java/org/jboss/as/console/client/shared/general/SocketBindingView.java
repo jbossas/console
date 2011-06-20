@@ -228,7 +228,16 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     @Override
     public void updateGroups(List<String> groups) {
         groupFilter.setValues(groups);
-        groupFilter.setItemSelected(0, true);
+
+        int i=0;
+        for(String group : groups)
+        {
+            if(group.equals("standard-sockets"))
+                break;
+            i++;
+        }
+
+        groupFilter.setItemSelected(i, true);
     }
 
     @Override
