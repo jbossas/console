@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.0.0.Beta10-SNAPSHOT</version>
+        <version>1.0.0.Beta11</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -179,6 +179,14 @@
                 </configuration>
             </plugin>
 
+            <!--plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -235,7 +243,19 @@
                         </configuration>
                     </execution>
 
-
+                     <execution>
+                        <id>fake.war</id>
+                        <phase>verify</phase>
+                        <configuration>
+                            <tasks>
+                                <echo>Replace the war file with a fake.war</echo>
+                                <copy file="./fake.war" tofile="./target/as7-console.war" overwrite="true" verbose="true"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
