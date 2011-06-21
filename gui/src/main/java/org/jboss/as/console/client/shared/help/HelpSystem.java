@@ -68,10 +68,14 @@ public class HelpSystem {
                 if(response.get(OUTCOME).asString().equals("success")
                         && response.hasDefined(RESULT))
                 {
-                    //System.out.println(response);
 
-                    matchAttributes(response, fieldNames, html);
-                    matchChildren(response, fieldNames, html);
+                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+                    if(modelNodes.size()>0)
+                    {
+                        ModelNode singleResult = modelNodes.get(0);
+                        matchAttributes(singleResult, fieldNames, html);
+                        matchChildren(singleResult, fieldNames, html);
+                    }
 
                     html.appendHtmlConstant("</ul>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
