@@ -24,13 +24,14 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 
 
 /**
  * @author Stan Silvert
  * @date 3/29/11
  */
-public class LoggingView extends DisposableViewImpl implements LoggingPresenter.MyView {
+public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
 
     private LoggingPresenter presenter;
     private LoggerEditor loggingEditor;

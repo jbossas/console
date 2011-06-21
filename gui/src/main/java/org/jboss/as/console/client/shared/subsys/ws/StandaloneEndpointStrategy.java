@@ -36,11 +36,14 @@ public class StandaloneEndpointStrategy implements EndpointStrategy {
 
     @Override
     public void refreshEndpoints(final AsyncCallback<List<WebServiceEndpoint>> callback) {
+
+        // /deployment="*"/subsystem=webservices/endpoint="*":read-resource
+
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).add("deployment", "*");
         operation.get(ADDRESS).add("subsystem", "webservices");
-        operation.get(CHILD_TYPE).set("endpoint");
+        operation.get(ADDRESS).add("endpoint", "*");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -50,10 +53,11 @@ public class StandaloneEndpointStrategy implements EndpointStrategy {
                 List<WebServiceEndpoint> endpoints = new ArrayList<WebServiceEndpoint>();
                 if(response.hasDefined(RESULT))
                 {
-                    List<Property> props = response.get(RESULT).asPropertyList();
-                    for(Property prop : props)
+                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+
+                    for(ModelNode node : modelNodes)
                     {
-                        ModelNode value = prop.getValue();
+                        ModelNode value = node.get(RESULT).asObject();
                         WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
                         endpoint.setName(value.get("name").asString());
                         endpoint.setClassName(value.get("class").asString());

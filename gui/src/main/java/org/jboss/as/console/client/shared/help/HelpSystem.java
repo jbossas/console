@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.help;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -59,8 +60,6 @@ public class HelpSystem {
                 fieldNames.add(binding.getDetypedName());
         }
 
-        //System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -69,22 +68,18 @@ public class HelpSystem {
                 if(response.get(OUTCOME).asString().equals("success")
                         && response.hasDefined(RESULT))
                 {
-                    //System.out.println(response);
-                    List<Property> steps = response.get(RESULT).asPropertyList();
-                    if(steps.size()>0)
-                    {
-                        ModelNode prototype = steps.get(0).getValue().asObject();
 
-                        matchAttributes(prototype, fieldNames, html);
-                        matchChildren(prototype, fieldNames, html);
-
-                        html.appendHtmlConstant("</ul>");
-                        callback.onSuccess(new HTML(html.toSafeHtml()));
-                    }
-                    else
+                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+                    if(modelNodes.size()>0)
                     {
-                        onFailure(new Exception("No steps to iterate on: "+response));
+                        ModelNode singleResult = modelNodes.get(0);
+                        matchAttributes(singleResult, fieldNames, html);
+                        matchChildren(singleResult, fieldNames, html);
                     }
+
+                    html.appendHtmlConstant("</ul>");
+                    callback.onSuccess(new HTML(html.toSafeHtml()));
+
                 }
                 else
                 {
@@ -102,43 +97,51 @@ public class HelpSystem {
     }
 
     private void matchAttributes(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        List<Property> attributes = prototype.get(RESULT).asObject().get("attributes").asPropertyList();
+        try {
+            List<Property> attributes = prototype.get(RESULT).asObject().get("attributes").asPropertyList();
 
-        for(Property prop : attributes)
-        {
-            String attName = prop.getName();
-            ModelNode value = prop.getValue();
-
-            if(fieldNames.contains(attName))
+            for(Property prop : attributes)
             {
-                html.appendHtmlConstant("<li>");
-                html.appendEscaped(attName).appendEscaped(": ");
-                html.appendEscaped(value.get("description").asString());
-                html.appendHtmlConstant("</li>");
+                String attName = prop.getName();
+                ModelNode value = prop.getValue();
+
+                if(fieldNames.contains(attName))
+                {
+                    html.appendHtmlConstant("<li>");
+                    html.appendEscaped(attName).appendEscaped(": ");
+                    html.appendEscaped(value.get("description").asString());
+                    html.appendHtmlConstant("</li>");
+                }
             }
+        } catch (IllegalArgumentException e) {
+            Log.error("Failed to read help description", e);
         }
     }
 
     private void matchChildren(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
 
-        ModelNode modelNode = prototype.get(RESULT).asObject();
-        if(modelNode.hasDefined("children"))
-        {
-            List<Property> attributes = modelNode.get("children").asPropertyList();
-
-            for(Property prop : attributes)
+        try {
+            ModelNode modelNode = prototype.get(RESULT).asObject();
+            if(modelNode.hasDefined("children"))
             {
-                String childName = prop.getName();
-                ModelNode value = prop.getValue();
+                List<Property> attributes = modelNode.get("children").asPropertyList();
 
-                if(fieldNames.contains(childName))
+                for(Property prop : attributes)
                 {
-                    html.appendHtmlConstant("<li>");
-                    html.appendEscaped(childName).appendEscaped(": ");
-                    html.appendEscaped(value.get("description").asString());
-                    html.appendHtmlConstant("</li>");
+                    String childName = prop.getName();
+                    ModelNode value = prop.getValue();
+
+                    if(fieldNames.contains(childName))
+                    {
+                        html.appendHtmlConstant("<li>");
+                        html.appendEscaped(childName).appendEscaped(": ");
+                        html.appendEscaped(value.get("description").asString());
+                        html.appendHtmlConstant("</li>");
+                    }
                 }
             }
+        } catch (IllegalArgumentException e) {
+             Log.error("Failed to read help description", e);
         }
     }
 }

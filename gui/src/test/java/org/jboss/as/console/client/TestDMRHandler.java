@@ -35,7 +35,7 @@ import java.io.IOException;
  */
 public class TestDMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
-    private static final String DOMAIN_API_URL = "http://localhost:9990/domain-api";
+    private static final String DOMAIN_API_URL = "http://localhost:9990/management";
     private static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
 
     @Override

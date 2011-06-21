@@ -25,11 +25,11 @@ public class WebDescriptions {
         builder.appendEscaped("check interval: If development is false and checkInterval is greater than zero, background compiles are enabled. checkInterval is the time in seconds between checks to see if a JSP page (and its dependent files) needs to be recompiled. Default 0 seconds.");
 
         builder.appendHtmlConstant("<li>");
-        builder.appendEscaped("work dir: What scratch directory should we use when compiling JSP pages? Default is the work directory for the current web application.");
+        builder.appendEscaped("listings: Display directory listings?.");
 
-        builder.appendHtmlConstant("<li>");
+        /*builder.appendHtmlConstant("<li>");
         builder.appendEscaped("advertise: Set this attribute to true to cause JBoss Web to advertise support for the Srevlet specification using the header recommended in the specification. The default value is false.");
-
+        */
         builder.appendHtmlConstant("</ul>");
 
         return builder.toSafeHtml();

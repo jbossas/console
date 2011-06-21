@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.DefaultWindow;
@@ -89,6 +90,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void setVirtualServers(List<VirtualServer> servers);
         void enableEditVirtualServer(boolean b);
         void enableJSPConfig(boolean b);
+
+        void setJSPConfig(JSPContainerConfiguration jspConfig);
     }
 
     @Inject
@@ -180,7 +183,75 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     }
 
     private void loadJSPConfig() {
-        // TODO: https://issues.jboss.org/browse/AS7-748
+
+        // /profile=default/subsystem=web:read-resource
+
+        /*{
+            "outcome" => "success",
+            "result" => {
+                "configuration" => {
+                    "static-resources" => {
+                        "sendfile" => 49152,
+                        "max-depth" => 3,
+                        "read-only" => true,
+                        "webdav" => false,
+                        "listings" => false,
+                        "disabled" => false
+                    },
+                    "jsp-configuration" => {
+                        "development" => false,
+                        "keep-generated" => true,
+                        "recompile-on-fail" => false,
+                        "check-interval" => 0,
+                        "modification-test-interval" => 4,
+                        "display-source-fragment" => true,
+                        "error-on-use-bean-invalid-class-attribute" => false,
+                        "java-encoding" => "UTF8",
+                        "tag-pooling" => true,
+                        "generate-strings-as-char-arrays" => false,
+                        "target-vm" => "1.5",
+                        "dump-smap" => false,
+                        "mapped-file" => true,
+                        "disabled" => false,
+                        "source-vm" => "1.5",
+                        "trim-spaces" => false,
+                        "smap" => true
+                    }
+                },
+                "connector" => {"http" => undefined},
+                "virtual-server" => {"localhost" => undefined}
+            }
+        }
+        */
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "web");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
+                ModelNode jspCfg  = config.get("jsp-configuration").asObject();
+                ModelNode staticCfg = config.get("static-resources").asObject();
+
+                JSPContainerConfiguration jspConfig = factory.jspConfig().as();
+                jspConfig.setDisabled(jspCfg.get("disabled").asBoolean());
+                jspConfig.setCheckInterval(jspCfg.get("check-interval").asInt());
+                jspConfig.setDevelopment(jspCfg.get("development").asBoolean());
+                jspConfig.setDisplaySource(jspCfg.get("display-source-fragment").asBoolean());
+                jspConfig.setKeepGenerated(jspCfg.get("keep-generated").asBoolean());
+                jspConfig.setListings(staticCfg.get("listings").asBoolean());
+                jspConfig.setRecompile(jspCfg.get("recompile-on-fail").asBoolean());
+
+                getView().setJSPConfig(jspConfig);
+            }
+        });
+
     }
 
     private void loadConnectors() {

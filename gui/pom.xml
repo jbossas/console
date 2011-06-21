@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.0.0.Beta11</version>
+        <version>1.0.0.CR1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -249,7 +249,9 @@
                         <configuration>
                             <tasks>
                                 <echo>Replace the war file with a fake.war</echo>
-                                <copy file="./fake.war" tofile="./target/as7-console.war" overwrite="true" verbose="true"/>
+                                <copy file="build.number" todir="fake_war" overwrite="true"/>
+                                 <zip destfile="./target/fake.war" basedir="fake_war"/>
+                                <copy file="./target/fake.war" tofile="./target/as7-console.war" overwrite="true" verbose="true"/>
                             </tasks>
                         </configuration>
                         <goals>
