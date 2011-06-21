@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
@@ -59,7 +60,10 @@ public class NewPropertyWizard {
         TextBoxItem valueItem = new TextBoxItem("value", "Value");
         CheckBoxItem bootItem = new CheckBoxItem("bootTime", "Boot-Time");
 
-        form.setFields(nameItem, valueItem, bootItem);
+        if(Console.MODULES.getBootstrapContext().isStandalone())
+            form.setFields(nameItem, valueItem);
+        else
+            form.setFields(nameItem, valueItem, bootItem);
 
         DialogueOptions options = new DialogueOptions(
                 new ClickHandler() {
