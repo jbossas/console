@@ -24,4 +24,30 @@ package org.jboss.as.console.client.shared.subsys.web.model;
  * @date 5/11/11
  */
 public interface JSPContainerConfiguration {
+
+    boolean isDevelopment();
+    void setDevelopment(boolean b);
+
+    boolean isKeepGenerated();
+    void setKeepGenerated(boolean b);
+
+    boolean isRecompile();
+    void setRecompile(boolean b);
+
+
+    boolean isDisplaySource();
+    void setDisplaySource(boolean b);
+
+
+    boolean isDisabled();
+    void setDisabled(boolean b);
+
+
+    int getCheckInterval();
+    void setCheckInterval(int i);
+
+
+    boolean isListings();
+    void setListings(boolean b);
+
 }

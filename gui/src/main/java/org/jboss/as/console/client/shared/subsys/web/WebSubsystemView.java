@@ -37,6 +37,7 @@ import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
+import org.jboss.as.console.client.widgets.forms.StatusItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
@@ -91,25 +92,21 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         form = new Form(JSPContainerConfiguration.class);
         form.setNumColumns(2);
 
-        CheckBoxItem listing = new CheckBoxItem("listings", "Listings?");
+        StatusItem listing = new StatusItem("listings", "Listings?");
 
-        CheckBoxItem disabled= new CheckBoxItem("disabled", "Disabled?");
+        StatusItem disabled= new StatusItem("disabled", "Disabled?");
 
-        CheckBoxItem development= new CheckBoxItem("development", "Development?");
+        StatusItem development= new StatusItem("development", "Development?");
 
-        CheckBoxItem keepGenerated= new CheckBoxItem("keepGenerated", "Keep Generated?");
+        StatusItem keepGenerated= new StatusItem("keepGenerated", "Keep Generated?");
 
         NumberBoxItem checkInterval = new NumberBoxItem("checkInterval", "Check Interval");
 
-        TextBoxItem workDir = new TextBoxItem("scratchDir", "Work Dir");
-
-        CheckBoxItem poweredBy= new CheckBoxItem("poweredBy", "Advertise?");
-
-        CheckBoxItem sourceFragment= new CheckBoxItem("sourceFragment", "Display Source?");
+        StatusItem sourceFragment= new StatusItem("displaySource", "Display Source?");
 
 
         form.setFields(disabled, development);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), listing, keepGenerated, checkInterval, workDir, poweredBy, sourceFragment);
+        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), listing, keepGenerated, checkInterval, sourceFragment);
 
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(WebDescriptions.getJSPConfigDescription());
@@ -169,5 +166,10 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
             edit.setText("Save");
         else
             edit.setText("Edit");
+    }
+
+    @Override
+    public void setJSPConfig(JSPContainerConfiguration jspConfig) {
+        form.edit(jspConfig);
     }
 }
