@@ -108,15 +108,9 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
             }
         };
 
-        TextColumn<Jvm> debugCol = new TextColumn<Jvm>() {
-            @Override
-            public String getValue(Jvm object) {
-                return String.valueOf(object.isDebugEnabled());
-            }
-        };
 
         table.addColumn(nameCol, "Name");
-        table.addColumn(debugCol, "IsDebugEnabled?");
+        //table.addColumn(debugCol, "IsDebugEnabled?");
 
         panel.add(table);
 
