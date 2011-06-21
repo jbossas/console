@@ -1030,7 +1030,7 @@ public class Base64
             else {
                 // There's a bad input character in the Base64 stream.
                 throw new java.io.IOException(
-                        format( "Bad Base64 input character decimal %d in array position %d", ((int)source[i])&0xFF, i )
+                        format( "Bad Base64 input character decimal: " + (((int)source[i])&0xFF), "" )
                 );
             }   // end else:
         }   // each input character
