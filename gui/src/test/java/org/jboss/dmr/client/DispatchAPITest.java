@@ -36,7 +36,7 @@ public class DispatchAPITest {
     public void showcase() {
 
         // create a dispatcher
-        Dispatcher dispatcher = new SimpleDispatcher("http://localhost:9990/domain-api");
+        Dispatcher dispatcher = new SimpleDispatcher("http://localhost:9990/management");
 
         // create an operation (in this case: reading profile names)
         ModelNode operation = new ModelNode();
