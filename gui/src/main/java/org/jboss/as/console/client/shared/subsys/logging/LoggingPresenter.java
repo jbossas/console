@@ -98,6 +98,34 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         revealStrategy.revealInParent(this);
     }
     
+    public void onRemoveHandler() {
+        
+    }
+    
+    public void onRemoveLogger(final String name) {
+        ModelNode operation = null;
+        if (name.equals("root-logger")) {
+            operation = LoggingOperation.make("remove-root-logger");
+        } else {
+            operation = LoggingOperation.make(REMOVE);
+            operation.get(ADDRESS).add("logger", name);
+        }
+        
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed logger " + name);
+                loggingInfo.refreshView();
+            }
+        });
+    }
+    
     public void onEditHandler() {
         getView().enableHandlerDetails(true);
     }
@@ -144,6 +172,9 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         ModelNode operation = null;
         if (name.equals("root-logger")) {
             operation = LoggingOperation.make("change-root-log-level");
+            if (this.loggingInfo.getRootLogger().getLevel().equals("undefined")) {
+                operation = LoggingOperation.make("set-root-logger");
+            }
         } else {
             operation = LoggingOperation.make("change-log-level");
             operation.get(ADDRESS).add("logger", name);

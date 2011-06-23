@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,22 +33,28 @@ import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class LoggerConfigDetails {
+public class LoggingDetails<T> {
 
-    private LoggingPresenter presenter;
-    private Form<LoggerConfig> form;
+    private String entitiesName;
+    private Form<T> form;
     private ToolButton editBtn;
     private ToolButton cancelBtn;
-    private LoggerConfig editedLogger;
+    private ToolButton removeBtn;
+    private T editedEntity;
+    private LoggingCmdAdapter executor;
 
-    public LoggerConfigDetails(LoggingPresenter presenter) {
-        this.presenter = presenter;
-        form = new Form(LoggerConfig.class);
-        form.setNumColumns(2);
+    public LoggingDetails(String entitiesName, Form<T> form, LoggingCmdAdapter executor) {
+        this.entitiesName = entitiesName;
+        this.form = form;
+        this.executor = executor;
     }
 
     public Widget asWidget() {
@@ -59,13 +64,14 @@ public class LoggerConfigDetails {
         ToolStrip detailToolStrip = new ToolStrip();
         editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditLogger();
-                else {
-                    editedLogger = form.getEditedEntity();
-                    presenter.onSaveLoggerDetails(form.getEditedEntity().getName(), form.getChangedValues());
+                if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
+                    executor.onEdit();
+                } else {
+                    editedEntity = form.getEditedEntity();
+                    executor.onSaveDetails(form);
                 }
             }
         };
@@ -73,31 +79,39 @@ public class LoggerConfigDetails {
 
         cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
         ClickHandler cancelHandler = new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
                 form.cancel();
-                LoggerConfigDetails.this.setEnabled(false);
+                LoggingDetails.this.setEnabled(false);
             }
         };
         cancelBtn.addClickHandler(cancelHandler);
 
+        removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove());
+        ClickHandler removeHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
+                        Console.MESSAGES.removeFromConfirm(executor.getName(form.getEditedEntity()), entitiesName),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    executor.onRemove(form);
+                                }
+                            }
+                        });
+            }
+        };
+        removeBtn.addClickHandler(removeHandler);
+
         detailToolStrip.addToolButton(editBtn);
         detailToolStrip.addToolButton(cancelBtn);
+        detailToolStrip.addToolButton(removeBtn);
 
         detailPanel.add(detailToolStrip);
-
-        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
-
-        ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
-        logLevelItem.setValueMap(LogLevel.STRINGS);
-
-        ListItem handlersItem = new ListItem("handlers", Console.CONSTANTS.subsys_logging_handlers(), true);
-
-        form.setFields(nameItem, logLevelItem, handlersItem);
-
-
-        StaticHelpPanel helpPanel = new StaticHelpPanel("Defines a logger category.");
-        detailPanel.add(helpPanel.asWidget());
 
         detailPanel.add(form.asWidget());
 
@@ -107,21 +121,23 @@ public class LoggerConfigDetails {
         return scroll;
     }
 
-    public void bind(CellTable<LoggerConfig> loggerConfigTable) {
+    public void bind(CellTable<T> loggerConfigTable) {
         form.bind(loggerConfigTable);
     }
 
     public void setEnabled(boolean isEnabled) {
         form.setEnabled(isEnabled);
         cancelBtn.setVisible(isEnabled);
+        removeBtn.setVisible(!isEnabled);
 
-        if(isEnabled)
+        if (isEnabled) {
             editBtn.setText(Console.CONSTANTS.common_label_save());
-        else
+        } else {
             editBtn.setText(Console.CONSTANTS.common_label_edit());
+        }
     }
 
-    public LoggerConfig getEditedLoggerConfig() {
-        return editedLogger;
+    public T getEditedEntity() {
+        return editedEntity;
     }
 }

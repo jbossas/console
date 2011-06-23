@@ -22,7 +22,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -37,6 +36,9 @@ import org.jboss.dmr.client.Property;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * This class gathers all the information about loggers and handlers.  When refreshView() is called
+ * it gets an updated copy of the logging info from the server and makes that info available to
+ * the view.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
