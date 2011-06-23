@@ -84,7 +84,9 @@ public class ListItem extends FormItem<List> {
     public void setValue(List list) {
         this.value = list;
         this.textArea.setText("");
-        this.textArea.setVisibleLines(list.size());
+        if (list.size() > 0) {
+            this.textArea.setVisibleLines(list.size());
+        }
         for(Object item : list)
         {
             textArea.setText(textArea.getText()+item.toString()+"\n");
