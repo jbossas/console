@@ -104,7 +104,24 @@ class ProfileSection {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                selection.setItemSelected(0, true);
+
+                int selectedIndex = 0;
+                for(int i=0; i<selection.getItemCount(); i++)
+                {
+                    if("preview-base".equals(selection.getValue(i)))     // domain-preview.xml
+                    {
+                        selectedIndex=i;
+                        break;
+                    }
+                    else if("web-base".equals(selection.getValue(i)))     // domain.xml
+                    {
+                        selectedIndex=i;
+                        break;
+                    }
+
+                }
+
+                selection.setItemSelected(selectedIndex, true);
                 fireProfileSelection(selection.getSelectedValue());
             }
         });
