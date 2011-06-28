@@ -50,7 +50,8 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
     private LoggingInfo loggingInfo;
-    DispatchAsync dispatcher;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.LoggingPresenter)
@@ -79,6 +80,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         this.revealStrategy = revealStrategy;
         this.loggingInfo = new LoggingInfo(dispatcher, factory, view);
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override
@@ -98,8 +100,27 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         revealStrategy.revealInParent(this);
     }
     
-    public void onRemoveHandler() {
+    public BeanFactory getBeanFactory() {
+        return this.factory;
+    }
+    
+    public void onRemoveHandler(final String name, String type) {
+        ModelNode operation = LoggingOperation.make(REMOVE);
+        operation.get(ADDRESS).add(type, name);
         
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed handler " + name);
+                loggingInfo.refreshView();
+            }
+        });
     }
     
     public void onRemoveLogger(final String name) {

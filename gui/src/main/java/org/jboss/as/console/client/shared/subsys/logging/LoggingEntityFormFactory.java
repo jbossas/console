@@ -18,45 +18,15 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.widgets.forms.Form;
 
 /**
- * Adapter for CRUD on LoggerConfig
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class LoggerConfigCmdAdapter implements LoggingCmdAdapter<LoggerConfig> {
+public interface LoggingEntityFormFactory<T> {
 
-    private LoggingPresenter presenter;
+    public Form<T> makeAddForm();
     
-    public LoggerConfigCmdAdapter(LoggingPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void onAdd(Form<LoggerConfig> form) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public String getName(LoggerConfig entity) {
-        return entity.getName();
-    }
-
-    @Override
-    public void onEdit() {
-        presenter.onEditLogger();
-    }
-
-    @Override
-    public void onRemove(Form<LoggerConfig> form) {
-        presenter.onRemoveLogger(form.getEditedEntity().getName());
-    }
-
-    @Override
-    public void onSaveDetails(Form<LoggerConfig> form) {
-        presenter.onSaveLoggerDetails(form.getEditedEntity().getName(), form.getChangedValues());
-    }
-    
+    public Form<T> makeEditForm();
 }

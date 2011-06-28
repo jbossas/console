@@ -29,6 +29,11 @@ import org.jboss.as.console.client.widgets.forms.Form;
 public interface LoggingCmdAdapter<T> {
     
     /**
+     * Add the entity from the form.
+     */
+    public void onAdd(Form<T> form);
+    
+    /**
      * Prepare for editing.
      */
     public void onEdit();
@@ -48,7 +53,8 @@ public interface LoggingCmdAdapter<T> {
     public void onRemove(Form<T> form);
     
     /**
-     * Get the name of the given entity.
+     * Get the name of the given entity.  We need this because
+     * GWT doesn't (easily) support reflection.
      * 
      * @param entity The entity.
      * @return The name.

@@ -33,6 +33,11 @@ public class HandlerCmdAdapter implements LoggingCmdAdapter<LoggingHandler> {
     public HandlerCmdAdapter(LoggingPresenter presenter) {
         this.presenter = presenter;
     }
+
+    @Override
+    public void onAdd(Form<LoggingHandler> form) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     @Override
     public String getName(LoggingHandler entity) {
@@ -46,7 +51,7 @@ public class HandlerCmdAdapter implements LoggingCmdAdapter<LoggingHandler> {
 
     @Override
     public void onRemove(Form<LoggingHandler> form) {
-        presenter.onRemoveHandler();
+        presenter.onRemoveHandler(form.getEditedEntity().getName(), form.getEditedEntity().getType());
     }
 
     @Override

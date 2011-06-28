@@ -44,13 +44,26 @@ import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
  */
 public class LoggingView extends DisposableViewImpl implements LoggingPresenter.MyView {
 
-    private LoggingPresenter presenter;
+    private LoggingCmdAdapter loggerConfigCmdAdapger;
+    private LoggingCmdAdapter handlerCmdAdapter;
+    
     private LoggingEditor<LoggerConfig> loggerConfigEditor;
     private LoggingDetails<LoggerConfig> loggerConfigDetails;
+    private LoggingEntityFormFactory<LoggerConfig> loggerFormFactory;
     
     private LoggingEditor<LoggingHandler> handlerEditor;
     private LoggingDetails<LoggingHandler> handlerDetails;
+    private LoggingEntityFormFactory<LoggingHandler> handlerFormFactory;
 
+    @Override
+    public void setPresenter(LoggingPresenter presenter) {
+        this.loggerConfigCmdAdapger = new LoggerConfigCmdAdapter(presenter);
+        this.loggerFormFactory = new LoggerConfigFormFactory(presenter.getBeanFactory(), LoggerConfig.class);
+        
+        this.handlerCmdAdapter = new HandlerCmdAdapter(presenter);
+        this.handlerFormFactory = new HandlerFormFactory(presenter.getBeanFactory(), LoggingHandler.class);
+    }
+    
     @Override
     public Widget createWidget() {
         loggerConfigEditor = makeLoggingEditor();
@@ -66,9 +79,13 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     }
     
     private LoggingEditor<LoggingHandler> makeHandlerEditor() {
-        handlerDetails = new LoggingDetails<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), makeHandlerForm(), new HandlerCmdAdapter(presenter));
+        handlerDetails = new LoggingDetails<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), 
+                                                            handlerFormFactory.makeEditForm(), 
+                                                            this.handlerCmdAdapter);
+        String title = Console.CONSTANTS.common_label_add() + " " + Console.CONSTANTS.subsys_logging_handlers();
+        AddLoggingEntityWindow<LoggingHandler> window = new AddLoggingEntityWindow<LoggingHandler>(title, handlerFormFactory.makeAddForm(), this.handlerCmdAdapter);
         DefaultCellTable<LoggingHandler> table = makeHandlerTable();
-        return new LoggingEditor<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), table, handlerDetails);
+        return new LoggingEditor<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), window, table, handlerDetails);
     }
     
     private Form<LoggingHandler> makeHandlerForm() {
@@ -122,12 +139,18 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
     }
     
     private LoggingEditor<LoggerConfig> makeLoggingEditor() {
-        loggerConfigDetails = new LoggingDetails<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), makeLoggerConfigForm(), new LoggerConfigCmdAdapter(presenter));
+        loggerConfigDetails = new LoggingDetails<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), 
+                                                               loggerFormFactory.makeEditForm(), 
+                                                               loggerConfigCmdAdapger);
+        String title = Console.CONSTANTS.common_label_add() + " " + Console.CONSTANTS.subsys_logging_loggers();
+        AddLoggingEntityWindow<LoggerConfig> window = new AddLoggingEntityWindow<LoggerConfig>(title, 
+                                                                                               loggerFormFactory.makeAddForm(), 
+                                                                                               loggerConfigCmdAdapger);
         DefaultCellTable<LoggerConfig> table = makeLoggerConfigTable();
-        return new LoggingEditor<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), table, loggerConfigDetails);
+        return new LoggingEditor<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), window, table, loggerConfigDetails);
     }
     
-    private Form<LoggerConfig> makeLoggerConfigForm() {
+    private Form<LoggerConfig> makeEditLoggerConfigForm() {
         TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
 
         ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
@@ -176,11 +199,6 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
         loggerConfigTable.addColumn(handlersColumn, Console.CONSTANTS.subsys_logging_handlers());
         
         return loggerConfigTable;
-    }
-
-    @Override
-    public void setPresenter(LoggingPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override

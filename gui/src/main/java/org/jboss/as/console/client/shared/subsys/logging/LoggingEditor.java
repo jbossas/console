@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,6 +33,8 @@ import org.jboss.as.console.client.widgets.DefaultPager;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
+import org.jboss.as.console.client.widgets.tools.ToolButton;
+import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
  * @author Stan Silvert
@@ -38,6 +42,7 @@ import java.util.List;
  */
 public class LoggingEditor<T> {
     private String entitiesName;
+    private AddLoggingEntityWindow<T> window;
     private ListDataProvider<T> dataProvider;
     private DefaultCellTable<T> table;
     private LoggingDetails<T> details;
@@ -50,8 +55,9 @@ public class LoggingEditor<T> {
      * @param table The table that holds the entities.
      * @param details  The LoggingDetails that manages CRUD for the selected entity.
      */
-    public LoggingEditor(String entitiesName, DefaultCellTable<T> table, LoggingDetails<T> details) {
+    public LoggingEditor(String entitiesName, AddLoggingEntityWindow<T> window, DefaultCellTable<T> table, LoggingDetails<T> details) {
         this.entitiesName = entitiesName;
+        this.window = window;
         this.table = table;
         this.details = details;
     }
@@ -64,6 +70,16 @@ public class LoggingEditor<T> {
         
         scroll.add(layout);
 
+        final ToolStrip toolStrip = new ToolStrip();
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                window.show();
+            }
+        }));
+        layout.add(toolStrip);
+        
         layout.add(new ContentHeaderLabel(entitiesName));
         
         table.setSelectionModel(new SingleSelectionModel<T>());
