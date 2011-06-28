@@ -123,7 +123,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                     }
                 }
                 else {
-                    Log.error("DMR result is 'UNDEFINED'", response.toString());
+                    callback.onFailure(new RuntimeException("Failed to read subsystem 'datasource': "+  response.toString()));
                 }
 
                 callback.onSuccess(datasources);
