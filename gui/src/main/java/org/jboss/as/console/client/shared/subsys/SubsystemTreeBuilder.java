@@ -104,7 +104,7 @@ public class SubsystemTreeBuilder {
         // fallback in case no manageable subsystems exist
         if(includedSubsystems==0)
         {
-            HTML explanation = new HTML("No manageable subsystems exist (...)");
+            HTML explanation = new HTML("No manageable subsystems exist.");
             explanation.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
