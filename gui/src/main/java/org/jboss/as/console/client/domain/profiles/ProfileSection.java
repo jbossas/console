@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.profiles;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -122,7 +123,13 @@ class ProfileSection {
                 }
 
                 selection.setItemSelected(selectedIndex, true);
-                fireProfileSelection(selection.getSelectedValue());
+                String selectedProfile = selection.getSelectedValue();
+
+                // just to make sure
+                Console.MODULES.getCurrentSelectedProfile().setName(selectedProfile);
+
+                // this will rebuild the tree
+                fireProfileSelection(selectedProfile);
             }
         });
 
