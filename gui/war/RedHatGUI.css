@@ -41,18 +41,19 @@ body, p, td, th, option, input, textarea, select {
     text-decoration: none;
     color:white;
     background-color: #3A4E64;
+    border-top: 4px solid #3A4E64;
 }
 
 .header-link:hover {
     text-decoration: none;
-    border-bottom: 4px solid #E8E8E9;
+    border-top: 4px solid #FFFFEE;
 }
 
 .header-link-selected {
     background-image: none;
     color:#ffffff;
     cursor: default;
-    border-bottom: 4px solid #CEDCEA;
+    border-top: 4px solid #CEDCEA;
 }
 
 .stack-section-header {
