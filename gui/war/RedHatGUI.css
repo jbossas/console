@@ -1,0 +1,175 @@
+
+body, p, td, th, option, input, textarea, select {
+    color: #000000;
+    font-family: 'Arial Unicode MS', Arial, sans-serif!important;
+    font-size: small!important;
+}
+
+.page-header {
+    background-color: #3A4E64;
+    color:white;
+}
+
+.header-content {
+    color:white;
+
+}
+
+.header-links {
+    float: right;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    margin-right:4px;
+    margin-bottom:4px;
+    border: none;
+}
+
+.header-link {
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+    color:white;
+    background-color: #3A4E64;
+}
+
+.header-link:hover {
+    text-decoration: underline;
+}
+
+.header-link-selected {
+    background-image: none;
+    color:white;
+    font-weight: BOLD;
+}
+
+.stack-section-header {
+    background: #CEDCEA;
+    border:1px solid #BBB;
+    cursor: pointer;
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 3px;
+}
+
+.stack-section {
+    border-top:none;
+    padding-left:0px;
+    padding-right:0px;
+    margin:0px;
+    padding-bottom:15px;
+    padding-top:5px;
+    width:100%;
+}
+
+
+.lhs-tree-item {
+    cursor:pointer;
+    color:#404040;
+}
+
+.lhs-tree-item:hover {
+    background: none;
+}
+
+.lhs-tree-item-selected {
+    background: none;
+}
+
+.tab-left {
+    width:3px;
+    height:25px;
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-left.png);
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-position-x: 0%;
+    background-position-y: 0%;
+}
+
+/*
+
+deselected tabs
+.tab-title {
+    height:25px;
+
+    padding-left:5px;
+    padding-right:5px;
+    vertical-align:middle;
+    font-size:12px;
+    font-weight: BOLD;
+    white-space:nowrap;
+
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab_bkg.png);
+    background-repeat-x: repeat;
+    background-repeat-y: no-repeat;
+    background-color: #94A9C1;
+}
+
+.tab-right {
+    width:3px;
+    height:25px;
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-right.png);
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 0%;
+}
+
+
+.tab-left {
+    width:3px;
+    height:25px;
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-left.png);
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-position-x: 0%;
+    background-position-y: 0%;
+}*/
+
+
+.tab-title {
+    height:25px;
+
+    padding-left:5px;
+    padding-right:5px;
+    vertical-align:middle;
+    font-size:12px;
+    font-weight: BOLD;
+    white-space:nowrap;
+    color:white;
+
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab_bkg-selected.png);
+    background-repeat-x: repeat;
+    background-repeat-y: no-repeat;
+    background-color: #CEDCEA;
+}
+
+.tab-right {
+    width:3px;
+    height:25px;
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-selected-right.png);
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 0%;
+}
+
+
+.tab-left {
+    width:3px;
+    height:25px;
+    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-selected-left.png);
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-position-x: 0%;
+    background-position-y: 0%;
+}
+
+.gwt-TabBarItem {
+    font-size:11px!important;
+
+}
+
+.help-panel * {
+    font-size:11px!important;
+}

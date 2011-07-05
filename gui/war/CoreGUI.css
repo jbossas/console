@@ -24,7 +24,7 @@ a:focus {
 
 .main-content-panel {
     border-bottom:1px solid #A7ABB4;
-    margin-top:10px;
+    margin-top:2px;
 }
 
 .header-panel {
@@ -87,7 +87,7 @@ a:focus {
 }
 
 .header {
-    border:none!important;
+    border:none;
     /*background-color:#FFFFFF;
     background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
 }

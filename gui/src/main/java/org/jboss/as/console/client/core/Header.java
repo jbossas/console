@@ -82,9 +82,11 @@ public class Header implements ValueChangeHandler<String> {
     public Widget asWidget() {
 
         LayoutPanel outerLayout = new LayoutPanel();
+        outerLayout.addStyleName("page-header");
 
         HorizontalPanel contentLayout = new HorizontalPanel();
-        contentLayout.setStyleName("fill-layout-width");
+
+        contentLayout.addStyleName("fill-layout-width");
         contentLayout.getElement().setAttribute("style", "height:34px");
 
         headlineContainer = new LayoutPanel();
@@ -131,7 +133,6 @@ public class Header implements ValueChangeHandler<String> {
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
-        innerLayout.setStyleName("header");
         //innerLayout.add(logo);
         innerLayout.add(links);
 
@@ -192,7 +193,7 @@ public class Header implements ValueChangeHandler<String> {
             headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
             headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
-            headerString.appendHtmlConstant("<td><img src=\"images/header/header_bg_line.png\"/></td>");
+            headerString.appendHtmlConstant("<td><img src=\"images/blank.png\" width=1/></td>");
             for (String[] section : sections) {
 
                 final String name = section[0];
@@ -205,7 +206,7 @@ public class Header implements ValueChangeHandler<String> {
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);
 
-                headerString.appendHtmlConstant("<td ><img src=\"images/header/header_bg_line.png\"/></td>");
+                headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
             }
 
             headerString.appendHtmlConstant("</tr></table>");
