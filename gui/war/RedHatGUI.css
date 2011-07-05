@@ -6,10 +6,16 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .page-header {
-    background: #3A4E64;
+    background: #ffffff;
 
+    background: -moz-linear-gradient(top, #3A4E64, #ffffff);
+    /* Chrome, Safari:*/
     background: -webkit-gradient(linear,
     left top, left bottom, from(#3A4E64), to(#ffffff));
+    /* MSIE */
+    filter: progid:DXImageTransform.Microsoft.Gradient(
+        StartColorStr='#3A4E64', EndColorStr='#ffffff', GradientType=0);
+
 
     color:white;
 }
@@ -304,8 +310,7 @@ deselected tabs
 }
 
 .gwt-TabLayoutPanelTabInner div {
-    /*color: #444;*/
-    color:#ffffff;
+    color: #444;
     padding-top: 6px;
     padding-left: 8px;
     padding-right: 8px;
@@ -321,4 +326,5 @@ deselected tabs
 
 .gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner div {
     background: url(images/rh/tabs/tab-active-center.png) repeat-x top;
+    color:#ffffff;
 }
