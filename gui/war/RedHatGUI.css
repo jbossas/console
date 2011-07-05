@@ -81,7 +81,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .lhs-tree-item-selected, .lhs-tree-item-selected:hover {
-    background:#E5EFF6;
+    background:#E8E8E9;
     cursor: default;
 }
 
@@ -264,3 +264,60 @@ deselected tabs
 
 }
 
+
+.gwt-TabLayoutPanelTab, .gwt-TabLayoutPanelTab-selected {
+  position: relative;
+  height: 26px;
+  width: auto;
+  margin-left: -16px;
+}
+
+.gwt-TabLayoutPanelTab .gwt-TabLayoutPanelTabInner,
+.gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner {
+  height: 26px;
+  padding-left: 15px;
+}
+
+.gwt-TabLayoutPanelTab {
+  background: url(images/rh/tabs/tab-inactive-left.png) no-repeat bottom left;
+  cursor: default;
+}
+
+.gwt-TabLayoutPanelTab .gwt-TabLayoutPanelTabInner {
+  background: url(images/rh/tabs/tab-inactive-right.png) no-repeat bottom right;
+}
+
+.gwt-TabLayoutPanelTab-selected {
+  background: url(images/rh/tabs/tab-active-left.png) no-repeat bottom left;
+  z-index: 1;
+}
+
+.gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner {
+  background: url(images/rh/tabs/tab-active-right.png) no-repeat bottom right;
+}
+
+.gwt-TabLayoutPanelTabs {
+  background: url(images/rh/tabs/tabs-bg.png) repeat-x bottom;
+  padding-left: 2em;
+  margin-left: 2px;
+  margin-right: 4px;
+}
+
+.gwt-TabLayoutPanelTabInner div {
+  color: #444;
+  padding-top: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+  font-weight: bold;
+  height: 26px;
+  text-align: center;
+  margin-right: 15px;
+}
+
+.gwt-TabLayoutPanelTab .gwt-TabLayoutPanelTabInner div {
+  background: url(images/rh/tabs/tab-inactive-center.png) repeat-x top;
+}
+
+.gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner div {
+  background: url(images/rh/tabs/tab-active-center.png) repeat-x top;
+}
