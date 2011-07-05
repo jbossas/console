@@ -81,7 +81,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .lhs-tree-item-selected, .lhs-tree-item-selected:hover {
-    background:#E8E8E9;
+    background:#E5EFF6;
     cursor: default;
 }
 
@@ -196,10 +196,10 @@ deselected tabs
     background:none;
     padding:4px;
     height:13px;
-    border-bottom:1px solid #A7ABB4;
+    border-bottom:1px solid rgb(200,204,207);
     border-left: 1px solid rgb(200,204,207);
     border-right:none;
-    font-weight:normal!important;
+    font-weight:bold!important;
     text-align:left!important;
     font-size: 11px!important;
 }
