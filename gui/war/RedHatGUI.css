@@ -15,7 +15,7 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .header-content {
-    color:#707070;
+    color:#ffffff;
 
 }
 
@@ -38,13 +38,15 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .header-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    border-bottom: 4px solid #E8E8E9;
 }
 
 .header-link-selected {
     background-image: none;
-    color:white;
-    font-weight: BOLD;
+    color:#ffffff;
+    cursor: default;
+    border-bottom: 4px solid #CEDCEA;
 }
 
 .stack-section-header {
