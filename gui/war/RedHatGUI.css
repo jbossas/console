@@ -46,7 +46,7 @@ body, p, td, th, option, input, textarea, select {
 
 .header-link:hover {
     text-decoration: none;
-    border-top: 4px solid #FFFFEE;
+    border-top: 4px solid #fdfcce;
 }
 
 .header-link-selected {
@@ -82,13 +82,13 @@ body, p, td, th, option, input, textarea, select {
 }
 
 .lhs-tree-item:hover {
-    background: #FFFFEE;
+    background: #fdfcce;
     cursor:pointer;
 
 }
 
 .lhs-tree-item-selected, .lhs-tree-item-selected:hover {
-    background:#E8E8E9;
+    background:#E5EFF6;
     cursor: default;
 }
 
@@ -203,6 +203,10 @@ deselected tabs
     font-size:11px!important;
 }
 
+.help-panel-open {
+    background: #c0cebc;
+}
+
 
 .default-cell-table{
     font-family:Arial, Verdana, sans-serif;
@@ -255,13 +259,14 @@ deselected tabs
 }
 
 .cellTableHoveredRow {
-    background-color:#FFFFEE;
+    background-color:#fdfcce;
     cursor: pointer;
 }
 
 .cellTableSelectedRow {
     /*background:#E8E8E9;*/
     background-color: #E5EFF6;
+    /*background: #c0cebc*/
     /*border: 1px solid #CCDDE7;*/
 }
 
@@ -300,7 +305,7 @@ deselected tabs
 
 .gwt-TabLayoutPanelTab {
     background: url(images/rh/tabs/tab-inactive-left.png) no-repeat bottom left;
-    cursor: default;
+    cursor: pointer;
 }
 
 .gwt-TabLayoutPanelTab .gwt-TabLayoutPanelTabInner {
@@ -310,6 +315,7 @@ deselected tabs
 .gwt-TabLayoutPanelTab-selected {
     background: url(images/rh/tabs/tab-active-left.png) no-repeat bottom left;
     z-index: 1;
+    cursor: default;
 }
 
 .gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner {
@@ -341,4 +347,12 @@ deselected tabs
 .gwt-TabLayoutPanelTab-selected .gwt-TabLayoutPanelTabInner div {
     background: url(images/rh/tabs/tab-active-center.png) repeat-x top;
     color:#ffffff;
+}
+
+.gwt-PopupPanelGlass {
+    z-index: 5;
+}
+
+.default-window {
+    z-index: 10;
 }
