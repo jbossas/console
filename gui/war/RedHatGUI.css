@@ -33,6 +33,7 @@ body, p, td, th, option, input, textarea, select {
     margin-right:4px;
     margin-bottom:4px;
     border: none;
+
 }
 
 .header-link {
@@ -155,45 +156,6 @@ deselected tabs
     background-position-y: 0%;
 }*/
 
-
-.tab-title {
-    height:25px;
-
-    padding-left:5px;
-    padding-right:5px;
-    vertical-align:middle;
-    font-size:12px;
-    font-weight: BOLD;
-    white-space:nowrap;
-    color:white;
-
-    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab_bkg-selected.png);
-    background-repeat-x: repeat;
-    background-repeat-y: no-repeat;
-    background-color: #CEDCEA;
-}
-
-.tab-right {
-    width:3px;
-    height:25px;
-    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-selected-right.png);
-    background-repeat-x: no-repeat;
-    background-repeat-y: no-repeat;
-    background-position-x: 100%;
-    background-position-y: 0%;
-}
-
-
-.tab-left {
-    width:3px;
-    height:25px;
-    background-image: url(http://design.jboss.org/blip/guvnor-ui/html/resources/images/tab-corner-selected-left.png);
-    background-repeat-x: no-repeat;
-    background-repeat-y: no-repeat;
-    background-position-x: 0%;
-    background-position-y: 0%;
-}
-
 .gwt-TabBarItem {
     font-size:11px!important;
 
@@ -218,6 +180,7 @@ deselected tabs
 
 .cellTableHeader {
     background:none;
+    color:#4A5D75;
     padding:4px;
     height:13px;
     border-bottom:1px solid rgb(200,204,207);
@@ -256,6 +219,7 @@ deselected tabs
 
 .cellTableCell {
     padding:5px;
+    font-size:11px!important;
 }
 
 .cellTableHoveredRow {
@@ -289,6 +253,44 @@ deselected tabs
 
 }
 
+/* fake tab header*/
+
+.tab-title {
+    height:26px!important;
+    padding-top:0px;
+    padding-botom:0px;
+    padding-left:5px;
+    padding-right:5px;
+    vertical-align:middle;
+    font-size:12px;
+    font-weight: BOLD;
+    white-space:nowrap;
+    color:white;
+
+    background: url(images/rh/tabs/tab-active-center.png) repeat-x top;
+    background-color: #ffffff;
+}
+
+.tab-right {
+    width:15px;
+    height:26px!important;
+    background: url(images/rh/tabs/tab-active-right.png) no-repeat top right;
+    background-position-x: 100%;
+    background-position-y: 0%;
+}
+
+.tab-left {
+    width:15px;
+    height:26px!important;
+    background: url(images/rh/tabs/tab-active-left.png) no-repeat top left;
+}
+
+.title-bar-panel {
+    border: none;
+    background: url(images/rh/tabs/tabs-bg.png) repeat-x bottom;
+}
+
+/* regular gwt tabs */
 
 .gwt-TabLayoutPanelTab, .gwt-TabLayoutPanelTab-selected {
     position: relative;
@@ -356,3 +358,9 @@ deselected tabs
 .default-window {
     z-index: 10;
 }
+
+.host-selector-header {
+    background-image: none;
+    background-color: #3A4E64;
+}
+
