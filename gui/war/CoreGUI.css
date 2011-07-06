@@ -693,6 +693,7 @@ a:focus {
     padding-top:6px;
     padding-bottom:6px;
     padding-left:10px;
+    font-weight: bold;
 }
 
 #host-selector-content {

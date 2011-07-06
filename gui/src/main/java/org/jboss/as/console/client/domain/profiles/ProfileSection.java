@@ -19,21 +19,12 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
-import org.jboss.as.console.client.widgets.ComboBox;
 import org.jboss.as.console.client.widgets.DisclosureStackHeader;
 import org.jboss.as.console.client.widgets.LHSNavTree;
 
@@ -46,7 +37,6 @@ import java.util.List;
 class ProfileSection {
 
     private LHSNavTree subsysTree;
-    private ComboBox selection;
     private DisclosurePanel panel;
 
     public ProfileSection()  {
@@ -58,25 +48,6 @@ class ProfileSection {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        selection = new ComboBox();
-        selection.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                fireProfileSelection(event.getValue());
-            }
-        });
-
-        Widget dropDown = selection.asWidget();
-
-        HorizontalPanel horz = new HorizontalPanel();
-        horz.getElement().setAttribute("width", "100%");
-        HTML title = new HTML(Console.CONSTANTS.common_label_profile()+":&nbsp;");
-        horz.add(title);
-        horz.add(dropDown);
-
-        title.getElement().getParentElement().setAttribute("class", "profile-selector");
-
-        layout.add(horz);
         layout.add(subsysTree);
 
         panel.setContent(layout);
@@ -86,53 +57,6 @@ class ProfileSection {
     public Widget asWidget()
     {
         return panel;
-    }
-
-    private void fireProfileSelection(String profileName) {
-        Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(profileName));
-    }
-
-    public void updateProfiles(final List<ProfileRecord> profileRecords) {
-
-        selection.clearValues();
-
-        for(ProfileRecord record : profileRecords)
-        {
-            selection.addItem(record.getName());
-        }
-
-        // select first option when updated
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-
-                int selectedIndex = 0;
-                for(int i=0; i<selection.getItemCount(); i++)
-                {
-                    if("preview-base".equals(selection.getValue(i)))     // domain-preview.xml
-                    {
-                        selectedIndex=i;
-                        break;
-                    }
-                    else if("web-base".equals(selection.getValue(i)))     // domain.xml
-                    {
-                        selectedIndex=i;
-                        break;
-                    }
-
-                }
-
-                selection.setItemSelected(selectedIndex, true);
-                String selectedProfile = selection.getSelectedValue();
-
-                // just to make sure
-                Console.MODULES.getCurrentSelectedProfile().setName(selectedProfile);
-
-                // this will rebuild the tree
-                fireProfileSelection(selectedProfile);
-            }
-        });
-
     }
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {

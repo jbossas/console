@@ -38,7 +38,7 @@ class LHSProfileNavigation {
 
     private LayoutPanel layout;
     private VerticalPanel stack;
-
+    private ProfileSelector selector;
     private ProfileSection profileSection;
 
     public LHSProfileNavigation() {
@@ -48,6 +48,10 @@ class LHSProfileNavigation {
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
+
+        selector = new ProfileSelector();
+        stack.add(selector.asWidget());
+
 
         profileSection = new ProfileSection();
         stack.add(profileSection.asWidget());
@@ -71,7 +75,7 @@ class LHSProfileNavigation {
 
     public void updateProfiles(List<ProfileRecord> profiles) {
 
-        profileSection.updateProfiles(profiles);
+        selector.updateProfiles(profiles);
     }
 
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
