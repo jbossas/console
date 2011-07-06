@@ -364,3 +364,30 @@ deselected tabs
     background-color: #3A4E64;
 }
 
+/* windows */
+
+.default-window {
+    border: 1px solid #A7ABB4;
+    background-color:#ffffff;
+
+    -moz-box-shadow: 2px 2px 3px #000000;
+    -webkit-box-shadow: 2px 2px 3px #000000;
+    box-shadow: 2px 2px 3px #000000;
+}
+
+.default-window-header {
+    margin: 2px;
+    font-size: 13px;
+    background: none;
+    background-color: #CEDCEA;
+    border: 1px solid #BBB;
+    font-weight: bold;
+    padding: 3px 6px;
+    color:#4A5D75;
+}
+
+.default-window-content {
+    margin:5px;
+}
+
+

@@ -77,7 +77,7 @@ public class DefaultWindow extends PopupPanel {
         //header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
         //header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
 
-        layout.addNorth(header, 25);
+        layout.addNorth(header, 40);
 
         content = new LayoutPanel();
         content.setStyleName("default-window-content");
