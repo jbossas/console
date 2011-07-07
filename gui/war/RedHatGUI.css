@@ -391,10 +391,14 @@ deselected tabs
     width:100%;
     height:20px;
     padding: 4px 0px 4px 0px;
-
     border-left: 1px solid #BBB;
-
     background: #FAFAFA;
+}
 
+
+
+.gwt-PopupPanelGlass {
+    background-color:rgba(127, 127, 127, 0.5);
+    background: -webkit-radial-gradient(rgba(127, 127, 127, 0.5), rgba(127, 127, 127, 0.5) 35%, rgba(0, 0, 0, 0.7))!important;
 
 }

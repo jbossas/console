@@ -112,4 +112,10 @@ public interface Icons extends ClientBundle {
     @Source("help.png")
     ImageResource help();
 
+    @Source("maximize.png")
+    ImageResource maximize();
+
+    @Source("minimize.png")
+    ImageResource minimize();
+
 }
