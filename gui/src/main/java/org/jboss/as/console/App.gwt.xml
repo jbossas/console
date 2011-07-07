@@ -36,6 +36,7 @@
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
     <inherits name="com.google.gwt.autobean.AutoBean"/>
     <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.allen_sauer.gwt.dnd.gwt-dnd"/>
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />

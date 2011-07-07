@@ -37,7 +37,7 @@ import org.jboss.as.console.client.widgets.icons.Icons;
  * @author Heiko Braun
  * @date 2/23/11
  */
-public class DefaultWindow extends PopupPanel {
+public class DefaultWindow extends ResizePanel {
 
     public final static double GOLDEN_RATIO = 1.618;
     private static final int ESCAPE = 27;
@@ -134,11 +134,11 @@ public class DefaultWindow extends PopupPanel {
 
     @Override
     public void setWidth(String width) {
-        throw new IllegalArgumentException("Use the numeric setter!") ;
+       super.setWidth(width);
     }
 
     @Override
     public void setHeight(String height) {
-        throw new IllegalArgumentException("Use the numeric setter!") ;
+       super.setHeight(height);
     }
 }
