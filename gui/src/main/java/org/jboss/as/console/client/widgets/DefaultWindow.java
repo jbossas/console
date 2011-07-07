@@ -20,18 +20,19 @@
 package org.jboss.as.console.client.widgets;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.widgets.icons.Icons;
 
 /**
  * @author Heiko Braun
@@ -46,36 +47,48 @@ public class DefaultWindow extends ResizePanel {
 
     int width, height;
 
+    private boolean dragged       = false;
+    private int     dragStartX;
+    private int     dragStartY;
+
+    private Command afterShowEvent;
+    private boolean fixedLocation = false;
+
     public DefaultWindow(String title) {
 
         DockLayoutPanel layout = new DockLayoutPanel(Style.Unit.PX);
         setStyleName("default-window");
 
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("default-window-header");
+        final PopupTitleBar header = new PopupTitleBar(title, this);
 
-        HTML titleText = new HTML(title);
-        titleText.getElement().setAttribute("style", "padding:5px");
+        // dnd
 
-        Image closeIcon = new Image(Icons.INSTANCE.close());
-        closeIcon.setAltText("Close");
-        closeIcon.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                hide();
+        header.addMouseDownHandler( new MouseDownHandler() {
+
+            public void onMouseDown(MouseDownEvent event) {
+                dragged = true;
+                dragStartX = event.getRelativeX( getElement() );
+                dragStartY = event.getRelativeY( getElement() );
+                DOM.setCapture(header.getElement());
             }
-        });
+        } );
+        header.addMouseMoveHandler( new MouseMoveHandler() {
 
-        header.add(titleText);
-        header.add(closeIcon);
+            public void onMouseMove(MouseMoveEvent event) {
+                if ( dragged ) {
+                    setPopupPosition( event.getClientX() - dragStartX,
+                            event.getClientY() - dragStartY );
+                }
+            }
+        } );
+        header.addMouseUpHandler( new MouseUpHandler() {
 
-        // it's just a table ...
-        titleText.getElement().getParentElement().setAttribute("width", "100%");
-        closeIcon.getElement().getParentElement().setAttribute("width", "16px");
-        closeIcon.getElement().getParentElement().setAttribute("style", "width:16px;padding-right:5px");
+            public void onMouseUp(MouseUpEvent event) {
+                dragged = false;
+                DOM.releaseCapture( header.getElement() );
+            }
+        } );
 
-        //header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
-        //header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
 
         layout.addNorth(header, 40);
 
@@ -134,11 +147,11 @@ public class DefaultWindow extends ResizePanel {
 
     @Override
     public void setWidth(String width) {
-       super.setWidth(width);
+        super.setWidth(width);
     }
 
     @Override
     public void setHeight(String height) {
-       super.setHeight(height);
+        super.setHeight(height);
     }
 }

@@ -28,6 +28,7 @@ public class ResizePanel extends PopupPanel {
     private Element movingPanelElement;
     private List panelResizedListeners = new ArrayList();
 
+
     public ResizePanel() {
         super();
 
