@@ -865,6 +865,14 @@ a:focus {
     padding-right: 10px;
 }
 
+.default-window-footer {
+    width:100%;
+    height:16px;
+    background-image: url(images/window/resizer.png);
+    background-repeat:no-repeat;
+    background-position:top right;
+}
+
 
 
 

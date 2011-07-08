@@ -31,8 +31,12 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.icons.Icons;
 
 /**
  * @author Heiko Braun
@@ -91,6 +95,16 @@ public class DefaultWindow extends ResizePanel {
 
 
         layout.addNorth(header, 40);
+
+        HorizontalPanel footer = new HorizontalPanel();
+        footer.setStyleName("default-window-footer");
+
+        HTML footerLabel = new HTML("&nbsp;");
+        footer.add(footerLabel);
+
+        footerLabel.getElement().getParentElement().setAttribute("width", "100%");
+
+        layout.addSouth(footer, 16);
 
         content = new LayoutPanel();
         content.setStyleName("default-window-content");
