@@ -347,14 +347,6 @@ deselected tabs
     color:#ffffff;
 }
 
-.gwt-PopupPanelGlass {
-    z-index: 5;
-}
-
-.default-window {
-    z-index: 10;
-}
-
 .host-selector-header {
     background-image: none;
     background-color: #3A4E64;

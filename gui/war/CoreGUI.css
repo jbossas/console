@@ -1,12 +1,14 @@
 
 
+::selection { background-color: transparent; color: #4A5D75; }
+::-o-selection { background-color: transparent; color: #4A5D75; }
+::-moz-selection { background-color: transparent; color: #4A5D75; }
+::-webkit-selection { background-color: transparent; color: #4A5D75; }
+
 body, p, td, th, option, input, textarea, select {
     color: #000000;
     font-family: tahoma, verdana, sans-serif !important;
     font-size: 11px !important;
-
-    -moz-user-select: none; /* mozilla browsers */
-    -khtml-user-select: none; /* webkit browsers */
 }
 
 a {
@@ -396,6 +398,8 @@ a:focus {
     -moz-box-shadow: 3px 3px 4px #c3c3c3;
     -webkit-box-shadow: 3px 3px 4px #c3c3c3;
     box-shadow: 3px 3px 4px #c3c3c3;
+
+    z-index:20;
 }
 
 .message-list {
@@ -502,6 +506,8 @@ a:focus {
     -moz-box-shadow: 2px 2px 3px #000000;
     -webkit-box-shadow: 2px 2px 3px #000000;
     box-shadow: 2px 2px 3px #000000;
+
+    z-index: 10;
 }
 
 .default-window-header {
@@ -513,12 +519,15 @@ a:focus {
 
 .default-window-content {
     margin:5px;
+    z-index: 15;
 }
 
 .gwt-PopupPanelGlass {
     background-color:#A7ABB4;
     filter:alpha(opacity=75);
     opacity:0.75;
+
+    z-index: 5;
 }
 
 .default-tabpanel {
