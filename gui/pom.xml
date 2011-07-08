@@ -115,7 +115,7 @@
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
                     <!--bindAddress>192.168.0.12</bindAddress-->
-	 	            <extraJvmArgs>-Xmx512m -DDEBUG</extraJvmArgs>
+                    <extraJvmArgs>-Xmx512m -DDEBUG</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
                     <soyc>false</soyc>
                     <style>OBF</style>
@@ -243,15 +243,30 @@
                         </configuration>
                     </execution>
 
-                     <execution>
+                    <execution>
                         <id>fake.war</id>
                         <phase>verify</phase>
                         <configuration>
                             <tasks>
                                 <echo>Replace the war file with a fake.war</echo>
                                 <copy file="build.number" todir="fake_war" overwrite="true"/>
-                                 <zip destfile="./target/fake.war" basedir="fake_war"/>
+                                <zip destfile="./target/fake.war" basedir="fake_war"/>
                                 <copy file="./target/fake.war" tofile="./target/as7-console.war" overwrite="true" verbose="true"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+
+
+                    <execution>
+                        <id>custom.styles</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
+                                <replace file="war/App.html" token="@custom_css@" value="custom.css" summary="yes"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -314,6 +329,35 @@
                         <configuration>
                             <draftCompile>true</draftCompile>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>eap</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+
+                            <execution>
+                                <id>custom.styles</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
+                                        <replace file="war/App.html" token="@custom_css@" value="RedHatGUI.css"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
