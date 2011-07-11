@@ -193,4 +193,21 @@ public class Base64Test {
         assertNotNull(modelNode);
     }
 
+
+    @Test
+    public void testIntegerValues() throws Exception {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("operation-name");
+        operation.get(ADDRESS).add("socket-binding", "jgroups-udp-fd");
+        operation.get("port").set(54200);
+
+        String base64 = operation.toBase64String();
+        assertNotNull(base64);
+
+        ModelNode revers = ModelNode.fromBase64(base64);
+        assertEquals(54200, revers.get("port").asInt());
+
+    }
+
 }
