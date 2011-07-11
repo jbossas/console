@@ -42,6 +42,7 @@ import org.jboss.as.console.client.widgets.Feedback;
 import org.jboss.as.console.client.widgets.TitleBar;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
+import org.jboss.as.console.client.widgets.forms.TextBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -188,12 +189,12 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
-        NumberBoxItem portItem = new NumberBoxItem("port", "Port");
         TextItem interfaceItem = new TextItem("interface", "Interface");
-        TextItem multicastItem = new TextItem("multiCastAddress", "Multicast Address");
+        NumberBoxItem portItem = new NumberBoxItem("port", "Port");
+        TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address");
         NumberBoxItem multicastPortItem = new NumberBoxItem("multiCastPort", "Multicast Port");
 
-        form.setFields(nameItem, portItem, interfaceItem, multicastItem, multicastPortItem);
+        form.setFields(nameItem, interfaceItem, portItem, multicastItem, multicastPortItem);
         form.bind(socketTable.getCellTable());
 
         Widget formWidget = form.asWidget();

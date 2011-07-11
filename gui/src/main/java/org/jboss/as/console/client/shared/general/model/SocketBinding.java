@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.general.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 4/6/11
@@ -34,9 +36,11 @@ public interface SocketBinding {
     String getInterface();
     void setInterface(String name);
 
+    @Binding(detypedName = "multicast-address")
     String getMultiCastAddress();
     void setMultiCastAddress(String address);
 
+    @Binding(detypedName = "multicast-port")
     int getMultiCastPort();
     void setMultiCastPort(int port);
 

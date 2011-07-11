@@ -63,10 +63,17 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                             value.get("interface").asString() : "not set";
 
                     sb.setInterface(interfaceValue);
-                    // TODO: multicast properties
-                    sb.setMultiCastAddress("not set");
-                    sb.setMultiCastPort(-1);
 
+                    if(value.hasDefined("multicast-port"))
+                    {
+                        sb.setMultiCastAddress(value.get("multicast-address").asString());
+                        sb.setMultiCastPort(value.get("multicast-port").asInt());
+                    }
+                    else
+                    {
+                        sb.setMultiCastAddress("");
+                        sb.setMultiCastPort(0);
+                    }
                     bindings.add(sb);
                 }
 

@@ -43,12 +43,26 @@ public class SocketTable {
         TextColumn<SocketBinding> portColumn = new TextColumn<SocketBinding>() {
             @Override
             public String getValue(SocketBinding record) {
-                return String.valueOf(record.getPort()+portOffset);
+                if(record.getPort()>0)
+                    return String.valueOf(record.getPort()+portOffset);
+                else
+                    return "";
+            }
+        };
+
+        TextColumn<SocketBinding> mcastColumn = new TextColumn<SocketBinding>() {
+            @Override
+            public String getValue(SocketBinding record) {
+                if(record.getMultiCastPort()>0)
+                    return String.valueOf(record.getMultiCastPort()+portOffset);
+                else
+                    return "";
             }
         };
 
         table.addColumn(nameColumn, "Name");
         table.addColumn(portColumn, "Port");
+        table.addColumn(mcastColumn, "MCast Port");
 
         return table;
     }

@@ -158,7 +158,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         getView().setEnabled(true);
     }
 
-    public void saveSocketBinding(final String name, String group, Map<String, Object> changeset) {
+    public void saveSocketBinding(final String name, final String group, Map<String, Object> changeset) {
         getView().setEnabled(false);
 
         ModelNode proto = new ModelNode();
@@ -178,6 +178,14 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                     Console.info("Success: Updated socket binding "+name);
                 else
                     Console.error("Failed: Update socket binding "+name, response.toString());
+
+                loadBindings(group);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                loadBindings(group);
             }
         });
     }
