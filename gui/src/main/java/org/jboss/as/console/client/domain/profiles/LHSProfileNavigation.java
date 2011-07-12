@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,18 +38,20 @@ import java.util.List;
  */
 class LHSProfileNavigation {
 
-    private LayoutPanel layout;
+    private DockLayoutPanel layout;
     private VerticalPanel stack;
-
+    private ProfileSelector selector;
     private ProfileSection profileSection;
 
     public LHSProfileNavigation() {
 
-        layout = new LayoutPanel();
+        layout = new DockLayoutPanel(Style.Unit.PX);
         layout.setStyleName("fill-layout");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
+
+        selector = new ProfileSelector();
 
         profileSection = new ProfileSection();
         stack.add(profileSection.asWidget());
@@ -55,6 +59,7 @@ class LHSProfileNavigation {
         CommonConfigSection commonSection = new CommonConfigSection();
         stack.add(commonSection.asWidget());
 
+        layout.addNorth(selector.asWidget(), 60);
         layout.add(stack);
 
     }
@@ -71,7 +76,7 @@ class LHSProfileNavigation {
 
     public void updateProfiles(List<ProfileRecord> profiles) {
 
-        profileSection.updateProfiles(profiles);
+        selector.updateProfiles(profiles);
     }
 
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {

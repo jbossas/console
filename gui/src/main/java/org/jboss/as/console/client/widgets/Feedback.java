@@ -37,8 +37,8 @@ public class Feedback {
     {
         final DefaultWindow window = new DefaultWindow(title);
 
-        int width = 240;
-        int height = (int) (width / DefaultWindow.GOLDEN_RATIO);
+        int width = 320;
+        int height = 240;
 
         window.setWidth(width);
         window.setHeight(height);

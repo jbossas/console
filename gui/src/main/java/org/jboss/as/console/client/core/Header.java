@@ -82,15 +82,17 @@ public class Header implements ValueChangeHandler<String> {
     public Widget asWidget() {
 
         LayoutPanel outerLayout = new LayoutPanel();
+        outerLayout.addStyleName("page-header");
 
-        HorizontalPanel contentLayout = new HorizontalPanel();
-        contentLayout.setStyleName("fill-layout-width");
-        contentLayout.getElement().setAttribute("style", "height:34px");
+        //HorizontalPanel contentLayout = new HorizontalPanel();
+
+        //contentLayout.addStyleName("fill-layout-width");
+        //contentLayout.getElement().setAttribute("style", "border:1px solid red;height:34px");
 
         headlineContainer = new LayoutPanel();
         headlineContainer.setStyleName("fill-layout");
 
-        contentLayout.add(headlineContainer);
+        //contentLayout.add(headlineContainer);
 
         /*HTML debugLink = new HTML("Debug");
         debugLink.setStyleName("cross-reference");
@@ -125,14 +127,13 @@ public class Header implements ValueChangeHandler<String> {
         settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
 
         */
-        headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
+        //headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
 
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
-        innerLayout.setStyleName("header");
-        //innerLayout.add(logo);
+        //innerLayout.add(headlineContainer);
         innerLayout.add(links);
 
         //innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PX);
@@ -140,10 +141,10 @@ public class Header implements ValueChangeHandler<String> {
         innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
-        outerLayout.add(contentLayout);
+        //outerLayout.add(contentLayout);
 
         outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        outerLayout.setWidgetTopHeight(contentLayout , 34, Style.Unit.PX, 25, Style.Unit.PX);
+        //outerLayout.setWidgetTopHeight(contentLayout , 34, Style.Unit.PX, 25, Style.Unit.PX);
 
         return outerLayout;
     }
@@ -192,7 +193,7 @@ public class Header implements ValueChangeHandler<String> {
             headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
             headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
-            headerString.appendHtmlConstant("<td><img src=\"images/header/header_bg_line.png\"/></td>");
+            headerString.appendHtmlConstant("<td><img src=\"images/blank.png\" width=1/></td>");
             for (String[] section : sections) {
 
                 final String name = section[0];
@@ -200,12 +201,12 @@ public class Header implements ValueChangeHandler<String> {
                 String styleClass = "header-link";
                 String styleAtt = "vertical-align:middle; text-align:center";
 
-                String td =  "<td style='"+styleAtt+"' width='100px' id='" + id +"'"+
-                        " class='"+styleClass+"'></td>";
+                String td =  "<td width='100px' style='"+styleAtt+"' id='" + id +"' class='"+styleClass+"'></td>";
+
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);
 
-                headerString.appendHtmlConstant("<td ><img src=\"images/header/header_bg_line.png\"/></td>");
+                headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
             }
 
             headerString.appendHtmlConstant("</tr></table>");

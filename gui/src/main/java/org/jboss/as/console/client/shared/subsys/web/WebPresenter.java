@@ -186,44 +186,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         // /profile=default/subsystem=web:read-resource
 
-        /*{
-            "outcome" => "success",
-            "result" => {
-                "configuration" => {
-                    "static-resources" => {
-                        "sendfile" => 49152,
-                        "max-depth" => 3,
-                        "read-only" => true,
-                        "webdav" => false,
-                        "listings" => false,
-                        "disabled" => false
-                    },
-                    "jsp-configuration" => {
-                        "development" => false,
-                        "keep-generated" => true,
-                        "recompile-on-fail" => false,
-                        "check-interval" => 0,
-                        "modification-test-interval" => 4,
-                        "display-source-fragment" => true,
-                        "error-on-use-bean-invalid-class-attribute" => false,
-                        "java-encoding" => "UTF8",
-                        "tag-pooling" => true,
-                        "generate-strings-as-char-arrays" => false,
-                        "target-vm" => "1.5",
-                        "dump-smap" => false,
-                        "mapped-file" => true,
-                        "disabled" => false,
-                        "source-vm" => "1.5",
-                        "trim-spaces" => false,
-                        "smap" => true
-                    }
-                },
-                "connector" => {"http" => undefined},
-                "virtual-server" => {"localhost" => undefined}
-            }
-        }
-        */
-
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(Baseadress.get());

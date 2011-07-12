@@ -140,6 +140,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         });
 
+        messagePopup.hide();
         window.center();
     }
 

@@ -48,6 +48,7 @@ class InputElementWrapper extends HorizontalPanel {
             @Override
             public void onClick(ClickEvent event) {
                 PopupPanel popup = new PopupPanel(true);
+                popup.getElement().setAttribute("style", "z-index:20");
                 popup.setWidget(new Label(input.getErrMessage()));
                 popup.setStyleName("popup-hint");
                 popup.setPopupPosition(img.getAbsoluteLeft()+16, img.getAbsoluteTop()+16);

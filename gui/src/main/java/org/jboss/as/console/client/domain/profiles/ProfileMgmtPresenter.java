@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -123,7 +124,14 @@ public class ProfileMgmtPresenter
 
             if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
             {
-                placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
+                Timer t = new Timer() {
+                    @Override
+                    public void run() {
+                        placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
+                    }
+                };
+
+                t.schedule(500);
             }
         }
     }
