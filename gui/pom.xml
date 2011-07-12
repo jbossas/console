@@ -272,7 +272,7 @@
                         <configuration>
                             <tasks>
                                 <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                <replace file="war/App.html" token="@custom_css@" value="custom.css" summary="yes"/>
+                                <!--replace file="war/App.html" token="@custom_css@" value="custom.css" summary="yes"/-->
                             </tasks>
                         </configuration>
                         <goals>
@@ -356,31 +356,11 @@
                                 <configuration>
                                     <tasks>
                                         <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                        <replace file="war/App.html" token="@custom_css@" value="RedHatGUI.css"/>
+                                        <!--replace file="war/App.html" token="@custom_css@" value="RedHatGUI.css"/-->
                                     </tasks>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>scripts/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>

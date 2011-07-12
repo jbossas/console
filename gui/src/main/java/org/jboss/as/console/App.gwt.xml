@@ -23,10 +23,13 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.chrome.ChromeResources'/>
     <inherits name="com.google.gwt.editor.Editor"/>
-    <inherits name="org.jboss.dmr.DMR"/>
     <inherits name="com.google.gwt.i18n.I18N"/>
 
     <inherits name='com.gwtplatform.mvp.Mvp' />
+
+    <inherits name="org.jboss.dmr.DMR"/>
+    <inherits name="org.jboss.as.console.BallroomWidgets"/>
+
 
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"
@@ -37,7 +40,6 @@
     <inherits name="com.google.gwt.autobean.AutoBean"/>
     <inherits name="com.google.gwt.json.JSON"/>
 
-    <inherits name="org.jboss.as.console.BallroomWidgets"/>
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />
