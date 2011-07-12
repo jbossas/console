@@ -39,9 +39,6 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
-import org.jboss.as.console.client.debug.DebugToolsPresenter;
-import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
-import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
@@ -163,13 +160,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<HostMgmtPresenter> getHostMgmtPresenter();
     AsyncProvider<ServerConfigPresenter> getServerPresenter();
     AsyncProvider<ServerInstancesPresenter> getInstancesPresenter();
-
-    // ----------------------------------------------------------------------
-    // dev tools
-    AsyncProvider<DebugToolsPresenter> getDebugTools();
-    AsyncProvider<ModelBrowserPresenter> getModelBrowser();
-    AsyncProvider<InvocationMetricsPresenter> getMetrics();
-
 
     // ----------------------------------------------------------------------
     // shared subsystems

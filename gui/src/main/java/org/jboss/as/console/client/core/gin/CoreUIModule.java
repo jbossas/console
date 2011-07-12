@@ -48,12 +48,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
-import org.jboss.as.console.client.debug.DebugToolsPresenter;
-import org.jboss.as.console.client.debug.DebugToolsView;
-import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
-import org.jboss.as.console.client.debug.InvocationMetricsView;
-import org.jboss.as.console.client.debug.ModelBrowserPresenter;
-import org.jboss.as.console.client.debug.ModelBrowserView;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
@@ -301,24 +295,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ServerInstancesView.class,
                 ServerInstancesPresenter.MyProxy.class);
 
-
-        // -------
-
-
-        bindPresenter(DebugToolsPresenter.class,
-                DebugToolsPresenter.MyView.class,
-                DebugToolsView.class,
-                DebugToolsPresenter.MyProxy.class);
-
-        bindPresenter(ModelBrowserPresenter.class,
-                ModelBrowserPresenter.MyView.class,
-                ModelBrowserView.class,
-                ModelBrowserPresenter.MyProxy.class);
-
-        bindPresenter(InvocationMetricsPresenter.class,
-                InvocationMetricsPresenter.MyView.class,
-                InvocationMetricsView.class,
-                InvocationMetricsPresenter.MyProxy.class);
 
         // -------
 

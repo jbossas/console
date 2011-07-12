@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.core;
+package org.jboss.as.console.client.widgets;
 
 import java.util.NoSuchElementException;
 

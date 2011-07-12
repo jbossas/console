@@ -19,14 +19,13 @@
 
 package org.jboss.as.console.client.widgets;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.Places;
 import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 
 /**
@@ -42,6 +41,7 @@ import org.jboss.as.console.client.widgets.resource.DefaultTreeResources;
 public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelectionHandler{
 
     private static final String TREE_ID_ATTRIBUTE = "treeid";
+    private static final Framework framework = GWT.create(Framework.class);
 
     private String treeId;
     private String category;
@@ -62,7 +62,7 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
 
                 if (selectedItem.getElement().hasAttribute("token")) {
                     String token = selectedItem.getElement().getAttribute("token");
-                    Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                    framework.getPlaceManager().revealPlaceHierarchy(
                             Places.fromString(token)
                     );
 
@@ -72,7 +72,7 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
-                        Console.MODULES.getEventBus().fireEvent(
+                        framework.getEventBus().fireEvent(
                                 new LHSHighlightEvent(treeId, selectedItem.getText(), category)
                         );
                     }
@@ -81,7 +81,7 @@ public class LHSNavTree extends Tree implements LHSHighlightEvent.NavItemSelecti
             }
         });
 
-        Console.MODULES.getEventBus().addHandler(LHSHighlightEvent.TYPE, this);
+        framework.getEventBus().addHandler(LHSHighlightEvent.TYPE, this);
     }
 
     public String getTreeId() {

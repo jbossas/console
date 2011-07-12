@@ -17,9 +17,8 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.core;
+package org.jboss.as.console.client.widgets;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class Places {
             }
 
         } catch (Throwable e) {
-            Log.error("Error parsing token: " + urlString);
+            throw new RuntimeException("Error parsing token: " + urlString);
         }
 
         return places;

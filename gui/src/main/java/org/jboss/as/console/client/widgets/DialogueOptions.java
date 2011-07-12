@@ -23,7 +23,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import org.jboss.as.console.client.Console;
 
 /**
  * @author Heiko Braun
@@ -32,7 +31,7 @@ import org.jboss.as.console.client.Console;
 public class DialogueOptions extends HorizontalPanel {
 
     public DialogueOptions(ClickHandler submitHandler, ClickHandler cancelHandler) {
-        this(Console.CONSTANTS.common_label_save(), submitHandler, Console.CONSTANTS.common_label_cancel(), cancelHandler);
+        this("Save", submitHandler, "Cancel", cancelHandler);
     }
 
     public DialogueOptions(

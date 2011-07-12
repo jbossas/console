@@ -21,6 +21,7 @@ package org.jboss.as.console.client.widgets.forms;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanCodex;
+import com.google.gwt.autobean.shared.AutoBeanFactory;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.autobean.shared.AutoBeanVisitor;
 import com.google.gwt.core.client.GWT;
@@ -29,7 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.widgets.Framework;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +47,9 @@ import java.util.Map;
  */
 public class Form<T> {
 
-    private final static BeanFactory factory = GWT.create(BeanFactory.class);
+    private final static Framework framework = GWT.create(Framework.class);
+
+    private AutoBeanFactory factory;
     private final static String DEFAULT_GROUP = "default";
 
     private final Map<String, Map<String, FormItem>> formItems = new LinkedHashMap<String, Map<String, FormItem>>();
@@ -59,6 +62,7 @@ public class Form<T> {
 
     public Form(Class<?> conversionType) {
         this.conversionType = conversionType;
+        this.factory = framework.getBeanFactory();
     }
 
     public Class<?> getConversionType() {
