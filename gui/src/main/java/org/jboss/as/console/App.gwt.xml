@@ -19,27 +19,15 @@
 
 <module rename-to="app">
 
-    <!-- Inherit the core Web Toolkit stuff.                  -->
-    <inherits name='com.google.gwt.user.User'/>
-    <inherits name='com.google.gwt.user.theme.chrome.ChromeResources'/>
-    <inherits name="com.google.gwt.editor.Editor"/>
     <inherits name="com.google.gwt.i18n.I18N"/>
-
-    <inherits name='com.gwtplatform.mvp.Mvp' />
-
     <inherits name="org.jboss.dmr.DMR"/>
     <inherits name="org.jboss.as.console.BallroomWidgets"/>
-
+    <inherits name="com.google.gwt.json.JSON"/>
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"
                                 value="org.jboss.as.console.client.core.gin.CoreUI" />
-
-    <!-- Add gwt-log support, default level `DEBUG` -->
-    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-    <inherits name="com.google.gwt.autobean.AutoBean"/>
-    <inherits name="com.google.gwt.json.JSON"/>
-
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />
@@ -49,10 +37,7 @@
     <set-property name="log_DivLogger" value="DISABLED" />
     <set-property name="log_FirebugLogger" value="DISABLED" />
     <set-property name="log_WindowLogger" value="DISABLED" />
-
-
     <set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
-
 
     <generate-with class="org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator">
         <when-type-assignable class="org.jboss.as.console.client.widgets.forms.PropertyMetaData" />
@@ -86,7 +71,6 @@
     <extend-property name="locale" values="en"/>
     <extend-property name="locale" values="de"/>
 
-    <!-- Specify the app entry point class.                   -->
     <entry-point class='org.jboss.as.console.client.Console'/>
 
 </module>
