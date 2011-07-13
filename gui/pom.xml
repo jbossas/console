@@ -20,7 +20,6 @@
          <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
-            <version>1.0.0.Beta1-SNAPSHOT</version>
         </dependency>
 
         <!-- GWT -->
