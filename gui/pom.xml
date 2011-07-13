@@ -14,12 +14,18 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <ballroom.version>1.0.0.Beta3-SNAPSHOT</ballroom.version>
+    </properties>
+
     <!--  Dependencies -->
     <dependencies>
 
-         <dependency>
+
+        <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
+            <version>${ballroom.version}</version>
         </dependency>
 
         <!-- GWT -->

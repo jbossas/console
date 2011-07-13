@@ -78,7 +78,6 @@
         <guice.version>3.0-rc2</guice.version>
         <gwtp.version>0.6-2.17</gwtp.version>
         <junit.version>4.8.1</junit.version>
-        <ballroom.version>1.0.0.Beta2</ballroom.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -88,14 +87,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-
-            <dependency>
-               <groupId>org.jboss.ballroom</groupId>
-               <artifactId>widgets</artifactId>
-               <version>${ballroom.version}</version>
-           </dependency>
-
 
             <!-- GWT related -->
             <dependency>
