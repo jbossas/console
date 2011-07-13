@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <ballroom.version>1.0.0.Beta3-SNAPSHOT</ballroom.version>
+        <ballroom.version>1.0.0.Beta2</ballroom.version>
     </properties>
 
     <!--  Dependencies -->
