@@ -190,14 +190,6 @@
                 </configuration>
             </plugin>
 
-            <!--plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -276,8 +268,8 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
-                                <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                <!--replace file="war/App.html" token="@custom_css@" value="custom.css" summary="yes"/-->
+                                <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.as.console.BallroomWidgets" summary="yes"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -360,8 +352,8 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                        <!--replace file="war/App.html" token="@custom_css@" value="RedHatGUI.css"/-->
+                                        <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.as.console.BallroomWidgets_RH" summary="yes"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

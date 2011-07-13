@@ -21,7 +21,10 @@
 
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="org.jboss.dmr.DMR"/>
-    <inherits name="org.jboss.as.console.BallroomWidgets"/>
+
+
+    <inherits name="@ballroom_theme@"/>
+
     <inherits name="com.google.gwt.json.JSON"/>
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
