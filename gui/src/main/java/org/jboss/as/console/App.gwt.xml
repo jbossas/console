@@ -54,11 +54,16 @@
     <set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
 
 
+    <generate-with class="org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator">
+        <when-type-assignable class="org.jboss.as.console.client.widgets.forms.PropertyMetaData" />
+    </generate-with>
+
+
     <replace-with class="org.jboss.as.console.client.ConsoleFramework">
         <when-type-is class="org.jboss.as.console.client.widgets.Framework"/>
     </replace-with>
 
-	<property-provider name="locale">
+	<!--property-provider name="locale">
         var locale_value = "";
         var cookieName = "as7_ui_locale";
 
@@ -76,7 +81,7 @@
         }
 
         return locale_value;
-	</property-provider>
+	</property-provider-->
 
     <extend-property name="locale" values="en"/>
     <extend-property name="locale" values="de"/>
