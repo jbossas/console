@@ -16,6 +16,7 @@
 
     <properties>
         <ballroom.version>1.0.0.Beta3</ballroom.version>
+        <console.profile>jboss</console.profile>
     </properties>
 
     <!--  Dependencies -->
@@ -238,6 +239,7 @@
                                     <property name="version" value="${project.version}"/>
                                     <property name="build.user" value="${user.name}"/>
                                     <property name="src.dir" value="${project.build.directory}/generated-sources" />
+                                    <property name="console.profile" value="${console.profile}" />
                                 </ant>
                             </tasks>
                             <sourceRoot>
@@ -299,6 +301,7 @@
                     <name>smoke</name>
                 </property>
             </activation>
+
             <build>
                 <plugins>
                     <plugin>
@@ -339,6 +342,9 @@
 
         <profile>
             <id>eap</id>
+            <properties>
+                <console.profile>eap</console.profile>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

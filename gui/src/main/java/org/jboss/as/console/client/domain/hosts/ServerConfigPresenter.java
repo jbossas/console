@@ -522,6 +522,9 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void onShowEffectivePorts() {
+
+        assert selectedRecord!=null : "No record selected!";
+
         window = new DefaultWindow("Server Ports");
         window.setWidth(480);
         window.setHeight(360);

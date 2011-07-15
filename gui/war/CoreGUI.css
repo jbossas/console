@@ -97,6 +97,11 @@ body {
     color: white;
 }
 
+.logo {
+    padding-top:20px;
+    padding-left:10px;
+}
+
 .message-list-item {
     padding:2px;
     min-height:20px;
