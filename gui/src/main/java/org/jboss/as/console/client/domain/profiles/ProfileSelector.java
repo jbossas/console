@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.widgets.forms.ComboBox;
+import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
 

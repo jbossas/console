@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <ballroom.version>1.0.0.Beta3-SNAPSHOT</ballroom.version>
+        <ballroom.version>1.0.0.Beta3</ballroom.version>
     </properties>
 
     <!--  Dependencies -->
@@ -269,7 +269,7 @@
                         <configuration>
                             <tasks>
                                 <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
-                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.as.console.BallroomWidgets" summary="yes"/>
+                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -353,7 +353,7 @@
                                 <configuration>
                                     <tasks>
                                         <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
-                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.as.console.BallroomWidgets_RH" summary="yes"/>
+                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework_RH" summary="yes"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

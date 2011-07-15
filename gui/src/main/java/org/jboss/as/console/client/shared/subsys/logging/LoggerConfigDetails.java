@@ -28,12 +28,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.ListItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.

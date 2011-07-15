@@ -19,7 +19,7 @@
 
 package org.jboss.as.console.rebind.forms;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.ballroom.client.widgets.forms.Binding;
 
 import java.lang.annotation.Annotation;
 

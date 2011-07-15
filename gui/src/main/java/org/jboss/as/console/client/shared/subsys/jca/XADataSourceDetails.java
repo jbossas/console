@@ -28,15 +28,15 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.widgets.window.Feedback;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.DefaultGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 /**

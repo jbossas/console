@@ -42,7 +42,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
 

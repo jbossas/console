@@ -29,13 +29,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.widgets.window.Feedback;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
-import org.jboss.as.console.client.widgets.tables.MenuColumn;
-import org.jboss.as.console.client.widgets.tables.NamedCommand;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
+import org.jboss.ballroom.client.widgets.tables.MenuColumn;
+import org.jboss.ballroom.client.widgets.tables.NamedCommand;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 

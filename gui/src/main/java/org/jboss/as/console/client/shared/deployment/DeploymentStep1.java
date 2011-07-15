@@ -35,8 +35,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.widgets.common.DefaultButton;
-import org.jboss.as.console.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
  * @author Heiko Braun

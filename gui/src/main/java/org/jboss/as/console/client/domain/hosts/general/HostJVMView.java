@@ -36,12 +36,12 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;

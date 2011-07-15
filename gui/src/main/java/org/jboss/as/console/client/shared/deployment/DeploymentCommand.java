@@ -22,7 +22,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.widgets.window.Feedback;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * Enumeration of commands used to manipulate deployments on the client side.  

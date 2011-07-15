@@ -34,10 +34,10 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFacto
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
 

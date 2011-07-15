@@ -26,12 +26,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.widgets.window.DialogueOptions;
-import org.jboss.as.console.client.widgets.window.WindowContentBuilder;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 import java.util.List;
 

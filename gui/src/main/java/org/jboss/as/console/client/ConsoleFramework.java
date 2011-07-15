@@ -5,7 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.spi.Framework;
+import org.jboss.ballroom.client.spi.Framework;
 
 /**
  * @author Heiko Braun

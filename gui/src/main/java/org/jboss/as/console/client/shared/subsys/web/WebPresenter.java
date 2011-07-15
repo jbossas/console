@@ -45,7 +45,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
-import org.jboss.as.console.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;

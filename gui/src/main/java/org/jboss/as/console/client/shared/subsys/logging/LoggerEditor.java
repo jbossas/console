@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.tables.DefaultPager;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
 

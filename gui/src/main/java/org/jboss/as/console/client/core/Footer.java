@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.core.message.MessageCenterView;
-import org.jboss.as.console.client.widgets.icons.Icons;
 
 /**
  * @author Heiko Braun

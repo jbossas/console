@@ -29,12 +29,12 @@ import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 

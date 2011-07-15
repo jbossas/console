@@ -27,12 +27,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.common.DefaultButton;
-import org.jboss.as.console.client.widgets.window.DefaultWindow;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 
 import java.util.List;
 

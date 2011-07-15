@@ -42,8 +42,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.window.DefaultWindow;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
 

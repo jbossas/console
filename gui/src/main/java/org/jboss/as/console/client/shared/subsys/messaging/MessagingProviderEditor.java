@@ -28,11 +28,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.StatusItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.StatusItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 
 /**
  * @author Heiko Braun

@@ -48,7 +48,7 @@
 
 
     <replace-with class="org.jboss.as.console.client.ConsoleFramework">
-        <when-type-is class="org.jboss.as.console.client.spi.Framework"/>
+        <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
     </replace-with>
 
 	<!--property-provider name="locale">

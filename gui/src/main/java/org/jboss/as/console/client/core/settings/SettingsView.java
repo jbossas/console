@@ -33,11 +33,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.window.DialogueOptions;
-import org.jboss.as.console.client.widgets.window.Feedback;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 
 /**

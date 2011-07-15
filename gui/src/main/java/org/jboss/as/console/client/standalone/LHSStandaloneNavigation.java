@@ -25,11 +25,11 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.layout.LHSNavTree;
-import org.jboss.as.console.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
-import org.jboss.as.console.client.widgets.stack.DisclosureStackPanel;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 

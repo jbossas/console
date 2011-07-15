@@ -6,9 +6,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.shared.general.SocketTable;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.tables.DefaultPager;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
 
