@@ -67,8 +67,6 @@ body {
 
 .header {
     border:none;
-    /*background-color:#FFFFFF;
-    background-image:url("images/sc/skins/Enterprise/images/ToolStrip/background.png");*/
 }
 
 .header-links {
@@ -93,8 +91,10 @@ body {
 }
 
 .header-link-selected {
-    background-image: url('images/header/header_bg_selected.png');
+    background-color: #4A5D75;
+    background: url(images/blue_bg.png)!important;
     color: white;
+    font-weight: BOLD;
 }
 
 .logo {
@@ -158,7 +158,7 @@ body {
 }
 
 .host-selector-header {
-    background-image: url('images/header/header_bg_selected.png');
+    background: url(images/blue_bg.png)!important;
     color:white;
     padding-top:6px;
     padding-bottom:6px;
