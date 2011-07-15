@@ -1,13 +1,13 @@
 .page-header {
-    background: #ffffff;
+    background: #F1F1F1;
 
-    background: -moz-linear-gradient(top, #C0C0C0, #ffffff);
+    background: -moz-linear-gradient(top, #F1F1F1, #ffffff);
     /* Chrome, Safari:*/
     background: -webkit-gradient(linear,
-    left top, left bottom, from(#C0C0C0), to(#ffffff));
+    left top, left bottom, from(#F1F1F1), to(#ffffff));
     /* MSIE */
     filter: progid:DXImageTransform.Microsoft.Gradient(
-        StartColorStr='#C0C0C0', EndColorStr='#ffffff', GradientType=0);
+        StartColorStr='#F1F1F1', EndColorStr='#ffffff', GradientType=0);
 
 
     color:white;
