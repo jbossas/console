@@ -74,6 +74,8 @@
     <extend-property name="locale" values="en"/>
     <extend-property name="locale" values="de"/>
 
+    <stylesheet src="console.css" />
+
     <entry-point class='org.jboss.as.console.client.Console'/>
 
 </module>
