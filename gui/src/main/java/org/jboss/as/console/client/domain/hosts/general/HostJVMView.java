@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -39,7 +38,7 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
@@ -63,7 +62,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar("Host JVM");
+        FakeTabPanel titleBar = new FakeTabPanel("Host JVM");
         layout.add(titleBar);
 
         ToolStrip toolStrip = new ToolStrip();

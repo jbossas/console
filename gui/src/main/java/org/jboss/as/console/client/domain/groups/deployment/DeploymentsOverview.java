@@ -38,8 +38,8 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.DefaultPager;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -80,7 +80,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_manageDeployments());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_manageDeployments());
         layout.add(titleBar);
 
         final ToolStrip toolStrip = new ToolStrip();

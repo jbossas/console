@@ -34,12 +34,12 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.as.console.client.widgets.forms.ComboBox;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.DefaultPager;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
+import org.jboss.as.console.client.widgets.window.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
@@ -68,7 +68,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar("Socket Binding Groups");
+        FakeTabPanel titleBar = new FakeTabPanel("Socket Binding Groups");
         layout.add(titleBar);
 
         ToolStrip toolstrip = new ToolStrip();

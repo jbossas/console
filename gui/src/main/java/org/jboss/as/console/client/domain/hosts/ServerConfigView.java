@@ -38,9 +38,7 @@ import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.WidgetUtil;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
 import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.DisclosureGroupRenderer;
@@ -51,6 +49,7 @@ import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.as.console.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -82,7 +81,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverConfig());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverConfig());
         layout.add(titleBar);
 
         // ----
@@ -144,7 +143,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        ScrollPanel scrollPanel = WidgetUtil.asScrollPanel(panel);
+        ScrollPanel scrollPanel = new ScrollPanel(panel);
         layout.add(scrollPanel);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);

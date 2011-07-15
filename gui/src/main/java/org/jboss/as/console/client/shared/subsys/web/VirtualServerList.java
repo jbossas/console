@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
-import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.window.Feedback;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.ListItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;

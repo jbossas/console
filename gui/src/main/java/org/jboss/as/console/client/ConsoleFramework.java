@@ -4,9 +4,8 @@ import com.google.gwt.autobean.shared.AutoBeanFactory;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.widgets.Framework;
+import org.jboss.as.console.client.spi.Framework;
 
 /**
  * @author Heiko Braun

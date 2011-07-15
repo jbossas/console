@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.Places;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.as.console.client.layout.LHSNavTree;
+import org.jboss.as.console.client.layout.LHSNavTreeItem;
+import org.jboss.as.console.client.util.Places;
+import org.jboss.as.console.client.widgets.stack.DisclosureStackPanel;
 
 /**
  * @author Heiko Braun
@@ -44,7 +44,7 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
 
     public ServerInstancesSection() {
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_serverInstances()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverInstances()).asWidget();
 
         instanceTree = new LHSNavTree("hosts");
 

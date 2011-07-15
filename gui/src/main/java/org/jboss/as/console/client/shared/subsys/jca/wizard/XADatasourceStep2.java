@@ -32,13 +32,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.widgets.ComboBox;
-import org.jboss.as.console.client.widgets.DefaultPager;
-import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.WindowContentBuilder;
+import org.jboss.as.console.client.widgets.forms.ComboBox;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
+import org.jboss.as.console.client.widgets.window.DialogueOptions;
+import org.jboss.as.console.client.widgets.window.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;

@@ -44,7 +44,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.window.DefaultWindow;
 
 import java.util.List;
 import java.util.Map;

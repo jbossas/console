@@ -38,9 +38,8 @@ import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TabHeader;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.DefaultPager;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
@@ -76,7 +75,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_deployments());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_deployments());
         layout.add(titleBar);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);

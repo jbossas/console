@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.as.console.client.widgets.DefaultPager;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.widgets.icons.Icons;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 

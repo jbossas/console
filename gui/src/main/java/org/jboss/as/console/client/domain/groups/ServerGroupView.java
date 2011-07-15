@@ -40,8 +40,8 @@ import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.TitleBar;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
+import org.jboss.as.console.client.widgets.window.Feedback;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
@@ -89,7 +89,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_serverGroup());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverGroup());
         layout.add(titleBar);
 
         // ----

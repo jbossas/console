@@ -30,7 +30,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.widgets.ContentGroupLabel;
 import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.DefaultPager;
+import org.jboss.as.console.client.widgets.tables.DefaultPager;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 
 /**

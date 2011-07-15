@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.widgets.Feedback;
+import org.jboss.as.console.client.widgets.window.Feedback;
 import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
 import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.as.console.client.widgets.tables.MenuColumn;

@@ -8,14 +8,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.WidgetUtil;
+import org.jboss.as.console.client.widgets.tabs.FakeTabPanel;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.as.console.client.widgets.window.Feedback;
 
 /**
  * @author Heiko Braun
@@ -30,7 +28,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar("Standalone Server");
+        FakeTabPanel titleBar = new FakeTabPanel("Standalone Server");
         layout.add(titleBar);
 
         // ----
@@ -61,7 +59,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        ScrollPanel scrollPanel = WidgetUtil.asScrollPanel(panel);
+        ScrollPanel scrollPanel = new ScrollPanel(panel);
         layout.add(scrollPanel);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);

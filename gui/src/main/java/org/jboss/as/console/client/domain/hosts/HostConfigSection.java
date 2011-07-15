@@ -22,9 +22,9 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.as.console.client.layout.LHSNavTree;
+import org.jboss.as.console.client.layout.LHSNavTreeItem;
+import org.jboss.as.console.client.widgets.stack.DisclosureStackPanel;
 
 /**
  * @author Heiko Braun
@@ -39,7 +39,7 @@ class HostConfigSection {
     public HostConfigSection() {
         super();
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_hostConfiguration()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_hostConfiguration()).asWidget();
 
         hostTree = new LHSNavTree("hosts");
 

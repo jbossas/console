@@ -44,7 +44,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmManagement;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;

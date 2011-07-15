@@ -26,9 +26,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.as.console.client.layout.LHSNavTree;
+import org.jboss.as.console.client.layout.LHSNavTreeItem;
+import org.jboss.as.console.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ class ServerGroupSection {
 
     public ServerGroupSection() {
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_serverGroups()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverGroups()).asWidget();
         serverGroupTree = new LHSNavTree("groups");
         panel.setContent(serverGroupTree);
     }

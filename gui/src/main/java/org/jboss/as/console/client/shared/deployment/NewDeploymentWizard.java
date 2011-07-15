@@ -34,7 +34,7 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.as.console.client.widgets.window.DefaultWindow;
 
 /**
  * @author Heiko Braun

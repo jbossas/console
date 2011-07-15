@@ -7,13 +7,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
-import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.WindowContentBuilder;
+import org.jboss.as.console.client.widgets.window.DialogueOptions;
+import org.jboss.as.console.client.widgets.window.WindowContentBuilder;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.ListItem;
 import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;

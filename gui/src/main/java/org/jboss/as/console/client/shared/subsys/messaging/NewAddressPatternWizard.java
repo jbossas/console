@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.as.console.client.widgets.DialogueOptions;
+import org.jboss.as.console.client.widgets.window.DialogueOptions;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.FormValidation;
 import org.jboss.as.console.client.widgets.forms.NumberBoxItem;

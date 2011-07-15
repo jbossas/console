@@ -43,7 +43,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealRootContentEvent;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.LoadingOverlay;
+import org.jboss.as.console.client.util.LoadingOverlay;
 
 
 public class SignInPagePresenter extends

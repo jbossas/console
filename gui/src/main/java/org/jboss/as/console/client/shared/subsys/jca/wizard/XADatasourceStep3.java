@@ -30,8 +30,8 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.WindowContentBuilder;
+import org.jboss.as.console.client.widgets.window.DialogueOptions;
+import org.jboss.as.console.client.widgets.window.WindowContentBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
