@@ -75,7 +75,7 @@ public class HostModelTest {
             @Override
             public void onSuccess(List<Host> result) {
                 assertTrue("No hosts loaded", result.size()>0);
-                assertEquals("local",result.get(0).getName());
+                assertEquals("master",result.get(0).getName());
                 didCallback = true;
             }
         };
@@ -103,7 +103,7 @@ public class HostModelTest {
             }
         };
 
-        store.getServerConfigurations("local", callback);
+        store.getServerConfigurations("master", callback);
 
         synchronized (callback) {
             callback.wait(500);
@@ -126,7 +126,7 @@ public class HostModelTest {
             }
         };
 
-        store.getServerInstances("local", callback);
+        store.getServerInstances("master", callback);
 
         synchronized (callback) {
             callback.wait(500);
