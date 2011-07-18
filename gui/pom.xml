@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.0.0.Beta14-SNAPSHOT</version>
+        <version>1.0.0.Beta15</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -27,6 +27,7 @@
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
             <version>${ballroom.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- GWT -->
