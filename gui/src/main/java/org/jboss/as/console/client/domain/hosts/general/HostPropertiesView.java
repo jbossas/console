@@ -50,7 +50,7 @@ public class HostPropertiesView extends DisposableViewImpl implements HostProper
         );
         layout.add(helpPanel.asWidget());
 
-        propertyEditor = new PropertyEditor(presenter);
+        propertyEditor = new PropertyEditor(presenter, 20);
         layout.add(propertyEditor.asWidget());
         propertyEditor.setEnabled(false);
 
