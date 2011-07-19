@@ -97,6 +97,8 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -340,6 +342,11 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(EndpointRegistry.class).in(Singleton.class);
         bind(DomainEndpointStrategy.class).in(Singleton.class);
         bind(StandaloneEndpointStrategy.class).in(Singleton.class);
+
+        bindPresenter(ResourceAdapterPresenter.class,
+                ResourceAdapterPresenter.MyView.class,
+                ResourceAdapterView.class,
+                ResourceAdapterPresenter.MyProxy.class);
     }
 
 }

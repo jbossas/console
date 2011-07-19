@@ -66,6 +66,7 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
@@ -190,5 +191,8 @@ public interface CoreUI extends Ginjector {
     EndpointRegistry getEndpointRegistry();
     DomainEndpointStrategy getDomainEndpointStrategy();
     StandaloneEndpointStrategy getStandaloneEndpointStrategy();
+
+    AsyncProvider<ResourceAdapterPresenter> getResourceAdapterPresenter();
+
 
 }

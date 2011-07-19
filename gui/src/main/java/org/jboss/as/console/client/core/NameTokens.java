@@ -44,6 +44,7 @@ public class NameTokens {
     public static final String HostInterfacesPresenter = "host-interfaces";
     public static final String StandaloneServerPresenter = "standalone-server";
     public static final String WebServicePresenter = "webservices";
+    public static final String ResourceAdapterPresenter ="resource-adapters";
 
     public static String getMainLayout() {
         return mainLayout;

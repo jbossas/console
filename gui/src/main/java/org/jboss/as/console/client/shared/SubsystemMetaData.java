@@ -30,7 +30,7 @@ public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new TreeMap<String, SubsystemGroup>();
 
-    private static final String INTEGRATION = "Connector";
+    private static final String CONNECTOR = "Connector";
 
     private static final String MESSAGING = "Messaging";
 
@@ -47,7 +47,7 @@ public class SubsystemMetaData {
     static {
 
         // specify groups
-        groups.put(INTEGRATION, new SubsystemGroup(INTEGRATION));
+        groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
@@ -56,10 +56,10 @@ public class SubsystemMetaData {
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca", Boolean.TRUE));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters", Boolean.TRUE));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("JCA", "jca", Boolean.TRUE));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
