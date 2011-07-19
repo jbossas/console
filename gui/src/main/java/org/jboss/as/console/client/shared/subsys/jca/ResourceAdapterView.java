@@ -7,15 +7,12 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -36,6 +33,8 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     private static final int PAGE_SIZE = 5;
     private CellTable<ResourceAdapter> table;
     private ListDataProvider<ResourceAdapter> dataProvider;
+    private AdapterDetails detailsPanel;
+    private AdapterConfigDetails configPanel;
 
     @Override
     public void setPresenter(ResourceAdapterPresenter presenter) {
@@ -47,7 +46,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("ResourceAdapter");
+        FakeTabPanel titleBar = new FakeTabPanel("Resource Adapter");
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
@@ -108,8 +107,6 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         table.addColumn(jndiNameColumn, "JNDI Name");
         table.addColumn(poolColumn, "Pool");
 
-        final SingleSelectionModel<ResourceAdapter> selectionModel = new SingleSelectionModel<ResourceAdapter>();
-        table.setSelectionModel(selectionModel);
 
         vpanel.add(table);
 
@@ -118,6 +115,24 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(table);
         vpanel.add(pager);
+
+
+        // -------
+        vpanel.add(new ContentGroupLabel("Resource Adapter"));
+
+        TabPanel bottomPanel = new TabPanel();
+        bottomPanel.setStyleName("default-tabpanel");
+
+        detailsPanel = new AdapterDetails();
+        detailsPanel.getForm().bind(table);
+        bottomPanel.add(detailsPanel.asWidget(), "Attributes");
+
+        configPanel = new AdapterConfigDetails();
+        bottomPanel.add(configPanel.asWidget(), "Configuration");
+
+        bottomPanel.selectTab(0);
+
+        vpanel.add(bottomPanel);
 
         return layout;
     }
