@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -50,7 +51,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("New Adapter", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton("New Resource Adapter", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -143,7 +144,6 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
         if(!adapters.isEmpty())
             table.getSelectionModel().setSelected(adapters.get(0), true);
-
 
     }
 }

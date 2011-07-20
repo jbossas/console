@@ -41,4 +41,9 @@ public class ModelNodeUtil {
 
         return operation;
     }
+
+    public static boolean indicatesSuccess(ModelNode response)
+    {
+        return response.get("outcome").asString().equals("success");
+    }
 }

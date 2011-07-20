@@ -39,14 +39,17 @@ public class AdapterStep1 {
         final Form<ResourceAdapter> form = new Form(ResourceAdapter.class);
 
         TextBoxItem archiveItem = new TextBoxItem("archive", "Archive");
-        TextBoxItem nameItem = new TextBoxItem("name", "Name");
+
+        // TODO: https://issues.jboss.org/browse/AS7-1346
+        //TextBoxItem nameItem = new TextBoxItem("name", "Name");
+
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);
         txItem.setValueMap(new String[] {"NoTransaction", "LocalTransaction", "XATransaction"});
 
-        form.setFields(archiveItem, nameItem, jndiItem, classItem, txItem);
+        form.setFields(archiveItem, jndiItem, classItem, txItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {

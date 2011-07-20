@@ -9,17 +9,20 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -122,7 +125,35 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
         revealStrategy.revealInParent(this);
     }
 
-    public void onDelete(ResourceAdapter ra) {
+    public void onDelete(final ResourceAdapter ra) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+
+        // TODO: https://issues.jboss.org/browse/AS7-1346
+        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                loadResourceAdapter();
+            }
+
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(result))
+                    Console.info("Success: Removed RA "+ra.getName());
+                else
+                    Console.error("Error: Failed to remove RA "+ra.getName(), result.toString());
+
+                loadResourceAdapter();
+            }
+        });
 
     }
 
@@ -151,8 +182,60 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
         window.hide();
     }
 
-    public void onCreateAdapter(ResourceAdapter step1Model) {
+    public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+
+        // TODO: https://issues.jboss.org/browse/AS7-1346
+        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
+
+        operation.get("archive").set(ra.getArchive());
+        operation.get("transaction-support").set(ra.getTransactionSupport());
+
+        // submodel
+        ModelNode conDef = new ModelNode();
+        conDef.get("class-name").set(ra.getConnectionClass());
+        conDef.get("jndi-name").set(ra.getJndiName());
+        conDef.get("pool-name").set(ra.getPoolName());
+
+        List<ModelNode> list = new ArrayList<ModelNode>();
+        list.add(conDef);
+        operation.get("connection-definitions").set(list);
+
+        // poperties
+
+        for(PropertyRecord prop : ra.getProperties())
+        {
+            // TODO: https://issues.jboss.org/browse/AS7-1347
+        }
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                loadResourceAdapter();
+            }
+
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(result))
+                    Console.info("Success: Created RA "+ra.getName());
+                else
+                    Console.error("Error: Failed to create RA " + ra.getName(), result.toString());
+
+                loadResourceAdapter();
+            }
+        });
+
     }
 
 

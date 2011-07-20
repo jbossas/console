@@ -61,7 +61,7 @@ public class AdapterDetails {
 
                 Feedback.confirm(
                         "Delete Resource Adapter",
-                        "Really delete this Adapter'" + ra.getName() + "' ?",
+                        "Really delete Adapter '" + ra.getName() + "' ?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
