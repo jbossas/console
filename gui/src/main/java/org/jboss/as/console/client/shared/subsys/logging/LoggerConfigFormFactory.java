@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
 import org.jboss.as.console.client.widgets.forms.ListItem;
@@ -32,23 +31,21 @@ import org.jboss.as.console.client.widgets.forms.TextItem;
  */
 public class LoggerConfigFormFactory<LoggerConfig> implements LoggingEntityFormFactory<LoggerConfig> {
 
-    private BeanFactory factory;
     private Class<?> conversionType;
+    private EntityBridge<LoggerConfig> bridge;
     
-    public LoggerConfigFormFactory(BeanFactory factory, Class<?> conversionType) {
-        this.factory = factory;
+    public LoggerConfigFormFactory(Class<?> conversionType, EntityBridge<LoggerConfig> bridge) {
         this.conversionType = conversionType;
+        this.bridge = bridge;
     }
     
     @Override
-    public Form<LoggerConfig> makeAddForm() {
+    public Form<LoggerConfig> makeAddEntityForm() {
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
 
         ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
         logLevelItem.setValueMap(LogLevel.STRINGS);
         logLevelItem.setValue(LogLevel.INFO.toString());
-
-        //ListItem handlersItem = new ListItem("handlers", Console.CONSTANTS.subsys_logging_handlers(), true);
 
         Form<LoggerConfig> form = new Form(this.conversionType);
         form.setNumColumns(1);
@@ -56,6 +53,16 @@ public class LoggerConfigFormFactory<LoggerConfig> implements LoggingEntityFormF
         return form;
     }
 
+    @Override
+    public AssignHandlerChooser<LoggerConfig> makeAssignHandlerForm() {
+        return new AssignHandlerChooser(this.conversionType);
+    }
+
+    @Override
+    public UnassignHandlerChooser<LoggerConfig> makeUnassignHandlerForm() {
+        return new UnassignHandlerChooser(this.conversionType, this.bridge);
+    }
+    
     @Override
     public Form<LoggerConfig> makeEditForm() {
         TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());

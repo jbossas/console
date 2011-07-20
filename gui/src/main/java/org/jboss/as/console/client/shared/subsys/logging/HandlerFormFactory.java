@@ -18,50 +18,76 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
 import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.StatusItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.as.console.client.widgets.forms.FormItem;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.*;
 
 /**
+ * Creates the Form objects needed for LoggingHandlers.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class HandlerFormFactory<LoggingHandler> implements LoggingEntityFormFactory<LoggingHandler> {
 
-    private BeanFactory factory;
     private Class<?> conversionType;
+    private EntityBridge<LoggingHandler> bridge;
     
-    public HandlerFormFactory(BeanFactory factory, Class<?> conversionType) {
-        this.factory = factory;
+    public HandlerFormFactory(Class<?> conversionType, EntityBridge<LoggingHandler> bridge) {
         this.conversionType = conversionType;
+        this.bridge = bridge;
     }
     
     @Override
-    public Form<LoggingHandler> makeAddForm() {
-        return makeEditForm();
+    public FormAdapter<LoggingHandler> makeAddEntityForm() {
+        ComboBoxItem handlerTypeItem = new ComboBoxItem("type", Console.CONSTANTS.subsys_logging_type());
+        handlerTypeItem.setValueMap(HandlerType.getAllDisplayNames());
+        handlerTypeItem.setValue("periodic-rotating-file-handler");
+
+        FormItem levelItem = LEVEL.getItemForAdd();
+        levelItem.setValue("INFO");
+        
+        Form<LoggingHandler> form = new Form(this.conversionType);
+        form.setNumColumns(1);
+        form.setFields(NAME.getItemForAdd(), handlerTypeItem, levelItem);
+        return form;
     }
 
     @Override
-    public Form<LoggingHandler> makeEditForm() {
-        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
-        TextItem typeItem = new TextItem("type", Console.CONSTANTS.subsys_logging_type());
+    public AssignHandlerChooser<LoggingHandler> makeAssignHandlerForm() {
+      return new AssignHandlerChooser(this.conversionType);
+    }
 
-        ComboBoxItem logLevelItem = new ComboBoxItem("level", Console.CONSTANTS.subsys_logging_logLevel());
-        logLevelItem.setValueMap(LogLevel.STRINGS);
+    @Override
+    public UnassignHandlerChooser<LoggingHandler> makeUnassignHandlerForm() {
+        return new UnassignHandlerChooser(this.conversionType, bridge);
+    }
+
+    @Override
+    public FormAdapter<LoggingHandler> makeEditForm() {
         
-        StatusItem flushItem = new StatusItem("autoflush", Console.CONSTANTS.subsys_logging_autoFlush());
+        Map<String, FormAdapter<LoggingHandler>> handlerForms = new HashMap<String, FormAdapter<LoggingHandler>>(HandlerType.values().length);
+        for (HandlerType handlerType : HandlerType.values()) {
+            HandlerAttribute[] attributes = handlerType.getAttributes();
+            FormItem[] formItems = new FormItem[attributes.length];
+            for (int i=0; i < attributes.length; i++) {
+                formItems[i] = attributes[i].getItemForEdit();
+            }
+            Form<LoggingHandler> form = new Form<LoggingHandler>(this.conversionType);
+            form.setFields(formItems);
+            form.setNumColumns(2);
+            handlerForms.put(handlerType.getDisplayName(), form);
+        }
 
-        TextItem formatterItem = new TextItem("formatter", Console.CONSTANTS.subsys_logging_formatter());
-        TextItem encodingItem = new TextItem("encoding", Console.CONSTANTS.subsys_logging_encoding());
-        TextItem queueItem = new TextItem("queueLength", Console.CONSTANTS.subsys_logging_queueLength());
-
-        Form<LoggingHandler> form = new Form(this.conversionType);
-        form.setNumColumns(2);
-        form.setFields(nameItem, typeItem, logLevelItem, flushItem, formatterItem, encodingItem, queueItem);
-        return form;
+        FormAdapter formDeckPanel = new FormDeckPanel(handlerForms, "type");
+        
+        return formDeckPanel;
     }
     
 }

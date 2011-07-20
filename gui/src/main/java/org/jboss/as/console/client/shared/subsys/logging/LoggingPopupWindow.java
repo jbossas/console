@@ -32,29 +32,30 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.DefaultButton;
 import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormValidation;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
 
 /**
- * Add dialog for a logging entity (logger or handler).
+ * Generic popup window that executes a command on the commandAdapter when the user clicks the Save button.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class AddLoggingEntityWindow<T> extends DefaultWindow {
+public abstract class LoggingPopupWindow<T> extends DefaultWindow {
     
-    private LoggingCmdAdapter<T> commandAdapter;
-    private Form<T> form;
+    protected EntityBridge<T> bridge;
+    protected FormAdapter<T> form;
     
-    public AddLoggingEntityWindow(String title, Form<T> form, LoggingCmdAdapter<T> commandAdapter) {
+    public LoggingPopupWindow(String title, FormAdapter<T> form, EntityBridge<T> bridge) {
         super(title);
         this.form = form;
-        this.commandAdapter = commandAdapter;
+        this.bridge = bridge;
         setWidth(320);
         setHeight(260);
 
         addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
-                AddLoggingEntityWindow.this.hide();
+                LoggingPopupWindow.this.hide();
             }
         });
         
@@ -76,29 +77,24 @@ public class AddLoggingEntityWindow<T> extends DefaultWindow {
 
             @Override
             public void onClick(ClickEvent event) {
-                AddLoggingEntityWindow.this.hide();
+                LoggingPopupWindow.this.hide();
             }
         });
 
         DefaultButton submit = new DefaultButton(Console.CONSTANTS.common_label_save(), new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
-
-                //FormValidation validation = form.validate();
-                //if (!validation.hasErrors()) {
-                    // proceed
+                FormValidation validation = form.validate();
+                if (!validation.hasErrors()) {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
                         @Override
                         public void execute() {
-                            //commandAdapter.onAdd(form);
-                            AddLoggingEntityWindow.this.hide();
+                            doCommand(form);
+                            LoggingPopupWindow.this.hide();
                         }
                     });
-
                 }
-         //   } // end if
+            } // end if
         });
 
         HorizontalPanel options = new HorizontalPanel();
@@ -118,4 +114,19 @@ public class AddLoggingEntityWindow<T> extends DefaultWindow {
         
         return layout;
     }
+
+    public void setNewBean() {
+        T newBean = bridge.newEntity().as();
+        form.edit(newBean);
+    }
+    
+    public void setBean(T bean) {
+        form.edit(bean);
+    }
+    
+    /**
+     * Execute a command from the EntityAdapter
+     * @param form The form that was just edited.
+     */
+    protected abstract void doCommand(FormAdapter<T> form);
 }

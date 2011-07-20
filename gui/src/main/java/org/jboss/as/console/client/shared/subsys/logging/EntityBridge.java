@@ -18,20 +18,36 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.Form;
+import com.google.gwt.autobean.shared.AutoBean;
+import java.util.List;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
 
 /**
- * Implementors of this class know how to perform specific CRUD 
+ * Implementors of this class know how to perform CRUD and other
  * operations on the given type T.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface LoggingCmdAdapter<T> {
+public interface EntityBridge<T> {
     
     /**
      * Add the entity from the form.
      */
-    public void onAdd(Form<T> form);
+    public void onAdd(FormAdapter<T> form);
+
+    /**
+     * Assign the form-selected handler to the entity.
+     * 
+     * @param form 
+     */
+    public void onAssignHandler(FormAdapter<T> form);
+    
+    /**
+     * Unassign the form-selected handler to the entity.
+     * 
+     * @param form 
+     */
+    public void onUnassignHandler(FormAdapter<T> form);
     
     /**
      * Prepare for editing.
@@ -43,14 +59,14 @@ public interface LoggingCmdAdapter<T> {
      * 
      * @param form  The form.
      */
-    public void onSaveDetails(Form<T> form);
+    public void onSaveDetails(FormAdapter<T> form);
     
     /**
      * Remove the entity in the form.
      * 
      * @param form The form.
      */
-    public void onRemove(Form<T> form);
+    public void onRemove(FormAdapter<T> form);
     
     /**
      * Get the name of the given entity.  We need this because
@@ -60,4 +76,25 @@ public interface LoggingCmdAdapter<T> {
      * @return The name.
      */
     public String getName(T entity);
+    
+    /**
+     * Create an empty entity.  Used for add operation.
+     * 
+     * @return A new instance of the entity.
+     */
+    public AutoBean<T> newEntity();
+    
+    /**
+     * Determine if a handler can be assigned to the given entity.
+     * @param entity The entity.
+     * @return <code>true</code> if a handler can be assigned, <code>false</code> otherwise.
+     */
+    public boolean isAssignHandlerAllowed(T entity);
+    
+    /**
+     * Get the names of the handlers assigned to the entity.
+     * @param entity The entity.
+     * @return The Handler names.
+     */
+    public List<String> getAssignedHandlers(T entity);
 }

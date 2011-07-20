@@ -20,19 +20,21 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import org.jboss.as.console.client.widgets.forms.FormAdapter;
 
+
 /**
- * Interface that describes a class that knows how to create Forms for CRUD
- * on an entity (LoggerConfig or Handler).
+ * Window to assign a Handler to a LoggerConfig or to another Handler.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface LoggingEntityFormFactory<T> {
+public class AssignHandlerWindow<T> extends LoggingPopupWindow<T> {
 
-    public FormAdapter<T> makeAddEntityForm();
+    public AssignHandlerWindow(String title, FormAdapter<T> form, EntityBridge<T> bridge) {
+        super(title, form, bridge);
+    }
+
+    @Override
+    protected void doCommand(FormAdapter<T> form) {
+        bridge.onAssignHandler(form);
+    }
     
-    public AssignHandlerChooser<T> makeAssignHandlerForm();
-    
-    public UnassignHandlerChooser<T> makeUnassignHandlerForm();
-    
-    public FormAdapter<T> makeEditForm();
 }

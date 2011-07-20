@@ -18,30 +18,44 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import java.util.List;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
 
 /**
  * Adapter for CRUD on LoggerConfig
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class LoggerConfigCmdAdapter implements LoggingCmdAdapter<LoggerConfig> {
+public class LoggerConfigBridge implements EntityBridge<LoggerConfig> {
 
     private LoggingPresenter presenter;
     
-    public LoggerConfigCmdAdapter(LoggingPresenter presenter) {
+    public LoggerConfigBridge(LoggingPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void onAdd(Form<LoggerConfig> form) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void onAdd(FormAdapter<LoggerConfig> form) {
+        String name = form.getUpdatedEntity().getName();
+        String level = form.getUpdatedEntity().getLevel();
+        presenter.onAddLogger(name, level);
+    }
+
+    @Override
+    public void onAssignHandler(FormAdapter<LoggerConfig> form) {
+        presenter.onAssignHandlerToLogger(form.getEditedEntity().getName(), form.getUpdatedEntity().getHandlerToAssign());
+    }
+
+    @Override
+    public void onUnassignHandler(FormAdapter<LoggerConfig> form) {
+        presenter.onUnassignHandlerFromLogger(form.getEditedEntity().getName(), form.getUpdatedEntity().getHandlerToUnassign());
     }
     
     @Override
-    public String getName(LoggerConfig entity) {
-        return entity.getName();
+    public String getName(LoggerConfig logger) {
+        return logger.getName();
     }
 
     @Override
@@ -50,13 +64,27 @@ public class LoggerConfigCmdAdapter implements LoggingCmdAdapter<LoggerConfig> {
     }
 
     @Override
-    public void onRemove(Form<LoggerConfig> form) {
+    public void onRemove(FormAdapter<LoggerConfig> form) {
         presenter.onRemoveLogger(form.getEditedEntity().getName());
     }
 
     @Override
-    public void onSaveDetails(Form<LoggerConfig> form) {
+    public void onSaveDetails(FormAdapter<LoggerConfig> form) {
         presenter.onSaveLoggerDetails(form.getEditedEntity().getName(), form.getChangedValues());
     }
-    
+
+    @Override
+    public AutoBean<LoggerConfig> newEntity() {
+        return presenter.getBeanFactory().loggerConfig();
+    }
+
+    @Override
+    public boolean isAssignHandlerAllowed(LoggerConfig logger) {
+        return true;
+    }
+
+    @Override
+    public List<String> getAssignedHandlers(LoggerConfig logger) {
+        return logger.getHandlers();
+    }
 }

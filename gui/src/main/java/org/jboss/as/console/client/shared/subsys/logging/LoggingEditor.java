@@ -37,12 +37,14 @@ import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
+ * The editor that allows CRUD operations on an entity (Handler or LoggerConfig).
+ * 
  * @author Stan Silvert
  * @date 3/29/11
  */
 public class LoggingEditor<T> {
     private String entitiesName;
-    private AddLoggingEntityWindow<T> window;
+    private LoggingPopupWindow<T> window;
     private ListDataProvider<T> dataProvider;
     private DefaultCellTable<T> table;
     private LoggingDetails<T> details;
@@ -50,12 +52,14 @@ public class LoggingEditor<T> {
     private DefaultPager pager;
 
     /**
+     * Create a new LoggingEditor.
      * 
      * @param entitiesName The display name (plural) of the entities.
+     * @param window The window used for creating a new entity.
      * @param table The table that holds the entities.
      * @param details  The LoggingDetails that manages CRUD for the selected entity.
      */
-    public LoggingEditor(String entitiesName, AddLoggingEntityWindow<T> window, DefaultCellTable<T> table, LoggingDetails<T> details) {
+    public LoggingEditor(String entitiesName, LoggingPopupWindow<T> window, DefaultCellTable<T> table, LoggingDetails<T> details) {
         this.entitiesName = entitiesName;
         this.window = window;
         this.table = table;
@@ -72,9 +76,9 @@ public class LoggingEditor<T> {
 
         final ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
+                window.setNewBean();
                 window.show();
             }
         }));
@@ -109,11 +113,6 @@ public class LoggingEditor<T> {
             return;
         }
         
-        if (details.getEditedEntity() == null) {
-            setSelected(entityList.get(0));
-            return;
-        }
-        
         if(lastEdited == null) {
             setSelected(entityList.get(0));
             return;
@@ -132,6 +131,6 @@ public class LoggingEditor<T> {
     }
     
     public void enableDetails(boolean isEnabled) {
-        this.details.setEnabled(isEnabled);
+        this.details.setEditingEnabled(isEnabled);
     }
 }

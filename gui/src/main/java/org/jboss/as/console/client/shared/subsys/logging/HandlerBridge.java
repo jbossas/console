@@ -18,30 +18,44 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import java.util.List;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
 
 /**
  * Adapter for CRUD on logging handlers.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class HandlerCmdAdapter implements LoggingCmdAdapter<LoggingHandler> {
+public class HandlerBridge implements EntityBridge<LoggingHandler> {
 
     private LoggingPresenter presenter;
     
-    public HandlerCmdAdapter(LoggingPresenter presenter) {
+    public HandlerBridge(LoggingPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void onAdd(Form<LoggingHandler> form) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void onAdd(FormAdapter<LoggingHandler> form) {
+        presenter.onAddHandler(form.getUpdatedEntity());
+    }
+
+    @Override
+    public void onAssignHandler(FormAdapter<LoggingHandler> form) {
+        LoggingHandler editedHandler = form.getEditedEntity();
+        presenter.onAssignHandlerToHandler(editedHandler.getName(), editedHandler.getType(), form.getUpdatedEntity().getHandlerToAssign());
+    }
+
+    @Override
+    public void onUnassignHandler(FormAdapter<LoggingHandler> form) {
+        LoggingHandler editedHandler = form.getEditedEntity();
+        presenter.onUnassignHandlerFromHandler(editedHandler.getName(), editedHandler.getType(), form.getUpdatedEntity().getHandlerToUnassign());
     }
     
     @Override
-    public String getName(LoggingHandler entity) {
-        return entity.getName();
+    public String getName(LoggingHandler handler) {
+        return handler.getName();
     }
 
     @Override
@@ -50,13 +64,29 @@ public class HandlerCmdAdapter implements LoggingCmdAdapter<LoggingHandler> {
     }
 
     @Override
-    public void onRemove(Form<LoggingHandler> form) {
+    public void onRemove(FormAdapter<LoggingHandler> form) {
         presenter.onRemoveHandler(form.getEditedEntity().getName(), form.getEditedEntity().getType());
     }
 
     @Override
-    public void onSaveDetails(Form<LoggingHandler> form) {
+    public void onSaveDetails(FormAdapter<LoggingHandler> form) {
         presenter.onSaveHandlerDetails(form.getEditedEntity().getName(), form.getEditedEntity().getType(), form.getChangedValues());
+    }
+
+    @Override
+    public AutoBean<LoggingHandler> newEntity() {
+        return presenter.getBeanFactory().loggingHandler();
+    }
+
+    @Override
+    public boolean isAssignHandlerAllowed(LoggingHandler handler) {
+        // Subhandlers can only be assigned to async handlers.
+        return handler.getType().equals(HandlerType.ASYNC.getDisplayName());
+    }
+
+    @Override
+    public List<String> getAssignedHandlers(LoggingHandler handler) {
+        return handler.getSubhandlers();
     }
     
 }

@@ -18,21 +18,40 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
+import org.jboss.as.console.client.widgets.forms.Form;
 
 /**
- * Interface that describes a class that knows how to create Forms for CRUD
- * on an entity (LoggerConfig or Handler).
+ * A Form that allows the user to choose a Handler.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface LoggingEntityFormFactory<T> {
+public class UnassignHandlerChooser<T> extends Form<T> {
+    
+    private ComboBoxItem handlersItem;
+    private EntityBridge<T> bridge;
+    
+    public UnassignHandlerChooser(Class<T> conversionType, EntityBridge<T> bridge) {
+        super(conversionType);
+        this.bridge = bridge;
+        setNumColumns(1);
+    }
+    
+    @Override
+    public Widget asWidget() {
+        handlersItem = new ComboBoxItem("handlerToUnassign", Console.CONSTANTS.subsys_logging_handlers());
+        handlersItem.setRequired(true);
+        setFields(handlersItem);
+        return super.asWidget();
+    }
 
-    public FormAdapter<T> makeAddEntityForm();
-    
-    public AssignHandlerChooser<T> makeAssignHandlerForm();
-    
-    public UnassignHandlerChooser<T> makeUnassignHandlerForm();
-    
-    public FormAdapter<T> makeEditForm();
+    @Override
+    public void edit(T bean) {
+        super.edit(bean);
+        this.handlersItem.setValueMap(bridge.getAssignedHandlers(bean));
+        this.handlersItem.clearSelection();
+    }
+
 }

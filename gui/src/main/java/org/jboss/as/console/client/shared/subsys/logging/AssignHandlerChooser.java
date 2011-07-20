@@ -18,21 +18,39 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
+import org.jboss.as.console.client.widgets.forms.Form;
 
 /**
- * Interface that describes a class that knows how to create Forms for CRUD
- * on an entity (LoggerConfig or Handler).
+ * A Form that allows the user to choose a Handler.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface LoggingEntityFormFactory<T> {
+public class AssignHandlerChooser<T> extends Form<T> {
+    
+    private ComboBoxItem availableHandlersItem;
+    
+    public AssignHandlerChooser(Class<T> conversionType) {
+        super(conversionType);
+        setNumColumns(1);
+    }
+    
+    @Override
+    public Widget asWidget() {
+        this.availableHandlersItem = new ComboBoxItem("handlerToAssign", Console.CONSTANTS.subsys_logging_handlers());
+        this.availableHandlersItem.setRequired(true);
+        setFields(availableHandlersItem);
+        return super.asWidget();
+    }
 
-    public FormAdapter<T> makeAddEntityForm();
-    
-    public AssignHandlerChooser<T> makeAssignHandlerForm();
-    
-    public UnassignHandlerChooser<T> makeUnassignHandlerForm();
-    
-    public FormAdapter<T> makeEditForm();
+    /**
+     * Update the Handlers that the user can choose.
+     * 
+     * @param handlers The Handlers.
+     */
+    public void updateAvailableHandlers(String[] handlers) {
+        this.availableHandlersItem.setValueMap(handlers);
+    }
 }

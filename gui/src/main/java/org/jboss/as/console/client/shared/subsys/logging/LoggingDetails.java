@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
@@ -34,27 +35,37 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.as.console.client.widgets.forms.EditListener;
+import org.jboss.as.console.client.widgets.forms.FormAdapter;
 import org.jboss.as.console.client.widgets.tools.ToolButton;
 import org.jboss.as.console.client.widgets.tools.ToolStrip;
 
 /**
+ * Displays form and buttons that allow editing of most attributes of the entity (Handler or LoggerConfig).
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class LoggingDetails<T> {
+public class LoggingDetails<T> implements EditListener {
 
     private String entitiesName;
-    private Form<T> form;
+    private FormAdapter<T> form;
     private ToolButton editBtn;
     private ToolButton cancelBtn;
     private ToolButton removeBtn;
-    private T editedEntity;
-    private LoggingCmdAdapter executor;
+    private ToolButton assignHandlerBtn;
+    private ToolButton unassignHandlerBtn;
+    private EntityBridge executor;
+    private AssignHandlerWindow assignHandlerWindow;
+    private UnassignHandlerWindow unassignHandlerWindow;
+    private boolean isAssignHandlerAllowed; // Can we assign a handler to the currently selected bean?
+    private boolean isUnassignHandlerAllowed;
 
-    public LoggingDetails(String entitiesName, Form<T> form, LoggingCmdAdapter executor) {
+    public LoggingDetails(String entitiesName, FormAdapter form, EntityBridge executor, 
+                          AssignHandlerWindow assignHandlerWindow, UnassignHandlerWindow unassignHandlerWindow) {
         this.entitiesName = entitiesName;
         this.form = form;
         this.executor = executor;
+        this.assignHandlerWindow = assignHandlerWindow;
+        this.unassignHandlerWindow = unassignHandlerWindow;
     }
 
     public Widget asWidget() {
@@ -70,7 +81,6 @@ public class LoggingDetails<T> {
                 if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
                     executor.onEdit();
                 } else {
-                    editedEntity = form.getEditedEntity();
                     executor.onSaveDetails(form);
                 }
             }
@@ -83,7 +93,7 @@ public class LoggingDetails<T> {
             @Override
             public void onClick(ClickEvent event) {
                 form.cancel();
-                LoggingDetails.this.setEnabled(false);
+                LoggingDetails.this.setEditingEnabled(false);
             }
         };
         cancelBtn.addClickHandler(cancelHandler);
@@ -107,29 +117,64 @@ public class LoggingDetails<T> {
         };
         removeBtn.addClickHandler(removeHandler);
 
+        assignHandlerBtn = new ToolButton(Console.CONSTANTS.subsys_logging_addHandler());
+        ClickHandler addHandlerHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                assignHandlerWindow.setBean(form.getEditedEntity());
+                assignHandlerWindow.show();
+            }
+        };
+        assignHandlerBtn.addClickHandler(addHandlerHandler);
+        
+        unassignHandlerBtn = new ToolButton(Console.CONSTANTS.subsys_logging_removeHandler());
+        ClickHandler removeHandlerHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                unassignHandlerWindow.setBean(form.getEditedEntity());
+                unassignHandlerWindow.show();
+            }
+        };
+        unassignHandlerBtn.addClickHandler(removeHandlerHandler);
+        
         detailToolStrip.addToolButton(editBtn);
         detailToolStrip.addToolButton(cancelBtn);
         detailToolStrip.addToolButton(removeBtn);
+        detailToolStrip.addToolButton(assignHandlerBtn);
+        detailToolStrip.addToolButton(unassignHandlerBtn);
 
         detailPanel.add(detailToolStrip);
 
         detailPanel.add(form.asWidget());
+        form.addEditListener(this);
 
-        setEnabled(false);  // initially don't allow edit
+        setEditingEnabled(false);  // initially don't allow edit
 
         ScrollPanel scroll = new ScrollPanel(detailPanel);
         return scroll;
     }
 
-    public void bind(CellTable<T> loggerConfigTable) {
-        form.bind(loggerConfigTable);
+    /**
+     * Bind the table to the details section.
+     * @param loggingEntityTable The table to be bound.
+     */
+    public void bind(CellTable<T> loggingEntityTable) {
+        form.bind(loggingEntityTable);
     }
 
-    public void setEnabled(boolean isEnabled) {
+    /**
+     * Set the state of the form and buttons if editing details is enabled.
+     * @param isEnabled Set the flag for editing details.
+     */
+    public void setEditingEnabled(boolean isEnabled) {
         form.setEnabled(isEnabled);
         cancelBtn.setVisible(isEnabled);
         removeBtn.setVisible(!isEnabled);
-
+        assignHandlerBtn.setVisible(isAssignHandlerAllowed && !isEnabled);
+        unassignHandlerBtn.setVisible(isUnassignHandlerAllowed && !isEnabled);
+        
         if (isEnabled) {
             editBtn.setText(Console.CONSTANTS.common_label_save());
         } else {
@@ -137,7 +182,12 @@ public class LoggingDetails<T> {
         }
     }
 
-    public T getEditedEntity() {
-        return editedEntity;
+    @Override
+    public void editingBean(Object bean) {
+        this.isAssignHandlerAllowed = executor.isAssignHandlerAllowed(bean);
+        List<String> assignedHandlers = executor.getAssignedHandlers(bean);
+        this.isUnassignHandlerAllowed = this.isAssignHandlerAllowed && (assignedHandlers != null) && (assignedHandlers.size() > 0);
+        assignHandlerBtn.setVisible(isAssignHandlerAllowed);
+        unassignHandlerBtn.setVisible(isUnassignHandlerAllowed);
     }
 }

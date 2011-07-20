@@ -18,28 +18,92 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.*;
+
 /**
- * This enum is used in the console to avoid importing the whole jboss logging project.
- * We just need something to pass around that will generate the proper toString() values.
+ * Enum that describes the attributes that belong with each type of Handler.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public enum LogLevel {
-    FATAL,
-    ERROR,
-    WARN,
-    INFO,
-    DEBUG,
-    TRACE;
+public enum HandlerType {
+    CONSOLE("console-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, TARGET),
     
-    public static final String[] STRINGS;
+    ASYNC("async-handler", NAME, LEVEL, OVERFLOW_ACTION, SUBHANDLERS, QUEUE_LENGTH),
     
-    static {
-        LogLevel[] values = LogLevel.values();
+    FILE("file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, APPEND, FILE_RELATIVE_TO, FILE_PATH),
+    
+    SIZE_ROTATING_FILE("size-rotating-file-handler", NAME, LEVEL, ENCODING, FORMATTER, AUTOFLUSH, FILE_RELATIVE_TO, 
+                                                     FILE_PATH, ROTATE_SIZE, MAX_BACKUP_INDEX),
+    
+    PERIODIC_ROTATING_FILE("periodic-rotating-file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, 
+                                                             APPEND, FILE_RELATIVE_TO, FILE_PATH, SUFFIX);
+    
+    private final String displayName;
+    
+    private final HandlerAttribute[] attributes;
+    
+    /**
+     * Create a new HandlerType.
+     * 
+     * @param displayName This is both the name displayed in the UI and used in DMR requests.
+     * @param attributes The attributes associated with the HandlerType.
+     */
+    private HandlerType(String displayName, HandlerAttribute... attributes) {
+        this.displayName = displayName;
+        this.attributes = attributes;
+    }
+    
+    /**
+     * Get the name of each HandlerType.
+     * 
+     * @return The names.
+     */
+    public static String[] getAllDisplayNames() {
+        HandlerType[] values = HandlerType.values();
         String[] array = new String[values.length];
         for (int i=0; i < values.length; i++) {
-            array[i] = values[i].toString();
+            array[i] = values[i].displayName;
         }
-        STRINGS = array;
+        
+        return array;
+    }
+    
+    /**
+     * Find a HandlerType given its displayName.
+     * @param displayName The displanName (DMR type name)
+     * @return The HandlerType if found
+     * @throws IllegalArgumentException if not found.
+     */
+    public static HandlerType findHandlerType(String displayName) {
+        for (HandlerType handler : HandlerType.values()) {
+            if (handler.displayName.equals(displayName)) return handler;
+        }
+        
+        throw new IllegalArgumentException("Unknown HandlerType display name " + displayName);
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+    
+    /**
+     * Does this HandlerType have a give attribute?
+     * @param attribute The attribute to search for.
+     * @return <code>true</code> if the HandlerType has the attribute, <code>false</code> otherwise.
+     */
+    public boolean hasAttribute(HandlerAttribute attribute) {
+        for (HandlerAttribute attrib : attributes) {
+            if (attrib == attribute) return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Return all the attributes that a given HandlerType has.
+     * @return The attributes.
+     */
+    public HandlerAttribute[] getAttributes() {
+        return this.attributes;
     }
 }
