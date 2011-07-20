@@ -57,19 +57,7 @@ public class XADatasourceStep1 {
         final Form<XADataSource> form = new Form<XADataSource>(XADataSource.class);
 
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-                boolean notEmpty = super.validate(value);
-
-                return notEmpty && !value.contains(":") && !value.startsWith("/");
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "Not empty, no prefix, no leading slash";
-            }
-        };
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
         enabled.setValue(Boolean.TRUE);
 

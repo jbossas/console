@@ -58,19 +58,7 @@ public class DatasourceStep1 {
         final Form<DataSource> form = new Form<DataSource>(DataSource.class);
 
         final TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-                boolean notEmpty = super.validate(value);
-
-                return notEmpty && !value.contains(":") && !value.startsWith("/");
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "Not empty, no prefix, no leading slash";
-            }
-        };
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
         enabled.setValue(Boolean.TRUE);
 

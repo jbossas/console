@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jndi;
+package org.jboss.as.console.client.shared.subsys.naming;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -13,6 +13,9 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -59,6 +62,13 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     @Override
     protected void onReset() {
         super.onReset();
+        loadJndiTree();
+    }
+
+    private void loadJndiTree() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set("jndi-view");
+        operation.get(ADDRESS).add();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jndi;
+package org.jboss.as.console.client.shared.subsys.naming;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;

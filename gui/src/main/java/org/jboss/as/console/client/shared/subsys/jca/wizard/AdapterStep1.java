@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.jca;
+package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -12,7 +12,6 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
@@ -47,7 +46,7 @@ public class AdapterStep1 {
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);
-        txItem.setValueMap(new String[] {"NoTransaction", "LocalTransaction", "XATransaction"});
+        txItem.setValueMap(new String[]{"NoTransaction", "LocalTransaction", "XATransaction"});
 
         form.setFields(archiveItem, jndiItem, classItem, txItem);
 
