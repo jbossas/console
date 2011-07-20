@@ -68,8 +68,7 @@ public class LHSStandaloneNavigation {
 
         Tree deploymentTree = new LHSNavTree("profiles");
         deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
-        deploymentTree.addItem(new LHSNavTreeItem("JNDI View", NameTokens.JndiPresenter));
-        DisclosurePanel deplPanel  = new DisclosureStackPanel("Tools").asWidget();
+        DisclosurePanel deplPanel  = new DisclosureStackPanel("Deployments").asWidget();
         deplPanel.setContent(deploymentTree);
 
         stack.add(deplPanel);
