@@ -1,6 +1,9 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.Binding;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -30,4 +33,8 @@ public interface ResourceAdapter {
 
     String getArchive();
     void setArchive(String archive);
+
+    @Binding(detypedName = "none", ignore = true)
+    List<PropertyRecord> getProperties();
+    void setProperties(List<PropertyRecord> props);
 }

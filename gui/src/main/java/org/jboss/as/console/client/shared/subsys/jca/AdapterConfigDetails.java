@@ -12,6 +12,12 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
  */
 public class AdapterConfigDetails implements PropertyManagement{
 
+    private ResourceAdapterPresenter presenter;
+
+    public AdapterConfigDetails(ResourceAdapterPresenter presenter) {
+        this.presenter = presenter;
+    }
+
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");

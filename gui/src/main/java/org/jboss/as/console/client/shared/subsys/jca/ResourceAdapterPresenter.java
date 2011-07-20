@@ -18,11 +18,13 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -36,6 +38,7 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
     private RevealStrategy revealStrategy;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -118,4 +121,39 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
+
+    public void onDelete(ResourceAdapter ra) {
+
+    }
+
+    public void onSave(String name, Map<String, Object> changedValues) {
+
+    }
+
+    public void onEdit(ResourceAdapter editedEntity) {
+
+    }
+
+    public void launchNewAdapterWizard() {
+        window = new DefaultWindow("Create Resource Adapter");
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewAdapterWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void closeDialoge() {
+        window.hide();
+    }
+
+    public void onCreateAdapter(ResourceAdapter step1Model) {
+        closeDialoge();
+    }
+
+
 }

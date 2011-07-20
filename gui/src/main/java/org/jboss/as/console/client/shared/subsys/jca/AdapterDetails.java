@@ -5,6 +5,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -13,6 +15,7 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -23,13 +26,17 @@ public class AdapterDetails {
     private VerticalPanel layout;
     private Form<ResourceAdapter> form;
     private ToolButton editBtn;
+    private ResourceAdapterPresenter presenter;
 
-    public AdapterDetails() {
+    public AdapterDetails(final ResourceAdapterPresenter presenter) {
+
+        this.presenter = presenter;
+
         layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
         form = new Form<ResourceAdapter>(ResourceAdapter.class);
-
+        form.setNumColumns(2);
 
         ToolStrip detailToolStrip = new ToolStrip();
         editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
@@ -37,11 +44,9 @@ public class AdapterDetails {
             @Override
             public void onClick(ClickEvent event) {
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    //TODO
-                    System.out.println("edit");
+                    presenter.onEdit(form.getEditedEntity());
                 else
-                    //TODO
-                    System.out.println("save");
+                    presenter.onSave(form.getEditedEntity().getName(), form.getChangedValues());
             }
         };
         editBtn.addClickHandler(editHandler);
@@ -52,7 +57,7 @@ public class AdapterDetails {
             @Override
             public void onClick(ClickEvent event) {
 
-                ResourceAdapter ra = form.getEditedEntity();
+                final ResourceAdapter ra = form.getEditedEntity();
 
                 Feedback.confirm(
                         "Delete Resource Adapter",
@@ -61,7 +66,7 @@ public class AdapterDetails {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    // TODO
+                                    presenter.onDelete(ra);
                                 }
                             }
                         });
@@ -86,6 +91,19 @@ public class AdapterDetails {
 
         form.setFields(nameItem, jndiItem, poolItem, archiveItem);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), txItem, classItem);
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "resource-adapters");
+                        address.add("resource-adapter", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

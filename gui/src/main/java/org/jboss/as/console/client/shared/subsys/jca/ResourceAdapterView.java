@@ -54,7 +54,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewAdapterWizard();
             }
         }));
 
@@ -70,9 +70,9 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        layout.setWidgetTopHeight(topLevelTools, 26, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
 
         vpanel.add(new ContentGroupLabel("Registered Adapter"));
 
@@ -123,11 +123,11 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
-        detailsPanel = new AdapterDetails();
+        detailsPanel = new AdapterDetails(presenter);
         detailsPanel.getForm().bind(table);
         bottomPanel.add(detailsPanel.asWidget(), "Attributes");
 
-        configPanel = new AdapterConfigDetails();
+        configPanel = new AdapterConfigDetails(presenter);
         bottomPanel.add(configPanel.asWidget(), "Configuration");
 
         bottomPanel.selectTab(0);
