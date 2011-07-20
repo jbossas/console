@@ -78,7 +78,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_deployments());
         layout.add(titleBar);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+
 
         final ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
@@ -90,8 +90,8 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         }));
         
         layout.add(toolStrip);
-        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        
+
+
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
@@ -141,7 +141,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         scroll.add(panel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 65, Style.Unit.PCT);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 26, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
         
         return layout;
     }
