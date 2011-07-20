@@ -63,6 +63,7 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.jndi.JndiPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -193,6 +194,6 @@ public interface CoreUI extends Ginjector {
     StandaloneEndpointStrategy getStandaloneEndpointStrategy();
 
     AsyncProvider<ResourceAdapterPresenter> getResourceAdapterPresenter();
-
+    AsyncProvider<JndiPresenter> getJndiPresenter();
 
 }

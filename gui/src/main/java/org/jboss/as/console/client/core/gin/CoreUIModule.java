@@ -91,6 +91,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.jndi.JndiPresenter;
+import org.jboss.as.console.client.shared.jndi.JndiView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
@@ -347,6 +349,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ResourceAdapterPresenter.MyView.class,
                 ResourceAdapterView.class,
                 ResourceAdapterPresenter.MyProxy.class);
+
+        bindPresenter(JndiPresenter.class,
+                JndiPresenter.MyView.class,
+                JndiView.class,
+                JndiPresenter.MyProxy.class);
     }
 
 }
