@@ -19,9 +19,7 @@ import java.util.Stack;
  */
 public class JndiTreeParser {
 
-
     private Stack<JndiEntry> stack = new Stack<JndiEntry>();
-
     private JndiEntry root = new JndiEntry("JNDI");
     private TreeViewModel treeModel = new JndiTreeModel(root);
     private CellTree cellTree = new CellTree(treeModel, "root");
@@ -30,19 +28,19 @@ public class JndiTreeParser {
     public CellTree parse(List<Property> model) {
 
         stack.push(root);
-        parseJndiTree(model);
+        parseSiblings(model);
         return cellTree;
     }
 
-    private void parseJndiTree(List<Property> siblings) {
+    private void parseSiblings(List<Property> siblings) {
 
         boolean skipped = false;
         for(Property sibling : siblings)
         {
             try {
                 List<Property> children = sibling.getValue().asPropertyList();
-                skipped = inc(sibling);
-                parseJndiTree(children);
+                skipped = createChild(sibling);
+                parseSiblings(children);
             } catch (IllegalArgumentException e) {
                 continue;
             }
@@ -63,7 +61,13 @@ public class JndiTreeParser {
         }
     }
 
-    private boolean inc(Property sibling) {
+    /**
+     * create actual children
+     *
+     * @param sibling
+     * @return
+     */
+    private boolean createChild(Property sibling) {
 
         boolean skipped = sibling.getName().equals("children");
 
@@ -71,6 +75,9 @@ public class JndiTreeParser {
         {
             //dump(sibling);
             JndiEntry next = new JndiEntry(sibling.getName());
+            if(sibling.getValue().hasDefined("value"))
+                    next.setType(sibling.getValue().get("value").asString());
+
             stack.peek().getChildren().add(next);
             stack.push(next);
         }
@@ -90,7 +97,18 @@ public class JndiTreeParser {
     class JndiEntryCell extends AbstractCell<JndiEntry> {
         @Override
         public void render(Context context, JndiEntry value, SafeHtmlBuilder sb) {
-            sb.appendEscaped(value.getName());
+            sb.appendHtmlConstant("<table width='100%'>");
+            sb.appendHtmlConstant("<tr>");
+                sb.appendHtmlConstant("<td width='60%'>");
+                sb.appendEscaped(value.getName());
+                sb.appendHtmlConstant("</td>");
+
+                sb.appendHtmlConstant("<td width='40%' align='right'>");
+                sb.appendEscaped(value.getType());
+                sb.appendHtmlConstant("</td>");
+
+            sb.appendHtmlConstant("</tr>");
+            sb.appendHtmlConstant("</table>");
         }
     }
 
