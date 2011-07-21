@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.naming;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.Tree;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -10,10 +11,17 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -35,6 +43,7 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
 
     public interface MyView extends View {
         void setPresenter(JndiPresenter presenter);
+        void setJndiTree(Tree tree);
     }
 
     @Inject
@@ -68,7 +77,22 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
     private void loadJndiTree() {
         ModelNode operation = new ModelNode();
         operation.get(OP).set("jndi-view");
-        operation.get(ADDRESS).add();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "naming");
+
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode model = result.get(RESULT);
+
+                // if(prop.getName().equals("java: contexts")) {
+
+                Tree tree = new JndiTreeParser().parse(model.asPropertyList());
+                getView().setJndiTree(tree);
+            }
+        });
     }
 
     @Override

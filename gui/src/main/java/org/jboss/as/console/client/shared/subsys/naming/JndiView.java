@@ -1,5 +1,8 @@
 package org.jboss.as.console.client.shared.subsys.naming;
 
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
@@ -11,6 +14,7 @@ import org.jboss.ballroom.client.layout.RHSContentPanel;
 public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView {
 
     private JndiPresenter presenter;
+    private VerticalPanel container;
 
     @Override
     public void setPresenter(JndiPresenter presenter) {
@@ -20,7 +24,18 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
     @Override
     public Widget createWidget() {
         RHSContentPanel layout = new RHSContentPanel("JNDI View");
+        container = new VerticalPanel();
+        container.setStyleName("fill-layout");
+
+        layout.add(container);
 
         return layout;
+    }
+
+    @Override
+    public void setJndiTree(Tree tree) {
+        container.clear();
+        container.add(tree);
+        tree.getItem(0).setState(true);
     }
 }
