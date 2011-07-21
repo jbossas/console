@@ -1,7 +1,11 @@
 package org.jboss.as.console.client.shared.subsys.naming;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.dmr.client.Property;
 
 import java.util.List;
@@ -70,4 +74,38 @@ public class JndiTreeParser {
         System.out.println(sb.toString());
     }
 
+    class JndiEntryCell extends AbstractCell<JndiEntry> {
+        @Override
+        public void render(Context context, JndiEntry value, SafeHtmlBuilder sb) {
+            sb.append(value.getName());
+        }
+    }
+
+    class JndiTreeModel implements TreeViewModel {
+
+        /**
+         * Get the {@link NodeInfo} that provides the children
+         * of the specified value.
+         */
+        public <T> NodeInfo<?> getNodeInfo(T value) {
+
+            JndiEntry entry = (JndiEntry)value;
+
+            ListDataProvider<JndiEntry> dataProvider = new ListDataProvider<JndiEntry>();
+            dataProvider.setList(entry.getChildren());
+
+            return new DefaultNodeInfo<JndiEntry>(dataProvider, new JndiEntryCell());
+        }
+
+        /**
+         * Check if the specified value represents a leaf node.
+         * Leaf nodes cannot be opened.
+         */
+        public boolean isLeaf(Object value) {
+            return ((JndiEntry)value).getChildren().isEmpty();
+        }
+    }
+
 }
+
+
