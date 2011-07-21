@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
@@ -209,6 +210,11 @@ public class BeanFactoryImpl implements BeanFactory {
     @Override
     public AutoBean<WebServiceEndpoint> webServiceEndpoint() {
         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<ResourceAdapter> resourceAdapter() {
+         throw new RuntimeException("not implemented");
     }
 }
 
