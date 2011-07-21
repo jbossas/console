@@ -5,10 +5,10 @@ import java.util.List;
 
 class JndiEntry {
 
-    private boolean name;
+    private String name;
     private List<JndiEntry> children;
 
-    JndiEntry(boolean name) {
+    JndiEntry(String name) {
         this.name = name;
         this.children = new ArrayList<JndiEntry>();
     }
@@ -17,7 +17,7 @@ class JndiEntry {
         return children;
     }
 
-    public boolean getName() {
+    public String getName() {
         return name;
     }
 }

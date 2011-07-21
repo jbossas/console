@@ -2,8 +2,8 @@ package org.jboss.as.console.client.shared.subsys.naming;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.dmr.client.Property;
@@ -12,20 +12,26 @@ import java.util.List;
 import java.util.Stack;
 
 /**
+ * really awkward jndi parsing routine.
+ *
  * @author Heiko Braun
  * @date 7/21/11
  */
 public class JndiTreeParser {
 
 
-    private Tree tree;
-    private Stack<TreeItem> stack = new Stack<TreeItem>();
+    private Stack<JndiEntry> stack = new Stack<JndiEntry>();
 
-    public Tree parse(List<Property> model) {
-        tree = new Tree();
-        stack.push(tree.addItem("JNDI"));
+    private JndiEntry root = new JndiEntry("JNDI");
+    private TreeViewModel treeModel = new JndiTreeModel(root);
+    private CellTree cellTree = new CellTree(treeModel, "root");
+    private static Command finishCmd = null;
+
+    public CellTree parse(List<Property> model) {
+
+        stack.push(root);
         parseJndiTree(model);
-        return tree;
+        return cellTree;
     }
 
     private void parseJndiTree(List<Property> siblings) {
@@ -49,6 +55,12 @@ public class JndiTreeParser {
     private void dec(boolean skipped) {
         if(!skipped)
             stack.pop();
+
+        if(stack.empty())
+        {
+            assert finishCmd!=null;
+            finishCmd.execute();
+        }
     }
 
     private boolean inc(Property sibling) {
@@ -58,7 +70,8 @@ public class JndiTreeParser {
         if(!skipped)
         {
             //dump(sibling);
-            TreeItem next = stack.peek().addItem(sibling.getName());
+            JndiEntry next = new JndiEntry(sibling.getName());
+            stack.peek().getChildren().add(next);
             stack.push(next);
         }
 
@@ -77,11 +90,17 @@ public class JndiTreeParser {
     class JndiEntryCell extends AbstractCell<JndiEntry> {
         @Override
         public void render(Context context, JndiEntry value, SafeHtmlBuilder sb) {
-            sb.append(value.getName());
+            sb.appendEscaped(value.getName());
         }
     }
 
     class JndiTreeModel implements TreeViewModel {
+
+        private JndiEntry rootEntry;
+
+        JndiTreeModel(JndiEntry root) {
+            this.rootEntry = root;
+        }
 
         /**
          * Get the {@link NodeInfo} that provides the children
@@ -89,10 +108,21 @@ public class JndiTreeParser {
          */
         public <T> NodeInfo<?> getNodeInfo(T value) {
 
-            JndiEntry entry = (JndiEntry)value;
+            final ListDataProvider<JndiEntry> dataProvider = new ListDataProvider<JndiEntry>();
 
-            ListDataProvider<JndiEntry> dataProvider = new ListDataProvider<JndiEntry>();
-            dataProvider.setList(entry.getChildren());
+            if(value instanceof JndiEntry)
+            {
+                JndiEntry entry = (JndiEntry)value;
+                dataProvider.setList(entry.getChildren());
+            }
+            else {
+                setFinish(new Command() {
+                    @Override
+                    public void execute() {
+                        dataProvider.setList(rootEntry.getChildren());
+                    }
+                });
+            }
 
             return new DefaultNodeInfo<JndiEntry>(dataProvider, new JndiEntryCell());
         }
@@ -102,8 +132,19 @@ public class JndiTreeParser {
          * Leaf nodes cannot be opened.
          */
         public boolean isLeaf(Object value) {
-            return ((JndiEntry)value).getChildren().isEmpty();
+
+            if(value instanceof JndiEntry)
+                return ((JndiEntry)value).getChildren().isEmpty();
+            else
+                return false;
         }
+
+    }
+
+
+    private static void setFinish(Command cmd)
+    {
+        finishCmd = cmd;
     }
 
 }

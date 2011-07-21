@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.naming;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.cellview.client.CellTree;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -19,9 +19,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
-
-import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -43,7 +40,7 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
 
     public interface MyView extends View {
         void setPresenter(JndiPresenter presenter);
-        void setJndiTree(Tree tree);
+        void setJndiTree(CellTree tree);
     }
 
     @Inject
@@ -87,10 +84,8 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 ModelNode model = result.get(RESULT);
 
-                // if(prop.getName().equals("java: contexts")) {
-
-                Tree tree = new JndiTreeParser().parse(model.asPropertyList());
-                getView().setJndiTree(tree);
+                CellTree cellTree = new JndiTreeParser().parse(model.asPropertyList());
+                getView().setJndiTree(cellTree);
             }
         });
     }

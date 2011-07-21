@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.naming;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
@@ -33,9 +32,8 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
     }
 
     @Override
-    public void setJndiTree(Tree tree) {
+    public void setJndiTree(CellTree tree) {
         container.clear();
         container.add(tree);
-        tree.getItem(0).setState(true);
     }
 }
