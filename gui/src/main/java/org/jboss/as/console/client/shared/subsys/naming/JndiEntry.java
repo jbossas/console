@@ -23,9 +23,14 @@ class JndiEntry {
         int idx = value.lastIndexOf(".");
 
         if(value!=null && idx>0) {
-           value = value.substring(idx+1, value.length());
-           this.type = value;
+            value = value.substring(idx+1, value.length());
+        }else if (value.length()>50)
+        {
+            value = value.substring(0, 50 )+" ...";
         }
+
+
+        this.type = value;
     }
 
     public List<JndiEntry> getChildren() {
