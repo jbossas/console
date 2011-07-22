@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DefaultGroupRenderer;
@@ -123,7 +124,7 @@ public class XADataSourceDetails {
 
         final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
+        StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
