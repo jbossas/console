@@ -8,6 +8,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -85,7 +86,10 @@ public class AdapterDetails {
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
         TextItem archiveItem = new TextItem("archive", "Archive");
 
-        TextBoxItem txItem = new TextBoxItem("transactionSupport", "TX");
+        ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
+        txItem.setDefaultToFirstOption(true);
+        txItem.setValueMap(new String[]{"NoTransaction", "LocalTransaction", "XATransaction"});
+
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
 
 
