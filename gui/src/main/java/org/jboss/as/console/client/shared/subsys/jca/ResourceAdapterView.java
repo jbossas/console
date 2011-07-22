@@ -12,6 +12,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.RowCountChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -131,9 +134,19 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         configPanel = new AdapterConfigDetails(presenter);
         bottomPanel.add(configPanel.asWidget(), "Configuration");
 
-        bottomPanel.selectTab(0);
+        final SingleSelectionModel<ResourceAdapter> selectionModel =
+                (SingleSelectionModel<ResourceAdapter>)table.getSelectionModel();
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ResourceAdapter selectedRa = selectionModel.getSelectedObject();
+                configPanel.setAdapter(selectedRa);
+            }
+        });
+
+        bottomPanel.selectTab(0);
         vpanel.add(bottomPanel);
+
 
         return layout;
     }
@@ -145,5 +158,11 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         if(!adapters.isEmpty())
             table.getSelectionModel().setSelected(adapters.get(0), true);
 
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        detailsPanel.setEnabled(b);
+        configPanel.setEnabled(b);
     }
 }
