@@ -1,6 +1,10 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -16,11 +20,17 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.jvm.Jvm;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
@@ -36,13 +46,23 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 7/19/11
  */
-public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy> {
+public class ResourceAdapterPresenter
+        extends Presenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy>
+        implements PropertyManagement {
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private DefaultWindow window;
+    private DefaultWindow propertyWindow;
+
+    private List<ResourceAdapter> resourceAdapters;
+    private PropertyMetaData propertyMetaData;
+
+    public BeanFactory getFactory() {
+        return factory;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -52,19 +72,22 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
     public interface MyView extends View {
         void setPresenter(ResourceAdapterPresenter presenter);
         void setAdapters(List<ResourceAdapter> adapters);
+
+        void setEnabled(boolean b);
     }
 
     @Inject
     public ResourceAdapterPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, RevealStrategy revealStrategy,
-            DispatchAsync dispatcher, BeanFactory factory) {
+            DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.revealStrategy = revealStrategy;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.propertyMetaData = propertyMetaData;
     }
 
     @Override
@@ -103,12 +126,26 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
                     ra.setTransactionSupport(model.get("transaction-support").asString());
                     ra.setArchive(model.get("archive").asString());
 
-                    // todo: https://issues.jboss.org/browse/AS7-1339
+                    if(model.hasDefined("config-properties"))
+                    {
+                        List<Property> config = model.get("config-properties").asPropertyList();
+                        List<PropertyRecord> propertyList = new ArrayList<PropertyRecord>(config.size());
+                        for(Property cfg : config) {
+                            PropertyRecord propModel = factory.property().as();
+                            propModel.setKey(cfg.getName());
+                            propModel.setValue(cfg.getValue().asString());
+
+                            propertyList.add(propModel);
+                        }
+
+                        ra.setProperties(propertyList);
+                    }
 
                     adapters.add(ra);
 
                 }
 
+                resourceAdapters = adapters;
                 getView().setAdapters(adapters);
 
             }
@@ -130,10 +167,7 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "resource-adapters");
-
-        // TODO: https://issues.jboss.org/browse/AS7-1346
         operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -160,10 +194,48 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
 
     public void onSave(String name, Map<String, Object> changedValues) {
 
+        getView().setEnabled(false);
+
+        if(changedValues.isEmpty())
+        {
+            Console.warning("No changes saved!");
+            return;
+        }
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "resource-adapters");
+        proto.get(ADDRESS).add("resource-adapter", name);
+
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(ResourceAdapter.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Error: Failed to update resource adapter", caught.getMessage());
+                loadResourceAdapter();
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
+
+                if(success)
+                    Console.info("Success: Update resource adapter ");
+                else
+                    Console.error("Failed: Update resource adapter", response.toString());
+
+                loadResourceAdapter();
+            }
+        });
     }
 
     public void onEdit(ResourceAdapter editedEntity) {
-
+        getView().setEnabled(true);
     }
 
     public void launchNewAdapterWizard() {
@@ -191,8 +263,6 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "resource-adapters");
-
-        // TODO: https://issues.jboss.org/browse/AS7-1346
         operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
 
         operation.get("archive").set(ra.getArchive());
@@ -209,13 +279,11 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
         operation.get("connection-definitions").set(list);
 
         // poperties
-
+        operation.get("config-properties").setEmptyList();
         for(PropertyRecord prop : ra.getProperties())
         {
-            // TODO: https://issues.jboss.org/browse/AS7-1347
+            operation.get("config-properties").add(prop.getKey(), prop.getValue());
         }
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -239,5 +307,102 @@ public class ResourceAdapterPresenter extends Presenter<ResourceAdapterPresenter
 
     }
 
+    // TODO: https://issues.jboss.org/browse/AS7-1379
+    @Override
+    public void onCreateProperty(final String ref, final PropertyRecord prop) {
+        closePropertyDialoge();
+        System.out.println("Create "+prop.getKey());
 
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+        operation.get(ADDRESS).add("resource-adapter", ref);
+
+
+        ResourceAdapter ra = resolveAdapter(ref);
+
+
+        // poperties
+        ModelNode cfg = new ModelNode();
+        cfg.setEmptyList();
+        for(PropertyRecord cfgProp : ra.getProperties())
+        {
+            cfg.add(cfgProp.getKey(), cfgProp.getValue());
+        }
+
+        operation.get(NAME).set("config-properties");
+        operation.get(VALUE).set(cfg);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                loadResourceAdapter();
+            }
+
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(result))
+                    Console.info("Success: Created added property "+prop.getKey());
+                else
+                    Console.error("Error: Failed to add property " + prop.getKey(), result.toString());
+
+                loadResourceAdapter();
+            }
+        });
+
+    }
+
+    private ResourceAdapter resolveAdapter(String reference)
+    {
+        ResourceAdapter match = null;
+        for(ResourceAdapter ra : resourceAdapters)
+        {
+            if(ra.getArchive().equals(reference))
+            {
+                match = ra;
+                break;
+            }
+        }
+
+        return match;
+    }
+
+    @Override
+    public void onDeleteProperty(String ref, PropertyRecord prop) {
+        Console.error("Not implemented");
+
+        // TODO: https://issues.jboss.org/browse/AS7-1381
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow("New Configuration Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
 }

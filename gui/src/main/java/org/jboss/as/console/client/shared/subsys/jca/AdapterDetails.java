@@ -118,4 +118,13 @@ public class AdapterDetails {
     public Form<ResourceAdapter> getForm() {
         return form;
     }
+
+    public void setEnabled(boolean b) {
+        form.setEnabled(b);
+
+        if(!b)
+            editBtn.setText("Edit");
+        else
+            editBtn.setText("Save");
+    }
 }
