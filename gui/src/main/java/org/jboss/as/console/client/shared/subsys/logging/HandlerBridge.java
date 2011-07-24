@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.subsys.logging;
 import com.google.gwt.autobean.shared.AutoBean;
 import java.util.List;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
  * Adapter for CRUD on logging handlers.

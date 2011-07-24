@@ -233,7 +233,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
             Object value = entry.getValue();
             
             if ((attrib == HandlerAttribute.FILE_PATH) || (attrib == HandlerAttribute.FILE_RELATIVE_TO)) {
-                operation.get("file").set(value.toString());
+                operation.get("file").get(dmrName).set(value.toString());
             } else {
                 operation.get(dmrName).set(value.toString());
             }

@@ -214,7 +214,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<ResourceAdapter> resourceAdapter() {
-         throw new RuntimeException("not implemented");
+        throw new RuntimeException("not implemented");
     }
 }
 

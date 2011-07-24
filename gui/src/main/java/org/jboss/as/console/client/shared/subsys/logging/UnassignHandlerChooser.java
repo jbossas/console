@@ -20,8 +20,8 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
 
 /**
  * A Form that allows the user to choose a Handler.
@@ -43,6 +43,7 @@ public class UnassignHandlerChooser<T> extends Form<T> {
     public Widget asWidget() {
         handlersItem = new ComboBoxItem("handlerToUnassign", Console.CONSTANTS.subsys_logging_handlers());
         handlersItem.setRequired(true);
+        handlersItem.setDefaultToFirstOption(true);
         setFields(handlersItem);
         return super.asWidget();
     }
@@ -52,6 +53,7 @@ public class UnassignHandlerChooser<T> extends Form<T> {
         super.edit(bean);
         this.handlersItem.setValueMap(bridge.getAssignedHandlers(bean));
         this.handlersItem.clearSelection();
+        this.handlersItem.selectItem(0);
     }
 
 }

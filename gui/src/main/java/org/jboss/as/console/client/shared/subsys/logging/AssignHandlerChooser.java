@@ -20,8 +20,8 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
 
 /**
  * A Form that allows the user to choose a Handler.
@@ -41,6 +41,7 @@ public class AssignHandlerChooser<T> extends Form<T> {
     public Widget asWidget() {
         this.availableHandlersItem = new ComboBoxItem("handlerToAssign", Console.CONSTANTS.subsys_logging_handlers());
         this.availableHandlersItem.setRequired(true);
+        this.availableHandlersItem.setDefaultToFirstOption(true);
         setFields(availableHandlersItem);
         return super.asWidget();
     }
@@ -52,5 +53,6 @@ public class AssignHandlerChooser<T> extends Form<T> {
      */
     public void updateAvailableHandlers(String[] handlers) {
         this.availableHandlersItem.setValueMap(handlers);
+        if (handlers.length > 0) this.availableHandlersItem.selectItem(0);
     }
 }

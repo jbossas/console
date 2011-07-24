@@ -21,11 +21,10 @@ package org.jboss.as.console.client.shared.subsys.logging;
 import java.util.HashMap;
 import java.util.Map;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormItem;
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 
 import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.*;
 

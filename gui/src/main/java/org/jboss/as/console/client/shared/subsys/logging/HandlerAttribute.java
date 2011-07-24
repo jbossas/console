@@ -18,15 +18,17 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import java.util.Formatter;
+import java.util.IllegalFormatException;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.ComboBoxItem;
-import org.jboss.as.console.client.widgets.forms.FormItem;
-import org.jboss.as.console.client.widgets.forms.ListItem;
-import org.jboss.as.console.client.widgets.forms.NumberBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.ListItem;
+import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 
 /**
  * Enum that ties handler attributes in DMR to the corresponding attributes in the UI.
@@ -39,16 +41,16 @@ public enum HandlerAttribute {
     LEVEL(true, "level", "level", "INFO", Console.CONSTANTS.subsys_logging_logLevel(), new ComboBoxItemFactory(LogLevel.STRINGS)),
     ENCODING(true, "encoding", "encoding", "UTF-8", Console.CONSTANTS.subsys_logging_encoding(), new TextBoxItemFactory()),
     FILTER(false, "filter", "filter", "", Console.CONSTANTS.subsys_logging_filter(), new TextBoxItemFactory()),
-    FORMATTER(true, "formatter", "formatter", "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", Console.CONSTANTS.subsys_logging_formatter(), new TextBoxItemFactory()),
+    FORMATTER(false, "formatter", "formatter", "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", Console.CONSTANTS.subsys_logging_formatter(), new FormatterItemFactory()),
     AUTOFLUSH(false, "autoflush", "autoflush", "true", Console.CONSTANTS.subsys_logging_autoFlush(), new CheckBoxItemFactory()),
     APPEND(false, "append", "append", "false", Console.CONSTANTS.subsys_logging_append(), new CheckBoxItemFactory()),
     FILE_RELATIVE_TO(false, "relative-to", "fileRelativeTo", "jboss.server.log.dir", Console.CONSTANTS.subsys_logging_fileRelativeTo(), new TextBoxItemFactory()),
     FILE_PATH(true, "path", "filePath", "mylog.log", Console.CONSTANTS.subsys_logging_filePath(), new TextBoxItemFactory()),
-    ROTATE_SIZE(true, "rotate-size", "rotateSize", "10485760", Console.CONSTANTS.subsys_logging_rotateSize(), new TextBoxItemFactory()), // 10MB default
+    ROTATE_SIZE(true, "rotate-size", "rotateSize", "2m", Console.CONSTANTS.subsys_logging_rotateSize(), new ByteUnitItemFactory()), // 2MB default
     MAX_BACKUP_INDEX(true, "max-backup-index", "maxBackupIndex", "5", Console.CONSTANTS.subsys_logging_maxBackupIndex(), new TextBoxItemFactory()),
     TARGET(true, "target", "target", "SYSTEM_OUT", Console.CONSTANTS.subsys_logging_target(), new TextBoxItemFactory()), // default value can either be SYSTEM_OUT or SYSTEM_ERR
     SUBHANDLERS(false, "subhandlers", "subhandlers", "", Console.CONSTANTS.subsys_logging_subhandlers(), new ListBoxItemFactory()),
-    OVERFLOW_ACTION(false, "overflow-action", "overflowAction", "BLOCK", Console.CONSTANTS.subsys_logging_overflowAction(), new ComboBoxItemFactory(new String[] {"BLOCK", "DISCARD"})),
+    OVERFLOW_ACTION(true, "overflow-action", "overflowAction", "BLOCK", Console.CONSTANTS.subsys_logging_overflowAction(), new ComboBoxItemFactory(new String[] {"BLOCK", "DISCARD"})),
     QUEUE_LENGTH(true, "queue-length", "queueLength", "512", Console.CONSTANTS.subsys_logging_queueLength(), new TextBoxItemFactory()),
     SUFFIX(true, "suffix", "suffix", ".yyyy-MM-dd", Console.CONSTANTS.subsys_logging_suffix(), new TextBoxItemFactory());
     
@@ -150,6 +152,85 @@ public enum HandlerAttribute {
             TextBoxItem textBoxItem = new TextBoxItem(beanPropName, label);
             textBoxItem.setRequired(isRequired);
             return textBoxItem;
+        }
+    }
+ 
+    private static class FormatterItemFactory implements FormItemFactory {
+        @Override
+        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
+            FormatterTextBox formatterTextBoxItem = new FormatterTextBox(beanPropName, label);
+            formatterTextBoxItem.setRequired(isRequired);
+            return formatterTextBoxItem;
+        }
+        
+        private static class FormatterTextBox extends TextBoxItem {
+            public FormatterTextBox(String name, String title) {
+                super(name, title);
+            }
+            
+            @Override
+            public boolean validate(String value) {
+            /*    try {
+                    Formatter formatter = new Formatter();
+                    formatter.format(value);
+                } catch (IllegalFormatException e) {
+                    e.printStackTrace();
+                    this.errMessage = e.getLocalizedMessage();
+                    return false;
+                } */
+                return true;
+            }
+        }
+    }
+    
+    private static class ByteUnitItemFactory implements FormItemFactory {
+        @Override
+        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
+            ByteUnitItem byteUnitItem = new ByteUnitItem(beanPropName, label);
+            byteUnitItem.setRequired(isRequired);
+            return byteUnitItem;
+        }
+        
+        private static class ByteUnitItem extends TextBoxItem {
+            private char[] UNIT_CHARS = {'b', 'k', 'm', 'g', 't'};
+            
+            public ByteUnitItem(String name, String title) {
+                super(name, title);
+            }
+            
+            @Override
+            // GWT doesn't allow me to use regex to do this validation.  
+            // Compiler chokes on Pattern class.
+            public boolean validate(String value) {
+                if (!super.validate(name)) {
+                    return false;
+                }
+                
+                if (value.length() < 2) return invalidValue();
+                
+                char finalChar = value.toLowerCase().charAt(value.length() - 1);
+                
+                boolean foundUnit = false;
+                for (char unit : UNIT_CHARS) {
+                    if (unit == finalChar) foundUnit = true;
+                }
+                
+                if (!foundUnit) return invalidValue();
+                    
+                String number = value.substring(0, value.length() - 1);
+                try {
+                    Long.parseLong(number);
+                } catch (NumberFormatException e) {
+                    return invalidValue();
+                }
+                
+                return true;
+            }
+            
+            private boolean invalidValue() {
+                this.errMessage = Console.CONSTANTS.subsys_logging_invalidByteSpec();
+                return false;
+            }
         }
     }
     

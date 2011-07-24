@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.EditListener;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -27,10 +26,11 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
-import org.jboss.as.console.client.widgets.stack.NamedDeckPanel;
+import org.jboss.ballroom.client.widgets.forms.EditListener;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.stack.NamedDeckPanel;
 
 /**
  * A NamedDeckPanel that wraps one or more Forms.  The IForm methods usually

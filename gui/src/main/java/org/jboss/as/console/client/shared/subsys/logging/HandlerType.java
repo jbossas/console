@@ -26,9 +26,9 @@ import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public enum HandlerType {
-    CONSOLE("console-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, TARGET),
+    CONSOLE("console-handler", NAME, LEVEL, AUTOFLUSH, ENCODING, FILTER, FORMATTER, TARGET),
     
-    ASYNC("async-handler", NAME, LEVEL, OVERFLOW_ACTION, SUBHANDLERS, QUEUE_LENGTH),
+    ASYNC("async-handler", NAME, LEVEL, OVERFLOW_ACTION, QUEUE_LENGTH, SUBHANDLERS),
     
     FILE("file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, APPEND, FILE_RELATIVE_TO, FILE_PATH),
     

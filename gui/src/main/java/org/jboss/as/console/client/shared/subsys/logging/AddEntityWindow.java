@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
  * Window to add a Handler or LoggerConfig.

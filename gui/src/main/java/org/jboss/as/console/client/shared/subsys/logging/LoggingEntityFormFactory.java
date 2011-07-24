@@ -18,7 +18,8 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
 
 /**
  * Interface that describes a class that knows how to create Forms for CRUD

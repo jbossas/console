@@ -220,4 +220,5 @@ public interface UIConstants extends Constants {
     
     String subsys_logging_handlerConfigurations();
 
+    String subsys_logging_invalidByteSpec();
 }
