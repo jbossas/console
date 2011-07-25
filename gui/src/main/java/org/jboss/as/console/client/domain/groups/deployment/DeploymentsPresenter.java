@@ -211,8 +211,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     public void launchNewDeploymentDialoge() {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
-        window.setWidth(320);
-        window.setHeight(260);
+        window.setWidth(480);
+        window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
 
             @Override

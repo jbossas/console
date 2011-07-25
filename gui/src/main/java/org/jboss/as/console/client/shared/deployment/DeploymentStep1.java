@@ -37,6 +37,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
  * @author Heiko Braun
@@ -77,37 +79,23 @@ public class DeploymentStep1 {
 
         // Add a 'submit' button.
 
-        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
-        cancel.setStyleName("html-link");
-        cancel.addClickHandler(new ClickHandler() {
+
+        ClickHandler cancelHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 window.hide();
             }
-        });
-
-        String okText = Console.CONSTANTS.common_label_next() + " &rsaquo;&rsaquo;";
-        Button submit = new DefaultButton(okText, new ClickHandler() {
+        };
+        ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 form.submit();
             }
-        });
+        };
 
-        HorizontalPanel options = new HorizontalPanel();
-        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
-
-        HTML spacer = new HTML("&nbsp;");
-        options.add(spacer);
-
-        options.add(submit);
-        options.add(spacer);
-        options.add(cancel);
-        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
-        submit.getElement().getParentElement().setAttribute("align", "right");
-        submit.getElement().getParentElement().setAttribute("width", "100%");
-
-        panel.add(options);
+        DialogueOptions options = new DialogueOptions(
+                "Next &rsaquo;&rsaquo;", submitHandler,
+                "Cancel", cancelHandler);
 
         // Add an event handler to the form.
         form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
@@ -143,6 +131,6 @@ public class DeploymentStep1 {
         description.setHTML(Console.CONSTANTS.common_label_chooseFile());
         layout.add(description);
         layout.add(form);
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 }
