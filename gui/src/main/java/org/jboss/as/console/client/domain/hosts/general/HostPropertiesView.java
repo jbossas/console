@@ -43,7 +43,7 @@ public class HostPropertiesView extends DisposableViewImpl implements HostProper
     public Widget createWidget() {
 
         LayoutPanel layout = new RHSContentPanel("Host Properties");
-        layout.add(new ContentHeaderLabel("System Property Declarations"));
+        layout.add(new ContentHeaderLabel("Host Property Declarations"));
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(
                 "These properties will be inherited by any server on this host."

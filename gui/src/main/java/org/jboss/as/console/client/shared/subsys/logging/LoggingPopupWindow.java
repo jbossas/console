@@ -46,8 +46,8 @@ public abstract class LoggingPopupWindow<T> extends DefaultWindow {
         super(title);
         this.form = form;
         this.bridge = bridge;
-        setWidth(320);
-        setHeight(260);
+        setWidth(480);
+        setHeight(360);
 
         addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override

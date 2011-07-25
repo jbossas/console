@@ -123,7 +123,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
 
     public void launchNewPropertyDialoge(String group) {
 
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow("New Host Property");
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {

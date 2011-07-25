@@ -150,7 +150,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
                 window = new DefaultWindow("Create Datasource");
                 window.setWidth(480);
-                window.setHeight(320);
+                window.setHeight(360);
                 window.addCloseHandler(new CloseHandler<PopupPanel>() {
                     @Override
                     public void onClose(CloseEvent<PopupPanel> event) {
