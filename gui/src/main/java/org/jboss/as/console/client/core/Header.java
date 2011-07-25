@@ -212,7 +212,7 @@ public class Header implements ValueChangeHandler<String> {
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);
 
-                headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
+                //headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
             }
 
             headerString.appendHtmlConstant("</tr></table>");

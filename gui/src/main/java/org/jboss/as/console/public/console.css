@@ -84,6 +84,11 @@ body {
     font-size: 12px;
     text-decoration: none;
     background-color:#F8F8F8;
+    border-right: 1px solid #A7ABB4!important;
+    border-bottom: 1px solid #A7ABB4!important;
+    min-height:32px;
+    max-height:32px;
+    height:32px;
 }
 
 .header-link:hover {
