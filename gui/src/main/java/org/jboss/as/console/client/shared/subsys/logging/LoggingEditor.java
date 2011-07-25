@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,6 +68,9 @@ public class LoggingEditor<T> {
     }
 
     public Widget asWidget() {
+
+        LayoutPanel panel = new LayoutPanel();
+
         ScrollPanel scroll = new ScrollPanel();
 
         VerticalPanel layout = new VerticalPanel();
@@ -81,7 +86,8 @@ public class LoggingEditor<T> {
                 window.show();
             }
         }));
-        layout.add(toolStrip);
+
+        panel.add(toolStrip);
         
         layout.add(new ContentHeaderLabel(entitiesName));
         
@@ -98,8 +104,13 @@ public class LoggingEditor<T> {
         details.bind(table);
         layout.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         layout.add(details.asWidget());
-        
-        return scroll;
+
+        panel.add(scroll);
+
+        panel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        panel.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return panel;
     }
     
     public void updateEntityList(List<T> entityList, T lastEdited) {
