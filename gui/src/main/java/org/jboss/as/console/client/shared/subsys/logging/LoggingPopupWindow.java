@@ -23,17 +23,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
  * Generic popup window that executes a command on the commandAdapter when the user clicks the Save button.
@@ -67,21 +64,19 @@ public abstract class LoggingPopupWindow<T> extends DefaultWindow {
     
     private Widget makeWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.getElement().setAttribute("style", "width:95%, margin:15px;");
-        
+        layout.setStyleName("default-window-content");
+
         layout.add(form.asWidget());
 
-        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
-        cancel.setStyleName("html-link");
-        cancel.addClickHandler(new ClickHandler() {
+        ClickHandler cancelHandler = new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 LoggingPopupWindow.this.hide();
             }
-        });
+        };
 
-        DefaultButton submit = new DefaultButton(Console.CONSTANTS.common_label_save(), new ClickHandler() {
+        ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 FormValidation validation = form.validate();
@@ -95,24 +90,14 @@ public abstract class LoggingPopupWindow<T> extends DefaultWindow {
                     });
                 }
             } // end if
-        });
+        };
 
-        HorizontalPanel options = new HorizontalPanel();
-        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
+        DialogueOptions options = new DialogueOptions(
+                submitHandler, cancelHandler
+        );
 
-        HTML spacer = new HTML("&nbsp;");
-        options.add(spacer);
+        return new WindowContentBuilder(layout, options).build();
 
-        options.add(submit);
-        options.add(spacer);
-        options.add(cancel);
-        cancel.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
-        submit.getElement().getParentElement().setAttribute("align", "right");
-        submit.getElement().getParentElement().setAttribute("width", "100%");
-
-        layout.add(options);
-        
-        return layout;
     }
 
     public void setNewBean() {
