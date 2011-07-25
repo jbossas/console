@@ -180,18 +180,45 @@ public interface UIConstants extends Constants {
     
     String subsys_logging_handlers();
     
+    String subsys_logging_handler();
+    
+    String subsys_logging_addHandler();
+    
+    String subsys_logging_removeHandler();
+    
     String subsys_logging_autoFlush();
     
     String subsys_logging_encoding();
     
+    String subsys_logging_filter();
+    
     String subsys_logging_formatter();
+    
+    String subsys_logging_append();
+    
+    String subsys_logging_fileRelativeTo();
+    
+    String subsys_logging_filePath();
+    
+    String subsys_logging_rotateSize();
+    
+    String subsys_logging_maxBackupIndex();
+    
+    String subsys_logging_target();
     
     String subsys_logging_type();
     
     String subsys_logging_logLevel();
     
+    String subsys_logging_overflowAction();
+    
+    String subsys_logging_subhandlers();
+            
     String subsys_logging_queueLength();
+    
+    String subsys_logging_suffix();
     
     String subsys_logging_handlerConfigurations();
 
+    String subsys_logging_invalidByteSpec();
 }

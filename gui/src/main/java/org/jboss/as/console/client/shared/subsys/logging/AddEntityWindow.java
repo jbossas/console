@@ -16,46 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging.model;
+package org.jboss.as.console.client.shared.subsys.logging;
 
-import java.util.List;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Model for a Logger
+ * Window to add a Handler or LoggerConfig.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface LoggerConfig {
-   String getName();
-   void setName(String name);
-   
-   String getLevel();
-   void setLevel(String level);
-   
-   List<String> getHandlers();
-   void setHandlers(List<String> handlers);
-   
-   /**
-    * Get the handler that needs to be assigned to the logger.
-    * @param handlerName 
-    */
-   String getHandlerToAssign();
-   
-   /**
-    * Set a handler that the presenter will try to assign to the logger.
-    * @param handlerName The handler name.
-    */
-   void setHandlerToAssign(String handlerName);
-   
-   /**
-    * Get the handler that needs to be assigned to the logger.
-    * @param handlerName 
-    */
-   String getHandlerToUnassign();
-   
-   /**
-    * Set a handler that the presenter will try to assign to the logger.
-    * @param handlerName The handler name.
-    */
-   void setHandlerToUnassign(String handlerName);
+public class AddEntityWindow<T> extends LoggingPopupWindow<T> {
+
+    public AddEntityWindow(String title, FormAdapter<T> form, EntityBridge<T> commandAdapter) {
+        super(title, form, commandAdapter);
+    }
+
+    @Override
+    protected void doCommand(FormAdapter<T> form) {
+        bridge.onAdd(form);
+    }
+    
 }
