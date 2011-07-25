@@ -60,15 +60,39 @@ public class BootstrapContext implements ApplicationProperties {
     private String getBaseUrl() {
         // extract host
         String base = GWT.getHostPageBaseURL();
+        return extractHttpEndpointUrl(base);
+
+    }
+
+    public static String extractHttpEndpointUrl(String base) {
         String protocol = base.substring(0, base.indexOf("//")+2);
         String remainder = base.substring(base.indexOf(protocol)+protocol.length(), base.length());
-        String host = remainder.indexOf(":")!=-1 ?
-                remainder.substring(0, remainder.indexOf(":")) :
-                remainder.substring(0, remainder.indexOf("/"));
+
+        String host = null;
+        String port = null;
+
+        int portDelim = remainder.indexOf(":");
+        if(portDelim !=-1 )
+        {
+            host = remainder.substring(0, portDelim);
+            String portRemainder = remainder.substring(portDelim+1, remainder.length());
+            if(portRemainder.indexOf("/")!=-1)
+            {
+                port = portRemainder.substring(0, portRemainder.indexOf("/"));
+            }
+            else
+            {
+                port = portRemainder;
+            }
+        }
+        else
+        {
+            host = remainder.substring(0, remainder.indexOf("/"));
+            port = "80";
+        }
 
         // default url
-        return protocol + host + ":9990/";   // TODO: configurable port number
-
+        return protocol + host + ":" + port + "/";
     }
 
     private void loadPersistedProperties() {
