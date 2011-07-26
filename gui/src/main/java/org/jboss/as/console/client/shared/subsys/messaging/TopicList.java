@@ -106,6 +106,7 @@ public class TopicList {
         form = new Form(JMSEndpoint.class);
         form.setNumColumns(2);
 
+
         TextItem name = new TextItem("name", "Name");
         TextItem jndi = new TextItem("jndiName", "JNDI");
 
@@ -130,7 +131,9 @@ public class TopicList {
 
         layout.add(helpPanel.asWidget());    */
 
-        layout.add(form.asWidget());
+        Widget formWidget = form.asWidget();
+        formWidget.getElement().setAttribute("style", "padding-top:15px;");
+        layout.add(formWidget);
 
         form.bind(table);
 
