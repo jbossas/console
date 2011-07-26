@@ -24,7 +24,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -32,6 +31,8 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.List;
 
 /**
  * Displays form and buttons that allow editing of most attributes of the entity (Handler or LoggerConfig).

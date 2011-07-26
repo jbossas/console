@@ -19,8 +19,9 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.autobean.shared.AutoBean;
-import java.util.List;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
+import java.util.List;
 
 /**
  * Implementors of this class know how to perform CRUD and other

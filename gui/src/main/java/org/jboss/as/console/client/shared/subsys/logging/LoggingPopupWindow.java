@@ -64,7 +64,7 @@ public abstract class LoggingPopupWindow<T> extends DefaultWindow {
     
     private Widget makeWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("default-window-content");
+        layout.setStyleName("window-content");
 
         layout.add(form.asWidget());
 

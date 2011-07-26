@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.BootstrapContext;
 
 import java.util.Map;
 import java.util.TreeMap;

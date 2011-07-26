@@ -35,10 +35,10 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -23,11 +23,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
-import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -43,7 +47,7 @@ public class NewTopicWizard {
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("window-content");
         final Form<JMSEndpoint> form = new Form<JMSEndpoint>(JMSEndpoint.class);
 
 
@@ -51,6 +55,19 @@ public class NewTopicWizard {
         TextBoxItem jndi = new TextBoxItem("jndiName", "JNDI");
 
         form.setFields(name, jndi);
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "messaging");
+                        address.add("jms-topic", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 
@@ -74,8 +91,7 @@ public class NewTopicWizard {
             }
         );
 
-        layout.add(options);
 
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 }

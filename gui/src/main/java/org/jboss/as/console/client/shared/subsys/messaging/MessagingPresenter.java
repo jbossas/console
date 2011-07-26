@@ -49,9 +49,9 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -523,8 +523,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     public void launchNewQueueDialogue() {
         window = new DefaultWindow("Create JMS Queue ");
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -603,8 +603,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     public void launchNewTopicDialogue() {
         window = new DefaultWindow("Create JMS Topic ");
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {

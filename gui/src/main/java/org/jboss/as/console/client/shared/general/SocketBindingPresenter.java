@@ -39,9 +39,9 @@ import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;

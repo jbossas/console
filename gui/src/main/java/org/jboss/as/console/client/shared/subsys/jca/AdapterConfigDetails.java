@@ -2,14 +2,8 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
-import org.jboss.as.console.client.shared.properties.PropertyManagement;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Heiko Braun

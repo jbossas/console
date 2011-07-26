@@ -20,9 +20,6 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -32,6 +29,10 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 

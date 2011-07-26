@@ -28,9 +28,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 /**
  * @author Heiko Braun

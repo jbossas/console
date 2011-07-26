@@ -20,7 +20,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;

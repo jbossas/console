@@ -16,8 +16,8 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
 

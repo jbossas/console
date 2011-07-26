@@ -29,7 +29,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import java.util.Map;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -39,6 +38,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 

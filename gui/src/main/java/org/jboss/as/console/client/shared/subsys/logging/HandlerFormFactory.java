@@ -18,15 +18,17 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 
-import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.LEVEL;
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.NAME;
 
 /**
  * Creates the Form objects needed for LoggingHandlers.

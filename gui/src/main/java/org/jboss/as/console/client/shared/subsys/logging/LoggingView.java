@@ -23,15 +23,15 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 
 import java.util.List;

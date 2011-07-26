@@ -23,14 +23,15 @@ import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.stack.NamedDeckPanel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A NamedDeckPanel that wraps one or more Forms.  The IForm methods usually

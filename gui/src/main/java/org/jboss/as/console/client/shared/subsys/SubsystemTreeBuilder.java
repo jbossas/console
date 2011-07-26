@@ -27,13 +27,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import org.jboss.as.console.client.Console;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
-import org.jboss.ballroom.client.layout.LHSNavTree;
-import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
 import java.util.List;
 
