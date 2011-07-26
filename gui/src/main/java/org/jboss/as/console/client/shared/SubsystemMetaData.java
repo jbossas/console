@@ -19,6 +19,9 @@
 
 package org.jboss.as.console.client.shared;
 
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -74,7 +77,7 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming"));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
