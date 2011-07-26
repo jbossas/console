@@ -171,7 +171,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int numMessages = fetchMessages(messagePopup);
                 if(numMessages==0)numMessages=1;
 
-                int width = 200;
+                int width = 250;
                 int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
@@ -226,7 +226,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
 
             final Label label = new Label(actualMessage);
-            label.getElement().setAttribute("style", "white-space: nowrap;text-overflow:ellipsis");
+            label.getElement().setAttribute("style", "font-size:10px; white-space: nowrap;text-overflow:ellipsis");
 
             final ImageResource iconSrc = getSeverityIcon(message.severity);
 

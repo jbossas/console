@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -135,7 +136,7 @@ public class XADataSourceDetails {
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
         form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
-        form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem);
+        form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem);
 
         form.setEnabled(false); // currently not editable
 

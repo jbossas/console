@@ -54,7 +54,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("New Resource Adapter", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {

@@ -121,7 +121,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         });
 
         toolStrip.addToolButton(delete);
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_createNewServerConfig(), new ClickHandler(){
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewConfigDialoge();

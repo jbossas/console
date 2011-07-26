@@ -72,7 +72,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         layout.add(titleBar);
 
         ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButtonRight(new ToolButton("New Socket Binding", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
