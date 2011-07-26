@@ -104,8 +104,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     private void showDetail(final Message msg) {
 
         DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetail());
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.setGlassEnabled(true);
 
 
