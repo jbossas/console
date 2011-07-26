@@ -44,6 +44,11 @@ public class AdapterDetails {
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+
+                if(null == form.getEditedEntity())
+                    return;
+
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEdit(form.getEditedEntity());
                 else
