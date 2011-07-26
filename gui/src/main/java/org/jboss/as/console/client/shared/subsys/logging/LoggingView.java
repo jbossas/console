@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -40,7 +41,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * @author Stan Silvert
  * @date 3/29/11
  */
-public class LoggingView extends DisposableViewImpl implements LoggingPresenter.MyView {
+public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
 
     private EntityBridge loggerConfigBridge;
     private EntityBridge handlerBridge;
@@ -65,7 +66,8 @@ public class LoggingView extends DisposableViewImpl implements LoggingPresenter.
         this.handlerTable = makeHandlerTable(); // need this to be constructed here intead of in createWidget()
         this.handlerFormFactory = new HandlerFormFactory(LoggingHandler.class, this.handlerBridge);
     }
-    
+
+
     @Override
     public Widget createWidget() {
         loggerConfigEditor = makeLoggerConfigEditor();
