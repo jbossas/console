@@ -129,6 +129,7 @@ public class DeploymentStep1 {
         layout.add(new HTML(stepText));
         HTML description = new HTML();
         description.setHTML(Console.CONSTANTS.common_label_chooseFile());
+        description.getElement().setAttribute("style", "padding-bottom:15px;");
         layout.add(description);
         layout.add(form);
         return new WindowContentBuilder(layout, options).build();
