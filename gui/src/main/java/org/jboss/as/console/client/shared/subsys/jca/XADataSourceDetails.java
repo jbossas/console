@@ -63,6 +63,10 @@ public class XADataSourceDetails {
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                if(null==form.getEditedEntity())
+                    return;
+
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditXA(form.getEditedEntity());
                 else

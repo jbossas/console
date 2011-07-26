@@ -66,6 +66,10 @@ public class DataSourceDetails {
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                if(null==form.getEditedEntity())
+                    return;
+
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditDS(form.getEditedEntity());
                 else
