@@ -8,4 +8,5 @@ build.number
 gui/war/WEB-INF
 gui/war/app
 gui/war/dmr_gwt
-gui/war/App.html
+gui/src/main/java/org/jboss/as/console/App.gwt.xml
+

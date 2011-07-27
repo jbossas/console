@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Popup;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -32,10 +31,9 @@ import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.LHSHighlightEvent;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
 import java.util.List;
 

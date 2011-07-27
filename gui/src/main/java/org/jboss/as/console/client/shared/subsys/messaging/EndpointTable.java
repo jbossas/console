@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
  * @author Heiko Braun

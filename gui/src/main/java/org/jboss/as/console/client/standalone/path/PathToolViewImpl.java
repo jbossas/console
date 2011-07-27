@@ -21,7 +21,7 @@ package org.jboss.as.console.client.standalone.path;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
 
 /**
  * @author Heiko Braun

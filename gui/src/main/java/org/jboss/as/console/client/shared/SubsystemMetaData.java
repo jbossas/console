@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared;
 
+import org.jboss.as.console.client.Console;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,7 +32,7 @@ public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new TreeMap<String, SubsystemGroup>();
 
-    private static final String INTEGRATION = "Connector";
+    private static final String CONNECTOR = "Connector";
 
     private static final String MESSAGING = "Messaging";
 
@@ -47,7 +49,7 @@ public class SubsystemMetaData {
     static {
 
         // specify groups
-        groups.put(INTEGRATION, new SubsystemGroup(INTEGRATION));
+        groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
@@ -56,16 +58,16 @@ public class SubsystemMetaData {
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("JCA", "jca", Boolean.TRUE));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters", Boolean.TRUE));
-        groups.get(INTEGRATION).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("JCA", "jca", Boolean.TRUE));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
 
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
@@ -74,7 +76,7 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", Boolean.TRUE));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 

@@ -27,9 +27,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ class ServersConfigSection {
 
     public ServersConfigSection() {
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
         hostTree = new LHSNavTree("hosts");
         panel.setContent(hostTree);
     }

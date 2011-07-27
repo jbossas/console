@@ -23,15 +23,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 
@@ -109,6 +106,7 @@ public class TopicList {
         form = new Form(JMSEndpoint.class);
         form.setNumColumns(2);
 
+
         TextItem name = new TextItem("name", "Name");
         TextItem jndi = new TextItem("jndiName", "JNDI");
 
@@ -133,7 +131,9 @@ public class TopicList {
 
         layout.add(helpPanel.asWidget());    */
 
-        layout.add(form.asWidget());
+        Widget formWidget = form.asWidget();
+        formWidget.getElement().setAttribute("style", "padding-top:15px;");
+        layout.add(formWidget);
 
         form.bind(table);
 

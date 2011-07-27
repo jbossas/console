@@ -22,20 +22,21 @@ package org.jboss.as.console.client.shared;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
 import org.jboss.as.console.client.core.settings.CommonSettings;
-import org.jboss.as.console.client.shared.general.model.SocketBinding;
-import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
+import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
@@ -70,6 +71,8 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<DataSource> dataSource();
     AutoBean<XADataSource> xaDataSource();
+    AutoBean<ResourceAdapter> resourceAdapter();
+
     AutoBean<Queue> queue();
     AutoBean<JMSEndpoint> topic();
     AutoBean<ConnectionFactory> connectionFactory();

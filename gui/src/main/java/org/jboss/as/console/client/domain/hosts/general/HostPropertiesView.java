@@ -19,15 +19,14 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 
 import java.util.List;
 
@@ -44,14 +43,14 @@ public class HostPropertiesView extends DisposableViewImpl implements HostProper
     public Widget createWidget() {
 
         LayoutPanel layout = new RHSContentPanel("Host Properties");
-        layout.add(new ContentHeaderLabel("System Property Declarations"));
+        layout.add(new ContentHeaderLabel("Host Property Declarations"));
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(
                 "These properties will be inherited by any server on this host."
         );
         layout.add(helpPanel.asWidget());
 
-        propertyEditor = new PropertyEditor(presenter);
+        propertyEditor = new PropertyEditor(presenter, 20);
         layout.add(propertyEditor.asWidget());
         propertyEditor.setEnabled(false);
 

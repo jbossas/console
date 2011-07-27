@@ -28,15 +28,15 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
+import org.jboss.ballroom.client.widgets.forms.StatusItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -62,6 +62,10 @@ public class XADataSourceDetails {
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                if(null==form.getEditedEntity())
+                    return;
+
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditXA(form.getEditedEntity());
                 else
@@ -123,14 +127,14 @@ public class XADataSourceDetails {
 
         final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-        CheckBoxItem enabledFlagItem = new CheckBoxItem("enabled", "Is enabled?");
+        StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
 
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
         form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
-        form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem);
+        form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem);
 
         form.setEnabled(false); // currently not editable
 

@@ -29,15 +29,15 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.forms.DefaultGroupRenderer;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.PasswordBoxItem;
-import org.jboss.as.console.client.widgets.forms.StatusItem;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
+import org.jboss.ballroom.client.widgets.forms.StatusItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -66,6 +66,10 @@ public class DataSourceDetails {
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                if(null==form.getEditedEntity())
+                    return;
+
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditDS(form.getEditedEntity());
                 else
@@ -135,7 +139,7 @@ public class DataSourceDetails {
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
         form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
-        form.setFieldsInGroup("Connection", new DefaultGroupRenderer(), userItem, passwordItem, urlItem);
+        form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem, urlItem);
 
 
         form.setEnabled(false); // currently not editable

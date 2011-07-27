@@ -39,9 +39,6 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
-import org.jboss.as.console.client.debug.DebugToolsPresenter;
-import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
-import org.jboss.as.console.client.debug.ModelBrowserPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
@@ -66,9 +63,11 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
@@ -165,13 +164,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ServerInstancesPresenter> getInstancesPresenter();
 
     // ----------------------------------------------------------------------
-    // dev tools
-    AsyncProvider<DebugToolsPresenter> getDebugTools();
-    AsyncProvider<ModelBrowserPresenter> getModelBrowser();
-    AsyncProvider<InvocationMetricsPresenter> getMetrics();
-
-
-    // ----------------------------------------------------------------------
     // shared subsystems
     AsyncProvider<DataSourcePresenter> getDataSourcePresenter();
     DataSourceStore getDataSourceStore();
@@ -200,5 +192,8 @@ public interface CoreUI extends Ginjector {
     EndpointRegistry getEndpointRegistry();
     DomainEndpointStrategy getDomainEndpointStrategy();
     StandaloneEndpointStrategy getStandaloneEndpointStrategy();
+
+    AsyncProvider<ResourceAdapterPresenter> getResourceAdapterPresenter();
+    AsyncProvider<JndiPresenter> getJndiPresenter();
 
 }

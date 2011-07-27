@@ -133,11 +133,11 @@ public class Header implements ValueChangeHandler<String> {
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
-        //innerLayout.add(headlineContainer);
+        innerLayout.add(logo);
         innerLayout.add(links);
 
-        //innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PX);
-        innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 100, Style.Unit.PCT);
+        innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PCT);
+        innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 50, Style.Unit.PCT);
         innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
@@ -151,8 +151,14 @@ public class Header implements ValueChangeHandler<String> {
 
     private Widget getLogoSection() {
 
-        Image logo = new Image("images/header/product-framework.png", 0, 0, 30, 25);
-        logo.setStyleName("header-logo");
+        Image logo = null;
+
+        if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
+            logo = new Image("images/logo/eap6.png");
+        else
+            logo = new Image("images/logo/jbossas7.png");
+
+        logo.setStyleName("logo");
         return logo;
     }
 
@@ -206,7 +212,7 @@ public class Header implements ValueChangeHandler<String> {
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);
 
-                headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
+                //headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
             }
 
             headerString.appendHtmlConstant("</tr></table>");

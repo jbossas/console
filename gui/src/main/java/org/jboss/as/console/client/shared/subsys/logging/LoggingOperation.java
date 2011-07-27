@@ -21,7 +21,8 @@ package org.jboss.as.console.client.shared.subsys.logging;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.dmr.client.ModelNode;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 
 /**
  * Static factory to provide a ModelNode with proper address

@@ -27,6 +27,7 @@
         public static final String VERSION = "${version}";
         public static final String BUILD = "${build.number}";
         public static final String USER = "${build.user}";
+        public static final String PROFILE = "${console.profile}";
       }
     </echo>
   </target>

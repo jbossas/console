@@ -51,6 +51,14 @@ Executing the Integration tests:
 3.) mvn clean -Dsmoke test
 
 
+EAP Build Profile
+-----------------
+
+To run a customized EAP build (L&F) follow these steps:
+
+- Create a dedicated version number (i.e. 1.0.0.EAP.CR2)
+- Rebuild with the EAP profile turned on: mvn -Peap clean install
+
 
 Problems?
 ---------

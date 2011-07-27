@@ -37,14 +37,13 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.TabHeader;
-import org.jboss.as.console.client.widgets.TitleBar;
-import org.jboss.as.console.client.widgets.DefaultPager;
-import org.jboss.as.console.client.widgets.icons.Icons;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -76,10 +75,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         LayoutPanel layout = new LayoutPanel();
 
-        TitleBar titleBar = new TitleBar(Console.CONSTANTS.common_label_deployments());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_deployments());
         layout.add(titleBar);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+
 
         final ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
@@ -91,8 +90,8 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         }));
         
         layout.add(toolStrip);
-        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        
+
+
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
@@ -142,7 +141,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         scroll.add(panel);
 
         layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 55, Style.Unit.PX, 65, Style.Unit.PCT);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 26, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
         
         return layout;
     }

@@ -21,12 +21,11 @@ package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.annotations.NameToken;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 /**
  * @author Heiko Braun
@@ -40,7 +39,7 @@ class CommonConfigSection {
     public CommonConfigSection() {
         super();
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_generalConfig()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_generalConfig()).asWidget();
         commonTree = new LHSNavTree("profiles");
         panel.setContent(commonTree);
 

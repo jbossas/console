@@ -35,9 +35,9 @@ import org.jboss.as.console.client.domain.groups.ServerGroupCell;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.profiles.ProfileCell;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
-import org.jboss.as.console.client.widgets.ContentGroupLabel;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 
 import java.util.ArrayList;
 import java.util.List;

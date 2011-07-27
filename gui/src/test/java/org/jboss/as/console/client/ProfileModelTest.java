@@ -31,6 +31,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
@@ -56,7 +57,7 @@ public class ProfileModelTest {
 
             @Override
             public void onSuccess(List<ProfileRecord> result) {
-                assertEquals(1, result.size());
+                assertFalse(result.isEmpty());
                 assertEquals("default", result.get(0).getName());
                 didCallback = true;
             }

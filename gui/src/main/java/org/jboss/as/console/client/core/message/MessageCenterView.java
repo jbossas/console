@@ -42,8 +42,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.List;
 
@@ -104,8 +104,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     private void showDetail(final Message msg) {
 
         DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetail());
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.setGlassEnabled(true);
 
 
@@ -171,7 +171,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int numMessages = fetchMessages(messagePopup);
                 if(numMessages==0)numMessages=1;
 
-                int width = 200;
+                int width = 250;
                 int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
@@ -226,7 +226,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
 
             final Label label = new Label(actualMessage);
-            label.getElement().setAttribute("style", "white-space: nowrap;text-overflow:ellipsis");
+            label.getElement().setAttribute("style", "font-size:10px; white-space: nowrap;text-overflow:ellipsis");
 
             final ImageResource iconSrc = getSeverityIcon(message.severity);
 

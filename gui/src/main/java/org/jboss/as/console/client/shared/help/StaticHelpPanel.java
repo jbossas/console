@@ -10,7 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 /**
  * Displays static help descriptions.

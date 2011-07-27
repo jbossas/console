@@ -48,12 +48,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
-import org.jboss.as.console.client.debug.DebugToolsPresenter;
-import org.jboss.as.console.client.debug.DebugToolsView;
-import org.jboss.as.console.client.debug.InvocationMetricsPresenter;
-import org.jboss.as.console.client.debug.InvocationMetricsView;
-import org.jboss.as.console.client.debug.ModelBrowserPresenter;
-import org.jboss.as.console.client.debug.ModelBrowserView;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
@@ -97,12 +91,16 @@ import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
+import org.jboss.as.console.client.shared.subsys.naming.JndiView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -304,24 +302,6 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         // -------
 
-
-        bindPresenter(DebugToolsPresenter.class,
-                DebugToolsPresenter.MyView.class,
-                DebugToolsView.class,
-                DebugToolsPresenter.MyProxy.class);
-
-        bindPresenter(ModelBrowserPresenter.class,
-                ModelBrowserPresenter.MyView.class,
-                ModelBrowserView.class,
-                ModelBrowserPresenter.MyProxy.class);
-
-        bindPresenter(InvocationMetricsPresenter.class,
-                InvocationMetricsPresenter.MyView.class,
-                InvocationMetricsView.class,
-                InvocationMetricsPresenter.MyProxy.class);
-
-        // -------
-
         bindPresenter(DataSourcePresenter.class,
                 DataSourcePresenter.MyView.class,
                 DatasourceView.class,
@@ -364,6 +344,16 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(EndpointRegistry.class).in(Singleton.class);
         bind(DomainEndpointStrategy.class).in(Singleton.class);
         bind(StandaloneEndpointStrategy.class).in(Singleton.class);
+
+        bindPresenter(ResourceAdapterPresenter.class,
+                ResourceAdapterPresenter.MyView.class,
+                ResourceAdapterView.class,
+                ResourceAdapterPresenter.MyProxy.class);
+
+        bindPresenter(JndiPresenter.class,
+                JndiPresenter.MyView.class,
+                JndiView.class,
+                JndiPresenter.MyProxy.class);
     }
 
 }

@@ -25,18 +25,16 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.widgets.DefaultButton;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
  * @author Heiko Braun
@@ -77,37 +75,23 @@ public class DeploymentStep1 {
 
         // Add a 'submit' button.
 
-        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
-        cancel.setStyleName("html-link");
-        cancel.addClickHandler(new ClickHandler() {
+
+        ClickHandler cancelHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 window.hide();
             }
-        });
-
-        String okText = Console.CONSTANTS.common_label_next() + " &rsaquo;&rsaquo;";
-        Button submit = new DefaultButton(okText, new ClickHandler() {
+        };
+        ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 form.submit();
             }
-        });
+        };
 
-        HorizontalPanel options = new HorizontalPanel();
-        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
-
-        HTML spacer = new HTML("&nbsp;");
-        options.add(spacer);
-
-        options.add(submit);
-        options.add(spacer);
-        options.add(cancel);
-        cancel.getElement().getParentElement().setAttribute("style","vertical-align:middle");
-        submit.getElement().getParentElement().setAttribute("align", "right");
-        submit.getElement().getParentElement().setAttribute("width", "100%");
-
-        panel.add(options);
+        DialogueOptions options = new DialogueOptions(
+                "Next &rsaquo;&rsaquo;", submitHandler,
+                "Cancel", cancelHandler);
 
         // Add an event handler to the form.
         form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
@@ -141,8 +125,9 @@ public class DeploymentStep1 {
         layout.add(new HTML(stepText));
         HTML description = new HTML();
         description.setHTML(Console.CONSTANTS.common_label_chooseFile());
+        description.getElement().setAttribute("style", "padding-bottom:15px;");
         layout.add(description);
         layout.add(form);
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 }

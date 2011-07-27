@@ -20,10 +20,6 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -34,9 +30,16 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * This class gathers all the information about loggers and handlers.  When refreshView() is called
+ * it gets an updated copy of the logging info from the server and makes that info available to
+ * the view.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
@@ -50,10 +53,29 @@ public class LoggingInfo {
     private BeanFactory factory;
     private LoggingPresenter.MyView view;
     
+    private String loggerConfigEdited;
+    private String handlerEdited;
+    
     public LoggingInfo(DispatchAsync dispatcher, BeanFactory factory, LoggingPresenter.MyView view) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.view = view;
+    }
+    
+    /**
+     * Get the name of the LoggerConfig just edited/added.
+     * @return The name, or <code>null</code> if a LoggerConfig was not just edited.
+     */
+    public String getLoggerConfigEdited() {
+        return this.loggerConfigEdited;
+    }
+    
+    /**
+     * Get the name of the Handler just edited/added.
+     * @return The name, or <code>null</code> if a Handler was not just edited.
+     */
+    public String getHandlerEdited() {
+        return this.handlerEdited;
     }
     
     public LoggerConfig getRootLogger() {
@@ -66,6 +88,14 @@ public class LoggingInfo {
     
     public List<LoggingHandler> getHandlers() {
         return handlers;
+    }
+    
+    public String[] getHandlerNames() {
+        String[] handlerNames = new String[handlers.size()];
+        for (int i=0 ; i < handlers.size(); i++) {
+            handlerNames[i] = handlers.get(i).getName();
+        }
+        return handlerNames;
     }
     
     public LoggingHandler findHandler(String name) {
@@ -123,7 +153,19 @@ public class LoggingInfo {
         return model;
     }
 
-    public void refreshView() {
+    /**
+     * Gather all the LoggerConfig and Handler info from the server and update the UI.
+     */
+    public void refreshView(String nameEditedOrAdded, boolean isHandlerOp) {
+        
+        if (isHandlerOp) {
+            this.loggerConfigEdited = null;
+            this.handlerEdited = nameEditedOrAdded;
+        } else {
+            this.loggerConfigEdited = nameEditedOrAdded;
+            this.handlerEdited = null;
+        }
+        
         setRootLogger();
         
         final List<LoggingHandler> handlers = new ArrayList<LoggingHandler>();
@@ -131,6 +173,9 @@ public class LoggingInfo {
 
         ModelNode operation = LoggingOperation.make(READ_CHILDREN_TYPES_OPERATION);
 
+        // REFACTOR ME!! 
+        // This finds all the handler types (plus loggers) then does a read-children-resources request for each one.
+        // Instead, we need to just do a single recursive request for everything.
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -192,12 +237,46 @@ public class LoggingInfo {
                         private LoggingHandler makeHandler(ModelNode node, String name) {
                             LoggingHandler model = factory.loggingHandler().as();
                             model.setName(name);
-                            model.setAutoflush(node.get("autoflush").asBoolean());
-                            model.setEncoding(node.get("encoding").asString());
-                            model.setFormatter(node.get("formatter").asString());
                             model.setType(handlerType);
                             model.setLevel(node.get("level").asString());
+                            model.setEncoding(node.get("encoding").asString());
+                            model.setFilter(node.get("filter").asString());
+                            model.setFormatter(node.get("formatter").asString());
+                            
+                            if (node.get("autoflush").isDefined()) {
+                                model.setAutoflush(node.get("autoflush").asBoolean());
+                            }
+                            
+                            if (node.get("append").isDefined()) {
+                                model.setAppend(node.get("append").asBoolean());
+                            }
+                            
+                            if (node.get("file").isDefined()) {
+                                model.setFileRelativeTo(node.get("file").get("relative-to").asString());
+                                model.setFilePath(node.get("file").get("path").asString());
+                            }
+                            
+                            model.setRotateSize(node.get("rotate-size").asString());
+                            
+                            if (node.get("max-backup-index").isDefined()) {
+                                model.setMaxBackupIndex(node.get("max-backup-index").asString());
+                            }
+                            
+                            model.setTarget(node.get("target").asString());
+                            
+                            model.setOverflowAction(node.get("overflow-action").asString());
+                            
+                            if (node.get("subhandlers").isDefined()) {
+                                List<ModelNode> subhandlerNodes = node.get("subhandlers").asList();
+                                List<String> subhandlers = new ArrayList<String>(subhandlerNodes.size());
+                                for (ModelNode handlerNode : subhandlerNodes) {
+                                    subhandlers.add(handlerNode.asString());
+                                }
+                                model.setSubhandlers(subhandlers);
+                            }
+                            
                             model.setQueueLength(node.get("queue-length").asString());
+                            model.setSuffix(node.get("suffix").asString());
 
                             return model;
                         }

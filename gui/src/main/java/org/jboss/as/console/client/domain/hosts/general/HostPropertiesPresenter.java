@@ -44,7 +44,7 @@ import org.jboss.as.console.client.shared.properties.LoadPropertiesCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -123,7 +123,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
 
     public void launchNewPropertyDialoge(String group) {
 
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow("New Host Property");
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {

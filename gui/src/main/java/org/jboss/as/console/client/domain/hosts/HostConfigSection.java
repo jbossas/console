@@ -22,9 +22,9 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 /**
  * @author Heiko Braun
@@ -39,14 +39,14 @@ class HostConfigSection {
     public HostConfigSection() {
         super();
 
-        panel = new DisclosureStackHeader(Console.CONSTANTS.common_label_hostConfiguration()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_hostConfiguration()).asWidget();
 
         hostTree = new LHSNavTree("hosts");
 
         //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
         LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "hosts/host-jvms");
         LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "hosts/host-interfaces");
-        LHSNavTreeItem properties = new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), "host/host-properties");
+        LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host/host-properties");
 
         //hostTree.addItem(paths);
         hostTree.addItem(jvms);

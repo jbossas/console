@@ -10,12 +10,26 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.0.0.CR1-SNAPSHOT</version>
+        <version>1.0.0.Beta17-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+      <!--  <ballroom.version>1.0.0.Beta4</ballroom.version> -->
+        <ballroom.version>1.0.0.Beta7</ballroom.version>
+        <console.profile>jboss</console.profile>
+    </properties>
+
     <!--  Dependencies -->
     <dependencies>
+
+
+        <dependency>
+            <groupId>org.jboss.ballroom</groupId>
+            <artifactId>widgets</artifactId>
+            <version>${ballroom.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- GWT -->
         <dependency>
@@ -179,14 +193,6 @@
                 </configuration>
             </plugin>
 
-            <!--plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -235,6 +241,7 @@
                                     <property name="version" value="${project.version}"/>
                                     <property name="build.user" value="${user.name}"/>
                                     <property name="src.dir" value="${project.build.directory}/generated-sources" />
+                                    <property name="console.profile" value="${console.profile}" />
                                 </ant>
                             </tasks>
                             <sourceRoot>
@@ -265,8 +272,8 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
-                                <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                <replace file="war/App.html" token="@custom_css@" value="custom.css" summary="yes"/>
+                                <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -296,6 +303,7 @@
                     <name>smoke</name>
                 </property>
             </activation>
+
             <build>
                 <plugins>
                     <plugin>
@@ -336,6 +344,9 @@
 
         <profile>
             <id>eap</id>
+            <properties>
+                <console.profile>eap</console.profile>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -349,32 +360,12 @@
                                 <phase>process-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <copy file="src/main/templates/App.html" tofile="war/App.html" overwrite="true" verbose="true"/>
-                                        <replace file="war/App.html" token="@custom_css@" value="RedHatGUI.css"/>
+                                        <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework_RH" summary="yes"/>
                                     </tasks>
                                 </configuration>
                                 <goals>
                                     <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>scripts/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>

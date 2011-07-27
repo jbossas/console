@@ -19,23 +19,20 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.as.console.client.widgets.DialogueOptions;
-import org.jboss.as.console.client.widgets.WindowContentBuilder;
-import org.jboss.as.console.client.widgets.forms.CheckBoxItem;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
 /**
@@ -61,19 +58,7 @@ public class DatasourceStep1 {
         final Form<DataSource> form = new Form<DataSource>(DataSource.class);
 
         final TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-                boolean notEmpty = super.validate(value);
-
-                return notEmpty && !value.contains(":") && !value.startsWith("/");
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "Not empty, no prefix, no leading slash";
-            }
-        };
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
         enabled.setValue(Boolean.TRUE);
 

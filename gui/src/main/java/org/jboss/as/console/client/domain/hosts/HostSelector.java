@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.widgets.ComboBox;
+import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
 

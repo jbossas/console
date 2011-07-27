@@ -1,6 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.ws.model;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.ballroom.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun

@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.shared;
 
 import com.google.gwt.resources.client.ImageResource;
-import org.jboss.as.console.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
 import java.util.List;

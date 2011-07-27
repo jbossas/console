@@ -29,13 +29,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.widgets.Feedback;
-import org.jboss.as.console.client.widgets.tables.DefaultCellTable;
-import org.jboss.as.console.client.widgets.tables.DefaultEditTextCell;
-import org.jboss.as.console.client.widgets.tables.MenuColumn;
-import org.jboss.as.console.client.widgets.tables.NamedCommand;
-import org.jboss.as.console.client.widgets.tools.ToolButton;
-import org.jboss.as.console.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.tables.MenuColumn;
+import org.jboss.ballroom.client.widgets.tables.NamedCommand;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 
@@ -53,9 +54,15 @@ public class PropertyEditor {
     private String reference;
     private boolean simpleView = false;
     private String helpText;
+    private int numRows = 5;
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
+    }
+
+    public PropertyEditor(PropertyManagement presenter, int rows) {
+        this.presenter = presenter;
+        this.numRows = rows;
     }
 
     public PropertyEditor(PropertyManagement presenter, boolean simpleView) {
@@ -63,11 +70,17 @@ public class PropertyEditor {
         this.simpleView = simpleView;
     }
 
+    public PropertyEditor(PropertyManagement presenter, boolean simpleView, int rows) {
+        this.presenter = presenter;
+        this.simpleView = simpleView;
+        this.numRows = rows;
+    }
+
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
         panel.addStyleName("fill-layout-width");
 
-        propertyTable = new DefaultCellTable<PropertyRecord>(5);
+        propertyTable = new DefaultCellTable<PropertyRecord>(numRows);
         propertyTable.getElement().setAttribute("style", "margin-top:5px;");
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
@@ -196,6 +209,11 @@ public class PropertyEditor {
 
         //propertyTable.setEnabled(false);
         panel.add(propertyTable);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(propertyTable);
+
+        panel.add(pager);
 
         return panel;
     }

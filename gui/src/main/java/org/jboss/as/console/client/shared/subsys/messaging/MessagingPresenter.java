@@ -49,9 +49,9 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.as.console.client.widgets.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -157,68 +157,80 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         provider.setPersistenceEnabled(model.get("persistence-enabled").asBoolean());
 
         // security
-        List<Property> secProps = model.get("security-setting").asPropertyList();
-        List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>(secProps.size());
-        for(Property prop : secProps)
+        List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>();
+        if(model.hasDefined("security-setting"))
         {
-            SecurityPattern pattern = factory.messagingSecurity().as();
-            pattern.setPattern(prop.getName());
+            List<Property> secProps = model.get("security-setting").asPropertyList();
 
-            Property principalProp= prop.getValue().asProperty();
-            pattern.setPrincipal(principalProp.getName());
+            for(Property prop : secProps)
+            {
+                SecurityPattern pattern = factory.messagingSecurity().as();
+                pattern.setPattern(prop.getName());
 
-            ModelNode propValue = principalProp.getValue().asObject();
-            pattern.setSend(propValue.get("send").asBoolean());
-            pattern.setConsume(propValue.get("consume").asBoolean());
-            pattern.setManage(propValue.get("manage").asBoolean());
-            pattern.setCreateDurableQueue(propValue.get("createDurableQueue").asBoolean());
-            pattern.setDeleteDurableQueue(propValue.get("deleteDurableQueue").asBoolean());
-            pattern.setCreateNonDurableQueue(propValue.get("createNonDurableQueue").asBoolean());
-            pattern.setDeleteNonDurableQueue(propValue.get("deleteNonDurableQueue").asBoolean());
+                Property principalProp= prop.getValue().asProperty();
+                pattern.setPrincipal(principalProp.getName());
 
-            secPatterns.add(pattern);
+                ModelNode propValue = principalProp.getValue().asObject();
+                pattern.setSend(propValue.get("send").asBoolean());
+                pattern.setConsume(propValue.get("consume").asBoolean());
+                pattern.setManage(propValue.get("manage").asBoolean());
+                pattern.setCreateDurableQueue(propValue.get("createDurableQueue").asBoolean());
+                pattern.setDeleteDurableQueue(propValue.get("deleteDurableQueue").asBoolean());
+                pattern.setCreateNonDurableQueue(propValue.get("createNonDurableQueue").asBoolean());
+                pattern.setDeleteNonDurableQueue(propValue.get("deleteNonDurableQueue").asBoolean());
+
+                secPatterns.add(pattern);
+            }
+
         }
-
         provider.setSecurityPatterns(secPatterns);
 
-
         // addressing
-        List<Property> addrProps = model.get("address-setting").asPropertyList();
-        List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>(addrProps.size());
-        for(Property prop : addrProps)
+        List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>();
+        if(model.hasDefined("address-setting"))
         {
-            AddressingPattern pattern = factory.messagingAddress().as();
-            pattern.setPattern(prop.getName());
+            List<Property> addrProps = model.get("address-setting").asPropertyList();
+            for(Property prop : addrProps)
+            {
+                AddressingPattern pattern = factory.messagingAddress().as();
+                pattern.setPattern(prop.getName());
 
-            ModelNode propValue = prop.getValue().asObject();
-            pattern.setDeadLetterQueue(propValue.get("dead-letter-address").asString());
-            pattern.setExpiryQueue(propValue.get("expiry-address").asString());
-            pattern.setRedeliveryDelay(propValue.get("redelivery-delay").asInt());
+                ModelNode propValue = prop.getValue().asObject();
+                pattern.setDeadLetterQueue(propValue.get("dead-letter-address").asString());
+                pattern.setExpiryQueue(propValue.get("expiry-address").asString());
+                pattern.setRedeliveryDelay(propValue.get("redelivery-delay").asInt());
 
-            addrPatterns.add(pattern);
+                addrPatterns.add(pattern);
+            }
         }
 
         provider.setAddressPatterns(addrPatterns);
 
 
         // socket binding ref
-        List<Property> connectorPropList = model.get("connector").asPropertyList();
-        for(Property connectorProp : connectorPropList)
+        if(model.hasDefined("connector"))
         {
-            if("netty".equals(connectorProp.getName()))
+            List<Property> connectorPropList = model.get("connector").asPropertyList();
+            for(Property connectorProp : connectorPropList)
             {
-                String socketBinding = connectorProp.getValue().asObject().get("socket-binding").asString();
-                provider.setConnectorBinding(socketBinding);
+                if("netty".equals(connectorProp.getName()))
+                {
+                    String socketBinding = connectorProp.getValue().asObject().get("socket-binding").asString();
+                    provider.setConnectorBinding(socketBinding);
+                }
             }
         }
 
-        List<Property> acceptorPropList = model.get("acceptor").asPropertyList();
-        for(Property acceptorProp : acceptorPropList)
+        if(model.hasDefined("acceptor"))
         {
-            if("netty".equals(acceptorProp.getName()))
+            List<Property> acceptorPropList = model.get("acceptor").asPropertyList();
+            for(Property acceptorProp : acceptorPropList)
             {
-                String socketBinding = acceptorProp.getValue().asObject().get("socket-binding").asString();
-                provider.setAcceptorBinding(socketBinding);
+                if("netty".equals(acceptorProp.getName()))
+                {
+                    String socketBinding = acceptorProp.getValue().asObject().get("socket-binding").asString();
+                    provider.setAcceptorBinding(socketBinding);
+                }
             }
         }
 
@@ -511,8 +523,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     public void launchNewQueueDialogue() {
         window = new DefaultWindow("Create JMS Queue ");
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -591,8 +603,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     public void launchNewTopicDialogue() {
         window = new DefaultWindow("Create JMS Topic ");
-        window.setWidth(320);
-        window.setHeight(240);
+        window.setWidth(480);
+        window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {

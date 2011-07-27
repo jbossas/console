@@ -24,13 +24,12 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.annotations.NameToken;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
-import org.jboss.as.console.client.widgets.DisclosureStackHeader;
-import org.jboss.as.console.client.widgets.LHSNavTree;
-import org.jboss.as.console.client.widgets.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class LHSStandaloneNavigation {
 
         subsysTree = new LHSNavTree("profiles");
 
-        DisclosurePanel subsysPanel  = new DisclosureStackHeader("Profile").asWidget();
+        DisclosurePanel subsysPanel  = new DisclosureStackPanel("Profile").asWidget();
         subsysPanel.setContent(subsysTree);
         stack.add(subsysPanel);
 
@@ -69,7 +68,7 @@ public class LHSStandaloneNavigation {
 
         Tree deploymentTree = new LHSNavTree("profiles");
         deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
-        DisclosurePanel deplPanel  = new DisclosureStackHeader("Deployments").asWidget();
+        DisclosurePanel deplPanel  = new DisclosureStackPanel("Deployments").asWidget();
         deplPanel.setContent(deploymentTree);
 
         stack.add(deplPanel);
@@ -77,7 +76,7 @@ public class LHSStandaloneNavigation {
         // ----------------------------------------------------
 
         Tree commonTree = new LHSNavTree("profiles");
-        DisclosurePanel commonPanel  = new DisclosureStackHeader("General Configuration").asWidget();
+        DisclosurePanel commonPanel  = new DisclosureStackPanel("General Configuration").asWidget();
         commonPanel.setContent(commonTree);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {

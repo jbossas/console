@@ -26,8 +26,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.ContentHeaderLabel;
-import org.jboss.as.console.client.widgets.RHSContentPanel;
+import org.jboss.ballroom.client.layout.RHSContentPanel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class PropertiesView extends DisposableViewImpl implements PropertiesPres
             layout.add(description);
         }
 
-        propertyEditor = new PropertyEditor(presenter, Console.MODULES.getBootstrapContext().isStandalone());
+        propertyEditor = new PropertyEditor(presenter, Console.MODULES.getBootstrapContext().isStandalone(), 20);
         layout.add(propertyEditor.asWidget());
         propertyEditor.setEnabled(false);
 

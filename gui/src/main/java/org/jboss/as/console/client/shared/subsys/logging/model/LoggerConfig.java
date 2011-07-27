@@ -34,4 +34,28 @@ public interface LoggerConfig {
    
    List<String> getHandlers();
    void setHandlers(List<String> handlers);
+   
+   /**
+    * Get the handler that needs to be assigned to the logger.
+    * @param handlerName 
+    */
+   String getHandlerToAssign();
+   
+   /**
+    * Set a handler that the presenter will try to assign to the logger.
+    * @param handlerName The handler name.
+    */
+   void setHandlerToAssign(String handlerName);
+   
+   /**
+    * Get the handler that needs to be assigned to the logger.
+    * @param handlerName 
+    */
+   String getHandlerToUnassign();
+   
+   /**
+    * Set a handler that the presenter will try to assign to the logger.
+    * @param handlerName The handler name.
+    */
+   void setHandlerToUnassign(String handlerName);
 }

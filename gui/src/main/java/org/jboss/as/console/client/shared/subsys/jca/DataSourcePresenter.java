@@ -44,7 +44,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
-import org.jboss.as.console.client.widgets.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
 import java.util.Map;
@@ -150,7 +150,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
                 window = new DefaultWindow("Create Datasource");
                 window.setWidth(480);
-                window.setHeight(320);
+                window.setHeight(360);
                 window.addCloseHandler(new CloseHandler<PopupPanel>() {
                     @Override
                     public void onClose(CloseEvent<PopupPanel> event) {

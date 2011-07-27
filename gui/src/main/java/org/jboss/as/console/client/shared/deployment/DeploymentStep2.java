@@ -22,17 +22,16 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.DefaultButton;
-import org.jboss.as.console.client.widgets.DefaultWindow;
-import org.jboss.as.console.client.widgets.forms.Form;
-import org.jboss.as.console.client.widgets.forms.FormValidation;
-import org.jboss.as.console.client.widgets.forms.TextBoxItem;
-import org.jboss.as.console.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 import java.util.List;
 
@@ -75,17 +74,14 @@ public class DeploymentStep2 {
 
         // -----
 
-        Label cancel = new Label(Console.CONSTANTS.common_label_cancel());
-        cancel.setStyleName("html-link");
-        cancel.addClickHandler(new ClickHandler() {
+        ClickHandler cancelHandler = new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 window.hide();
             }
-        });
-
-        DefaultButton submit = new DefaultButton(Console.CONSTANTS.common_label_finish(), new ClickHandler() {
+        };
+        ClickHandler submitHandler = new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -103,24 +99,11 @@ public class DeploymentStep2 {
 
                 }
             }
-        });
+        };
 
-        HorizontalPanel options = new HorizontalPanel();
-        options.getElement().setAttribute("style", "margin-top:10px;width:100%");
+        DialogueOptions options = new DialogueOptions(submitHandler, cancelHandler);
 
-        HTML spacer = new HTML("&nbsp;");
-        options.add(spacer);
-
-        options.add(submit);
-        options.add(spacer);
-        options.add(cancel);
-        cancel.getElement().getParentElement().setAttribute("style", "vertical-align:middle");
-        submit.getElement().getParentElement().setAttribute("align", "right");
-        submit.getElement().getParentElement().setAttribute("width", "100%");
-
-        layout.add(options);
-
-        return layout;
+        return new WindowContentBuilder(layout, options).build();
     }
 
     void edit(DeploymentReference ref) {

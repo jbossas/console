@@ -29,7 +29,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import java.util.Map;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -37,20 +36,26 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * The Presenter for loggers (LoggerConfig) and Handlers (LoggingHandler).
  * @author Stan Silvert
  * @date 3/29/11
  */
 public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
+    private static final String ROOT_LOGGER = "root-logger";
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
     private LoggingInfo loggingInfo;
-    DispatchAsync dispatcher;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.LoggingPresenter)
@@ -79,6 +84,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         this.revealStrategy = revealStrategy;
         this.loggingInfo = new LoggingInfo(dispatcher, factory, view);
         this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override
@@ -90,12 +96,125 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     @Override
     protected void onReset() {
         super.onReset();
-        loggingInfo.refreshView();
+        loggingInfo.refreshView(null, false);
     }
 
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+    
+    public BeanFactory getBeanFactory() {
+        return this.factory;
+    }
+    
+    public void onAddHandler(LoggingHandler handler) {
+        final String name = handler.getName();
+        HandlerType type = HandlerType.findHandlerType(handler.getType());
+        
+        ModelNode operation = LoggingOperation.make(ADD);
+        operation.get(ADDRESS).add(type.getDisplayName(), name);
+        
+        operation.get(HandlerAttribute.NAME.getDmrName()).set(handler.getName());
+        operation.get(HandlerAttribute.LEVEL.getDmrName()).set(handler.getLevel());
+        
+        HandlerAttribute[] stringAttributes = new HandlerAttribute[] { 
+            HandlerAttribute.ENCODING, HandlerAttribute.FILTER, HandlerAttribute.FORMATTER, 
+            HandlerAttribute.ROTATE_SIZE, HandlerAttribute.MAX_BACKUP_INDEX, HandlerAttribute.TARGET,
+            HandlerAttribute.TARGET, HandlerAttribute.SUFFIX, HandlerAttribute.OVERFLOW_ACTION, HandlerAttribute.QUEUE_LENGTH };
+        
+        for (HandlerAttribute attrib : stringAttributes) {
+            if (type.hasAttribute(attrib)) {
+                operation.get(attrib.getDmrName()).set(attrib.getDefaultValue());
+            }
+        }
+        
+        HandlerAttribute[] booleanAttributes = new HandlerAttribute[] { HandlerAttribute.AUTOFLUSH, HandlerAttribute.APPEND };
+        for (HandlerAttribute attrib : booleanAttributes) {
+            if (type.hasAttribute(attrib)) {
+                operation.get(attrib.getDmrName()).set(Boolean.parseBoolean(attrib.getDefaultValue()));
+            }
+        } 
+        
+        HandlerAttribute[] fileAttributes = new HandlerAttribute[] { HandlerAttribute.FILE_RELATIVE_TO, HandlerAttribute.FILE_PATH };
+        for (HandlerAttribute attrib : fileAttributes) {
+            if (type.hasAttribute(attrib)) {
+                operation.get("file").get(attrib.getDmrName()).set(attrib.getDefaultValue());
+            }
+        } 
+                
+        execute(operation, name, true, "Success: Added handler " + name);
+    }
+    
+    public void onRemoveHandler(final String name, String type) {
+        ModelNode operation = LoggingOperation.make(REMOVE);
+        operation.get(ADDRESS).add(type, name);
+        
+        execute(operation, null, true, "Success: Removed handler " + name);
+    }
+    
+    public void onAssignHandlerToHandler(String handlerName, String handlerType, String handlerToAssign) {
+        ModelNode operation = LoggingOperation.make("assign-subhandler");
+        operation.get(ADDRESS).add(handlerType, handlerName);
+        operation.get(NAME).set(handlerToAssign);
+        
+        execute(operation, handlerName, true, "Success: Assigned subhandler " + handlerToAssign + " to handler " + handlerName);
+    }
+    
+    public void onUnassignHandlerFromHandler(String handlerName, String handlerType, String handlerToUnassign) {
+        ModelNode operation = LoggingOperation.make("unassign-subhandler");
+        operation.get(ADDRESS).add(handlerType, handlerName);
+        operation.get(NAME).set(handlerToUnassign);
+        
+        execute(operation, handlerName, true, "Success: Unassigned subhandler " + handlerToUnassign + " from handler " + handlerName);
+    }
+    
+    public void onAddLogger(final String name, final String level) {
+        ModelNode operation = LoggingOperation.make(ADD);
+        operation.get(ADDRESS).add("logger", name);
+        operation.get("level").set(level);
+        
+        execute(operation, name, false, "Success: Added logger " + name);
+    }
+    
+    public void onRemoveLogger(final String name) {
+        ModelNode operation = null;
+        if (name.equals(ROOT_LOGGER)) {
+            operation = LoggingOperation.make("remove-root-logger");
+        } else {
+            operation = LoggingOperation.make(REMOVE);
+            operation.get(ADDRESS).add("logger", name);
+        }
+        
+        execute(operation, null, false, "Success: Removed logger " + name);
+    }
+    
+    public void onAssignHandlerToLogger(String loggerName, String handlerName) {
+        ModelNode operation = null;
+        if (loggerName.equals(ROOT_LOGGER)) {
+            operation = LoggingOperation.make("root-logger-assign-handler");
+        } else {
+            operation = LoggingOperation.make("assign-handler");
+            operation.get(ADDRESS).add("logger", loggerName);
+        }
+        
+        operation.get(NAME).set(handlerName);
+        
+        execute(operation, loggerName, false, "Success: Assigned handler " + handlerName + " to logger " + loggerName);
+    }
+    
+    public void onUnassignHandlerFromLogger(String loggerName, String handlerName) {
+        ModelNode operation = null;
+        if (loggerName.equals(ROOT_LOGGER)) {
+            operation = LoggingOperation.make("root-logger-unassign-handler");
+        } else {
+            operation = LoggingOperation.make("unassign-handler");
+            operation.get(ADDRESS).add("logger", loggerName);
+        }
+        
+        operation.get(NAME).set(handlerName);
+        
+        execute(operation, loggerName, false, "Success: Unssigned handler " + handlerName + " from logger " + loggerName);
     }
     
     public void onEditHandler() {
@@ -106,27 +225,22 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         getView().enableHandlerDetails(false);
         if (changedValues.isEmpty()) return;
         
-        String newLevel = (String)changedValues.get("level");
-        if (newLevel == null) return;
-        
-        // can only change level for now
-        ModelNode operation = LoggingOperation.make("change-log-level");
+        ModelNode operation = LoggingOperation.make("update-properties");
         operation.get(ADDRESS).add(handlerType, name);
-        operation.get("level").set(newLevel);
         
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
+        for (Map.Entry<String, Object> entry : changedValues.entrySet()) {
+            HandlerAttribute attrib = HandlerAttribute.findHandlerAttribute(entry.getKey());
+            String dmrName = attrib.getDmrName();
+            Object value = entry.getValue();
+            
+            if ((attrib == HandlerAttribute.FILE_PATH) || (attrib == HandlerAttribute.FILE_RELATIVE_TO)) {
+                operation.get("file").get(dmrName).set(value.toString());
+            } else {
+                operation.get(dmrName).set(value.toString());
             }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                Console.info("Success: Updated Log Level");
-                loggingInfo.refreshView();
-            }
-        });
+        }
+        
+        execute(operation, name, true, "Success: Updated Log Level");
     }
     
     public void onEditLogger() {
@@ -142,14 +256,21 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         
         // can only change level for now
         ModelNode operation = null;
-        if (name.equals("root-logger")) {
+        if (name.equals(ROOT_LOGGER)) {
             operation = LoggingOperation.make("change-root-log-level");
+            if (this.loggingInfo.getRootLogger().getLevel().equals("undefined")) {
+                operation = LoggingOperation.make("set-root-logger");
+            }
         } else {
             operation = LoggingOperation.make("change-log-level");
             operation.get(ADDRESS).add("logger", name);
         }
         operation.get("level").set(newLevel);
         
+        execute(operation, name, false, "Success: Updated Log Level");
+    }
+    
+    private void execute(ModelNode operation, final String nameEditedOrAdded, final boolean isHandlerOp, final String successMessage) {
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
@@ -159,10 +280,9 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
 
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Updated Log Level");
-                loggingInfo.refreshView();
+                Console.info(successMessage);
+                loggingInfo.refreshView(nameEditedOrAdded, isHandlerOp);
             }
         });
     }
-
 }

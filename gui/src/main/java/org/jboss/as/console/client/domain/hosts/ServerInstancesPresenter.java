@@ -42,7 +42,7 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.widgets.LHSHighlightEvent;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
