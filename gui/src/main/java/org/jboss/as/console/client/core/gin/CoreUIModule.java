@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -48,10 +49,6 @@ import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
 import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.core.settings.SettingsView;
-import org.jboss.as.console.client.shared.general.PropertiesPresenter;
-import org.jboss.as.console.client.shared.general.PropertiesView;
-import org.jboss.as.console.client.shared.general.InterfacePresenter;
-import org.jboss.as.console.client.shared.general.InterfaceView;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtView;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
@@ -88,11 +85,13 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
+import org.jboss.as.console.client.shared.general.InterfacePresenter;
+import org.jboss.as.console.client.shared.general.InterfaceView;
+import org.jboss.as.console.client.shared.general.PropertiesPresenter;
+import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
-import org.jboss.as.console.client.shared.subsys.naming.JndiView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
@@ -109,6 +108,10 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
+import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
+import org.jboss.as.console.client.shared.subsys.naming.JndiView;
+import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
+import org.jboss.as.console.client.shared.subsys.osgi.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
@@ -320,6 +323,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 LoggingPresenter.MyView.class,
                 LoggingView.class,
                 LoggingPresenter.MyProxy.class);
+
+        bindPresenter(OSGiPresenter.class,
+                OSGiPresenter.MyView.class,
+                OSGiSubsystemView.class,
+                OSGiPresenter.MyProxy.class);
 
         bindPresenter(SocketBindingPresenter.class,
                 SocketBindingPresenter.MyView.class,

@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
+
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -46,6 +47,9 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -96,4 +100,8 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<StandaloneServer> standaloneServer();
     AutoBean<WebServiceEndpoint> webServiceEndpoint();
+
+    AutoBean<OSGiSubsystem> osgiSubsystem();
+    AutoBean<OSGiPreloadedModule> osgiPreloadedModule();
+    AutoBean<OSGiConfigAdminData> osgiConfigAdminData();
 }

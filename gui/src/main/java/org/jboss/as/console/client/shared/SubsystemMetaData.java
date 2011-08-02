@@ -19,10 +19,10 @@
 
 package org.jboss.as.console.client.shared;
 
-import org.jboss.as.console.client.Console;
-
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.jboss.as.console.client.Console;
 
 /**
  * @author Heiko Braun
@@ -40,6 +40,8 @@ public class SubsystemMetaData {
 
     private static final String CONTAINER = "Container";
 
+    private static final String OSGI = "OSGi";
+
     private static final String SECURITY = "Security";
 
     private static final String WEB = "Web";
@@ -53,6 +55,7 @@ public class SubsystemMetaData {
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
+        groups.put(OSGI, new SubsystemGroup(OSGI));
         groups.put(SECURITY, new SubsystemGroup(SECURITY));
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OTHER, new SubsystemGroup(OTHER));
@@ -80,7 +83,8 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("OSGI", "osgi",Boolean.TRUE));
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi"));
+
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
