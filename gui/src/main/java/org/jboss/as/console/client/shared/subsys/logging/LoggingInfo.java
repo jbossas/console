@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.Comparator;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -55,6 +56,20 @@ public class LoggingInfo {
     
     private String loggerConfigEdited;
     private String handlerEdited;
+    
+    private Comparator loggerComparator = new Comparator<LoggerConfig>() {
+        @Override
+        public int compare(LoggerConfig logger1, LoggerConfig logger2) {
+            return logger1.getName().toLowerCase().compareTo(logger2.getName().toLowerCase());
+        }
+    };
+    
+    private Comparator handlerComparator = new Comparator<LoggingHandler>() {
+        @Override
+        public int compare(LoggingHandler handler1, LoggingHandler handler2) {
+            return handler1.getName().toLowerCase().compareTo(handler2.getName().toLowerCase());
+        }
+    };
     
     public LoggingInfo(DispatchAsync dispatcher, BeanFactory factory, LoggingPresenter.MyView view) {
         this.dispatcher = dispatcher;
@@ -224,14 +239,24 @@ public class LoggingInfo {
                                 }
                             }
 
-                            LoggingInfo.this.handlers = handlers;
-                            LoggingInfo.this.loggers = loggers;
+                            LoggingInfo.this.handlers = sortHandlers(handlers);
+                            LoggingInfo.this.loggers = sortLoggers(loggers);
                             
                             view.updateLoggingInfo(LoggingInfo.this);
                         }
                         
                         private boolean isLogger(ModelNode node) {
                             return node.has("handlers");
+                        }
+                        
+                        private List<LoggerConfig> sortLoggers(List<LoggerConfig> loggers) {
+                            Collections.sort(loggers, loggerComparator);
+                            return loggers;
+                        }
+
+                        private List<LoggingHandler> sortHandlers(List<LoggingHandler> handlers) {
+                            Collections.sort(handlers, handlerComparator);
+                            return handlers;
                         }
                         
                         private LoggingHandler makeHandler(ModelNode node, String name) {
