@@ -19,14 +19,19 @@
 
 package org.jboss.as.console.client.shared.properties;
 
+import java.util.Comparator;
+import java.util.List;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -37,8 +42,6 @@ import org.jboss.ballroom.client.widgets.tables.NamedCommand;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -96,13 +99,15 @@ public class PropertyEditor {
                 presenter.launchNewPropertyDialoge(reference);
             }
         });
-        propTools.addToolButton(addProp);
+        propTools.addToolButtonRight(addProp);
 
         panel.add(propTools);
 
+        ColumnSortEvent.ListHandler<PropertyRecord> sortHandler =
+                new ColumnSortEvent.ListHandler<PropertyRecord>(propertyProvider.getList());
+
         // Create columns
         Column<PropertyRecord, String> keyColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
-
             {
                 setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
 
@@ -119,6 +124,13 @@ public class PropertyEditor {
             }
 
         };
+        keyColumn.setSortable(true);
+        sortHandler.setComparator(keyColumn, new Comparator<PropertyRecord>() {
+            @Override
+            public int compare(PropertyRecord o1, PropertyRecord o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
 
         Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
             {
@@ -200,6 +212,8 @@ public class PropertyEditor {
 
         propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
 
+        propertyTable.addColumnSortHandler(sortHandler);
+        propertyTable.getColumnSortList().push(keyColumn);
 
         if(helpText!=null)
         {
@@ -226,8 +240,13 @@ public class PropertyEditor {
         assert properties!=null : "properties cannot be null!";
         this.reference= reference;
         propertyTable.setRowCount(properties.size(), true);
-        propertyProvider.setList(properties);
 
+        List<PropertyRecord> propList = propertyProvider.getList();
+        propList.clear(); // cannot call setList() as that breaks the sort handler
+        propList.addAll(properties);
+
+        // Make sure the new values are properly sorted
+        ColumnSortEvent.fire(propertyTable, propertyTable.getColumnSortList());
     }
 
     public void setEnabled(boolean enabled)
