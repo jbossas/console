@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -95,8 +96,8 @@ public class PreloadedModulesTable {
             }
         });
 
-        table.addColumn(identifierColumn, "Module Identifier");
-        table.addColumn(startLevelColumn, "Start Level");
+        table.addColumn(identifierColumn, Console.CONSTANTS.subsys_osgi_preloadedModuleId());
+        table.addColumn(startLevelColumn, Console.CONSTANTS.subsys_osgi_preloadedModuleStartLevel());
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(identifierColumn);
 

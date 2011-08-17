@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
@@ -52,8 +53,8 @@ public class NewModuleWizard {
         layout.setStyleName("window-content");
         final Form<OSGiPreloadedModule> form = new Form<OSGiPreloadedModule>(OSGiPreloadedModule.class);
 
-        TextBoxItem identifier = new TextBoxItem("identifier", "Module Identifier");
-        TextBoxItem startLevel = new TextBoxItem("startLevel", "Start Level");
+        TextBoxItem identifier = new TextBoxItem("identifier", Console.CONSTANTS.subsys_osgi_preloadedModuleId());
+        TextBoxItem startLevel = new TextBoxItem("startLevel", Console.CONSTANTS.subsys_osgi_preloadedModuleStartLevel());
         startLevel.setRequired(false);
 
         form.setFields(identifier, startLevel);

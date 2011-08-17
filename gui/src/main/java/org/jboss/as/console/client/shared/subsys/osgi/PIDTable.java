@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -53,7 +54,7 @@ public class PIDTable {
                 return pidEntry.getPid();
             }
         };
-        table.addColumn(pidColumn, "PID");
+        table.addColumn(pidColumn, Console.CONSTANTS.subsys_osgi_configAdminPIDShort());
         layout.add(table);
 
         DefaultPager pager = new DefaultPager();
