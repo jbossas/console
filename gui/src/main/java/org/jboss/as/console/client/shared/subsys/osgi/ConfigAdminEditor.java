@@ -67,7 +67,7 @@ public class ConfigAdminEditor implements PropertyManagement {
             public void onClick(ClickEvent event) {
                 final OSGiConfigAdminData model = pidTable.getSelection();
 
-                dialog = new DefaultWindow("Edit PID");
+                dialog = new DefaultWindow(Console.CONSTANTS.subsys_osgi_configAdminEditPID());
                 dialog.setWidth(320);
                 dialog.setHeight(140);
                 dialog.setWidget(new InputWindow(model.getPid(), new InputWindow.Result() {
@@ -89,7 +89,7 @@ public class ConfigAdminEditor implements PropertyManagement {
             @Override
             public void onClick(ClickEvent event) {
                 final OSGiConfigAdminData model = pidTable.getSelection();
-                Feedback.confirm("Remove Configuration Admin Data", "Remove Configuration Admin Data for PID: " + model.getPid() + "?",
+                Feedback.confirm(Console.MESSAGES.subsys_osgi_removeConfigAdmin(), Console.MESSAGES.subsys_osgi_removeConfigAdminConfirm(model.getPid()),
                     new Feedback.ConfirmationHandler() {
                         @Override
                         public void onConfirmation(boolean isConfirmed) {
@@ -117,12 +117,12 @@ public class ConfigAdminEditor implements PropertyManagement {
         layout.setWidgetTopHeight(scroll, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.add(new ContentHeaderLabel("Configuration Admin Data"));
+        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_osgi_configAdminHeader()));
         vpanel.add(horzPanel);
 
         pidTable = new PIDTable();
 
-        vpanel.add(new ContentGroupLabel("Persistent Identifier (PID)"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_configAdminPIDLabel()));
         vpanel.add(pidTable.asWidget());
 
         propertyEditor = new PropertyEditor(this, true, 10);
@@ -136,7 +136,7 @@ public class ConfigAdminEditor implements PropertyManagement {
         });
         pidTable.setSelectionModel(selectionModel);
 
-        vpanel.add(new ContentGroupLabel("Configuration Values"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_configAdminValuesLabel()));
         vpanel.add(propertyEditor.asWidget());
         propertyEditor.setEnabled(false);
 
@@ -171,7 +171,7 @@ public class ConfigAdminEditor implements PropertyManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        dialog = new DefaultWindow("New Configuration Admin Data");
+        dialog = new DefaultWindow(Console.CONSTANTS.subsys_osgi_configAdminValueAdd());
         dialog.setWidth(320);
         dialog.setHeight(240);
         dialog.setWidget(new NewPropertyWizard(this, reference).asWidget());

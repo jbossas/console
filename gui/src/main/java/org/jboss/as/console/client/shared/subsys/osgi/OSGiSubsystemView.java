@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
@@ -47,8 +48,8 @@ public class OSGiSubsystemView extends SuspendableViewImpl implements OSGiPresen
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(frameworkEditor.asWidget(), "Framework");
-        tabLayoutPanel.add(configAdminEditor.asWidget(), "Config Admin");
+        tabLayoutPanel.add(frameworkEditor.asWidget(), Console.CONSTANTS.subsys_osgi_framework());
+        tabLayoutPanel.add(configAdminEditor.asWidget(), Console.CONSTANTS.subsys_osgi_configAdmin());
 
         tabLayoutPanel.selectTab(0);
 

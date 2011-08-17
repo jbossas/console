@@ -20,7 +20,7 @@ package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,17 +28,17 @@ import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
- * A general-purpose input window panel. The user enters a response in the
- * textbox, and a callback is made with the result.
+ * A general-purpose text display panel with OK and Cancel buttons. A callback is made
+ * to inform which button was pressed to dismiss the window.
  *
  * @author David Bosschaert
  */
-public class InputWindow {
-    private final String initial;
+public class MessageWindow {
+    private final String text;
     private final Result callback;
 
-    public InputWindow(String initial, Result callback) {
-        this.initial = initial;
+    public MessageWindow(String text, Result callback) {
+        this.text = text;
         this.callback = callback;
     }
 
@@ -46,31 +46,34 @@ public class InputWindow {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        final TextBox textBox = new TextBox();
-        textBox.setValue(initial);
-        layout.add(textBox);
+        final HTML label = new HTML(text);
+        layout.add(label);
 
         DialogueOptions options = new DialogueOptions(
-            new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    callback.result(textBox.getValue());
-                }
-            }, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    callback.result(null);
-                }
-            });
+            "OK", new MyClickHandler(true),
+            "Cancel", new MyClickHandler(false));
 
         return new WindowContentBuilder(layout, options).build();
     }
 
+    private class MyClickHandler implements ClickHandler {
+        private final boolean value;
+
+        private MyClickHandler(boolean val) {
+            value = val;
+        }
+
+        @Override
+        public void onClick(ClickEvent event) {
+            callback.result(value);
+        }
+    }
+
     public static interface Result {
         /**
-         * Called with the result of the Input Window.
-         * @param value The new value or <tt>null</tt> if the user pressed cancel.
+         * Called with the result of the button pressed.
+         * @param value <tt>true</tt> when OK was pressed, <tt>false</tt> otherwise.
          */
-        void result(String value);
+        void result(boolean result);
     }
 }

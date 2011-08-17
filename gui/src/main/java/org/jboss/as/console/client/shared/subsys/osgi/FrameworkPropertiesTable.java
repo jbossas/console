@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -44,8 +45,7 @@ public class FrameworkPropertiesTable implements PropertyManagement {
 
     Widget asWidget() {
       propEditor = new PropertyEditor(this, true, 10);
-      propEditor.setHelpText("OSGi Framework Properties. " +
-  		"Changes to these properties require a Framework restart in order to become effective.");
+      propEditor.setHelpText(Console.MESSAGES.subsys_osgi_frameworkPropertiesHelp());
 
       Widget widget = propEditor.asWidget();
       propEditor.setEnabled(false);
@@ -64,7 +64,7 @@ public class FrameworkPropertiesTable implements PropertyManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New OSGi Framework Property");
+        propertyWindow = new DefaultWindow(Console.CONSTANTS.subsys_osgi_frameworkPropertyAdd());
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.setWidget(new NewPropertyWizard(this, reference).asWidget());
