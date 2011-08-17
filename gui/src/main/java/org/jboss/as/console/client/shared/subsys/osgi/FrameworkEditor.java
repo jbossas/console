@@ -23,6 +23,8 @@ import java.util.List;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -65,13 +67,19 @@ public class FrameworkEditor {
         ToolStrip toolStrip = new ToolStrip();
         layout.add(toolStrip);
 
-        vpanel.add(new ContentHeaderLabel("OSGi Framework Configuration"));
-        vpanel.add(new ContentGroupLabel("Settings"));
+        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_osgi_frameworkHeader()));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_settings()));
 
         form = new Form<OSGiSubsystem>(OSGiSubsystem.class);
         form.setNumColumns(1);
 
-        CheckBoxItem activationMode = new CheckBoxItem("lazyActivation", "Lazy Activation");
+        CheckBoxItem activationMode = new CheckBoxItem("lazyActivation", Console.CONSTANTS.common_label_lazyActivation());
+        activationMode.asWidget().addHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                presenter.onActivationChange(event.getValue());
+            }
+        }, ValueChangeEvent.getType());
         form.setFields(activationMode);
         vpanel.add(form.asWidget());
 
@@ -86,14 +94,14 @@ public class FrameworkEditor {
     }
 
     private void addProperties(Panel layout) {
-        layout.add(new ContentGroupLabel("Framework Properties"));
+        layout.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_frameworkProperties()));
 
         propertiesTable = new FrameworkPropertiesTable(presenter);
         layout.add(propertiesTable.asWidget());
     }
 
     private void addPreLoadedModules(Panel layout) {
-        layout.add(new ContentGroupLabel("Pre-loaded Modules"));
+        layout.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_preloadedModules()));
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
@@ -106,7 +114,8 @@ public class FrameworkEditor {
             @Override
             public void onClick(ClickEvent event) {
                 final OSGiPreloadedModule module =  preloadedModulesTable.getSelection();
-                Feedback.confirm("Remove Pre-Loaded Module", "Remove from pre-loaded modules: " + module.getIdentifier() + "?",
+                Feedback.confirm(Console.MESSAGES.subsys_osgi_removePreloadedModule(),
+                    Console.MESSAGES.subsys_osgi_removePreloadedModuleConfirm(module.getIdentifier()),
                     new Feedback.ConfirmationHandler() {
                         @Override
                         public void onConfirmation(boolean isConfirmed) {
@@ -130,7 +139,6 @@ public class FrameworkEditor {
 
     void setProviderDetails(OSGiSubsystem provider) {
         form.edit(provider);
-        form.setEnabled(false);
     }
 
     void updateProperties(List<PropertyRecord> properties) {

@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -56,34 +57,34 @@ public class NewPropertyWizard {
 
         final Form<PropertyRecord> form = new Form<PropertyRecord>(PropertyRecord.class);
 
-        final TextBoxItem nameItem = new TextBoxItem("key", "Name");
-        final TextAreaItem valueItem = new TextAreaItem("value", "Value");
+        final TextBoxItem nameItem = new TextBoxItem("key", Console.CONSTANTS.common_label_name());
+        final TextAreaItem valueItem = new TextAreaItem("value", Console.CONSTANTS.common_label_value());
 
         form.setFields(nameItem, valueItem);
 
         DialogueOptions options = new DialogueOptions(
-                new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        // save
+            new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    // save
 
-                        // Not using form.getUpdatedEntity() here as this goes through a JSON
-                        // serialization phase which causes issues with multi-line values
-                        PropertyRecord property = factory.property().as();
-                        property.setKey(nameItem.getValue());
-                        property.setValue(valueItem.getValue());
+                    // Not using form.getUpdatedEntity() here as this goes through a JSON
+                    // serialization phase which causes issues with multi-line values
+                    PropertyRecord property = factory.property().as();
+                    property.setKey(nameItem.getValue());
+                    property.setValue(valueItem.getValue());
 
-                        presenter.onCreateProperty(reference, property);
-                        presenter.closePropertyDialoge();
-                    }
-                },
-                new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        // cancel
-                        presenter.closePropertyDialoge();
-                    }
+                    presenter.onCreateProperty(reference, property);
+                    presenter.closePropertyDialoge();
                 }
+            },
+            new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    // cancel
+                    presenter.closePropertyDialoge();
+                }
+            }
         );
 
         panel.add(form.asWidget());

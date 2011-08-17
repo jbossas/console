@@ -23,6 +23,7 @@ import com.google.gwt.i18n.client.Messages;
 
 /**
  * @author Heiko Braun
+ * @author David Bosschaert
  * @date 5/2/11
  */
 public interface UIMessages extends Messages {
@@ -47,11 +48,11 @@ public interface UIMessages extends Messages {
     String removeProperty();
 
     String removePropertyConfirm(String key);
-    
+
     String common_validation_requiredField();
-    
+
     String mustBeDeployableArchive(String fieldName);
-    
+
     String alreadyExists(String fieldName);
 
     String commmon_description_newServerGroup();
@@ -61,30 +62,37 @@ public interface UIMessages extends Messages {
     String restartRequired();
 
     String restartRequiredConfirm();
-    
+
     String removeFromConfirm(String entity, String target);
-    
+
     String failedToRemoveFrom(String entity, String target);
-    
+
     String removedFrom(String entity, String target);
-    
+
     String enableConfirm(String entity);
-    
+
     String disableConfirm(String entity);
-    
+
     String failedToEnable(String entity);
-    
+
     String failedToDisable(String entity);
-    
+
     String successEnabled(String entity);
-    
+
     String successDisabled(String entity);
-    
+
     String addConfirm(String entity, String target);
-    
+
     String failedToAdd(String entity, String target);
-    
+
     String successAdd(String entity, String target);
-    
+
     String alreadyAssignedTo(String deploymentName, String serverGroup);
+
+    String subsys_osgi_activationWarning();
+    String subsys_osgi_frameworkPropertiesHelp();
+    String subsys_osgi_removeConfigAdmin();
+    String subsys_osgi_removeConfigAdminConfirm(String pid);
+    String subsys_osgi_removePreloadedModule();
+    String subsys_osgi_removePreloadedModuleConfirm(String id);
 }

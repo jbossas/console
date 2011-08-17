@@ -22,6 +22,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.FAILURE_DESCRIPTION;
+import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OUTCOME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
@@ -30,6 +31,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.REMOVE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUCCESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
+import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -243,9 +247,9 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
     public void launchModuleWizard(OSGiPreloadedModule module) {
         String title;
         if (module == null)
-            title = "Add Pre-loaded Module";
+            title = Console.CONSTANTS.subsys_osgi_preloadedModuleAdd();
         else
-            title = "Edit Pre-loaded Module";
+            title = Console.CONSTANTS.subsys_osgi_preloadedModuleEdit();
 
         window = new DefaultWindow(title);
         window.setWidth(320);
@@ -257,7 +261,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
 
     public void launchNewCASPropertyWizard() {
-        window = new DefaultWindow("Add Configuration Admin Data");
+        window = new DefaultWindow(Console.CONSTANTS.subsys_osgi_configAdminAdd());
         window.setWidth(480);
         window.setHeight(360);
         window.setWidget(new NewConfigAdminDataWizard(this).asWidget());
@@ -270,13 +274,52 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
             window.hide();
     }
 
+    void onActivationChange(final boolean isLazy) {
+        if (!isLazy) {
+            window = new DefaultWindow(Console.CONSTANTS.common_label_changeActivation());
+            window.setWidth(320);
+            window.setHeight(140);
+            window.setWidget(new MessageWindow(Console.MESSAGES.subsys_osgi_activationWarning(),
+                new MessageWindow.Result() {
+                    @Override
+                    public void result(boolean result) {
+                        closeDialogue();
+                        if (result)
+                            applyActivationChange(isLazy);
+                        else
+                            loadOSGiDetails();
+                    }
+                }).asWidget());
+            window.setGlassEnabled(true);
+            window.center();
+        } else {
+            applyActivationChange(isLazy);
+        }
+    }
+
+    private void applyActivationChange(boolean isLazy) {
+        ModelNode operation = createOperation(WRITE_ATTRIBUTE_OPERATION);
+        final String stringValue = isLazy ? "lazy" : "eager";
+        operation.get(NAME).set("activation");
+        operation.get(VALUE).set(stringValue);
+
+        dispatcher.execute(new DMRAction(operation),
+            new SimpleResponseHandler(WRITE_ATTRIBUTE_OPERATION, "activation", stringValue,
+                new Command() {
+                    @Override
+                    public void execute() {
+                        loadOSGiDetails();
+                    }
+                }));
+    }
+
     public void onAddProperty(final PropertyRecord prop) {
         ModelNode operation = createOperation(ADD);
         operation.get(ADDRESS).add("property", prop.getKey());
         operation.get("value").set(prop.getValue());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, "Framework Property", prop.getKey(),
+            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_frameworkProperty(), prop.getKey(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -290,7 +333,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("property", property.getKey());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, "Framework Property", property.getKey(),
+            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_frameworkProperty(), property.getKey(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -308,7 +351,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
             operation.get("start").set(entity.getStartLevel());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, "pre-loaded module", entity.getIdentifier(),
+            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_preloadedModule(), entity.getIdentifier(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -322,7 +365,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("module", identifier);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, "pre-loaded module", identifier,
+            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_preloadedModule(), identifier,
                 new Command() {
                     @Override
                     public void execute() {
@@ -342,7 +385,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         }
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, "Configuration Admin PID", data.getPid(),
+            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_configAdminPID(), data.getPid(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -356,7 +399,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("configuration", pid);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, "Configuration Admin PID", pid,
+            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_configAdminPID(), pid,
                 new Command() {
                     @Override
                     public void execute() {
@@ -388,7 +431,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
         @Override
         public void onFailure(Throwable caught) {
-            Console.error("Failed to " + operation + " " + entityName, caught.getMessage());
+            Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName, caught.getMessage());
         }
 
         @Override
@@ -396,9 +439,9 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
             ModelNode response = ModelNode.fromBase64(result.getResponseText());
             boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
             if (success)
-                Console.info("Success: " + operation + " " + entityName + ": " + id);
+                Console.info(Console.CONSTANTS.common_label_success() + " " + operation + " " + entityName + ": " + id);
             else
-                Console.error("Failed to " + operation + " " + entityName + ": " + id,
+                Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName + ": " + id,
                     response.get(FAILURE_DESCRIPTION).asString());
 
             Console.schedule(callback);

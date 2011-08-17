@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
@@ -57,7 +58,7 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
         layout.setStyleName("window-content");
         final Form<OSGiConfigAdminData> form = new Form<OSGiConfigAdminData>(OSGiConfigAdminData.class);
 
-        TextBoxItem pid = new TextBoxItem("pid", "PID");
+        TextBoxItem pid = new TextBoxItem("pid", Console.CONSTANTS.subsys_osgi_configAdminPIDShort());
         form.setFields(pid);
 
         layout.add(form.asWidget());
@@ -104,8 +105,8 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
 
     private void addEmptyProperty() {
         PropertyRecord proto = factory.property().as();
-        proto.setKey("name");
-        proto.setValue("value");
+        proto.setKey(Console.CONSTANTS.common_label_name().toLowerCase());
+        proto.setValue(Console.CONSTANTS.common_label_value().toLowerCase());
 
         properties.add(proto);
         propEditor.setProperties("", properties);
