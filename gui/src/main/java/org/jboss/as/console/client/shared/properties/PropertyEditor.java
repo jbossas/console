@@ -58,6 +58,8 @@ public class PropertyEditor {
     private boolean simpleView = false;
     private String helpText;
     private int numRows = 5;
+    private boolean enabled = true;
+    private boolean allowEditProps = true;
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
@@ -114,6 +116,7 @@ public class PropertyEditor {
                     @Override
                     public void update(int index, PropertyRecord object, String value) {
                         object.setKey(value);
+                        presenter.onChangeProperty(reference, object);
                     }
                 });
             }
@@ -139,6 +142,7 @@ public class PropertyEditor {
                     @Override
                     public void update(int index, PropertyRecord object, String value) {
                         object.setValue(value);
+                        presenter.onChangeProperty(reference, object);
                     }
                 });
             }
@@ -170,7 +174,7 @@ public class PropertyEditor {
         NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
             @Override
             public void execute(int rownum) {
-
+                if (!PropertyEditor.this.propertyTable.isEnabled()) return;
                 final PropertyRecord property = propertyProvider.getList().get(rownum);
 
                 if(simpleView)
@@ -251,6 +255,20 @@ public class PropertyEditor {
 
     public void setEnabled(boolean enabled)
     {
-        propertyTable.setEnabled(enabled);
+        this.enabled = enabled;
+        propertyTable.setEnabled(enabled && allowEditProps);
+        addProp.setEnabled(enabled);
     }
+    
+    /**
+     * If set to false, editor will only allow add and delete, but not
+     * in-place editing.
+     * 
+     * @param allowEditProps 
+     */
+    public void setAllowEditProps(boolean allowEditProps) {
+        this.allowEditProps = allowEditProps;
+        propertyTable.setEnabled(enabled && allowEditProps);
+    }
+    
 }

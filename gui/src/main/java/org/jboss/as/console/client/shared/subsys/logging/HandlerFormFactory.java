@@ -18,8 +18,11 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.DefaultGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -29,6 +32,8 @@ import java.util.Map;
 
 import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.LEVEL;
 import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.NAME;
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.CLASS;
+import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute.MODULE;
 
 /**
  * Creates the Form objects needed for LoggingHandlers.
@@ -47,17 +52,66 @@ public class HandlerFormFactory<LoggingHandler> implements LoggingEntityFormFact
     
     @Override
     public FormAdapter<LoggingHandler> makeAddEntityForm() {
-        ComboBoxItem handlerTypeItem = new ComboBoxItem("type", Console.CONSTANTS.subsys_logging_type());
-        handlerTypeItem.setValueMap(HandlerType.getAllDisplayNames());
-        handlerTypeItem.setValue("periodic-rotating-file-handler");
-
-        FormItem levelItem = LEVEL.getItemForAdd();
-        levelItem.setValue("INFO");
+        Map<String, FormAdapter<LoggingHandler>> handlerForms = new HashMap<String, FormAdapter<LoggingHandler>>(HandlerType.values().length);
+        final AddHandlerDeckPanel formDeckPanel = new AddHandlerDeckPanel("type");
         
-        Form<LoggingHandler> form = new Form(this.conversionType);
-        form.setNumColumns(1);
-        form.setFields(NAME.getItemForAdd(), handlerTypeItem, levelItem);
-        return form;
+        for (HandlerType handlerType : HandlerType.values()) {
+            Form<LoggingHandler> form = new Form<LoggingHandler>(this.conversionType);
+            form.setNumColumns(1);
+            
+            ComboBoxItem handlerTypeItem = new ComboBoxItem("type", Console.CONSTANTS.subsys_logging_type());
+            formDeckPanel.addComboBox(handlerType.getDisplayName(), handlerTypeItem);
+            handlerTypeItem.setValueMap(HandlerType.getAllDisplayNames());
+            handlerTypeItem.setValue(handlerType.getDisplayName());
+            handlerTypeItem.addValueChangeHandler(new ValueChangeHandler<String>() {
+                @Override
+                public void onValueChange(ValueChangeEvent<String> event) {
+                    formDeckPanel.showWidget(event.getValue());
+                }
+            });
+
+            FormItem levelItem = LEVEL.getItemForAdd();
+            levelItem.setValue("INFO");
+
+            if (handlerType.equals(HandlerType.CUSTOM)) {
+                FormItem classNameItem = CLASS.getItemForAdd();
+                FormItem moduleItem = MODULE.getItemForAdd();
+                form.setFields(handlerTypeItem, NAME.getItemForAdd(), levelItem, moduleItem, classNameItem);
+            } else {
+                form.setFields(handlerTypeItem, NAME.getItemForAdd(), levelItem);
+            }
+            
+            handlerForms.put(handlerType.getDisplayName(), form);
+        }
+
+        formDeckPanel.setForms(handlerForms, HandlerType.PERIODIC_ROTATING_FILE.getDisplayName());
+        return formDeckPanel;
+    }
+    
+    // Convoluted extension of FormDeckPanel that collects the ComboBoxItems.  Since the ComboBoxItem is the
+    // thing that switches panels, we need to set its value to whatever was selected.  Otherwise, whatever
+    // the user selected would appear to change to whatever the value was last time the panel was displayed.
+    private class AddHandlerDeckPanel extends FormDeckPanel<LoggingHandler> {
+        private Map<String, ComboBoxItem> comboBoxes = new HashMap<String, ComboBoxItem>();
+        
+        AddHandlerDeckPanel(String triggerProperty) {
+            super(triggerProperty);
+        }
+        
+        void addComboBox(String type, ComboBoxItem comboBox) {
+            this.comboBoxes.put(type, comboBox);
+        }
+
+        @Override
+        public void showWidget(String name) {
+            ComboBoxItem comboBox = comboBoxes.get(name);
+            
+            // Only change the value if it is wrong.  Otherwise, it triggers the ValueChangeHandler again
+            // and you get an endless loop.
+            if (!name.equals(comboBox.getValue())) comboBox.setValue(name);
+            
+            super.showWidget(name);
+        }
     }
 
     @Override
@@ -76,18 +130,26 @@ public class HandlerFormFactory<LoggingHandler> implements LoggingEntityFormFact
         Map<String, FormAdapter<LoggingHandler>> handlerForms = new HashMap<String, FormAdapter<LoggingHandler>>(HandlerType.values().length);
         for (HandlerType handlerType : HandlerType.values()) {
             HandlerAttribute[] attributes = handlerType.getAttributes();
-            FormItem[] formItems = new FormItem[attributes.length];
+            int mainItemCount = (handlerType == HandlerType.CUSTOM) ? attributes.length - 1 : attributes.length;
+            FormItem[] formItems = new FormItem[mainItemCount];
             for (int i=0; i < attributes.length; i++) {
+                if (attributes[i] == HandlerAttribute.PROPERTIES) continue;
                 formItems[i] = attributes[i].getItemForEdit();
             }
             Form<LoggingHandler> form = new Form<LoggingHandler>(this.conversionType);
             form.setFields(formItems);
             form.setNumColumns(2);
+            
+            // put Properties Editor in a single column spanning the bottom of the form
+            if (handlerType == HandlerType.CUSTOM) form.setFieldsInGroup(Console.CONSTANTS.subsys_logging_handlerProperties(), 
+                                                                         new DefaultGroupRenderer(),
+                                                                         HandlerAttribute.PROPERTIES.getItemForEdit());
+            
             handlerForms.put(handlerType.getDisplayName(), form);
         }
 
-        FormAdapter formDeckPanel = new FormDeckPanel(handlerForms, "type");
-        
+        FormDeckPanel formDeckPanel = new FormDeckPanel("type");
+        formDeckPanel.setForms(handlerForms, HandlerType.PERIODIC_ROTATING_FILE.getDisplayName());
         return formDeckPanel;
     }
     

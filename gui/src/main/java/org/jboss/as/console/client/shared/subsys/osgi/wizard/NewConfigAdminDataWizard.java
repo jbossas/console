@@ -97,6 +97,11 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
         properties.remove(prop);
         propEditor.setProperties("", properties);
     }
+    
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // do nothing
+    }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {

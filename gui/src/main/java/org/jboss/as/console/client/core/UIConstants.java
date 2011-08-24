@@ -136,7 +136,11 @@ public interface UIConstants extends Constants {
     String subsys_logging_suffix();
     String subsys_logging_handlerConfigurations();
     String subsys_logging_invalidByteSpec();
-
+    String subsys_logging_className();
+    String subsys_logging_module();
+    String subsys_logging_handlerProperties();
+    String subsys_logging_newHandlerProperty();
+    
     String subsys_osgi_configAdmin();
     String subsys_osgi_configAdminAdd();
     String subsys_osgi_configAdminEditPID();

@@ -16,33 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging;
+package org.jboss.as.console.client.shared.properties;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
-import org.jboss.as.console.client.shared.properties.PropertyEditor;
-import org.jboss.as.console.client.shared.properties.PropertyManagement;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
- *
+ * FormItem that wraps a PropertyEditor table.
+ * 
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class PropertyEditorFormItem extends FormItem<List<PropertyRecord>> implements PropertyManagement {
     private static BeanFactory factory = GWT.create(BeanFactory.class);;
     
-    private PropertyEditor propertyEditor;
-    private List<PropertyRecord> value;
+    protected PropertyEditor propertyEditor;
+    protected List<PropertyRecord> value;
     
-    private DefaultWindow addPropertyDialog;
-    private String addDialogTitle;
+    protected DefaultWindow addPropertyDialog;
+    protected String addDialogTitle;
     
+    /**
+     * Create a new PropertyEditorFormItem.
+     * 
+     * @param name The name of the FormItem.
+     * @param title The label that will be displayed with the editor.
+     * @param addDialogTitle The title shown when the Add button is pressed.
+     * @param rows The max number of rows in the PropertyEditor.
+     */
     public PropertyEditorFormItem(String name, String title, String addDialogTitle, int rows) {
         super(name, title);
         this.propertyEditor = new PropertyEditor(this, true, rows);
@@ -76,7 +81,6 @@ public class PropertyEditorFormItem extends FormItem<List<PropertyRecord>> imple
 
     @Override
     public void setValue(List<PropertyRecord> properties) {
-        
         // clone the PropertyRecords so that you can cancel the edit
         List<PropertyRecord> props = new ArrayList<PropertyRecord>(properties.size());
         for (PropertyRecord property : properties) {

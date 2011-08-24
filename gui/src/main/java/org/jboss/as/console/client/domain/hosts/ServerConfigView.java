@@ -245,7 +245,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         propertyEditor = new PropertyEditor(presenter);
         propertyEditor.setHelpText("A system property to set on this server.");
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
-        propertyEditor.setEnabled(false);
+        propertyEditor.setAllowEditProps(false);
 
 
         panel.add(new ContentGroupLabel("Subresources"));

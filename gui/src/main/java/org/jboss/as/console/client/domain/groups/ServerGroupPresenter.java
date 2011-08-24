@@ -474,5 +474,10 @@ public class ServerGroupPresenter
         });
     }
 
+    @Override
+    public void onChangeProperty(String groupName, PropertyRecord prop) {
+        // do nothing
+    }
 
+    
 }

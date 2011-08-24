@@ -104,8 +104,14 @@ public class DeploymentStep1 {
 
                     String json = html;
 
-                    if(!GWT.isScript()) // TODO: Formpanel weirdness
-                        json = html.substring(html.indexOf(">")+1, html.lastIndexOf("<"));
+                    try {
+                        if(!GWT.isScript()) // TODO: Formpanel weirdness
+                            json = html.substring(html.indexOf(">")+1, html.lastIndexOf("<"));
+                    } catch (StringIndexOutOfBoundsException e) {
+                        // if I get this exception it means I shouldn't strip out the html
+                        // this issue still needs more research
+                        Log.debug("Failed to strip out HTML.  This should be preferred?");
+                    }
 
                     JSONObject response  = JSONParser.parseLenient(json).isObject();
                     JSONObject result = response.get("result").isObject();

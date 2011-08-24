@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import org.jboss.as.console.client.shared.properties.PropertyEditorFormItem;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -50,7 +51,10 @@ public enum HandlerAttribute {
     SUBHANDLERS(false, "subhandlers", "subhandlers", "", Console.CONSTANTS.subsys_logging_subhandlers(), new ListBoxItemFactory()),
     OVERFLOW_ACTION(true, "overflow-action", "overflowAction", "BLOCK", Console.CONSTANTS.subsys_logging_overflowAction(), new ComboBoxItemFactory(new String[] {"BLOCK", "DISCARD"})),
     QUEUE_LENGTH(true, "queue-length", "queueLength", "512", Console.CONSTANTS.subsys_logging_queueLength(), new TextBoxItemFactory()),
-    SUFFIX(true, "suffix", "suffix", ".yyyy-MM-dd", Console.CONSTANTS.subsys_logging_suffix(), new TextBoxItemFactory());
+    SUFFIX(true, "suffix", "suffix", ".yyyy-MM-dd", Console.CONSTANTS.subsys_logging_suffix(), new TextBoxItemFactory()),
+    CLASS(true, "class", "className", "", Console.CONSTANTS.subsys_logging_className(), new TextBoxItemFactory(), new TextItemFactory()),
+    MODULE(true, "module", "module", "", Console.CONSTANTS.subsys_logging_module(), new TextBoxItemFactory(), new TextItemFactory()),
+    PROPERTIES(false, "properties", "properties", "", Console.CONSTANTS.subsys_logging_handlerProperties(), new PropertyEditorItemFactory());
     
     private boolean isRequired;
     private String dmrName;
@@ -275,4 +279,15 @@ public enum HandlerAttribute {
         }
     }
     
+    private static class PropertyEditorItemFactory implements FormItemFactory {
+        @Override
+        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
+            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(beanPropName, 
+                                                                           label, 
+                                                                           Console.CONSTANTS.subsys_logging_newHandlerProperty(), 
+                                                                           3);
+            propEditor.setRequired(isRequired);
+            return propEditor;
+        }
+    }
 }

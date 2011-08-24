@@ -138,7 +138,7 @@ public class ConfigAdminEditor implements PropertyManagement {
 
         vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_configAdminValuesLabel()));
         vpanel.add(propertyEditor.asWidget());
-        propertyEditor.setEnabled(false);
+        propertyEditor.setAllowEditProps(false);
 
         return layout;
     }
@@ -169,6 +169,11 @@ public class ConfigAdminEditor implements PropertyManagement {
         presenter.onAddConfigurationAdminData(data);
     }
 
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // do nothing
+    }
+    
     @Override
     public void launchNewPropertyDialoge(String reference) {
         dialog = new DefaultWindow(Console.CONSTANTS.subsys_osgi_configAdminValueAdd());
