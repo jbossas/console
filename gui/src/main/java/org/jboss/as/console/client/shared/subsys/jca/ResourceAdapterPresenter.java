@@ -379,6 +379,11 @@ public class ResourceAdapterPresenter
 
         // TODO: https://issues.jboss.org/browse/AS7-1381
     }
+    
+    @Override
+    public void onChangeProperty(String ref, PropertyRecord prop) {
+        Console.error("Not implemented yet!");
+    }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {

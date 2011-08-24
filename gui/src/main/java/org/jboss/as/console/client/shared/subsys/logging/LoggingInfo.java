@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
@@ -264,9 +265,16 @@ public class LoggingInfo {
                             model.setName(name);
                             model.setType(handlerType);
                             model.setLevel(node.get("level").asString());
-                            model.setEncoding(node.get("encoding").asString());
+                            
+                            if (node.get("encoding").isDefined()) {
+                                model.setEncoding(node.get("encoding").asString());
+                            }
+                            
                             model.setFilter(node.get("filter").asString());
-                            model.setFormatter(node.get("formatter").asString());
+                            
+                            if (node.get("formatter").isDefined()) {
+                                model.setFormatter(node.get("formatter").asString());
+                            }
                             
                             if (node.get("autoflush").isDefined()) {
                                 model.setAutoflush(node.get("autoflush").asBoolean());
@@ -303,6 +311,26 @@ public class LoggingInfo {
                             model.setQueueLength(node.get("queue-length").asString());
                             model.setSuffix(node.get("suffix").asString());
 
+                            if (node.get("class").isDefined()) {
+                                model.setClassName(node.get("class").asString());
+                            }
+                            
+                            if (node.get("module").isDefined()) {
+                                model.setModule(node.get("module").asString());
+                            }
+                            
+                            List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
+                            if (node.get("properties").isDefined()) {
+                                List<Property> props = node.get("properties").asPropertyList();
+                                for (Property prop : props) {
+                                    PropertyRecord property = factory.property().as();
+                                    property.setKey(prop.getName());
+                                    property.setValue(prop.getValue().asString());
+                                    properties.add(property);
+                                }
+                            }
+                            model.setProperties(properties);
+                            
                             return model;
                         }
                         

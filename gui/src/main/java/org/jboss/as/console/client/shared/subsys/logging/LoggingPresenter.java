@@ -29,12 +29,14 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.dmr.client.ModelNode;
@@ -117,6 +119,11 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         
         operation.get(HandlerAttribute.NAME.getDmrName()).set(handler.getName());
         operation.get(HandlerAttribute.LEVEL.getDmrName()).set(handler.getLevel());
+        
+        if (type == HandlerType.CUSTOM) {
+            operation.get(HandlerAttribute.CLASS.getDmrName()).set(handler.getClassName());
+            operation.get(HandlerAttribute.MODULE.getDmrName()).set(handler.getModule());
+        }
         
         HandlerAttribute[] stringAttributes = new HandlerAttribute[] { 
             HandlerAttribute.ENCODING, HandlerAttribute.FILTER, HandlerAttribute.FORMATTER, 
@@ -235,6 +242,13 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
             
             if ((attrib == HandlerAttribute.FILE_PATH) || (attrib == HandlerAttribute.FILE_RELATIVE_TO)) {
                 operation.get("file").get(dmrName).set(value.toString());
+            } else if (attrib == HandlerAttribute.PROPERTIES) {
+                ModelNode propList = new ModelNode();
+                List<PropertyRecord> properties = (List<PropertyRecord>)value;
+                for (PropertyRecord prop : properties) {
+                    propList.add(prop.getKey(), prop.getValue());
+                }
+                operation.get(dmrName).set(propList);
             } else {
                 operation.get(dmrName).set(value.toString());
             }

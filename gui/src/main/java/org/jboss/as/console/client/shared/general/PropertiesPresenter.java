@@ -184,4 +184,8 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
         });
     }
 
+    @Override
+    public void onChangeProperty(String groupName, PropertyRecord prop) {
+        // do nothing
+    }
 }

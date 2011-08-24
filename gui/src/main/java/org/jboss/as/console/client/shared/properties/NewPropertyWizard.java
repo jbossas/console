@@ -40,10 +40,16 @@ public class NewPropertyWizard {
 
     private String reference;
     private PropertyManagement presenter;
+    private boolean includeBootTime = true;
 
-    public NewPropertyWizard(PropertyManagement presenter, String reference) {
+    public NewPropertyWizard(PropertyManagement presenter, String reference, boolean includeBootTime) {
         this.presenter = presenter;
         this.reference = reference;
+        this.includeBootTime = includeBootTime;
+    }
+    
+    public NewPropertyWizard(PropertyManagement presenter, String reference) {
+        this(presenter, reference, true);
     }
 
     public Widget asWidget() {
@@ -59,7 +65,7 @@ public class NewPropertyWizard {
         TextBoxItem valueItem = new TextBoxItem("value", "Value");
         CheckBoxItem bootItem = new CheckBoxItem("bootTime", "Boot-Time");
 
-        if(Console.MODULES.getBootstrapContext().isStandalone())
+        if(Console.MODULES.getBootstrapContext().isStandalone() || !includeBootTime)
             form.setFields(nameItem, valueItem);
         else
             form.setFields(nameItem, valueItem, bootItem);

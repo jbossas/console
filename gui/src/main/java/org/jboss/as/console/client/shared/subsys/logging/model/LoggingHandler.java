@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
 import java.util.List;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 /**
  * Model for a Logging Handler
@@ -78,6 +79,18 @@ public interface LoggingHandler {
    
    String getSuffix();
    void setSuffix(String suffix);
+   
+   // Custom handlers only
+   String getClassName();
+   void setClassName(String className);
+   
+   // Custom handlers only
+   String getModule();
+   void setModule(String module);
+   
+   // Custom handlers only
+   List<PropertyRecord> getProperties();
+   void setProperties(List<PropertyRecord> properties);
    
    /**
     * Get the subhandler that needs to be assigned to an async handler.
