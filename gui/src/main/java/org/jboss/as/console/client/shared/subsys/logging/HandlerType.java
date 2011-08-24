@@ -36,7 +36,9 @@ public enum HandlerType {
                                                      FILE_PATH, ROTATE_SIZE, MAX_BACKUP_INDEX),
     
     PERIODIC_ROTATING_FILE("periodic-rotating-file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, 
-                                                             APPEND, FILE_RELATIVE_TO, FILE_PATH, SUFFIX);
+                                                             APPEND, FILE_RELATIVE_TO, FILE_PATH, SUFFIX),
+    
+    CUSTOM("custom-handler", NAME, MODULE, CLASS, LEVEL, ENCODING, FORMATTER, PROPERTIES);
     
     private final String displayName;
     

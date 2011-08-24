@@ -76,14 +76,14 @@ public class NewDeploymentWizard  {
 
 
     public void onUploadComplete(String fileName, String hash) {
-
+        
         // html5 spec: anonymous file upload (C:\fakepath\)
         int fakePathIndex = fileName.lastIndexOf("\\");
         if(fakePathIndex!=-1)
         {
             fileName = fileName.substring(fakePathIndex+1, fileName.length());
         }
-
+        
         DeploymentReference deploymentRef = factory.deploymentReference().as();
         deploymentRef.setHash(hash);
         deploymentRef.setName(fileName);

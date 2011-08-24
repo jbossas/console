@@ -44,6 +44,11 @@ public class AdapterStep2 implements PropertyManagement {
     }
 
     @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // do nothing
+    }
+    
+    @Override
     public void launchNewPropertyDialoge(String reference) {
         PropertyRecord proto = factory.property().as();
         proto.setKey("name");

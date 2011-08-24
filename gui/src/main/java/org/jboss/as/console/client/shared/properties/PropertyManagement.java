@@ -26,6 +26,7 @@ package org.jboss.as.console.client.shared.properties;
 public interface PropertyManagement {
     void onCreateProperty(String reference, final PropertyRecord prop);
     void onDeleteProperty(String reference, final PropertyRecord prop);
+    void onChangeProperty(String reference, final PropertyRecord prop);
     void launchNewPropertyDialoge(String reference);
     void closePropertyDialoge();
 }

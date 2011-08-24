@@ -179,7 +179,7 @@ public class XADataSourceEditor implements PropertyManagement {
 
         bottomPanel.add(details.asWidget(), "Attributes");
         bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
-        propertyEditor.setEnabled(false); // TODO: modifications of XA properties
+        propertyEditor.setAllowEditProps(false); // TODO: modifications of XA properties
         //bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
         //bottomPanel.add(new HTML("Current pool size, connections in use, etc"), "Metrics");
 
@@ -216,6 +216,11 @@ public class XADataSourceEditor implements PropertyManagement {
         Console.error("Not implemented yet!");
     }
 
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        Console.error("Not implemented yet!");
+    }
+    
     @Override
     public void launchNewPropertyDialoge(String reference) {
         Console.error("Not implemented yet!");    // https://issues.jboss.org/browse/AS7-874

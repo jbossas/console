@@ -179,4 +179,8 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
         });
     }
 
+    @Override
+    public void onChangeProperty(String groupName, PropertyRecord prop) {
+        // do nothing
+    }
 }
