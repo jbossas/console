@@ -89,6 +89,8 @@ public interface UIMessages extends Messages {
 
     String alreadyAssignedTo(String deploymentName, String serverGroup);
 
+    String subsys_naming_failedToLoadJNDIView();
+
     String subsys_osgi_activationWarning();
     String subsys_osgi_frameworkPropertiesHelp();
     String subsys_osgi_removeConfigAdmin();

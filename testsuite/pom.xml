@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <name>JBoss 7 - Management Console :: Test Suite</name>
+    <groupId>org.jboss.as</groupId>
+    <artifactId>jboss-as-console-testsuite</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-console-parent</artifactId>
+        <version>1.0.0.Beta17-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modules>
+        <module>smoke</module>
+    </modules>
+</project>

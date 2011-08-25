@@ -1,61 +1,81 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ */
 package org.jboss.as.console.client.shared.subsys.naming;
+
+import java.util.List;
+import java.util.Stack;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
-import org.jboss.dmr.client.Property;
 
-import java.util.List;
-import java.util.Stack;
+import org.jboss.dmr.client.Property;
 
 /**
  * really awkward jndi parsing routine.
  *
  * @author Heiko Braun
+ * @author David Bosschaert
  * @date 7/21/11
  */
 public class JndiTreeParser {
-
     private Stack<JndiEntry> stack = new Stack<JndiEntry>();
-    private JndiEntry root = new JndiEntry("JNDI");
+    private JndiEntry root = new JndiEntry("JNDI", "", null);
     private TreeViewModel treeModel = new JndiTreeModel(root);
     private CellTree cellTree = new CellTree(treeModel, "root");
     private static Command finishCmd = null;
+    private SingleSelectionModel<JndiEntry> selectionModel = new SingleSelectionModel<JndiEntry>();
+
+    SingleSelectionModel<JndiEntry> getSelectionModel() {
+        return selectionModel;
+    }
 
     public CellTree parse(List<Property> model) {
-
         stack.push(root);
-        parseSiblings(model);
+        parseSiblings(model, "");
         return cellTree;
     }
 
-    private void parseSiblings(List<Property> siblings) {
-
+    private void parseSiblings(List<Property> siblings, String parentURI) {
         boolean skipped = false;
-        for(Property sibling : siblings)
-        {
+        for (Property sibling : siblings) {
             try {
                 List<Property> children = sibling.getValue().asPropertyList();
-                skipped = createChild(sibling);
-                parseSiblings(children);
+                skipped = createChild(sibling, parentURI);
+                parseSiblings(children, skipped ? parentURI : parentURI + "/" + sibling.getName());
             } catch (IllegalArgumentException e) {
                 continue;
             }
         }
 
         dec(skipped);
-
     }
 
     private void dec(boolean skipped) {
-        if(!skipped)
+        if (!skipped)
             stack.pop();
 
-        if(stack.empty())
-        {
+        if (stack.empty()) {
             assert finishCmd!=null;
             finishCmd.execute();
         }
@@ -67,16 +87,28 @@ public class JndiTreeParser {
      * @param sibling
      * @return
      */
-    private boolean createChild(Property sibling) {
-
+    private boolean createChild(Property sibling, String parentURI) {
         boolean skipped = sibling.getName().equals("children");
 
-        if(!skipped)
-        {
+        if (!skipped) {
             //dump(sibling);
-            JndiEntry next = new JndiEntry(sibling.getName());
-            if(sibling.getValue().hasDefined("value"))
-                    next.setType(sibling.getValue().get("value").asString());
+            String dataType = null;
+            String uri = "";
+            if (sibling.getValue().hasDefined("class-name")) {
+                dataType = sibling.getValue().get("class-name").asString();
+                uri = parentURI + "/" + sibling.getName();
+
+                int idx = uri.indexOf(':');
+                if (idx > 0) {
+                    int idx2 = uri.lastIndexOf('/', idx);
+                    if (idx2 >= 0 && (idx2 + 1) < uri.length())
+                        uri = uri.substring(idx2 + 1);
+                }
+            }
+
+            JndiEntry next = new JndiEntry(sibling.getName(), uri, dataType);
+            if (sibling.getValue().hasDefined("value"))
+                next.setValue(sibling.getValue().get("value").asString());
 
             stack.peek().getChildren().add(next);
             stack.push(next);
@@ -85,14 +117,16 @@ public class JndiTreeParser {
         return skipped;
     }
 
+    /*
     private void dump(Property sibling) {
         StringBuffer sb = new StringBuffer();
-        for(int i=0; i<stack.size(); i++)
+        for (int i=0; i<stack.size(); i++)
             sb.append("\t");
 
         sb.append(sibling.getName());
         System.out.println(sb.toString());
     }
+    */
 
     class JndiEntryCell extends AbstractCell<JndiEntry> {
         @Override
@@ -104,7 +138,7 @@ public class JndiTreeParser {
                 sb.appendHtmlConstant("</td>");
 
                 sb.appendHtmlConstant("<td width='40%' align='right'>");
-                sb.appendEscaped(value.getType());
+                sb.appendEscaped(value.getValue());
                 sb.appendHtmlConstant("</td>");
 
             sb.appendHtmlConstant("</tr>");
@@ -113,8 +147,7 @@ public class JndiTreeParser {
     }
 
     class JndiTreeModel implements TreeViewModel {
-
-        private JndiEntry rootEntry;
+        JndiEntry rootEntry;
 
         JndiTreeModel(JndiEntry root) {
             this.rootEntry = root;
@@ -128,12 +161,10 @@ public class JndiTreeParser {
 
             final ListDataProvider<JndiEntry> dataProvider = new ListDataProvider<JndiEntry>();
 
-            if(value instanceof JndiEntry)
-            {
+            if (value instanceof JndiEntry) {
                 JndiEntry entry = (JndiEntry)value;
                 dataProvider.setList(entry.getChildren());
-            }
-            else {
+            } else {
                 setFinish(new Command() {
                     @Override
                     public void execute() {
@@ -142,7 +173,7 @@ public class JndiTreeParser {
                 });
             }
 
-            return new DefaultNodeInfo<JndiEntry>(dataProvider, new JndiEntryCell());
+            return new DefaultNodeInfo<JndiEntry>(dataProvider, new JndiEntryCell(), selectionModel, null);
         }
 
         /**
@@ -156,15 +187,12 @@ public class JndiTreeParser {
             else
                 return false;
         }
-
     }
 
 
-    private static void setFinish(Command cmd)
-    {
+    private static void setFinish(Command cmd) {
         finishCmd = cmd;
     }
-
 }
 
 
