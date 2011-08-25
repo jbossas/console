@@ -47,9 +47,16 @@ Executing the Integration tests:
 -------------------------------
 
 1.) Start AS7 in domain mode
-2.) cd 'gui'
-3.) mvn clean -Dsmoke test
+2.) Build the 'gui' module:
+    cd 'gui'
+    mvn compile
+3.) Run the smoke tests:
+    cd testsuite/smoke
+    mvn clean -Dsmoke test
 
+or simply run 
+  mvn clean -Dsmoke test 
+from the root directory to combine the last two steps.
 
 EAP Build Profile
 -----------------
