@@ -130,6 +130,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private void loadProviderDetails() {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(RECURSIVE).set(Boolean.TRUE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
 
