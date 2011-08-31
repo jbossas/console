@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 
 /**
  * @author Heiko Braun
@@ -40,6 +41,8 @@ public class SubsystemMetaData {
 
     private static final String CONTAINER = "Container";
 
+    private static final String EJB = "EJB";
+
     private static final String OSGI = "OSGi";
 
     private static final String SECURITY = "Security";
@@ -52,6 +55,7 @@ public class SubsystemMetaData {
 
         // specify groups
         groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
+        groups.put(EJB, new SubsystemGroup(EJB));
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
@@ -66,6 +70,9 @@ public class SubsystemMetaData {
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
 
+        groups.get(EJB).getItems().add(new SubsystemGroupItem("Session Beans", "ejb3", NameTokens.SessionBeanPresenter));
+        groups.get(EJB).getItems().add(new SubsystemGroupItem("Message Driven Beans", "ejb3", NameTokens.MessageDrivenBeanPresenter));
+
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
@@ -77,7 +84,6 @@ public class SubsystemMetaData {
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
 
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB3", "ejb3",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));

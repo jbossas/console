@@ -20,10 +20,12 @@
 package org.jboss.as.console.client.shared;
 
 import com.google.gwt.resources.client.ImageResource;
+
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 /**
  * @author Heiko Braun
+ * @author David Bosschaert
  * @date 5/3/11
  */
 public class SubsystemGroupItem {
@@ -31,6 +33,7 @@ public class SubsystemGroupItem {
     private String name;
     private ImageResource icon;
     private String key;
+    private String presenter;
     private boolean disabled = false;
 
     public SubsystemGroupItem(String name, String key, boolean disabled) {
@@ -42,10 +45,19 @@ public class SubsystemGroupItem {
         this(name, Icons.INSTANCE.noIcon(), key);
     }
 
+    public SubsystemGroupItem(String name, String key, String presenter) {
+        this(name, Icons.INSTANCE.noIcon(), key, presenter);
+    }
+
     public SubsystemGroupItem(String name, ImageResource icon, String key) {
+        this(name, icon, key, key.toLowerCase().replace(" ", "_"));
+    }
+
+    public SubsystemGroupItem(String name, ImageResource icon, String key, String presenter) {
         this.name = name;
         this.icon = icon;
         this.key = key;
+        this.presenter = presenter;
     }
 
     public String getName() {
@@ -58,6 +70,10 @@ public class SubsystemGroupItem {
 
     public String getKey() {
         return key;
+    }
+
+    public String getPresenter() {
+        return presenter;
     }
 
     public boolean isDisabled() {

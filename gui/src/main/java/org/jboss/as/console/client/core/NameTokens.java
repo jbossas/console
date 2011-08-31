@@ -27,26 +27,29 @@ public class NameTokens {
 
     public static final String mainLayout = "main";
 
-    public static final String DebugToolsPresenter = "debug-tools";
-    public static final String ModelBrowserPresenter = "model-browser";
-    public static final String MetricsPresenter = "invocation-metrics";
     public static final String DataSourcePresenter = "datasources";
-    public static final String JMSPresenter = "jms";
-    public static final String LoggingPresenter = "logging";
-    public static final String SocketBindingPresenter = "socket-bindings";
-    public static final String SettingsPresenter = "settings";
-    public static final String MessagingPresenter = "messaging";
-    public static final String OSGiPresenter = "osgi";
-    public static final String WebPresenter = "web";
-    public static final String InterfacePresenter = "interfaces";
-    public static final String PropertiesPresenter = "properties";
-    public static final String HostPropertiesPresenter = "host-properties";
-    public static final String HostJVMPresenter = "host-jvms";
+    public static final String DebugToolsPresenter = "debug-tools";
     public static final String HostInterfacesPresenter = "host-interfaces";
-    public static final String StandaloneServerPresenter = "standalone-server";
-    public static final String WebServicePresenter = "webservices";
-    public static final String ResourceAdapterPresenter ="resource-adapters";
+    public static final String HostJVMPresenter = "host-jvms";
+    public static final String HostPropertiesPresenter = "host-properties";
+    public static final String InterfacePresenter = "interfaces";
+    public static final String JMSPresenter = "jms";
     public static final String JndiPresenter = "naming";
+    public static final String LoggingPresenter = "logging";
+    public static final String MessageDrivenBeanPresenter = "mdb";
+    public static final String MessagingPresenter = "messaging";
+    public static final String MetricsPresenter = "invocation-metrics";
+    public static final String ModelBrowserPresenter = "model-browser";
+    public static final String OSGiPresenter = "osgi";
+    public static final String PropertiesPresenter = "properties";
+    public static final String ResourceAdapterPresenter ="resource-adapters";
+    public static final String SettingsPresenter = "settings";
+    public static final String SessionBeanPresenter = "session-bean";
+    public static final String SocketBindingPresenter = "socket-bindings";
+    public static final String StandaloneServerPresenter = "standalone-server";
+    public static final String WebPresenter = "web";
+    public static final String WebServicePresenter = "webservices";
+
 
     public static String getMainLayout() {
         return mainLayout;
