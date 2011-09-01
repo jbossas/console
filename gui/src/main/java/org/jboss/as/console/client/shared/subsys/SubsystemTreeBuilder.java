@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
+import java.util.List;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
@@ -34,8 +37,6 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -62,7 +63,7 @@ public class SubsystemTreeBuilder {
                     {
                         includedSubsystems++;
 
-                        final String key = subsys.getTitle().toLowerCase().replace(" ", "_");
+                        final String key = groupItem.getPresenter();
                         String token = parentPlace + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
