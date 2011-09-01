@@ -96,6 +96,10 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanView;
+import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -313,6 +317,16 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DataSourceStore.class).to(DataSourceStoreImpl.class).in(Singleton.class);
         bind(DomainDriverStrategy.class).in(Singleton.class);
         bind(StandaloneDriverStrategy.class).in(Singleton.class);
+
+        bindPresenter(SessionBeanPresenter.class,
+                SessionBeanPresenter.MyView.class,
+                SessionBeanView.class,
+                SessionBeanPresenter.MyProxy.class);
+
+        bindPresenter(MessageDrivenBeanPresenter.class,
+                MessageDrivenBeanPresenter.MyView.class,
+                MessageDrivenBeanView.class,
+                MessageDrivenBeanPresenter.MyProxy.class);
 
         bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,
