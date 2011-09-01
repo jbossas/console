@@ -33,7 +33,10 @@ public class DataInput {
     }
 
     public int read() throws IOException {
-        return bytes[pos++];
+        if (pos >= bytes.length)
+            return -1;
+
+        return bytes[pos++] & 0xFF;
     }
 
     public boolean readBoolean() throws IOException {
@@ -42,24 +45,24 @@ public class DataInput {
 
     public byte readByte() throws IOException {
         int i = read();
-        /*if (i == -1) {
+        if (i == -1) {
             throw new RuntimeException("EOF");
-        } */
+        }
         return (byte) i;
     }
 
     public char readChar() throws IOException {
-        int a = readByte();
+        int a = readUnsignedByte();
         int b = readUnsignedByte();
         return (char) ((a << 8) | b);
     }
 
     public double readDouble() throws IOException {
-        throw new RuntimeException("readDouble");
+        return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
     }
 
     public float readFloat() throws IOException {
-        throw new RuntimeException("readFloat");
+        return IEEE754.toFloat(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
     }
 
     public int readInt() throws IOException {
@@ -81,7 +84,7 @@ public class DataInput {
     }
 
     public short readShort() throws IOException {
-        int a = readByte();
+        int a = readUnsignedByte();
         int b = readUnsignedByte();
         return (short) ((a << 8) | b);
     }
@@ -109,7 +112,7 @@ public class DataInput {
             return 2;
         }
         if ((a & 0xf0) == 0xe0) {
-            int b = readByte();
+            int b = readUnsignedByte();
             int c = readUnsignedByte();
             sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
             return 3;
@@ -117,20 +120,16 @@ public class DataInput {
         throw new IllegalArgumentException("Illegal byte "+a);
     }
 
-    /*public int readUnsignedByte() throws IOException {
+    public int readUnsignedByte() throws IOException {
         int i = read();
         if (i == -1) {
             throw new RuntimeException("EOF");
         }
         return i;
-    } */
-
-    public int readUnsignedByte() throws IOException {
-        return readByte() & 0xFF;
     }
 
     public int readUnsignedShort() throws IOException {
-        int a = readByte();
+        int a = readUnsignedByte();
         int b = readUnsignedByte();
         return ((a << 8) | b);
     }
