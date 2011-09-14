@@ -463,7 +463,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
         queue.get("durable").set(entity.isDurable());
 
-        if(entity.getSelector()!=null)
+        if(entity.getSelector()!=null && !entity.getSelector().equals(""))
             queue.get("selector").set(entity.getSelector());
 
         dispatcher.execute(new DMRAction(queue), new AsyncCallback<DMRResponse>() {
