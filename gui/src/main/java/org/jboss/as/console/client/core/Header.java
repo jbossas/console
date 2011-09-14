@@ -130,6 +130,7 @@ public class Header implements ValueChangeHandler<String> {
         //headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
 
         Widget logo = getLogoSection();
+
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
@@ -151,6 +152,7 @@ public class Header implements ValueChangeHandler<String> {
 
     private Widget getLogoSection() {
 
+        HorizontalPanel panel = new HorizontalPanel();
         Image logo = null;
 
         if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
@@ -159,7 +161,19 @@ public class Header implements ValueChangeHandler<String> {
             logo = new Image("images/logo/jbossas7.png");
 
         logo.setStyleName("logo");
-        return logo;
+
+        panel.add(logo);
+        HTML prodVersion = new HTML(org.jboss.as.console.client.Build.PROD_VERSION);
+        prodVersion.setStyleName("header-prod-version");
+        panel.add(prodVersion);
+
+
+        logo.getElement().getParentElement().setAttribute("valign", "bottom");
+        logo.getElement().getParentElement().setAttribute("style", "vertical-align:bottom;");
+
+        prodVersion.getElement().getParentElement().setAttribute("valign", "bottom");
+        prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:bottom; padding-bottom:4px");
+        return panel;
     }
 
     private Widget getLinksSection() {

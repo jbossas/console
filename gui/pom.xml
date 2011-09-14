@@ -17,6 +17,7 @@
     <properties>
         <ballroom.version>1.0.0.Beta8-SNAPSHOT</ballroom.version>
         <console.profile>jboss</console.profile>
+        <product.version>6.0-Alpha1</product.version>
     </properties>
 
     <!--  Dependencies -->
@@ -239,6 +240,7 @@
                                     <property name="build.user" value="${user.name}"/>
                                     <property name="src.dir" value="${project.build.directory}/generated-sources" />
                                     <property name="console.profile" value="${console.profile}" />
+                                    <property name="product.version" value="${product.version}" />
                                 </ant>
                             </tasks>
                             <sourceRoot>
