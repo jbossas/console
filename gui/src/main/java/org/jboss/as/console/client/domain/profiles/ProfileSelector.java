@@ -67,10 +67,12 @@ public class ProfileSelector {
     }
 
     private void fireProfileSelection(String name) {
-       Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(name));
+        Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(name));
     }
 
     public void updateProfiles(final List<ProfileRecord> profileRecords) {
+
+        final String prevSelected = profileSelection.getSelectedValue();
 
         profileSelection.clearValues();
 
@@ -85,19 +87,16 @@ public class ProfileSelector {
             public void execute() {
 
                 int selectedIndex = 0;
-                for(int i=0; i<profileSelection.getItemCount(); i++)
+                if(prevSelected!=null && !prevSelected.equals(""))
                 {
-                    if("preview-base".equals(profileSelection.getValue(i)))     // domain-preview.xml
+                    for(int i=0; i<profileSelection.getItemCount(); i++)
                     {
-                        selectedIndex=i;
-                        break;
+                        if(prevSelected.equals(profileSelection.getValue(i)))
+                        {
+                            selectedIndex=i;
+                            break;
+                        }
                     }
-                    else if("web-base".equals(profileSelection.getValue(i)))     // domain.xml
-                    {
-                        selectedIndex=i;
-                        break;
-                    }
-
                 }
 
                 profileSelection.setItemSelected(selectedIndex, true);

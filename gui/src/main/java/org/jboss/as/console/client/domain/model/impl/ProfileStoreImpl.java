@@ -81,10 +81,6 @@ public class ProfileStoreImpl implements ProfileStore {
                     records.add(record);
                 }
 
-                // early initialization
-                if(records.size()>0)
-                    currentProfile.setName(records.get(0).getName());
-
                 callback.onSuccess(records);
             }
         });
