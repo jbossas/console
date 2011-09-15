@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.properties;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -270,5 +271,4 @@ public class PropertyEditor {
         this.allowEditProps = allowEditProps;
         propertyTable.setEnabled(enabled && allowEditProps);
     }
-    
 }

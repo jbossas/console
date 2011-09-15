@@ -35,6 +35,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -44,6 +45,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,7 +55,7 @@ import java.util.List;
  * @date 3/8/11
  */
 public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter.MyView, ServerInstancesPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener {
+        implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
 
     private final PlaceManager placeManager;
     private HostInformationStore hostInfoStore;
@@ -91,6 +93,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
     @Override
@@ -167,6 +170,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void onSuccess(List<Server> result) {
                 getView().updateServerConfigurations(result);
+
+                if(result.isEmpty())
+                {
+                    // hacky: See HostInfoStore#getServerInstances()
+                    getView().updateInstances(Collections.EMPTY_LIST);
+                }
             }
         });
     }
@@ -266,5 +275,11 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                     Console.error("Error: Failed to reload server configuration " + server);
             }
         });
+    }
+
+    @Override
+    public void onStaleModel(String modelName) {
+        if(StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
+            refreshView();
     }
 }

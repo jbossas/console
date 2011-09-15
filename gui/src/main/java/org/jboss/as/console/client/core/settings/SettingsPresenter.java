@@ -71,13 +71,11 @@ public class SettingsPresenter extends Presenter<SettingsPresenter.MyView, Setti
     @Override
     protected void onReveal() {
         super.onReveal();
-        System.out.println("reveal");
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        System.out.println("reset");
     }
 
     @Override

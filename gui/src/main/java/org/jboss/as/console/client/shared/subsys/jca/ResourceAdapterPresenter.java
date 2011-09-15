@@ -310,7 +310,6 @@ public class ResourceAdapterPresenter
     @Override
     public void onCreateProperty(final String ref, final PropertyRecord prop) {
         closePropertyDialoge();
-        System.out.println("Create "+prop.getKey());
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);

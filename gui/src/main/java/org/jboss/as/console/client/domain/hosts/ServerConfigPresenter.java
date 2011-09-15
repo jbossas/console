@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
@@ -58,8 +59,8 @@ import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -72,7 +73,9 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.JVM;
  * @date 3/3/11
  */
 public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyView, ServerConfigPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener, JvmManagement, PropertyManagement {
+        implements HostSelectionEvent.HostSelectionListener,
+        ServerWizardEvent.ServerWizardListener,
+        JvmManagement, PropertyManagement {
 
     private HostInformationStore hostInfoStore;
 
@@ -89,6 +92,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private DispatchAsync dispatcher;
     private PropertyMetaData propertyMetaData;
     private BeanFactory factory;
+    private PlaceManager placeManager;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
@@ -110,7 +114,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             HostInformationStore hostInfoStore,
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher,
-            PropertyMetaData propertyMetaData, BeanFactory factory) {
+            PropertyMetaData propertyMetaData, BeanFactory factory,
+            PlaceManager placeManager) {
         super(eventBus, view, proxy);
 
         this.hostInfoStore = hostInfoStore;
@@ -118,6 +123,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         this.dispatcher = dispatcher;
         this.propertyMetaData = propertyMetaData;
         this.factory = factory;
+        this.placeManager = placeManager;
     }
 
     @Override
@@ -125,6 +131,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerWizardEvent.TYPE, this);
     }
 
     @Override
@@ -268,13 +275,22 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
+
                 if(!result.isEmpty()) {
                     workOn(result.get(0));
                     serverName = selectedRecord.getName();
                     loadJVMs(hostName);
                 }
+                else {
+                    noServerAvailable();
+                }
+
             }
         });
+    }
+
+    private void noServerAvailable() {
+        placeManager.revealPlace(new PlaceRequest(NameTokens.InstancesPresenter));
     }
 
     public void createServerConfig(final Server newServer) {
@@ -294,7 +310,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            System.out.println("> stale model event");
                             getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
                         }
                     });
@@ -551,4 +566,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         });
     }
 
+    @Override
+    public void launchWizard(String HostName) {
+        launchNewConfigDialoge();
+    }
 }

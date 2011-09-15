@@ -282,6 +282,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void setSelectedRecord(Server selectedRecord) {
+
         nameLabel.setText(selectedRecord.getName());
         form.edit(selectedRecord);
 

@@ -207,7 +207,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                 for(final Server handle : serverNames)
                 {
-
                     final ModelNode operation = new ModelNode();
                     operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
                     operation.get(ADDRESS).setEmptyList();
