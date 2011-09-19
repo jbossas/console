@@ -333,8 +333,6 @@ public class ResourceAdapterPresenter
         operation.get(NAME).set("config-properties");
         operation.get(VALUE).set(cfg);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override

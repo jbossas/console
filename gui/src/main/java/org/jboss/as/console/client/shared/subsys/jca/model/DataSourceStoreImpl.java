@@ -33,6 +33,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
@@ -310,8 +311,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         }
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -493,7 +492,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void loadPoolConfig(String name, String poolName, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
+    public void loadPoolConfig(String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(getBaseAddress());
@@ -514,8 +513,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode payload = response.get(RESULT).asObject();
 
-                System.out.println(payload);
-
                 PoolConfig poolConfig = factory.poolConfig().as();
 
                 if(payload.hasDefined("max-pool-size"))
@@ -528,10 +525,51 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 else
                     poolConfig.setMinPoolSize(-1);
 
-                // TODO: remaining
+                if(payload.hasDefined("pool-prefill"))
+                    poolConfig.setPoolPrefill(payload.get("pool-prefill").asBoolean());
+                else
+                    poolConfig.setPoolPrefill(false);
+
+                if(payload.hasDefined("pool-use-strict-min"))
+                    poolConfig.setPoolStrictMin(payload.get("pool-use-strict-min").asBoolean());
+                else
+                    poolConfig.setPoolStrictMin(false);
 
                 callback.onSuccess(new ResponseWrapper<PoolConfig>(poolConfig, response));
             }
         });
+    }
+
+    @Override
+    public void savePoolConfig(String dsName, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(getBaseAddress());
+        proto.get(ADDRESS).add("subsystem", "datasources");
+        proto.get(ADDRESS).add("data-source", dsName);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                callback.onSuccess(ModelAdapter.wrapBooleanResponse(result));
+            }
+        });
+    }
+
+    @Override
+    public void deletePoolConfig(String dsName, PoolConfig entity, final AsyncCallback callback) {
+
     }
 }

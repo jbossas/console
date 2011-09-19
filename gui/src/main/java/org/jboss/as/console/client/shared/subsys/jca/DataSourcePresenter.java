@@ -65,17 +65,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private RevealStrategy revealStrategy;
     private ApplicationProperties bootstrap;
 
-    public void loadPoolConfig(DataSource datasource) {
-        System.out.println("load pool config: "+datasource.getPoolName());
-        dataSourceStore.loadPoolConfig(datasource.getName(), datasource.getPoolName(),
-                new SimpleCallback<ResponseWrapper<PoolConfig>>() {
-                    @Override
-                    public void onSuccess(ResponseWrapper<PoolConfig> result) {
-                        getView().setPoolConfig(result.getUnderlying());
-                    }
-                });
-    }
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -89,7 +78,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void enableDSDetails(boolean b);
         void enableXADetails(boolean b);
 
-        void setPoolConfig(PoolConfig poolConfig);
+        void setPoolConfig(String name, PoolConfig poolConfig);
     }
 
     @Inject
@@ -360,4 +349,37 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
+    public void loadPoolConfig(final String dsName) {
+
+        dataSourceStore.loadPoolConfig(dsName,
+                new SimpleCallback<ResponseWrapper<PoolConfig>>() {
+                    @Override
+                    public void onSuccess(ResponseWrapper<PoolConfig> result) {
+                        getView().setPoolConfig(dsName, result.getUnderlying());
+                    }
+                });
+    }
+
+    public void onSavePoolConfig(final String editedName, Map<String, Object> changeset) {
+        dataSourceStore.savePoolConfig(editedName, changeset, new SimpleCallback<ResponseWrapper<Boolean>>(){
+            @Override
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if(result.getUnderlying())
+                    Console.info("Success: Saved pool config "+editedName);
+                else
+                    Console.error("Failed to save pool config " + editedName, result.getResponse().toString());
+
+                loadPoolConfig(editedName);
+            }
+        });
+    }
+
+    public void onDeletePoolConfig(final String editedName, PoolConfig entity) {
+        dataSourceStore.deletePoolConfig(editedName, entity, new SimpleCallback(){
+            @Override
+            public void onSuccess(Object result) {
+              Console.info("Success: Delete pool config "+editedName);
+            }
+        });
+    }
 }

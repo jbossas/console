@@ -27,6 +27,9 @@ public interface PoolConfig {
     boolean getPoolStrictMin();
     void setPoolStrictMin(boolean b);
 
+
+    // metrics below
+
     @Binding(detypedName = "none", ignore = true)
     int getActiveCount();
     void setActiveCount(int i);

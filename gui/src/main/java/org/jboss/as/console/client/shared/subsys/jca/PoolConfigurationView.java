@@ -1,18 +1,16 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 /**
  * @author Heiko Braun
  * @date 9/16/11
  */
-public class PoolConfiguration {
+public class PoolConfigurationView {
 
     private Form<PoolConfig> form;
 
