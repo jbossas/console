@@ -10,12 +10,12 @@
     <parent>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-console-parent</artifactId>
-        <version>1.0.0.Beta17-SNAPSHOT</version>
+        <version>1.0.0.Beta17</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
-        <ballroom.version>1.0.0.Beta8-SNAPSHOT</ballroom.version>
+        <ballroom.version>1.0.0.Beta8</ballroom.version>
         <console.profile>jboss</console.profile>
         <product.version>7</product.version>
     </properties>
