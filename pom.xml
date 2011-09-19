@@ -54,6 +54,18 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <name>Stan Silvert</name>
+            <id>ssilvert</id>
+        </developer>
+        <developer>
+            <name>David Bosschaert</name>
+            <id>dbosschaert</id>
+        </developer>
+        <developer>
+            <name>Jason Greene</name>
+            <id>jgreene</id>
+        </developer>
     </developers>
 
     <!-- IssueManagement -->
