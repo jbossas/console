@@ -491,4 +491,47 @@ public class DataSourceStoreImpl implements DataSourceStore {
             }
         });
     }
+
+    @Override
+    public void loadPoolConfig(String name, String poolName, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).set(getBaseAddress());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("data-source", name);
+        operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode payload = response.get(RESULT).asObject();
+
+                System.out.println(payload);
+
+                PoolConfig poolConfig = factory.poolConfig().as();
+
+                if(payload.hasDefined("max-pool-size"))
+                    poolConfig.setMaxPoolSize(payload.get("max-pool-size").asInt());
+                else
+                    poolConfig.setMaxPoolSize(-1);
+
+                if(payload.hasDefined("min-pool-size"))
+                    poolConfig.setMinPoolSize(payload.get("min-pool-size").asInt());
+                else
+                    poolConfig.setMinPoolSize(-1);
+
+                // TODO: remaining
+
+                callback.onSuccess(new ResponseWrapper<PoolConfig>(poolConfig, response));
+            }
+        });
+    }
 }

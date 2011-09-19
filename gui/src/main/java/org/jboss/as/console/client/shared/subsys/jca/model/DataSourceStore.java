@@ -45,4 +45,6 @@ public interface DataSourceStore {
     void deleteXADataSource(XADataSource entity, AsyncCallback<Boolean> callback);
 
     void updateXADataSource(String name, Map<String, Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
+
+    void loadPoolConfig(String name, String poolName, AsyncCallback<ResponseWrapper<PoolConfig>> callback);
 }

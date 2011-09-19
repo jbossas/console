@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 
 import java.util.List;
@@ -80,5 +81,10 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     @Override
     public void enableXADetails(boolean b) {
         xaDataSourceEditor.enableDetails(b);
+    }
+
+    @Override
+    public void setPoolConfig(PoolConfig poolConfig) {
+        dataSourceEditor.setPoolConfig(poolConfig);
     }
 }

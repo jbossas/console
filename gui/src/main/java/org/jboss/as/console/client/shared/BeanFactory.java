@@ -37,6 +37,7 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
@@ -76,6 +77,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<DataSource> dataSource();
     AutoBean<XADataSource> xaDataSource();
     AutoBean<ResourceAdapter> resourceAdapter();
+    AutoBean<PoolConfig> poolConfig();
 
     AutoBean<Queue> queue();
     AutoBean<JMSEndpoint> topic();

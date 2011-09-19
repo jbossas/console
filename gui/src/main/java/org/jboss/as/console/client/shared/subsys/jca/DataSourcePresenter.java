@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
@@ -64,6 +65,18 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private RevealStrategy revealStrategy;
     private ApplicationProperties bootstrap;
 
+    public void loadPoolConfig(DataSource datasource) {
+        System.out.println("load pool config: "+datasource.getPoolName());
+        dataSourceStore.loadPoolConfig(datasource.getName(), datasource.getPoolName(),
+                new SimpleCallback<ResponseWrapper<PoolConfig>>() {
+                    @Override
+                    public void onSuccess(ResponseWrapper<PoolConfig> result) {
+                        getView().setPoolConfig(result.getUnderlying());
+                    }
+                });
+    }
+
+
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
     public interface MyProxy extends Proxy<DataSourcePresenter>, Place {
@@ -75,6 +88,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void updateXADataSources(List<XADataSource> result);
         void enableDSDetails(boolean b);
         void enableXADetails(boolean b);
+
+        void setPoolConfig(PoolConfig poolConfig);
     }
 
     @Inject
