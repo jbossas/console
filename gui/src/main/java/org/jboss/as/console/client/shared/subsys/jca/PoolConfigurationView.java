@@ -54,7 +54,7 @@ public class PoolConfigurationView {
                     public void onDelete(PoolConfig entity) {
                        presenter.onDeletePoolConfig(editedName, entity);
                     }
-                }
+                }, "Reset"
         );
 
 

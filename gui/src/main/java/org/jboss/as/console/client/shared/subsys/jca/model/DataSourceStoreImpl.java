@@ -570,14 +570,13 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void deletePoolConfig(String dsName, PoolConfig entity, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-
+    public void deletePoolConfig(final String dsName, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         Map<String, Object> resetValues = new HashMap<String, Object>();
-        resetValues.put("min-pool-size", 0);
-        resetValues.put("max-pool-size", 0);
-        resetValues.put("pool-use-strict-min", false);
-        resetValues.put("pool-prefill", false);
+        resetValues.put("minPoolSize", 0);
+        resetValues.put("maxPoolSize", 20);
+        resetValues.put("poolStrictMin", false);
+        resetValues.put("poolPrefill", false);
 
         savePoolConfig(dsName, resetValues, callback);
 

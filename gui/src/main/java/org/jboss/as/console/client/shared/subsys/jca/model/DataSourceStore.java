@@ -47,5 +47,5 @@ public interface DataSourceStore {
 
     void loadPoolConfig(String name, AsyncCallback<ResponseWrapper<PoolConfig>> callback);
     void savePoolConfig(String dsName, Map<String, Object> changeset, AsyncCallback<ResponseWrapper<Boolean>> simpleCallback);
-    void deletePoolConfig(String dsName, PoolConfig entity, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void deletePoolConfig(String dsName, AsyncCallback<ResponseWrapper<Boolean>> callback);
 }

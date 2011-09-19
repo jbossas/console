@@ -19,10 +19,17 @@ public class FormToolStrip<T> {
 
     Form<T> form = null;
     FormCallback<T> callback;
+    private String deleteOpName = null;
 
     public FormToolStrip(Form<T> form, FormCallback<T> callback) {
         this.form = form;
         this.callback = callback;
+    }
+
+    public FormToolStrip(Form<T> form, FormCallback<T> callback, String deleteOpName) {
+        this.form = form;
+        this.callback = callback;
+        this.deleteOpName = deleteOpName;
     }
 
     public Widget asWidget() {
@@ -60,9 +67,11 @@ public class FormToolStrip<T> {
             @Override
             public void onClick(ClickEvent event) {
 
+                String action = deleteOpName != null ? deleteOpName : "Delete";
+
                 Feedback.confirm(
-                        "Delete Item",
-                        "Really delete this item?",
+                        action +" Item",
+                        "Really "+action+" this item?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -74,7 +83,8 @@ public class FormToolStrip<T> {
             }
         };
 
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        String title = deleteOpName!=null ? deleteOpName : Console.CONSTANTS.common_label_delete();
+        ToolButton deleteBtn = new ToolButton(title);
         deleteBtn.addClickHandler(clickHandler);
         toolStrip.addToolButton(deleteBtn);
 
