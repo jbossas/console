@@ -2,9 +2,16 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -13,6 +20,12 @@ import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 public class PoolConfigurationView {
 
     private Form<PoolConfig> form;
+    private DataSourcePresenter presenter;
+    private String editedName = null;
+
+    public PoolConfigurationView(DataSourcePresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
 
@@ -23,16 +36,48 @@ public class PoolConfigurationView {
 
         NumberBoxItem maxCon = new NumberBoxItem("maxPoolSize", "Max Pool Size");
         NumberBoxItem minCon = new NumberBoxItem("minPoolSize", "Min Pool Size");
+        CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Use Strict Min?");
+        CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Pool Prefill?");
 
-        form.setFields(minCon, maxCon);
+        form.setFields(minCon, maxCon, strictMin, prefill);
         form.setEnabled(false);
 
+        FormToolStrip<PoolConfig> toolStrip = new FormToolStrip<PoolConfig>(
+                form,
+                new FormToolStrip.FormCallback<PoolConfig>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSavePoolConfig(editedName, changeset);
+                    }
+
+                    @Override
+                    public void onDelete(PoolConfig entity) {
+                       presenter.onDeletePoolConfig(editedName, entity);
+                    }
+                }
+        );
+
+
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "datasources");
+                address.add("data-source", "*");
+                return address;
+            }
+        }, form);
+
+        panel.add(toolStrip.asWidget());
+        panel.add(helpPanel.asWidget());
         panel.add(form.asWidget());
 
         return panel;
     }
 
-    public void updateFrom(PoolConfig poolConfig) {
+    public void updateFrom(String name, PoolConfig poolConfig) {
+        this.editedName = name;
         form.edit(poolConfig);
     }
 }

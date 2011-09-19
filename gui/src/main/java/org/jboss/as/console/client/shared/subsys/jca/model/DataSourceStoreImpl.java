@@ -39,6 +39,7 @@ import org.jboss.dmr.client.Property;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -569,7 +570,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void deletePoolConfig(String dsName, PoolConfig entity, final AsyncCallback callback) {
+    public void deletePoolConfig(String dsName, PoolConfig entity, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+
+
+        Map<String, Object> resetValues = new HashMap<String, Object>();
+        resetValues.put("min-pool-size", 0);
+        resetValues.put("max-pool-size", 0);
+        resetValues.put("pool-use-strict-min", false);
+        resetValues.put("pool-prefill", false);
+
+        savePoolConfig(dsName, resetValues, callback);
 
     }
 }

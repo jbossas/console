@@ -375,10 +375,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onDeletePoolConfig(final String editedName, PoolConfig entity) {
-        dataSourceStore.deletePoolConfig(editedName, entity, new SimpleCallback(){
+
+        System.out.println("!!");
+        dataSourceStore.deletePoolConfig(editedName, entity, new SimpleCallback<ResponseWrapper<Boolean>>(){
             @Override
-            public void onSuccess(Object result) {
-              Console.info("Success: Delete pool config "+editedName);
+            public void onSuccess(ResponseWrapper<Boolean> result) {
+                if(result.getUnderlying())
+                    Console.info("Success: Delete pool config "+editedName);
+                else
+                    Console.error("Failed to delete pool config " + editedName, result.getResponse().toString());
+
             }
         });
     }
