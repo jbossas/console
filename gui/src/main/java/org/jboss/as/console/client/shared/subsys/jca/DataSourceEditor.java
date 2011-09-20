@@ -42,6 +42,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -146,7 +147,18 @@ public class DataSourceEditor {
 
         bottomPanel.add(details.asWidget(), "Attributes");
 
-        poolConfig = new PoolConfigurationView(presenter);
+        poolConfig = new PoolConfigurationView(new PoolManagement() {
+            @Override
+            public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
+                presenter.onSavePoolConfig(parentName, changeset, false);
+            }
+
+            @Override
+            public void onResetPoolConfig(String parentName, PoolConfig entity) {
+                presenter.onDeletePoolConfig(parentName, entity, false);
+            }
+        });
+
         bottomPanel.add(poolConfig.asWidget(), "Pool");
 
         //bottomPanel.add(new HTML("Pool-size, connections in use, etc"), "Metrics");

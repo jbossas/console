@@ -58,30 +58,6 @@ public class AdapterDetails {
         editBtn.addClickHandler(editHandler);
         detailToolStrip.addToolButton(editBtn);
 
-
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                final ResourceAdapter ra = form.getEditedEntity();
-
-                Feedback.confirm(
-                        "Delete Resource Adapter",
-                        "Really delete Adapter '" + ra.getName() + "' ?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDelete(ra);
-                                }
-                            }
-                        });
-            }
-        };
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.addClickHandler(clickHandler);
-        detailToolStrip.addToolButton(deleteBtn);
-
         layout.add(detailToolStrip);
 
         // ----
@@ -135,5 +111,9 @@ public class AdapterDetails {
             editBtn.setText("Edit");
         else
             editBtn.setText("Save");
+    }
+
+    public ResourceAdapter getCurrentSelection() {
+        return form.getEditedEntity();
     }
 }

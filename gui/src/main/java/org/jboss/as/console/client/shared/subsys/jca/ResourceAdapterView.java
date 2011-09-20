@@ -13,7 +13,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -22,8 +25,10 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -37,6 +42,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     private ListDataProvider<ResourceAdapter> dataProvider;
     private AdapterDetails detailsPanel;
     private AdapterConfigDetails configPanel;
+    private PoolConfigurationView poolConfig;
 
     @Override
     public void setPresenter(ResourceAdapterPresenter presenter) {
@@ -59,6 +65,29 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
                 presenter.launchNewAdapterWizard();
             }
         }));
+
+        ClickHandler clickHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final ResourceAdapter ra = detailsPanel.getCurrentSelection();
+
+                Feedback.confirm(
+                        "Delete Resource Adapter",
+                        "Really delete Adapter '" + ra.getName() + "' ?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.onDelete(ra);
+                                }
+                            }
+                        });
+            }
+        };
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        deleteBtn.addClickHandler(clickHandler);
+        topLevelTools.addToolButtonRight(deleteBtn);
 
         layout.add(topLevelTools);
 
@@ -142,6 +171,30 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
             }
         });
 
+        poolConfig = new PoolConfigurationView(new PoolManagement() {
+            @Override
+            public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
+                presenter.onSavePoolConfig(parentName, changeset);
+            }
+
+            @Override
+            public void onResetPoolConfig(String parentName, PoolConfig entity) {
+                presenter.onDeletePoolConfig(parentName, entity);
+            }
+        });
+
+
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ResourceAdapter selectedObject = ((SingleSelectionModel<ResourceAdapter >) table.getSelectionModel()).getSelectedObject();
+                presenter.loadPoolConfig(selectedObject.getName());
+            }
+        });
+
+
+        bottomPanel.add(poolConfig.asWidget(), "Pool");
+
         bottomPanel.selectTab(0);
         vpanel.add(bottomPanel);
 
@@ -162,5 +215,10 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     public void setEnabled(boolean b) {
         detailsPanel.setEnabled(b);
         configPanel.setEnabled(b);
+    }
+
+    @Override
+    public void setPoolConfig(String parent, PoolConfig poolConfig) {
+        this.poolConfig.updateFrom(parent, poolConfig);
     }
 }

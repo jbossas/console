@@ -52,6 +52,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -218,7 +219,18 @@ public class XADataSourceEditor implements PropertyManagement {
         bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
         propertyEditor.setAllowEditProps(false); // TODO: modifications of XA properties
 
-        poolConfig = new PoolConfigurationView(presenter, true);
+        poolConfig = new PoolConfigurationView(new PoolManagement() {
+            @Override
+            public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
+                presenter.onSavePoolConfig(parentName, changeset, true);
+            }
+
+            @Override
+            public void onResetPoolConfig(String parentName, PoolConfig entity) {
+                presenter.onDeletePoolConfig(parentName, entity, true);
+            }
+        });
+
         bottomPanel.add(poolConfig.asWidget(), "Pool");
 
         bottomPanel.selectTab(0);

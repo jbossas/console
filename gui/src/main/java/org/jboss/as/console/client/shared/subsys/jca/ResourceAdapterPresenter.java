@@ -21,11 +21,13 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -36,6 +38,7 @@ import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +66,7 @@ public class ResourceAdapterPresenter
         return factory;
     }
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
     public interface MyProxy extends Proxy<ResourceAdapterPresenter>, Place {
@@ -73,6 +77,8 @@ public class ResourceAdapterPresenter
         void setAdapters(List<ResourceAdapter> adapters);
 
         void setEnabled(boolean b);
+
+        void setPoolConfig(String name, PoolConfig poolConfig);
     }
 
     @Inject
@@ -376,7 +382,7 @@ public class ResourceAdapterPresenter
 
         // TODO: https://issues.jboss.org/browse/AS7-1381
     }
-    
+
     @Override
     public void onChangeProperty(String ref, PropertyRecord prop) {
         Console.error("Not implemented yet!");
@@ -406,4 +412,97 @@ public class ResourceAdapterPresenter
     public void closePropertyDialoge() {
         propertyWindow.hide();
     }
+
+    public void loadPoolConfig(final String name) {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+        operation.get(ADDRESS).add("resource-adapter", name);
+        operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Failed to load RA pool config", caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                ModelNode payload = response.get(RESULT).asObject();
+
+                PoolConfig poolConfig = factory.poolConfig().as();
+
+                if(payload.hasDefined("max-pool-size"))
+                    poolConfig.setMaxPoolSize(payload.get("max-pool-size").asInt());
+                else
+                    poolConfig.setMaxPoolSize(-1);
+
+                if(payload.hasDefined("min-pool-size"))
+                    poolConfig.setMinPoolSize(payload.get("min-pool-size").asInt());
+                else
+                    poolConfig.setMinPoolSize(-1);
+
+                if(payload.hasDefined("pool-prefill"))
+                    poolConfig.setPoolPrefill(payload.get("pool-prefill").asBoolean());
+                else
+                    poolConfig.setPoolPrefill(false);
+
+                if(payload.hasDefined("pool-use-strict-min"))
+                    poolConfig.setPoolStrictMin(payload.get("pool-use-strict-min").asBoolean());
+                else
+                    poolConfig.setPoolStrictMin(false);
+
+                getView().setPoolConfig(name, poolConfig);
+            }
+        });
+    }
+
+    public void onSavePoolConfig(final String editedName, Map<String, Object> changeset) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "resource-adapters");
+        proto.get(ADDRESS).add("resource-adapter", editedName);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+
+        System.out.println(operation);
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Failed to update RA pool config", caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
+                if(response.getUnderlying())
+                    Console.info("Success: Update RA pool config");
+                else
+                    Console.error("Failed: Update RA pool config", response.getResponse().toString());
+            }
+        });
+    }
+
+    public void onDeletePoolConfig(final String editedName, PoolConfig entity) {
+        Map<String, Object> resetValues = new HashMap<String, Object>();
+        resetValues.put("minPoolSize", 0);
+        resetValues.put("maxPoolSize", 20);
+        resetValues.put("poolStrictMin", false);
+        resetValues.put("poolPrefill", false);
+
+        onSavePoolConfig(editedName, resetValues);
+
+    }
+
+
 }

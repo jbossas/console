@@ -20,17 +20,11 @@ import java.util.Map;
 public class PoolConfigurationView {
 
     private Form<PoolConfig> form;
-    private DataSourcePresenter presenter;
     private String editedName = null;
-    private boolean isXA = false;
+    private PoolManagement management;
 
-    public PoolConfigurationView(DataSourcePresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    public PoolConfigurationView(DataSourcePresenter presenter, boolean isXA) {
-        this.isXA = isXA;
-        this.presenter = presenter;
+    public PoolConfigurationView(PoolManagement management) {
+        this.management = management;
     }
 
     Widget asWidget() {
@@ -53,12 +47,12 @@ public class PoolConfigurationView {
                 new FormToolStrip.FormCallback<PoolConfig>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSavePoolConfig(editedName, changeset, isXA());
+                        management.onSavePoolConfig(editedName, changeset);
                     }
 
                     @Override
                     public void onDelete(PoolConfig entity) {
-                       presenter.onDeletePoolConfig(editedName, entity, isXA());
+                       management.onResetPoolConfig(editedName, entity);
                     }
                 }, "Reset"
         );
@@ -70,8 +64,7 @@ public class PoolConfigurationView {
 
                 ModelNode address = Baseadress.get();
                 address.add("subsystem", "datasources");
-                String subaddress = isXA() ? "xa-data-source" : "data-source";
-                address.add(subaddress, "*");
+                address.add("data-source", "*");
                 return address;
             }
         }, form);
@@ -86,10 +79,5 @@ public class PoolConfigurationView {
     public void updateFrom(String name, PoolConfig poolConfig) {
         this.editedName = name;
         form.edit(poolConfig);
-    }
-
-    private boolean isXA()
-    {
-        return isXA;
     }
 }
