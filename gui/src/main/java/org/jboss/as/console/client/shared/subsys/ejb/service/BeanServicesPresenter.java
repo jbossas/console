@@ -16,10 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.service;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -29,29 +31,34 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
-import org.jboss.as.console.client.shared.subsys.ejb.EJBViewBase;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
 
 /**
  * @author David Bosschaert
  */
-public class SessionBeanPresenter extends EJBPresenterBase<SessionBeans, SessionBeanPresenter.MyView, SessionBeanPresenter.MyProxy> {
+public class BeanServicesPresenter extends Presenter<BeanServicesPresenter.MyView, BeanServicesPresenter.MyProxy> {
+    private static final String SUBSYSTEM = "ejb3";
+
+    private final DispatchAsync dispatcher;
+    private final BeanFactory factory;
+    private final RevealStrategy revealStrategy;
+
     @ProxyCodeSplit
-    @NameToken(NameTokens.SessionBeanPresenter)
-    public interface MyProxy extends Proxy<SessionBeanPresenter>, Place {
+    @NameToken(NameTokens.BeanServicesPresenter)
+    public interface MyProxy extends Proxy<BeanServicesPresenter>, Place {
     }
 
-    public interface MyView extends EJBViewBase<SessionBeans> {
-        void setPresenter(SessionBeanPresenter presenter);
+    public interface MyView extends View {
+        void setPresenter(BeanServicesPresenter presenter);
     }
 
     @Inject
-    public SessionBeanPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-            DispatchAsync dispatcher, BeanFactory factory,
-            RevealStrategy revealStrategy) {
-        super(eventBus, view, proxy, revealStrategy, dispatcher, factory);
+    public BeanServicesPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
+        super(eventBus, view, proxy);
 
+        this.dispatcher = dispatcher;
+        this.factory = factory;
+        this.revealStrategy = revealStrategy;
     }
 
     @Override
@@ -61,7 +68,12 @@ public class SessionBeanPresenter extends EJBPresenterBase<SessionBeans, Session
     }
 
     @Override
-    protected void loadDetails() {
-        loadDetails(factory.sessionBeans().as(), "default-slsb-instance-pool");
+    protected void onReset() {
+        super.onReset();
+    }
+
+    @Override
+    protected void revealInParent() {
+        revealStrategy.revealInParent(this);
     }
 }

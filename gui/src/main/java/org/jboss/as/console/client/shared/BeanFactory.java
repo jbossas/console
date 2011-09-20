@@ -35,6 +35,9 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
+import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -82,6 +85,10 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<Queue> queue();
     AutoBean<JMSEndpoint> topic();
     AutoBean<ConnectionFactory> connectionFactory();
+
+    AutoBean<SessionBeans> sessionBeans();
+    AutoBean<MessageDrivenBeans> messageDrivenBeans();
+    AutoBean<EJBPool> ejbPool();
 
     AutoBean<LoggingHandler> loggingHandler();
     AutoBean<LoggerConfig> loggerConfig();

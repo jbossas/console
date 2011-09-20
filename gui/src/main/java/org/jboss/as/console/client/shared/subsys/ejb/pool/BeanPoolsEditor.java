@@ -16,35 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.pool;
+
+import java.util.List;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.dmr.client.ModelDescriptionConstants;
-import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
-class SessionBeanEditor {
-    private Form<SessionBeans> form;
-    private final SessionBeanPresenter presenter;
-    private ListBoxItem defaultPool;
+class BeanPoolsEditor {
+    private final BeanPoolsPresenter presenter;
+    private PoolDetails poolDetails;
+    private PoolsTable poolsTable;
 
-    SessionBeanEditor(SessionBeanPresenter presenter) {
+    BeanPoolsEditor(BeanPoolsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -55,30 +55,30 @@ class SessionBeanEditor {
         vpanel.setStyleName("rhs-content-panel");
         scroll.add(vpanel);
 
-        // Add an empty toolstrip to make this panel look similar to others
         ToolStrip toolStrip = new ToolStrip();
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(),
+            new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    presenter.launchNewPoolWizard();
+                }
+            }));
         layout.add(toolStrip);
 
-        vpanel.add(new ContentHeaderLabel("Stateless Session Beans"));
+        vpanel.add(new ContentHeaderLabel("Bean Instance Pools"));
+        poolsTable = new PoolsTable();
+        vpanel.add(poolsTable.asWidget());
 
-        vpanel.add(new ContentGroupLabel("Pooling"));
-        form = new Form<SessionBeans>(SessionBeans.class);
-        form.setNumColumns(1);
+        poolDetails = new PoolDetails(presenter);
+        poolDetails.bind(poolsTable.getCellTable());
 
-        defaultPool = new ListBoxItem("defaultPool", "Default Pool");
-        form.setFields(defaultPool);
+        TabPanel bottomPanel = new TabPanel();
+        bottomPanel.setStyleName("default-tabpanel");
+        bottomPanel.add(poolDetails.asWidget(), "Attributes");
+        bottomPanel.selectTab(0);
 
-        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
-            @Override
-            public ModelNode getAddress() {
-                ModelNode address = Baseadress.get();
-                address.add(ModelDescriptionConstants.SUBSYSTEM, EJBPresenterBase.SUBSYSTEM_NAME);
-                return address;
-            }
-        }, form);
-        vpanel.add(helpPanel.asWidget());
-        vpanel.add(form.asWidget());
-
+        vpanel.add(new ContentGroupLabel("Pool"));
+        vpanel.add(bottomPanel);
         layout.add(scroll);
         layout.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
         layout.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
@@ -86,9 +86,11 @@ class SessionBeanEditor {
         return layout;
     }
 
-    void setProviderDetails(SessionBeans provider) {
-        defaultPool.setChoices(provider.getAvailablePools(), null);
+    void updatePools(List<EJBPool> pools) {
+        poolsTable.getDataProvider().setList(pools);
+    }
 
-        form.edit(provider);
+    public void enablePoolDetails(boolean b) {
+        poolDetails.setEnabled(b);
     }
 }

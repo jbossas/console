@@ -24,15 +24,24 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelDescriptionConstants;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
 public class MessageDrivenBeanEditor {
+    private Form<MessageDrivenBeans> form;
     private final MessageDrivenBeanPresenter presenter;
+    private ListBoxItem defaultPool;
 
     public MessageDrivenBeanEditor(MessageDrivenBeanPresenter presenter) {
         this.presenter = presenter;
@@ -50,12 +59,35 @@ public class MessageDrivenBeanEditor {
         layout.add(toolStrip);
 
         vpanel.add(new ContentHeaderLabel("Message Driven Beans"));
-        vpanel.add(new ContentGroupLabel("Bean Instance Pools"));
+
+        vpanel.add(new ContentGroupLabel("Pooling"));
+        form = new Form<MessageDrivenBeans>(MessageDrivenBeans.class);
+        form.setNumColumns(1);
+
+        defaultPool = new ListBoxItem("defaultPool", "Default Pool");
+        form.setFields(defaultPool);
+
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add(ModelDescriptionConstants.SUBSYSTEM, MessageDrivenBeanPresenter.SUBSYSTEM_NAME);
+                return address;
+            }
+        }, form);
+        vpanel.add(helpPanel.asWidget());
+        vpanel.add(form.asWidget());
 
         layout.add(scroll);
         layout.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
         layout.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
+    }
+
+    public void setProviderDetails(MessageDrivenBeans provider) {
+        defaultPool.setChoices(provider.getAvailablePools(), null);
+
+        form.edit(provider);
     }
 }

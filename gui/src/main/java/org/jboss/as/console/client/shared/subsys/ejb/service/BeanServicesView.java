@@ -16,42 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.service;
 
-/**
- * @author David Bosschaert
- */
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
 
-public class SessionBeanView extends SuspendableViewImpl implements SessionBeanPresenter.MyView {
-    private SessionBeanPresenter presenter;
-    private SessionBeanEditor sessionBeanEditor;
+/**
+ * @author David Bosschaert
+ */
+public class BeanServicesView extends SuspendableViewImpl implements BeanServicesPresenter.MyView {
+    private BeanServicesEditor beanServicesEditor;
+    private BeanServicesPresenter presenter;
 
     @Override
     public Widget createWidget() {
-        sessionBeanEditor = new SessionBeanEditor(presenter);
+        beanServicesEditor = new BeanServicesEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(sessionBeanEditor.asWidget(), "Stateless");
+        tabLayoutPanel.add(beanServicesEditor.asWidget(), "Services");
         tabLayoutPanel.selectTab(0);
 
         return tabLayoutPanel;
     }
 
     @Override
-    public void setPresenter(SessionBeanPresenter presenter) {
+    public void setPresenter(BeanServicesPresenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public void setProviderDetails(SessionBeans provider) {
-        sessionBeanEditor.setProviderDetails(provider);
     }
 }

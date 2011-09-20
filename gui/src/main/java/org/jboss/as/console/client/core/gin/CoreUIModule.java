@@ -98,6 +98,10 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanView;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsView;
+import org.jboss.as.console.client.shared.subsys.ejb.service.BeanServicesPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.service.BeanServicesView;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -327,6 +331,16 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MessageDrivenBeanPresenter.MyView.class,
                 MessageDrivenBeanView.class,
                 MessageDrivenBeanPresenter.MyProxy.class);
+
+        bindPresenter(BeanPoolsPresenter.class,
+                BeanPoolsPresenter.MyView.class,
+                BeanPoolsView.class,
+                BeanPoolsPresenter.MyProxy.class);
+
+        bindPresenter(BeanServicesPresenter.class,
+                BeanServicesPresenter.MyView.class,
+                BeanServicesView.class,
+                BeanServicesPresenter.MyProxy.class);
 
         bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,
