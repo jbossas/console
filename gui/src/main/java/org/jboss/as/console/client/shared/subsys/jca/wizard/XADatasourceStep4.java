@@ -58,12 +58,7 @@ public class XADatasourceStep4 {
         form = new Form<XADataSource>(XADataSource.class);
 
         TextBoxItem user = new TextBoxItem("username", "Username");
-        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
-            {
-                isRequired = false;
-            }
-        };
-
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password");
 
         form.setFields(user,pass);
 

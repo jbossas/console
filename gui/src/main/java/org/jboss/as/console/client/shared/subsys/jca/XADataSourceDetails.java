@@ -75,31 +75,6 @@ public class XADataSourceDetails {
         editBtn.addClickHandler(editHandler);
         detailToolStrip.addToolButton(editBtn);
 
-
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                DataSource currentSelection = form.getEditedEntity();
-
-                Feedback.confirm(
-                        "Delete DataSource",
-                        "Really delete this DataSource '" + currentSelection.getName() + "' ?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDeleteXA(form.getEditedEntity());
-                                }
-                            }
-                        });
-            }
-        };
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.addClickHandler(clickHandler);
-        detailToolStrip.addToolButton(deleteBtn);
-
-
         ClickHandler disableHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -170,5 +145,9 @@ public class XADataSourceDetails {
 
     public void setSelectedRecord(XADataSource dataSource) {
         form.edit(dataSource);
+    }
+
+    public XADataSource getCurrentSelection() {
+        return form.getEditedEntity();
     }
 }
