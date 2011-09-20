@@ -26,6 +26,14 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console</artifactId>
+            <version>${version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-all</artifactId>
