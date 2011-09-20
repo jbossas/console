@@ -304,11 +304,13 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void onCreateNewXADatasource(final XADataSource updatedEntity) {
         window.hide();
-        dataSourceStore.createXADataSource(updatedEntity, new SimpleCallback<Boolean>() {
+        dataSourceStore.createXADataSource(updatedEntity, new SimpleCallback<ResponseWrapper<Boolean>>() {
             @Override
-            public void onSuccess(Boolean wasSuccessful) {
-                if (wasSuccessful)
+            public void onSuccess(ResponseWrapper<Boolean> response) {
+                if (response.getUnderlying())
                     Console.info("Succes: Created XA Datasource " + updatedEntity.getName());
+                else
+                    Console.error("Failed to create XA Datasource " + updatedEntity.getName(), response.getResponse().toString());
 
                 loadDataSources();
             }
@@ -349,9 +351,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
-    public void loadPoolConfig(final String dsName) {
+    public void loadPoolConfig(boolean isXA, final String dsName) {
 
-        dataSourceStore.loadPoolConfig(dsName,
+        dataSourceStore.loadPoolConfig(isXA, dsName,
                 new SimpleCallback<ResponseWrapper<PoolConfig>>() {
                     @Override
                     public void onSuccess(ResponseWrapper<PoolConfig> result) {
@@ -360,8 +362,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 });
     }
 
-    public void onSavePoolConfig(final String editedName, Map<String, Object> changeset) {
-        dataSourceStore.savePoolConfig(editedName, changeset, new SimpleCallback<ResponseWrapper<Boolean>>(){
+    public void onSavePoolConfig(final String editedName, Map<String, Object> changeset, final boolean isXA) {
+        dataSourceStore.savePoolConfig(isXA, editedName, changeset, new SimpleCallback<ResponseWrapper<Boolean>>(){
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if(result.getUnderlying())
@@ -369,23 +371,25 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 else
                     Console.error("Failed to save pool config " + editedName, result.getResponse().toString());
 
-                loadPoolConfig(editedName);
+                loadPoolConfig(isXA, editedName);
             }
         });
     }
 
-    public void onDeletePoolConfig(final String editedName, PoolConfig entity) {
+    public void onDeletePoolConfig(final String editedName, PoolConfig entity, final boolean isXA) {
 
-        dataSourceStore.deletePoolConfig(editedName, new SimpleCallback<ResponseWrapper<Boolean>>(){
+        dataSourceStore.deletePoolConfig(isXA, editedName, new SimpleCallback<ResponseWrapper<Boolean>>(){
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if(result.getUnderlying())
-                    Console.info("Success: Delete pool config "+editedName);
+                    Console.info("Success: Update pool config "+editedName);
                 else
-                    Console.error("Failed to delete pool config " + editedName, result.getResponse().toString());
+                    Console.error("Failed to update pool config " + editedName, result.getResponse().toString());
 
-                loadPoolConfig(editedName);
+                loadPoolConfig(isXA, editedName);
             }
         });
     }
+
+
 }

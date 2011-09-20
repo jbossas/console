@@ -80,30 +80,6 @@ public class DataSourceDetails {
         detailToolStrip.addToolButton(editBtn);
 
 
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                DataSource currentSelection = form.getEditedEntity();
-
-                Feedback.confirm(
-                        "Delete DataSource",
-                        "Really delete this DataSource '" + currentSelection.getName() + "' ?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDelete(form.getEditedEntity());
-                                }
-                            }
-                        });
-            }
-        };
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.addClickHandler(clickHandler);
-        detailToolStrip.addToolButton(deleteBtn);
-
-
         ClickHandler disableHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -179,5 +155,9 @@ public class DataSourceDetails {
             editBtn.setText("Save");
         else
             editBtn.setText("Edit");
+    }
+
+    public DataSource getCurrentSelection() {
+        return form.getEditedEntity();
     }
 }

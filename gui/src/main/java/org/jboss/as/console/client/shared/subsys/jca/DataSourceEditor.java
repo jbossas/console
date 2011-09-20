@@ -39,6 +39,7 @@ import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 
@@ -69,6 +70,32 @@ public class DataSourceEditor {
                 presenter.launchNewDatasourceWizard();
             }
         }));
+
+
+        ClickHandler clickHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final DataSource currentSelection = details.getCurrentSelection();
+                if(currentSelection!=null)
+                {
+                    Feedback.confirm(
+                            "Delete DataSource",
+                            "Really delete this DataSource '" + currentSelection.getName() + "' ?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.onDelete(currentSelection);
+                                    }
+                                }
+                            });
+                }
+            }
+        };
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        deleteBtn.addClickHandler(clickHandler);
+        topLevelTools.addToolButtonRight(deleteBtn);
 
         layout.add(topLevelTools);
 
@@ -109,7 +136,7 @@ public class DataSourceEditor {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 DataSource selectedObject = ((SingleSelectionModel<DataSource>) dataSourceTable.getCellTable().getSelectionModel()).getSelectedObject();
-                presenter.loadPoolConfig(selectedObject.getName());
+                presenter.loadPoolConfig(false, selectedObject.getName());
 
             }
         });

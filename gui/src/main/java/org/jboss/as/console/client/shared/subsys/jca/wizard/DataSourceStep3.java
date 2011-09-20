@@ -59,11 +59,7 @@ public class DataSourceStep3 {
 
         TextBoxItem connectionUrl = new TextBoxItem("connectionUrl", "Connection URL");
         TextBoxItem user = new TextBoxItem("username", "Username");
-        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
-            {
-                isRequired = false;
-            }
-        };
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password");
 
 
         form.setFields(connectionUrl,user,pass);

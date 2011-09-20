@@ -62,6 +62,7 @@ public class XADataSourceEditor implements PropertyManagement {
     private ListDataProvider<XADataSource> dataSourceProvider;
     private XADataSourceDetails details;
     private PropertyEditor propertyEditor;
+    private PoolConfigurationView poolConfig;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -174,14 +175,24 @@ public class XADataSourceEditor implements PropertyManagement {
         dataSourceTable.setSelectionModel(selectionModel);
 
 
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                XADataSource selectedObject = ((SingleSelectionModel<XADataSource>) dataSourceTable.getSelectionModel()).getSelectedObject();
+                presenter.loadPoolConfig(true, selectedObject.getName());
+
+            }
+        });
+
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
         bottomPanel.add(details.asWidget(), "Attributes");
         bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
         propertyEditor.setAllowEditProps(false); // TODO: modifications of XA properties
-        //bottomPanel.add(new HTML("All the nitty gritty details"), "Advanced");
-        //bottomPanel.add(new HTML("Current pool size, connections in use, etc"), "Metrics");
+
+        poolConfig = new PoolConfigurationView(presenter, true);
+        bottomPanel.add(poolConfig.asWidget(), "Pool");
 
         bottomPanel.selectTab(0);
         vpanel.add(new ContentGroupLabel("Datasource"));
@@ -220,7 +231,7 @@ public class XADataSourceEditor implements PropertyManagement {
     public void onChangeProperty(String reference, PropertyRecord prop) {
         Console.error("Not implemented yet!");
     }
-    
+
     @Override
     public void launchNewPropertyDialoge(String reference) {
         Console.error("Not implemented yet!");    // https://issues.jboss.org/browse/AS7-874

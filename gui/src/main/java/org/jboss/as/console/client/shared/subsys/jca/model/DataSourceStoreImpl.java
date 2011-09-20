@@ -192,9 +192,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
                             List<PropertyRecord> xaProperties = Collections.EMPTY_LIST;
 
                             // System properties
-                            if(ds.hasDefined("xa-data-source-properties"))
+                            if(ds.hasDefined("xa-datasource-properties"))
                             {
-                                List<ModelNode> properties = ds.get("xa-data-source-properties").asList();
+                                List<ModelNode> properties = ds.get("xa-datasource-properties").asList();
                                 xaProperties = new ArrayList<PropertyRecord>(properties.size());
                                 for(ModelNode xaProp : properties)
                                 {
@@ -270,7 +270,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void createXADataSource(XADataSource datasource, final AsyncCallback<Boolean> callback) {
+    public void createXADataSource(XADataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).set(getBaseAddress());
@@ -308,7 +308,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             if(datasource.getProperties().isEmpty())
                 props.setEmptyObject();
 
-            operation.get("xa-data-source-properties").set(props);
+            operation.get("xa-datasource-properties").set(props);
 
         }
 
@@ -321,8 +321,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                boolean wasSuccessful = responseIndicatesSuccess(result);
-                callback.onSuccess(wasSuccessful);
+
+                callback.onSuccess(ModelAdapter.wrapBooleanResponse(result));
             }
         });
     }
@@ -493,12 +493,13 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void loadPoolConfig(String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
+    public void loadPoolConfig(boolean isXA, String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(getBaseAddress());
         operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("data-source", name);
+        String subaddress = isXA ? "xa-data-source" : "data-source";
+        operation.get(ADDRESS).add(subaddress, name);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -512,6 +513,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
                 ModelNode payload = response.get(RESULT).asObject();
 
                 PoolConfig poolConfig = factory.poolConfig().as();
@@ -542,17 +544,17 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void savePoolConfig(String dsName, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void savePoolConfig(boolean isXA, String dsName, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(getBaseAddress());
         proto.get(ADDRESS).add("subsystem", "datasources");
-        proto.get(ADDRESS).add("data-source", dsName);
+
+        String subaddress = isXA ? "xa-data-source" : "data-source";
+        proto.get(ADDRESS).add(subaddress, dsName);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -570,7 +572,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void deletePoolConfig(final String dsName, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
+    public void deletePoolConfig(boolean isXA, final String dsName, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         Map<String, Object> resetValues = new HashMap<String, Object>();
         resetValues.put("minPoolSize", 0);
@@ -578,7 +580,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         resetValues.put("poolStrictMin", false);
         resetValues.put("poolPrefill", false);
 
-        savePoolConfig(dsName, resetValues, callback);
+        savePoolConfig(isXA, dsName, resetValues, callback);
 
     }
 }

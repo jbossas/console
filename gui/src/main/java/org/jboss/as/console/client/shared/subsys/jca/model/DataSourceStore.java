@@ -39,13 +39,13 @@ public interface DataSourceStore {
 
     void updateDataSource(String name, Map<String,Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
-    void createXADataSource(XADataSource datasource, AsyncCallback<Boolean> callback);
+    void createXADataSource(XADataSource datasource, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
     void enableXADataSource(XADataSource entity, boolean doEnable, AsyncCallback<ResponseWrapper<Boolean>> callback);
     void deleteXADataSource(XADataSource entity, AsyncCallback<Boolean> callback);
     void updateXADataSource(String name, Map<String, Object> changedValues, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
-    void loadPoolConfig(String name, AsyncCallback<ResponseWrapper<PoolConfig>> callback);
-    void savePoolConfig(String dsName, Map<String, Object> changeset, AsyncCallback<ResponseWrapper<Boolean>> simpleCallback);
-    void deletePoolConfig(String dsName, AsyncCallback<ResponseWrapper<Boolean>> callback);
+    void loadPoolConfig(boolean isXA, String name, AsyncCallback<ResponseWrapper<PoolConfig>> callback);
+    void savePoolConfig(boolean isXA, String dsName, Map<String, Object> changeset, AsyncCallback<ResponseWrapper<Boolean>> simpleCallback);
+    void deletePoolConfig(boolean isXA, String dsName, AsyncCallback<ResponseWrapper<Boolean>> callback);
 }
