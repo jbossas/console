@@ -27,7 +27,7 @@ import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
-import org.jboss.ballroom.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Method;

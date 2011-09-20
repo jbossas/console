@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.model;
 
-import org.jboss.ballroom.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * This interface is implemented by an AutoBean to interface with the module sub-resource in the
