@@ -111,6 +111,10 @@ public class BeanFactoryImpl implements BeanFactory {
         return new AutoBeanStub<DataSource>(new DataSourceImpl());
     }
 
+    public AutoBean<PoolConfig> poolConfig() {
+        throw new RuntimeException("not implemented");
+    }
+
     @Override
     public AutoBean<LoggingHandler> loggingHandler() {
         throw new RuntimeException("not implemented");
