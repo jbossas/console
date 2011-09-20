@@ -556,6 +556,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
 
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override

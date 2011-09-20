@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -207,7 +208,6 @@ public class XADataSourceEditor implements PropertyManagement {
             public void onSelectionChange(SelectionChangeEvent event) {
                 XADataSource selectedObject = ((SingleSelectionModel<XADataSource>) dataSourceTable.getSelectionModel()).getSelectedObject();
                 presenter.loadPoolConfig(true, selectedObject.getName());
-
             }
         });
 
@@ -271,5 +271,9 @@ public class XADataSourceEditor implements PropertyManagement {
 
     public void enableDetails(boolean b) {
         details.setEnabled(b);
+    }
+
+    public void setPoolConfig(String name, PoolConfig poolConfig) {
+        this.poolConfig.updateFrom(name, poolConfig);
     }
 }

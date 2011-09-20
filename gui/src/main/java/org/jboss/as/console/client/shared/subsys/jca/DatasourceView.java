@@ -87,4 +87,9 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     public void setPoolConfig(String name, PoolConfig poolConfig) {
         dataSourceEditor.setPoolConfig(name, poolConfig);
     }
+
+    @Override
+    public void setXAPoolConfig(String name, PoolConfig poolConfig) {
+        xaDataSourceEditor.setPoolConfig(name, poolConfig);
+    }
 }

@@ -79,6 +79,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void enableXADetails(boolean b);
 
         void setPoolConfig(String name, PoolConfig poolConfig);
+
+        void setXAPoolConfig(String dsName, PoolConfig underlying);
     }
 
     @Inject
@@ -351,13 +353,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
-    public void loadPoolConfig(boolean isXA, final String dsName) {
+    public void loadPoolConfig(final boolean isXA, final String dsName) {
 
         dataSourceStore.loadPoolConfig(isXA, dsName,
                 new SimpleCallback<ResponseWrapper<PoolConfig>>() {
                     @Override
                     public void onSuccess(ResponseWrapper<PoolConfig> result) {
-                        getView().setPoolConfig(dsName, result.getUnderlying());
+                        if(isXA)
+                            getView().setXAPoolConfig(dsName, result.getUnderlying());
+                        else
+                            getView().setPoolConfig(dsName, result.getUnderlying());
                     }
                 });
     }

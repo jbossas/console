@@ -70,7 +70,7 @@ public class PoolConfigurationView {
 
                 ModelNode address = Baseadress.get();
                 address.add("subsystem", "datasources");
-                String subaddress = isXA ? "xa-data-source" : "data-source";
+                String subaddress = isXA() ? "xa-data-source" : "data-source";
                 address.add(subaddress, "*");
                 return address;
             }
