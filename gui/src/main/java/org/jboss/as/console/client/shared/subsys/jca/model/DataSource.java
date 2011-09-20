@@ -48,10 +48,6 @@ public interface DataSource {
     String getPoolName();
     void setPoolName(String name);
 
-    @Binding(ignore = true, detypedName = "none")
-    PoolConfig getPoolConfig();
-    void setPoolConfig(PoolConfig poolConfig);
-
     // regular DS attributes below
 
     @Binding(detypedName = "connection-url")
