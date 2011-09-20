@@ -75,6 +75,10 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private RevealStrategy revealStrategy;
     private PropertyMetaData propertyMetaData;
 
+    public String getCurrentServer() {
+        return "default";
+    }
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
     public interface MyProxy extends Proxy<MessagingPresenter>, Place {
@@ -133,7 +137,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(RECURSIVE).set(Boolean.TRUE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
-
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -322,6 +326,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(RECURSIVE).set(Boolean.TRUE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -427,6 +432,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
+        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-queue", name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
@@ -456,6 +462,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         queue.get(OP).set(ADD);
         queue.get(ADDRESS).set(Baseadress.get());
         queue.get(ADDRESS).add("subsystem", "messaging");
+        queue.get(ADDRESS).add("hornetq-server", getCurrentServer());
         queue.get(ADDRESS).add("jms-queue", entity.getName());
 
         queue.get("entries").setEmptyList();
@@ -499,6 +506,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
         operation.get(ADDRESS).add("jms-queue", entity.getName());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -546,6 +554,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
         operation.get(ADDRESS).add("jms-topic", entity.getName());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -582,6 +591,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "messaging");
+        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-topic", name);
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(JMSEndpoint.class);
@@ -628,16 +638,17 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     public void onCreateTopic(final JMSEndpoint entity) {
         closeDialogue();
 
-        ModelNode queue = new ModelNode();
-        queue.get(OP).set(ADD);
-        queue.get(ADDRESS).set(Baseadress.get());
-        queue.get(ADDRESS).add("subsystem", "messaging");
-        queue.get(ADDRESS).add("jms-topic", entity.getName());
+        ModelNode topic = new ModelNode();
+        topic.get(OP).set(ADD);
+        topic.get(ADDRESS).set(Baseadress.get());
+        topic.get(ADDRESS).add("subsystem", "messaging");
+        topic.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        topic.get(ADDRESS).add("jms-topic", entity.getName());
 
-        queue.get("entries").setEmptyList();
-        queue.get("entries").add(entity.getJndiName());
+        topic.get("entries").setEmptyList();
+        topic.get("entries").add(entity.getJndiName());
 
-        dispatcher.execute(new DMRAction(queue), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(topic), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
