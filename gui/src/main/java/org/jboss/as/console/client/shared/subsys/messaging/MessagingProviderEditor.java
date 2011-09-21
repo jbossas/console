@@ -31,12 +31,15 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -72,18 +75,37 @@ public class MessagingProviderEditor {
 
         panel.add(new ContentGroupLabel("Attributes"));
 
+
         form = new Form(MessagingProvider.class);
         form.setNumColumns(2);
 
-        StatusItem persistenceItem = new StatusItem("persistenceEnabled", "Persistence enabled?");
-        StatusItem securityItem = new StatusItem("securityEnabled", "Security enabled?");
-        StatusItem messageCounterItem = new StatusItem("messageCounterEnabled", "Message Counter enabled?");
+        CheckBoxItem persistenceItem = new CheckBoxItem("persistenceEnabled", "Persistence enabled?");
+        CheckBoxItem securityItem = new CheckBoxItem("securityEnabled", "Security enabled?");
+        CheckBoxItem messageCounterItem = new CheckBoxItem("messageCounterEnabled", "Message Counter enabled?");
 
         //TextItem connector = new TextItem("connectorBinding", "Connector Binding");
         //TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
 
         form.setFields(persistenceItem, securityItem, messageCounterItem);
         //form.setFieldsInGroup("Connections", new DisclosureGroupRenderer(), acceptor, connector);
+
+
+        FormToolStrip<MessagingProvider> toolStrip = new FormToolStrip<MessagingProvider>(
+                form,
+                new FormToolStrip.FormCallback<MessagingProvider>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveProviderConfig(changeset);
+                    }
+
+                    @Override
+                    public void onDelete(MessagingProvider entity) {
+
+                    }
+                });
+        toolStrip.providesDeleteOp(false);
+
+        panel.add(toolStrip.asWidget());
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
             @Override

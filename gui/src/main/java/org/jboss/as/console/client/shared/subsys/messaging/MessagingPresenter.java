@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
@@ -722,5 +723,32 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     private JMSView getJMSView() {
         return (JMSView)getView();
+    }
+
+    public void onSaveProviderConfig(Map<String, Object> changeset) {
+
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "messaging");
+        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(MessagingProvider.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
+                if(response.getUnderlying())
+                    Console.info("Updated provider settings "+getCurrentServer());
+                else
+                    Console.error("Failed to update provider settings " + getCurrentServer(), response.getResponse().toString());
+
+                loadProviderDetails();
+            }
+        });
+
     }
 }

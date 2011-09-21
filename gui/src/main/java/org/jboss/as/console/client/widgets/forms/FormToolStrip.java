@@ -20,6 +20,7 @@ public class FormToolStrip<T> {
     Form<T> form = null;
     FormCallback<T> callback;
     private String deleteOpName = null;
+    private boolean providesDeleteOp = true;
 
     public FormToolStrip(Form<T> form, FormCallback<T> callback) {
         this.form = form;
@@ -32,6 +33,9 @@ public class FormToolStrip<T> {
         this.deleteOpName = deleteOpName;
     }
 
+    public void providesDeleteOp(boolean b) {
+        this.providesDeleteOp = b;
+    }
     public Widget asWidget() {
 
         ToolStrip toolStrip = new ToolStrip();
@@ -62,31 +66,34 @@ public class FormToolStrip<T> {
         editBtn.addClickHandler(editHandler);
         toolStrip.addToolButton(editBtn);
 
+        if(providesDeleteOp)
+        {
+            ClickHandler clickHandler = new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
 
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+                    String action = deleteOpName != null ? deleteOpName : "Delete";
 
-                String action = deleteOpName != null ? deleteOpName : "Delete";
-
-                Feedback.confirm(
-                        action +" Item",
-                        "Really "+action+" this item?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    callback.onDelete(form.getEditedEntity());
+                    Feedback.confirm(
+                            action +" Item",
+                            "Really "+action+" this item?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        callback.onDelete(form.getEditedEntity());
+                                    }
                                 }
-                            }
-                        });
-            }
-        };
+                            });
+                }
+            };
 
-        String title = deleteOpName!=null ? deleteOpName : Console.CONSTANTS.common_label_delete();
-        ToolButton deleteBtn = new ToolButton(title);
-        deleteBtn.addClickHandler(clickHandler);
-        toolStrip.addToolButton(deleteBtn);
+            String title = deleteOpName!=null ? deleteOpName : Console.CONSTANTS.common_label_delete();
+            ToolButton deleteBtn = new ToolButton(title);
+            deleteBtn.addClickHandler(clickHandler);
+            toolStrip.addToolButton(deleteBtn);
+
+        }
 
         return toolStrip;
     }
