@@ -62,6 +62,7 @@ public class NewTopicWizard {
                     public ModelNode getAddress() {
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "messaging");
+                        address.add("hornetq-server", "*");
                         address.add("jms-topic", "*");
                         return address;
                     }

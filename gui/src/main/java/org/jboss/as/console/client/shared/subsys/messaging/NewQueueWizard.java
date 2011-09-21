@@ -73,6 +73,7 @@ public class NewQueueWizard {
                     public ModelNode getAddress() {
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "messaging");
+                        address.add("hornetq-server", "*");
                         address.add("jms-queue", "*");
                         return address;
                     }
