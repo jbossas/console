@@ -78,6 +78,7 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
@@ -180,6 +181,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<MessageDrivenBeanPresenter> getMessageDrivenBeanPresenter();
     AsyncProvider<MessagingPresenter> getMessagingPresenter();
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
+    AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiPresenter> getOSGiPresenter();
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 

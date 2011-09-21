@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -83,6 +84,7 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<LoggingHandler> loggingHandler();
     AutoBean<LoggerConfig> loggerConfig();
+    AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();
     AutoBean<DeploymentReference> deploymentReference();
 
