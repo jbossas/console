@@ -318,8 +318,37 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         window.center();
     }
 
-    public void onCreateSecPattern(SecurityPattern securityPattern) {
+    public void onCreateSecPattern(final SecurityPattern pattern) {
         closeDialogue();
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add("security-setting", pattern.getPattern());
+        operation.get(ADDRESS).add("role", pattern.getRole());
+
+        operation.get("send").set(pattern.isSend());
+        operation.get("consume").set(pattern.isConsume());
+        operation.get("manage").set(pattern.isManage());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Added security setting ");
+                else
+                    Console.error("Failed to add security setting" + pattern.getPattern(), response.toString());
+
+                loadSecurityConfig();
+            }
+        });
     }
 
     public void onSaveSecDetails(final SecurityPattern pattern, Map<String, Object> changedValues) {
@@ -333,8 +362,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(SecurityPattern.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -373,7 +400,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error("Failed to remove security setting" + pattern.getPattern(), response.toString());
 
-               loadSecurityConfig();
+                loadSecurityConfig();
             }
         });
     }
