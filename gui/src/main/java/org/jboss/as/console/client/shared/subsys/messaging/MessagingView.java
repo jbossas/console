@@ -23,10 +23,12 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 
 import java.util.List;
 
@@ -100,5 +102,15 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     @Override
     public void enableEditTopic(boolean b) {
         jmsEditor.enableEditTopic(b);
+    }
+
+    @Override
+    public void setSecurityConfig(List<SecurityPattern> secPatterns) {
+        providerEditor.setSecurityConfig(secPatterns);
+    }
+
+    @Override
+    public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
+        providerEditor.setAddressingConfig(addrPatterns);
     }
 }

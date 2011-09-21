@@ -21,8 +21,6 @@ package org.jboss.as.console.client.shared.subsys.messaging.model;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
 
-import java.util.List;
-
 /**
  * @author Heiko Braun
  * @date 5/10/11
@@ -35,12 +33,6 @@ public interface MessagingProvider {
     @Binding(detypedName = "persistence-enabled")
     boolean isPersistenceEnabled();
     void setPersistenceEnabled(boolean persistenceEnabled);
-
-    List<SecurityPattern> getSecurityPatterns();
-    void setSecurityPatterns(List<SecurityPattern> patterns);
-
-    List<AddressingPattern> getAddressPatterns();
-    void setAddressPatterns(List<AddressingPattern> addrPatterns);
 
     String getConnectorBinding();
     void setConnectorBinding(String binding);

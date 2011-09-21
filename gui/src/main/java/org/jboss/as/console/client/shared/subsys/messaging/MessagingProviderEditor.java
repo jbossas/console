@@ -27,17 +27,16 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -128,7 +127,6 @@ public class MessagingProviderEditor {
         form.edit(provider);
         form.setEnabled(false);
 
-        secDetails.setProvider(provider);
         addrDetails.setProvider(provider);
 
     }
@@ -139,5 +137,13 @@ public class MessagingProviderEditor {
 
     public void editAddrDetails(boolean b) {
         addrDetails.setEnabled(b);
+    }
+
+    public void setSecurityConfig(List<SecurityPattern> patterns) {
+        secDetails.setSecurityConfig(patterns);
+    }
+
+    public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
+        addrDetails.setAddressingConfig(addrPatterns);
     }
 }

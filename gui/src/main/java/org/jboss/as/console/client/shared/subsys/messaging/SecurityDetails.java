@@ -25,9 +25,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
-import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
@@ -35,6 +34,7 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class SecurityDetails {
 
     private MessagingPresenter presenter;
     private Form<SecurityPattern> form;
-    private MessagingProvider providerEntity;
+
     private DefaultCellTable<SecurityPattern> secTable;
     private ToolButton edit ;
 
@@ -96,10 +96,10 @@ public class SecurityDetails {
         secTable = new DefaultCellTable<SecurityPattern>(10);
         secTable.getElement().setAttribute("style", "margin-top:10px");
 
-        Column<SecurityPattern, String> principalColumn = new Column<SecurityPattern, String>(new TextCell()) {
+        Column<SecurityPattern, String> roleColumn = new Column<SecurityPattern, String>(new TextCell()) {
             @Override
             public String getValue(SecurityPattern object) {
-                return object.getPrincipal();
+                return object.getRole();
             }
         };
 
@@ -111,8 +111,8 @@ public class SecurityDetails {
             }
         };
 
-        secTable.addColumn(principalColumn, "Principal");
         secTable.addColumn(patternColumn, "Pattern");
+        secTable.addColumn(roleColumn, "Role");
 
         layout.add(secTable);
 
@@ -138,24 +138,22 @@ public class SecurityDetails {
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), createDQ, deleteDQ, createNDQ, deleteNDQ);
 
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getSecurityDescription());
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "messaging");
+                address.add("hornetq-server", "*");
+                address.add("security-setting", "*");
+                address.add("role", "*");
+                return address;
+            }
+        }, form);
+
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
         return layout;
-    }
-
-    void setProvider(MessagingProvider provider)
-    {
-        this.providerEntity = provider;
-
-        List<SecurityPattern> secPatterns = provider.getSecurityPatterns();
-        secTable.setRowCount(secPatterns.size(), true);
-        secTable.setRowData(0, secPatterns);
-        if(!secPatterns.isEmpty())
-            secTable.getSelectionModel().setSelected(secPatterns.get(0), true);
-
-        form.setEnabled(false);
     }
 
     public void setEnabled(boolean b) {
@@ -165,5 +163,15 @@ public class SecurityDetails {
             edit.setText("Save");
         else
             edit.setText("Edit");
+    }
+
+    public void setSecurityConfig(List<SecurityPattern> patterns) {
+
+        secTable.setRowCount(patterns.size(), true);
+        secTable.setRowData(0, patterns);
+        if(!patterns.isEmpty())
+            secTable.getSelectionModel().setSelected(patterns.get(0), true);
+
+        form.setEnabled(false);
     }
 }

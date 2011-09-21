@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/10/11
@@ -28,12 +30,16 @@ public interface AddressingPattern {
     String getPattern();
     void setPattern(String pattern);
 
+    @Binding(detypedName = "dead-letter-address")
     String getDeadLetterQueue();
     void setDeadLetterQueue(String deadLetterQueue);
 
+    @Binding(detypedName = "expiry-address")
     String getExpiryQueue();
     void setExpiryQueue(String expiryQueue);
 
+    @Binding(detypedName = "redelivery-delay")
     int getRedeliveryDelay();
     void setRedeliveryDelay(int redeliveryDelay);
+
 }

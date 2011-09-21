@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -68,13 +67,11 @@ public class NewAddressPatternWizard {
 
         form.setFields(pattern, dlQ, expQ, redelivery);
 
-        // defaults
-        AddressingPattern defaultPattern = findDefaultPattern();
-        if(defaultPattern!=null) {
-            dlQ.setValue(defaultPattern.getDeadLetterQueue());
-            expQ.setValue(defaultPattern.getExpiryQueue());
-            redelivery.setValue(defaultPattern.getRedeliveryDelay());
-        }
+        // TODO: defaults
+        dlQ.setValue("jms.queue.DLQ");
+        expQ.setValue("jms.queue.ExpiryQueue");
+        redelivery.setValue(0);
+
         layout.add(form.asWidget());
 
         DialogueOptions options = new DialogueOptions(
@@ -99,18 +96,5 @@ public class NewAddressPatternWizard {
         );
 
         return new WindowContentBuilder(layout, options).build();
-    }
-
-    private AddressingPattern findDefaultPattern() {
-        AddressingPattern match = null;
-        for(AddressingPattern pattern : provider.getAddressPatterns()) {
-            if("#".equals(pattern.getPattern()))
-            {
-                match = pattern;
-                break;
-            }
-        }
-
-        return match;
     }
 }

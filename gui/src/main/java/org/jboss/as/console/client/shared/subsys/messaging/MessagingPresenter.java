@@ -92,6 +92,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         void editSecDetails(boolean b);
         void editAddrDetails(boolean b);
 
+        void setSecurityConfig(List<SecurityPattern> secPatterns);
+        void setAddressingConfig(List<AddressingPattern> addrPatterns);
     }
 
     public interface JMSView {
@@ -128,6 +130,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     protected void onReset() {
         super.onReset();
         loadProviderDetails();
+        loadSecurityConfig();
+        loadAddressingConfig();
         loadJMSConfig();
     }
 
@@ -144,7 +148,41 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                MessagingProvider provider = parseResponse(response);
+                ModelNode model = response.get("result").asObject();
+
+                MessagingProvider provider = factory.messagingProvider().as();
+                provider.setName(getCurrentServer());
+
+                provider.setPersistenceEnabled(model.get("persistence-enabled").asBoolean());
+                provider.setSecurityEnabled(model.get("security-enabled").asBoolean());
+                provider.setMessageCounterEnabled(model.get("message-counter-enabled").asBoolean());
+
+                // socket binding ref
+                if(model.hasDefined("connector"))
+                {
+                    List<Property> connectorPropList = model.get("connector").asPropertyList();
+                    for(Property connectorProp : connectorPropList)
+                    {
+                        if("netty".equals(connectorProp.getName()))
+                        {
+                            String socketBinding = connectorProp.getValue().asObject().get("socket-binding").asString();
+                            provider.setConnectorBinding(socketBinding);
+                        }
+                    }
+                }
+
+                if(model.hasDefined("acceptor"))
+                {
+                    List<Property> acceptorPropList = model.get("acceptor").asPropertyList();
+                    for(Property acceptorProp : acceptorPropList)
+                    {
+                        if("netty".equals(acceptorProp.getName()))
+                        {
+                            String socketBinding = acceptorProp.getValue().asObject().get("socket-binding").asString();
+                            provider.setAcceptorBinding(socketBinding);
+                        }
+                    }
+                }
 
                 providerEntity = provider;
                 getView().setProviderDetails(provider);
@@ -153,99 +191,105 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         });
     }
 
-    private MessagingProvider parseResponse(ModelNode response) {
-        ModelNode model = response.get("result").asObject();
+    private void loadSecurityConfig() {
 
-        System.out.println(model);
+        //  /subsystem=messaging/hornetq-server=default:read-children-resources(child-type=security-setting)
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(RECURSIVE).set(Boolean.TRUE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(CHILD_TYPE).set("security-setting");
 
-        MessagingProvider provider = factory.messagingProvider().as();
-        provider.setName(getCurrentServer());
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
-        provider.setPersistenceEnabled(model.get("persistence-enabled").asBoolean());
-        provider.setSecurityEnabled(model.get("security-enabled").asBoolean());
-        provider.setMessageCounterEnabled(model.get("message-counter-enabled").asBoolean());
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-        // security
-        List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>();
+                List<Property> payload = response.get(RESULT).asPropertyList();
+                List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>();
 
-        /*if(model.hasDefined("security-setting"))
-        {
-            List<Property> secProps = model.get("security-setting").asPropertyList();
-
-            for(Property prop : secProps)
-            {
-                SecurityPattern pattern = factory.messagingSecurity().as();
-                pattern.setPattern(prop.getName());
-
-                Property principalProp= prop.getValue().asProperty();
-                pattern.setPrincipal(principalProp.getName());
-
-                ModelNode propValue = principalProp.getValue().asObject();
-                pattern.setSend(propValue.get("send").asBoolean());
-                pattern.setConsume(propValue.get("consume").asBoolean());
-                pattern.setManage(propValue.get("manage").asBoolean());
-                pattern.setCreateDurableQueue(propValue.get("createDurableQueue").asBoolean());
-                pattern.setDeleteDurableQueue(propValue.get("deleteDurableQueue").asBoolean());
-                pattern.setCreateNonDurableQueue(propValue.get("createNonDurableQueue").asBoolean());
-                pattern.setDeleteNonDurableQueue(propValue.get("deleteNonDurableQueue").asBoolean());
-
-                secPatterns.add(pattern);
-            }
-
-        }   */
-        provider.setSecurityPatterns(secPatterns);
-
-        // addressing
-        List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>();
-
-       /* if(model.hasDefined("address-setting"))
-        {
-            List<Property> addrProps = model.get("address-setting").asPropertyList();
-            for(Property prop : addrProps)
-            {
-                AddressingPattern pattern = factory.messagingAddress().as();
-                pattern.setPattern(prop.getName());
-
-                ModelNode propValue = prop.getValue().asObject();
-                pattern.setDeadLetterQueue(propValue.get("dead-letter-address").asString());
-                pattern.setExpiryQueue(propValue.get("expiry-address").asString());
-                pattern.setRedeliveryDelay(propValue.get("redelivery-delay").asInt());
-
-                addrPatterns.add(pattern);
-            }
-        }  */
-
-        provider.setAddressPatterns(addrPatterns);
-
-
-        // socket binding ref
-        if(model.hasDefined("connector"))
-        {
-            List<Property> connectorPropList = model.get("connector").asPropertyList();
-            for(Property connectorProp : connectorPropList)
-            {
-                if("netty".equals(connectorProp.getName()))
+                for(Property prop : payload)
                 {
-                    String socketBinding = connectorProp.getValue().asObject().get("socket-binding").asString();
-                    provider.setConnectorBinding(socketBinding);
-                }
-            }
-        }
+                    String pattern = prop.getName();
+                    List<Property> roles = prop.getValue().asPropertyList();
 
-        if(model.hasDefined("acceptor"))
-        {
-            List<Property> acceptorPropList = model.get("acceptor").asPropertyList();
-            for(Property acceptorProp : acceptorPropList)
-            {
-                if("netty".equals(acceptorProp.getName()))
+                    for(Property role : roles) {
+                        if("role".equals(role.getName()))
+                        {
+                            List<Property> permList = role.getValue().asPropertyList();
+
+                            for(Property perm : permList)
+                            {
+                                ModelNode permValue = perm.getValue().asObject();
+                                SecurityPattern model = factory.messagingSecurity().as();
+                                model.setPattern(pattern);
+                                model.setRole(perm.getName());
+
+                                model.setSend(permValue.get("send").asBoolean());
+                                model.setConsume(permValue.get("consume").asBoolean());
+                                model.setManage(permValue.get("manage").asBoolean());
+                                model.setCreateDurableQueue(permValue.get("create-durable-queue").asBoolean());
+                                model.setDeleteDurableQueue(permValue.get("delete-durable-queue").asBoolean());
+                                model.setCreateNonDurableQueue(permValue.get("create-non-durable-queue").asBoolean());
+                                model.setDeleteNonDurableQueue(permValue.get("delete-non-durable-queue").asBoolean());
+
+                                secPatterns.add(model);
+                            }
+                        }
+                    }
+
+                }
+
+                getView().setSecurityConfig(secPatterns);
+
+            }
+        });
+    }
+
+
+    private void loadAddressingConfig() {
+
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(RECURSIVE).set(Boolean.TRUE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(CHILD_TYPE).set("address-setting");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>();
+                List<Property> payload = response.get(RESULT).asPropertyList();
+
+                for(Property prop : payload)
                 {
-                    String socketBinding = acceptorProp.getValue().asObject().get("socket-binding").asString();
-                    provider.setAcceptorBinding(socketBinding);
-                }
-            }
-        }
+                    String pattern = prop.getName();
+                    ModelNode value = prop.getValue().asObject();
 
-        return provider;
+                    AddressingPattern model = factory.messagingAddress().as();
+                    model.setPattern(pattern);
+                    model.setDeadLetterQueue(value.get("dead-letter-address").asString());
+                    model.setExpiryQueue(value.get("expiry-address").asString());
+                    model.setRedeliveryDelay(value.get("redelivery-delay").asInt());
+
+                    addrPatterns.add(model);
+
+                }
+
+
+                getView().setAddressingConfig(addrPatterns);
+
+            }
+        });
     }
 
     @Override

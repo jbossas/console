@@ -8,6 +8,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  * @author Heiko Braun
  * @date 6/9/11
  */
+@Deprecated
 public class MessagingDescription {
 
     private static SafeHtml addressingDescription;

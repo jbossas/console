@@ -28,8 +28,8 @@ public interface SecurityPattern {
     public String getPattern() ;
     public void setPattern(String pattern);
 
-    public String getPrincipal() ;
-    public void setPrincipal(String principal);
+    public String getRole() ;
+    public void setRole(String role);
 
     public boolean isSend() ;
     public void setSend(boolean send);
