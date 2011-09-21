@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.mdb;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -31,27 +31,25 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
 import org.jboss.as.console.client.shared.subsys.ejb.EJBViewBase;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
 
 /**
  * @author David Bosschaert
  */
-public class SessionBeanPresenter extends EJBPresenterBase<SessionBeans, SessionBeanPresenter.MyView, SessionBeanPresenter.MyProxy> {
+public class MessageDrivenBeansPresenter extends EJBPresenterBase<MessageDrivenBeans, MessageDrivenBeansPresenter.MyView, MessageDrivenBeansPresenter.MyProxy> {
     @ProxyCodeSplit
-    @NameToken(NameTokens.SessionBeanPresenter)
-    public interface MyProxy extends Proxy<SessionBeanPresenter>, Place {
+    @NameToken(NameTokens.MessageDrivenBeanPresenter)
+    public interface MyProxy extends Proxy<MessageDrivenBeansPresenter>, Place {
     }
 
-    public interface MyView extends EJBViewBase<SessionBeans> {
-        void setPresenter(SessionBeanPresenter presenter);
+    public interface MyView extends EJBViewBase<MessageDrivenBeans> {
+        void setPresenter(MessageDrivenBeansPresenter presenter);
     }
 
     @Inject
-    public SessionBeanPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-            DispatchAsync dispatcher, BeanFactory factory,
-            RevealStrategy revealStrategy) {
+    public MessageDrivenBeansPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy, revealStrategy, dispatcher, factory);
-
     }
 
     @Override
@@ -62,6 +60,6 @@ public class SessionBeanPresenter extends EJBPresenterBase<SessionBeans, Session
 
     @Override
     protected void loadDetails() {
-        loadDetails(factory.sessionBeans().as(), "default-slsb-instance-pool");
+        loadDetails(factory.messageDrivenBeans().as(), "default-mdb-instance-pool");
     }
 }

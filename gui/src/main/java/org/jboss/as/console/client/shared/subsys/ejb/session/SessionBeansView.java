@@ -28,13 +28,13 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
 
-public class SessionBeanView extends SuspendableViewImpl implements SessionBeanPresenter.MyView {
-    private SessionBeanPresenter presenter;
-    private SessionBeanEditor sessionBeanEditor;
+public class SessionBeansView extends SuspendableViewImpl implements SessionBeansPresenter.MyView {
+    private SessionBeansPresenter presenter;
+    private SessionBeansEditor sessionBeanEditor;
 
     @Override
     public Widget createWidget() {
-        sessionBeanEditor = new SessionBeanEditor(presenter);
+        sessionBeanEditor = new SessionBeansEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
@@ -46,7 +46,7 @@ public class SessionBeanView extends SuspendableViewImpl implements SessionBeanP
     }
 
     @Override
-    public void setPresenter(SessionBeanPresenter presenter) {
+    public void setPresenter(SessionBeansPresenter presenter) {
         this.presenter = presenter;
     }
 

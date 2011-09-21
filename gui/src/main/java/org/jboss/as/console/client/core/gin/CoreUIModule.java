@@ -96,14 +96,14 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanView;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansView;
 import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsView;
-import org.jboss.as.console.client.shared.subsys.ejb.service.BeanServicesPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.service.BeanServicesView;
-import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanView;
+import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesView;
+import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -322,25 +322,25 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DomainDriverStrategy.class).in(Singleton.class);
         bind(StandaloneDriverStrategy.class).in(Singleton.class);
 
-        bindPresenter(SessionBeanPresenter.class,
-                SessionBeanPresenter.MyView.class,
-                SessionBeanView.class,
-                SessionBeanPresenter.MyProxy.class);
+        bindPresenter(SessionBeansPresenter.class,
+                SessionBeansPresenter.MyView.class,
+                SessionBeansView.class,
+                SessionBeansPresenter.MyProxy.class);
 
-        bindPresenter(MessageDrivenBeanPresenter.class,
-                MessageDrivenBeanPresenter.MyView.class,
-                MessageDrivenBeanView.class,
-                MessageDrivenBeanPresenter.MyProxy.class);
+        bindPresenter(MessageDrivenBeansPresenter.class,
+                MessageDrivenBeansPresenter.MyView.class,
+                MessageDrivenBeansView.class,
+                MessageDrivenBeansPresenter.MyProxy.class);
 
         bindPresenter(BeanPoolsPresenter.class,
                 BeanPoolsPresenter.MyView.class,
                 BeanPoolsView.class,
                 BeanPoolsPresenter.MyProxy.class);
 
-        bindPresenter(BeanServicesPresenter.class,
-                BeanServicesPresenter.MyView.class,
-                BeanServicesView.class,
-                BeanServicesPresenter.MyProxy.class);
+        bindPresenter(EJBServicesPresenter.class,
+                EJBServicesPresenter.MyView.class,
+                EJBServicesView.class,
+                EJBServicesPresenter.MyProxy.class);
 
         bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,

@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb.mdb.model;
 
-import java.util.Set;
-
 import org.jboss.as.console.client.shared.subsys.ejb.model.EJBCommonModel;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
@@ -33,10 +31,4 @@ public interface MessageDrivenBeans extends EJBCommonModel  {
     String getDefaultPool();
     @Override
     void setDefaultPool(String name);
-
-    // TODO can we move these down? Do we only need to override the ones with an @Binding?
-    @Override
-    Set<String> getAvailablePools();
-    @Override
-    void setAvailablePools(Set<String> keys);
 }

@@ -28,13 +28,13 @@ import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBean
 /**
  * @author David Bosschaert
  */
-public class MessageDrivenBeanView extends SuspendableViewImpl implements MessageDrivenBeanPresenter.MyView {
-    private MessageDrivenBeanPresenter presenter;
-    private MessageDrivenBeanEditor messageDrivenBeanEditor;
+public class MessageDrivenBeansView extends SuspendableViewImpl implements MessageDrivenBeansPresenter.MyView {
+    private MessageDrivenBeansPresenter presenter;
+    private MessageDrivenBeansEditor messageDrivenBeanEditor;
 
     @Override
     public Widget createWidget() {
-        messageDrivenBeanEditor = new MessageDrivenBeanEditor(presenter);
+        messageDrivenBeanEditor = new MessageDrivenBeansEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
@@ -46,7 +46,7 @@ public class MessageDrivenBeanView extends SuspendableViewImpl implements Messag
     }
 
     @Override
-    public void setPresenter(MessageDrivenBeanPresenter presenter) {
+    public void setPresenter(MessageDrivenBeansPresenter presenter) {
         this.presenter = presenter;
     }
 

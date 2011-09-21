@@ -33,6 +33,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -154,7 +155,6 @@ public class BeanPoolsPresenter extends Presenter<BeanPoolsPresenter.MyView, Bea
         operation.get("max-pool-size").set(pool.getMaxPoolSize());
         operation.get("timeout").set(pool.getTimeout());
         operation.get("timeout-unit").set(pool.getTimeoutUnit());
-        // TODO the above may be done automatically using some utility class that exists I think
 
         dispatcher.execute(new DMRAction(operation),
             new SimpleDMRResponseHandler(ModelDescriptionConstants.ADD, POOL_NAME, pool.getName(),
@@ -224,7 +224,7 @@ public class BeanPoolsPresenter extends Presenter<BeanPoolsPresenter.MyView, Bea
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
+                Console.error(Console.CONSTANTS.common_error_failure() + " obtain choices for timeout-unit", caught.getMessage());
             }
 
             @Override
@@ -232,7 +232,7 @@ public class BeanPoolsPresenter extends Presenter<BeanPoolsPresenter.MyView, Bea
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean success = response.get(ModelDescriptionConstants.OUTCOME).asString().equals(ModelDescriptionConstants.SUCCESS);
                 if (!success) {
-                    // TODO log error
+                    Console.error(Console.CONSTANTS.common_error_failure() + " obtain choices for timeout-unit");
                     return;
                 }
                 List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
@@ -242,9 +242,11 @@ public class BeanPoolsPresenter extends Presenter<BeanPoolsPresenter.MyView, Bea
                     ModelNode attr = attrs.get("timeout-unit");
 
                     List<String> values = new ArrayList<String>();
-                    values.add(attr.get("allowed").asString()); // TODO cater for STRING-LIST type?
-                    String defVal = attr.get("default").asString();
+                    for (ModelNode allowed : attr.get("allowed").asList()) {
+                        values.add(allowed.asString());
+                    }
 
+                    String defVal = attr.get("default").asString();
                     timeoutItem.setChoices(values, defVal);
                 }
             }

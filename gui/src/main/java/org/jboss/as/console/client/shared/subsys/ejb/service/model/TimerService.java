@@ -16,19 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session.model;
+package org.jboss.as.console.client.shared.subsys.ejb.service.model;
 
-import org.jboss.as.console.client.shared.subsys.ejb.model.EJBCommonModel;
 import org.jboss.as.console.client.widgets.forms.Binding;
-
 
 /**
  * @author David Bosschaert
  */
-public interface SessionBeans extends EJBCommonModel {
-    @Override
-    @Binding(detypedName = "default-slsb-instance-pool")
-    String getDefaultPool();
-    @Override
-    void setDefaultPool(String name);
+public interface TimerService {
+    @Binding(detypedName = "core-threads")
+    int getCoreThreads();
+    void setCoreThreads(int coreThreads);
+
+    @Binding(detypedName = "max-threads")
+    int getMaxThreads();
+    void setMaxThreads(int maxThreads);
+
+    String getPath();
+    void setPath(String path);
+
+    @Binding(detypedName = "relative-to")
+    String getRelativeTo();
+    void setRelativeTo(String relativeTo);
 }
