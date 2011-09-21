@@ -38,6 +38,7 @@ public class NameTokens {
     public static final String JMSPresenter = "jms";
     public static final String JndiPresenter = "naming";
     public static final String LoggingPresenter = "logging";
+    public static final String ScannerPresenter = "deployment-scanner";
     public static final String MessageDrivenBeanPresenter = "mdb";
     public static final String MessagingPresenter = "messaging";
     public static final String MetricsPresenter = "invocation-metrics";

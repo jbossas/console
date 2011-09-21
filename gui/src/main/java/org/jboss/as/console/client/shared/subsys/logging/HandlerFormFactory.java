@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import org.jboss.as.console.client.shared.viewframework.FormDeckPanel;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import org.jboss.as.console.client.Console;
