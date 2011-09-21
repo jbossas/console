@@ -72,6 +72,8 @@ public class SubsystemMetaData {
 
         groups.get(EJB).getItems().add(new SubsystemGroupItem("Session Beans", "ejb3", NameTokens.SessionBeanPresenter));
         groups.get(EJB).getItems().add(new SubsystemGroupItem("Message Driven Beans", "ejb3", NameTokens.MessageDrivenBeanPresenter));
+        groups.get(EJB).getItems().add(new SubsystemGroupItem("Pools", "ejb3", NameTokens.BeanPoolsPresenter));
+        groups.get(EJB).getItems().add(new SubsystemGroupItem("Services", "ejb3", NameTokens.BeanServicesPresenter));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));

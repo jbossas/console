@@ -16,42 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.pool;
 
-/**
- * @author David Bosschaert
- */
+import java.util.List;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
 
-public class SessionBeanView extends SuspendableViewImpl implements SessionBeanPresenter.MyView {
-    private SessionBeanPresenter presenter;
-    private SessionBeanEditor sessionBeanEditor;
+/**
+ * @author David Bosschaert
+ */
+public class BeanPoolsView extends SuspendableViewImpl implements BeanPoolsPresenter.MyView {
+    private BeanPoolsPresenter presenter;
+    private BeanPoolsEditor poolsEditor;
 
     @Override
     public Widget createWidget() {
-        sessionBeanEditor = new SessionBeanEditor(presenter);
+        poolsEditor = new BeanPoolsEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(sessionBeanEditor.asWidget(), "Stateless");
+        tabLayoutPanel.add(poolsEditor.asWidget(), "Pools");
         tabLayoutPanel.selectTab(0);
 
         return tabLayoutPanel;
     }
 
     @Override
-    public void setPresenter(SessionBeanPresenter presenter) {
+    public void setPresenter(BeanPoolsPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void setProviderDetails(SessionBeans provider) {
-        sessionBeanEditor.setProviderDetails(provider);
+    public void updatePools(List<EJBPool> pools) {
+        poolsEditor.updatePools(pools);
+    }
+
+    @Override
+    public void enablePoolDetails(boolean b) {
+        poolsEditor.enablePoolDetails(b);
     }
 }

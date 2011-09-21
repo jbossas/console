@@ -21,16 +21,13 @@ package org.jboss.as.console.client.shared.subsys.osgi;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.dmr.client.ModelDescriptionConstants.FAILURE_DESCRIPTION;
 import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OUTCOME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.dmr.client.ModelDescriptionConstants.REMOVE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.dmr.client.ModelDescriptionConstants.SUCCESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
@@ -39,7 +36,6 @@ import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -56,6 +52,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
 import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -135,19 +132,19 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
                 Console.schedule(new Command() {
                     @Override
                     public void execute() {
-                        if (model.get("property").isDefined())
+                        if (model.hasDefined("property"))
                             loadOSGiPropertyDetails();
 
                         Console.schedule(new Command() {
                             @Override
                             public void execute() {
-                                if (model.get("module").isDefined())
+                                if (model.hasDefined("module"))
                                     loadOSGiModuleDetails();
 
                                 Console.schedule(new Command() {
                                     @Override
                                     public void execute() {
-                                        if (model.get("configuration").isDefined())
+                                        if (model.hasDefined("configuration"))
                                             loadOSGiConfigAdminDetails(null);
                                     }
                                 });
@@ -304,7 +301,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(VALUE).set(stringValue);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(WRITE_ATTRIBUTE_OPERATION, "activation", stringValue,
+            new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION, "activation", stringValue,
                 new Command() {
                     @Override
                     public void execute() {
@@ -319,7 +316,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get("value").set(prop.getValue());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_frameworkProperty(), prop.getKey(),
+            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_frameworkProperty(), prop.getKey(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -333,7 +330,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("property", property.getKey());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_frameworkProperty(), property.getKey(),
+            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_frameworkProperty(), property.getKey(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -351,7 +348,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
             operation.get("start").set(entity.getStartLevel());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_preloadedModule(), entity.getIdentifier(),
+            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_preloadedModule(), entity.getIdentifier(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -365,7 +362,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("module", identifier);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_preloadedModule(), identifier,
+            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_preloadedModule(), identifier,
                 new Command() {
                     @Override
                     public void execute() {
@@ -385,7 +382,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         }
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_configAdminPID(), data.getPid(),
+            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_configAdminPID(), data.getPid(),
                 new Command() {
                     @Override
                     public void execute() {
@@ -399,7 +396,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).add("configuration", pid);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_configAdminPID(), pid,
+            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_configAdminPID(), pid,
                 new Command() {
                     @Override
                     public void execute() {
@@ -414,37 +411,5 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add(SUBSYSTEM, OSGI_SUBSYSTEM);
         return operation;
-    }
-
-    static class SimpleResponseHandler implements AsyncCallback<DMRResponse> {
-        private final String operation;
-        private final String entityName;
-        private final String id;
-        private final Command callback;
-
-        SimpleResponseHandler(String operationName, String entityName, String id, Command callback) {
-            this.operation = operationName;
-            this.entityName = entityName;
-            this.id = id;
-            this.callback = callback;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName, caught.getMessage());
-        }
-
-        @Override
-        public void onSuccess(DMRResponse result) {
-            ModelNode response = ModelNode.fromBase64(result.getResponseText());
-            boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
-            if (success)
-                Console.info(Console.CONSTANTS.common_label_success() + " " + operation + " " + entityName + ": " + id);
-            else
-                Console.error(Console.CONSTANTS.common_error_failure() + " " + operation + " " + entityName + ": " + id,
-                    response.get(FAILURE_DESCRIPTION).asString());
-
-            Console.schedule(callback);
-        }
     }
 }

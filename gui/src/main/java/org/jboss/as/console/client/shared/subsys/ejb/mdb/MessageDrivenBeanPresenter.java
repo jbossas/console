@@ -18,62 +18,38 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb.mdb;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.dmr.client.ModelDescriptionConstants;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
+import org.jboss.as.console.client.shared.subsys.ejb.EJBViewBase;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
 
 /**
  * @author David Bosschaert
  */
-public class MessageDrivenBeanPresenter extends Presenter<MessageDrivenBeanPresenter.MyView, MessageDrivenBeanPresenter.MyProxy> {
-    private static final String EJB3_SUBSYSTEM = "ejb3";
-
-    private DispatchAsync dispatcher;
-    private BeanFactory factory;
-    private RevealStrategy revealStrategy;
-
+public class MessageDrivenBeanPresenter extends EJBPresenterBase<MessageDrivenBeans, MessageDrivenBeanPresenter.MyView, MessageDrivenBeanPresenter.MyProxy> {
     @ProxyCodeSplit
     @NameToken(NameTokens.MessageDrivenBeanPresenter)
     public interface MyProxy extends Proxy<MessageDrivenBeanPresenter>, Place {
     }
 
-    public interface MyView extends View {
+    public interface MyView extends EJBViewBase<MessageDrivenBeans> {
         void setPresenter(MessageDrivenBeanPresenter presenter);
     }
 
     @Inject
     public MessageDrivenBeanPresenter(EventBus eventBus, MyView view, MyProxy proxy,
             DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
-        super(eventBus, view, proxy);
-
-        this.dispatcher = dispatcher;
-        this.factory = factory;
-        this.revealStrategy = revealStrategy;
-    }
-
-    @Override
-    protected void revealInParent() {
-        revealStrategy.revealInParent(this);
+        super(eventBus, view, proxy, revealStrategy, dispatcher, factory);
     }
 
     @Override
@@ -83,27 +59,7 @@ public class MessageDrivenBeanPresenter extends Presenter<MessageDrivenBeanPrese
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadMDBDetails();
-    }
-
-    private void loadMDBDetails() {
-        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                // TODO
-            }
-        });
-    }
-
-    private ModelNode createOperation(String operator) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(operator);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add(SUBSYSTEM, EJB3_SUBSYSTEM);
-        return operation;
+    protected void loadDetails() {
+        loadDetails(factory.messageDrivenBeans().as(), "default-mdb-instance-pool");
     }
 }

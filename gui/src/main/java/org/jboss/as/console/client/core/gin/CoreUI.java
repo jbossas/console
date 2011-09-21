@@ -67,6 +67,8 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeanPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb.service.BeanServicesPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeanPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -178,6 +180,9 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<SessionBeanPresenter> getSessionBeanPresenter();
     AsyncProvider<MessageDrivenBeanPresenter> getMessageDrivenBeanPresenter();
+    AsyncProvider<BeanPoolsPresenter> getBeanPoolsPresenter();
+    AsyncProvider<BeanServicesPresenter> getBeanServicesPresenter();
+
     AsyncProvider<MessagingPresenter> getMessagingPresenter();
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
     AsyncProvider<OSGiPresenter> getOSGiPresenter();

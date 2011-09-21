@@ -16,42 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.session;
+package org.jboss.as.console.client.shared.subsys.ejb.service;
+
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author David Bosschaert
  */
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
+class BeanServicesEditor {
+    private final BeanServicesPresenter presenter;
 
-import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
-
-public class SessionBeanView extends SuspendableViewImpl implements SessionBeanPresenter.MyView {
-    private SessionBeanPresenter presenter;
-    private SessionBeanEditor sessionBeanEditor;
-
-    @Override
-    public Widget createWidget() {
-        sessionBeanEditor = new SessionBeanEditor(presenter);
-
-        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutPanel.addStyleName("default-tabpanel");
-
-        tabLayoutPanel.add(sessionBeanEditor.asWidget(), "Stateless");
-        tabLayoutPanel.selectTab(0);
-
-        return tabLayoutPanel;
-    }
-
-    @Override
-    public void setPresenter(SessionBeanPresenter presenter) {
+    BeanServicesEditor(BeanServicesPresenter presenter) {
         this.presenter = presenter;
     }
 
-    @Override
-    public void setProviderDetails(SessionBeans provider) {
-        sessionBeanEditor.setProviderDetails(provider);
+    Widget asWidget() {
+        LayoutPanel layout = new LayoutPanel();
+        ScrollPanel scroll = new ScrollPanel();
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("rhs-content-panel");
+        scroll.add(vpanel);
+
+        // Add an empty toolstrip to make this panel look similar to others
+        ToolStrip toolStrip = new ToolStrip();
+        layout.add(toolStrip);
+
+        layout.add(scroll);
+        layout.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
     }
 }

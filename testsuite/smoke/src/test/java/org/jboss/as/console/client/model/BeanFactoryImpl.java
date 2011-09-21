@@ -35,6 +35,9 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
+import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
+import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -113,6 +116,21 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     public AutoBean<PoolConfig> poolConfig() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<SessionBeans> sessionBeans() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<MessageDrivenBeans> messageDrivenBeans() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<EJBPool> ejbPool() {
         throw new RuntimeException("not implemented");
     }
 
