@@ -54,13 +54,13 @@ public class NewSecurityPatternWizard {
         layout.setStyleName("window-content");
         layout.getElement().setAttribute("cellpadding", "10");
 
-        layout.add(new HTML("<h3>Create Security Pattern</h3>"));
+        layout.add(new HTML("<h3>Create Security Setting</h3>"));
 
         final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
-        form.setNumColumns(2);
+        form.setNumColumns(1);
 
-        TextBoxItem principal = new TextBoxItem("principal", "Principal");
         TextBoxItem pattern = new TextBoxItem("pattern", "Pattern");
+        TextBoxItem principal = new TextBoxItem("role", "Role");
         CheckBoxItem send = new CheckBoxItem("send", "Send?");
         CheckBoxItem consume = new CheckBoxItem("consume", "Consume?");
         CheckBoxItem manage= new CheckBoxItem("manage", "Manage?");

@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -37,6 +38,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -58,41 +60,6 @@ public class SecurityDetails {
 
         VerticalPanel layout = new VerticalPanel();
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
-
-        edit = new ToolButton("Edit", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                if(edit.getText().equals("Edit"))
-                    presenter.onEditSecDetails();
-                else
-                    presenter.onSaveSecDetails(form.getChangedValues());
-            }
-        });
-        toolStrip.addToolButton(edit);
-
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.onDeleteSecDetails(form.getEditedEntity());
-            }
-        }));
-
-
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.launchNewSecDialogue();
-            }
-        }));
-
-        // TODO: https://issues.jboss.org/browse/AS7-759
-        //layout.add(toolStrip);
-
-        // ----
-
         secTable = new DefaultCellTable<SecurityPattern>(10);
         secTable.getElement().setAttribute("style", "margin-top:10px");
 
@@ -113,9 +80,6 @@ public class SecurityDetails {
 
         secTable.addColumn(patternColumn, "Pattern");
         secTable.addColumn(roleColumn, "Role");
-
-        layout.add(secTable);
-
 
         // ---
 
@@ -150,9 +114,35 @@ public class SecurityDetails {
             }
         }, form);
 
-        layout.add(helpPanel.asWidget());
 
+        FormToolStrip<SecurityPattern> toolStrip = new FormToolStrip<SecurityPattern>(
+                form,
+                new FormToolStrip.FormCallback<SecurityPattern>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveSecDetails(form.getEditedEntity(), changeset);
+                    }
+
+                    @Override
+                    public void onDelete(SecurityPattern entity) {
+                        presenter.onDeleteSecDetails(entity);
+                    }
+                }
+        );
+
+        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewSecDialogue();
+            }
+        }));
+
+        // asembly
+        layout.add(toolStrip.asWidget());
+        layout.add(secTable);
+        layout.add(helpPanel.asWidget());
         layout.add(form.asWidget());
+
         return layout;
     }
 

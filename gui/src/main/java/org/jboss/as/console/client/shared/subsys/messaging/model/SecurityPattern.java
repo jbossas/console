@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/10/11
@@ -37,15 +39,19 @@ public interface SecurityPattern {
     public boolean isConsume() ;
     public void setConsume(boolean consume);
 
+    @Binding(detypedName = "create-durable-queue")
     public boolean isCreateDurableQueue() ;
     public void setCreateDurableQueue(boolean createDurableQueue) ;
 
+    @Binding(detypedName = "delete-durable-queue")
     public boolean isDeleteDurableQueue() ;
     public void setDeleteDurableQueue(boolean deleteDurableQueue) ;
 
+    @Binding(detypedName = "create-non-durable-queue")
     public boolean isCreateNonDurableQueue() ;
     public void setCreateNonDurableQueue(boolean createNonDurableQueue) ;
 
+    @Binding(detypedName = "delete-non-durable-queue")
     public boolean isDeleteNonDurableQueue() ;
     public void setDeleteNonDurableQueue(boolean deleteNonDurableQueue) ;
 

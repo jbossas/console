@@ -9,6 +9,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,10 +19,11 @@ import java.util.Map;
  */
 public class FormToolStrip<T> {
 
-    Form<T> form = null;
-    FormCallback<T> callback;
+    private Form<T> form = null;
+    private FormCallback<T> callback;
     private String deleteOpName = null;
     private boolean providesDeleteOp = true;
+    private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
     public FormToolStrip(Form<T> form, FormCallback<T> callback) {
         this.form = form;
@@ -95,7 +98,14 @@ public class FormToolStrip<T> {
 
         }
 
+        for(ToolButton btn : additionalButtons)
+            toolStrip.addToolButtonRight(btn);
+
         return toolStrip;
+    }
+
+    public void addToolButtonRight(ToolButton btn) {
+        additionalButtons.add(btn);
     }
 
     public interface FormCallback<T> {

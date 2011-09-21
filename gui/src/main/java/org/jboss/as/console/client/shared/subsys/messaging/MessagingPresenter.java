@@ -54,6 +54,7 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -218,7 +219,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                     List<Property> roles = prop.getValue().asPropertyList();
 
                     for(Property role : roles) {
-                        if("role".equals(role.getName()))
+                        if("role".equals(role.getName()) && role.getValue().isDefined())
                         {
                             List<Property> permList = role.getValue().asPropertyList();
 
@@ -299,7 +300,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewSecDialogue() {
-        window = new DefaultWindow("Security Pattern");
+        window = new DefaultWindow("New Security Setting");
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -321,16 +322,60 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         closeDialogue();
     }
 
-    public void onEditSecDetails() {
-        getView().editSecDetails(true);
+    public void onSaveSecDetails(final SecurityPattern pattern, Map<String, Object> changedValues) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "messaging");
+        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        proto.get(ADDRESS).add("security-setting", pattern.getPattern());
+        proto.get(ADDRESS).add("role", pattern.getRole());
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(SecurityPattern.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
+                if(response.getUnderlying())
+                    Console.info("Updated security setting "+pattern);
+                else
+                    Console.error("Failed to update security setting " + pattern, response.getResponse().toString());
+
+                loadSecurityConfig();
+            }
+        });
     }
 
-    public void onSaveSecDetails(Map<String, Object> changedValues) {
-        getView().editSecDetails(false);
-    }
+    public void onDeleteSecDetails(final SecurityPattern pattern) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add("security-setting", pattern.getPattern());
+        operation.get(ADDRESS).add("role", pattern.getRole());
 
-    public void onDeleteSecDetails(SecurityPattern pattern) {
-        getView().editSecDetails(false);
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Removed security setting ");
+                else
+                    Console.error("Failed to remove security setting" + pattern.getPattern(), response.toString());
+
+               loadSecurityConfig();
+            }
+        });
     }
 
     public void onEditAddressDetails(AddressingPattern addressingPattern) {
