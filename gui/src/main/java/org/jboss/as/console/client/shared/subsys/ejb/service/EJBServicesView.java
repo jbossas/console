@@ -23,17 +23,18 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
 
 /**
  * @author David Bosschaert
  */
-public class BeanServicesView extends SuspendableViewImpl implements BeanServicesPresenter.MyView {
-    private BeanServicesEditor beanServicesEditor;
-    private BeanServicesPresenter presenter;
+public class EJBServicesView extends SuspendableViewImpl implements EJBServicesPresenter.MyView {
+    private EJBServicesEditor beanServicesEditor;
+    private EJBServicesPresenter presenter;
 
     @Override
     public Widget createWidget() {
-        beanServicesEditor = new BeanServicesEditor(presenter);
+        beanServicesEditor = new EJBServicesEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
@@ -45,7 +46,12 @@ public class BeanServicesView extends SuspendableViewImpl implements BeanService
     }
 
     @Override
-    public void setPresenter(BeanServicesPresenter presenter) {
+    public void setPresenter(EJBServicesPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void setTimerServiceDetails(TimerService ts) {
+        beanServicesEditor.setTimerServiceDetails(ts);
     }
 }

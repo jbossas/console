@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.mdb;
+package org.jboss.as.console.client.shared.subsys.ejb.service;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -26,11 +26,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
+import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
+import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
+import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
@@ -38,16 +40,15 @@ import org.jboss.dmr.client.ModelNode;
 /**
  * @author David Bosschaert
  */
-public class MessageDrivenBeanEditor {
-    private Form<MessageDrivenBeans> form;
-    private final MessageDrivenBeanPresenter presenter;
-    private ListBoxItem defaultPool;
+class EJBServicesEditor {
+    private final EJBServicesPresenter presenter;
+    private Form<TimerService> form;
 
-    public MessageDrivenBeanEditor(MessageDrivenBeanPresenter presenter) {
+    EJBServicesEditor(EJBServicesPresenter presenter) {
         this.presenter = presenter;
     }
 
-    public Widget asWidget() {
+    Widget asWidget() {
         LayoutPanel layout = new LayoutPanel();
         ScrollPanel scroll = new ScrollPanel();
         VerticalPanel vpanel = new VerticalPanel();
@@ -58,20 +59,23 @@ public class MessageDrivenBeanEditor {
         ToolStrip toolStrip = new ToolStrip();
         layout.add(toolStrip);
 
-        vpanel.add(new ContentHeaderLabel("Message Driven Beans"));
+        vpanel.add(new ContentHeaderLabel("EJB Services"));
+        vpanel.add(new ContentGroupLabel("Timer Service"));
 
-        vpanel.add(new ContentGroupLabel("Pooling"));
-        form = new Form<MessageDrivenBeans>(MessageDrivenBeans.class);
-        form.setNumColumns(1);
+        form = new Form<TimerService>(TimerService.class);
 
-        defaultPool = new ListBoxItem("defaultPool", "Default Pool");
-        form.setFields(defaultPool);
+        NumberBoxItem coreThreads = new NumberBoxItem("coreThreads", "Core Threads");
+        NumberBoxItem maxThreads = new NumberBoxItem("maxThreads", "Max Threads");
+        TextBoxItem path = new TextBoxItem("path", "Path");
+        TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
+        form.setFields(coreThreads, maxThreads, path, relativeTo);
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = Baseadress.get();
-                address.add(ModelDescriptionConstants.SUBSYSTEM, MessageDrivenBeanPresenter.SUBSYSTEM_NAME);
+                address.add(ModelDescriptionConstants.SUBSYSTEM, EJBPresenterBase.SUBSYSTEM_NAME);
+                address.add("service", "timer-service");
                 return address;
             }
         }, form);
@@ -85,9 +89,7 @@ public class MessageDrivenBeanEditor {
         return layout;
     }
 
-    public void setProviderDetails(MessageDrivenBeans provider) {
-        defaultPool.setChoices(provider.getAvailablePools(), null);
-
-        form.edit(provider);
+    public void setTimerServiceDetails(TimerService ts) {
+        form.edit(ts);
     }
 }

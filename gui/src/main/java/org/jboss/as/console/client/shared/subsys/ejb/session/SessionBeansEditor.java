@@ -19,7 +19,11 @@
 package org.jboss.as.console.client.shared.subsys.ejb.session;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,12 +43,12 @@ import org.jboss.dmr.client.ModelNode;
 /**
  * @author David Bosschaert
  */
-class SessionBeanEditor {
+class SessionBeansEditor {
     private Form<SessionBeans> form;
-    private final SessionBeanPresenter presenter;
+    private final SessionBeansPresenter presenter;
     private ListBoxItem defaultPool;
 
-    SessionBeanEditor(SessionBeanPresenter presenter) {
+    SessionBeansEditor(SessionBeansPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -66,6 +70,16 @@ class SessionBeanEditor {
         form.setNumColumns(1);
 
         defaultPool = new ListBoxItem("defaultPool", "Default Pool");
+        // TODO This will change, just some temp stuff...
+        ComplexPanel cw = ((ComplexPanel) defaultPool.asWidget());
+        ListBox lb = (ListBox) cw.getWidget(0);
+        lb.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                presenter.onDefaultPoolChange(defaultPool.getValue());
+            }
+        });
+        // --- the above will change
         form.setFields(defaultPool);
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
