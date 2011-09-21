@@ -156,14 +156,19 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private MessagingProvider parseResponse(ModelNode response) {
         ModelNode model = response.get("result").asObject();
 
+        System.out.println(model);
+
         MessagingProvider provider = factory.messagingProvider().as();
-        provider.setName("HornetQ"); // TODO: can this be retrieved incl. version?
+        provider.setName(getCurrentServer());
 
         provider.setPersistenceEnabled(model.get("persistence-enabled").asBoolean());
+        provider.setSecurityEnabled(model.get("security-enabled").asBoolean());
+        provider.setMessageCounterEnabled(model.get("message-counter-enabled").asBoolean());
 
         // security
         List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>();
-        if(model.hasDefined("security-setting"))
+
+        /*if(model.hasDefined("security-setting"))
         {
             List<Property> secProps = model.get("security-setting").asPropertyList();
 
@@ -187,12 +192,13 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 secPatterns.add(pattern);
             }
 
-        }
+        }   */
         provider.setSecurityPatterns(secPatterns);
 
         // addressing
         List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>();
-        if(model.hasDefined("address-setting"))
+
+       /* if(model.hasDefined("address-setting"))
         {
             List<Property> addrProps = model.get("address-setting").asPropertyList();
             for(Property prop : addrProps)
@@ -207,7 +213,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
                 addrPatterns.add(pattern);
             }
-        }
+        }  */
 
         provider.setAddressPatterns(addrPatterns);
 

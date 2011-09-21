@@ -48,4 +48,11 @@ public interface MessagingProvider {
     String getAcceptorBinding();
     void setAcceptorBinding(String binding);
 
+    @Binding(detypedName = "security-enabled")
+    boolean isSecurityEnabled();
+    void setSecurityEnabled(boolean b);
+
+    @Binding(detypedName = "message-counter-enabled")
+    boolean isMessageCounterEnabled();
+    void setMessageCounterEnabled(boolean b);
 }

@@ -22,6 +22,7 @@ package org.jboss.as.console.client.shared.subsys.messaging;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -50,8 +51,8 @@ public class JMSEditor implements MessagingPresenter.JMSView{
     private MessagingPresenter presenter;
     private TopicList topicList;
     private QueueList queueList;
-
     private DefaultCellTable<ConnectionFactory> factoryTable;
+    private HTML serverName;
 
     public JMSEditor(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -75,7 +76,10 @@ public class JMSEditor implements MessagingPresenter.JMSView{
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.messaging());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("JMS Subsystem Configuration"));
+        serverName = new HTML("Replace me");
+        serverName.setStyleName("content-header-label");
+
+        horzPanel.add(serverName);
         image.getElement().getParentElement().setAttribute("width", "25");
 
         panel.add(horzPanel);
@@ -140,6 +144,9 @@ public class JMSEditor implements MessagingPresenter.JMSView{
 
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
+
+        serverName.setHTML("JMS Configuration: "+presenter.getCurrentServer());
+
         factoryTable.setRowCount(factories.size(), true);
         factoryTable.setRowData(0, factories);
     }

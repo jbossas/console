@@ -25,6 +25,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -34,6 +35,7 @@ import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.subsys.messaging.LoadServersCmd;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
@@ -44,7 +46,7 @@ import org.jboss.ballroom.client.layout.LHSNavTreeItem;
  */
 public class SubsystemTreeBuilder {
 
-    public static void build(String parentPlace, final LHSNavTree subsysTree, List<SubsystemRecord> subsystems)
+    public static void build(final String parentPlace, final LHSNavTree subsysTree, List<SubsystemRecord> subsystems)
     {
 
         int includedSubsystems =0;
@@ -54,7 +56,7 @@ public class SubsystemTreeBuilder {
         {
             final TreeItem groupTreeItem = new TreeItem(group.getName());
 
-            for(SubsystemGroupItem groupItem : group.getItems())
+            for(final SubsystemGroupItem groupItem : group.getItems())
             {
                 for(SubsystemRecord subsys: subsystems)
                 {
@@ -64,11 +66,47 @@ public class SubsystemTreeBuilder {
                         includedSubsystems++;
 
                         final String key = groupItem.getPresenter();
+
+
+                        if(key.equals("messaging")) {
+                            // See  https://issues.jboss.org/browse/AS7-1857
+                            // there can be multiple messaging server instances
+
+                            new LoadServersCmd(Console.MODULES.getDispatchAsync()).execute(
+                                    new AsyncCallback<List<String>>() {
+                                        @Override
+                                        public void onFailure(Throwable caught) {
+                                            Console.error("Failed to load hornet server names", caught.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onSuccess(List<String> result) {
+
+                                            for(String server : result)
+                                            {
+                                                String token = parentPlace + key+";name="+server;
+                                                final LHSNavTreeItem link = new LHSNavTreeItem("Provider: "+server, token);
+                                                link.setKey(key);
+                                                groupTreeItem.addItem(link);
+                                            }
+
+                                            if(groupTreeItem.getChildCount()>0)
+                                                subsysTree.addItem(groupTreeItem);
+                                        }
+                                    }
+                            );
+
+                            // skip ahead
+                            continue;
+                        }
+
+
+
                         String token = parentPlace + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
 
-                        if(key.equals("datasources")) // the eventing currently doesn't work reliably
+                        if(key.equals("datasources"))
                         {
                             Timer t = new Timer() {
                                 @Override
@@ -88,6 +126,7 @@ public class SubsystemTreeBuilder {
                             };
                             t.schedule(500);
                         }
+
 
                         groupTreeItem.addItem(link);
                     }

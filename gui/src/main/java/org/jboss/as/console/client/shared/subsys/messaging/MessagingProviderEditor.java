@@ -20,19 +20,24 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -44,6 +49,7 @@ public class MessagingProviderEditor {
     private Form<MessagingProvider> form;
     private SecurityDetails secDetails;
     private AddressingDetails addrDetails;
+    private HTML serverName;
 
     public MessagingProviderEditor(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -60,22 +66,35 @@ public class MessagingProviderEditor {
 
         layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        panel.add(new ContentHeaderLabel("Messaging Provider Configuration"));
+        serverName = new HTML("Replace me");
+        serverName.setStyleName("content-header-label");
+
+        panel.add(serverName);
 
         panel.add(new ContentGroupLabel("Attributes"));
 
         form = new Form(MessagingProvider.class);
         form.setNumColumns(2);
 
-        TextItem name = new TextItem("name", "Provider");
         StatusItem persistenceItem = new StatusItem("persistenceEnabled", "Persistence enabled?");
+        StatusItem securityItem = new StatusItem("securityEnabled", "Security enabled?");
+        StatusItem messageCounterItem = new StatusItem("messageCounterEnabled", "Message Counter enabled?");
 
-        TextItem connector = new TextItem("connectorBinding", "Connector Binding");
-        TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
+        //TextItem connector = new TextItem("connectorBinding", "Connector Binding");
+        //TextItem acceptor = new TextItem("acceptorBinding", "Acceptor Binding");
 
-        form.setFields(name, connector, persistenceItem, acceptor);
+        form.setFields(persistenceItem, securityItem, messageCounterItem);
+        //form.setFieldsInGroup("Connections", new DisclosureGroupRenderer(), acceptor, connector);
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getProviderDescription());
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "messaging");
+                address.add("hornetq-server", "*");
+                return address;
+            }
+        }, form);
 
         panel.add(helpPanel.asWidget());
         panel.add(form.asWidget());
@@ -103,6 +122,9 @@ public class MessagingProviderEditor {
 
 
     public void setProviderDetails(MessagingProvider provider) {
+
+        serverName.setHTML("Provider Configuration: "+provider.getName());
+
         form.edit(provider);
         form.setEnabled(false);
 
