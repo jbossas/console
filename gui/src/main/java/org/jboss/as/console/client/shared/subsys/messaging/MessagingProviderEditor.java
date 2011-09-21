@@ -126,7 +126,6 @@ public class MessagingProviderEditor {
 
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
-        bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
 
         secDetails = new SecurityDetails(presenter);
         bottomLayout.add(secDetails.asWidget(), "Security");
