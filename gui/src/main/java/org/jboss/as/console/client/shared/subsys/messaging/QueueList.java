@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -61,11 +62,11 @@ public class QueueList {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
-        edit = new ToolButton("Edit", new ClickHandler() {
+        edit = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
-                if(edit.getText().equals("Edit"))
+                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditQueue();
                 else
                     presenter.onSaveQueue(form.getEditedEntity().getName(), form.getChangedValues());
@@ -73,12 +74,12 @@ public class QueueList {
         });
         toolStrip.addToolButton(edit);
 
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
+        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 final Queue queue = form.getEditedEntity();
-                Feedback.confirm("Remove Queue", "Really remove queue "+queue.getName()+"?",
+                Feedback.confirm(Console.MESSAGES.remove_title("Queue"), Console.MESSAGES.remove_confirm(queue.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -91,7 +92,7 @@ public class QueueList {
         }));
 
 
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewQueueDialogue();
@@ -180,8 +181,8 @@ public class QueueList {
         form.setEnabled(b);
 
         if(b)
-            edit.setText("Save");
+            edit.setText(Console.CONSTANTS.common_label_save());
         else
-            edit.setText("Edit");
+            edit.setText(Console.CONSTANTS.common_label_edit());
     }
 }

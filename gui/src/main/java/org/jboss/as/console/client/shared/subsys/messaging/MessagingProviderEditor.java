@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
@@ -142,7 +143,7 @@ public class MessagingProviderEditor {
 
     public void setProviderDetails(MessagingProvider provider) {
 
-        serverName.setHTML("Provider Configuration: "+provider.getName());
+        serverName.setHTML(Console.MESSAGES.subsys_messaging(provider.getName()));
 
         form.edit(provider);
         form.setEnabled(false);

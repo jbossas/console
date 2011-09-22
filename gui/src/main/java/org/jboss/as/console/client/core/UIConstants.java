@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Heiko Braun
@@ -92,7 +93,11 @@ public interface UIConstants extends Constants {
     String common_label_subsystems();
     String common_label_areYouSure();
     String common_label_addToGroup();
+
+    // use the term "delete" instead
+    @Deprecated
     String common_label_remove();
+
     String common_label_domain();
     String common_label_upload();
     String common_label_next();
@@ -107,6 +112,7 @@ public interface UIConstants extends Constants {
     String common_label_lazyActivation();
     String common_label_changeActivation();
     String common_label_success();
+    String common_label_reset();
 
     String subsys_jca_dataSources();
     String subsys_jca_dataSourcesXA();
@@ -174,4 +180,8 @@ public interface UIConstants extends Constants {
     String subsys_osgi_preloadedModuleId();
     String subsys_osgi_preloadedModuleStartLevel();
     String subsys_osgi_preloadedModules();
+
+
+    String subsys_messaging_jms_provider();
+    String subsys_messaging_jms_destinations();
 }

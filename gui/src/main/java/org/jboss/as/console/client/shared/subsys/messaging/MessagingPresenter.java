@@ -297,7 +297,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewSecDialogue() {
-        window = new DefaultWindow("New Security Setting");
+        window = new DefaultWindow(Console.MESSAGES.createItemTitle("Security Setting"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -340,9 +340,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Added security setting ");
+                    Console.info(Console.MESSAGES.added("security setting"));
                 else
-                    Console.error("Failed to add security setting" + pattern.getPattern(), response.toString());
+                    Console.error(Console.MESSAGES.added("security setting"+pattern.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
@@ -367,9 +367,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info("Updated security setting "+pattern);
+                    Console.info(Console.MESSAGES.saved("security setting "+pattern.getPattern()));
                 else
-                    Console.error("Failed to update security setting " + pattern, response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("security setting "+pattern.getPattern()), response.getResponse().toString());
 
                 loadSecurityConfig();
             }
@@ -392,9 +392,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Removed security setting ");
+                    Console.info(Console.MESSAGES.deleted("security setting"));
                 else
-                    Console.error("Failed to remove security setting" + pattern.getPattern(), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("security setting "+pattern.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
@@ -416,9 +416,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Removed address setting ");
+                    Console.info(Console.MESSAGES.deleted("address setting"));
                 else
-                    Console.error("Failed to remove address setting" + addressingPattern.getPattern(), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("address setting "+addressingPattern.getPattern()), response.toString());
 
                 loadAddressingConfig();
             }
@@ -426,7 +426,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewAddrDialogue() {
-        window = new DefaultWindow("Addressing Pattern");
+        window = new DefaultWindow(Console.MESSAGES.createItemTitle("Addressing Setting"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -463,9 +463,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info("Updated address setting "+entity.getPattern());
+                    Console.info(Console.MESSAGES.saved("address setting "+entity.getPattern()));
                 else
-                    Console.error("Failed to update address setting " + entity.getPattern(), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("address setting "+entity.getPattern()), response.getResponse().toString());
 
                 loadAddressingConfig();
             }
@@ -496,9 +496,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Added address setting ");
+                    Console.info(Console.MESSAGES.added("Address Setting"));
                 else
-                    Console.error("Failed to add address setting" + address.getPattern(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("address setting")+ address.getPattern(), response.toString());
 
                 loadAddressingConfig();
             }
@@ -629,8 +629,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -638,9 +636,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Updated queue "+name);
+                    Console.info(Console.MESSAGES.saved("queue "+name));
                 else
-                    Console.error("Failed to update queue " + name, response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("queue "+name), response.toString());
 
                 loadJMSConfig();
             }
@@ -679,9 +677,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Created queue "+entity.getName());
+                    Console.info(Console.MESSAGES.added("Queue "+entity.getName()));
                 else
-                    Console.error("Failed to create queue " + entity.getName(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Queue "+entity.getName()), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -710,9 +708,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Removed queue "+entity.getName());
+                    Console.info(Console.MESSAGES.deleted("Queue "+entity.getName()));
                 else
-                    Console.error("Failed to remove queue " + entity.getName(), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Queue "+entity.getName()), response.toString());
 
                 loadJMSConfig();
 
@@ -721,7 +719,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewQueueDialogue() {
-        window = new DefaultWindow("Create JMS Queue ");
+        window = new DefaultWindow(Console.MESSAGES.createItemTitle("JMS Queue"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -754,9 +752,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Removed topic "+entity.getName());
+                    Console.info(Console.MESSAGES.deleted("topic"+entity.getName()));
                 else
-                    Console.error("Failed to remove topic " + entity.getName(), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("topic "+entity.getName()), response.toString());
 
                loadJMSConfig();
             }
@@ -789,9 +787,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Updated topic "+name);
+                    Console.info(Console.MESSAGES.saved("topic "+name));
                 else
-                    Console.error("Failed to update topic " + name, response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("topic "+name), response.toString());
 
                 loadJMSConfig();
             }
@@ -799,7 +797,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewTopicDialogue() {
-        window = new DefaultWindow("Create JMS Topic ");
+        window = new DefaultWindow(Console.MESSAGES.createItemTitle("JMS Topic"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -841,9 +839,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Created topic "+entity.getName());
+                    Console.info(Console.MESSAGES.added("topic "+entity.getName()));
                 else
-                    Console.error("Failed to create topic " + entity.getName(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("topic "+entity.getName()), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -877,9 +875,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info("Updated provider settings "+getCurrentServer());
+                    Console.info(Console.MESSAGES.saved("provider configuration "+getCurrentServer()));
                 else
-                    Console.error("Failed to update provider settings " + getCurrentServer(), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("provider configuration "+getCurrentServer()), response.getResponse().toString());
 
                 loadProviderDetails();
             }

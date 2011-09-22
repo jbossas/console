@@ -75,7 +75,7 @@ public class FormToolStrip<T> {
                 @Override
                 public void onClick(ClickEvent event) {
 
-                    String action = deleteOpName != null ? deleteOpName : "Delete";
+                    String action = deleteOpName != null ? deleteOpName : Console.CONSTANTS.common_label_delete();
 
                     Feedback.confirm(
                             action +" Item",

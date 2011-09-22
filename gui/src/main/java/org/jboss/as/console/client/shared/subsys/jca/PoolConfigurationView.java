@@ -2,6 +2,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -54,7 +55,7 @@ public class PoolConfigurationView {
                     public void onDelete(PoolConfig entity) {
                        management.onResetPoolConfig(editedName, entity);
                     }
-                }, "Reset"
+                }, Console.CONSTANTS.common_label_reset()
         );
 
 

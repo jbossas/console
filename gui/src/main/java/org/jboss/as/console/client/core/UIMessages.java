@@ -97,4 +97,19 @@ public interface UIMessages extends Messages {
     String subsys_osgi_removeConfigAdminConfirm(String pid);
     String subsys_osgi_removePreloadedModule();
     String subsys_osgi_removePreloadedModuleConfirm(String id);
+
+    String subsys_messaging(String providerName);
+
+    String remove_title(String name);
+    String remove_confirm(String name);
+
+    String createItemTitle(String itemName);
+
+    String added(String name);
+    String addingFailed(String name);
+    String deleted(String name);
+    String deletionFailed(String name);
+
+    String saved(String name);
+    String saveFailed(String name);
 }

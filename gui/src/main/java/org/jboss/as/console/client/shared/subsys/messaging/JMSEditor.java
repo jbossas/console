@@ -33,7 +33,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
-import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingDescription;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;

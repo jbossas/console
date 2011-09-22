@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -54,11 +55,11 @@ public class TopicList {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
 
-        edit = new ToolButton("Edit", new ClickHandler() {
+        edit = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
-                if(edit.getText().equals("Edit"))
+                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
                     presenter.onEditTopic();
                 else
                     presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
@@ -67,12 +68,12 @@ public class TopicList {
 
         //toolStrip.addToolButton(edit);
 
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
+        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 final JMSEndpoint topic = form.getEditedEntity();
-                Feedback.confirm("Remove Topic", "Really remove topic " + topic.getName() + "?",
+                Feedback.confirm(Console.MESSAGES.remove_title("Topic"), Console.MESSAGES.remove_confirm(topic.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -85,7 +86,7 @@ public class TopicList {
         }));
 
 
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewTopicDialogue();
@@ -112,21 +113,6 @@ public class TopicList {
 
         form.setFields(name, jndi);
 
-
-        /*final FormHelpPanel helpPanel = new FormHelpPanel(
-                new FormHelpPanel.AddressCallback() {
-                    @Override
-                    public ModelNode getAddress() {
-                        ModelNode address = Baseadress.get();
-                        address.add("subsystem", "messaging");
-                        address.add("hornetq-server", "*");
-                        address.add("jms-topic", "*");
-                        return address;
-                    }
-                }, form
-        );
-        layout.add(helpPanel.asWidget());*/
-
         Widget formWidget = form.asWidget();
         formWidget.getElement().setAttribute("style", "padding-top:15px;");
         layout.add(formWidget);
@@ -149,8 +135,8 @@ public class TopicList {
         form.setEnabled(b);
 
         if(b)
-            edit.setText("Save");
+            edit.setText(Console.CONSTANTS.common_label_save());
         else
-            edit.setText("Edit");
+            edit.setText(Console.CONSTANTS.common_label_edit());
     }
 }
