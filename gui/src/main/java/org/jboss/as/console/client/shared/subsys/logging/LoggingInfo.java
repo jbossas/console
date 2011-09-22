@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Comparator;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -29,6 +28,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -133,16 +133,9 @@ public class LoggingInfo {
     private void setRootLogger() {
         ModelNode operation = LoggingOperation.make(READ_RESOURCE_OPERATION);
         
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+            public void onDmrSuccess(ModelNode response) {
                 ModelNode resultNode = response.get("result");
                 ModelNode node = resultNode.get("root-logger");
                 LoggingInfo.this.rootLogger = makeLogger(node, "root-logger");
@@ -192,31 +185,18 @@ public class LoggingInfo {
         // REFACTOR ME!! 
         // This finds all the handler types (plus loggers) then does a read-children-resources request for each one.
         // Instead, we need to just do a single recursive request for everything.
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+            public void onDmrSuccess(ModelNode response) {
                 List<ModelNode> payload = response.get("result").asList();
                 for (final ModelNode node : payload) {
                     final String handlerType = node.asString();
                     ModelNode operation = LoggingOperation.make(READ_CHILDREN_RESOURCES_OPERATION);
                     operation.get(CHILD_TYPE).set(handlerType);
 
-                    dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
+                    dispatcher.execute(new DMRAction(operation), new DmrCallback() {
                         @Override
-                        public void onFailure(Throwable caught) {
-                            Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-                        }
-
-                        @Override
-                        public void onSuccess(DMRResponse result) {
-                            ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                        public void onDmrSuccess(ModelNode response) {
                             if (!response.get("result").isDefined()) return;
                             
                             List<ModelNode> payload = response.get("result").asList();

@@ -188,16 +188,9 @@ public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T>
 
         ModelNode operation = opFactory.makeReadResource();
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+            public void onDmrSuccess(ModelNode response) {
                 List<ModelNode> payload = response.get("result").asList();
                 ModelNode entityNode = payload.get(0);
                 List<ModelNode> entitiyList = entityNode.get(opFactory.getEntityName()).asList(); 
@@ -217,15 +210,9 @@ public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T>
     
     
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
+            public void onDmrSuccess(ModelNode response) {
                 Console.info(successMessage);
                 loadEntities(nameEditedOrAdded);
             }
