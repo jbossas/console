@@ -80,8 +80,8 @@ public class AddressingDetails {
         form.setNumColumns(2);
         form.bind(addrTable);
 
-        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
-        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
+        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Address");
+        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Address");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
          NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attepmts");
 

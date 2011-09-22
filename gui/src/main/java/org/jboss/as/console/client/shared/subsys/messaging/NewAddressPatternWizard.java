@@ -60,8 +60,8 @@ public class NewAddressPatternWizard {
 
         TextBoxItem pattern = new TextBoxItem("pattern", "Pattern");
 
-        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
-        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
+        TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Address");
+        TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Address");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
         NumberBoxItem maxAttempts = new NumberBoxItem("maxDelivery", "Max Delivery Attempts");
 
