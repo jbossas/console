@@ -39,6 +39,7 @@ import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBean
 import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
 import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -262,6 +263,11 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<OSGiConfigAdminData> osgiConfigAdminData() {
+        throw new RuntimeException("not implemented");
+    }
+    
+    @Override
+    public AutoBean<DeploymentScanner> deploymentScanner() {
         throw new RuntimeException("not implemented");
     }
 }

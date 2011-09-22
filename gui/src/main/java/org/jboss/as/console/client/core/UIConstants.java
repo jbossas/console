@@ -54,6 +54,7 @@ public interface UIConstants extends Constants {
     String common_label_socketBindingGroups();
     String common_label_virtualMachines();
     String common_label_paths();
+    String common_label_path();
     String common_label_serverGroups();
     String common_label_deployments();
     String common_label_manageDeployments();
@@ -140,6 +141,14 @@ public interface UIConstants extends Constants {
     String subsys_logging_module();
     String subsys_logging_handlerProperties();
     String subsys_logging_newHandlerProperty();
+    
+    String subsys_deploymentscanner_scanners();
+    String subsys_deploymentscanner_relativeTo();
+    String subsys_deploymentscanner_scanEnabled();
+    String subsys_deploymentscanner_scanInterval();
+    String subsys_deploymentscanner_autoDeployZipped();
+    String subsys_deploymentscanner_autoDeployExploded();
+    String subsys_deploymentscanner_deploymentTimeout();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();
