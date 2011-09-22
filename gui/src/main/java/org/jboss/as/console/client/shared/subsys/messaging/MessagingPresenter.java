@@ -90,9 +90,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         // Messaging Provider
         void setPresenter(MessagingPresenter presenter);
         void setProviderDetails(MessagingProvider provider);
-        void editSecDetails(boolean b);
-        void editAddrDetails(boolean b);
-
         void setSecurityConfig(List<SecurityPattern> secPatterns);
         void setAddressingConfig(List<AddressingPattern> addrPatterns);
     }

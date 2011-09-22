@@ -70,16 +70,6 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     }
 
     @Override
-    public void editSecDetails(boolean b) {
-        providerEditor.editSecDetails(b);
-    }
-
-    @Override
-    public void editAddrDetails(boolean b) {
-        providerEditor.editAddrDetails(b);
-    }
-
-    @Override
     public void setQueues(List<Queue> queues) {
         jmsEditor.setQueues(queues);
     }

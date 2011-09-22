@@ -34,7 +34,6 @@ import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -50,7 +49,6 @@ public class SecurityDetails {
     private Form<SecurityPattern> form;
 
     private DefaultCellTable<SecurityPattern> secTable;
-    private ToolButton edit ;
 
     public SecurityDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -144,15 +142,6 @@ public class SecurityDetails {
         layout.add(form.asWidget());
 
         return layout;
-    }
-
-    public void setEnabled(boolean b) {
-        form.setEnabled(b);
-
-        if(b)
-            edit.setText("Save");
-        else
-            edit.setText("Edit");
     }
 
     public void setSecurityConfig(List<SecurityPattern> patterns) {

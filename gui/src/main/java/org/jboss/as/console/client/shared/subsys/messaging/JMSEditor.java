@@ -106,7 +106,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
         factoryTable.addColumn(nameColumn, "Name");
         factoryTable.addColumn(jndiColumn, "JNDI");
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel(MessagingDescription.getFactoryDescription());
+        StaticHelpPanel helpPanel = new StaticHelpPanel("The JMS connection factories.");
 
         panel.add(helpPanel.asWidget());
 

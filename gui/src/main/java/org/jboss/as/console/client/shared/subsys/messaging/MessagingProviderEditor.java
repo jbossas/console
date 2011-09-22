@@ -35,7 +35,6 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -150,14 +149,6 @@ public class MessagingProviderEditor {
 
         addrDetails.setProvider(provider);
 
-    }
-
-    public void editSecDetails(boolean b) {
-        secDetails.setEnabled(b);
-    }
-
-    public void editAddrDetails(boolean b) {
-        addrDetails.setEnabled(b);
     }
 
     public void setSecurityConfig(List<SecurityPattern> patterns) {

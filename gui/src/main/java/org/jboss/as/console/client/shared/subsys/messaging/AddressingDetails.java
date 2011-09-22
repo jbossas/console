@@ -36,7 +36,6 @@ import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -52,7 +51,6 @@ public class AddressingDetails {
     private Form<AddressingPattern> form;
     private MessagingProvider providerEntity;
     private DefaultCellTable<SecurityPattern> addrTable;
-    private ToolButton edit;
 
     public AddressingDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -143,11 +141,5 @@ public class AddressingDetails {
 
         form.setEnabled(false);
     }
-    public void setEnabled(boolean b) {
-        form.setEnabled(b);
-        if(b)
-            edit.setText("Save");
-        else
-            edit.setText("Edit");
-    }
+
 }
