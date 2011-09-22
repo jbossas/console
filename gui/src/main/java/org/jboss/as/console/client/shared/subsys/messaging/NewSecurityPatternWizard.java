@@ -24,6 +24,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -32,6 +34,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -52,7 +55,6 @@ public class NewSecurityPatternWizard {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
-        layout.getElement().setAttribute("cellpadding", "10");
 
         layout.add(new HTML("<h3>Create Security Setting</h3>"));
 
@@ -66,6 +68,20 @@ public class NewSecurityPatternWizard {
         CheckBoxItem manage= new CheckBoxItem("manage", "Manage?");
 
         form.setFields(principal, pattern, send, consume, manage);
+
+         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "messaging");
+                address.add("hornetq-server", "*");
+                address.add("security-setting", "*");
+                address.add("role", "*");
+                return address;
+            }
+        }, form);
+
+        layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
 

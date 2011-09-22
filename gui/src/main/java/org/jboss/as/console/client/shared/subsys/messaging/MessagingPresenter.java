@@ -318,6 +318,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         window.center();
     }
 
+    // TODO: https://issues.jboss.org/browse/AS7-1892
     public void onCreateSecPattern(final SecurityPattern pattern) {
         closeDialogue();
 
