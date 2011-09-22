@@ -24,8 +24,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
-import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -52,11 +52,10 @@ public class NewAddressPatternWizard {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
-        layout.getElement().setAttribute("cellpadding", "10");
 
         layout.add(new HTML("<h3>Create Address Pattern</h3>"));
 
-        final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
+        final Form<AddressingPattern> form = new Form<AddressingPattern>(AddressingPattern.class);
 
 
         TextBoxItem pattern = new TextBoxItem("pattern", "Pattern");
@@ -64,13 +63,15 @@ public class NewAddressPatternWizard {
         TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
         TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
+        NumberBoxItem maxAttempts = new NumberBoxItem("maxDelivery", "Max Delivery Attempts");
 
-        form.setFields(pattern, dlQ, expQ, redelivery);
+        form.setFields(pattern, dlQ, expQ, redelivery, maxAttempts);
 
         // TODO: defaults
         dlQ.setValue("jms.queue.DLQ");
         expQ.setValue("jms.queue.ExpiryQueue");
         redelivery.setValue(0);
+        maxAttempts.setValue(10);
 
         layout.add(form.asWidget());
 

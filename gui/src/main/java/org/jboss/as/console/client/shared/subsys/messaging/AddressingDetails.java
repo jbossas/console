@@ -30,6 +30,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -39,6 +40,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -60,39 +62,6 @@ public class AddressingDetails {
 
         VerticalPanel layout = new VerticalPanel();
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
-
-        edit = new ToolButton("Edit", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if("Edit".equals(edit.getText()))
-                    presenter.onEditAddressDetails(form.getEditedEntity());
-                else
-                    presenter.onSaveAddressDetails(form.getChangedValues());
-            }
-        });
-        toolStrip.addToolButton(edit);
-
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.onDeleteAddressDetails(form.getEditedEntity());
-            }
-        }));
-
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.launchNewAddrDialogue();
-            }
-        }));
-
-        // TODO: https://issues.jboss.org/browse/AS7-759
-        //layout.add(toolStrip);
-
-        // ----
-
         addrTable = new DefaultCellTable<SecurityPattern>(10);
         addrTable.getElement().setAttribute("style", "margin-top:10px");
 
@@ -105,9 +74,6 @@ public class AddressingDetails {
 
         addrTable.addColumn(patternColumn, "Pattern");
 
-        layout.add(addrTable);
-
-
         // ---
 
         form = new Form<AddressingPattern>(AddressingPattern.class);
@@ -117,8 +83,9 @@ public class AddressingDetails {
         TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Queue");
         TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Queue");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
+         NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attepmts");
 
-        form.setFields(dlQ, expQ, redelivery);
+        form.setFields(dlQ, expQ, redelivery, maxDelivery);
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
             @Override
@@ -131,9 +98,34 @@ public class AddressingDetails {
             }
         }, form);
 
-        layout.add(helpPanel.asWidget());
+        FormToolStrip<AddressingPattern> toolStrip = new FormToolStrip<AddressingPattern>(
+                form,
+                new FormToolStrip.FormCallback<AddressingPattern>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveAddressDetails(form.getEditedEntity(), changeset);
+                    }
 
+                    @Override
+                    public void onDelete(AddressingPattern entity) {
+                        presenter.onDeleteAddressDetails(entity);
+                    }
+                }
+        );
+
+        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.launchNewAddrDialogue();
+            }
+        }));
+
+        layout.add(toolStrip.asWidget());
+        layout.add(addrTable);
+
+        layout.add(helpPanel.asWidget());
         layout.add(form.asWidget());
+
         return layout;
     }
 

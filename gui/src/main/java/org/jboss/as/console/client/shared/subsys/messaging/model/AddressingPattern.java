@@ -42,4 +42,8 @@ public interface AddressingPattern {
     int getRedeliveryDelay();
     void setRedeliveryDelay(int redeliveryDelay);
 
+    @Binding(detypedName = "max-delivery-attempts")
+    int getMaxDelivery();
+    void setMaxDelivery(int maxAttempts);
+
 }

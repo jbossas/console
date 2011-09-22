@@ -282,6 +282,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                     model.setDeadLetterQueue(value.get("dead-letter-address").asString());
                     model.setExpiryQueue(value.get("expiry-address").asString());
                     model.setRedeliveryDelay(value.get("redelivery-delay").asInt());
+                    model.setMaxDelivery(value.get("max-delivery-attempts").asInt());
 
                     addrPatterns.add(model);
 
@@ -388,8 +389,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get(ADDRESS).add("security-setting", pattern.getPattern());
         operation.get(ADDRESS).add("role", pattern.getRole());
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -406,12 +405,28 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         });
     }
 
-    public void onEditAddressDetails(AddressingPattern addressingPattern) {
-        getView().editAddrDetails(true);
-    }
+    public void onDeleteAddressDetails(final AddressingPattern addressingPattern) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add("address-setting", addressingPattern.getPattern());
 
-    public void onDeleteAddressDetails(AddressingPattern addressingPattern) {
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Removed address setting ");
+                else
+                    Console.error("Failed to remove address setting" + addressingPattern.getPattern(), response.toString());
+
+                loadAddressingConfig();
+            }
+        });
     }
 
     public void launchNewAddrDialogue() {
@@ -433,12 +448,65 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         window.center();
     }
 
-    public void onSaveAddressDetails(Map<String, Object> changedValues) {
-        getView().editAddrDetails(false);
+    public void onSaveAddressDetails(final AddressingPattern entity, Map<String, Object> changedValues) {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "messaging");
+        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        proto.get(ADDRESS).add("address-setting", entity.getPattern());
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(AddressingPattern.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
+                if(response.getUnderlying())
+                    Console.info("Updated address setting "+entity.getPattern());
+                else
+                    Console.error("Failed to update address setting " + entity.getPattern(), response.getResponse().toString());
+
+                loadAddressingConfig();
+            }
+        });
     }
 
-    public void onCreateAddressPattern(SecurityPattern addrPattern) {
+    public void onCreateAddressPattern(final AddressingPattern address) {
+        closeDialogue();
 
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add("address-setting", address.getPattern());
+
+        operation.get("dead-letter-address").set(address.getDeadLetterQueue());
+        operation.get("expiry-address").set(address.getExpiryQueue());
+        operation.get("max-delivery-attempts").set(address.getMaxDelivery());
+        operation.get("redelivery-delay").set(address.getRedeliveryDelay());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Added address setting ");
+                else
+                    Console.error("Failed to add address setting" + address.getPattern(), response.toString());
+
+                loadAddressingConfig();
+            }
+        });
     }
 
 
