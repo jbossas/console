@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -79,9 +78,8 @@ public class XADataSourceDetails {
             @Override
             public void onClick(ClickEvent event) {
 
-                String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
                 final boolean doEnable = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
+                Feedback.confirm(Console.MESSAGES.modify("datasource"), Console.MESSAGES.modifyConfirm("datasource " + form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -138,9 +136,9 @@ public class XADataSourceDetails {
         form.setEnabled(b);
 
         if(b)
-            editBtn.setText("Save");
+            editBtn.setText(Console.CONSTANTS.common_label_save());
         else
-            editBtn.setText("Edit");
+            editBtn.setText(Console.CONSTANTS.common_label_edit());
     }
 
     public void setSelectedRecord(XADataSource dataSource) {

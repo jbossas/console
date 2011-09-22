@@ -86,7 +86,8 @@ public class DataSourceDetails {
 
                 String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
                 final boolean nextState = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(state + " datasource", "Do you want to " + state + " this DataSource?",
+                Feedback.confirm(Console.MESSAGES.modify("datasource"),
+                        Console.MESSAGES.modifyConfirm("datasource "+form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -152,9 +153,9 @@ public class DataSourceDetails {
 
 
         if(b)
-            editBtn.setText("Save");
+            editBtn.setText(Console.CONSTANTS.common_label_save());
         else
-            editBtn.setText("Edit");
+            editBtn.setText(Console.CONSTANTS.common_label_edit());
     }
 
     public DataSource getCurrentSelection() {

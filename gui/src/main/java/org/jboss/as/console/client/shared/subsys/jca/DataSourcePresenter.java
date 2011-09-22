@@ -154,7 +154,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(List<JDBCDriver> drivers) {
 
-                window = new DefaultWindow("Create Datasource");
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
                 window.setWidth(480);
                 window.setHeight(360);
                 window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -182,7 +182,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
             @Override
             public void onSuccess(List<JDBCDriver> drivers) {
-                window = new DefaultWindow("Create XA Datasource");
+                window = new DefaultWindow(Console.MESSAGES.createTitle("XA Datasource"));
                 window.setWidth(480);
                 window.setHeight(320);
                 window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -212,11 +212,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
-                    Console.info("Success: Create datasource " + datasource.getName());
+                    Console.info(Console.MESSAGES.added("datasource ")+ datasource.getName());
                     loadDataSources();
                 }
                 else
-                    Console.error("Failed to create datasource", result.getResponse().toString());
+                    Console.error(Console.MESSAGES.addingFailed("datasource "+datasource.getName()), result.getResponse().toString());
             }
         });
 
@@ -238,9 +238,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
                 if (success) {
                     loadDataSources();
-                    Console.info("Successfully removed datasource " + entity.getName());
+                    Console.info(Console.MESSAGES.deleted("datasource ") + entity.getName());
                 } else {
-                    Console.error("Failed to remove datasource " + entity.getName());
+                    Console.error(Console.MESSAGES.deletionFailed("datasource ") + entity.getName());
                 }
 
                 loadDataSources();
@@ -254,9 +254,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
-                    Console.info("Successfully modified datasource " + entity.getName());
+                    Console.info(Console.MESSAGES.modified("datasource ") + entity.getName());
                 } else {
-                    Console.error("Failed to modify datasource" + entity.getName(), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("datasource ") + entity.getName(), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -277,9 +277,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 @Override
                 public void onSuccess(ResponseWrapper<Boolean> response) {
                     if(response.getUnderlying())
-                        Console.info("Success: Updated Datasource");
+                        Console.info(Console.MESSAGES.saved("datasource "+name));
                     else
-                        Console.error("Failed: Update datasource " + name, response.getResponse().toString());
+                        Console.error(Console.MESSAGES.saveFailed("datasource ") + name, response.getResponse().toString());
                 }
             });
         }
@@ -295,9 +295,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 @Override
                 public void onSuccess(ResponseWrapper<Boolean> response) {
                     if(response.getUnderlying())
-                        Console.info("Success: Updated XA datasource");
+                        Console.info(Console.MESSAGES.saved("xa datasource "+name));
                     else
-                        Console.error("Failed: Update XA datasource " + name, response.getResponse().toString());
+                        Console.error(Console.MESSAGES.saveFailed("xa datasource "+name), response.getResponse().toString());
                 }
             });
         }
@@ -310,9 +310,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> response) {
                 if (response.getUnderlying())
-                    Console.info("Succes: Created XA Datasource " + updatedEntity.getName());
+                    Console.info(Console.MESSAGES.added("xa datasource "+ updatedEntity.getName()));
                 else
-                    Console.error("Failed to create XA Datasource " + updatedEntity.getName(), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.addingFailed("xa datasource " + updatedEntity.getName()), response.getResponse().toString());
 
                 loadDataSources();
             }
@@ -327,9 +327,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(ResponseWrapper<Boolean> result) {
 
                 if (result.getUnderlying()) {
-                    Console.info("Successfully modified datasource " + entity.getName());
+                    Console.info(Console.MESSAGES.modified("datasource " + entity.getName()));
                 } else {
-                    Console.error("Failed to modify datasource " + entity.getName(), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("datasource "+ entity.getName()), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -343,9 +343,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.info("Successfully removed datasource " + entity.getName());
+                    Console.info(Console.MESSAGES.deleted("datasource "+ entity.getName()));
                 } else {
-                    Console.error("Failed to remove datasource " + entity.getName());
+                    Console.error(Console.MESSAGES.deletionFailed("datasource "+ entity.getName()));
                 }
 
                 loadDataSources();
@@ -372,9 +372,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if(result.getUnderlying())
-                    Console.info("Success: Saved pool config "+editedName);
+                    Console.info(Console.MESSAGES.saved("pool settings "+editedName));
                 else
-                    Console.error("Failed to save pool config " + editedName, result.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ editedName), result.getResponse().toString());
 
                 loadPoolConfig(isXA, editedName);
             }
@@ -387,9 +387,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if(result.getUnderlying())
-                    Console.info("Success: Update pool config "+editedName);
+                    Console.info(Console.MESSAGES.modified("pool setting "+editedName));
                 else
-                    Console.error("Failed to update pool config " + editedName, result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("pool setting "+ editedName), result.getResponse().toString());
 
                 loadPoolConfig(isXA, editedName);
             }

@@ -184,4 +184,9 @@ public interface UIConstants extends Constants {
 
     String subsys_messaging_jms_provider();
     String subsys_messaging_jms_destinations();
+
+    String subsys_jca_dataSource_registered();
+    String subsys_jca_dataSource_configurations();
+
+    String subsys_jca_dataSource_xaprop_help();
 }

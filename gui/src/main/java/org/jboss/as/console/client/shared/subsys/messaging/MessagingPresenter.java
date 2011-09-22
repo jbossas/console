@@ -297,7 +297,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewSecDialogue() {
-        window = new DefaultWindow(Console.MESSAGES.createItemTitle("Security Setting"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Security Setting"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -369,7 +369,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(response.getUnderlying())
                     Console.info(Console.MESSAGES.saved("security setting "+pattern.getPattern()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("security setting "+pattern.getPattern()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("security setting " + pattern.getPattern()), response.getResponse().toString());
 
                 loadSecurityConfig();
             }
@@ -394,7 +394,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("security setting"));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("security setting "+pattern.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("security setting " + pattern.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
@@ -418,7 +418,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("address setting"));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("address setting "+addressingPattern.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("address setting " + addressingPattern.getPattern()), response.toString());
 
                 loadAddressingConfig();
             }
@@ -426,7 +426,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewAddrDialogue() {
-        window = new DefaultWindow(Console.MESSAGES.createItemTitle("Addressing Setting"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Addressing Setting"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -463,9 +463,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("address setting "+entity.getPattern()));
+                    Console.info(Console.MESSAGES.saved("address setting " + entity.getPattern()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("address setting "+entity.getPattern()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("address setting " + entity.getPattern()), response.getResponse().toString());
 
                 loadAddressingConfig();
             }
@@ -638,7 +638,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.saved("queue "+name));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("queue "+name), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("queue " + name), response.toString());
 
                 loadJMSConfig();
             }
@@ -679,7 +679,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("Queue "+entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("Queue "+entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Queue " + entity.getName()), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -708,9 +708,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.deleted("Queue "+entity.getName()));
+                    Console.info(Console.MESSAGES.deleted("Queue " + entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("Queue "+entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Queue " + entity.getName()), response.toString());
 
                 loadJMSConfig();
 
@@ -719,7 +719,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewQueueDialogue() {
-        window = new DefaultWindow(Console.MESSAGES.createItemTitle("JMS Queue"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("JMS Queue"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -752,9 +752,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.deleted("topic"+entity.getName()));
+                    Console.info(Console.MESSAGES.deleted("topic" + entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("topic "+entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("topic " + entity.getName()), response.toString());
 
                loadJMSConfig();
             }
@@ -789,7 +789,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.saved("topic "+name));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("topic "+name), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("topic " + name), response.toString());
 
                 loadJMSConfig();
             }
@@ -797,7 +797,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void launchNewTopicDialogue() {
-        window = new DefaultWindow(Console.MESSAGES.createItemTitle("JMS Topic"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("JMS Topic"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -841,7 +841,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("topic "+entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("topic "+entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("topic " + entity.getName()), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -877,7 +877,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(response.getUnderlying())
                     Console.info(Console.MESSAGES.saved("provider configuration "+getCurrentServer()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("provider configuration "+getCurrentServer()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("provider configuration " + getCurrentServer()), response.getResponse().toString());
 
                 loadProviderDetails();
             }

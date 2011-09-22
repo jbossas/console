@@ -73,7 +73,7 @@ public class TopicList {
             public void onClick(ClickEvent event) {
 
                 final JMSEndpoint topic = form.getEditedEntity();
-                Feedback.confirm(Console.MESSAGES.remove_title("Topic"), Console.MESSAGES.remove_confirm(topic.getName()),
+                Feedback.confirm(Console.MESSAGES.deleteTitle("Topic"), Console.MESSAGES.deleteConfirm(topic.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {

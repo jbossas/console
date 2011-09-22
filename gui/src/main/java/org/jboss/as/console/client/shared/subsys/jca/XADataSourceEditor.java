@@ -76,7 +76,7 @@ public class XADataSourceEditor implements PropertyManagement {
         LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.subsys_jca_newDataSource(), new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -93,8 +93,8 @@ public class XADataSourceEditor implements PropertyManagement {
                 if(currentSelection!=null)
                 {
                     Feedback.confirm(
-                            "Delete DataSource",
-                            "Really delete this DataSource '" + currentSelection.getName() + "' ?",
+                            Console.MESSAGES.deleteTitle("datasource"),
+                            Console.MESSAGES.deleteConfirm("datasource "+currentSelection.getName()),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -129,7 +129,7 @@ public class XADataSourceEditor implements PropertyManagement {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("XA Datasource Configurations"));
+        horzPanel.add(new ContentHeaderLabel("XA "+Console.CONSTANTS.subsys_jca_dataSource_configurations()));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
@@ -183,14 +183,14 @@ public class XADataSourceEditor implements PropertyManagement {
         dataSourceTable.addColumn(poolColumn, "Pool");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
-        vpanel.add(new ContentGroupLabel("Registered XA Datasources"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_dataSource_registered()));
         vpanel.add(dataSourceTable);
 
 
         // -----------
         details = new XADataSourceDetails(presenter);
         propertyEditor = new PropertyEditor(this,true);
-        propertyEditor.setHelpText("Properties to assign to the XADataSource implementation class.");
+        propertyEditor.setHelpText(Console.CONSTANTS.subsys_jca_dataSource_xaprop_help());
 
         final SingleSelectionModel<XADataSource> selectionModel = new SingleSelectionModel<XADataSource>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -218,6 +218,7 @@ public class XADataSourceEditor implements PropertyManagement {
         bottomPanel.add(details.asWidget(), "Attributes");
         bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
         propertyEditor.setAllowEditProps(false); // TODO: modifications of XA properties
+        // See https://issues.jboss.org/browse/AS7-874
 
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override

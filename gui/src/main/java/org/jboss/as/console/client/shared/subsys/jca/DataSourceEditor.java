@@ -64,7 +64,7 @@ public class DataSourceEditor {
         LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.subsys_jca_newDataSource(), new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -81,8 +81,8 @@ public class DataSourceEditor {
                 if(currentSelection!=null)
                 {
                     Feedback.confirm(
-                            "Delete DataSource",
-                            "Really delete this DataSource '" + currentSelection.getName() + "' ?",
+                            Console.MESSAGES.deleteTitle("datasource"),
+                            Console.MESSAGES.deleteConfirm("datasource "+currentSelection.getName()),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -117,14 +117,14 @@ public class DataSourceEditor {
         horzPanel.getElement().setAttribute("style", "width:100%;");
         Image image = new Image(Icons.INSTANCE.database());
         horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel("Datasource Configurations"));
+        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_dataSource_configurations()));
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
 
         dataSourceTable = new DatasourceTable();
 
-        vpanel.add(new ContentGroupLabel("Registered Datasources"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_dataSource_registered()));
         vpanel.add(dataSourceTable.asWidget());
 
 

@@ -79,7 +79,7 @@ public class QueueList {
             public void onClick(ClickEvent event) {
 
                 final Queue queue = form.getEditedEntity();
-                Feedback.confirm(Console.MESSAGES.remove_title("Queue"), Console.MESSAGES.remove_confirm(queue.getName()),
+                Feedback.confirm(Console.MESSAGES.deleteTitle("Queue"), Console.MESSAGES.deleteConfirm(queue.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {

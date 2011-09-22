@@ -100,10 +100,10 @@ public interface UIMessages extends Messages {
 
     String subsys_messaging(String providerName);
 
-    String remove_title(String name);
-    String remove_confirm(String name);
+    String deleteTitle(String name);
+    String deleteConfirm(String name);
 
-    String createItemTitle(String itemName);
+    String createTitle(String itemName);
 
     String added(String name);
     String addingFailed(String name);
@@ -112,4 +112,10 @@ public interface UIMessages extends Messages {
 
     String saved(String name);
     String saveFailed(String name);
+
+    String modify(String name);
+    String modifyConfirm(String name);
+
+    String modified(String name);
+    String modificationFailed(String name);
 }
