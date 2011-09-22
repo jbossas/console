@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
@@ -71,7 +72,7 @@ public class XADatasourceStep2 {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>Step 2/4: Datasource Class</h3>"));
+        layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_xadataSource_step2()+"</h3>"));
 
         if(!isStandalone)
         {

@@ -75,9 +75,7 @@ public class ResourceAdapterPresenter
     public interface MyView extends View {
         void setPresenter(ResourceAdapterPresenter presenter);
         void setAdapters(List<ResourceAdapter> adapters);
-
         void setEnabled(boolean b);
-
         void setPoolConfig(String name, PoolConfig poolConfig);
     }
 
@@ -187,9 +185,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info("Success: Removed RA "+ra.getName());
+                    Console.info(Console.MESSAGES.deleted("resource adapter "+ra.getName()));
                 else
-                    Console.error("Error: Failed to remove RA "+ra.getName(), result.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getName()), result.toString());
 
                 loadResourceAdapter();
             }
@@ -197,7 +195,7 @@ public class ResourceAdapterPresenter
 
     }
 
-    public void onSave(String name, Map<String, Object> changedValues) {
+    public void onSave(final String name, Map<String, Object> changedValues) {
 
         getView().setEnabled(false);
 
@@ -230,9 +228,9 @@ public class ResourceAdapterPresenter
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info("Success: Update resource adapter ");
+                    Console.info(Console.MESSAGES.saved("resource adapter "+name));
                 else
-                    Console.error("Failed: Update resource adapter", response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("resource adapter "+name), response.toString());
 
                 loadResourceAdapter();
             }
@@ -244,7 +242,7 @@ public class ResourceAdapterPresenter
     }
 
     public void launchNewAdapterWizard() {
-        window = new DefaultWindow("Create Resource Adapter");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("resource adapter"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -302,9 +300,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info("Success: Created RA "+ra.getName());
+                    Console.info(Console.MESSAGES.added("resource adapter "+ra.getName()));
                 else
-                    Console.error("Error: Failed to create RA " + ra.getName(), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("resource adapter "+ra.getName()), result.toString());
 
                 loadResourceAdapter();
             }
@@ -351,9 +349,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info("Success: Created added property "+prop.getKey());
+                    Console.info(Console.MESSAGES.added("property "+prop.getKey()));
                 else
-                    Console.error("Error: Failed to add property " + prop.getKey(), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("property " + prop.getKey()), result.toString());
 
                 loadResourceAdapter();
             }
@@ -390,7 +388,7 @@ public class ResourceAdapterPresenter
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New Configuration Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Configuration Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -486,9 +484,9 @@ public class ResourceAdapterPresenter
 
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info("Success: Update RA pool config");
+                    Console.info(Console.MESSAGES.saved("pool settings"));
                 else
-                    Console.error("Failed: Update RA pool config", response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("pool settings "+editedName), response.getResponse().toString());
             }
         });
     }

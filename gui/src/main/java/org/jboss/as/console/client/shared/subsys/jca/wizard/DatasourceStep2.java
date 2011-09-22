@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
@@ -68,7 +69,7 @@ public class DatasourceStep2 {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "margin:10px; vertical-align:center;width:95%");
 
-        HTML desc = new HTML("<h3>Step 2/3: JDBC Driver</h3>Please chose one of the available drivers.");
+        HTML desc = new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_dataSource_step2()+"</h3>");
         desc.getElement().setAttribute("style", "padding-bottom:10px;");
 
         layout.add(desc);
@@ -160,7 +161,7 @@ public class DatasourceStep2 {
                     wizard.onConfigureDriver(editedEntity);
                 }
                 else {
-                    Window.alert("Please select a driver!");
+                    Window.alert(Console.CONSTANTS.subsys_jca_dataSource_select_driver());
                 }
 
             }

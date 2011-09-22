@@ -189,4 +189,22 @@ public interface UIConstants extends Constants {
     String subsys_jca_dataSource_configurations();
 
     String subsys_jca_dataSource_xaprop_help();
+
+    String subsys_jca_ra_configurations();
+
+    String subsys_jca_ra_registered();
+
+    String subsys_jca_dataSource_step1();
+    String subsys_jca_dataSource_step2();
+    String subsys_jca_dataSource_step3();
+
+    String subsys_jca_dataSource_select_driver();
+
+    String subsys_jca_xadataSource_step1();
+    String subsys_jca_xadataSource_step2();
+    String subsys_jca_xadataSource_step3();
+    String subsys_jca_xadataSource_step4();
+
+    String subsys_jca_ra_step1();
+    String subsys_jca_ra_step2();
 }

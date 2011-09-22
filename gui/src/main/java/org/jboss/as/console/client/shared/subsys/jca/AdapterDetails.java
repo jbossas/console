@@ -108,9 +108,9 @@ public class AdapterDetails {
         form.setEnabled(b);
 
         if(!b)
-            editBtn.setText("Edit");
+            editBtn.setText(Console.CONSTANTS.common_label_edit());
         else
-            editBtn.setText("Save");
+            editBtn.setText(Console.CONSTANTS.common_label_save());
     }
 
     public ResourceAdapter getCurrentSelection() {

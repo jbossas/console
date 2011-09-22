@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
@@ -91,7 +92,7 @@ public class XADatasourceStep3 implements PropertyManagement {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>Step 3/4: XA Properties</h3>"));
+        layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_xadataSource_step3()+"</h3>"));
 
         propEditor = new PropertyEditor(this, true);
 

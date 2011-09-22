@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -53,7 +54,7 @@ public class DataSourceStep3 {
         VerticalPanel layout = new VerticalPanel();
         layout.getElement().setAttribute("style", "margin:15px; vertical-align:center;width:95%");
 
-        layout.add(new HTML("<h3>Step 3/3: Connection Settings</h3>"));
+        layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_dataSource_step3()+"</h3>"));
 
         form = new Form<DataSource>(DataSource.class);
 

@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
@@ -52,7 +53,7 @@ public class XADatasourceStep1 {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>Step 1/4: Datasource Attributes</h3>"));
+        layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_xadataSource_step1()+"</h3>"));
 
         final Form<XADataSource> form = new Form<XADataSource>(XADataSource.class);
 

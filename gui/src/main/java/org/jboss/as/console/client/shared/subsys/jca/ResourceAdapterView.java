@@ -58,7 +58,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -73,8 +73,8 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
                 final ResourceAdapter ra = detailsPanel.getCurrentSelection();
 
                 Feedback.confirm(
-                        "Delete Resource Adapter",
-                        "Really delete Adapter '" + ra.getName() + "' ?",
+                        Console.MESSAGES.deleteTitle("resource adapter"),
+                        Console.MESSAGES.deleteConfirm("resource adapter "+ra.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -96,7 +96,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
-        vpanel.add(new ContentHeaderLabel("Resource Adapter Configurations"));
+        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_ra_configurations()));
 
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);
@@ -105,7 +105,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         layout.setWidgetTopHeight(topLevelTools, 26, Style.Unit.PX, 30, Style.Unit.PX);
         layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        vpanel.add(new ContentGroupLabel("Registered Adapter"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_ra_registered()));
 
         // -------
 

@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -33,7 +34,7 @@ public class AdapterStep1 {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h2>Step 1/2: Resource Adapter Declaration</h2>"));
+        layout.add(new HTML("<h2>"+ Console.CONSTANTS.subsys_jca_ra_step1()+"</h2>"));
 
         final Form<ResourceAdapter> form = new Form(ResourceAdapter.class);
 

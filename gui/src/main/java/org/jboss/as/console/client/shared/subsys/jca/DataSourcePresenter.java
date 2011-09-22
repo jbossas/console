@@ -77,9 +77,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void updateXADataSources(List<XADataSource> result);
         void enableDSDetails(boolean b);
         void enableXADetails(boolean b);
-
         void setPoolConfig(String name, PoolConfig poolConfig);
-
         void setXAPoolConfig(String dsName, PoolConfig underlying);
     }
 
