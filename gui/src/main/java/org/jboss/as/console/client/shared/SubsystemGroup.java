@@ -23,6 +23,7 @@ import com.google.gwt.resources.client.ImageResource;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class SubsystemGroup {
 
     private String name;
     private ImageResource icon;
-    private List<SubsystemGroupItem> items = new ArrayList<SubsystemGroupItem>();
+    private List<SubsystemGroupItem> items = new LinkedList<SubsystemGroupItem>();
 
     public SubsystemGroup(String name, ImageResource icon) {
         this.name = name;

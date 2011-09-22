@@ -89,12 +89,12 @@ public class SubsystemTreeBuilder {
                                                 link.setKey(key);
                                                 groupTreeItem.addItem(link);
                                             }
-
-                                            if(groupTreeItem.getChildCount()>0)
-                                                subsysTree.addItem(groupTreeItem);
                                         }
                                     }
                             );
+
+                            //if(groupTreeItem.getChildCount()>0)
+                            subsysTree.addItem(groupTreeItem);
 
                             // skip ahead
                             continue;

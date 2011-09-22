@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -31,7 +32,7 @@ import org.jboss.as.console.client.core.NameTokens;
  */
 public class SubsystemMetaData {
 
-    static Map<String, SubsystemGroup> groups = new TreeMap<String, SubsystemGroup>();
+    static Map<String, SubsystemGroup> groups = new LinkedHashMap<String, SubsystemGroup>();
 
     private static final String CONNECTOR = "Connector";
 
@@ -53,15 +54,15 @@ public class SubsystemMetaData {
 
     static {
 
-        // specify groups
-        groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
-        groups.put(EJB, new SubsystemGroup(EJB));
-        groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
+        // specify groups and the order they appear
         groups.put(CORE, new SubsystemGroup(CORE));
-        groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
-        groups.put(OSGI, new SubsystemGroup(OSGI));
+        groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
+        groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
+        groups.put(EJB, new SubsystemGroup(EJB));
         groups.put(SECURITY, new SubsystemGroup(SECURITY));
+        groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
         groups.put(WEB, new SubsystemGroup(WEB));
+        groups.put(OSGI, new SubsystemGroup(OSGI));
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
@@ -82,13 +83,13 @@ public class SubsystemMetaData {
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Deployment Scanners", "deployment-scanner"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
 
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
