@@ -83,7 +83,7 @@ public class AddressingDetails {
         TextBoxItem dlQ = new TextBoxItem("deadLetterQueue", "Dead Letter Address");
         TextBoxItem expQ= new TextBoxItem("expiryQueue", "Expiry Address");
         NumberBoxItem redelivery = new NumberBoxItem("redeliveryDelay", "Redelivery Delay");
-         NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attepmts");
+        NumberBoxItem maxDelivery = new NumberBoxItem("maxDelivery", "Max Delivery Attepmts");
 
         form.setFields(dlQ, expQ, redelivery, maxDelivery);
 

@@ -133,7 +133,12 @@ public class QueueList {
         TextItem jndi = new TextItem("jndiName", "JNDI");
 
         CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
-        TextBoxItem selector = new TextBoxItem("selector", "Selector");
+        TextBoxItem selector = new TextBoxItem("selector", "Selector") {
+            @Override
+            public boolean isUndefined() {
+                return getValue().equals("");
+            }
+        };
 
         form.setFields(name, jndi, durable, selector);
         form.bind(queueTable);

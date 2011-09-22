@@ -24,6 +24,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -78,9 +79,12 @@ public class ModelAdapter {
                 step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();
-                if(String.class == type)
+                if(FormItem.VALUE.class == type) {
+                    // if we don't provide a value, it will be persisted as UNDEFINED
+                }
+                else if(String.class == type)
                 {
-                    step.get(VALUE).set((String)value);
+                    step.get(VALUE).set((String) value);
                 }
                 else if(Boolean.class == type)
                 {

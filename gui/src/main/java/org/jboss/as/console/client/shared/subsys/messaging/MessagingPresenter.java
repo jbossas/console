@@ -54,7 +54,6 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -614,7 +613,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         getJMSView().enableEditQueue(true);
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-756
     public void onSaveQueue(final String name, Map<String, Object> changedValues) {
         getJMSView().enableEditQueue(false);
 
@@ -627,8 +625,14 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-queue", name);
 
+        // selector hack
+        //if(changedValues.containsKey("selector") && changedValues.get("selector").equals(""))
+        //    changedValues.put("selector", "undefined");
+
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -641,6 +645,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error("Failed to update queue " + name, response.toString());
 
+                loadJMSConfig();
             }
         });
 
@@ -712,12 +717,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error("Failed to remove queue " + entity.getName(), response.toString());
 
-                Console.schedule(new Command() {
-                    @Override
-                    public void execute() {
-                        loadJMSConfig();
-                    }
-                });
+                loadJMSConfig();
+
             }
         });
     }
@@ -760,12 +761,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error("Failed to remove topic " + entity.getName(), response.toString());
 
-                Console.schedule(new Command() {
-                    @Override
-                    public void execute() {
-                        loadJMSConfig();
-                    }
-                });
+               loadJMSConfig();
             }
         });
     }
@@ -800,6 +796,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error("Failed to update topic " + name, response.toString());
 
+                loadJMSConfig();
             }
         });
     }
