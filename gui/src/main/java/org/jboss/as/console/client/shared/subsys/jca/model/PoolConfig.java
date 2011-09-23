@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
@@ -8,6 +9,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  */
 public interface PoolConfig {
 
+    @Binding(key = true)
     String getName();
     void setName(String name);
 
@@ -30,23 +32,23 @@ public interface PoolConfig {
 
     // metrics below
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     int getActiveCount();
     void setActiveCount(int i);
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     int getCreatedCount();
     void setCreatedCount(int i);
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     int getMaxWaitCount();
     void setMaxWaitCount(int i);
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     int getAvailbleCount();
     void setAvailbleCount(int i);
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     int getMaxUsedCount();
     void setMaxUsedCount(int i);
 

@@ -77,28 +77,46 @@ public class EntityAdapter<T> {
                 }
                 else if("java.lang.Boolean".equals(propBinding.getJavaTypeName()))
                 {
-                    value = actualPayload.get(propBinding.getDetypedName()).asBoolean();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asBoolean();
+                    else
+                        value = false;
                 }
                 else if("java.lang.Long".equals(propBinding.getJavaTypeName()))
                 {
-                    value = actualPayload.get(propBinding.getDetypedName()).asLong();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asLong();
+                    else
+                        value = -1;
                 }
                 else if("java.lang.Integer".equals(propBinding.getJavaTypeName()))
                 {
-                    value = actualPayload.get(propBinding.getDetypedName()).asInt();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asInt();
+                    else
+                        value = -1;
                 }
                 else if("java.lang.Double".equals(propBinding.getJavaTypeName()))
                 {
-                    value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    else
+                        value = -1;
                 }
                 else if("java.lang.Float".equals(propBinding.getJavaTypeName()))
                 {
-                    value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    else
+                        value = -1;
                 }
                 else if("java.lang.String".equals(propBinding.getJavaTypeName()))
                 {
                     // default
-                    value = actualPayload.get(propBinding.getDetypedName()).asString();
+                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
+                        value = actualPayload.get(propBinding.getDetypedName()).asString();
+                    else
+                        value = "";
                 }
 
                 // invoke the mutator

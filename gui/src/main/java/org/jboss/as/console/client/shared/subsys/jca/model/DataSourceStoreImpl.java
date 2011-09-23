@@ -30,6 +30,7 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.as.console.client.widgets.forms.PrototypeFactory;
@@ -444,7 +445,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void loadPoolConfig(boolean isXA, String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
+    public void loadPoolConfig(boolean isXA, final String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(getBaseAddress());
@@ -463,33 +464,18 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
-                ModelNode payload = response.get(RESULT).asObject();
-
-                PoolConfig poolConfig = factory.poolConfig().as();
-
-                if(payload.hasDefined("max-pool-size"))
-                    poolConfig.setMaxPoolSize(payload.get("max-pool-size").asInt());
-                else
-                    poolConfig.setMaxPoolSize(-1);
-
-                if(payload.hasDefined("min-pool-size"))
-                    poolConfig.setMinPoolSize(payload.get("min-pool-size").asInt());
-                else
-                    poolConfig.setMinPoolSize(-1);
-
-                if(payload.hasDefined("pool-prefill"))
-                    poolConfig.setPoolPrefill(payload.get("pool-prefill").asBoolean());
-                else
-                    poolConfig.setPoolPrefill(false);
-
-                if(payload.hasDefined("pool-use-strict-min"))
-                    poolConfig.setPoolStrictMin(payload.get("pool-use-strict-min").asBoolean());
-                else
-                    poolConfig.setPoolStrictMin(false);
-
+                EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, propertyMetaData)
+                        .with(new KeyAssignment() {
+                            @Override
+                            public Object valueForKey(String key) {
+                                return name;
+                            }
+                        });
+                PoolConfig poolConfig = adapter.fromDMR(response.get(RESULT), factory.poolConfig().as());
                 callback.onSuccess(new ResponseWrapper<PoolConfig>(poolConfig, response));
+
             }
         });
     }
