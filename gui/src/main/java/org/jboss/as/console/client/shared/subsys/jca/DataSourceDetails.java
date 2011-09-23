@@ -115,7 +115,10 @@ public class DataSourceDetails {
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
+        StatusItem jtaItem = new StatusItem("jta", "Use JTA?");
+        StatusItem ccmItem = new StatusItem("ccm", "Use CCM?");
+
+        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, jtaItem,  ccmItem);
         form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem, urlItem);
 
 

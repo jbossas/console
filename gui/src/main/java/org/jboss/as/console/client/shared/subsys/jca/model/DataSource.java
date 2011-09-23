@@ -65,6 +65,13 @@ public interface DataSource {
     String getDriverName();
     void setDriverName(String driver);
 
+    boolean getJta();
+    void setJta(boolean b);
+
+    @Binding(detypedName = "use-ccm")
+    boolean getCcm();
+    void setCcm(boolean b);
+
     @Binding(skip = true)
     int getMajorVersion();
     void setMajorVersion(int major);
