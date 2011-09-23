@@ -75,6 +75,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private PropertyMetaData propertyMetaData;
+    private List<SecurityPattern> securitySettings = new ArrayList<SecurityPattern>();
 
     public String getCurrentServer() {
         return "default";
@@ -241,6 +242,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
                 }
 
+                securitySettings = secPatterns;
                 getView().setSecurityConfig(secPatterns);
 
             }
@@ -316,24 +318,57 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     // TODO: https://issues.jboss.org/browse/AS7-1892
-    public void onCreateSecPattern(final SecurityPattern pattern) {
+    public void onCreateSecPattern(final SecurityPattern newEntity) {
         closeDialogue();
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
-        operation.get(ADDRESS).add("security-setting", pattern.getPattern());
-        operation.get(ADDRESS).add("role", pattern.getRole());
+        ModelNode composite = new ModelNode();
+        composite .get(OP).set(COMPOSITE);
+        composite .get(ADDRESS).setEmptyList();
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+        
+        // the parent resourc, if needed
+        boolean parentDoesExist = false;
+        for(SecurityPattern setting : securitySettings)
+        {
+            if(setting.getPattern().equals(newEntity.getPattern()))
+            {
+                parentDoesExist = true;
+                break;
+            }
+        }
+        
+        if(!parentDoesExist)
+        {
+            // insert a step to create the parent
+            ModelNode createParentOp = new ModelNode();
+            createParentOp.get(OP).set(ADD);
+            createParentOp.get(ADDRESS).set(Baseadress.get());
+            createParentOp.get(ADDRESS).add("subsystem", "messaging");
+            createParentOp.get(ADDRESS).add("hornetq-server", getCurrentServer());
+            createParentOp.get(ADDRESS).add("security-setting", newEntity.getPattern());
 
-        operation.get("send").set(pattern.isSend());
-        operation.get("consume").set(pattern.isConsume());
-        operation.get("manage").set(pattern.isManage());
+            steps.add(createParentOp);
+        }
+        
+        // the child resource
 
-        System.out.println(operation);
+        ModelNode createChildOp = new ModelNode();
+        createChildOp.get(OP).set(ADD);
+        createChildOp.get(ADDRESS).set(Baseadress.get());
+        createChildOp.get(ADDRESS).add("subsystem", "messaging");
+        createChildOp.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        createChildOp.get(ADDRESS).add("security-setting", newEntity.getPattern());
+        createChildOp.get(ADDRESS).add("role", newEntity.getRole());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        createChildOp.get("send").set(newEntity.isSend());
+        createChildOp.get("consume").set(newEntity.isConsume());
+        createChildOp.get("manage").set(newEntity.isManage());
+
+        steps.add(createChildOp);
+        
+        composite.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
@@ -342,7 +377,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("security setting"));
                 else
-                    Console.error(Console.MESSAGES.added("security setting"+pattern.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.added("security setting"+newEntity.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
