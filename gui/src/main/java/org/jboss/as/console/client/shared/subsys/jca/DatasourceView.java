@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
@@ -56,6 +57,11 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
         tabLayoutpanel.selectTab(0);
 
         return tabLayoutpanel;
+    }
+
+    @Override
+    public void setXAProperties(String dataSourceName, List<PropertyRecord> result) {
+        xaDataSourceEditor.setXaProperties(dataSourceName, result);
     }
 
     @Override

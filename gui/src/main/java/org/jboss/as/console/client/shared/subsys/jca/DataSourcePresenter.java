@@ -35,6 +35,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
@@ -46,9 +47,12 @@ import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
@@ -79,6 +83,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void enableXADetails(boolean b);
         void setPoolConfig(String name, PoolConfig poolConfig);
         void setXAPoolConfig(String dsName, PoolConfig underlying);
+
+        void setXAProperties(String dataSourceName, List<PropertyRecord> result);
     }
 
     @Inject
@@ -214,7 +220,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     loadDataSources();
                 }
                 else
-                    Console.error(Console.MESSAGES.addingFailed("datasource "+datasource.getName()), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.addingFailed("datasource " + datasource.getName()), result.getResponse().toString());
             }
         });
 
@@ -295,7 +301,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     if(response.getUnderlying())
                         Console.info(Console.MESSAGES.saved("xa datasource "+name));
                     else
-                        Console.error(Console.MESSAGES.saveFailed("xa datasource "+name), response.getResponse().toString());
+                        Console.error(Console.MESSAGES.saveFailed("xa datasource " + name), response.getResponse().toString());
                 }
             });
         }
@@ -308,7 +314,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> response) {
                 if (response.getUnderlying())
-                    Console.info(Console.MESSAGES.added("xa datasource "+ updatedEntity.getName()));
+                    Console.info(Console.MESSAGES.added("xa datasource " + updatedEntity.getName()));
                 else
                     Console.error(Console.MESSAGES.addingFailed("xa datasource " + updatedEntity.getName()), response.getResponse().toString());
 
@@ -327,7 +333,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if (result.getUnderlying()) {
                     Console.info(Console.MESSAGES.modified("datasource " + entity.getName()));
                 } else {
-                    Console.error(Console.MESSAGES.modificationFailed("datasource "+ entity.getName()), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("datasource " + entity.getName()), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -343,7 +349,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if (success) {
                     Console.info(Console.MESSAGES.deleted("datasource "+ entity.getName()));
                 } else {
-                    Console.error(Console.MESSAGES.deletionFailed("datasource "+ entity.getName()));
+                    Console.error(Console.MESSAGES.deletionFailed("datasource " + entity.getName()));
                 }
 
                 loadDataSources();
@@ -387,12 +393,22 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if(result.getUnderlying())
                     Console.info(Console.MESSAGES.modified("pool setting "+editedName));
                 else
-                    Console.error(Console.MESSAGES.modificationFailed("pool setting "+ editedName), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("pool setting " + editedName), result.getResponse().toString());
 
                 loadPoolConfig(isXA, editedName);
             }
         });
     }
 
+
+    public void loadXAProperties(final String dataSourceName) {
+        dataSourceStore.loadXAProperties(dataSourceName, new SimpleCallback<List<PropertyRecord>>()
+        {
+            @Override
+            public void onSuccess(List<PropertyRecord> result) {
+                getView().setXAProperties(dataSourceName, result);
+            }
+        });
+    }
 
 }

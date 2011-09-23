@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
@@ -35,7 +34,6 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.as.console.client.widgets.forms.PrototypeFactory;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
@@ -113,84 +111,67 @@ public class DataSourceStoreImpl implements DataSourceStore {
         return baseAddress;
     }
 
-    public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
+    @Override
+    public void loadXAProperties(final String dataSourceName, final AsyncCallback<List<PropertyRecord>> callback) {
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(getBaseAddress());
-
         operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(CHILD_TYPE).set("xa-data-source");
+        operation.get(ADDRESS).add("xa-data-source", dataSourceName);
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
-                List<XADataSource> datasources = new ArrayList<XADataSource>();
+                ModelNode payload = response.get(RESULT).asObject();
 
-                if(response.hasDefined("result")) {
-                    List<ModelNode> payload = response.get("result").asList();
+                List<ModelNode> properties = payload.get("xa-datasource-properties").asList();
+                List<PropertyRecord> xaProperties = new ArrayList<PropertyRecord>(properties.size());
 
+                for(ModelNode xaProp : properties)
+                {
+                    Property p = xaProp.asProperty();
+                    PropertyRecord propRecord = factory.property().as();
 
-                    for(ModelNode item : payload)
-                    {
-                        // returned as type property (key=ds name)
-                        Property property = item.asProperty();
-                        ModelNode ds = property.getValue().asObject();
-                        String name = property.getName();
-                        //System.out.println(ds.toJSONString(false));
+                    propRecord.setKey(p.getName());
+                    ModelNode value = p.getValue();
+                    propRecord.setValue(value.asString());
 
-                        try {
-                            XADataSource model = factory.xaDataSource().as();
-                            model.setName(name);
-                            model.setJndiName(ds.get("jndi-name").asString());
-                            model.setDriverName(ds.get("driver-name").asString());
-
-                            model.setEnabled(ds.get("enabled").asBoolean());
-                            model.setUsername(ds.get("user-name").asString());
-                            model.setPassword(ds.get("password").asString());
-                            model.setPoolName(ds.get("pool-name").asString());
+                    xaProperties.add(propRecord);
+                }
 
 
-                            List<PropertyRecord> xaProperties = Collections.EMPTY_LIST;
+                callback.onSuccess(xaProperties);
+            }
+        });
+    }
 
-                            // System properties
-                            if(ds.hasDefined("xa-datasource-properties"))
-                            {
-                                List<ModelNode> properties = ds.get("xa-datasource-properties").asList();
-                                xaProperties = new ArrayList<PropertyRecord>(properties.size());
-                                for(ModelNode xaProp : properties)
-                                {
-                                    Property p = xaProp.asProperty();
-                                    PropertyRecord propRecord = factory.property().as();
+    public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
 
-                                    propRecord.setKey(p.getName());
-                                    ModelNode value = p.getValue();
-                                    propRecord.setValue(value.asString());
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).set(getBaseAddress());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(CHILD_TYPE).set("xa-data-source");
 
-                                    xaProperties.add(propRecord);
-                                }
-                            }
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
-                            model.setProperties(xaProperties);
-                            datasources.add(model);
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
-
-                        } catch (IllegalArgumentException e) {
-                            Log.error("Failed to parse xa data source representation", e);
-                        }
+                EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
+                List<XADataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList(), new PrototypeFactory<XADataSource>() {
+                    @Override
+                    public XADataSource create() {
+                        XADataSource entity = factory.xaDataSource().as();
+                        entity.setProperties(Collections.EMPTY_LIST); // TODO: Submodel parsing
+                        return entity;
                     }
-                }
-                else {
-                    Log.error("DMR result is 'UNDEFINED'", response.toString());
-                }
+                });
 
                 callback.onSuccess(datasources);
             }

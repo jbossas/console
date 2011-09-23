@@ -198,7 +198,8 @@ public class XADataSourceEditor implements PropertyManagement {
             public void onSelectionChange(SelectionChangeEvent event) {
                 XADataSource dataSource = selectionModel.getSelectedObject();
                 details.setSelectedRecord(dataSource);
-                propertyEditor.setProperties(dataSource.getName(), dataSource.getProperties());
+                //propertyEditor.setProperties(dataSource.getName(), dataSource.getProperties());
+                presenter.loadXAProperties(dataSource.getName());
             }
         });
         dataSourceTable.setSelectionModel(selectionModel);
@@ -288,5 +289,9 @@ public class XADataSourceEditor implements PropertyManagement {
 
     public void setPoolConfig(String name, PoolConfig poolConfig) {
         this.poolConfig.updateFrom(name, poolConfig);
+    }
+
+    public void setXaProperties(String dataSourceName, List<PropertyRecord> result) {
+        propertyEditor.setProperties(dataSourceName, result);
     }
 }

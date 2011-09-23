@@ -36,8 +36,20 @@ public interface XADataSource extends DataSource {
     String getDataSourceClass();
     void setDataSourceClass(String dadaSourceClass);
 
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
+
+    @Binding(skip=true) // does not exist on XA datasources
+    boolean getJta();
+    void setJta(boolean b);
+
+    @Binding(detypedName = "pad-xid")
+    boolean getPadXid();
+    void setPadXid(boolean b);
+
+    @Binding(detypedName = "wrap-xa-resource")
+    boolean getWrapXaResource();
+    void setWrapXaResource(boolean b);
 
 }

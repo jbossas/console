@@ -20,7 +20,9 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 import java.util.List;
 import java.util.Map;
@@ -48,4 +50,6 @@ public interface DataSourceStore {
     void loadPoolConfig(boolean isXA, String name, AsyncCallback<ResponseWrapper<PoolConfig>> callback);
     void savePoolConfig(boolean isXA, String dsName, Map<String, Object> changeset, AsyncCallback<ResponseWrapper<Boolean>> simpleCallback);
     void deletePoolConfig(boolean isXA, String dsName, AsyncCallback<ResponseWrapper<Boolean>> callback);
+
+    void loadXAProperties(String dataSourceName, AsyncCallback<List<PropertyRecord>> callback);
 }
