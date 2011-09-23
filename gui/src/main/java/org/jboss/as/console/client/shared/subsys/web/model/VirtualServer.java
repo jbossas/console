@@ -33,7 +33,7 @@ public interface VirtualServer {
     void setName(String name);
 
     // collections are currently not supported
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     List<String> getAlias();
     void setAlias(List<String> alias);
 

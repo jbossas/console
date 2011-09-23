@@ -30,23 +30,23 @@ public interface PoolConfig {
 
     // metrics below
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     int getActiveCount();
     void setActiveCount(int i);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     int getCreatedCount();
     void setCreatedCount(int i);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     int getMaxWaitCount();
     void setMaxWaitCount(int i);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     int getAvailbleCount();
     void setAvailbleCount(int i);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     int getMaxUsedCount();
     void setMaxUsedCount(int i);
 

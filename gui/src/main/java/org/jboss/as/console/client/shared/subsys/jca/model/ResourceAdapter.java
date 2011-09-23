@@ -34,7 +34,7 @@ public interface ResourceAdapter {
     String getArchive();
     void setArchive(String archive);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 }

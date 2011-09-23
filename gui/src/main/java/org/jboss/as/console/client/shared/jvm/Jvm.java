@@ -27,7 +27,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  */
 public interface Jvm {
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     String getName();
     void setName(String name);
 

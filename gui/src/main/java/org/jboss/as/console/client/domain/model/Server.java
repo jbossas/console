@@ -41,7 +41,7 @@ public interface Server {
     boolean isAutoStart();
     void setAutoStart(boolean b);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     boolean isStarted();
     void setStarted(boolean b);
 

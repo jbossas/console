@@ -30,6 +30,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -122,6 +123,25 @@ public class DataSourceStoreImpl implements DataSourceStore {
                         } catch (IllegalArgumentException e) {
                             Log.error("Failed to parse data source representation", e);
                         }
+
+                    }
+
+
+                    for(ModelNode item : payload)
+                    {
+
+                        //System.out.println(item);
+
+                        EntityAdapter<DataSource> adapter =
+                                new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+                        DataSource dataSource = adapter.fromDMR(item, factory.dataSource().as());
+
+                        System.out.println("> "+dataSource.getName());
+                        System.out.println("> "+dataSource.getJndiName());
+                        System.out.println("> "+dataSource.getPoolName());
+                        System.out.println("> "+dataSource.getUsername());
+                        System.out.println("> "+dataSource.getPassword());
+
                     }
                 }
                 else {

@@ -29,11 +29,8 @@ import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
-import org.jboss.ballroom.client.util.StringTokenizer;
-import org.jboss.dmr.client.ModelNode;
 
 import java.io.PrintWriter;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -41,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
  * @author Heiko Braun
@@ -186,11 +181,11 @@ public class PropertyMetaDataGenerator extends Generator{
 
                         for(BindingDeclaration decl : bindings)
                         {
-                            if(decl.isIgnore()) continue;
+                            if(decl.skip()) continue;
 
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
-                            sourceWriter.println("new PropertyBinding(\""+decl.getJavaName()+"\", \""+decl.getDetypedName()+"\")");
+                            sourceWriter.println("new PropertyBinding(\""+decl.getJavaName()+"\", \""+decl.getDetypedName()+"\", \"" + decl.getJavaTypeName() + "\", "+decl.key()+")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -306,16 +301,20 @@ public class PropertyMetaDataGenerator extends Generator{
 
         // @Binding can override the detyped name
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
-        boolean ignore = false;
+        boolean skip = false;
+        boolean key = false;
 
         if(bindingDeclaration!=null)
         {
-            detypedName = bindingDeclaration.detypedName();
-            ignore = bindingDeclaration.ignore();
+            detypedName = bindingDeclaration.detypedName()!= null ? bindingDeclaration.detypedName() : "not-set";
+            skip = bindingDeclaration.skip();
+            key = bindingDeclaration.key();
         }
 
-        BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, ignore, beanTypeClass.getName());
+        BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, skip, beanTypeClass.getName());
         decl.setJavaTypeName(method.getReturnType().getName());
+        decl.setKey(key);
+
         return decl;
     }
 
@@ -337,7 +336,7 @@ public class PropertyMetaDataGenerator extends Generator{
 
         sourceWriter.println("public Mutator getMutator(Class<?> type) { ");
         sourceWriter.indent();
-        sourceWriter.println("return null;");
+        sourceWriter.println("return mutators.get(type);");
         sourceWriter.outdent();
         sourceWriter.println("}");
     }

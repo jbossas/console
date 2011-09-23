@@ -36,7 +36,7 @@ public interface XADataSource extends DataSource {
     String getDataSourceClass();
     void setDataSourceClass(String dadaSourceClass);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 

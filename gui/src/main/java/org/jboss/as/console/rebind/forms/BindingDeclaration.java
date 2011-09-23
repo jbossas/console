@@ -32,15 +32,25 @@ public class BindingDeclaration implements Binding  {
     private String detypedName;
     private String javaName;
     private String javaTypeName;
-    private boolean ignore = false;
+    private boolean doSkip = false;
+    private boolean isKey = false;
 
     private String beanClassName;
 
     public BindingDeclaration(String detypedName, String javaName, boolean ignore, String beanClassName) {
         this.detypedName = detypedName;
         this.javaName = javaName;
-        this.ignore = ignore;
+        this.doSkip = ignore;
         this.beanClassName = beanClassName;
+    }
+
+    public void setKey(boolean key) {
+        isKey = key;
+    }
+
+    @Override
+    public boolean key() {
+        return isKey;
     }
 
     public String getJavaTypeName() {
@@ -88,23 +98,18 @@ public class BindingDeclaration implements Binding  {
         return sb.toString();
     }
 
-    public boolean isIgnore() {
-        return ignore;
-    }
-
     public String getBeanClassName() {
         return beanClassName;
     }
 
-
     @Override
     public String detypedName() {
-        return null;
+        return detypedName;
     }
 
     @Override
-    public boolean ignore() {
-        return false;
+    public boolean skip() {
+        return doSkip;
     }
 
     @Override

@@ -51,7 +51,7 @@ public interface JDBCDriver {
     String getXaDataSourceClass();
     void setXaDataSourceClass(String dataSourceClass);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(detypedName = "none", skip = true)
     String getGroup();
     void setGroup(String group);
 }

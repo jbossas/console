@@ -32,6 +32,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface Binding {
 
-    String detypedName();
-    boolean ignore() default false;
+    String detypedName() default "";
+    boolean skip() default false;
+    boolean key() default false;
 }

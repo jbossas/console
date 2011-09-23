@@ -29,6 +29,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 @Address("/subsystem=datasources/data-source=*")
 public interface DataSource {
 
+    @Binding(key = true)
     String getName();
     void setName(String name);
 
@@ -64,11 +65,11 @@ public interface DataSource {
     String getDriverName();
     void setDriverName(String driver);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(skip = true)
     int getMajorVersion();
     void setMajorVersion(int major);
 
-    @Binding(detypedName = "none", ignore = true)
+    @Binding(skip = true)
     int getMinorVersion();
     void setMinorVersion(int minor);
 

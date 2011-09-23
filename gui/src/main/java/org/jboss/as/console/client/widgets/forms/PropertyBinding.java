@@ -20,18 +20,24 @@
 package org.jboss.as.console.client.widgets.forms;
 
 /**
- * Represents the {@link org.jboss.ballroom.client.widgets.forms.Binding} meta data
- *
  * @author Heiko Braun
  * @date 4/19/11
  */
 public class PropertyBinding {
     private String detypedName;
     private String javaName;
+    private String javaTypeName;
+    private boolean isKey = false;
 
-    public PropertyBinding(String javaName, String detypedName) {
+    public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey) {
         this.detypedName = detypedName;
         this.javaName = javaName;
+        this.javaTypeName = javaTypeName;
+        this.isKey = isKey;
+    }
+
+    public String getJavaTypeName() {
+        return javaTypeName;
     }
 
     public String getDetypedName() {
@@ -50,8 +56,14 @@ public class PropertyBinding {
         this.javaName = javaName;
     }
 
+    public boolean isKey() {
+        return isKey;
+    }
+
     @Override
     public String toString() {
-        return javaName+">"+detypedName;
+
+        String keyInd = isKey() ? "* " : "";
+        return keyInd+javaName+">"+detypedName+" ("+javaTypeName+")";
     }
 }

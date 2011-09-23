@@ -92,7 +92,7 @@ public class SimpleDispatcher implements Dispatcher {
         try {
             me.close();
         } catch (IOException e) {
-            // ignore
+            // skip
             System.out.println("Failed to close stream (ignored): "+e.getMessage());
         }
     }
