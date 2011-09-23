@@ -27,4 +27,6 @@ import java.util.List;
  */
 public interface PropertyMetaData {
     List<PropertyBinding> getBindingsForType(Class<?> type);
+    BeanMetaData getBeanMetaData(Class<?> type);
+    Mutator getMutator(Class<?> type);
 }

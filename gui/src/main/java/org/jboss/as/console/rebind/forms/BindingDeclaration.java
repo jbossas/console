@@ -31,6 +31,7 @@ public class BindingDeclaration implements Binding  {
 
     private String detypedName;
     private String javaName;
+    private String javaTypeName;
     private boolean ignore = false;
 
     private String beanClassName;
@@ -42,6 +43,36 @@ public class BindingDeclaration implements Binding  {
         this.beanClassName = beanClassName;
     }
 
+    public String getJavaTypeName() {
+        return javaTypeName;
+    }
+
+    public void setJavaTypeName(String javaTypeName) {
+
+        if("boolean".equals(javaTypeName))
+        {
+            this.javaTypeName = "java.lang.Boolean";
+        }
+        else if("int".equals(javaTypeName))
+        {
+            this.javaTypeName = "java.lang.Integer";
+        }
+        else if("float".equals(javaTypeName))
+        {
+            this.javaTypeName = "java.lang.Float";
+        }
+        else if("long".equals(javaTypeName))
+        {
+            this.javaTypeName = "java.lang.Long";
+        }
+        else
+        {
+            // default
+            this.javaTypeName = javaTypeName;
+        }
+
+    }
+
     public String getDetypedName() {
         return detypedName;
     }
@@ -50,10 +81,16 @@ public class BindingDeclaration implements Binding  {
         return javaName;
     }
 
+    public String getPropertyName() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getJavaName().substring(0, 1).toUpperCase());
+        sb.append(getJavaName().substring(1));
+        return sb.toString();
+    }
+
     public boolean isIgnore() {
         return ignore;
     }
-
 
     public String getBeanClassName() {
         return beanClassName;

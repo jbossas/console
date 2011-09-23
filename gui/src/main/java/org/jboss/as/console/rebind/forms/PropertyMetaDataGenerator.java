@@ -145,6 +145,7 @@ public class PropertyMetaDataGenerator extends Generator{
     private void generateFields(SourceWriter sourceWriter) {
         sourceWriter.println("private Map<Class<?>, List<PropertyBinding>> registry = new HashMap<Class<?>,List<PropertyBinding>>();");
         sourceWriter.println("private Map<Class<?>, AddressBinding> addressing= new HashMap<Class<?>, AddressBinding>();");
+        sourceWriter.println("private Map<Class<?>, Mutator> mutators = new HashMap<Class<?>, Mutator>();");
     }
 
     private void generateConstructor(TreeLogger logger, GeneratorContext context , SourceWriter sourceWriter)
@@ -171,7 +172,16 @@ public class PropertyMetaDataGenerator extends Generator{
                         Class beanTypeClass = (Class) typeArguments[0];
                         sourceWriter.println("registry.put("+beanTypeClass.getName()+".class, new ArrayList<PropertyBinding>());");
 
-                        // map properties
+
+                        // --------------------------------
+                        // Mutator
+
+                        sourceWriter.println("Mutator mut_"+idx+" = new Mutator<"+beanTypeClass.getName()+">();");
+                        sourceWriter.println("mutators.put("+beanTypeClass.getName()+".class , mut_"+idx+");");
+
+                        // -----------------------------
+                        // PropertyBinding
+
                         List<BindingDeclaration> bindings = mapProperties(beanTypeClass);
 
                         for(BindingDeclaration decl : bindings)
@@ -183,7 +193,19 @@ public class PropertyMetaDataGenerator extends Generator{
                             sourceWriter.println("new PropertyBinding(\""+decl.getJavaName()+"\", \""+decl.getDetypedName()+"\")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
+
+
+                            // create and register setters
+                            sourceWriter.println("mut_"+idx+".register(\"" + decl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public void invoke("+decl.getBeanClassName()+" entity, Object value) {\n" +
+                                            "entity.set"+decl.getPropertyName()+"(("+decl.getJavaTypeName()+")value);\n"+
+                                        "}\n"+
+                                    "});\n");
+
                         }
+
+                        // -----------------------------
+                        // AddressBinding
 
                         AddressDeclaration addr = parseAddress(beanTypeClass);
 
@@ -194,7 +216,9 @@ public class PropertyMetaDataGenerator extends Generator{
                             sourceWriter.println("addr_"+idx+".add(\""+token[0]+"\", \""+token[1]+"\");");
                         }
 
-                        sourceWriter.println("// End " +beanTypeClass.getName());
+                        sourceWriter.println("");
+                        sourceWriter.println("");
+                        sourceWriter.println("// ---- End " +beanTypeClass.getName() +" ----");
                     }
                 }
 
@@ -290,31 +314,30 @@ public class PropertyMetaDataGenerator extends Generator{
             ignore = bindingDeclaration.ignore();
         }
 
-        return new BindingDeclaration(detypedName, javaName, ignore, beanTypeClass.getName());
+        BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, ignore, beanTypeClass.getName());
+        decl.setJavaTypeName(method.getReturnType().getName());
+        return decl;
     }
 
     private void generateMethods(SourceWriter sourceWriter)
     {
-        // start constructor source generation
+
         sourceWriter.println("public List<PropertyBinding> getBindingsForType(Class<?> type) { ");
         sourceWriter.indent();
-
-        // write content
         sourceWriter.println("return registry.get(type);");
+        sourceWriter.outdent();
+        sourceWriter.println("}");
 
-        // end constructor source generation
+        sourceWriter.println("public BeanMetaData getBeanMetaData(Class<?> type) { ");
+        sourceWriter.indent();
+        sourceWriter.println("return new BeanMetaData(type, addressing.get(type), registry.get(type));");
         sourceWriter.outdent();
         sourceWriter.println("}");
 
 
-         // start constructor source generation
-        sourceWriter.println("public BeanMetaData getBeanMetaData(Class<?> type) { ");
+        sourceWriter.println("public Mutator getMutator(Class<?> type) { ");
         sourceWriter.indent();
-
-        // write content
-        sourceWriter.println("return new BeanMetaData(type, addressing.get(type), registry.get(type));");
-
-        // end constructor source generation
+        sourceWriter.println("return null;");
         sourceWriter.outdent();
         sourceWriter.println("}");
     }
