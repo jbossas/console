@@ -20,7 +20,6 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -39,6 +38,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -285,15 +285,9 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     }
     
     private void execute(ModelNode operation, final String nameEditedOrAdded, final boolean isHandlerOp, final String successMessage) {
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
-            public void onFailure(Throwable caught) {
-                Log.error(Console.CONSTANTS.common_error_unknownError(), caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
+            public void onDmrSuccess(ModelNode response) {
                 Console.info(successMessage);
                 loggingInfo.refreshView(nameEditedOrAdded, isHandlerOp);
             }
