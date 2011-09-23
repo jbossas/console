@@ -19,12 +19,14 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
  * @date 3/29/11
  */
+@Address("/subsystem=datasources/data-source=*")
 public interface DataSource {
 
     String getName();

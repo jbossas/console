@@ -17,27 +17,20 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.jca.model;
+package org.jboss.as.console.client.widgets.forms;
 
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.Address;
-import org.jboss.as.console.client.widgets.forms.Binding;
-
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Heiko Braun
- * @date 5/4/11
+ * @date 4/19/11
  */
-@Address("/subsystem=datasources/xa-data-source=*")
-public interface XADataSource extends DataSource {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface Address {
 
-    @Binding(detypedName = "xa-data-source-class")
-    String getDataSourceClass();
-    void setDataSourceClass(String dadaSourceClass);
-
-    @Binding(detypedName = "none", ignore = true)
-    List<PropertyRecord> getProperties();
-    void setProperties(List<PropertyRecord> props);
-
+    String value();
 }
