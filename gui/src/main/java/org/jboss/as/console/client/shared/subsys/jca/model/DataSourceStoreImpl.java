@@ -33,6 +33,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.PrototypeFactory;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
@@ -90,64 +91,13 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
-                List<DataSource> datasources = new ArrayList<DataSource>();
-
-                if(response.hasDefined("result")) {
-
-                    List<ModelNode> payload = response.get("result").asList();
-
-                    for(ModelNode item : payload)
-                    {
-                        // returned as type property (key=ds name)
-                        Property property = item.asProperty();
-                        ModelNode ds = property.getValue().asObject();
-                        String name = property.getName();
-                        //System.out.println(ds);
-
-                        try {
-                            DataSource model = factory.dataSource().as();
-                            model.setName(name);
-                            model.setConnectionUrl(ds.get("connection-url").asString());
-                            model.setJndiName(ds.get("jndi-name").asString());
-                            model.setDriverClass(ds.get("driver-class-name").asString());
-
-                            model.setDriverName(ds.get("driver-name").asString());
-
-                            model.setEnabled(ds.get("enabled").asBoolean());
-                            model.setUsername(ds.get("user-name").asString());
-                            model.setPassword(ds.get("password").asString());
-                            model.setPoolName(ds.get("pool-name").asString());
-
-                            datasources.add(model);
-
-                        } catch (IllegalArgumentException e) {
-                            Log.error("Failed to parse data source representation", e);
-                        }
-
+                EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+                List<DataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList(), new PrototypeFactory<DataSource>() {
+                    @Override
+                    public DataSource create() {
+                        return factory.dataSource().as();
                     }
-
-
-                    for(ModelNode item : payload)
-                    {
-
-                        //System.out.println(item);
-
-                        EntityAdapter<DataSource> adapter =
-                                new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
-                        DataSource dataSource = adapter.fromDMR(item, factory.dataSource().as());
-
-                        System.out.println("> "+dataSource.getName());
-                        System.out.println("> "+dataSource.getJndiName());
-                        System.out.println("> "+dataSource.getPoolName());
-                        System.out.println("> "+dataSource.getUsername());
-                        System.out.println("> "+dataSource.getPassword());
-
-                    }
-                }
-                else {
-                    callback.onFailure(new RuntimeException("Failed to read subsystem 'datasource': "+  response.toString()));
-                }
-
+                });
                 callback.onSuccess(datasources);
             }
         });

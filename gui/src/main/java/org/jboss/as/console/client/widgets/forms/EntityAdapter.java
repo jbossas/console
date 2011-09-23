@@ -4,6 +4,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class EntityAdapter<T> {
             try
             {
 
-                System.out.println(propBinding);
+                //System.out.println(propBinding);
 
                 if(propBinding.isKey())
                 {
@@ -121,8 +122,16 @@ public class EntityAdapter<T> {
         return protoType;
     }
 
-    public List<T> fromDMRList(List<ModelNode> dmr) {
-        return null;
+    public List<T> fromDMRList(List<ModelNode> dmr, PrototypeFactory<T> factory) {
+
+        List<T> entities = new ArrayList<T>();
+
+        for(ModelNode item : dmr)
+        {
+            entities.add(fromDMR(item, factory.create()));
+        }
+
+        return entities;
     }
 
     public ModelNode fromEntity(T entity)
