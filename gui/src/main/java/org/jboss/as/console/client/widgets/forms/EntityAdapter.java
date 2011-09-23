@@ -4,8 +4,6 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-
 import java.util.List;
 
 /**
@@ -16,19 +14,23 @@ public class EntityAdapter<T> {
 
     private Class<?> type;
     private PropertyMetaData metaData;
+    private KeyAssignment keyAssignment = null;
 
     public EntityAdapter(Class<?> type, PropertyMetaData metaData) {
         this.type = type;
         this.metaData = metaData;
     }
 
+    public EntityAdapter<T> with(KeyAssignment keyAssignment)
+    {
+        this.keyAssignment = keyAssignment;
+        return this;
+    }
+
     public T fromDMR(ModelNode dmr, T protoType) {
 
+        String key = null;
         ModelNode actualPayload = null;
-
-        String key = null;   // only works with property types
-
-        //System.out.println(dmr);
 
         if(ModelType.OBJECT.equals(dmr.getType()))
         {
@@ -36,8 +38,13 @@ public class EntityAdapter<T> {
         }
         else if(ModelType.PROPERTY.equals(dmr.getType()))
         {
-            Property property = dmr.asProperty();
-            key = property.getName();
+            final Property property = dmr.asProperty();
+            this.keyAssignment = new KeyAssignment() {
+                @Override
+                public Object valueForKey(String key) {
+                    return property.getName();
+                }
+            };
             actualPayload = property.getValue();
         }
         else
@@ -58,8 +65,14 @@ public class EntityAdapter<T> {
 
                 if(propBinding.isKey())
                 {
-                    System.out.println("prop is key "+propBinding);
-                    value = key;
+                    if(keyAssignment!=null)
+                    {
+                        value = keyAssignment.valueForKey(propBinding.getJavaName());
+                    }
+                    else
+                    {
+                        throw new IllegalArgumentException("Key property declared, but no key assignment available: "+propBinding);
+                    }
                 }
                 else if("java.lang.Boolean".equals(propBinding.getJavaTypeName()))
                 {
