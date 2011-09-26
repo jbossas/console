@@ -26,7 +26,11 @@ import java.util.List;
  * @date 4/19/11
  */
 public interface PropertyMetaData {
+
+    // Use BeanMetaData instead
+    @Deprecated
     List<PropertyBinding> getBindingsForType(Class<?> type);
+
     BeanMetaData getBeanMetaData(Class<?> type);
     Mutator getMutator(Class<?> type);
     <T> EntityFactory<T> getFactory(Class<T> type);

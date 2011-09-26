@@ -167,12 +167,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     @Override
     public void createDataSource(final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).set(getBaseAddress());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("data-source", datasource.getName());
 
+        EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+        ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
+        System.out.println(">> "+operation);
+        operation.get(OP).set(ADD);
 
         operation.get("name").set(datasource.getName());
         operation.get("jndi-name").set(datasource.getJndiName());

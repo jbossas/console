@@ -26,7 +26,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 3/29/11
  */
-@Address("/subsystem=datasources/data-source=*")
+@Address("/subsystem=datasources/data-source={0}")
 public interface DataSource {
 
     @Binding(key = true)

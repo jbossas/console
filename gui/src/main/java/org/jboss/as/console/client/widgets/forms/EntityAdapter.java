@@ -1,11 +1,16 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Adopts DMR to Entity T and vice versa.<p/>
@@ -64,7 +69,7 @@ public class EntityAdapter<T> {
         }
 
         BeanMetaData beanMetaData = metaData.getBeanMetaData(type);
-        for(PropertyBinding propBinding : beanMetaData.properties)
+        for(PropertyBinding propBinding : beanMetaData.getProperties())
         {
 
             Object value = null;
@@ -169,14 +174,81 @@ public class EntityAdapter<T> {
         return entities;
     }
 
-    public ModelNode fromEntity(T entity)
+    public ModelNode fromEntity(T entity, String... addressArgs)
     {
-        return null;
+        AddressBinding address = metaData.getBeanMetaData(type).getAddress();
+        ModelNode operation = address.asProtoType(addressArgs);
+
+        return operation;
     }
 
     public List<ModelNode> fromEntityList(List<T> entities)
     {
         return null;
+    }
+
+
+    /**
+     * Turns a changeset into a composite write attribute operation.
+     *
+     * @param prototype a ModelNode that carries the target address
+     * @param changeSet
+     * @return composite operation
+     */
+    public ModelNode fromChangeset(ModelNode prototype, Map<String, Object> changeSet)
+    {
+        prototype.require(ADDRESS);
+        prototype.require(OP);
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        List<PropertyBinding> propertyBindings = metaData.getBeanMetaData(type).getProperties();
+
+        for(PropertyBinding binding : propertyBindings)
+        {
+
+            Object value = changeSet.get(binding.getJavaName());
+            if(value!=null)
+            {
+                ModelNode step = prototype.clone();
+                step.get(NAME).set(binding.getDetypedName());
+
+                Class type = value.getClass();
+                if(FormItem.VALUE.class == type) {
+                    // if we don't provide a value, it will be persisted as UNDEFINED
+                }
+                else if(String.class == type)
+                {
+                    step.get(VALUE).set((String) value);
+                }
+                else if(Boolean.class == type)
+                {
+                    step.get(VALUE).set((Boolean)value);
+                }
+                else if(Integer.class == type)
+                {
+                    step.get(VALUE).set((Integer)value);
+                }
+                else if(Double.class == type)
+                {
+                    step.get(VALUE).set((Double)value);
+                }
+                else
+                {
+                    throw new RuntimeException("Unsupported type: "+type);
+                }
+
+                steps.add(step);
+            }
+        }
+
+
+        operation.get(STEPS).set(steps);
+        return operation;
     }
 
 }

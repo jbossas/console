@@ -22,12 +22,11 @@ public class TestAddressParser {
         List<BindingDeclaration> bindings = PropertyMetaDataGenerator.mapProperties(ExampleEntity.class);
         AddressDeclaration addressDeclaration = PropertyMetaDataGenerator.parseAddress(ExampleEntity.class);
 
-        AddressBinding addressBinding = new AddressBinding(addressDeclaration);
-        assertEquals(1, addressBinding.getNumWildCards());
+        //
 
     }
 
-    @Address(address = "parent=parent-name/child=*")
+    @Address("parent=parent-name/child=*")
     interface ExampleEntity {
 
         @Binding(detypedName = "entity-name")

@@ -1,11 +1,11 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -13,27 +13,49 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
  */
 public class AddressBinding {
 
-    private ModelNode address = new ModelNode();
+    private List<String[]> address = new LinkedList<String[]>();
 
     public AddressBinding() {
     }
 
     public void add(String parent, String child)
     {
-        address.get(ADDRESS).add(parent, child);
+        address.add(new String[]{parent, child});
     }
 
     public int getNumWildCards() {
 
         int counter = 0;
-        List<Property> tokens = address.get(ADDRESS).asPropertyList();
-        for(Property tok : tokens)
+
+        for(String[] tuple : address)
         {
-            if(tok.getValue().asString().equals("*"))
+            if(tuple[1].startsWith("{"))
                 counter++;
         }
         return counter;
+    }
 
+    public ModelNode asProtoType(String... args) {
+
+        assert getNumWildCards() ==args.length :
+                "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
+
+        ModelNode model = new ModelNode();
+
+        int argsCounter = 0;
+        for(String[] tuple : address)
+        {
+            String parent = tuple[0];
+            String child = tuple[1];
+            if(child.startsWith("{"))
+            {
+                child = args[argsCounter];
+                argsCounter++;
+            }
+
+            model.get(ADDRESS).add(parent, child);
+        }
+        return model;
     }
 
 }
