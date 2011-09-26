@@ -29,6 +29,9 @@ public class AddressBinding {
 
         for(String[] tuple : address)
         {
+            if(tuple[0].startsWith("{"))
+                counter++;
+
             if(tuple[1].startsWith("{"))
                 counter++;
         }
@@ -47,6 +50,13 @@ public class AddressBinding {
         {
             String parent = tuple[0];
             String child = tuple[1];
+
+            if(parent.startsWith("{"))
+            {
+                parent = args[argsCounter];
+                argsCounter++;
+            }
+
             if(child.startsWith("{"))
             {
                 child = args[argsCounter];

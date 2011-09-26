@@ -57,6 +57,7 @@ public class ModelAdapter {
      * @param bindings
      * @return composite operation
      */
+    @Deprecated
     public static ModelNode detypedFromChangeset(ModelNode prototype, Map<String, Object> changeSet, List<PropertyBinding> bindings)
     {
         // pre requesites

@@ -222,23 +222,43 @@ public class EntityAdapter<T> {
         return type;
     }
 
-    public List<ModelNode> fromEntityList(List<T> entities)
+    /**
+     * Creates a composite operation to create entities
+     *
+     * @param entities
+     * @return a composite ModelNode structure
+     */
+    public ModelNode fromEntityList(List<T> entities)
     {
-        return null;
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        for(T entity : entities)
+        {
+            steps.add(fromEntity(entity));
+        }
+
+        operation.get(STEPS).set(steps);
+        return operation;
     }
 
 
     /**
      * Turns a changeset into a composite write attribute operation.
      *
-     * @param prototype a ModelNode that carries the target address
      * @param changeSet
+     * @param addressArgs arguments
      * @return composite operation
      */
-    public ModelNode fromChangeset(ModelNode prototype, Map<String, Object> changeSet)
+    public ModelNode fromChangeset(Map<String, Object> changeSet, String... addressArgs)
     {
-        prototype.require(ADDRESS);
-        prototype.require(OP);
+
+        AddressBinding address = metaData.getBeanMetaData(type).getAddress();
+        ModelNode protoType = address.asProtoType(addressArgs);
+        protoType.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(COMPOSITE);
@@ -254,7 +274,7 @@ public class EntityAdapter<T> {
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
-                ModelNode step = prototype.clone();
+                ModelNode step = protoType.clone();
                 step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();

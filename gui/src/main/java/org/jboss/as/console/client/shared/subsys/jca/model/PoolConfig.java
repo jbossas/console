@@ -7,6 +7,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 9/16/11
  */
+@Address("/subsystem=datasources/{0}={1}")
 public interface PoolConfig {
 
     @Binding(key = true)

@@ -29,6 +29,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -343,14 +344,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     @Override
     public void updateDataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(getBaseAddress());
-        proto.get(ADDRESS).add("subsystem", "datasources");
-        proto.get(ADDRESS).add("data-source", name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+        ModelNode operation = adapter.fromChangeset(changedValues, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -369,14 +365,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     @Override
     public void updateXADataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(getBaseAddress());
-        proto.get(ADDRESS).add("subsystem", "datasources");
-        proto.get(ADDRESS).add("xa-data-source", name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(DataSource.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
+        ModelNode operation = adapter.fromChangeset(changedValues, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -395,12 +386,12 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     @Override
     public void loadPoolConfig(boolean isXA, final String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
-        ModelNode operation = new ModelNode();
+
+        String parentAddress = isXA ? "xa-data-source" : "data-source";
+        AddressBinding address = propertyMetaData.getBeanMetaData(PoolConfig.class).getAddress();
+
+        ModelNode operation = address.asProtoType(parentAddress, name);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).set(getBaseAddress());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        String subaddress = isXA ? "xa-data-source" : "data-source";
-        operation.get(ADDRESS).add(subaddress, name);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -430,17 +421,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void savePoolConfig(boolean isXA, String dsName, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(getBaseAddress());
-        proto.get(ADDRESS).add("subsystem", "datasources");
+    public void savePoolConfig(boolean isXA, String name, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        String subaddress = isXA ? "xa-data-source" : "data-source";
-        proto.get(ADDRESS).add(subaddress, dsName);
-
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+        String parentAddress = isXA ? "xa-data-source" : "data-source";
+        EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, propertyMetaData);
+        ModelNode operation = adapter.fromChangeset(changeset, parentAddress, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
