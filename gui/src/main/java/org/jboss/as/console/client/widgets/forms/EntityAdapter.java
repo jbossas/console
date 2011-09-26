@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Adopts DMR to Entity T and vice versa.<p/>
+ * Acts as a model bridge from JBoss AS 7 ModelNode representations
+ * into a strongly typed model that's consumed by GWT.
+ *
  * @author Heiko Braun
  * @date 9/23/11
  */
@@ -28,6 +32,11 @@ public class EntityAdapter<T> {
         return this;
     }
 
+    /**
+     * A ModelNode can be either of type <tt>ModelType.Object</tt> or <tt>ModelType.Property</tt>
+     * @param dmr  a ModelNode
+     * @return an entity representation of type T
+     */
     public T fromDMR(ModelNode dmr) {
 
         String key = null;
@@ -141,6 +150,13 @@ public class EntityAdapter<T> {
         return protoType;
     }
 
+    /**
+     * Parse a ModelNode of type ModelType.List<p/>
+     * Basically calls {@link #fromDMR(org.jboss.dmr.client.ModelNode)} for each item.
+     *
+     * @param dmr a ModelNode
+     * @return a list of entities of type T
+     */
     public List<T> fromDMRList(List<ModelNode> dmr) {
 
         List<T> entities = new ArrayList<T>();
