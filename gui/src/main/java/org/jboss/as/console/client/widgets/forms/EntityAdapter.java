@@ -4,7 +4,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -159,7 +159,7 @@ public class EntityAdapter<T> {
      */
     public List<T> fromDMRList(List<ModelNode> dmr) {
 
-        List<T> entities = new ArrayList<T>();
+        List<T> entities = new LinkedList<T>();
 
         for(ModelNode item : dmr)
         {
