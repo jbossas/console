@@ -69,6 +69,8 @@ public class EntityAdapter<T> {
         }
 
         BeanMetaData beanMetaData = metaData.getBeanMetaData(type);
+        Mutator mutator = metaData.getMutator(type);
+
         for(PropertyBinding propBinding : beanMetaData.getProperties())
         {
 
@@ -135,8 +137,7 @@ public class EntityAdapter<T> {
                 }
 
                 // invoke the mutator
-                Mutator mutator = metaData.getMutator(type);
-                mutator.mutate(protoType, propBinding.getJavaName(), value);
+                mutator.setValue(protoType, propBinding.getJavaName(), value);
 
 
             }
@@ -179,7 +180,36 @@ public class EntityAdapter<T> {
         AddressBinding address = metaData.getBeanMetaData(type).getAddress();
         ModelNode operation = address.asProtoType(addressArgs);
 
+        List<PropertyBinding> properties = metaData.getBeanMetaData(type).getProperties();
+        Mutator mutator = metaData.getMutator(type);
+
+        for(PropertyBinding property : properties)
+        {
+            //if(property.isKey()) continue;
+
+            Object value = mutator.getValue(entity, property.getJavaName());
+            operation.get(property.getDetypedName()).set(resolveModelType(property.getJavaTypeName()), value);
+        }
+
         return operation;
+    }
+
+    private ModelType resolveModelType(String javaTypeName) {
+
+        ModelType type = null;
+
+        if("java.lang.String".equals(javaTypeName))
+            type = ModelType.STRING;
+        else if("java.lang.Integer".equals(javaTypeName))
+            type = ModelType.INT;
+        if("java.lang.Long".equals(javaTypeName))
+            type = ModelType.LONG;
+        if("java.lang.Boolean".equals(javaTypeName))
+            type = ModelType.BOOLEAN;
+        else
+            throw new RuntimeException("No type resolution for "+ javaTypeName);
+
+        return type;
     }
 
     public List<ModelNode> fromEntityList(List<T> entities)

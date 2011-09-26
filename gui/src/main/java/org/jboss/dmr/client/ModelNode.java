@@ -336,6 +336,38 @@ public class ModelNode implements Cloneable {
         return this;
     }
 
+    public ModelNode set(ModelType type, Object propValue)
+    {
+        checkProtect();
+
+        if(type.equals(ModelType.STRING))
+        {
+            value = new StringModelValue((String)propValue);
+        }
+        else if(type.equals(ModelType.INT))
+        {
+            value = new IntModelValue((Integer)propValue);
+        }
+        else if(type.equals(ModelType.DOUBLE))
+        {
+            value = new DoubleModelValue((Double)propValue);
+        }
+        else if(type.equals(ModelType.LONG))
+        {
+            value = new LongModelValue((Long)propValue);
+        }
+        else if(type.equals(ModelType.BOOLEAN))
+        {
+            value = BooleanModelValue.valueOf((Boolean)propValue);
+        }
+        else
+        {
+            throw new RuntimeException("Type conversion not implemented for "+type);
+        }
+
+        return this;
+    }
+
     /**
      * Change this node's value to the given value.
      *

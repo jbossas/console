@@ -171,6 +171,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
         ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
         System.out.println(">> "+operation);
+
         operation.get(OP).set(ADD);
 
         operation.get("name").set(datasource.getName());
