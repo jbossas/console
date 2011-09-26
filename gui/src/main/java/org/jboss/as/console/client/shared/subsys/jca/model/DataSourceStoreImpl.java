@@ -54,7 +54,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData propertyMetaData;
+    private PropertyMetaData metaData;
     private CurrentProfileSelection currentProfile;
 
     private EntityAdapter<DataSource> dataSourceAdapter;
@@ -69,7 +69,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             CurrentProfileSelection currentProfile) {
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.propertyMetaData = propertyMetaData;
+        this.metaData = propertyMetaData;
         this.currentProfile = currentProfile;
 
 
@@ -81,11 +81,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void loadDataSources(final AsyncCallback<List<DataSource>> callback) {
 
-        ModelNode operation = new ModelNode();
+        AddressBinding address = metaData.getBeanMetaData(DataSource.class).getAddress();
+        ModelNode operation = address.asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(CHILD_TYPE).set("data-source");
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -103,14 +101,31 @@ public class DataSourceStoreImpl implements DataSourceStore {
         });
     }
 
+    public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
+
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode operation =  address.asSubresource(Baseadress.get());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                List<XADataSource> datasources = xaDataSourceAdapter.fromDMRList(response.get(RESULT).asList());
+                callback.onSuccess(datasources);
+
+            }
+        });
+    }
+
     @Override
     public void loadXAProperties(final String dataSourceName, final AsyncCallback<List<PropertyRecord>> callback) {
 
-        ModelNode operation = new ModelNode();
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode operation =  address.asResource(Baseadress.get(), dataSourceName);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("xa-data-source", dataSourceName);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -141,32 +156,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
         });
     }
 
-    public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
-
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(CHILD_TYPE).set("xa-data-source");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-                List<XADataSource> datasources = xaDataSourceAdapter.fromDMRList(response.get(RESULT).asList());
-                callback.onSuccess(datasources);
-
-            }
-        });
-    }
-
     @Override
     public void createDataSource(final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(DataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), datasource.getName());
+        AddressBinding address = metaData.getBeanMetaData(DataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), datasource.getName());
 
         ModelNode operation = dataSourceAdapter.fromEntity(datasource);
         operation.get(OP).set(ADD);
@@ -192,8 +186,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void createXADataSource(XADataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(XADataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), datasource.getName());
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), datasource.getName());
 
         ModelNode operation = xaDataSourceAdapter.fromEntity(datasource);
         operation.get(OP).set(ADD);
@@ -234,8 +228,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void deleteDataSource(final DataSource dataSource, final AsyncCallback<Boolean> callback) {
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(DataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), dataSource.getName());
+        AddressBinding address = metaData.getBeanMetaData(DataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), dataSource.getName());
 
         ModelNode operation = dataSourceAdapter.fromEntity(dataSource);
         operation.get(OP).set(REMOVE);
@@ -259,8 +253,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void deleteXADataSource(XADataSource dataSource, final AsyncCallback<Boolean> callback) {
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(XADataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), dataSource.getName());
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), dataSource.getName());
 
         ModelNode operation = xaDataSourceAdapter.fromEntity(dataSource);
         operation.get(OP).set(REMOVE);
@@ -286,8 +280,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         final String opName = doEnable ? "enable" : "disable";
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(DataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), dataSource.getName());
+        AddressBinding address = metaData.getBeanMetaData(DataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), dataSource.getName());
 
         ModelNode operation = dataSourceAdapter.fromEntity(dataSource);
         operation.get(OP).set(opName);
@@ -319,8 +313,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         final String opName = doEnable ? "enable" : "disable";
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(XADataSource.class).getAddress();
-        ModelNode addressModel =  address.asProtoType(Baseadress.get(), dataSource.getName());
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode addressModel =  address.asResource(Baseadress.get(), dataSource.getName());
 
         ModelNode operation = xaDataSourceAdapter.fromEntity(dataSource);
         operation.get(OP).set(opName);
@@ -353,8 +347,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public void updateDataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(DataSource.class).getAddress();
-        ModelNode addressModel = address.asProtoType(Baseadress.get(), name);
+        AddressBinding address = metaData.getBeanMetaData(DataSource.class).getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), name);
         ModelNode operation = dataSourceAdapter.fromChangeset(changedValues, addressModel);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -376,8 +370,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public void updateXADataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(XADataSource.class).getAddress();
-        ModelNode addressModel = address.asProtoType(Baseadress.get(), name);
+        AddressBinding address = metaData.getBeanMetaData(XADataSource.class).getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), name);
         ModelNode operation = xaDataSourceAdapter.fromChangeset(changedValues, addressModel);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -399,9 +393,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public void loadPoolConfig(boolean isXA, final String name, final AsyncCallback<ResponseWrapper<PoolConfig>> callback) {
 
         String parentAddress = isXA ? "xa-data-source" : "data-source";
-        AddressBinding address = propertyMetaData.getBeanMetaData(PoolConfig.class).getAddress();
+        AddressBinding address = metaData.getBeanMetaData(PoolConfig.class).getAddress();
 
-        ModelNode operation = address.asProtoType(Baseadress.get(), parentAddress, name);
+        ModelNode operation = address.asResource(Baseadress.get(), parentAddress, name);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
@@ -417,7 +411,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
-                EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, propertyMetaData)
+                EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, metaData)
                         .with(new KeyAssignment() {
                             @Override
                             public Object valueForKey(String key) {
@@ -436,8 +430,8 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         String parentAddress = isXA ? "xa-data-source" : "data-source";
 
-        AddressBinding address = propertyMetaData.getBeanMetaData(PoolConfig.class).getAddress();
-        ModelNode addressModel = address.asProtoType(Baseadress.get(), parentAddress, name);
+        AddressBinding address = metaData.getBeanMetaData(PoolConfig.class).getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), parentAddress, name);
 
         ModelNode operation = datasourcePoolAdapter .fromChangeset(changeset, addressModel);
 

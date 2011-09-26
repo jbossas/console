@@ -38,18 +38,30 @@ public class AddressBinding {
         return counter;
     }
 
-    public ModelNode asProtoType(String... args) {
-        return asProtoType(new ModelNode(), args);
+    /**
+     * Turns this address into a ModelNode with an address property.
+     *
+     * @param args parameters for address wildcards
+     * @return a ModelNode with an address property
+     */
+    public ModelNode asResource(String... args) {
+        return asResource(new ModelNode(), args);
     }
 
-    public ModelNode asProtoType(ModelNode baseAddress, String... args) {
+    /**
+     * Turns this address into a ModelNode with an address property.
+     * Allows to specify a base address prefix (i.e server vs. domain addressing).
+     *
+     * @param baseAddress
+     * @param args parameters for address wildcards
+     * @return a ModelNode with an address property
+     */
+    public ModelNode asResource(ModelNode baseAddress, String... args) {
 
         assert getNumWildCards() ==args.length :
                 "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
 
-
         ModelNode model = new ModelNode();
-
         model.get(ADDRESS).set(baseAddress);
 
         int argsCounter = 0;
@@ -76,4 +88,71 @@ public class AddressBinding {
         return model;
     }
 
+    /**
+     * Turns this address into a subresource address,
+     * including the address and child-type properties.
+
+     *
+     * @param args parameters for address wildcards
+     * @return  ModelNode including address and child-type property
+     */
+    public ModelNode asSubresource(String... args) {
+        return asSubresource(new ModelNode(), args);
+    }
+
+    /**
+     * Turns this address into a subresource address,
+     * including the address and child-type properties.
+     * Allows to specify a base address prefix (i.e server vs. domain addressing).
+     *
+     * @param baseAddress
+     * @param args parameters for address wildcards
+     * @return  ModelNode including address and child-type property
+     */
+    public ModelNode asSubresource(ModelNode baseAddress, String... args) {
+
+        assert getNumWildCards()-1 == args.length :
+                "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
+
+        ModelNode model = new ModelNode();
+        model.get(ADDRESS).set(baseAddress);
+
+        int argsCounter = 0;
+
+        for(int i=0; i<address.size()-1; i++)
+        {
+            String[] tuple = address.get(i);
+
+            String parent = tuple[0];
+            String child = tuple[1];
+
+            if(parent.startsWith("{"))
+            {
+                parent = args[argsCounter];
+                argsCounter++;
+            }
+
+            if(child.startsWith("{"))
+            {
+                child = args[argsCounter];
+                argsCounter++;
+            }
+
+            model.get(ADDRESS).add(parent, child);
+        }
+
+        String[] lastTuple = address.get(address.size()-1);
+        String childType = lastTuple[0];
+
+        if(childType.startsWith("{"))
+        {
+            childType = args[argsCounter];
+            argsCounter++;
+        }
+
+        model.get(CHILD_TYPE).set(childType);
+
+        return model;
+
+    }
 }
