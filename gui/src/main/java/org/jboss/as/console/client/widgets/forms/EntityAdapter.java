@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.widgets.forms;
 
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
@@ -26,7 +25,6 @@ public class EntityAdapter<T> {
     private Class<?> type;
     private PropertyMetaData metaData;
     private KeyAssignment keyAssignment = null;
-    private ModelNode baseAddress = null;
 
     public EntityAdapter(Class<?> type, PropertyMetaData metaData) {
         this.type = type;
@@ -39,14 +37,10 @@ public class EntityAdapter<T> {
         return this;
     }
 
-    public EntityAdapter<T> with(ModelNode baseAddress)
-    {
-        this.baseAddress = baseAddress;
-        return this;
-    }
-
     /**
-     * A ModelNode can be either of type <tt>ModelType.Object</tt> or <tt>ModelType.Property</tt>
+     * A ModelNode can be either of type <tt>ModelType.Object</tt> or <tt>ModelType.Property</tt>.
+     * Typically it's just the payload of a DMR response (ModelNode.get(RESULT))
+     *
      * @param dmr  a ModelNode
      * @return an entity representation of type T
      */
@@ -186,12 +180,16 @@ public class EntityAdapter<T> {
         return entities;
     }
 
-    public ModelNode fromEntity(T entity, String... addressArgs)
+    /**
+     * Create a plain DMR representation of an entity.
+     * Plain means w/o the address and operation property.
+     *
+     * @param entity
+     * @return
+     */
+    public ModelNode fromEntity(T entity)
     {
-        AddressBinding address = metaData.getBeanMetaData(type).getAddress();
-        ModelNode operation = baseAddress!=null ?
-                address.asProtoType(baseAddress, addressArgs) : address.asProtoType(addressArgs);
-
+        ModelNode operation = new ModelNode();
         List<PropertyBinding> properties = metaData.getBeanMetaData(type).getProperties();
         Mutator mutator = metaData.getMutator(type);
 
@@ -235,7 +233,8 @@ public class EntityAdapter<T> {
     }
 
     /**
-     * Creates a composite operation to create entities
+     * Creates a composite operation to create entities.
+     * Basically calls {@link #fromEntity(Object)}
      *
      * @param entities
      * @return a composite ModelNode structure
@@ -261,16 +260,14 @@ public class EntityAdapter<T> {
      * Turns a changeset into a composite write attribute operation.
      *
      * @param changeSet
-     * @param addressArgs arguments
+     * @param address the entity address
      * @return composite operation
      */
-    public ModelNode fromChangeset(Map<String, Object> changeSet, String... addressArgs)
+    public ModelNode fromChangeset(Map<String, Object> changeSet, ModelNode address)
     {
 
-        AddressBinding address = metaData.getBeanMetaData(type).getAddress();
-        ModelNode protoType = baseAddress!=null ?
-                address.asProtoType(baseAddress, addressArgs) : address.asProtoType(addressArgs);
-
+        ModelNode protoType = new ModelNode();
+        protoType.get(ADDRESS).set(address.get(ADDRESS));
         protoType.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
         ModelNode operation = new ModelNode();
@@ -323,5 +320,4 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-
 }
