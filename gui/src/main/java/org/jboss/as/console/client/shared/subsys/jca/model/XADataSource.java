@@ -29,7 +29,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/4/11
  */
-@Address("/subsystem=datasources/xa-data-source=*")
+@Address("/subsystem=datasources/xa-data-source={0}")
 public interface XADataSource extends DataSource {
 
     @Binding(detypedName = "xa-data-source-class")

@@ -106,6 +106,8 @@ public class NewDatasourceWizard {
         updatedEntity.setMajorVersion(driverAttributes.getMajorVersion());
         updatedEntity.setMinorVersion(driverAttributes.getMinorVersion());
 
+        updatedEntity.setPoolName(baseAttributes.getName()+"_Pool");
+
         presenter.onCreateNewDatasource(updatedEntity);
     }
 

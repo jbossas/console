@@ -170,11 +170,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
         ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
-
         operation.get(OP).set(ADD);
-        operation.get("pool-name").set(datasource.getName()+"_Pool");
-
-        System.out.println(">> "+operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -195,29 +191,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     @Override
     public void createXADataSource(XADataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
-        ModelNode operation = new ModelNode();
+
+        EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
+        ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
         operation.get(OP).set(ADD);
-        operation.get(ADDRESS).set(getBaseAddress());
-        operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("xa-data-source", datasource.getName());
-
-
-        operation.get("name").set(datasource.getName());
-        operation.get("jndi-name").set(datasource.getJndiName());
-        operation.get("enabled").set(datasource.isEnabled());
-
-//        operation.get("xa-data-source-class").set(datasource.getDataSourceClass());
-
-        operation.get("driver-name").set(datasource.getDriverName());
-        operation.get("driver-class-name").set(datasource.getDriverClass());
-        operation.get("driver-major-version").set(datasource.getMajorVersion());
-        operation.get("driver-minor-version").set(datasource.getMinorVersion());
-
-        operation.get("pool-name").set(datasource.getName()+"_Pool");
-        operation.get("user-name").set(datasource.getUsername());
-        String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
-        operation.get("password").set(pw);
-
 
         // properties
         if(datasource.getProperties()!=null)
