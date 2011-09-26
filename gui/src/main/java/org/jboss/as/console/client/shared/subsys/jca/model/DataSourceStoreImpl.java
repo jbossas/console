@@ -33,13 +33,11 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
-import org.jboss.as.console.client.widgets.forms.PrototypeFactory;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +89,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
                 EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
-                List<DataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList(), new PrototypeFactory<DataSource>() {
-                    @Override
-                    public DataSource create() {
-                        return factory.dataSource().as();
-                    }
-                });
+                List<DataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList());
                 callback.onSuccess(datasources);
             }
         });
@@ -165,14 +158,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                 ModelNode response  = ModelNode.fromBase64(result.getResponseText());
 
                 EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
-                List<XADataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList(), new PrototypeFactory<XADataSource>() {
-                    @Override
-                    public XADataSource create() {
-                        XADataSource entity = factory.xaDataSource().as();
-                        entity.setProperties(Collections.EMPTY_LIST); // TODO: Submodel parsing
-                        return entity;
-                    }
-                });
+                List<XADataSource> datasources = adapter.fromDMRList(response.get(RESULT).asList());
 
                 callback.onSuccess(datasources);
             }
@@ -473,7 +459,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
                                 return name;
                             }
                         });
-                PoolConfig poolConfig = adapter.fromDMR(response.get(RESULT), factory.poolConfig().as());
+                PoolConfig poolConfig = adapter.fromDMR(response.get(RESULT));
                 callback.onSuccess(new ResponseWrapper<PoolConfig>(poolConfig, response));
 
             }

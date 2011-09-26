@@ -10,3 +10,4 @@ gui/war/app
 gui/war/dmr_gwt
 gui/src/main/java/org/jboss/as/console/App.gwt.xml
 
+gui/generated

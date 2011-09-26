@@ -29,4 +29,5 @@ public interface PropertyMetaData {
     List<PropertyBinding> getBindingsForType(Class<?> type);
     BeanMetaData getBeanMetaData(Class<?> type);
     Mutator getMutator(Class<?> type);
+    <T> EntityFactory<T> getFactory(Class<T> type);
 }

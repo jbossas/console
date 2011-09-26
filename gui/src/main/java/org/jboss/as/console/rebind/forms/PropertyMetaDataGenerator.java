@@ -141,9 +141,11 @@ public class PropertyMetaDataGenerator extends Generator{
         sourceWriter.println("private Map<Class<?>, List<PropertyBinding>> registry = new HashMap<Class<?>,List<PropertyBinding>>();");
         sourceWriter.println("private Map<Class<?>, AddressBinding> addressing= new HashMap<Class<?>, AddressBinding>();");
         sourceWriter.println("private Map<Class<?>, Mutator> mutators = new HashMap<Class<?>, Mutator>();");
+        sourceWriter.println("private Map<Class<?>, EntityFactory> factories = new HashMap<Class<?>, EntityFactory>();");
+        sourceWriter.println("private "+BEAN_FACTORY_NAME+" beanFactory = com.google.gwt.core.client.GWT.create("+BEAN_FACTORY_NAME+".class);");
     }
 
-    private void generateConstructor(TreeLogger logger, GeneratorContext context , SourceWriter sourceWriter)
+    private void generateConstructor(TreeLogger logger, GeneratorContext context, SourceWriter sourceWriter)
     {
         // start constructor source generation
         sourceWriter.println("public " + className + "() { ");
@@ -185,7 +187,7 @@ public class PropertyMetaDataGenerator extends Generator{
 
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
-                            sourceWriter.println("new PropertyBinding(\""+decl.getJavaName()+"\", \""+decl.getDetypedName()+"\", \"" + decl.getJavaTypeName() + "\", "+decl.key()+")");
+                            sourceWriter.println("new PropertyBinding(\"" + decl.getJavaName() + "\", \"" + decl.getDetypedName() + "\", \"" + decl.getJavaTypeName() + "\", " + decl.key() + ")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -211,9 +213,19 @@ public class PropertyMetaDataGenerator extends Generator{
                             sourceWriter.println("addr_"+idx+".add(\""+token[0]+"\", \""+token[1]+"\");");
                         }
 
+                        // -----------------------------
+                        // Factory lookup
+                        sourceWriter.println("factories.put("+beanTypeClass.getName()+".class, new EntityFactory<"+beanTypeClass.getName()+">() {\n" +
+                                        "public "+beanTypeClass.getName()+" create() {\n" +
+                                            "return beanFactory."+method.getName()+"().as();\n"+
+                                        "}\n"+
+                                "});\n");
+
+
                         sourceWriter.println("");
                         sourceWriter.println("");
                         sourceWriter.println("// ---- End " +beanTypeClass.getName() +" ----");
+
                     }
                 }
 
@@ -337,6 +349,12 @@ public class PropertyMetaDataGenerator extends Generator{
         sourceWriter.println("public Mutator getMutator(Class<?> type) { ");
         sourceWriter.indent();
         sourceWriter.println("return mutators.get(type);");
+        sourceWriter.outdent();
+        sourceWriter.println("}");
+
+        sourceWriter.println("public <T> EntityFactory<T> getFactory(Class<T> type) {");
+        sourceWriter.indent();
+        sourceWriter.println("return factories.get(type);");
         sourceWriter.outdent();
         sourceWriter.println("}");
     }

@@ -28,10 +28,11 @@ public class EntityAdapter<T> {
         return this;
     }
 
-    public T fromDMR(ModelNode dmr, T protoType) {
+    public T fromDMR(ModelNode dmr) {
 
         String key = null;
         ModelNode actualPayload = null;
+        T protoType = (T)metaData.getFactory(type).create();
 
         if(ModelType.OBJECT.equals(dmr.getType()))
         {
@@ -140,13 +141,13 @@ public class EntityAdapter<T> {
         return protoType;
     }
 
-    public List<T> fromDMRList(List<ModelNode> dmr, PrototypeFactory<T> factory) {
+    public List<T> fromDMRList(List<ModelNode> dmr) {
 
         List<T> entities = new ArrayList<T>();
 
         for(ModelNode item : dmr)
         {
-            entities.add(fromDMR(item, factory.create()));
+            entities.add(fromDMR(item));
         }
 
         return entities;
