@@ -199,6 +199,17 @@ public class PropertyMetaDataGenerator extends Generator{
                                         "}\n"+
                                     "});\n");
 
+                             // create and register getters
+
+                            String prefix = "get";
+                            if(decl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
+
+                            sourceWriter.println("mut_"+idx+".register(\"" + decl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public Object invoke("+decl.getBeanClassName()+" entity) {\n" +
+                                            "   return entity."+prefix+decl.getPropertyName()+"();\n"+
+                                        "}\n"+
+                                    "});\n");
+
                         }
 
                         // -----------------------------

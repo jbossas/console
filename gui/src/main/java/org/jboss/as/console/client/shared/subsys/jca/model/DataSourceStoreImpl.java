@@ -170,25 +170,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
         EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
         ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
-        System.out.println(">> "+operation);
 
         operation.get(OP).set(ADD);
-
-        operation.get("name").set(datasource.getName());
-        operation.get("jndi-name").set(datasource.getJndiName());
-        operation.get("enabled").set(datasource.isEnabled());
-
-        operation.get("driver-name").set(datasource.getDriverName());
-        operation.get("driver-class-name").set(datasource.getDriverClass());
-        operation.get("driver-major-version").set(datasource.getMajorVersion());
-        operation.get("driver-minor-version").set(datasource.getMinorVersion());
         operation.get("pool-name").set(datasource.getName()+"_Pool");
 
-        operation.get("connection-url").set(datasource.getConnectionUrl());
-        operation.get("user-name").set(datasource.getUsername());
-
-        String pw = datasource.getPassword() != null ? datasource.getPassword() : "";
-        operation.get("password").set(pw);
+        System.out.println(">> "+operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

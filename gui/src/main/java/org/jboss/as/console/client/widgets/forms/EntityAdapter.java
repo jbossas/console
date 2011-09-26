@@ -185,10 +185,18 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding property : properties)
         {
-            //if(property.isKey()) continue;
+            // TODO: How to deal with keys?
+            if(property.isKey()) continue;
 
             Object value = mutator.getValue(entity, property.getJavaName());
-            operation.get(property.getDetypedName()).set(resolveModelType(property.getJavaTypeName()), value);
+            if(value!=null)
+            {
+                try {
+                    operation.get(property.getDetypedName()).set(resolveModelType(property.getJavaTypeName()), value);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Failed to get value "+property.getJavaName(), e);
+                }
+            }
         }
 
         return operation;
@@ -202,12 +210,14 @@ public class EntityAdapter<T> {
             type = ModelType.STRING;
         else if("java.lang.Integer".equals(javaTypeName))
             type = ModelType.INT;
-        if("java.lang.Long".equals(javaTypeName))
+        else if("java.lang.Long".equals(javaTypeName))
             type = ModelType.LONG;
-        if("java.lang.Boolean".equals(javaTypeName))
+        else if("java.lang.Boolean".equals(javaTypeName))
             type = ModelType.BOOLEAN;
+        else if("java.lang.Double".equals(javaTypeName))
+            type = ModelType.DOUBLE;
         else
-            throw new RuntimeException("No type resolution for "+ javaTypeName);
+            throw new RuntimeException("Failed to resolve ModelType for '"+ javaTypeName+"'");
 
         return type;
     }

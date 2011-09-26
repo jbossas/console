@@ -22,11 +22,11 @@ public interface PoolConfig {
     void setMinPoolSize(int min);
 
     @Binding(detypedName = "pool-prefill")
-    boolean getPoolPrefill();
+    boolean isPoolPrefill();
     void setPoolPrefill(boolean b);
 
     @Binding(detypedName = "pool-use-strict-min")
-    boolean getPoolStrictMin();
+    boolean isPoolStrictMin();
     void setPoolStrictMin(boolean b);
 
 

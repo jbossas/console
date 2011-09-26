@@ -65,11 +65,11 @@ public interface DataSource {
     String getDriverName();
     void setDriverName(String driver);
 
-    boolean getJta();
+    boolean isJta();
     void setJta(boolean b);
 
     @Binding(detypedName = "use-ccm")
-    boolean getCcm();
+    boolean isCcm();
     void setCcm(boolean b);
 
     @Binding(skip = true)

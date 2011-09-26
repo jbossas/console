@@ -338,27 +338,25 @@ public class ModelNode implements Cloneable {
 
     public ModelNode set(ModelType type, Object propValue)
     {
-        checkProtect();
-
         if(type.equals(ModelType.STRING))
         {
-            value = new StringModelValue((String)propValue);
+            set((String)propValue);
         }
         else if(type.equals(ModelType.INT))
         {
-            value = new IntModelValue((Integer)propValue);
+            set((Integer)propValue);
         }
         else if(type.equals(ModelType.DOUBLE))
         {
-            value = new DoubleModelValue((Double)propValue);
+            set((Double)propValue);
         }
         else if(type.equals(ModelType.LONG))
         {
-            value = new LongModelValue((Long)propValue);
+            set((Long)propValue);
         }
         else if(type.equals(ModelType.BOOLEAN))
         {
-            value = BooleanModelValue.valueOf((Boolean)propValue);
+            set((Boolean)propValue);
         }
         else
         {

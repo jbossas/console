@@ -41,15 +41,15 @@ public interface XADataSource extends DataSource {
     void setProperties(List<PropertyRecord> props);
 
     @Binding(skip=true) // does not exist on XA datasources
-    boolean getJta();
+    boolean isJta();
     void setJta(boolean b);
 
     @Binding(detypedName = "pad-xid")
-    boolean getPadXid();
+    boolean isPadXid();
     void setPadXid(boolean b);
 
     @Binding(detypedName = "wrap-xa-resource")
-    boolean getWrapXaResource();
+    boolean isWrapXaResource();
     void setWrapXaResource(boolean b);
 
 }
