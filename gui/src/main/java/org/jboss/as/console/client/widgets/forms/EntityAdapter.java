@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
@@ -25,6 +26,7 @@ public class EntityAdapter<T> {
     private Class<?> type;
     private PropertyMetaData metaData;
     private KeyAssignment keyAssignment = null;
+    private ModelNode baseAddress = null;
 
     public EntityAdapter(Class<?> type, PropertyMetaData metaData) {
         this.type = type;
@@ -34,6 +36,12 @@ public class EntityAdapter<T> {
     public EntityAdapter<T> with(KeyAssignment keyAssignment)
     {
         this.keyAssignment = keyAssignment;
+        return this;
+    }
+
+    public EntityAdapter<T> with(ModelNode baseAddress)
+    {
+        this.baseAddress = baseAddress;
         return this;
     }
 
@@ -65,7 +73,7 @@ public class EntityAdapter<T> {
         }
         else
         {
-            throw new IllegalArgumentException("Unknown ModelType "+dmr.getType());
+            throw new IllegalArgumentException("Unknown ModelType "+dmr.getType()+": "+dmr);
         }
 
         BeanMetaData beanMetaData = metaData.getBeanMetaData(type);
@@ -78,14 +86,17 @@ public class EntityAdapter<T> {
 
             try
             {
-
-                //System.out.println(propBinding);
-
                 if(propBinding.isKey())
                 {
                     if(keyAssignment!=null)
                     {
+                        // typically keys are
                         value = keyAssignment.valueForKey(propBinding.getJavaName());
+                    }
+                    else if(dmr.hasDefined(propBinding.getDetypedName()))
+                    {
+                        // keys are required to be strings (part of the address..)
+                        value = actualPayload.get(propBinding.getDetypedName()).asString();
                     }
                     else
                     {
@@ -178,7 +189,8 @@ public class EntityAdapter<T> {
     public ModelNode fromEntity(T entity, String... addressArgs)
     {
         AddressBinding address = metaData.getBeanMetaData(type).getAddress();
-        ModelNode operation = address.asProtoType(addressArgs);
+        ModelNode operation = baseAddress!=null ?
+                address.asProtoType(baseAddress, addressArgs) : address.asProtoType(addressArgs);
 
         List<PropertyBinding> properties = metaData.getBeanMetaData(type).getProperties();
         Mutator mutator = metaData.getMutator(type);
@@ -245,7 +257,6 @@ public class EntityAdapter<T> {
         return operation;
     }
 
-
     /**
      * Turns a changeset into a composite write attribute operation.
      *
@@ -257,7 +268,9 @@ public class EntityAdapter<T> {
     {
 
         AddressBinding address = metaData.getBeanMetaData(type).getAddress();
-        ModelNode protoType = address.asProtoType(addressArgs);
+        ModelNode protoType = baseAddress!=null ?
+                address.asProtoType(baseAddress, addressArgs) : address.asProtoType(addressArgs);
+
         protoType.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
         ModelNode operation = new ModelNode();

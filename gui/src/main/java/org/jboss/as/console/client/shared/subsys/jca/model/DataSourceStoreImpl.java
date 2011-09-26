@@ -29,10 +29,10 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -169,7 +169,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void createDataSource(final DataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+        EntityAdapter<DataSource> adapter =
+                new EntityAdapter<DataSource>(DataSource.class, propertyMetaData)
+                .with(Baseadress.get());
+
         ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
         operation.get(OP).set(ADD);
 
@@ -193,7 +196,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void createXADataSource(XADataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
+        EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData)
+                .with(Baseadress.get());
+
         ModelNode operation = adapter.fromEntity(datasource, datasource.getName());
         operation.get(OP).set(ADD);
 
@@ -345,7 +350,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void updateDataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        EntityAdapter<DataSource> adapter = new EntityAdapter<DataSource>(DataSource.class, propertyMetaData);
+        EntityAdapter<DataSource> adapter =
+                new EntityAdapter<DataSource>(DataSource.class, propertyMetaData)
+                .with(Baseadress.get());
+
         ModelNode operation = adapter.fromChangeset(changedValues, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -366,7 +374,10 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void updateXADataSource(String name, Map<String, Object> changedValues, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
-        EntityAdapter<XADataSource> adapter = new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData);
+        EntityAdapter<XADataSource> adapter =
+                new EntityAdapter<XADataSource>(XADataSource.class, propertyMetaData)
+                .with(Baseadress.get());
+
         ModelNode operation = adapter.fromChangeset(changedValues, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -390,7 +401,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         String parentAddress = isXA ? "xa-data-source" : "data-source";
         AddressBinding address = propertyMetaData.getBeanMetaData(PoolConfig.class).getAddress();
 
-        ModelNode operation = address.asProtoType(parentAddress, name);
+        ModelNode operation = address.asProtoType(Baseadress.get(), parentAddress, name);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
@@ -424,7 +435,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public void savePoolConfig(boolean isXA, String name, Map<String, Object> changeset, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
         String parentAddress = isXA ? "xa-data-source" : "data-source";
-        EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, propertyMetaData);
+        EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, propertyMetaData)
+                .with(Baseadress.get());
+
         ModelNode operation = adapter.fromChangeset(changeset, parentAddress, name);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {

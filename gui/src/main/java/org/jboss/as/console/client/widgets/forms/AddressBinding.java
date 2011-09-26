@@ -39,11 +39,18 @@ public class AddressBinding {
     }
 
     public ModelNode asProtoType(String... args) {
+        return asProtoType(new ModelNode(), args);
+    }
+
+    public ModelNode asProtoType(ModelNode baseAddress, String... args) {
 
         assert getNumWildCards() ==args.length :
                 "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
 
+
         ModelNode model = new ModelNode();
+
+        model.get(ADDRESS).set(baseAddress);
 
         int argsCounter = 0;
         for(String[] tuple : address)
@@ -65,6 +72,7 @@ public class AddressBinding {
 
             model.get(ADDRESS).add(parent, child);
         }
+
         return model;
     }
 
