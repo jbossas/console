@@ -15,7 +15,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;

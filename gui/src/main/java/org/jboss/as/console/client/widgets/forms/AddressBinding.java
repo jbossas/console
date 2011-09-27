@@ -8,6 +8,10 @@ import java.util.List;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * Represents entity address meta data, that declared using the {@link Address} annotation.<br/>
+ * Address declarations may contain wildcards. An AddressBinding supports replacement of
+ * wildcards with proper address values when turned into {@link ModelNode} representations.
+ *
  * @author Heiko Braun
  * @date 9/23/11
  */
