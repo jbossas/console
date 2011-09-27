@@ -50,6 +50,9 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -74,8 +77,12 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private MessagingProvider providerEntity;
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
-    private PropertyMetaData propertyMetaData;
+    private PropertyMetaData metaData;
     private List<SecurityPattern> securitySettings = new ArrayList<SecurityPattern>();
+
+    private EntityAdapter<MessagingProvider> providerAdapter;
+    private EntityAdapter<SecurityPattern> securityAdapter;
+    private EntityAdapter<AddressingPattern> addressingAdapter;
 
     public String getCurrentServer() {
         return "default";
@@ -115,7 +122,22 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
-        this.propertyMetaData = propertyMetaData;
+        this.metaData = propertyMetaData;
+
+        this.providerAdapter = new EntityAdapter<MessagingProvider>(
+                MessagingProvider.class,
+                propertyMetaData
+        );
+
+        this.securityAdapter = new EntityAdapter<SecurityPattern>(
+                SecurityPattern.class,
+                propertyMetaData
+        );
+
+        this.addressingAdapter = new EntityAdapter<AddressingPattern>(
+                AddressingPattern.class,
+                propertyMetaData
+        );
     }
 
     @Override
@@ -129,77 +151,35 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     protected void onReset() {
         super.onReset();
         loadProviderDetails();
-        loadSecurityConfig();
+        loadSecurityConfig("#");
         loadAddressingConfig();
         loadJMSConfig();
     }
 
     private void loadProviderDetails() {
-        ModelNode operation = new ModelNode();
+
+        AddressBinding address = metaData.getBeanMetaData(MessagingProvider.class).getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), getCurrentServer());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(RECURSIVE).set(Boolean.TRUE);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode model = response.get("result").asObject();
-
-                MessagingProvider provider = factory.messagingProvider().as();
-                provider.setName(getCurrentServer());
-
-                provider.setPersistenceEnabled(model.get("persistence-enabled").asBoolean());
-                provider.setSecurityEnabled(model.get("security-enabled").asBoolean());
-                provider.setMessageCounterEnabled(model.get("message-counter-enabled").asBoolean());
-
-                // socket binding ref
-                if(model.hasDefined("connector"))
-                {
-                    List<Property> connectorPropList = model.get("connector").asPropertyList();
-                    for(Property connectorProp : connectorPropList)
-                    {
-                        if("netty".equals(connectorProp.getName()))
-                        {
-                            String socketBinding = connectorProp.getValue().asObject().get("socket-binding").asString();
-                            provider.setConnectorBinding(socketBinding);
-                        }
-                    }
-                }
-
-                if(model.hasDefined("acceptor"))
-                {
-                    List<Property> acceptorPropList = model.get("acceptor").asPropertyList();
-                    for(Property acceptorProp : acceptorPropList)
-                    {
-                        if("netty".equals(acceptorProp.getName()))
-                        {
-                            String socketBinding = acceptorProp.getValue().asObject().get("socket-binding").asString();
-                            provider.setAcceptorBinding(socketBinding);
-                        }
-                    }
-                }
-
-                providerEntity = provider;
+                MessagingProvider provider = providerAdapter.fromDMR(response.get(RESULT));
                 getView().setProviderDetails(provider);
 
             }
         });
     }
 
-    private void loadSecurityConfig() {
+    private void loadSecurityConfig(final String pattern) {
 
-        //  /subsystem=messaging/hornetq-server=default:read-children-resources(child-type=security-setting)
-        ModelNode operation = new ModelNode();
+        AddressBinding address = metaData.getBeanMetaData(SecurityPattern.class).getAddress();
+        ModelNode operation = address.asSubresource(Baseadress.get(), getCurrentServer(), pattern);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(RECURSIVE).set(Boolean.TRUE);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
-        operation.get(CHILD_TYPE).set("security-setting");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -207,43 +187,19 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                List<Property> payload = response.get(RESULT).asPropertyList();
-                List<SecurityPattern> secPatterns = new ArrayList<SecurityPattern>();
-
-                for(Property prop : payload)
-                {
-                    String pattern = prop.getName();
-                    List<Property> roles = prop.getValue().asPropertyList();
-
-                    for(Property role : roles) {
-                        if("role".equals(role.getName()) && role.getValue().isDefined())
-                        {
-                            List<Property> permList = role.getValue().asPropertyList();
-
-                            for(Property perm : permList)
-                            {
-                                ModelNode permValue = perm.getValue().asObject();
-                                SecurityPattern model = factory.messagingSecurity().as();
-                                model.setPattern(pattern);
-                                model.setRole(perm.getName());
-
-                                model.setSend(permValue.get("send").asBoolean());
-                                model.setConsume(permValue.get("consume").asBoolean());
-                                model.setManage(permValue.get("manage").asBoolean());
-                                model.setCreateDurableQueue(permValue.get("create-durable-queue").asBoolean());
-                                model.setDeleteDurableQueue(permValue.get("delete-durable-queue").asBoolean());
-                                model.setCreateNonDurableQueue(permValue.get("create-non-durable-queue").asBoolean());
-                                model.setDeleteNonDurableQueue(permValue.get("delete-non-durable-queue").asBoolean());
-
-                                secPatterns.add(model);
+                List<SecurityPattern> patterns =
+                        securityAdapter.with(new KeyAssignment() {
+                            @Override
+                            public Object valueForKey(String key) {
+                                String result = null;
+                                if ("pattern".equals(key)) {
+                                    result = pattern;
+                                }
+                                return result;
                             }
-                        }
-                    }
+                        }).fromDMRList(response.get(RESULT).asList());
 
-                }
-
-                securitySettings = secPatterns;
-                getView().setSecurityConfig(secPatterns);
+                getView().setSecurityConfig(patterns);
 
             }
         });
@@ -317,7 +273,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         window.center();
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-1892
     public void onCreateSecPattern(final SecurityPattern newEntity) {
         closeDialogue();
 
@@ -325,8 +280,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         composite .get(OP).set(COMPOSITE);
         composite .get(ADDRESS).setEmptyList();
         List<ModelNode> steps = new ArrayList<ModelNode>();
-        
+
         // the parent resourc, if needed
+
         boolean parentDoesExist = false;
         for(SecurityPattern setting : securitySettings)
         {
@@ -336,7 +292,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 break;
             }
         }
-        
+
         if(!parentDoesExist)
         {
             // insert a step to create the parent
@@ -349,7 +305,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             steps.add(createParentOp);
         }
-        
+
         // the child resource
 
         ModelNode createChildOp = new ModelNode();
@@ -365,7 +321,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         createChildOp.get("manage").set(newEntity.isManage());
 
         steps.add(createChildOp);
-        
+
         composite.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
@@ -379,7 +335,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.added("security setting"+newEntity.getPattern()), response.toString());
 
-                loadSecurityConfig();
+                loadSecurityConfig("#");
             }
         });
     }
@@ -393,7 +349,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("security-setting", pattern.getPattern());
         proto.get(ADDRESS).add("role", pattern.getRole());
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(SecurityPattern.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(SecurityPattern.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -406,7 +362,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.saveFailed("security setting " + pattern.getPattern()), response.getResponse().toString());
 
-                loadSecurityConfig();
+                loadSecurityConfig("#");
             }
         });
     }
@@ -431,7 +387,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.deletionFailed("security setting " + pattern.getPattern()), response.toString());
 
-                loadSecurityConfig();
+                loadSecurityConfig("#");
             }
         });
     }
@@ -487,7 +443,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("address-setting", entity.getPattern());
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(AddressingPattern.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(AddressingPattern.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         System.out.println(operation);
@@ -661,7 +617,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         //if(changedValues.containsKey("selector") && changedValues.get("selector").equals(""))
         //    changedValues.put("selector", "undefined");
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Queue.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(Queue.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -791,7 +747,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.deletionFailed("topic " + entity.getName()), response.toString());
 
-               loadJMSConfig();
+                loadJMSConfig();
             }
         });
     }
@@ -812,7 +768,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-topic", name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(JMSEndpoint.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(JMSEndpoint.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -901,7 +857,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("subsystem", "messaging");
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(MessagingProvider.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(MessagingProvider.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

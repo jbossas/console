@@ -19,12 +19,14 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
  * @date 5/10/11
  */
+@Address("/subsystem=messaging/hornetq-server={0}")
 public interface MessagingProvider {
 
     String getName();

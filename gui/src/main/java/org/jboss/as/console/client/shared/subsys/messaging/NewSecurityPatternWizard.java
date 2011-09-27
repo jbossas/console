@@ -67,7 +67,7 @@ public class NewSecurityPatternWizard {
         CheckBoxItem consume = new CheckBoxItem("consume", "Consume?");
         CheckBoxItem manage= new CheckBoxItem("manage", "Manage?");
 
-        form.setFields(principal, pattern, send, consume, manage);
+        form.setFields(pattern, principal, send, consume, manage);
 
          FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
             @Override

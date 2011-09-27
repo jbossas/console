@@ -46,9 +46,10 @@ public class EntityAdapter<T> {
      */
     public T fromDMR(ModelNode dmr) {
 
-        String key = null;
         ModelNode actualPayload = null;
         T protoType = (T)metaData.getFactory(type).create();
+
+        KeyAssignment keyDelegation = null;
 
         if(ModelType.OBJECT.equals(dmr.getType()))
         {
@@ -57,12 +58,25 @@ public class EntityAdapter<T> {
         else if(ModelType.PROPERTY.equals(dmr.getType()))
         {
             final Property property = dmr.asProperty();
-            this.keyAssignment = new KeyAssignment() {
+
+            keyDelegation = new KeyAssignment() {
                 @Override
                 public Object valueForKey(String key) {
-                    return property.getName();
+
+                    Object resolvedValue = null;
+
+                    // use delegate
+                    if(keyAssignment!=null)
+                        resolvedValue = keyAssignment.valueForKey(key);
+
+                    // if delegate fails, fallback to property name
+                    if(null==resolvedValue)
+                        resolvedValue = property.getName();
+
+                    return resolvedValue;
                 }
             };
+
             actualPayload = property.getValue();
         }
         else
@@ -82,7 +96,17 @@ public class EntityAdapter<T> {
             {
                 if(propBinding.isKey())
                 {
-                    if(keyAssignment!=null)
+                    // key resolution strategy:
+                    // a, external KeyAssignment with fallback to property name (for property types)
+                    // b, external KeyAssignment
+                    // c, resolution of a matching property
+                    // d, failure
+
+                    if(keyDelegation!=null)
+                    {
+                        value = keyDelegation.valueForKey(propBinding.getJavaName());
+                    }
+                    else if(keyAssignment!=null)
                     {
                         // typically keys are
                         value = keyAssignment.valueForKey(propBinding.getJavaName());

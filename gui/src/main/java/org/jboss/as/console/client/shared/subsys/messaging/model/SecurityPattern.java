@@ -19,17 +19,22 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
  * @date 5/10/11
  */
+//@Address("/subsystem=messaging/hornetq-server={0}/security-setting={1}")
+@Address("/subsystem=messaging/hornetq-server={0}/security-setting={1}/role={2}")
 public interface SecurityPattern {
 
+    @Binding(key=true)
     public String getPattern() ;
     public void setPattern(String pattern);
 
+    @Binding(key=true)
     public String getRole() ;
     public void setRole(String role);
 
