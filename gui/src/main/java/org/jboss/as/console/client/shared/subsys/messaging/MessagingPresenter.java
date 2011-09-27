@@ -333,7 +333,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("security setting"));
                 else
-                    Console.error(Console.MESSAGES.added("security setting"+newEntity.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("security setting"+newEntity.getPattern()), response.toString());
 
                 loadSecurityConfig("#");
             }
