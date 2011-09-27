@@ -51,7 +51,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class DataSourceStoreImpl implements DataSourceStore {
 
-
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData metaData;

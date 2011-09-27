@@ -49,8 +49,8 @@ public class AddressBinding {
     }
 
     /**
-     * Turns this address into a ModelNode with an address property.
-     * Allows to specify a base address prefix (i.e server vs. domain addressing).
+     * Turns this address into a ModelNode with an address property.<br/>
+     * This method allows to specify a base address prefix (i.e server vs. domain addressing).
      *
      * @param baseAddress
      * @param args parameters for address wildcards
@@ -102,8 +102,10 @@ public class AddressBinding {
 
     /**
      * Turns this address into a subresource address,
-     * including the address and child-type properties.
-     * Allows to specify a base address prefix (i.e server vs. domain addressing).
+     * including the address and child-type properties.<br/>
+     * The child-type is derived from the last address token qualifier.
+     *
+     * This method allows to specify a base address prefix (i.e server vs. domain addressing).
      *
      * @param baseAddress
      * @param args parameters for address wildcards
@@ -111,8 +113,11 @@ public class AddressBinding {
      */
     public ModelNode asSubresource(ModelNode baseAddress, String... args) {
 
-        assert getNumWildCards()-1 == args.length :
-                "Address arguments don't match number of wildcards: "+args.length+","+getNumWildCards();
+        int numWildCards = getNumWildCards();
+        int wildcards = (numWildCards - 1) > 0 ? numWildCards-1 : 0;
+
+        assert wildcards == args.length :
+                "Address arguments don't match number of wildcards: "+args.length+","+wildcards;
 
         ModelNode model = new ModelNode();
         model.get(ADDRESS).set(baseAddress);

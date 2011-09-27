@@ -27,9 +27,11 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -60,7 +62,7 @@ public class ResourceAdapterPresenter
     private DefaultWindow propertyWindow;
 
     private List<ResourceAdapter> resourceAdapters;
-    private PropertyMetaData propertyMetaData;
+    private PropertyMetaData metaData;
 
     public BeanFactory getFactory() {
         return factory;
@@ -90,7 +92,7 @@ public class ResourceAdapterPresenter
         this.revealStrategy = revealStrategy;
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.propertyMetaData = propertyMetaData;
+        this.metaData = propertyMetaData;
     }
 
     @Override
@@ -100,11 +102,10 @@ public class ResourceAdapterPresenter
     }
 
     private void loadResourceAdapter() {
-        ModelNode operation = new ModelNode();
+
+        AddressBinding address = metaData.getBeanMetaData(ResourceAdapter.class).getAddress();
+        ModelNode operation = address.asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(CHILD_TYPE).set("resource-adapter");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -212,7 +213,7 @@ public class ResourceAdapterPresenter
         proto.get(ADDRESS).add("resource-adapter", name);
 
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(ResourceAdapter.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(ResourceAdapter.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -228,9 +229,9 @@ public class ResourceAdapterPresenter
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info(Console.MESSAGES.saved("resource adapter "+name));
+                    Console.info(Console.MESSAGES.saved("resource adapter " + name));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("resource adapter "+name), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("resource adapter " + name), response.toString());
 
                 loadResourceAdapter();
             }
@@ -300,9 +301,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.added("resource adapter "+ra.getName()));
+                    Console.info(Console.MESSAGES.added("resource adapter " + ra.getName()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("resource adapter "+ra.getName()), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getName()), result.toString());
 
                 loadResourceAdapter();
             }
@@ -349,7 +350,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.added("property "+prop.getKey()));
+                    Console.info(Console.MESSAGES.added("property " + prop.getKey()));
                 else
                     Console.error(Console.MESSAGES.addingFailed("property " + prop.getKey()), result.toString());
 
@@ -468,7 +469,7 @@ public class ResourceAdapterPresenter
         proto.get(ADDRESS).add("subsystem", "resource-adapters");
         proto.get(ADDRESS).add("resource-adapter", editedName);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(PoolConfig.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(PoolConfig.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
