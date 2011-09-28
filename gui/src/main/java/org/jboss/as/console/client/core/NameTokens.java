@@ -52,6 +52,7 @@ public class NameTokens {
     public static final String StandaloneServerPresenter = "standalone-server";
     public static final String WebPresenter = "web";
     public static final String WebServicePresenter = "webservices";
+    public static final String VirtualMachine = "vm";
 
 
     public static String getMainLayout() {
