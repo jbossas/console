@@ -27,11 +27,12 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -64,6 +65,8 @@ public class ResourceAdapterPresenter
     private List<ResourceAdapter> resourceAdapters;
     private PropertyMetaData metaData;
 
+    private BeanMetaData raMetaData;
+
     public BeanFactory getFactory() {
         return factory;
     }
@@ -93,6 +96,8 @@ public class ResourceAdapterPresenter
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = propertyMetaData;
+
+        this.raMetaData = metaData.getBeanMetaData(ResourceAdapter.class);
     }
 
     @Override
@@ -103,7 +108,7 @@ public class ResourceAdapterPresenter
 
     private void loadResourceAdapter() {
 
-        AddressBinding address = metaData.getBeanMetaData(ResourceAdapter.class).getAddress();
+        AddressBinding address = raMetaData.getAddress();
         ModelNode operation = address.asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
 
@@ -168,11 +173,10 @@ public class ResourceAdapterPresenter
     }
 
     public void onDelete(final ResourceAdapter ra) {
-        ModelNode operation = new ModelNode();
+
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), ra.getArchive());
         operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -206,15 +210,18 @@ public class ResourceAdapterPresenter
             return;
         }
 
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(Baseadress.get());
-        proto.get(ADDRESS).add("subsystem", "resource-adapters");
-        proto.get(ADDRESS).add("resource-adapter", name);
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), name);
+        addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(ResourceAdapter.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        EntityAdapter<ResourceAdapter> adapter = new EntityAdapter<ResourceAdapter>(
+            ResourceAdapter.class, metaData
+        );
+
+        ModelNode operation = adapter.fromChangeset(changedValues, addressModel);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -262,13 +269,9 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
-        ModelNode operation = new ModelNode();
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), ra.getArchive());
         operation.get(OP).set(ADD);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
-
         operation.get("archive").set(ra.getArchive());
         operation.get("transaction-support").set(ra.getTransactionSupport());
 
@@ -301,9 +304,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.added("resource adapter " + ra.getName()));
+                    Console.info(Console.MESSAGES.added("resource adapter " + ra.getArchive()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getName()), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getArchive()), result.toString());
 
                 loadResourceAdapter();
             }
@@ -316,16 +319,11 @@ public class ResourceAdapterPresenter
     public void onCreateProperty(final String ref, final PropertyRecord prop) {
         closePropertyDialoge();
 
-        ModelNode operation = new ModelNode();
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), ref);
         operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", ref);
-
 
         ResourceAdapter ra = resolveAdapter(ref);
-
 
         // poperties
         ModelNode cfg = new ModelNode();
@@ -414,11 +412,10 @@ public class ResourceAdapterPresenter
 
     public void loadPoolConfig(final String name) {
 
-        ModelNode operation = new ModelNode();
+
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), name);
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", name);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -463,14 +460,16 @@ public class ResourceAdapterPresenter
     }
 
     public void onSavePoolConfig(final String editedName, Map<String, Object> changeset) {
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(Baseadress.get());
-        proto.get(ADDRESS).add("subsystem", "resource-adapters");
-        proto.get(ADDRESS).add("resource-adapter", editedName);
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(PoolConfig.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), editedName);
+        addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+
+        EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(
+                PoolConfig.class, metaData
+        );
+
+        ModelNode operation = adapter.fromChangeset(changeset, addressModel);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -487,6 +486,8 @@ public class ResourceAdapterPresenter
                     Console.info(Console.MESSAGES.saved("pool settings"));
                 else
                     Console.error(Console.MESSAGES.saveFailed("pool settings "+editedName), response.getResponse().toString());
+
+                loadPoolConfig(editedName);
             }
         });
     }
