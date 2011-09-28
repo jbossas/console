@@ -32,6 +32,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -84,11 +85,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private EntityAdapter<MessagingProvider> providerAdapter;
     private EntityAdapter<SecurityPattern> securityAdapter;
     private EntityAdapter<AddressingPattern> addressingAdapter;
-
-    // TODO: provide server switch
-    public String getCurrentServer() {
-        return "default";
-    }
+    private String currentServer = null;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -140,6 +137,11 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 AddressingPattern.class,
                 propertyMetaData
         );
+    }
+
+     @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        currentServer = request.getParameter("name", null);
     }
 
     @Override
@@ -899,5 +901,13 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             }
         });
 
+    }
+
+    public String getCurrentServer() {
+
+        if(null==currentServer)
+            throw new IllegalArgumentException("Current server name not set!");
+
+        return currentServer;
     }
 }
