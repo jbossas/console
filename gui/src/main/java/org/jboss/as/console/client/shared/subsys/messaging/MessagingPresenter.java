@@ -139,7 +139,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         );
     }
 
-     @Override
+    @Override
     public void prepareFromRequest(PlaceRequest request) {
         currentServer = request.getParameter("name", null);
     }
@@ -226,6 +226,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
                 }
 
+                securitySettings = payload;
                 getView().setSecurityConfig(payload);
 
             }
@@ -238,11 +239,11 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(RECURSIVE).set(Boolean.TRUE);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "messaging");
         operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
         operation.get(CHILD_TYPE).set("address-setting");
+        operation.get(RECURSIVE).set(Boolean.TRUE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -258,12 +259,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                     String pattern = prop.getName();
                     ModelNode value = prop.getValue().asObject();
 
-                    AddressingPattern model = factory.messagingAddress().as();
+                    AddressingPattern model = addressingAdapter.fromDMR(value);
                     model.setPattern(pattern);
-                    model.setDeadLetterQueue(value.get("dead-letter-address").asString());
-                    model.setExpiryQueue(value.get("expiry-address").asString());
-                    model.setRedeliveryDelay(value.get("redelivery-delay").asInt());
-                    model.setMaxDelivery(value.get("max-delivery-attempts").asInt());
 
                     addrPatterns.add(model);
 
@@ -335,17 +332,16 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
         // the child resource
 
-        ModelNode createChildOp = new ModelNode();
-        createChildOp.get(OP).set(ADD);
-        createChildOp.get(ADDRESS).set(Baseadress.get());
-        createChildOp.get(ADDRESS).add("subsystem", "messaging");
-        createChildOp.get(ADDRESS).add("hornetq-server", getCurrentServer());
-        createChildOp.get(ADDRESS).add("security-setting", newEntity.getPattern());
-        createChildOp.get(ADDRESS).add("role", newEntity.getRole());
+        AddressBinding address = metaData.getBeanMetaData(SecurityPattern.class).getAddress();
+        ModelNode addressModel = address.asResource(
+                Baseadress.get(),
+                getCurrentServer(),
+                newEntity.getPattern(), newEntity.getRole()
+        );
 
-        createChildOp.get("send").set(newEntity.isSend());
-        createChildOp.get("consume").set(newEntity.isConsume());
-        createChildOp.get("manage").set(newEntity.isManage());
+        ModelNode createChildOp = securityAdapter.fromEntity(newEntity);
+        createChildOp.get(OP).set(ADD);
+        createChildOp.get(ADDRESS).set(addressModel.get(ADDRESS).asObject());
 
         steps.add(createChildOp);
 
@@ -368,13 +364,10 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void onSaveSecDetails(final SecurityPattern pattern, Map<String, Object> changedValues) {
-        ModelNode proto = new ModelNode();
+
+        AddressBinding address = metaData.getBeanMetaData(SecurityPattern.class).getAddress();
+        ModelNode proto = address.asResource(Baseadress.get(), getCurrentServer(), pattern.getPattern(), pattern.getRole());
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(Baseadress.get());
-        proto.get(ADDRESS).add("subsystem", "messaging");
-        proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
-        proto.get(ADDRESS).add("security-setting", pattern.getPattern());
-        proto.get(ADDRESS).add("role", pattern.getRole());
 
         List<PropertyBinding> bindings = metaData.getBindingsForType(SecurityPattern.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
