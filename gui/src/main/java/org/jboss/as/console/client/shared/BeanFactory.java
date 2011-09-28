@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.Jvm;
+import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -117,4 +118,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<OSGiSubsystem> osgiSubsystem();
     AutoBean<OSGiPreloadedModule> osgiPreloadedModule();
     AutoBean<OSGiConfigAdminData> osgiConfigAdminData();
+
+    AutoBean<HeapMetric> heapMetric();
 }
