@@ -71,6 +71,7 @@ import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansPrese
 import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansPresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
@@ -189,6 +190,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
     AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiPresenter> getOSGiPresenter();
+    AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 
     AsyncProvider<WebPresenter> getWebPresenter();

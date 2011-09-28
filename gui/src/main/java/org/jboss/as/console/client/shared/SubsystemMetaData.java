@@ -45,6 +45,8 @@ public class SubsystemMetaData {
     private static final String EJB = "EJB";
 
     private static final String OSGI = "OSGi";
+    
+    private static final String INFINISPAN = "Infinispan";
 
     private static final String SECURITY = "Security";
 
@@ -63,6 +65,7 @@ public class SubsystemMetaData {
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OSGI, new SubsystemGroup(OSGI));
+        groups.put(INFINISPAN, new SubsystemGroup(INFINISPAN));
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
@@ -94,6 +97,8 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi"));
+        
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.CacheContainerPresenter));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));

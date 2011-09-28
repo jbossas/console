@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.Deploym
 import org.jboss.as.console.client.shared.viewframework.EntityAttributes;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 
-import org.jboss.as.console.client.shared.viewframework.SimpleEntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.AbstractEntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.SubsystemOpFactory;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -37,7 +37,7 @@ import org.jboss.dmr.client.Property;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class ScannerBridge extends SimpleEntityToDmrBridge<DeploymentScanner> {
+public class ScannerBridge extends AbstractEntityToDmrBridge<DeploymentScanner> {
 
     private BeanFactory beanFactory;
     

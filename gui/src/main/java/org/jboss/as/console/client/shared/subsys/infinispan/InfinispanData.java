@@ -16,25 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.viewframework;
+package org.jboss.as.console.client.shared.subsys.infinispan;
 
-import com.gwtplatform.mvp.client.View;
+import org.jboss.as.console.client.shared.viewframework.EntityAttributes;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 
 /**
- * Super interface for Views that use this framework.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface FrameworkView extends View {
-    /**
-     * Called whenever the data in the view needs to be refreshed.
-     */
-    public void refresh();
+public enum InfinispanData {
     
-    /**
-     * Tells the view if editing should be enabled.
-     * 
-     * @param isEnabled 
-     */
-    public void setEditingEnabled(boolean isEnabled);
+    CACHE(new CacheAttributes(), new CacheBridge()),
+    CACHE_CONTAINER(new CacheContainerAttributes(), new CacheContainerBridge());
+    
+    private EntityAttributes attribs;
+    private EntityToDmrBridge bridge;
+    
+    private InfinispanData(EntityAttributes attribs, EntityToDmrBridge bridge) {
+        this.attribs = attribs;
+        this.bridge = bridge;
+    }
+    
+    public EntityAttributes getAttributes() {
+            return attribs;
+    }
+    
+    public EntityToDmrBridge getBridge() {
+        return this.bridge;
+    }
 }

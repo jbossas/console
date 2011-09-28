@@ -17,12 +17,13 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.deploymentscanner;
+package org.jboss.as.console.client.shared.subsys.infinispan;
 
+import com.google.gwt.user.cellview.client.TextColumn;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
-import org.jboss.as.console.client.shared.viewframework.Columns.EnabledColumn;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityAttributes;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
@@ -33,60 +34,51 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 
 /**
- * Main view class for Deployment Scanners.  This class assembles the editor and reacts to 
- * FrameworkView callbacks.
+ * Main view class for Infinispan Cache Containers.
  * 
  * @author Stan Silvert
  */
-public class ScannerView extends AbstractEntityView<DeploymentScanner> implements ScannerPresenter.MyView {
-
-    private EntityToDmrBridge scannerBridge;
-    private EntityAttributes attributes;
+public class CacheContainerView extends AbstractEntityView<CacheContainer> implements CacheContainerPresenter.MyView {
 
     @Override
     protected EntityAttributes getEntityAttributes() {
-        return this.attributes;
+        return InfinispanData.CACHE_CONTAINER.getAttributes();
     }
 
     @Override
     protected EntityToDmrBridge getEntityBridge() {
-        return this.scannerBridge;
+        return InfinispanData.CACHE_CONTAINER.getBridge();
     }
 
     @Override
     protected String getPluralEntityName() {
-        return Console.CONSTANTS.subsys_deploymentscanner_scanners();
+        return Console.CONSTANTS.subsys_infinispan_cache_containers();
     }
 
     @Override
-    protected FormAdapter<DeploymentScanner> makeAddEntityForm() {
-        Form<DeploymentScanner> form = new Form(DeploymentScanner.class);
+    protected FormAdapter<CacheContainer> makeAddEntityForm() {
+        Form<CacheContainer> form = new Form(DeploymentScanner.class);
         form.setNumColumns(1);
-        form.setFields(attributes.findAttribute("name").getItemForAdd(),
-                       attributes.findAttribute("path").getItemForAdd(),
-                       attributes.findAttribute("relativeTo").getItemForAdd(),
-                       attributes.findAttribute("enabled").getItemForAdd());
+        form.setFields(getEntityAttributes().findAttribute("name").getItemForAdd());
         return form;
     }
 
     @Override
-    protected DefaultCellTable<DeploymentScanner> makeEntityTable() {
-        DefaultCellTable<DeploymentScanner> table = new DefaultCellTable<DeploymentScanner>(4);
+    protected DefaultCellTable<CacheContainer> makeEntityTable() {
+        DefaultCellTable<CacheContainer> table = new DefaultCellTable<CacheContainer>(4);
         
         table.addColumn(new NameColumn(), NameColumn.LABEL);
-        table.addColumn(new EnabledColumn(), EnabledColumn.LABEL);
+        
+        TextColumn<CacheContainer> defaultCacheColumn = new TextColumn<CacheContainer>() {
+            @Override
+            public String getValue(CacheContainer record) {
+                return record.getDefaultCache();
+            }
+        };
+        
+        table.addColumn(defaultCacheColumn, Console.CONSTANTS.subsys_infinispan_default_cache());
         
         return table;
-    }
-  
-    /**
-     * Called when Presenter is created.
-     * @param bridge The EntityToDmrBridge for DeploymentScanner
-     */
-    @Override
-    public void setEntityToDmrBridge(EntityToDmrBridge bridge) {
-        this.scannerBridge = bridge;
-        this.attributes = bridge.getEntityAttributes();
     }
     
 }

@@ -40,11 +40,9 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * sense that its code is simple.  But rather, it operates on a simple, typical DMR data structure
  * where there is a list of Entities of a single type.
  * 
- * Note that the model type T must implement NamedEntity.
- *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T> {
+public abstract class AbstractEntityToDmrBridge <T extends NamedEntity> implements EntityToDmrBridge<T> {
 
     protected DispatchAsync dispatcher;
     protected FrameworkView view;
@@ -61,13 +59,35 @@ public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T>
         }
     };
     
-    public SimpleEntityToDmrBridge(DispatchAsync dispatcher, 
+    /**
+     * This version of the constructor allows for deferred binding of objects from 
+     * the presenter.
+     */
+    public AbstractEntityToDmrBridge() {}
+    
+    public AbstractEntityToDmrBridge(DispatchAsync dispatcher, 
                                    FrameworkView view, 
                                    EntityAttributes attributes,
                                    SubsystemOpFactory opFactory) {
+        setDispatcher(dispatcher);
+        setView(view);
+        setAttributes(attributes);
+        setOpFactory(opFactory);
+    }
+    
+    public final void setDispatcher(DispatchAsync dispatcher) {
         this.dispatcher = dispatcher;
+    }
+    
+    public final void setView(FrameworkView view) {
         this.view = view;
+    }
+    
+    public final void setAttributes(EntityAttributes attributes) {
         this.attributes = attributes;
+    }
+    
+    public final void setOpFactory(SubsystemOpFactory opFactory) {
         this.opFactory = opFactory;
     }
     
@@ -130,7 +150,7 @@ public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T>
         ModelNode operation = opFactory.makeUpdateOp(ADD, entity);
         
         Map<String, Object> changedValues = form.getChangedValues();
-        for (AttributeMetadata attrib : attributes.getAllAttributes()) {
+        for (AttributeMetadata attrib : attributes.getBaseAttributes()) {
             if (changedValues.containsKey(attrib.getBeanPropName())) {
                 operation.get(attrib.getDmrName()).set(changedValues.get(attrib.getBeanPropName()).toString());
             }
@@ -191,13 +211,11 @@ public abstract class SimpleEntityToDmrBridge<T> implements EntityToDmrBridge<T>
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
-                List<ModelNode> payload = response.get("result").asList();
-                ModelNode entityNode = payload.get(0);
-                List<ModelNode> entitiyList = entityNode.get(opFactory.getEntityName()).asList(); 
-                for (final ModelNode node : entitiyList) {
+                List<ModelNode> entityList = response.get("result").get(opFactory.getEntityName()).asList();
+                for (final ModelNode node : entityList) {
                     entities.add(makeEntity(node.asPropertyList().get(0)));
                 }
-                SimpleEntityToDmrBridge.this.entityList = sortEntitties(entities);
+                AbstractEntityToDmrBridge.this.entityList = sortEntitties(entities);
                 view.refresh();
             }
 

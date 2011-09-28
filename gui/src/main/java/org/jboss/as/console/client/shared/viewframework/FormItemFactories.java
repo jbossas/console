@@ -147,9 +147,19 @@ public class FormItemFactories {
      * Factory for Short, Integer, and Long values
      */
     public static class NumberBoxItemFactory implements FormItemFactory {
+        private boolean allowNegativeNumber;
+        
+        public NumberBoxItemFactory() {
+            this(false);
+        }
+        
+        public NumberBoxItemFactory(boolean allowNegativeNumber) {
+            this.allowNegativeNumber = allowNegativeNumber;
+        }
+        
         @Override
         public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label);
+            NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label, this.allowNegativeNumber);
             numberItem.setRequired(isRequired);
             return numberItem;
         }

@@ -35,6 +35,7 @@ public class NameTokens {
     public static final String HostJVMPresenter = "host-jvms";
     public static final String HostPropertiesPresenter = "host-properties";
     public static final String InterfacePresenter = "interfaces";
+    public static final String CacheContainerPresenter = "infinispan";
     public static final String JMSPresenter = "jms";
     public static final String JndiPresenter = "naming";
     public static final String LoggingPresenter = "logging";

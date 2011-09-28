@@ -106,6 +106,7 @@ import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesPresente
 import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesView;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansView;
+import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -124,6 +125,7 @@ import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
+import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
@@ -365,6 +367,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 OSGiPresenter.MyView.class,
                 OSGiSubsystemView.class,
                 OSGiPresenter.MyProxy.class);
+        
+        bindPresenter(CacheContainerPresenter.class,
+                CacheContainerPresenter.MyView.class,
+                CacheContainerView.class,
+                CacheContainerPresenter.MyProxy.class);
 
         bindPresenter(SocketBindingPresenter.class,
                 SocketBindingPresenter.MyView.class,

@@ -64,6 +64,11 @@ public class ScannerPresenter extends Presenter<ScannerPresenter.MyView, Scanner
     }
 
     public interface MyView extends FrameworkView {
+        /**
+         * Set the bridge that knows how to translate between AutoBean and DMR.
+         * @param bridge The bridge.
+         */
+        public void setEntityToDmrBridge(EntityToDmrBridge bridge);
     }
 
     @Inject

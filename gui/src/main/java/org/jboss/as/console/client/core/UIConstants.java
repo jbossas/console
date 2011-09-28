@@ -155,6 +155,19 @@ public interface UIConstants extends Constants {
     String subsys_deploymentscanner_autoDeployZipped();
     String subsys_deploymentscanner_autoDeployExploded();
     String subsys_deploymentscanner_deploymentTimeout();
+    
+    String subsys_infinispan_cache_container();
+    String subsys_infinispan_cache_containers();
+    String subsys_infinispan_default_cache();
+    String subsys_infinispan_jndiName();
+    String subsys_infinispan_listenerExecutor();
+    String subsys_infinispan_evictionExecutor();
+    String subsys_infinispan_replicationQueueExecutor();
+    String subsys_infinispan_isolation();
+    String subsys_infinispan_striping();
+    String subsys_infinispan_aquireTimeout();
+    String subsys_infinispan_concurrencyLevel();
+    String subsys_infinispan_evictionStrategy();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

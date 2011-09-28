@@ -16,25 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.viewframework;
-
-import com.gwtplatform.mvp.client.View;
+package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
 /**
- * Super interface for Views that use this framework.
+ * Model for a Transport
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface FrameworkView extends View {
-    /**
-     * Called whenever the data in the view needs to be refreshed.
-     */
-    public void refresh();
-    
-    /**
-     * Tells the view if editing should be enabled.
-     * 
-     * @param isEnabled 
-     */
-    public void setEditingEnabled(boolean isEnabled);
+public interface Transport  {
 }

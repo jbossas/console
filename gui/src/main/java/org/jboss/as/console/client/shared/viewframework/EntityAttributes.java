@@ -19,7 +19,10 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Aggregator for AttributeMetadata instances.  Be careful to only create one instance of
@@ -29,10 +32,33 @@ import java.util.List;
  */
 public class EntityAttributes {
     
-    private List<AttributeMetadata> attributes;
+    private List<AttributeMetadata> baseAttributes;
+    private Map<String, List<AttributeMetadata>> groupedAttributes = new LinkedHashMap<String, List<AttributeMetadata>>();
     
-    public EntityAttributes(List<AttributeMetadata> attributes) {
-        this.attributes = attributes;
+    public EntityAttributes(List<AttributeMetadata> baseAttributes) {
+        this.baseAttributes = baseAttributes;
+    }
+
+    public List<AttributeMetadata> getBaseAttributes() {
+        return Collections.unmodifiableList(this.baseAttributes);
+    }
+    
+    public void setGroupedAttributes(String groupName, List<AttributeMetadata> attributes) {
+        groupedAttributes.put(groupName, attributes);
+    }
+    
+    public List<AttributeMetadata> getGroupedAttribtes(String groupName) {
+        return groupedAttributes.get(groupName);
+    }
+    
+    /**
+     * Returns all group names.  Calling iterator() on the returned Set
+     * will give you an iterator that maintains the names in the order they were added.
+     * 
+     * @return The group names.
+     */
+    public Set<String> getGroupNames() {
+        return groupedAttributes.keySet();
     }
     
     /**
@@ -42,14 +68,17 @@ public class EntityAttributes {
      * @throws IllegalArgumentException if the AttributeMetadata is not found.
      */
     public AttributeMetadata findAttribute(String beanPropName) {
-        for (AttributeMetadata attrib : attributes) {
+        for (AttributeMetadata attrib : baseAttributes) {
             if (attrib.getBeanPropName().equals(beanPropName)) return attrib;
+        }
+        
+        for (Map.Entry<String, List<AttributeMetadata>> entry : groupedAttributes.entrySet()) {
+            for (AttributeMetadata attrib : entry.getValue()) {
+                if (attrib.getBeanPropName().equals(beanPropName)) return attrib;
+            }
         }
         
         throw new IllegalArgumentException("Unknown Attribute with beanPropName name " + beanPropName);
     }
     
-    public List<AttributeMetadata> getAllAttributes() {
-        return Collections.unmodifiableList(this.attributes);
-    }
 }
