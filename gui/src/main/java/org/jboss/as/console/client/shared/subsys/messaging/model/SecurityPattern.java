@@ -30,11 +30,11 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 @Address("/subsystem=messaging/hornetq-server={0}/security-setting={1}/role={2}")
 public interface SecurityPattern {
 
-    @Binding(key=true)
+    @Binding(skip=true)
     public String getPattern() ;
     public void setPattern(String pattern);
 
-    @Binding(key=true)
+    @Binding(skip=true)
     public String getRole() ;
     public void setRole(String role);
 

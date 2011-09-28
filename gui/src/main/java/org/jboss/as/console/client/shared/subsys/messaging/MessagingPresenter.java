@@ -60,6 +60,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private EntityAdapter<SecurityPattern> securityAdapter;
     private EntityAdapter<AddressingPattern> addressingAdapter;
 
+    // TODO: provide server switch
     public String getCurrentServer() {
         return "default";
     }
@@ -151,7 +153,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     protected void onReset() {
         super.onReset();
         loadProviderDetails();
-        loadSecurityConfig("#");
+        loadSecurityConfig();
         loadAddressingConfig();
         loadJMSConfig();
     }
@@ -175,11 +177,20 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         });
     }
 
-    private void loadSecurityConfig(final String pattern) {
+    private void loadSecurityConfig() {
 
-        AddressBinding address = metaData.getBeanMetaData(SecurityPattern.class).getAddress();
-        ModelNode operation = address.asSubresource(Baseadress.get(), getCurrentServer(), pattern);
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("security-setting");
+        operation.get(RECURSIVE).set(true);
+
+        final EntityAdapter<SecurityPattern> adapter =
+                new EntityAdapter<SecurityPattern>(
+                        SecurityPattern.class, metaData
+                );
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -187,19 +198,33 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                List<SecurityPattern> patterns =
-                        securityAdapter.with(new KeyAssignment() {
-                            @Override
-                            public Object valueForKey(String key) {
-                                String result = null;
-                                if ("pattern".equals(key)) {
-                                    result = pattern;
-                                }
-                                return result;
-                            }
-                        }).fromDMRList(response.get(RESULT).asList());
+                List<Property> patterns = response.get(RESULT).asPropertyList();
+                List<SecurityPattern> payload = new LinkedList<SecurityPattern>();
 
-                getView().setSecurityConfig(patterns);
+                for(Property pattern : patterns)
+                {
+                    String patternName = pattern.getName();
+                    ModelNode patternValue = pattern.getValue().asObject();
+
+                    if(patternValue.hasDefined("role"))
+                    {
+                        List<Property> roles = patternValue.get("role").asPropertyList();
+
+                        for(Property role : roles)
+                        {
+                            String roleName = role.getName();
+                            ModelNode roleValue = role.getValue().asObject();
+
+                            SecurityPattern securityPattern = adapter.fromDMR(roleValue);
+                            securityPattern.setPattern(patternName);
+                            securityPattern.setRole(roleName);
+                            payload.add(securityPattern);
+                        }
+                    }
+
+                }
+
+                getView().setSecurityConfig(payload);
 
             }
         });
@@ -333,9 +358,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("security setting"));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("security setting"+newEntity.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("security setting" + newEntity.getPattern()), response.toString());
 
-                loadSecurityConfig("#");
+                loadSecurityConfig();
             }
         });
     }
@@ -362,7 +387,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.saveFailed("security setting " + pattern.getPattern()), response.getResponse().toString());
 
-                loadSecurityConfig("#");
+                loadSecurityConfig();
             }
         });
     }
@@ -387,7 +412,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 else
                     Console.error(Console.MESSAGES.deletionFailed("security setting " + pattern.getPattern()), response.toString());
 
-                loadSecurityConfig("#");
+                loadSecurityConfig();
             }
         });
     }
