@@ -18,6 +18,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class AddressBinding {
 
     private List<String[]> address = new LinkedList<String[]>();
+    private int countedWildcards = -1;
 
     public AddressBinding() {
     }
@@ -29,17 +30,23 @@ public class AddressBinding {
 
     public int getNumWildCards() {
 
-        int counter = 0;
-
-        for(String[] tuple : address)
+        if(countedWildcards <0)
         {
-            if(tuple[0].startsWith("{"))
-                counter++;
+            int counter = 0;
 
-            if(tuple[1].startsWith("{"))
-                counter++;
+            for(String[] tuple : address)
+            {
+                if(tuple[0].startsWith("{"))
+                    counter++;
+
+                if(tuple[1].startsWith("{"))
+                    counter++;
+            }
+
+            countedWildcards = counter;
         }
-        return counter;
+
+        return countedWildcards;
     }
 
     /**
