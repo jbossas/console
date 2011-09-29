@@ -20,12 +20,16 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -40,7 +44,9 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     private BeanFactory factory;
     private PropertyMetaData metaData;
     private RevealStrategy revealStrategy;
+
     private EntityAdapter<HeapMetric> heapMetricAdapter;
+    private EntityAdapter<ThreadMetric> threadMetricAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
@@ -54,6 +60,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
         void attachCharts();
         void detachCharts();
+
+        void setThreads(ThreadMetric thread);
     }
 
     @Inject
@@ -68,7 +76,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
         this.factory = factory;
         this.dispatcher = dispatcher;
 
-        this.heapMetricAdapter =   new EntityAdapter<HeapMetric>(HeapMetric.class, metaData);
+        this.heapMetricAdapter = new EntityAdapter<HeapMetric>(HeapMetric.class, metaData);
+        this.threadMetricAdapter = new EntityAdapter<ThreadMetric>(ThreadMetric.class, metaData);
     }
 
     @Override
@@ -111,13 +120,35 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
     public void loadVMStatus() {
 
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("core-service", "platform-mbean");
-        operation.get(ADDRESS).add("type", "memory");
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(INCLUDE_RUNTIME).set(true);
+        ModelNode composite = new ModelNode();
+        composite.get(OP).set(COMPOSITE);
+        composite.get(ADDRESS).setEmptyList();
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        // memory
+
+        ModelNode memory = new ModelNode();
+        memory.get(ADDRESS).add("core-service", "platform-mbean");
+        memory.get(ADDRESS).add("type", "memory");
+        memory.get(OP).set(READ_RESOURCE_OPERATION);
+        memory.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(memory);
+
+        // threads
+
+        ModelNode threads = new ModelNode();
+        threads.get(ADDRESS).add("core-service", "platform-mbean");
+        threads.get(ADDRESS).add("type", "threading");
+        threads.get(OP).set(READ_RESOURCE_OPERATION);
+        threads.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(threads);
+
+        composite.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -127,16 +158,29 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode steps = response.get(RESULT);
+
+                //System.out.println(steps);
 
                 if(ModelAdapter.wasSuccess(response))
                 {
-                    ModelNode payload = response.get(RESULT);
+                    // memory
 
-                    HeapMetric heap = heapMetricAdapter.fromDMR(payload.get("heap-memory-usage"));
-                    HeapMetric nonHeap = heapMetricAdapter.fromDMR(payload.get("non-heap-memory-usage"));
+                    ModelNode memory  = steps.get("step-1").get(RESULT);
+                    HeapMetric heap = heapMetricAdapter.fromDMR(memory.get("heap-memory-usage"));
+                    HeapMetric nonHeap = heapMetricAdapter.fromDMR(memory.get("non-heap-memory-usage"));
 
                     getView().setHeap(heap);
                     getView().setNonHeap(nonHeap);
+
+                    // threads
+
+                    ModelNode threads = steps.get("step-2").get(RESULT);
+
+                    System.out.println(threads);
+                    ThreadMetric thread = threadMetricAdapter.fromDMR(threads);
+
+                    getView().setThreads(thread);
                 }
                 else
                 {

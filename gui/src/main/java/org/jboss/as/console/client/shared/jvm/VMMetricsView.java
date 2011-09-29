@@ -12,6 +12,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -151,5 +152,10 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             nonHeapChart.addSample(nonHeap);
         }
         //nonHeapForm.edit(nonHeap);
+    }
+
+    @Override
+    public void setThreads(ThreadMetric thread) {
+        System.out.println(thread.getCount());
     }
 }
