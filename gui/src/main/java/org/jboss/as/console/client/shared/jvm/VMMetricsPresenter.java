@@ -20,6 +20,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -103,6 +104,7 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
                         return isVisible();
                     }
                 }, POLL_INTERVAL);
+
     }
 
 
@@ -116,17 +118,30 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
         operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("Error loading VM metrics", caught.getMessage());
+            }
+
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode payload = response.get(RESULT);
 
-                HeapMetric heap = heapMetricAdapter.fromDMR(payload.get("heap-memory-usage"));
-                HeapMetric nonHeap = heapMetricAdapter.fromDMR(payload.get("non-heap-memory-usage"));
+                if(ModelAdapter.wasSuccess(response))
+                {
+                    ModelNode payload = response.get(RESULT);
 
-                getView().setHeap(heap);
-                getView().setNonHeap(nonHeap);
+                    HeapMetric heap = heapMetricAdapter.fromDMR(payload.get("heap-memory-usage"));
+                    HeapMetric nonHeap = heapMetricAdapter.fromDMR(payload.get("non-heap-memory-usage"));
 
+                    getView().setHeap(heap);
+                    getView().setNonHeap(nonHeap);
+                }
+                else
+                {
+                    Console.error("Failed to load VM metrics", response.toString());
+                }
             }
         });
     }

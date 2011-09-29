@@ -25,12 +25,16 @@ public class HeapChartView {
     private int width = 400;
     private int height = 240;
 
-    public HeapChartView() {
+    private String title;
+
+    public HeapChartView(String title) {
+        this.title = title;
     }
 
-    public HeapChartView(int width, int height) {
+    public HeapChartView(String title, int width, int height) {
         this.width = width;
         this.height = height;
+        this.title = title;
     }
 
     public Widget asWidget() {
@@ -66,7 +70,7 @@ public class HeapChartView {
         Options options = Options.create();
         options.setWidth(width);
         options.setHeight(height);
-        options.setTitle("Heap Usage (mb)");
+        options.setTitle(title +" (mb)");
         options.setType(CoreChart.Type.LINE);
         return options;
     }

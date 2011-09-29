@@ -3,16 +3,11 @@ package org.jboss.as.console.client.shared.jvm;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
-import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
@@ -34,10 +29,13 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private Form<HeapMetric> heapForm;
     private Form<HeapMetric> nonHeapForm;
 
-    private VerticalPanel vpanel;
+    private HorizontalPanel heapPanel;
 
     private HeapChartView heapChart;
     private Widget heapChartWidget;
+
+    private HeapChartView nonHeapChart;
+    private Widget nonHeapChartWidget;
 
     @Override
     public void setPresenter(VMMetricsPresenter presenter) {
@@ -67,7 +65,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // ----
 
-        vpanel = new VerticalPanel();
+        VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
         ScrollPanel scroll = new ScrollPanel(vpanel);
@@ -83,25 +81,40 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         nonHeapForm = createHeapForm();
 
         vpanel.add(new ContentGroupLabel("Heap"));
-        vpanel.add(heapForm.asWidget());
 
-        vpanel.add(new ContentGroupLabel("Non Heap"));
-        vpanel.add(nonHeapForm.asWidget());
+        heapPanel = new HorizontalPanel();
+        heapPanel.setStyleName("fill-layout-width");
+
+        vpanel.add(heapPanel);
 
         return layout;
     }
 
     @Override
     public void attachCharts() {
-        heapChart = new HeapChartView() ;
+        heapChart = new HeapChartView("Heap Usage", 320, 240) ;
         heapChartWidget = heapChart.asWidget();
-        vpanel.add(heapChartWidget);
+
+        nonHeapChart = new HeapChartView("Non Heap Usage", 320, 240) ;
+        nonHeapChartWidget = nonHeapChart.asWidget();
+
+        heapPanel.add(heapChartWidget);
+        heapPanel.add(nonHeapChartWidget);
     }
 
     @Override
     public void detachCharts() {
-        if(heapChartWidget!=null)
-            vpanel.remove(heapChartWidget);
+        if(heapChartWidget!=null) {
+            heapPanel.remove(heapChartWidget);
+            heapPanel.remove(nonHeapChartWidget);
+        }
+
+
+        this.heapChartWidget=null;
+        this.heapChart=null;
+
+        this.nonHeapChart=null;
+        this.nonHeapChartWidget=null;
     }
 
 
@@ -124,12 +137,19 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     public void setHeap(HeapMetric heap) {
 
         if(heapChart!=null)
+        {
             heapChart.addSample(heap);
-        heapForm.edit(heap);
+        }
+        //heapForm.edit(heap);
     }
 
     @Override
     public void setNonHeap(HeapMetric nonHeap) {
-        nonHeapForm.edit(nonHeap);
+
+        if(nonHeapChart!=null)
+        {
+            nonHeapChart.addSample(nonHeap);
+        }
+        //nonHeapForm.edit(nonHeap);
     }
 }
