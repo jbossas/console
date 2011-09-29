@@ -143,6 +143,12 @@ public class Console implements EntryPoint {
         );
     }
 
+    public static void warning(String message, String detail) {
+        MODULES.getMessageCenter().notify(
+                new Message(message, detail, Message.Severity.Warning)
+        );
+    }
+
     public static void schedule(final Command cmd)
     {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {

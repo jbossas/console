@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.jvm;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -11,9 +12,13 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
+import org.jboss.as.console.client.shared.jvm.charts.ThreadChartView;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.OSMetric;
+import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -27,16 +32,19 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPresenter.MyView {
 
     private VMMetricsPresenter presenter;
-    private Form<HeapMetric> heapForm;
-    private Form<HeapMetric> nonHeapForm;
 
     private HorizontalPanel heapPanel;
+    private HorizontalPanel threadPanel;
+    private VerticalPanel osPanel;
 
     private HeapChartView heapChart;
-    private Widget heapChartWidget;
-
     private HeapChartView nonHeapChart;
-    private Widget nonHeapChartWidget;
+    private ThreadChartView threadChart;
+
+    private ContentHeaderLabel vmName;
+
+    private HTML osName;
+    private HTML processors;
 
     @Override
     public void setPresenter(VMMetricsPresenter presenter) {
@@ -78,44 +86,60 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // ------------------------
 
-        heapForm = createHeapForm();
-        nonHeapForm = createHeapForm();
+        vmName = new ContentHeaderLabel("");
+        vpanel.add(vmName);
+
+        vpanel.add(new ContentGroupLabel("Threads"));
+
+        threadPanel = new HorizontalPanel();
+        threadPanel.setStyleName("fill-layout-width");
+
+        osName = new HTML();
+        processors = new HTML();
+
+        osPanel = new VerticalPanel();
+        osPanel.add(osName);
+        osPanel.add(processors);
+        osName.getElement().setAttribute("style", "padding-top:30px");
+
+        vpanel.add(threadPanel);
 
         vpanel.add(new ContentGroupLabel("Heap"));
 
         heapPanel = new HorizontalPanel();
         heapPanel.setStyleName("fill-layout-width");
-
         vpanel.add(heapPanel);
+
+        // --
 
         return layout;
     }
 
     @Override
     public void attachCharts() {
-        heapChart = new HeapChartView("Heap Usage", 320, 240) ;
-        heapChartWidget = heapChart.asWidget();
+        heapChart = new HeapChartView(320, 200, "Heap Usage") ;
+        nonHeapChart = new HeapChartView(320, 200, "Non Heap Usage") ;
 
-        nonHeapChart = new HeapChartView("Non Heap Usage", 320, 240) ;
-        nonHeapChartWidget = nonHeapChart.asWidget();
+        heapPanel.add(heapChart.asWidget());
+        heapPanel.add(nonHeapChart.asWidget());
 
-        heapPanel.add(heapChartWidget);
-        heapPanel.add(nonHeapChartWidget);
+        // --
+
+        threadChart = new ThreadChartView(320, 200, "Thread Usage");
+        threadPanel.add(threadChart.asWidget());
+        threadPanel.add(osPanel);
     }
 
     @Override
     public void detachCharts() {
-        if(heapChartWidget!=null) {
-            heapPanel.remove(heapChartWidget);
-            heapPanel.remove(nonHeapChartWidget);
+        if(heapChart!=null) {
+            heapPanel.clear();
+            threadPanel.clear();
         }
 
-
-        this.heapChartWidget=null;
         this.heapChart=null;
-
         this.nonHeapChart=null;
-        this.nonHeapChartWidget=null;
+        this.threadChart=null;
     }
 
 
@@ -155,7 +179,25 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     }
 
     @Override
-    public void setThreads(ThreadMetric thread) {
-        System.out.println(thread.getCount());
+    public void setThreads(ThreadMetric metric) {
+
+        if(threadChart!=null)
+            threadChart.addSample(metric);
+    }
+
+    @Override
+    public void setRuntimeMetric(RuntimeMetric runtime) {
+        vmName.setText(runtime.getVmName());
+    }
+
+    @Override
+    public void setOSMetric(OSMetric osMetric) {
+
+        if(threadChart!=null)
+        {
+            osName.setHTML("<b style='color:#A7ABB4'>Operating System:</b>   "+osMetric.getName()+" "+osMetric.getVersion());
+            processors.setHTML("<b style='color:#A7ABB4'>Number of processors:</b>   "+osMetric.getNumProcessors());
+        }
+
     }
 }

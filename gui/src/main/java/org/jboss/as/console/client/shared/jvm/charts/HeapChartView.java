@@ -14,35 +14,28 @@ import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
  * @author Heiko Braun
  * @date 9/29/11
  */
-public class HeapChartView {
+public class HeapChartView extends AbstractChartView {
 
-    private DataTable heapData;
-    private LineChart heapChart;
+    private DataTable data;
+    private LineChart chart;
 
     private HTML usedLabel;
     private HTML maxLabel;
 
-    private int width = 400;
-    private int height = 240;
-
-    private String title;
-
     public HeapChartView(String title) {
-        this.title = title;
+        super(title);
     }
 
-    public HeapChartView(String title, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.title = title;
+    public HeapChartView(int width, int height, String title) {
+        super(width, height, title);
     }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
 
         // chart
-        heapChart = new LineChart(createTable(), createOptions()) ;
-        layout.add(heapChart);
+        chart = new LineChart(createTable(), createOptions()) ;
+        layout.add(chart);
 
         // labels
 
@@ -61,9 +54,9 @@ public class HeapChartView {
     }
 
     private DataTable createTable() {
-        heapData = DataTable.create();
-        heapData.addColumn(AbstractDataTable.ColumnType.NUMBER, "Used");
-        return heapData;
+        data = DataTable.create();
+        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Used");
+        return data;
     }
 
     private Options createOptions() {
@@ -81,30 +74,30 @@ public class HeapChartView {
         long usedMb = (heap.getUsed()/1024)/1024;
         long maxMb = (heap.getMax()/1024)/1024;
 
-        maxLabel.setHTML("<b>Max</b>: "+maxMb+" mb");
-        usedLabel.setHTML("<b>Used</b>: "+usedMb+" mb");
+        maxLabel.setHTML("Max: " + maxMb + " mb");
+        usedLabel.setHTML("Used: "+usedMb+" mb");
 
-        heapData.addRow();
-        int nextRow = heapData.getNumberOfRows()-1;
+        data.addRow();
+        int nextRow = data.getNumberOfRows()-1;
 
-        heapData.setValue(nextRow, 0, usedMb);
+        data.setValue(nextRow, 0, usedMb);
 
         Options options = createOptions();
         AxisOptions vaxis = AxisOptions.create();
         vaxis.setMaxValue(maxMb);
         options.setVAxisOptions(vaxis);
 
-        heapChart.draw(heapData, options);
+        chart.draw(data, options);
     }
 
     public void clearSamples()
     {
-        heapData = createTable();
-        heapChart.draw(heapData);
+        data = createTable();
+        chart.draw(data);
     }
 
     public long numSamples() {
-        return heapData.getNumberOfRows();
+        return data.getNumberOfRows();
     }
 
 

@@ -33,6 +33,8 @@ import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.OSMetric;
+import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
@@ -122,4 +124,6 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<HeapMetric> heapMetric();
     AutoBean<ThreadMetric> threadMetric();
+    AutoBean<RuntimeMetric> runtime();
+    AutoBean<OSMetric> osmetric();
 }

@@ -22,7 +22,7 @@ public interface ThreadMetric {
 
     @Binding(detypedName = "total-started-thread-count")
     long getTotalStarted();
-    void setTotolStarted(long l);
+    void setTotalStarted(long l);
 
 
 }

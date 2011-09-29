@@ -2,8 +2,6 @@ package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -20,6 +18,8 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.OSMetric;
+import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -47,6 +47,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
     private EntityAdapter<HeapMetric> heapMetricAdapter;
     private EntityAdapter<ThreadMetric> threadMetricAdapter;
+    private EntityAdapter<RuntimeMetric> runtimeAdapter;
+    private EntityAdapter<OSMetric> osAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
@@ -55,13 +57,16 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
     public interface MyView extends View {
         void setPresenter(VMMetricsPresenter presenter);
+
         void setHeap(HeapMetric heap);
         void setNonHeap(HeapMetric nonHeap);
+        void setThreads(ThreadMetric thread);
+        void setRuntimeMetric(RuntimeMetric runtime);
 
         void attachCharts();
         void detachCharts();
 
-        void setThreads(ThreadMetric thread);
+        void setOSMetric(OSMetric osMetric);
     }
 
     @Inject
@@ -78,6 +83,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
         this.heapMetricAdapter = new EntityAdapter<HeapMetric>(HeapMetric.class, metaData);
         this.threadMetricAdapter = new EntityAdapter<ThreadMetric>(ThreadMetric.class, metaData);
+        this.runtimeAdapter = new EntityAdapter<RuntimeMetric>(RuntimeMetric.class, metaData);
+        this.osAdapter = new EntityAdapter<OSMetric>(OSMetric.class, metaData);
     }
 
     @Override
@@ -110,9 +117,17 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
                     @Override
                     public boolean execute() {
                         loadVMStatus();
-                        return isVisible();
+                        boolean visible = isVisible();
+
+                        if(!visible)
+                            Console.warning("Stop polling for virtual machine metrics.",
+                                    "Polling stop when the chart are not visible anymore.");
+
+                        return visible;
                     }
                 }, POLL_INTERVAL);
+
+        Console.info("Begin polling for virtual machine metrics");
 
     }
 
@@ -146,6 +161,27 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
         steps.add(threads);
 
+
+        // runtime
+
+        ModelNode runtime = new ModelNode();
+        runtime.get(ADDRESS).add("core-service", "platform-mbean");
+        runtime.get(ADDRESS).add("type", "runtime");
+        runtime.get(OP).set(READ_RESOURCE_OPERATION);
+        runtime.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(runtime);
+
+        // OS
+
+        ModelNode os = new ModelNode();
+        os.get(ADDRESS).add("core-service", "platform-mbean");
+        os.get(ADDRESS).add("type", "operating-system");
+        os.get(OP).set(READ_RESOURCE_OPERATION);
+        os.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(os);
+
         composite.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
@@ -176,11 +212,23 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
                     // threads
 
                     ModelNode threads = steps.get("step-2").get(RESULT);
-
-                    System.out.println(threads);
                     ThreadMetric thread = threadMetricAdapter.fromDMR(threads);
 
                     getView().setThreads(thread);
+
+                    // runtime
+
+                    ModelNode runtime = steps.get("step-3").get(RESULT);
+                    RuntimeMetric runtimeMetric = runtimeAdapter.fromDMR(runtime);
+
+                    getView().setRuntimeMetric(runtimeMetric);
+
+                    // os
+
+                    ModelNode os = steps.get("step-4").get(RESULT);
+                    OSMetric osMetric = osAdapter.fromDMR(os);
+
+                    getView().setOSMetric(osMetric);
                 }
                 else
                 {
