@@ -86,6 +86,7 @@
         <gwt.version>2.2.0</gwt.version>
         <gwt.maven>2.2.0</gwt.maven>
         <gwt-log.version>3.1.0</gwt-log.version>
+        <gwt-vis.version>1.1.1</gwt-vis.version>
         <gin.version>1.0_r170</gin.version>
         <guice.version>3.0-rc2</guice.version>
         <gwtp.version>0.6-2.17</gwtp.version>
@@ -118,6 +119,12 @@
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
                 <version>${gwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code</groupId>
+                <artifactId>gwt-visualization</artifactId>
+                <version>${gwt-vis.version}</version>
             </dependency>
 
             <dependency>

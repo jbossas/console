@@ -28,6 +28,8 @@
     <inherits name="com.google.gwt.json.JSON"/>
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
+    <inherits name='com.google.gwt.visualization.Visualization'/>
+
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"
                                 value="org.jboss.as.console.client.core.gin.CoreUI" />

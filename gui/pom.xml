@@ -42,6 +42,10 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code</groupId>
+            <artifactId>gwt-visualization</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.google.gwt</groupId>

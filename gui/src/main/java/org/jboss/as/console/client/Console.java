@@ -20,6 +20,7 @@
 package org.jboss.as.console.client;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.ajaxloader.client.AjaxLoader;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -29,6 +30,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.BootstrapCmd;
 import org.jboss.as.console.client.core.UIConstants;
@@ -83,6 +86,16 @@ public class Console implements EntryPoint {
                 bootstrap();
 
                 RootLayoutPanel.get().remove(loadingImage);
+
+                // google vis API
+                VisualizationUtils.loadVisualizationApi(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println("Loaded Google Vizualization API");
+                            }
+                        }, LineChart.PACKAGE
+                );
             }
         });
     }
@@ -139,5 +152,12 @@ public class Console implements EntryPoint {
             }
         });
     }
+
+    public static native boolean visAPILoaded() /*-{
+        if ($wnd['google'] && $wnd.google['load']) {
+            return true;
+        }
+        return false;
+    }-*/;
 
 }

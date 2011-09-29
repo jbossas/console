@@ -2,6 +2,8 @@ package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -10,6 +12,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -31,6 +34,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMMetricsPresenter.MyProxy> {
 
+    private static final int POLL_INTERVAL = 5000;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData metaData;
@@ -46,6 +50,9 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
         void setPresenter(VMMetricsPresenter presenter);
         void setHeap(HeapMetric heap);
         void setNonHeap(HeapMetric nonHeap);
+
+        void attachCharts();
+        void detachCharts();
     }
 
     @Inject
@@ -72,11 +79,19 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     @Override
     protected void onHide() {
         super.onHide();
+
+        getView().detachCharts();
     }
+
 
     @Override
     protected void onReset() {
         super.onReset();
+
+        if(Console.visAPILoaded())
+            getView().attachCharts();
+        else
+            Console.error("Failed load visualization API", "Charts will not be available.");
 
         loadVMStatus();
 
@@ -87,7 +102,7 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
                         loadVMStatus();
                         return isVisible();
                     }
-                }, 2000);
+                }, POLL_INTERVAL);
     }
 
 
