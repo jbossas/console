@@ -47,7 +47,12 @@ public class EntityAdapter<T> {
     public T fromDMR(ModelNode dmr) {
 
         ModelNode actualPayload = null;
-        T protoType = (T)metaData.getFactory(type).create();
+        EntityFactory<?> factory = metaData.getFactory(type);
+
+        if(null==factory)
+            throw new IllegalArgumentException("No factory method for " + type);
+
+        T protoType = (T) factory.create();
 
         KeyAssignment keyDelegation = null;
 
