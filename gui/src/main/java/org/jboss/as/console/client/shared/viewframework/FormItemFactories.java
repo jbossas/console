@@ -159,7 +159,8 @@ public class FormItemFactories {
         
         @Override
         public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label, this.allowNegativeNumber);
+            //TODO: NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label, this.allowNegativeNumber);
+            NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label);
             numberItem.setRequired(isRequired);
             return numberItem;
         }
