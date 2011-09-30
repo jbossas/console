@@ -32,7 +32,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -40,14 +39,14 @@ import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import javax.inject.Inject;
@@ -168,12 +167,11 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
         form.setNumColumns(2);
 
-        final TextItem nameField = new TextItem("groupName", Console.CONSTANTS.common_label_name());
         TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
         socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        form.setFields(nameField, profileItem, socketBindingItem);
+        form.setFields(profileItem, socketBindingItem);
 
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 
