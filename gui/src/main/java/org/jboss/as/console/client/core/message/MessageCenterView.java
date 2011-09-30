@@ -161,10 +161,6 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
-
-
-        messageDisplay = new LayoutPanel();
-
         final DefaultButton button = new DefaultButton(Console.CONSTANTS.common_label_messages());
         button.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
 
@@ -196,12 +192,13 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         // register listener
         messageCenter.addMessageListener(this);
 
+        messageDisplay = new LayoutPanel();
 
         layout.add(messageDisplay);
         layout.add(button);
 
-        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 350, Style.Unit.PX);
-        layout.setWidgetLeftWidth(button, 350, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 250, Style.Unit.PX);
+        layout.setWidgetLeftWidth(button, 250, Style.Unit.PX, 100, Style.Unit.PX);
         layout.setWidgetTopHeight(button, 2, Style.Unit.PX, 22, Style.Unit.PX);
 
         return layout;
@@ -226,7 +223,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             HorizontalPanel panel = new HorizontalPanel();
             panel.getElement().setAttribute("cellpadding", "6");
 
-            String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
+            String actualMessage = message.getConciseMessage().length()>50 ? message.getConciseMessage().substring(0, 50)+" ..." : message.getConciseMessage();
 
             final Label label = new Label(actualMessage);
             label.getElement().setAttribute("style", "font-size:10px; white-space: nowrap;text-overflow:ellipsis");
