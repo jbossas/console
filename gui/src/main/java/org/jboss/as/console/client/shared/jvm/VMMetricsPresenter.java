@@ -50,6 +50,9 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     private EntityAdapter<RuntimeMetric> runtimeAdapter;
     private EntityAdapter<OSMetric> osAdapter;
 
+    private boolean keepPolling = true;
+    private Scheduler.RepeatingCommand pollCmd = null;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
     public interface MyProxy extends Proxy<VMMetricsPresenter>, Place {
@@ -67,6 +70,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
         void detachCharts();
 
         void setOSMetric(OSMetric osMetric);
+
+        void reset();
     }
 
     @Inject
@@ -105,6 +110,9 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     protected void onReset() {
         super.onReset();
 
+
+        getView().reset();
+
         if(Console.visAPILoaded())
             getView().attachCharts();
         else
@@ -112,25 +120,34 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
         loadVMStatus();
 
-        Scheduler.get().scheduleFixedDelay(
-                new Scheduler.RepeatingCommand() {
-                    @Override
-                    public boolean execute() {
-                        loadVMStatus();
-                        boolean visible = isVisible();
-
-                        if(!visible)
-                            Console.warning("Stop polling for virtual machine metrics.",
-                                    "Polling stop when the chart are not visible anymore.");
-
-                        return visible;
-                    }
-                }, POLL_INTERVAL);
-
-        Console.info("Begin polling for virtual machine metrics");
+        beginPolling();
 
     }
 
+    private void beginPolling() {
+        pollCmd = new Scheduler.RepeatingCommand() {
+            @Override
+            public boolean execute() {
+
+                final boolean keepPooling = isVisible() && !shouldPause();
+
+                if (keepPooling)
+                    loadVMStatus();
+                else
+                    Console.warning("Stop polling for VM metrics.");
+
+                return keepPooling;
+            }
+        };
+
+        Scheduler.get().scheduleFixedDelay(pollCmd, POLL_INTERVAL);
+
+        Console.info("Begin polling for virtual machine metrics");
+    }
+
+    private boolean shouldPause() {
+        return !keepPolling;
+    }
 
 
     public void loadVMStatus() {
@@ -242,4 +259,16 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
     }
+
+    public void keepPolling(boolean b) {
+
+        this.keepPolling = b;
+
+        if(keepPolling && pollCmd==null)
+            beginPolling();
+        else if(!keepPolling && pollCmd!=null)
+            pollCmd=null;
+
+    }
+
 }

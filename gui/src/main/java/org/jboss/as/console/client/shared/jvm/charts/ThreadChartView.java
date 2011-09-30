@@ -12,6 +12,8 @@ import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 
+import java.util.Date;
+
 
 /**
  * @author Heiko Braun
@@ -63,6 +65,7 @@ public class ThreadChartView extends AbstractChartView {
 
     private DataTable createTable() {
         data = DataTable.create();
+        data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
         data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Live");
         data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Daemon");
         return data;
@@ -82,18 +85,25 @@ public class ThreadChartView extends AbstractChartView {
 
         live.setHTML("Live: "+metric.getCount());
         daemon.setHTML("Daemon: "+metric.getDaemonCount());
-        peak.setHTML("Peak: "+metric.getPeakCount());
+        peak.setHTML("Peak: " + metric.getPeakCount());
 
         data.addRow();
         int nextRow = data.getNumberOfRows()-1;
 
-        data.setValue(nextRow, 0, metric.getCount());
-        data.setValue(nextRow, 1, metric.getDaemonCount());
+        data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
+        data.setValue(nextRow, 1, metric.getCount());
+        data.setValue(nextRow, 2, metric.getDaemonCount());
 
         Options options = createOptions();
         AxisOptions vaxis = AxisOptions.create();
         vaxis.setMaxValue(metric.getPeakCount()+10);
         options.setVAxisOptions(vaxis);
+
+        AxisOptions haxis = AxisOptions.create();
+        haxis.set("showTextEvery", "10.00");
+        haxis.set("maxAlternation", "1");
+        options.setHAxisOptions(haxis);
+
 
         chart.draw(data, options);
     }

@@ -45,6 +45,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     private HTML osName;
     private HTML processors;
+    private ToolButton pauseBtn;
 
     @Override
     public void setPresenter(VMMetricsPresenter presenter) {
@@ -60,15 +61,26 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(
-                new ToolButton(Console.CONSTANTS.common_label_refresh(),
-                        new ClickHandler() {
 
-                            @Override
-                            public void onClick(ClickEvent event) {
-                                presenter.loadVMStatus();
-                            }
-                        }));
+        pauseBtn = new ToolButton("Stop");
+        ClickHandler clickHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+
+                boolean b = pauseBtn.getText().equals("Start");
+                presenter.keepPolling(b);
+
+                if(pauseBtn.getText().equals("Stop"))
+                    pauseBtn.setText("Start");
+                else
+                    pauseBtn.setText("Stop");
+
+            }
+        };
+
+        pauseBtn.addClickHandler(clickHandler);
+        topLevelTools.addToolButtonRight(pauseBtn);
 
         layout.add(topLevelTools);
 
@@ -199,5 +211,10 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             processors.setHTML("<b style='color:#A7ABB4'>Number of processors:</b>   "+osMetric.getNumProcessors());
         }
 
+    }
+
+    @Override
+    public void reset() {
+        pauseBtn.setText("Stop");
     }
 }

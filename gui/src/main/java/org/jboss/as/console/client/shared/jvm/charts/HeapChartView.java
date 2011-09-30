@@ -9,6 +9,8 @@ import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 
+import java.util.Date;
+
 
 /**
  * @author Heiko Braun
@@ -55,6 +57,7 @@ public class HeapChartView extends AbstractChartView {
 
     private DataTable createTable() {
         data = DataTable.create();
+        data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
         data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Used");
         return data;
     }
@@ -80,12 +83,19 @@ public class HeapChartView extends AbstractChartView {
         data.addRow();
         int nextRow = data.getNumberOfRows()-1;
 
-        data.setValue(nextRow, 0, usedMb);
+        data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
+        data.setValue(nextRow, 1, usedMb);
 
         Options options = createOptions();
         AxisOptions vaxis = AxisOptions.create();
         vaxis.setMaxValue(maxMb);
+        //vaxis.set("vAxis.gridlineColor", "#FF6666");
         options.setVAxisOptions(vaxis);
+
+        AxisOptions haxis = AxisOptions.create();
+        haxis.set("showTextEvery", "10.00");
+        haxis.set("maxAlternation", "1");
+        options.setHAxisOptions(haxis);
 
         chart.draw(data, options);
     }
