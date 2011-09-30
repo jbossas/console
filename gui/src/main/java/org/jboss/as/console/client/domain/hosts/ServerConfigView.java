@@ -172,7 +172,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         form = new Form<Server>(Server.class);
         form.setNumColumns(2);
 
-        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
         //groupItem = new ComboBoxItem("group", "Server Group");
 
@@ -199,7 +198,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         };
 
 
-        form.setFields(nameItem, groupItem, startedItem);
+        form.setFields(groupItem, startedItem);
         form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
