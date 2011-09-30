@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.properties;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -99,7 +100,8 @@ public class PropertyEditor {
         addProp.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewPropertyDialoge(reference);
+                if(PropertyEditor.this.enabled)
+                    presenter.launchNewPropertyDialoge(reference);
             }
         });
         propTools.addToolButtonRight(addProp);
@@ -175,7 +177,8 @@ public class PropertyEditor {
         NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
             @Override
             public void execute(int rownum) {
-                if (!PropertyEditor.this.propertyTable.isEnabled()) return;
+
+                if (!PropertyEditor.this.enabled) return;
                 final PropertyRecord property = propertyProvider.getList().get(rownum);
 
                 if(simpleView)
@@ -270,5 +273,10 @@ public class PropertyEditor {
     public void setAllowEditProps(boolean allowEditProps) {
         this.allowEditProps = allowEditProps;
         propertyTable.setEnabled(enabled && allowEditProps);
+    }
+
+    public void clearValues() {
+        propertyProvider.setList(new ArrayList<PropertyRecord>());
+        setEnabled(false);
     }
 }

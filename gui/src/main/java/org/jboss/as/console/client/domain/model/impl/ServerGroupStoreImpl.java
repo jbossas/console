@@ -144,11 +144,17 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode payload = response.get("result").asObject();
-
-                ServerGroupRecord record = model2ServerGroup(name, payload);
-
-                callback.onSuccess(record);
+                if(ModelAdapter.wasSuccess(response))
+                {
+                    ModelNode payload = response.get("result").asObject();
+                    ServerGroupRecord record = model2ServerGroup(name, payload);
+                    callback.onSuccess(record);
+                }
+                else
+                {
+                    System.out.println(response);
+                    callback.onFailure(new RuntimeException("Failed load server config " + name));
+                }
 
             }
         });
@@ -171,15 +177,22 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> payload = response.get("result").asList();
-
-                List<String> records = new ArrayList<String>(payload.size());
-                for(ModelNode binding : payload)
+                if(ModelAdapter.wasSuccess(response))
                 {
-                    records.add(binding.asString());
-                }
+                    List<ModelNode> payload = response.get("result").asList();
 
-                callback.onSuccess(records);
+                    List<String> records = new ArrayList<String>(payload.size());
+                    for(ModelNode binding : payload)
+                    {
+                        records.add(binding.asString());
+                    }
+
+                    callback.onSuccess(records);
+                }
+                else
+                {
+                    callback.onFailure(new RuntimeException("Failed to load socket binding groups"));
+                }
             }
         });
     }

@@ -170,4 +170,7 @@ public class JvmEditor {
 
     }
 
+    public void clearValues() {
+        form.clearValues();
+    }
 }

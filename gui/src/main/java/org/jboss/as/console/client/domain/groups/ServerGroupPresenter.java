@@ -86,6 +86,9 @@ public class ServerGroupPresenter
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
 
+    private List<ProfileRecord> existingProfiles;
+    private List<String> existingSockets;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupPresenter)
     public interface MyProxy extends Proxy<ServerGroupPresenter>, Place {
@@ -95,8 +98,9 @@ public class ServerGroupPresenter
         void setPresenter(ServerGroupPresenter presenter);
         void setSelectedRecord(ServerGroupRecord record);
         void setEnabled(boolean isEnabled);
-        void updateProfiles(List<ProfileRecord> result);
         void updateSocketBindings(List<String> result);
+
+        void setNoGroupsAvailable(boolean b);
     }
 
     @Inject
@@ -141,16 +145,18 @@ public class ServerGroupPresenter
         profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
             @Override
             public void onSuccess(List<ProfileRecord> result) {
-                getView().updateProfiles(result);
+                existingProfiles = result;
             }
         });
 
         serverGroupStore.loadSocketBindingGroupNames(new SimpleCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> result) {
+                existingSockets = result;
                 getView().updateSocketBindings(result);
             }
         });
+
         refreshServerGroups();
 
     }
@@ -174,24 +180,36 @@ public class ServerGroupPresenter
                 }
                 else
                 {
-                    Log.warn("Parameter 'name' missing, fallback to default group");
-                    groupName = result.get(0).getGroupName();
-                    selectedRecord = result.get(0);
+                    if(!result.isEmpty())
+                    {
+                        Log.warn("Parameter 'name' missing, fallback to default group");
 
-                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            getEventBus().fireEvent(
-                                    new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
+                        // select first item
+                        groupName = result.get(0).getGroupName();
+                        selectedRecord = result.get(0);
 
-                            );
-                        }
-                    });
+                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                            @Override
+                            public void execute() {
+                                getEventBus().fireEvent(
+                                        new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
+
+                                );
+                            }
+                        });
+                    }
+                    else
+                    {
+                        getView().setNoGroupsAvailable(true);
+                    }
 
                 }
 
-                loadServerGroup(selectedRecord.getGroupName());
-                getView().setEnabled(false);
+                if(selectedRecord!=null)
+                {
+                    loadServerGroup(selectedRecord.getGroupName());
+                    getView().setEnabled(false);
+                }
 
             }
         });
@@ -241,6 +259,10 @@ public class ServerGroupPresenter
                                 new Message("Failed to delete "+deletion.getGroupName(), Message.Severity.Error)
                         );
                     }
+
+                    groupName=null;
+                    selectedRecord=null;
+                    refreshServerGroups();
                 }
             });
 
@@ -248,13 +270,13 @@ public class ServerGroupPresenter
         }
 
         // switch to alternate record instead
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+        /*serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
                 if(result.size()>0)
                     workOn(serverGroups.get(0));
             }
-        });
+        });*/
 
     }
 
@@ -350,7 +372,7 @@ public class ServerGroupPresenter
         });
 
         window.setWidget(
-                new NewServerGroupWizard(this, serverGroups).asWidget()
+                new NewServerGroupWizard(this, serverGroups, existingProfiles, existingSockets).asWidget()
         );
 
         window.setGlassEnabled(true);
@@ -460,6 +482,7 @@ public class ServerGroupPresenter
 
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
+        System.out.println("Delete prop "+prop.getKey());
 
         ModelNode address = new ModelNode();
         address.add("server-group", groupName);

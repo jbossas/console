@@ -169,18 +169,11 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.setNumColumns(2);
 
         final TextItem nameField = new TextItem("groupName", Console.CONSTANTS.common_label_name());
-        //jvmField = new ComboBoxItem("jvm", "Virtual Machine");
-        //jvmField.setValueMap(new String[] {"default"}); // TODO: https://issues.jboss.org/browse/JBAS-9156
-
+        TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
         socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        // TODO: https://issues.jboss.org/browse/AS7-663
-        //profileItem = new ComboBoxItem("profileName", "Profile");
-        TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
-
         form.setFields(nameField, profileItem, socketBindingItem);
-        //form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBindingItem);
 
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 
@@ -222,7 +215,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
         propertyEditor.setAllowEditProps(false);
 
-        bottomLayout .selectTab(0);
+        bottomLayout.selectTab(0);
 
         panel.add(new ContentGroupLabel("Subresources"));
         panel.add(bottomLayout);
@@ -251,32 +244,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form.edit(record);
 
         propertyEditor.setProperties(record.getGroupName(), record.getProperties());
+        propertyEditor.setEnabled(true); // otherwise delete would not work
         jvmEditor.setSelectedRecord(record.getGroupName(), record.getJvm());
-    }
-
-    @Override
-    public void updateProfiles(List<ProfileRecord> result) {
-
-        /*
-
-        TODO: https://issues.jboss.org/browse/AS7-663
-
-        List<String> names = new ArrayList<String>(result.size());
-        for(ProfileRecord rec : result)
-            names.add(rec.getName());
-
-        profileItem.setValueMap(names);*/
     }
 
     public void setEnabled(boolean isEnabled) {
 
-        if(isEnabled)
-            panel.addStyleName("edit-panel");
-        else
-            panel.removeStyleName("edit-panel");
-
         form.setEnabled(isEnabled);
-
 
         edit.setText(
                 isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
@@ -286,5 +260,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public void updateSocketBindings(List<String> result) {
         socketBindingItem.setValueMap(result);
+    }
+
+    @Override
+    public void setNoGroupsAvailable(boolean b) {
+        form.clearValues();
+        jvmEditor.clearValues();
+        propertyEditor.clearValues();
     }
 }

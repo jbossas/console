@@ -52,6 +52,7 @@ class ServersConfigSection {
 
         panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
         hostTree = new LHSNavTree("hosts");
+
         panel.setContent(hostTree);
     }
 

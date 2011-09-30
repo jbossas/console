@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
@@ -42,11 +43,20 @@ import java.util.List;
 class NewServerGroupWizard {
 
     private ServerGroupPresenter presenter;
-    private List<ServerGroupRecord> existing;
+    private List<ServerGroupRecord> existingGroups;
+    private List<ProfileRecord> existingProfiles;
+    private List<String> existingSockets;
 
-    public NewServerGroupWizard(final ServerGroupPresenter presenter, final List<ServerGroupRecord> existing) {
+    public NewServerGroupWizard(
+            final ServerGroupPresenter presenter,
+            final List<ServerGroupRecord> existing,
+            List<ProfileRecord> existingProfiles,
+            List<String> existingSockets) {
         this.presenter = presenter;
-        this.existing = existing;
+        this.existingGroups = existing;
+        this.existingProfiles = existingProfiles;
+        this.existingSockets = existingSockets;
+
     }
 
     public Widget asWidget() {
@@ -71,20 +81,43 @@ class NewServerGroupWizard {
             }
         };
 
-        final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", Console.CONSTANTS.common_label_basedOn());
+        /*final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", Console.CONSTANTS.common_label_basedOn());
+        basedOnSelection.setDefaultToFirstOption(true);
 
-        String[] exists = new String[existing.size()];
-        int i=0;
-        for(ServerGroupRecord rec : existing)
+        if(existingGroups.isEmpty())
         {
-            exists[i] = rec.getGroupName();
+            basedOnSelection.setValueMap(new String[]{"none"});
+        }
+        else
+        {
+            String[] exists = new String[existingGroups.size()];
+            int i=0;
+            for(ServerGroupRecord rec : existingGroups)
+            {
+                exists[i] = rec.getGroupName();
+                i++;
+            }
+            basedOnSelection.setValueMap(exists);
+        }      */
+
+
+        String[] profiles = new String[existingProfiles.size()];
+        int i=0;
+        for(ProfileRecord rec : existingProfiles)
+        {
+            profiles[i] = rec.getName();
             i++;
         }
 
-        basedOnSelection.setDefaultToFirstOption(true);
-        basedOnSelection.setValueMap(exists);
+        final ComboBoxItem profileSelection = new ComboBoxItem("profileName", "Profile");
+        profileSelection.setDefaultToFirstOption(true);
+        profileSelection.setValueMap(profiles);
 
-        form.setFields(nameField, basedOnSelection);
+        final ComboBoxItem socketSelection = new ComboBoxItem("socketBinding", "Socket Binding");
+        socketSelection.setDefaultToFirstOption(true);
+        socketSelection.setValueMap(existingSockets);
+
+        form.setFields(nameField, profileSelection, socketSelection);
 
         DialogueOptions options = new DialogueOptions(
 
@@ -99,8 +132,8 @@ class NewServerGroupWizard {
                         if(validation.hasErrors())
                             return;
 
-                        ServerGroupRecord base = null;
-                        for(ServerGroupRecord rec : existing)
+                        /*ServerGroupRecord base = null;
+                        for(ServerGroupRecord rec : existingGroups)
                         {
                             if(rec.getGroupName().equals(basedOnSelection.getValue()))
                             {
@@ -109,10 +142,14 @@ class NewServerGroupWizard {
                             }
                         }
 
-                        newGroup.setJvm(base.getJvm());
-                        newGroup.setSocketBinding(base.getSocketBinding());
-                        newGroup.setProfileName(base.getProfileName());
-                        newGroup.setProperties(base.getProperties());
+                        if(base!=null)
+                        {
+                            newGroup.setJvm(base.getJvm());
+                            newGroup.setSocketBinding(base.getSocketBinding());
+                            newGroup.setProfileName(base.getProfileName());
+                            newGroup.setProperties(base.getProperties());
+                        }
+                          */
 
                         presenter.createNewGroup(newGroup);
 
