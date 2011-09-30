@@ -166,7 +166,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         messageDisplay = new LayoutPanel();
 
         final DefaultButton button = new DefaultButton(Console.CONSTANTS.common_label_messages());
-        button.getElement().setAttribute("style", "width:100%");
+        button.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
 
         ClickHandler clickHandler = new ClickHandler() {
             public void onClick(ClickEvent event) {
