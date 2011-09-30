@@ -56,7 +56,7 @@ public class Footer {
 
         MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
         Widget messageCenter = messageCenterView.asWidget();
-        //messageCenter.getElement().addClassName("footer-item-right");
+        //messageCenter.getElement().setAttribute("style", "border:1px solid green");
         layout.add(messageCenter);
 
         //layout.setWidgetLeftWidth(userImg, 5, Style.Unit.PX, 16, Style.Unit.PX);
@@ -67,14 +67,14 @@ public class Footer {
 
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
-        version.getElement().setAttribute("style", "color:#000000;font-size:10px; align:center");
+        version.getElement().setAttribute("style", "color:#000000;font-size:10px; align:left");
         layout.add(version);
 
-        layout.setWidgetLeftWidth(version, 15, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetTopHeight(version, 6, Style.Unit.PX, 16, Style.Unit.PX);
 
 
-        layout.setWidgetRightWidth(messageCenter, 15, Style.Unit.PX, 300, Style.Unit.PX);
+        layout.setWidgetRightWidth(messageCenter, 5, Style.Unit.PX, 450, Style.Unit.PX);
         layout.setWidgetTopHeight(messageCenter, 2, Style.Unit.PX, 28, Style.Unit.PX);
         return layout;
     }

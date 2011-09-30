@@ -42,6 +42,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
@@ -160,10 +161,12 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
+
+
         messageDisplay = new LayoutPanel();
 
-        final Button button = new Button(Console.CONSTANTS.common_label_messages());
-        button.getElement().addClassName("default-button");
+        final DefaultButton button = new DefaultButton(Console.CONSTANTS.common_label_messages());
+        button.getElement().setAttribute("style", "width:100%");
 
         ClickHandler clickHandler = new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -175,8 +178,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
-                        button.getAbsoluteLeft() - (width+24-button.getOffsetWidth()) ,
-                        button.getAbsoluteTop() - (height+24)
+                        button.getAbsoluteLeft() - (width+10-button.getOffsetWidth()) ,
+                        button.getAbsoluteTop() - (height+18)
                 );
 
 
@@ -197,8 +200,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         layout.add(messageDisplay);
         layout.add(button);
 
-        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 200, Style.Unit.PX);
-        layout.setWidgetLeftWidth(button, 200, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 350, Style.Unit.PX);
+        layout.setWidgetLeftWidth(button, 350, Style.Unit.PX, 100, Style.Unit.PX);
         layout.setWidgetTopHeight(button, 2, Style.Unit.PX, 22, Style.Unit.PX);
 
         return layout;
