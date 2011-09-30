@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
@@ -33,6 +34,7 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 
@@ -170,8 +172,15 @@ class NewServerGroupWizard {
 
         Widget formWidget = form.asWidget();
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel(
-                Console.MESSAGES.commmon_description_newServerGroup()
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = new ModelNode();
+                        address.add("server-group", "*");
+                        return address;
+                    }
+                }, form
         );
 
         layout.add(helpPanel.asWidget());
