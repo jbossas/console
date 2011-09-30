@@ -223,7 +223,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             HorizontalPanel panel = new HorizontalPanel();
             panel.getElement().setAttribute("cellpadding", "6");
 
-            String actualMessage = message.getConciseMessage().length()>50 ? message.getConciseMessage().substring(0, 50)+" ..." : message.getConciseMessage();
+            String actualMessage = message.getConciseMessage().length()>40 ? message.getConciseMessage().substring(0, 40)+" ..." : message.getConciseMessage();
 
             final Label label = new Label(actualMessage);
             label.getElement().setAttribute("style", "font-size:10px; white-space: nowrap;text-overflow:ellipsis");
