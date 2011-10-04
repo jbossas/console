@@ -28,12 +28,14 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -50,7 +52,7 @@ public class FrameworkEditor {
     private final OSGiPresenter presenter;
     private Form<OSGiSubsystem> form;
     private FrameworkPropertiesTable propertiesTable;
-    private PreloadedModulesTable preloadedModulesTable;
+    private CapabilitiesTable capabilitiesTable;
 
     FrameworkEditor(OSGiPresenter presenter) {
         this.presenter = presenter;
@@ -83,8 +85,20 @@ public class FrameworkEditor {
         form.setFields(activationMode);
         vpanel.add(form.asWidget());
 
-        addProperties(vpanel);
-        addPreLoadedModules(vpanel);
+
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_frameworkConfiguration()));
+        TabPanel bottomPanel = new TabPanel();
+        bottomPanel.setStyleName("default-tabpanel");
+
+        propertiesTable = new FrameworkPropertiesTable(presenter);
+        bottomPanel.add(propertiesTable.asWidget(), Console.CONSTANTS.subsys_osgi_properties());
+
+        VerticalPanel panel = new VerticalPanel();
+        addCapabilities(panel);
+        bottomPanel.add(panel, Console.CONSTANTS.subsys_osgi_capabilities());
+
+        bottomPanel.selectTab(0);
+        vpanel.add(bottomPanel);
 
         layout.add(scroll);
         layout.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
@@ -93,34 +107,26 @@ public class FrameworkEditor {
         return layout;
     }
 
-    private void addProperties(Panel layout) {
-        layout.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_frameworkProperties()));
-
-        propertiesTable = new FrameworkPropertiesTable(presenter);
-        layout.add(propertiesTable.asWidget());
-    }
-
-    private void addPreLoadedModules(Panel layout) {
-        layout.add(new ContentGroupLabel(Console.CONSTANTS.subsys_osgi_preloadedModules()));
+    private void addCapabilities(Panel layout) {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                OSGiPreloadedModule module =  preloadedModulesTable.getSelection();
-                presenter.launchModuleWizard(module);
+                OSGiCapability capability =  capabilitiesTable.getSelection();
+                presenter.launchCapabilityWizard(capability);
             }
         }));
         toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final OSGiPreloadedModule module =  preloadedModulesTable.getSelection();
-                Feedback.confirm(Console.MESSAGES.subsys_osgi_removePreloadedModule(),
-                    Console.MESSAGES.subsys_osgi_removePreloadedModuleConfirm(module.getIdentifier()),
+                final OSGiCapability capability =  capabilitiesTable.getSelection();
+                Feedback.confirm(Console.MESSAGES.subsys_osgi_removeCapability(),
+                    Console.MESSAGES.subsys_osgi_removeCapabilityConfirm(capability.getIdentifier()),
                     new Feedback.ConfirmationHandler() {
                         @Override
                         public void onConfirmation(boolean isConfirmed) {
                             if (isConfirmed)
-                                presenter.onDeletePreloadedModule(module.getIdentifier());
+                                presenter.onDeleteCapability(capability.getIdentifier());
                         }
                     });
             }
@@ -128,13 +134,16 @@ public class FrameworkEditor {
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchModuleWizard(null);
+                presenter.launchCapabilityWizard(null);
             }
         }));
         layout.add(toolStrip);
 
-        preloadedModulesTable = new PreloadedModulesTable();
-        layout.add(preloadedModulesTable.asWidget());
+        StaticHelpPanel helpPanel = new StaticHelpPanel(Console.MESSAGES.subsys_osgi_capabilitiesHelp());
+        layout.add(helpPanel.asWidget());
+
+        capabilitiesTable = new CapabilitiesTable();
+        layout.add(capabilitiesTable.asWidget());
     }
 
     void setProviderDetails(OSGiSubsystem provider) {
@@ -145,7 +154,7 @@ public class FrameworkEditor {
         propertiesTable.setProperties(properties);
     }
 
-    void updatePreloadedModules(List<OSGiPreloadedModule> modules) {
-        preloadedModulesTable.setModules(modules);
+    void updateCapabilities(List<OSGiCapability> capabilities) {
+        capabilitiesTable.setCapabilities(capabilities);
     }
 }

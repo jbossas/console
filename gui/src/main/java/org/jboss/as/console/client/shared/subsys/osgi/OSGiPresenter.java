@@ -57,11 +57,11 @@ import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewCapabilityWizard;
 import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewConfigAdminDataWizard;
-import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewModuleWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -71,6 +71,12 @@ import org.jboss.dmr.client.Property;
  */
 public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter.MyProxy> {
     public static final String OSGI_SUBSYSTEM = "osgi";
+
+    public static final String CAPABILITY_RESOURCE = "capability";
+    public static final String FRAMEWORK_PROPERTY_RESOURCE = "framework-property";
+
+    public static final String ACTIVATION_ATTRIBUTE = "activation";
+    public static final String STARTLEVEL_ATTRIBUTE = "startlevel";
 
     private final DispatchAsync dispatcher;
     private final BeanFactory factory;
@@ -87,7 +93,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         void setPresenter(OSGiPresenter presenter);
         void setProviderDetails(OSGiSubsystem provider);
         void updateProperties(List<PropertyRecord> properties);
-        void updatePreloadedModules(List<OSGiPreloadedModule> modules);
+        void updateCapabilities(List<OSGiCapability> capabilities);
         void updateConfigurationAdmin(List<OSGiConfigAdminData> casDataList, String selectPid);
     }
 
@@ -125,21 +131,21 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
                 providerEntity = factory.osgiSubsystem().as();
 
-                boolean lazy = "lazy".equalsIgnoreCase(model.get("activation").asString());
+                boolean lazy = "lazy".equalsIgnoreCase(model.get(ACTIVATION_ATTRIBUTE).asString());
                 providerEntity.setLazyActivation(lazy);
 
                 // Load sub-elements asynchronously
                 Console.schedule(new Command() {
                     @Override
                     public void execute() {
-                        if (model.hasDefined("property"))
+                        if (model.hasDefined(FRAMEWORK_PROPERTY_RESOURCE))
                             loadOSGiPropertyDetails();
 
                         Console.schedule(new Command() {
                             @Override
                             public void execute() {
-                                if (model.hasDefined("module"))
-                                    loadOSGiModuleDetails();
+                                if (model.hasDefined(CAPABILITY_RESOURCE))
+                                    loadOSGiCapabilityDetails();
 
                                 Console.schedule(new Command() {
                                     @Override
@@ -160,7 +166,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
     private void loadOSGiPropertyDetails() {
         ModelNode operation = createOperation(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(CHILD_TYPE).set("property");
+        operation.get(CHILD_TYPE).set(FRAMEWORK_PROPERTY_RESOURCE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -180,9 +186,9 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         });
     }
 
-    private void loadOSGiModuleDetails() {
+    private void loadOSGiCapabilityDetails() {
         ModelNode operation = createOperation(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(CHILD_TYPE).set("module");
+        operation.get(CHILD_TYPE).set(CAPABILITY_RESOURCE);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -190,18 +196,18 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode model = response.get(RESULT);
 
-                List<OSGiPreloadedModule> modules = new ArrayList<OSGiPreloadedModule>();
-                for (String moduleName : model.keys()) {
-                    OSGiPreloadedModule pm = factory.osgiPreloadedModule().as();
-                    pm.setIdentifier(moduleName);
+                List<OSGiCapability> capabilities = new ArrayList<OSGiCapability>();
+                for (String identifier : model.keys()) {
+                    OSGiCapability pm = factory.osgiCapability().as();
+                    pm.setIdentifier(identifier);
 
-                    ModelNode val = model.get(moduleName);
-                    if (val.has("start")) {
-                        pm.setStartLevel(val.get("start").asString());
+                    ModelNode val = model.get(identifier);
+                    if (val.has(STARTLEVEL_ATTRIBUTE)) {
+                        pm.setStartLevel(val.get(STARTLEVEL_ATTRIBUTE).asString());
                     }
-                    modules.add(pm);
+                    capabilities.add(pm);
                 }
-                getView().updatePreloadedModules(modules);
+                getView().updateCapabilities(capabilities);
             }
         });
     }
@@ -241,17 +247,17 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
         revealStrategy.revealInParent(this);
     }
 
-    public void launchModuleWizard(OSGiPreloadedModule module) {
+    public void launchCapabilityWizard(OSGiCapability capability) {
         String title;
-        if (module == null)
-            title = Console.CONSTANTS.subsys_osgi_preloadedModuleAdd();
+        if (capability == null)
+            title = Console.CONSTANTS.subsys_osgi_capabilityAdd();
         else
-            title = Console.CONSTANTS.subsys_osgi_preloadedModuleEdit();
+            title = Console.CONSTANTS.subsys_osgi_capabilityEdit();
 
         window = new DefaultWindow(title);
         window.setWidth(320);
         window.setHeight(240);
-        window.setWidget(new NewModuleWizard(this, module).asWidget());
+        window.setWidget(new NewCapabilityWizard(this, capability).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }
@@ -297,11 +303,11 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
     private void applyActivationChange(boolean isLazy) {
         ModelNode operation = createOperation(WRITE_ATTRIBUTE_OPERATION);
         final String stringValue = isLazy ? "lazy" : "eager";
-        operation.get(NAME).set("activation");
+        operation.get(NAME).set(ACTIVATION_ATTRIBUTE);
         operation.get(VALUE).set(stringValue);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION, "activation", stringValue,
+            new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION, ACTIVATION_ATTRIBUTE, stringValue,
                 new Command() {
                     @Override
                     public void execute() {
@@ -312,7 +318,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
     public void onAddProperty(final PropertyRecord prop) {
         ModelNode operation = createOperation(ADD);
-        operation.get(ADDRESS).add("property", prop.getKey());
+        operation.get(ADDRESS).add(FRAMEWORK_PROPERTY_RESOURCE, prop.getKey());
         operation.get("value").set(prop.getValue());
 
         dispatcher.execute(new DMRAction(operation),
@@ -327,7 +333,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
 
     public void onDeleteProperty(final PropertyRecord property) {
         ModelNode operation = createOperation(REMOVE);
-        operation.get(ADDRESS).add("property", property.getKey());
+        operation.get(ADDRESS).add(FRAMEWORK_PROPERTY_RESOURCE, property.getKey());
 
         dispatcher.execute(new DMRAction(operation),
             new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_frameworkProperty(), property.getKey(),
@@ -339,34 +345,34 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
                 }));
     }
 
-    public void onAddPreloadedModule(final OSGiPreloadedModule entity) {
+    public void onAddCapability(final OSGiCapability entity) {
         closeDialogue();
 
         ModelNode operation = createOperation(ADD);
-        operation.get(ADDRESS).add("module", entity.getIdentifier());
+        operation.get(ADDRESS).add(CAPABILITY_RESOURCE, entity.getIdentifier());
         if (entity.getStartLevel() != null && entity.getStartLevel().length() > 0)
-            operation.get("start").set(entity.getStartLevel());
+            operation.get(STARTLEVEL_ATTRIBUTE).set(entity.getStartLevel());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_preloadedModule(), entity.getIdentifier(),
+            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_capability(), entity.getIdentifier(),
                 new Command() {
                     @Override
                     public void execute() {
-                        loadOSGiModuleDetails();
+                        loadOSGiCapabilityDetails();
                     }
                 }));
     }
 
-    public void onDeletePreloadedModule(final String identifier) {
+    public void onDeleteCapability(final String identifier) {
         ModelNode operation = createOperation(REMOVE);
-        operation.get(ADDRESS).add("module", identifier);
+        operation.get(ADDRESS).add(CAPABILITY_RESOURCE, identifier);
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_preloadedModule(), identifier,
+            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_capability(), identifier,
                 new Command() {
                     @Override
                     public void execute() {
-                        loadOSGiModuleDetails();
+                        loadOSGiCapabilityDetails();
                     }
                 }));
     }

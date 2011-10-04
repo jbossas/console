@@ -28,7 +28,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
 
 /**
@@ -72,8 +72,8 @@ public class OSGiSubsystemView extends SuspendableViewImpl implements OSGiPresen
     }
 
     @Override
-    public void updatePreloadedModules(List<OSGiPreloadedModule> modules) {
-        frameworkEditor.updatePreloadedModules(modules);
+    public void updateCapabilities(List<OSGiCapability> capabilities) {
+        frameworkEditor.updateCapabilities(capabilities);
     }
 
     @Override

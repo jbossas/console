@@ -27,7 +27,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -39,22 +39,22 @@ import org.jboss.dmr.client.ModelNode;
 /**
  * @author David Bosschaert
  */
-public class NewModuleWizard {
+public class NewCapabilityWizard {
     private final OSGiPresenter presenter;
-    private final OSGiPreloadedModule module;
+    private final OSGiCapability capability;
 
-    public NewModuleWizard(OSGiPresenter presenter, OSGiPreloadedModule module) {
+    public NewCapabilityWizard(OSGiPresenter presenter, OSGiCapability capability) {
         this.presenter = presenter;
-        this.module = module;
+        this.capability = capability;
     }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
-        final Form<OSGiPreloadedModule> form = new Form<OSGiPreloadedModule>(OSGiPreloadedModule.class);
+        final Form<OSGiCapability> form = new Form<OSGiCapability>(OSGiCapability.class);
 
-        TextBoxItem identifier = new TextBoxItem("identifier", Console.CONSTANTS.subsys_osgi_preloadedModuleId());
-        TextBoxItem startLevel = new TextBoxItem("startLevel", Console.CONSTANTS.subsys_osgi_preloadedModuleStartLevel());
+        TextBoxItem identifier = new TextBoxItem("identifier", Console.CONSTANTS.subsys_osgi_capabilityId());
+        TextBoxItem startLevel = new TextBoxItem("startLevel", Console.CONSTANTS.subsys_osgi_capabilityStartLevel());
         startLevel.setRequired(false);
 
         form.setFields(identifier, startLevel);
@@ -64,7 +64,7 @@ public class NewModuleWizard {
             public ModelNode getAddress() {
                 ModelNode address = Baseadress.get();
                 address.add(ModelDescriptionConstants.SUBSYSTEM, OSGiPresenter.OSGI_SUBSYSTEM);
-                address.add("module", "*");
+                address.add(OSGiPresenter.CAPABILITY_RESOURCE, "*");
                 return address;
             }
         }, form);
@@ -72,9 +72,9 @@ public class NewModuleWizard {
 
         layout.add(form.asWidget());
         final String originalIdentifier;
-        if (module != null) {
-            originalIdentifier = module.getIdentifier();
-            form.edit(module);
+        if (capability != null) {
+            originalIdentifier = capability.getIdentifier();
+            form.edit(capability);
         } else {
             originalIdentifier = null;
         }
@@ -86,9 +86,9 @@ public class NewModuleWizard {
                     FormValidation validation = form.validate();
                     if (!validation.hasErrors()) {
                         if (originalIdentifier != null)
-                            presenter.onDeletePreloadedModule(originalIdentifier);
+                            presenter.onDeleteCapability(originalIdentifier);
 
-                        presenter.onAddPreloadedModule(form.getUpdatedEntity());
+                        presenter.onAddCapability(form.getUpdatedEntity());
                     }
                 }
             }, new ClickHandler() {

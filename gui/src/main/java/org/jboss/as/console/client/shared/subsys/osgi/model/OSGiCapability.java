@@ -21,17 +21,17 @@ package org.jboss.as.console.client.shared.subsys.osgi.model;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
- * This interface is implemented by an AutoBean to interface with the module sub-resource in the
+ * This interface is implemented by an AutoBean to interface with the capability sub-resource in the
  * detyped server API of the OSGi subsystem.
  * @author David Bosschaert
  */
-public interface OSGiPreloadedModule {
+public interface OSGiCapability {
     String getIdentifier();
     void setIdentifier(String id);
 
     // Start Level is really an integer, but it can also be ommitted and
     // the autobean handling of no value -> null doesn't work for Integers
-    @Binding(detypedName = "start")
+    @Binding(detypedName = "startlevel")
     String getStartLevel();
     void setStartLevel(String sl);
 }
