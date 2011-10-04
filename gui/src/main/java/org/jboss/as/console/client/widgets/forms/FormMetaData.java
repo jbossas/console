@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.viewframework;
+package org.jboss.as.console.client.widgets.forms;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,29 +26,40 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Aggregator for AttributeMetadata instances.  Be careful to only create one instance of
- * this class for each Entity.
+ * Aggregator for PropertyBinding instances.  Allows searching and grouping.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class EntityAttributes {
+public class FormMetaData {
     
-    private List<AttributeMetadata> baseAttributes;
-    private Map<String, List<AttributeMetadata>> groupedAttributes = new LinkedHashMap<String, List<AttributeMetadata>>();
+    private List<PropertyBinding> baseAttributes = new ArrayList<PropertyBinding>();
+    private Map<String, List<PropertyBinding>> groupedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
     
-    public EntityAttributes(List<AttributeMetadata> baseAttributes) {
-        this.baseAttributes = baseAttributes;
+    FormMetaData(BeanMetaData beanMetaData) {
+        for (PropertyBinding binding : beanMetaData.getProperties()) {
+           String subgroup = binding.getSubgroup();
+           if (subgroup.equals("")) {
+               baseAttributes.add(binding);
+           } else {
+               List<PropertyBinding> subgroupData = groupedAttributes.get(subgroup);
+               if (subgroupData == null) {
+                   subgroupData = new ArrayList<PropertyBinding>();
+                   groupedAttributes.put(subgroup, subgroupData);
+               }
+               subgroupData.add(binding);
+           }
+        }
     }
-
-    public List<AttributeMetadata> getBaseAttributes() {
+    
+    public List<PropertyBinding> getBaseAttributes() {
         return Collections.unmodifiableList(this.baseAttributes);
     }
     
-    public void setGroupedAttributes(String groupName, List<AttributeMetadata> attributes) {
+    public void setGroupedAttributes(String groupName, List<PropertyBinding> attributes) {
         groupedAttributes.put(groupName, attributes);
     }
     
-    public List<AttributeMetadata> getGroupedAttribtes(String groupName) {
+    public List<PropertyBinding> getGroupedAttribtes(String groupName) {
         return groupedAttributes.get(groupName);
     }
     
@@ -62,19 +74,19 @@ public class EntityAttributes {
     }
     
     /**
-     * Find an AttributeMetadata with the given bean property.
+     * Find a PropertyBinding with the given bean (Java Bean Name) property.
      * @param beanPropName The name of the bean property.
-     * @return The AttributeMetaData
-     * @throws IllegalArgumentException if the AttributeMetadata is not found.
+     * @return The PropertyBinding
+     * @throws IllegalArgumentException if the PropertyBinding is not found.
      */
-    public AttributeMetadata findAttribute(String beanPropName) {
-        for (AttributeMetadata attrib : baseAttributes) {
-            if (attrib.getBeanPropName().equals(beanPropName)) return attrib;
+    public PropertyBinding findAttribute(String beanPropName) {
+        for (PropertyBinding attrib : baseAttributes) {
+            if (attrib.getJavaName().equals(beanPropName)) return attrib;
         }
         
-        for (Map.Entry<String, List<AttributeMetadata>> entry : groupedAttributes.entrySet()) {
-            for (AttributeMetadata attrib : entry.getValue()) {
-                if (attrib.getBeanPropName().equals(beanPropName)) return attrib;
+        for (Map.Entry<String, List<PropertyBinding>> entry : groupedAttributes.entrySet()) {
+            for (PropertyBinding attrib : entry.getValue()) {
+                if (attrib.getJavaName().equals(beanPropName)) return attrib;
             }
         }
         

@@ -18,30 +18,65 @@
  */
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
-import java.util.List;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
+@Address("/subsystem=infinispan/cache-container={0}")
 public interface CacheContainer extends NamedEntity {
+    @Override
+    @Binding(detypedName="name", key=true)
+    @FormItem(defaultValue="",
+              localLabel="common_label_name",
+              required=true,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX")
+    public String getName();
+    @Override
+    public void setName(String name);
     
-    List<String> getAliasList();
-    void setAliasList(List<String> aliasList);
-    
+    @Binding(detypedName = "jndi-name")
+    @FormItem(localLabel="subsys_infinispan_jndiName",
+            required=false,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT")    
     String getJndiName();
     void setJndiName(String jndiName);
     
+    @Binding(detypedName= "default-cache")
+    @FormItem(localLabel="subsys_infinispan_default_cache",
+            required=true,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT")
     String getDefaultCache();
     void setDefaultCache(String defaultCache);
     
+    @Binding(detypedName="eviction-executor")
+    @FormItem(localLabel="subsys_infinispan_evictionExecutor",
+            required=false,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT")
     String getEvictionExecutor();
     void setEvictionExecutor(String evictionExecutor);
     
+    @Binding(detypedName="replication-queue-executor")
+    @FormItem(localLabel="subsys_infinispan_replicationQueueExecutor",
+            required=false,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT")
     String getReplicationQueueExecutor();
     void setReplicationQueueExecutor(String replicationQueueExecutor);
     
+    @Binding(detypedName="listener-executor")
+    @FormItem(localLabel="subsys_infinispan_listenerExecutor",
+            required=false,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT")
     String getListenerExecutor();
     void setListenerExecutor(String listenerExecutor);
 }

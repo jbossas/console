@@ -336,6 +336,14 @@ public class EntityAdapter<T> {
                 {
                     step.get(VALUE).set((Double)value);
                 }
+                else if (Long.class == type)
+                {
+                    step.get(VALUE).set((Long)value);
+                }
+                else if (Float.class == type)
+                {
+                    step.get(VALUE).set((Float)value);
+                }
                 else
                 {
                     throw new RuntimeException("Unsupported type: "+type);

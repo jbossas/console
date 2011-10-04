@@ -31,7 +31,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.shared.viewframework.SubsystemOpFactory;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 
 
@@ -42,10 +42,7 @@ import org.jboss.as.console.client.shared.viewframework.SubsystemOpFactory;
  */
 public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy> {
 
-    private SubsystemOpFactory opFactory = new SubsystemOpFactory("deployment-scanner", "scanner");
-    private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
-    private CacheContainerBridge bridge = (CacheContainerBridge)InfinispanData.CACHE_CONTAINER.getBridge();
 
     @ProxyCodeSplit
     @NameToken(NameTokens.CacheContainerPresenter)
@@ -58,17 +55,10 @@ public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.M
     @Inject
     public CacheContainerPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory beanFactory, RevealStrategy revealStrategy) {
+            RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
-        this.placeManager = placeManager;
         this.revealStrategy = revealStrategy;
-        bridge.setAttributes(InfinispanData.CACHE_CONTAINER.getAttributes());
-        bridge.setDispatcher(dispatcher);
-        bridge.setView(view);
-        bridge.setOpFactory(new SubsystemOpFactory("infinispan", "cache-container"));
-        bridge.setBeanFactory(beanFactory);
     }
 
     @Override
@@ -79,7 +69,7 @@ public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
-        bridge.loadEntities(null);
+        getView().initialLoad();
     }
 
     @Override

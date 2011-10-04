@@ -36,7 +36,7 @@ public class BindingDeclaration implements Binding  {
     private boolean isKey = false;
 
     private String beanClassName;
-
+    
     public BindingDeclaration(String detypedName, String javaName, boolean ignore, String beanClassName) {
         this.detypedName = detypedName;
         this.javaName = javaName;

@@ -29,6 +29,7 @@ import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator.PropBindingDeclarations;
 
 /**
  * @author Heiko Braun
@@ -39,9 +40,10 @@ public class ReflectionMetaData implements PropertyMetaData {
     public List<PropertyBinding> getBindingsForType(Class<?> type) {
         List<PropertyBinding> bindings = new ArrayList<PropertyBinding>();
 
-        List<BindingDeclaration> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
-        for(BindingDeclaration decl : bindingDeclarations)
+        List<PropBindingDeclarations> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
+        for(PropBindingDeclarations decl : bindingDeclarations)
         {
+<<<<<<< HEAD
             bindings.add(
                     new PropertyBinding(
                             decl.getJavaName(),
@@ -50,6 +52,10 @@ public class ReflectionMetaData implements PropertyMetaData {
                             decl.key()
                     )
             );
+=======
+            bindings.add(new PropertyBinding(decl.getBindingDeclaration().getJavaName(), decl.getBindingDeclaration().getDetypedName(),
+                                             decl.getBindingDeclaration().getJavaTypeName(), decl.getBindingDeclaration().key()));
+>>>>>>> bc6aa6e... Update viewframework to use EntityAdapter and to specify Form attributes in an annotation.
         }
 
         return bindings;
@@ -57,6 +63,7 @@ public class ReflectionMetaData implements PropertyMetaData {
 
     @Override
     public BeanMetaData getBeanMetaData(Class<?> type) {
+<<<<<<< HEAD
         throw new RuntimeException("not implemented!");
     }
 
@@ -69,4 +76,19 @@ public class ReflectionMetaData implements PropertyMetaData {
     public <T> EntityFactory<T> getFactory(Class<T> type) {
         throw new RuntimeException("not implemented!");
     }
+=======
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> EntityFactory<T> getFactory(Class<T> type) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Mutator getMutator(Class<?> type) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+>>>>>>> bc6aa6e... Update viewframework to use EntityAdapter and to specify Form attributes in an annotation.
 }

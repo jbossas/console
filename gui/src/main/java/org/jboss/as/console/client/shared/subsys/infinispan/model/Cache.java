@@ -19,6 +19,8 @@
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
  *
@@ -26,37 +28,101 @@ import org.jboss.as.console.client.shared.viewframework.NamedEntity;
  */
 public interface Cache extends NamedEntity {
     // top level attributes
-        // just getName/setName for now
+    // just getName/setName for now
     
     // Locking attributes
-    public void setIsolation(String isolation);
+    @Binding(detypedName="isolation")
+    @FormItem(defaultValue="REPEATABLE_READ",
+            label="Isolation",
+            required=false,
+            formItemTypeForEdit="ISOLATION_TYPES",
+            formItemTypeForAdd="ISOLATION_TYPES",
+            subgroup="Locking")
     public String getIsolation();
+    public void setIsolation(String isolation);
     
-    public void setStriping(Boolean striping);
+    @Binding(detypedName="striping")
+    @FormItem(defaultValue="false",
+            label="Striping",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            subgroup="Locking")
     public Boolean getStriping();
+    public void setStriping(Boolean striping);
     
-    public void setAcquireTimeout(Long aquireTimeout);
+    @Binding(detypedName="acquire-timeout")
+    @FormItem(defaultValue="15000",
+            label="Acquire Timeout",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX",
+            formItemTypeForAdd="NUMBER_BOX",
+            subgroup="Locking")
     public Long getAcquireTimeout();
+    public void setAcquireTimeout(Long aquireTimeout);
     
-    public void setConcurrencyLevel(Integer concurrencyLevel);
+    @Binding(detypedName="concurrency-level")
+    @FormItem(defaultValue="1000",
+            label="Concurrency Level",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX",
+            formItemTypeForAdd="NUMBER_BOX",
+            subgroup="Locking")
     public Integer getConcurrencyLevel();
+    public void setConcurrencyLevel(Integer concurrencyLevel);
+    
     
     // eviction attributes
-    public void setEvictionStrategy(String evictionStrategy);
+    @Binding(detypedName="strategy")
+    @FormItem(defaultValue="NONE",
+            label="Eviction Strategy",
+            required=false,
+            formItemTypeForEdit="EVICTION_STRATEGY_TYPES",
+            formItemTypeForAdd="EVICTION_STRATEGY_TYPES",
+            subgroup="Eviction")
     public String getEvictionStrategy();
+    public void setEvictionStrategy(String evictionStrategy);
     
-    public void setMaxEntries(Integer maxEntries);
+    @Binding(detypedName="max-entries")
+    @FormItem(defaultValue="10000",
+            label="Eviction Strategy",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX",
+            formItemTypeForAdd="NUMBER_BOX",
+            subgroup="Eviction")
     public Integer getMaxEntries();
+    public void setMaxEntries(Integer maxEntries);
+    
     
     // expiration attributes
-    public void setMaxIdle(Long maxIdle);
+    @Binding(detypedName="max-idle")
+    @FormItem(defaultValue="-1",
+            label="Max Idle",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
+            formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
+            subgroup="Expiration")
     public Long getMaxIdle();
+    public void setMaxIdle(Long maxIdle);
     
-    public void setLifespan(Long lifespan);
+    @Binding(detypedName="lifespan")
+    @FormItem(defaultValue="-1",
+            label="Lifespan",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
+            formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
+            subgroup="Expiration")
     public Long getLifespan();
+    public void setLifespan(Long lifespan);
     
-    public void setInterval(Long interval);
+    @Binding(detypedName="interval")
+    @FormItem(defaultValue="5000",
+            label="Interval",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
+            formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
+            subgroup="Expiration")
     public Long getInterval();
-    
+    public void setInterval(Long interval);
     
 }

@@ -18,12 +18,21 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.FormItem;
+
 /**
  * Data Model interface for Entities with a name attribute.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface NamedEntity {
-    public void setName(String name);
+ /*   @Binding(detypedName="name", key=true)
+    @FormItem(defaultValue="",
+              label="Name",
+              required=true,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX") */
     public String getName();
+    public void setName(String name);
 }

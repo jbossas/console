@@ -18,12 +18,21 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.FormItem;
+
 /**
  * Data Model interface for Entities with an enabled attribute.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface EnabledEntity {
-    public void setEnabled(boolean isEnabled);
+ /*   @Binding(detypedName="enabled")
+    @FormItem(defaultValue="false",
+               label="Enabled",
+               required=true,
+               formItemTypeForEdit="CHECK_BOX",
+               formItemTypeForAdd="CHECK_BOX") */
     public boolean isEnabled();
+    public void setEnabled(boolean isEnabled);
 }

@@ -19,18 +19,20 @@
 
 package org.jboss.as.console.client.shared.subsys.deploymentscanner;
 
+import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.EnabledColumn;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
-import org.jboss.as.console.client.shared.viewframework.EntityAttributes;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-
-
 
 /**
  * Main view class for Deployment Scanners.  This class assembles the editor and reacts to 
@@ -41,11 +43,17 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class ScannerView extends AbstractEntityView<DeploymentScanner> implements ScannerPresenter.MyView {
 
     private EntityToDmrBridge scannerBridge;
-    private EntityAttributes attributes;
+    private FormMetaData formMetaData;
 
+    @Inject
+    public ScannerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        formMetaData = propertyMetaData.getBeanMetaData(DeploymentScanner.class).getFormMetaData();
+        scannerBridge = new EntityToDmrBridgeImpl<DeploymentScanner>(propertyMetaData, DeploymentScanner.class, this, dispatcher);
+    }
+    
     @Override
-    protected EntityAttributes getEntityAttributes() {
-        return this.attributes;
+    protected FormMetaData getFormMetaData() {
+        return this.formMetaData;
     }
 
     @Override
@@ -62,10 +70,10 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
     protected FormAdapter<DeploymentScanner> makeAddEntityForm() {
         Form<DeploymentScanner> form = new Form(DeploymentScanner.class);
         form.setNumColumns(1);
-        form.setFields(attributes.findAttribute("name").getItemForAdd(),
-                       attributes.findAttribute("path").getItemForAdd(),
-                       attributes.findAttribute("relativeTo").getItemForAdd(),
-                       attributes.findAttribute("enabled").getItemForAdd());
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                       formMetaData.findAttribute("path").getFormItemForAdd(),
+                       formMetaData.findAttribute("relativeTo").getFormItemForAdd(),
+                       formMetaData.findAttribute("enabled").getFormItemForAdd());
         return form;
     }
 
@@ -79,14 +87,4 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
         return table;
     }
   
-    /**
-     * Called when Presenter is created.
-     * @param bridge The EntityToDmrBridge for DeploymentScanner
-     */
-    @Override
-    public void setEntityToDmrBridge(EntityToDmrBridge bridge) {
-        this.scannerBridge = bridge;
-        this.attributes = bridge.getEntityAttributes();
-    }
-    
 }

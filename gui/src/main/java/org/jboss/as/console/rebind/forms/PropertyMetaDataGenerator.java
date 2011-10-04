@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
  * @author Heiko Braun
@@ -111,6 +112,7 @@ public class PropertyMetaDataGenerator extends Generator{
                 new ClassSourceFileComposerFactory(packageName, className);
 
         // Imports
+        composerFactory.addImport("org.jboss.as.console.client.Console");
         composerFactory.addImport("org.jboss.as.console.client.widgets.forms.*");
         composerFactory.addImport("java.util.*");
 
@@ -179,34 +181,47 @@ public class PropertyMetaDataGenerator extends Generator{
                         // -----------------------------
                         // PropertyBinding
 
-                        List<BindingDeclaration> bindings = mapProperties(beanTypeClass);
+                        List<PropBindingDeclarations> bindings = mapProperties(beanTypeClass);
 
-                        for(BindingDeclaration decl : bindings)
+                        for(PropBindingDeclarations binding : bindings)
                         {
-                            if(decl.skip()) continue;
+                            BindingDeclaration bindDecl = binding.getBindingDeclaration();
+                            FormItemDeclaration formDecl = binding.getFormItemDeclaration();
+                            
+                            if(bindDecl.skip()) continue;
 
+                            String labelVar = "label_" +  beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            if (formDecl.localLabel().equals("")) {
+                                sourceWriter.println("String " + labelVar + " = \"" +  formDecl.label() + "\";");
+                            } else {
+                                sourceWriter.println("String " + labelVar + " = Console.CONSTANTS." + formDecl.localLabel() + "();");
+                            }
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
-                            sourceWriter.println("new PropertyBinding(\"" + decl.getJavaName() + "\", \"" + decl.getDetypedName() + "\", \"" + decl.getJavaTypeName() + "\", " + decl.key() + ")");
+                            sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
+                                                                      "\", \"" + bindDecl.getJavaTypeName() + "\", " + bindDecl.key() + 
+                                                                      ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
+                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
+                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() + "\")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
 
                             // create and register setters
-                            sourceWriter.println("mut_"+idx+".register(\"" + decl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public void invoke("+decl.getBeanClassName()+" entity, Object value) {\n" +
-                                            "entity.set"+decl.getPropertyName()+"(("+decl.getJavaTypeName()+")value);\n"+
+                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public void invoke("+bindDecl.getBeanClassName()+" entity, Object value) {\n" +
+                                            "entity.set"+bindDecl.getPropertyName()+"(("+bindDecl.getJavaTypeName()+")value);\n"+
                                         "}\n"+
                                     "});\n");
 
                              // create and register getters
 
                             String prefix = "get";
-                            if(decl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
+                            if(bindDecl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
 
-                            sourceWriter.println("mut_"+idx+".register(\"" + decl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public Object invoke("+decl.getBeanClassName()+" entity) {\n" +
-                                            "   return entity."+prefix+decl.getPropertyName()+"();\n"+
+                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public Object invoke("+bindDecl.getBeanClassName()+" entity) {\n" +
+                                            "   return entity."+prefix+bindDecl.getPropertyName()+"();\n"+
                                         "}\n"+
                                     "});\n");
 
@@ -251,10 +266,21 @@ public class PropertyMetaDataGenerator extends Generator{
         sourceWriter.outdent();
         sourceWriter.println("}");
     }
+    
+    public static class PropBindingDeclarations {
+        private BindingDeclaration bindingDecl;
+        private FormItemDeclaration formItemDecl;
+        public PropBindingDeclarations(BindingDeclaration bindingDecl, FormItemDeclaration formItemDecl) {
+            this.bindingDecl = bindingDecl;
+            this.formItemDecl = formItemDecl;
+        }
+        public BindingDeclaration getBindingDeclaration() { return this.bindingDecl; }
+        public FormItemDeclaration getFormItemDeclaration() { return this.formItemDecl; }
+    }
+    
+    public static List<PropBindingDeclarations> mapProperties(Class beanTypeClass) {
 
-    public static List<BindingDeclaration> mapProperties(Class beanTypeClass) {
-
-        List<BindingDeclaration> bindings = new ArrayList<BindingDeclaration>();
+        List<PropBindingDeclarations> bindings = new ArrayList<PropBindingDeclarations>();
 
         for(Method method : beanTypeClass.getMethods())
         {
@@ -273,8 +299,11 @@ public class PropertyMetaDataGenerator extends Generator{
             if(token!=null)
             {
                 BindingDeclaration bindingDeclaration = createBindingDeclaration(beanTypeClass, method, token);
-                if(bindingDeclaration!=null)
-                    bindings.add(bindingDeclaration);
+                if(bindingDeclaration!=null) {
+                    FormItemDeclaration formItemDecl = createFormItemDeclaration(method);
+                    PropBindingDeclarations propDecls = new PropBindingDeclarations(bindingDeclaration, formItemDecl);
+                    bindings.add(propDecls);
+                }
             }
 
         }
@@ -312,6 +341,32 @@ public class PropertyMetaDataGenerator extends Generator{
         return address;
     }
 
+    private static FormItemDeclaration createFormItemDeclaration(Method method) {
+        FormItem formItemDeclaration = method.getAnnotation(FormItem.class);
+        String defaultValue = "";
+        String label = "";
+        String localLabel = "";
+        boolean required = false;
+        String formItemTypeForEdit = "TEXT_BOX";
+        String formItemTypeForAdd = "TEXT_BOX";
+        String subgroup = "";
+
+        if(formItemDeclaration!=null)
+        {
+            defaultValue = formItemDeclaration.defaultValue();
+            label = formItemDeclaration.label();
+            localLabel = formItemDeclaration.localLabel();
+            required = formItemDeclaration.required();
+            formItemTypeForEdit = formItemDeclaration.formItemTypeForEdit();
+            formItemTypeForAdd = formItemDeclaration.formItemTypeForAdd();
+            subgroup = formItemDeclaration.subgroup();
+        }
+
+        FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
+                                                         formItemTypeForEdit, formItemTypeForAdd, subgroup);
+        return decl;
+    }
+    
     private static BindingDeclaration createBindingDeclaration(Class beanTypeClass, Method method, String token) {
 
 
@@ -326,7 +381,7 @@ public class PropertyMetaDataGenerator extends Generator{
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
         boolean skip = false;
         boolean key = false;
-
+        
         if(bindingDeclaration!=null)
         {
             detypedName = bindingDeclaration.detypedName()!= null ? bindingDeclaration.detypedName() : "not-set";

@@ -34,7 +34,27 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class FormItemFactories {
+public enum FormItemType {
+    
+    TEXT(new TextItemFactory()),
+    TEXT_BOX(new TextBoxItemFactory()),
+    BYTE_UNIT(new ByteUnitItemFactory()),
+    CHECK_BOX(new CheckBoxItemFactory()),
+    LIST_BOX(new ListBoxItemFactory()),
+    NUMBER_BOX(new NumberBoxItemFactory()),
+    NUMBER_BOX_ALLOW_NEGATIVE(new NumberBoxItemFactory(true)),
+    ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
+    EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"}));
+    
+    private FormItemFactory factory;
+    
+    private FormItemType(FormItemFactory factory) {
+        this.factory = factory;
+    }
+    
+    public FormItemFactory getFactory() {
+        return this.factory;
+    }
     
     public static interface FormItemFactory {
         FormItem makeFormItem(String beanPropName, String label, boolean isRequired);

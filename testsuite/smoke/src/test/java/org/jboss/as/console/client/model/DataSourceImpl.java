@@ -38,6 +38,8 @@ public class DataSourceImpl implements DataSource {
     String poolname;
     String version;
     int major, minor;
+    boolean ccm;
+    boolean jta;
 
     @Override
     public String getName() {

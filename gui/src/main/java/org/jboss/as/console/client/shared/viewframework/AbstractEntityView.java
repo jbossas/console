@@ -19,12 +19,14 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -33,7 +35,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 
 /**
- * Main view class for Deployment Scanners.  This class assembles the editor and reacts to 
+ * An abstract view class with a full EntityEditor.  This class assembles the editor and reacts to 
  * FrameworkView callbacks.
  * 
  * @author Stan Silvert
@@ -43,16 +45,16 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected EntityEditor<T> entityEditor;
 
     /**
-     * Get the EntityAttributes for the Entity.
-     * @return The EntityAttributes.
+     * Get the FormMetaData for the Entity.
+     * @return The FormMetaData.
      */
-    protected abstract EntityAttributes getEntityAttributes();
+    protected abstract FormMetaData getFormMetaData();
     
     /**
      * Get the EntityToDmrBridge for the Entity.
      * @return The bridge.
      */
-    protected abstract EntityToDmrBridge getEntityBridge();
+    protected abstract EntityToDmrBridge<T> getEntityBridge();
     
     /**
      * Create the table with the desired columns for the Entity.
@@ -115,13 +117,26 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected FormAdapter<T> makeEditEntityDetailsForm() {
         Form<T> form = new Form(DeploymentScanner.class);
         form.setNumColumns(2);
-        EntityAttributes attributes = getEntityAttributes();
+        FormMetaData attributes = getFormMetaData();
+        
+        // add base items to form
         FormItem[] items = new FormItem[attributes.getBaseAttributes().size()];
         int i=0;
-        for (AttributeMetadata attrib : attributes.getBaseAttributes()) {
-            items[i++] = attrib.getItemForEdit();
+        for (PropertyBinding attrib : attributes.getBaseAttributes()) {
+            items[i++] = attrib.getFormItemForEdit();
         }
         form.setFields(items);
+        
+        // add grouped items to form
+        for (String subgroup : attributes.getGroupNames()) {
+            FormItem[] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()];
+            int j=0;
+            for (PropertyBinding attrib : attributes.getGroupedAttribtes(subgroup)) {
+                groupItems[j++] = attrib.getFormItemForEdit();
+            }
+            form.setFieldsInGroup(subgroup, groupItems);
+        }
+        
         return form;
     }
     
@@ -133,9 +148,14 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     public void setEditingEnabled(boolean isEnabled) {
         entityEditor.setEditingEnabled(isEnabled);
     }
+
+    @Override
+    public void initialLoad() {
+        getEntityBridge().loadEntities(null);
+    }
     
     /**
-     * Called whenever there is a change to any DeploymentScanner
+     * Called whenever there is a change to any Entity
      */
     @Override
     public void refresh() {

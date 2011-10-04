@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import java.util.List;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
@@ -30,10 +31,10 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 public interface EntityToDmrBridge<T> {
     
     /**
-     * Get the EntityAttributes associated with the type.
-     * @return The EntityAttributes
+     * Get the FormMetaData associated with the type.
+     * @return The FormMetaData
      */
-    public EntityAttributes getEntityAttributes();
+    public FormMetaData getEntityAttributes();
     
     /**
      * Query the server for the full entity list.  If successful, this method should call

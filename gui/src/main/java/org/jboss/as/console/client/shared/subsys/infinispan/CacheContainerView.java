@@ -20,18 +20,20 @@
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
 import com.google.gwt.user.cellview.client.TextColumn;
+import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
-import org.jboss.as.console.client.shared.viewframework.EntityAttributes;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-
-
 
 /**
  * Main view class for Infinispan Cache Containers.
@@ -40,14 +42,23 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class CacheContainerView extends AbstractEntityView<CacheContainer> implements CacheContainerPresenter.MyView {
 
+    private FormMetaData formMetaData;
+    private EntityToDmrBridge bridge;
+    
+    @Inject
+    public CacheContainerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        formMetaData = propertyMetaData.getBeanMetaData(CacheContainer.class).getFormMetaData();
+        bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
+    }
+    
     @Override
-    protected EntityAttributes getEntityAttributes() {
-        return InfinispanData.CACHE_CONTAINER.getAttributes();
+    protected FormMetaData getFormMetaData() {
+        return formMetaData;
     }
 
     @Override
     protected EntityToDmrBridge getEntityBridge() {
-        return InfinispanData.CACHE_CONTAINER.getBridge();
+        return bridge;
     }
 
     @Override
@@ -59,7 +70,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     protected FormAdapter<CacheContainer> makeAddEntityForm() {
         Form<CacheContainer> form = new Form(DeploymentScanner.class);
         form.setNumColumns(1);
-        form.setFields(getEntityAttributes().findAttribute("name").getItemForAdd());
+        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
         return form;
     }
 

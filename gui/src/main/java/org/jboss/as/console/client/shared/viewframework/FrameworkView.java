@@ -27,6 +27,11 @@ import com.gwtplatform.mvp.client.View;
  */
 public interface FrameworkView extends View {
     /**
+     * Call for Entities to be loaded into the view for the first time.
+     */
+    public void initialLoad();
+    
+    /**
      * Called whenever the data in the view needs to be refreshed.
      */
     public void refresh();

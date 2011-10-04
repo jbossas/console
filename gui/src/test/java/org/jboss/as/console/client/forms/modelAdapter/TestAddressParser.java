@@ -6,6 +6,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.rebind.forms.AddressDeclaration;
 import org.jboss.as.console.rebind.forms.BindingDeclaration;
 import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
+import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator.PropBindingDeclarations;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,7 +20,7 @@ public class TestAddressParser {
 
     @Test
     public void testAnnotationParsing() throws Exception {
-        List<BindingDeclaration> bindings = PropertyMetaDataGenerator.mapProperties(ExampleEntity.class);
+        List<PropBindingDeclarations> bindings = PropertyMetaDataGenerator.mapProperties(ExampleEntity.class);
         AddressDeclaration addressDeclaration = PropertyMetaDataGenerator.parseAddress(ExampleEntity.class);
 
         //
