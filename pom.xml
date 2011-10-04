@@ -96,7 +96,7 @@
 
     <modules>
         <module>gui</module>
-        <module>testsuite</module>
+        <!--module>testsuite</module-->
     </modules>
 
     <dependencyManagement>
