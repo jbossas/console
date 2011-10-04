@@ -118,6 +118,11 @@ public class QueueList {
             public boolean isUndefined() {
                 return getValue().equals("");
             }
+
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
         };
 
         form.setFields(name, jndi, durable, selector);
