@@ -79,6 +79,18 @@
             </plugin>
 
             <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.2</version>
@@ -91,10 +103,10 @@
                             <tasks>
                                 <taskdef resource="net/sf/antcontrib/antcontrib.properties"
                                          classpathref="maven.plugin.classpath" />
-                                
+
                                 <property name="gui.classes.org" value="${basedir}/../../gui/war/WEB-INF/classes"/>
-                                <property name="gui.classes.target" value="${basedir}/target/classes"/>         
-                                         
+                                <property name="gui.classes.target" value="${basedir}/target/classes"/>
+
                                 <if>
                                     <not>
                                         <available file="${gui.classes.org}"/>
@@ -144,19 +156,6 @@
                         <configuration>
                             <skipTests>false</skipTests>
                         </configuration>
-                    </plugin>
-
-
-                    <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                     </plugin>
                 </plugins>
             </build>
