@@ -349,7 +349,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         if(changedValues.size()>0)
         {
-
             hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new AsyncCallback<Boolean>() {
 
                 @Override

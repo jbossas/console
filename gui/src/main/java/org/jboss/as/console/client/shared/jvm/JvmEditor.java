@@ -20,19 +20,17 @@
 package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.Map;
 
 
 /**
@@ -42,13 +40,10 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 public class JvmEditor {
 
     private JvmManagement presenter;
-
     private Form<Jvm> form;
-
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
 
-    private ToolButton edit;
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
@@ -64,48 +59,26 @@ public class JvmEditor {
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
-        ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent event) {
-                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
-                {
-                    onEdit();
-                }
-                else
-                {
-                    onSave();
-                }
-            }
-        };
-
-        edit.addClickHandler(editHandler);
-        toolStrip.addToolButton(edit);
-
-        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if(hasJvm)
-                {
-                    Feedback.confirm(Console.MESSAGES.deleteJVM(), Console.MESSAGES.deleteJVMConfirm(),
-                            new Feedback.ConfirmationHandler() {
-                                @Override
-                                public void onConfirmation(boolean isConfirmed) {
-                                    if(isConfirmed)
-                                        presenter.onDeleteJvm(reference, form.getEditedEntity());
-                                }
-                            });
-                }
-            }
-        });
-
-        toolStrip.addToolButton(delete);
-
-        panel.add(toolStrip);
 
         form = new Form<Jvm>(Jvm.class);
         form.setNumColumns(2);
+
+        FormToolStrip<Jvm> toolStrip = new FormToolStrip<Jvm>(
+                form,
+                new FormToolStrip.FormCallback<Jvm>()
+                {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        onSaveJvm();
+                    }
+
+                    @Override
+                    public void onDelete(Jvm entity) {
+                        presenter.onDeleteJvm(reference, form.getEditedEntity());
+                    }
+                });
+
+        panel.add(toolStrip.asWidget());
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
         TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
@@ -132,14 +105,12 @@ public class JvmEditor {
         return panel;
     }
 
-    private void onSave() {
+    private void onSaveJvm() {
 
         FormValidation validation = form.validate();
         if(!validation.hasErrors())
         {
             form.setEnabled(false);
-            edit.setText(Console.CONSTANTS.common_label_edit());
-
             Jvm jvm = form.getUpdatedEntity();
             if(hasJvm)
                 presenter.onUpdateJvm(reference, jvm.getName(), form.getChangedValues());
@@ -148,20 +119,12 @@ public class JvmEditor {
         }
     }
 
-    private void onEdit() {
-
-        edit.setText(Console.CONSTANTS.common_label_save());
-        form.setEnabled(true);
-    }
-
     public void setSelectedRecord(String reference, Jvm jvm) {
         this.reference = reference;
 
         hasJvm = jvm!=null;
 
         form.setEnabled(false);
-
-        edit.setText(Console.CONSTANTS.common_label_edit());
 
         if(hasJvm)
             form.edit(jvm);

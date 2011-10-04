@@ -222,4 +222,6 @@ public interface UIConstants extends Constants {
     String subsys_jca_ra_step2();
 
     String common_label_refresh();
+
+    String common_label_clear();
 }

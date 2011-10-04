@@ -120,13 +120,15 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             }
         });
 
-        toolStrip.addToolButton(delete);
+
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewConfigDialoge();
             }
         }));
+
+        toolStrip.addToolButtonRight(delete);
 
         toolStrip.addToolButtonRight(new ToolButton("Ports", new ClickHandler(){
             @Override
@@ -172,6 +174,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         form = new Form<Server>(Server.class);
         form.setNumColumns(2);
 
+        TextItem nameItem = new TextItem("name", "Name");
+
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
         //groupItem = new ComboBoxItem("group", "Server Group");
 
@@ -198,7 +202,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         };
 
 
-        form.setFields(groupItem, startedItem);
+        form.setFields(nameItem, groupItem, startedItem);
         form.setFieldsInGroup(
                 "Advanced",
                 new DisclosureGroupRenderer(),
@@ -263,6 +267,9 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         if(!validation.hasErrors())
         {
             Server updatedEntity = form.getUpdatedEntity();
+
+            System.out.println(updatedEntity.getName());
+
             Map<String,Object> changedValues = form.getChangedValues();
 
             // https://issues.jboss.org/browse/AS7-662

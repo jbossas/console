@@ -167,11 +167,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
         form.setNumColumns(2);
 
+        TextItem nameItem = new TextItem("groupName", "Name");
         TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
         socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());
         socketBindingItem.setDefaultToFirstOption(true);
 
-        form.setFields(profileItem, socketBindingItem);
+        form.setFields(nameItem, profileItem, socketBindingItem);
 
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
 

@@ -190,7 +190,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         form.setNumColumns(2);
 
         ToolStrip formTools = new ToolStrip();
-        formTools.addToolButton(new ToolButton("Start/Stop", new ClickHandler() {
+        formTools.addToolButtonRight(new ToolButton("Start/Stop", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
