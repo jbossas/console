@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.model;
 
 import com.google.gwt.autobean.shared.AutoBean;
-
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -32,14 +31,19 @@ import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.Jvm;
+import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
+import org.jboss.as.console.client.shared.jvm.model.OSMetric;
+import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
+import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
 import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
 import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
@@ -49,10 +53,10 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
-import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
@@ -192,7 +196,7 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     @Override
-    public AutoBean<JMSEndpoint> topic() {
+    public AutoBean<Topic> topic() {
         throw new RuntimeException("not implemented");
     }
 
@@ -268,6 +272,26 @@ public class BeanFactoryImpl implements BeanFactory {
     
     @Override
     public AutoBean<DeploymentScanner> deploymentScanner() {
+        throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<CacheContainer> cacheContainer() {
+        throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<HeapMetric> heapMetric() {
+        throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<ThreadMetric> threadMetric(){
+        throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<RuntimeMetric> runtime(){
+        throw new RuntimeException("not implemented");
+    }
+
+    public AutoBean<OSMetric> osmetric(){
         throw new RuntimeException("not implemented");
     }
 }

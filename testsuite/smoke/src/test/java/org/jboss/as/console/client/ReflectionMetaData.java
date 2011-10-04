@@ -19,6 +19,9 @@
 
 package org.jboss.as.console.client;
 
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityFactory;
+import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.as.console.rebind.forms.BindingDeclaration;
@@ -39,9 +42,31 @@ public class ReflectionMetaData implements PropertyMetaData {
         List<BindingDeclaration> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
         for(BindingDeclaration decl : bindingDeclarations)
         {
-            bindings.add(new PropertyBinding(decl.getJavaName(), decl.getDetypedName()));
+            bindings.add(
+                    new PropertyBinding(
+                            decl.getJavaName(),
+                            decl.getDetypedName(),
+                            decl.getJavaTypeName(),
+                            decl.key()
+                    )
+            );
         }
 
         return bindings;
+    }
+
+    @Override
+    public BeanMetaData getBeanMetaData(Class<?> type) {
+        throw new RuntimeException("not implemented!");
+    }
+
+    @Override
+    public Mutator getMutator(Class<?> type) {
+        throw new RuntimeException("not implemented!");
+    }
+
+    @Override
+    public <T> EntityFactory<T> getFactory(Class<T> type) {
+        throw new RuntimeException("not implemented!");
     }
 }

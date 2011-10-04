@@ -148,4 +148,11 @@ public class DataSourceImpl implements DataSource {
     public void setMinorVersion(int minor) {
         this.minor = minor;
     }
+
+    public boolean isJta(){return false;}
+    public void setJta(boolean b) {}
+
+    public boolean isCcm() {return  false;}
+    public void setCcm(boolean b) {}
+
 }
