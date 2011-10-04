@@ -65,12 +65,16 @@ public class FormToolStrip<T> {
                 }
                 else
                 {
-                    cancelBtn.setVisible(false);
-                    editBtn.setText(Console.CONSTANTS.common_label_edit());
-                    form.setEnabled(false);
-                    Map<String, Object> changedValues = form.getChangedValues();
-                    if(!changedValues.isEmpty())
-                        callback.onSave(changedValues);
+
+                    if(!form.validate().hasErrors())
+                    {
+                        cancelBtn.setVisible(false);
+                        editBtn.setText(Console.CONSTANTS.common_label_edit());
+                        form.setEnabled(false);
+                        Map<String, Object> changedValues = form.getChangedValues();
+                        if(!changedValues.isEmpty())
+                            callback.onSave(changedValues);
+                    }
                 }
 
             }
