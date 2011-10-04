@@ -2,6 +2,11 @@ package org.jboss.as.console.client.widgets.forms;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -24,6 +29,8 @@ public class FormToolStrip<T> {
     private String deleteOpName = null;
     private boolean providesDeleteOp = true;
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
+
+    private ToolButton cancelBtn = null;
 
     public FormToolStrip(Form<T> form, FormCallback<T> callback) {
         this.form = form;
@@ -54,9 +61,11 @@ public class FormToolStrip<T> {
                 {
                     editBtn.setText(Console.CONSTANTS.common_label_save());
                     form.setEnabled(true);
+                    cancelBtn.setVisible(true);
                 }
                 else
                 {
+                    cancelBtn.setVisible(false);
                     editBtn.setText(Console.CONSTANTS.common_label_edit());
                     form.setEnabled(false);
                     Map<String, Object> changedValues = form.getChangedValues();
@@ -101,6 +110,21 @@ public class FormToolStrip<T> {
         for(ToolButton btn : additionalButtons)
             toolStrip.addToolButtonRight(btn);
 
+
+        final ClickHandler cancelHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                form.cancel();
+                editBtn.setText(Console.CONSTANTS.common_label_edit());
+                form.setEnabled(false);
+                cancelBtn.setVisible(false);
+            }
+        };
+
+        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel(), cancelHandler);
+
+        toolStrip.addToolButton(cancelBtn);
+        cancelBtn.setVisible(false);
         return toolStrip;
     }
 
