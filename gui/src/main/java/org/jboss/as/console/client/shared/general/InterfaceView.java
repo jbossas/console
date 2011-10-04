@@ -20,10 +20,12 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.expr.ExpressionCell;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -46,11 +48,6 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
         layout.add(new ContentHeaderLabel("Interface Declarations"));
 
-        //HTML description = new HTML("A named network interface, but without any criteria for determining the IP address to associate with that interface. Acts as a placeholder in the model (e.g. at the domain level) until a fully specified interface definition is applied at a lower level (e.g. at the server level, where available addresses are known.)");
-        //description.getElement().setAttribute("style", "margin-bottom:15px;");
-
-        //layout.add(description);
-
         table = new DefaultCellTable<Interface>(10);
 
         TextColumn<Interface> nameColumn = new TextColumn<Interface>() {
@@ -60,15 +57,26 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
             }
         };
 
-         TextColumn<Interface> criteriaColumn = new TextColumn<Interface>() {
+        TextColumn<Interface> criteriaColumn = new TextColumn<Interface>() {
             @Override
             public String getValue(Interface record) {
                 return record.getCriteria();
             }
         };
 
+        Column<Interface, String> exprCol =
+                new Column<Interface, String>(new ExpressionCell()) {
+
+            @Override
+            public String getValue(Interface hasExpr) {
+                return hasExpr.getCriteria();
+            }
+
+        };
+
         table.addColumn(nameColumn, "Name");
         table.addColumn(criteriaColumn, "Criteria");
+        table.addColumn(exprCol, "Expression");
 
         layout.add(table);
 

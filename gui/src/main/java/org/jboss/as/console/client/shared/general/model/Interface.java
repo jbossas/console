@@ -23,7 +23,7 @@ package org.jboss.as.console.client.shared.general.model;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public interface Interface {
+public interface Interface{
     String getName();
     void setName(String name);
 

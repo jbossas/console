@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.expr.Expression;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -70,7 +71,17 @@ public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncComma
                     ModelNode item = property.getValue();
                     Interface intf = factory.interfaceDeclaration().as();
                     intf.setName(item.get("name").asString());
-                    intf.setCriteria(item.get("criteria").toString());
+                    ModelNode criteria = item.get("criteria").asObject();
+
+                    // TODO: remaining criteria types
+                    if(criteria.hasDefined("inet-address"))
+                    {
+                        String expr = criteria.get("inet-address").asString();
+                        intf.setCriteria(expr);
+                    }
+                    else {
+                        intf.setCriteria(criteria.toString());
+                    }
 
                     interfaces.add(intf);
                 }

@@ -88,6 +88,8 @@ import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
+import org.jboss.as.console.client.shared.expr.DefaultExpressionManagerImpl;
+import org.jboss.as.console.client.shared.expr.ExpressionManager;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.shared.general.InterfaceView;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
@@ -165,6 +167,8 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(MessageCenterView.class).in(Singleton.class);
 
         bind(HelpSystem.class).in(Singleton.class);
+
+        bind(ExpressionManager.class).to(DefaultExpressionManagerImpl.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 
