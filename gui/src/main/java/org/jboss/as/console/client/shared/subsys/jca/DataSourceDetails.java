@@ -29,6 +29,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
@@ -36,9 +37,10 @@ import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -47,7 +49,6 @@ import org.jboss.dmr.client.ModelNode;
 public class DataSourceDetails {
 
     private Form<DataSource> form;
-    private ToolButton editBtn;
     private DataSourcePresenter presenter;
 
     public DataSourceDetails(DataSourcePresenter presenter) {
@@ -59,25 +60,6 @@ public class DataSourceDetails {
     public Widget asWidget() {
         VerticalPanel detailPanel = new VerticalPanel();
         detailPanel.setStyleName("fill-layout-width");
-
-
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                if(null==form.getEditedEntity())
-                    return;
-
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditDS(form.getEditedEntity());
-                else
-                    presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        detailToolStrip.addToolButton(editBtn);
 
 
         ClickHandler disableHandler = new ClickHandler() {
@@ -99,11 +81,26 @@ public class DataSourceDetails {
             }
         };
 
-        ToolButton enableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
-        enableBtn.addClickHandler(disableHandler);
-        detailToolStrip.addToolButtonRight(enableBtn);
+        ToolButton disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
 
-        detailPanel.add(detailToolStrip);
+        FormToolStrip<DataSource> toolStrip = new FormToolStrip<DataSource>(
+                form,
+                new FormToolStrip.FormCallback<DataSource>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                         presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
+
+                    @Override
+                    public void onDelete(DataSource entity) {
+
+                    }
+                });
+
+        toolStrip.providesDeleteOp(false);
+        toolStrip.addToolButtonRight(disableBtn);
+
+        detailPanel.add(toolStrip.asWidget());
 
         final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
@@ -153,12 +150,6 @@ public class DataSourceDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-
-        if(b)
-            editBtn.setText(Console.CONSTANTS.common_label_save());
-        else
-            editBtn.setText(Console.CONSTANTS.common_label_edit());
     }
 
     public DataSource getCurrentSelection() {

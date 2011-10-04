@@ -27,6 +27,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
@@ -38,6 +39,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Map;
+
 /**
  * @author Heiko Braun
  * @date 5/4/11
@@ -45,7 +48,6 @@ import org.jboss.dmr.client.ModelNode;
 public class XADataSourceDetails {
 
     private Form<XADataSource> form;
-    private ToolButton editBtn;
     private DataSourcePresenter presenter;
 
     public XADataSourceDetails(DataSourcePresenter presenter) {
@@ -55,24 +57,6 @@ public class XADataSourceDetails {
     }
 
     public Widget asWidget() {
-
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                if(null==form.getEditedEntity())
-                    return;
-
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditXA(form.getEditedEntity());
-                else
-                    presenter.onSaveXADetails(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        detailToolStrip.addToolButton(editBtn);
 
         ClickHandler disableHandler = new ClickHandler() {
             @Override
@@ -93,10 +77,28 @@ public class XADataSourceDetails {
 
         ToolButton enableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
         enableBtn.addClickHandler(disableHandler);
-        detailToolStrip.addToolButtonRight(enableBtn);
+
+
+        FormToolStrip<XADataSource> toolStrip = new FormToolStrip<XADataSource>(
+                form,
+                new FormToolStrip.FormCallback<XADataSource>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
+
+                    @Override
+                    public void onDelete(XADataSource entity) {
+
+                    }
+                });
+
+        toolStrip.providesDeleteOp(false);
+        toolStrip.addToolButtonRight(enableBtn);
+
 
         VerticalPanel panel = new VerticalPanel();
-        panel.add(detailToolStrip);
+        panel.add(toolStrip.asWidget());
 
         final TextItem nameItem = new TextItem("name", "Name");
         TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
@@ -134,11 +136,6 @@ public class XADataSourceDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(b)
-            editBtn.setText(Console.CONSTANTS.common_label_save());
-        else
-            editBtn.setText(Console.CONSTANTS.common_label_edit());
     }
 
     public void setSelectedRecord(XADataSource dataSource) {

@@ -1,22 +1,20 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -26,7 +24,6 @@ public class AdapterDetails {
 
     private VerticalPanel layout;
     private Form<ResourceAdapter> form;
-    private ToolButton editBtn;
     private ResourceAdapterPresenter presenter;
 
     public AdapterDetails(final ResourceAdapterPresenter presenter) {
@@ -39,26 +36,24 @@ public class AdapterDetails {
         form = new Form<ResourceAdapter>(ResourceAdapter.class);
         form.setNumColumns(2);
 
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        FormToolStrip<ResourceAdapter> toolStrip = new FormToolStrip<ResourceAdapter>(
+                form,
+                new FormToolStrip.FormCallback<ResourceAdapter>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSave(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
+
+                    @Override
+                    public void onDelete(ResourceAdapter entity) {
+
+                    }
+                });
+
+        toolStrip.providesDeleteOp(false);
 
 
-                if(null == form.getEditedEntity())
-                    return;
-
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEdit(form.getEditedEntity());
-                else
-                    presenter.onSave(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        detailToolStrip.addToolButton(editBtn);
-
-        layout.add(detailToolStrip);
+        layout.add(toolStrip.asWidget());
 
         // ----
 
@@ -106,11 +101,6 @@ public class AdapterDetails {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(!b)
-            editBtn.setText(Console.CONSTANTS.common_label_edit());
-        else
-            editBtn.setText(Console.CONSTANTS.common_label_save());
     }
 
     public ResourceAdapter getCurrentSelection() {

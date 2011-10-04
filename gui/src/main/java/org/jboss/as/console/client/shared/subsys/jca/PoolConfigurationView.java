@@ -58,6 +58,10 @@ public class PoolConfigurationView {
                 }, Console.CONSTANTS.common_label_reset()
         );
 
+        // disable "reset" functionality
+        toolStrip.providesDeleteOp(false);
+
+
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
             @Override
