@@ -28,7 +28,7 @@ import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator.PropBindingDeclarations;
+
 
 /**
  * @author Heiko Braun
@@ -39,11 +39,17 @@ public class ReflectionMetaData implements PropertyMetaData {
     public List<PropertyBinding> getBindingsForType(Class<?> type) {
         List<PropertyBinding> bindings = new ArrayList<PropertyBinding>();
 
-        List<PropBindingDeclarations> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
-        for(PropBindingDeclarations decl : bindingDeclarations)
+        List<PropertyMetaDataGenerator.PropBindingDeclarations> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
+        for(PropertyMetaDataGenerator.PropBindingDeclarations decl : bindingDeclarations)
         {
-            bindings.add(new PropertyBinding(decl.getBindingDeclaration().getJavaName(), decl.getBindingDeclaration().getDetypedName(),
-                                             decl.getBindingDeclaration().getJavaTypeName(), decl.getBindingDeclaration().key()));
+            bindings.add(
+                    new PropertyBinding(
+                            decl.getBindingDeclaration().getJavaName(),
+                            decl.getBindingDeclaration().getDetypedName(),
+                            decl.getBindingDeclaration().getJavaTypeName(),
+                            decl.getBindingDeclaration().key()
+                    )
+            );
         }
 
         return bindings;
@@ -63,5 +69,5 @@ public class ReflectionMetaData implements PropertyMetaData {
     public Mutator getMutator(Class<?> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }
