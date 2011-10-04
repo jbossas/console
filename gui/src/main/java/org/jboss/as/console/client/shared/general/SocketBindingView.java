@@ -30,10 +30,10 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
@@ -46,10 +46,10 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -61,7 +61,6 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     private SocketTable socketTable;
     private ComboBox groupFilter;
-    private ToolButton editBtn;
     private Form<SocketBinding> form;
 
     @Override
@@ -139,54 +138,37 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         // -----------
 
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                SocketBinding editedEntity = form.getEditedEntity();
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
-                    presenter.editSocketBinding(editedEntity);
+        form = new Form<SocketBinding>(SocketBinding.class);
+        form.setNumColumns(2);
+
+        FormToolStrip<SocketBinding> detailToolStrip = new FormToolStrip<SocketBinding>(
+                form,
+                new FormToolStrip.FormCallback<SocketBinding>()
+                {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        SocketBinding updatedEntity = form.getUpdatedEntity();
+                        presenter.saveSocketBinding(
+                                updatedEntity.getName(),
+                                updatedEntity.getGroup(),
+                                form.getChangedValues()
+                        );
+                    }
+
+                    @Override
+                    public void onDelete(SocketBinding entity) {
+                        presenter.onDelete(entity);
+                    }
                 }
-                else {
-                    presenter.saveSocketBinding(editedEntity.getName(), editedEntity.getGroup(), form.getChangedValues());
-                }
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        detailToolStrip.addToolButton(editBtn);
+        );
 
-
-        ClickHandler clickHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                SocketBinding socket = form.getEditedEntity();
-
-                Feedback.confirm(
-                        "Delete Socket Binding",
-                        "Really delete this socket binding '" + socket.getName() + "' ?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDelete(form.getEditedEntity());
-                                }
-                            }
-                        });
-            }
-        };
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.addClickHandler(clickHandler);
-        detailToolStrip.addToolButton(deleteBtn);
 
         panel.add(new ContentGroupLabel("Socket Binding"));
 
-        panel.add(detailToolStrip);
+        panel.add(detailToolStrip.asWidget());
         // ---
 
-        form = new Form<SocketBinding>(SocketBinding.class);
-        form.setNumColumns(2);
+
 
         TextItem nameItem = new TextItem("name", "Name");
         TextItem interfaceItem = new TextItem("interface", "Interface");
@@ -249,8 +231,5 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     @Override
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        String text = b ? "Save" : "Edit";
-        editBtn.setText(text);
     }
 }
