@@ -70,6 +70,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     private JvmEditor jvmEditor;
     private PropertyEditor propertyEditor;
+    private ToolButton cancelBtn = null;
 
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
@@ -103,6 +104,20 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         });
 
         toolStrip.addToolButton(edit);
+
+        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
+        cancelBtn.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                cancelBtn.setVisible(false);
+                form.cancel();
+                form.setEnabled(false);
+                edit.setText(Console.CONSTANTS.common_label_edit());
+            }
+        });
+        toolStrip.addToolButton(cancelBtn);
+        cancelBtn.setVisible(false);
+
         ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
         delete.addClickHandler(new ClickHandler(){
             @Override
@@ -266,6 +281,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         if(!validation.hasErrors())
         {
+            cancelBtn.setVisible(true);
+
             Server updatedEntity = form.getUpdatedEntity();
 
             System.out.println(updatedEntity.getName());
@@ -284,6 +301,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     private void onEdit() {
         presenter.editCurrentRecord();
+        cancelBtn.setVisible(true);
     }
 
     @Override

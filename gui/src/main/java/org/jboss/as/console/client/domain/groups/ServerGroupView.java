@@ -72,6 +72,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     private JvmEditor jvmEditor;
     private HelpSystem help;
     private DisclosurePanel helpPanel ;
+    private ToolButton cancelBtn = null;
 
     @Inject
     public ServerGroupView(HelpSystem help) {
@@ -110,6 +111,22 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         });
 
         toolStrip.addToolButton(edit);
+
+        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
+        cancelBtn.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                cancelBtn.setVisible(false);
+                form.cancel();
+                form.setEnabled(false);
+                edit.setText(Console.CONSTANTS.common_label_edit());
+
+            }
+        });
+        toolStrip.addToolButton(cancelBtn);
+        cancelBtn.setVisible(false);
+
+
         ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
         delete.addClickHandler(new ClickHandler(){
             @Override
@@ -126,7 +143,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                         });
             }
         });
-        toolStrip.addToolButton(delete);
+        toolStrip.addToolButtonRight(delete);
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_newServerGroup(), new ClickHandler() {
             @Override
@@ -224,12 +241,18 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
     private void onSave() {
-        ServerGroupRecord updatedEntity = form.getUpdatedEntity();
-        presenter.onSaveChanges(updatedEntity.getGroupName(), form.getChangedValues());
+
+        if(!form.validate().hasErrors())
+        {
+            cancelBtn.setVisible(false);
+            ServerGroupRecord updatedEntity = form.getUpdatedEntity();
+            presenter.onSaveChanges(updatedEntity.getGroupName(), form.getChangedValues());
+        }
     }
 
     private void onEdit() {
         presenter.editCurrentRecord();
+        cancelBtn.setVisible(true);
     }
 
 
