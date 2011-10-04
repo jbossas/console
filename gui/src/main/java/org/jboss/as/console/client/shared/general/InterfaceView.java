@@ -65,7 +65,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
         };
 
         Column<Interface, String> exprCol =
-                new Column<Interface, String>(new ExpressionCell()) {
+                new Column<Interface, String>(new ExpressionCell() ) {
 
             @Override
             public String getValue(Interface hasExpr) {

@@ -36,19 +36,22 @@ public class DefaultExpressionManagerImpl extends ExpressionManager {
             @Override
             public void onSuccess(List<PropertyRecord> result) {
 
-                boolean didMatch = false;
+                String resolved =  null;
                 for(PropertyRecord prop : result)
                 {
+
+                    System.out.println(expr.getKey()+">"+prop.getValue());
                     if(prop.getKey().equals(expr.getKey()))
                     {
-                        callback.onSuccess(prop.getValue());
-                        didMatch = true;
+                        resolved = prop.getValue();
                         break;
                     }
                 }
 
-                if(!didMatch)
+                if(null==resolved)
                     callback.onSuccess(expr.getDefaultValue()+"");
+                else
+                    callback.onSuccess(resolved);
             }
         });
     }

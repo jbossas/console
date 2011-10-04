@@ -33,7 +33,7 @@ public class Expression {
         int idx = token.indexOf(":");
         if(idx!=-1)
         {
-            expr = new Expression(token.substring(0, idx-1), token.substring(idx+1, token.length()));
+            expr = new Expression(token.substring(0, idx), token.substring(idx+1, token.length()));
         }
         else
         {

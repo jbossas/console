@@ -10,13 +10,18 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 
 /**
  * @author Heiko Braun
  */
 public class ExpressionCell extends AbstractCell<String> {
+
+    private Expression expr;
 
     public ExpressionCell() {
         super("click", "keydown");
@@ -34,7 +39,7 @@ public class ExpressionCell extends AbstractCell<String> {
     @Override
     public void render(Context context, String value, SafeHtmlBuilder sb) {
 
-        Expression expr = Expression.fromString(value);
+        expr = Expression.fromString(value);
         SafeHtml html = new SafeHtmlBuilder()
                 .appendHtmlConstant( "<div tabindex=\"-1\" class='cell-popup'>"+expr.toString()+"</div>").toSafeHtml();
 
@@ -49,7 +54,15 @@ public class ExpressionCell extends AbstractCell<String> {
 
         int rowSelection = context.getIndex();
 
-        System.out.println("Clicked "+rowSelection);
+        Console.MODULES.getExpressionManager().resolveValue(
+                expr,new SimpleCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Window.confirm("Resolves to: "+ result);
+            }
+        });
+
+        //System.out.println("Clicked "+rowSelection);
 
     }
 
