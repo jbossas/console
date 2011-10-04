@@ -58,6 +58,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
@@ -90,7 +91,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<PoolConfig> poolConfig();
 
     AutoBean<Queue> queue();
-    AutoBean<JMSEndpoint> topic();
+    AutoBean<Topic> topic();
     AutoBean<ConnectionFactory> connectionFactory();
 
     AutoBean<SessionBeans> sessionBeans();

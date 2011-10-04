@@ -25,13 +25,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -41,9 +42,7 @@ public class TopicList {
 
     private EndpointTable table;
     private MessagingPresenter presenter;
-    private ToolButton edit;
-
-    private Form<JMSEndpoint> form;
+    private Form<Topic> form;
 
     public TopicList(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -52,38 +51,23 @@ public class TopicList {
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+        form = new Form(Topic.class);
+        form.setNumColumns(2);
 
-        edit = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        FormToolStrip<Topic> toolStrip = new FormToolStrip<Topic>(
+                form,
+                new FormToolStrip.FormCallback<Topic>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
 
-                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditTopic();
-                else
-                    presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        });
-
-        //toolStrip.addToolButton(edit);
-
-        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                final JMSEndpoint topic = form.getEditedEntity();
-                Feedback.confirm(Console.MESSAGES.deleteTitle("Topic"), Console.MESSAGES.deleteConfirm(topic.getName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed)
-                                    presenter.onDeleteTopic(topic);
-                            }
-                        });
-
-            }
-        }));
+                    @Override
+                    public void onDelete(Topic entity) {
+                        presenter.onDeleteTopic(entity);
+                    }
+                }
+        );
 
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
@@ -93,8 +77,7 @@ public class TopicList {
             }
         }));
 
-
-        layout.add(toolStrip);
+        layout.add(toolStrip.asWidget());
 
         // -----
         table = new EndpointTable();
@@ -103,10 +86,6 @@ public class TopicList {
 
 
         // -----
-
-        form = new Form(JMSEndpoint.class);
-        form.setNumColumns(2);
-
 
         TextItem name = new TextItem("name", "Name");
         TextItem jndi = new TextItem("jndiName", "JNDI");
@@ -133,10 +112,5 @@ public class TopicList {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(b)
-            edit.setText(Console.CONSTANTS.common_label_save());
-        else
-            edit.setText(Console.CONSTANTS.common_label_edit());
     }
 }

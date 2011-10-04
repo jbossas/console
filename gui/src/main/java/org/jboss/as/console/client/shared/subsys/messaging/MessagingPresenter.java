@@ -51,6 +51,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
@@ -788,7 +789,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         proto.get(ADDRESS).add("hornetq-server", getCurrentServer());
         proto.get(ADDRESS).add("jms-topic", name);
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(JMSEndpoint.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(Topic.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

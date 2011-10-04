@@ -78,13 +78,16 @@ public class FormToolStrip<T> {
         editBtn.addClickHandler(editHandler);
         toolStrip.addToolButton(editBtn);
 
+        for(ToolButton btn : additionalButtons)
+            toolStrip.addToolButtonRight(btn);
+
         if(providesDeleteOp)
         {
             ClickHandler clickHandler = new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
 
-                    String action = deleteOpName != null ? deleteOpName : Console.CONSTANTS.common_label_delete();
+                    String action = deleteOpName != null ? deleteOpName : Console.CONSTANTS.common_label_delete().toLowerCase();
 
                     Feedback.confirm(
                             action +" Item",
@@ -103,13 +106,9 @@ public class FormToolStrip<T> {
             String title = deleteOpName!=null ? deleteOpName : Console.CONSTANTS.common_label_delete();
             ToolButton deleteBtn = new ToolButton(title);
             deleteBtn.addClickHandler(clickHandler);
-            toolStrip.addToolButton(deleteBtn);
+            toolStrip.addToolButtonRight(deleteBtn);
 
         }
-
-        for(ToolButton btn : additionalButtons)
-            toolStrip.addToolButtonRight(btn);
-
 
         final ClickHandler cancelHandler = new ClickHandler() {
             @Override

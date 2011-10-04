@@ -28,17 +28,17 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -47,7 +47,6 @@ import java.util.List;
 public class QueueList {
 
     private DefaultCellTable<Queue> queueTable;
-    private ToolButton edit;
     private MessagingPresenter presenter;
     private Form<Queue> form ;
 
@@ -59,38 +58,23 @@ public class QueueList {
 
         VerticalPanel layout = new VerticalPanel();
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+        form = new Form(Queue.class);
+        form.setNumColumns(2);
 
-        edit = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        FormToolStrip<Queue> toolStrip = new FormToolStrip<Queue>(
+                form,
+                new FormToolStrip.FormCallback<Queue>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveQueue(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
 
-                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
-                    presenter.onEditQueue();
-                else
-                    presenter.onSaveQueue(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        });
-        toolStrip.addToolButton(edit);
-
-        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                final Queue queue = form.getEditedEntity();
-                Feedback.confirm(Console.MESSAGES.deleteTitle("Queue"), Console.MESSAGES.deleteConfirm(queue.getName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                    presenter.onDeleteQueue(queue);
-                            }
-                        });
-
-            }
-        }));
-
+                    @Override
+                    public void onDelete(Queue entity) {
+                        presenter.onDeleteQueue(entity);
+                    }
+                }
+        );
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
@@ -99,8 +83,7 @@ public class QueueList {
             }
         }));
 
-
-        layout.add(toolStrip);
+        layout.add(toolStrip.asWidget());
 
         queueTable = new DefaultCellTable<Queue>(10);
 
@@ -125,10 +108,6 @@ public class QueueList {
 
 
         // ----
-
-
-        form = new Form(Queue.class);
-        form.setNumColumns(2);
 
         TextItem name = new TextItem("name", "Name");
         TextItem jndi = new TextItem("jndiName", "JNDI");
@@ -179,10 +158,5 @@ public class QueueList {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(b)
-            edit.setText(Console.CONSTANTS.common_label_save());
-        else
-            edit.setText(Console.CONSTANTS.common_label_edit());
     }
 }
