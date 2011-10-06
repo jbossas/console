@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
+import java.util.EnumSet;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -43,9 +44,15 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
     protected EntityEditor<T> entityEditor;
     protected Class<?> beanType;
+    protected EnumSet hideButtons;
     
     public AbstractEntityView(Class<?> beanType) {
+        this(beanType, EnumSet.noneOf(FrameworkButton.class));
+    }
+    
+    public AbstractEntityView(Class<?> beanType, EnumSet<FrameworkButton> hideButtons) {
         this.beanType = beanType;
+        this.hideButtons = hideButtons;
     }
 
     /**
@@ -102,13 +109,14 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected EntityEditor<T> makeEntityEditor() {
         EntityDetails<T> scannerDetails = new EntityDetails<T>(getPluralEntityName(), 
                                                                makeEditEntityDetailsForm(), 
-                                                               getEntityBridge());
+                                                               getEntityBridge(),
+                                                               hideButtons);
         String title = Console.CONSTANTS.common_label_add() + " " + getPluralEntityName();
         EntityPopupWindow<T> window = new AddEntityWindow<T>(title, 
                                                              makeAddEntityForm(), 
                                                              getEntityBridge());
         DefaultCellTable<T> table = makeEntityTable();
-        return new EntityEditor<T>(getPluralEntityName(), window, table, scannerDetails);
+        return new EntityEditor<T>(getPluralEntityName(), window, table, scannerDetails, hideButtons);
     }
     
     /**

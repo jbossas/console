@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.EnumSet;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -46,6 +47,7 @@ public class EntityDetails<T> implements EditListener {
     private ToolButton cancelBtn;
     private ToolButton removeBtn;
     private EntityToDmrBridge executor;
+    private EnumSet<FrameworkButton> hideButtons;
 
     /**
      * Create a new EntityDetails.
@@ -55,9 +57,14 @@ public class EntityDetails<T> implements EditListener {
      * @param executor The EntityToDmrBridge that will be called for various actions.
      */
     public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor) {
+        this(entitiesName, form, executor, EnumSet.noneOf(FrameworkButton.class));
+    }
+    
+    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor, EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
         this.executor = executor;
+        this.hideButtons = hideButtons;
     }
 
     /**
@@ -117,9 +124,9 @@ public class EntityDetails<T> implements EditListener {
         removeBtn.addClickHandler(removeHandler);
 
         
-        detailToolStrip.addToolButton(editBtn);
-        detailToolStrip.addToolButton(cancelBtn);
-        detailToolStrip.addToolButton(removeBtn);
+        if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) detailToolStrip.addToolButton(editBtn);
+        if (!hideButtons.contains(FrameworkButton.CANCEL)) detailToolStrip.addToolButton(cancelBtn);
+        if (!hideButtons.contains(FrameworkButton.REMOVE)) detailToolStrip.addToolButton(removeBtn);
 
         detailPanel.add(detailToolStrip);
 

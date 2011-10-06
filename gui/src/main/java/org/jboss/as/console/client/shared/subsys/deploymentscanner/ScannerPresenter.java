@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.deploymentscanner;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -45,7 +46,7 @@ public class ScannerPresenter extends Presenter<ScannerPresenter.MyView, Scanner
     public interface MyProxy extends Proxy<ScannerPresenter>, Place {
     }
 
-    public interface MyView extends FrameworkView {
+    public interface MyView extends FrameworkView, View {
     }
 
     @Inject

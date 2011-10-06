@@ -19,13 +19,16 @@
 
 package org.jboss.as.console.client.shared.subsys.threads;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
@@ -40,48 +43,44 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueThreadPool> implements FrameworkView {
+public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter.MyView {
 
-    private EntityToDmrBridge threadPoolBridge;
-    private FormMetaData formMetaData;
+    private BoundedQueueThreadPoolView boundedQueueView;
+    private BoundedQueueThreadPoolView boundedQueueView2;
 
     @Inject
-    public BoundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(BoundedQueueThreadPool.class, FrameworkButton.asSet(FrameworkButton.values()));
-        formMetaData = propertyMetaData.getBeanMetaData(BoundedQueueThreadPool.class).getFormMetaData();
-        threadPoolBridge = new EntityToDmrBridgeImpl<BoundedQueueThreadPool>(propertyMetaData, BoundedQueueThreadPool.class, this, dispatcher);
+    public ThreadsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        boundedQueueView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher) {
+            @Override
+            public Widget createWidget() {
+                entityEditor = makeEntityEditor();
+                return entityEditor.asWidget();
+            }
+        };
+        
+        // TODO: replace with another type of pool view
+        boundedQueueView2 = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher) {
+            @Override
+            public Widget createWidget() {
+                entityEditor = makeEntityEditor();
+                return entityEditor.asWidget();
+            }
+        };
+    }
+
+    @Override
+    public Widget createWidget() {
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
+        
+        tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getPluralEntityName());
+        tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getPluralEntityName());
+        return tabLayoutpanel;
     }
     
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return this.formMetaData;
-    }
-
-    @Override
-    protected EntityToDmrBridge getEntityBridge() {
-        return this.threadPoolBridge;
-    }
-
-    @Override
-    protected String getPluralEntityName() {
-        return "Bounded Queue Thread Pools";
-    }
-
-    @Override
-    protected FormAdapter<BoundedQueueThreadPool> makeAddEntityForm() {
-        Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
-        form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd());
-        return form;
-    }
-
-    @Override
-    protected DefaultCellTable<BoundedQueueThreadPool> makeEntityTable() {
-        DefaultCellTable<BoundedQueueThreadPool> table = new DefaultCellTable<BoundedQueueThreadPool>(4);
-        
-        table.addColumn(new NameColumn(), NameColumn.LABEL);
-        
-        return table;
+    public void initialLoad() {
+        this.boundedQueueView.initialLoad();
+        this.boundedQueueView2.initialLoad();
     }
   
 }
