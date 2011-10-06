@@ -30,46 +30,46 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 /**
  * @author David Bosschaert
  */
-public class PreloadedModulesTable {
-    private CellTable<OSGiPreloadedModule> table;
-    private ListDataProvider<OSGiPreloadedModule> dataProvider;
-    private SingleSelectionModel<OSGiPreloadedModule> selectionModel;
+public class CapabilitiesTable {
+    private CellTable<OSGiCapability> table;
+    private ListDataProvider<OSGiCapability> dataProvider;
+    private SingleSelectionModel<OSGiCapability> selectionModel;
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        table = new DefaultCellTable<OSGiPreloadedModule>(25);
-        dataProvider = new ListDataProvider<OSGiPreloadedModule>();
+        table = new DefaultCellTable<OSGiCapability>(25);
+        dataProvider = new ListDataProvider<OSGiCapability>();
         dataProvider.addDataDisplay(table);
 
-        ColumnSortEvent.ListHandler<OSGiPreloadedModule> sortHandler =
-            new ColumnSortEvent.ListHandler<OSGiPreloadedModule>(dataProvider.getList());
+        ColumnSortEvent.ListHandler<OSGiCapability> sortHandler =
+            new ColumnSortEvent.ListHandler<OSGiCapability>(dataProvider.getList());
 
-        TextColumn<OSGiPreloadedModule> identifierColumn = new TextColumn<OSGiPreloadedModule>() {
+        TextColumn<OSGiCapability> identifierColumn = new TextColumn<OSGiCapability>() {
             @Override
-            public String getValue(OSGiPreloadedModule record) {
+            public String getValue(OSGiCapability record) {
                 return record.getIdentifier();
             }
         };
         identifierColumn.setSortable(true);
-        sortHandler.setComparator(identifierColumn, new Comparator<OSGiPreloadedModule>() {
+        sortHandler.setComparator(identifierColumn, new Comparator<OSGiCapability>() {
             @Override
-            public int compare(OSGiPreloadedModule o1, OSGiPreloadedModule o2) {
+            public int compare(OSGiCapability o1, OSGiCapability o2) {
                 return o1.getIdentifier().compareTo(o2.getIdentifier());
             }
         });
 
-        TextColumn<OSGiPreloadedModule> startLevelColumn = new TextColumn<OSGiPreloadedModule>() {
+        TextColumn<OSGiCapability> startLevelColumn = new TextColumn<OSGiCapability>() {
             @Override
-            public String getValue(OSGiPreloadedModule record) {
+            public String getValue(OSGiCapability record) {
                 if (record.getStartLevel() == null)
                     return "";
                 else
@@ -77,9 +77,9 @@ public class PreloadedModulesTable {
             }
         };
         startLevelColumn.setSortable(true);
-        sortHandler.setComparator(startLevelColumn, new Comparator<OSGiPreloadedModule>() {
+        sortHandler.setComparator(startLevelColumn, new Comparator<OSGiCapability>() {
             @Override
-            public int compare(OSGiPreloadedModule o1, OSGiPreloadedModule o2) {
+            public int compare(OSGiCapability o1, OSGiCapability o2) {
                 if (o1.getStartLevel() == null) {
                     // Don't use MIN_VALUE because -MIN_VALUE doesn't fit in an int
                     return -Integer.MAX_VALUE;
@@ -91,17 +91,17 @@ public class PreloadedModulesTable {
                 if (cv != 0)
                     return cv;
 
-                // Sort on module identifier within startlevel
+                // Sort on identifier within startlevel
                 return o1.getIdentifier().compareTo(o2.getIdentifier());
             }
         });
 
-        table.addColumn(identifierColumn, Console.CONSTANTS.subsys_osgi_preloadedModuleId());
-        table.addColumn(startLevelColumn, Console.CONSTANTS.subsys_osgi_preloadedModuleStartLevel());
+        table.addColumn(identifierColumn, Console.CONSTANTS.subsys_osgi_capabilityId());
+        table.addColumn(startLevelColumn, Console.CONSTANTS.subsys_osgi_capabilityStartLevel());
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(identifierColumn);
 
-        selectionModel = new SingleSelectionModel<OSGiPreloadedModule>();
+        selectionModel = new SingleSelectionModel<OSGiCapability>();
         table.setSelectionModel(selectionModel);
         layout.add(table);
 
@@ -112,16 +112,16 @@ public class PreloadedModulesTable {
         return layout;
     }
 
-    CellTable<OSGiPreloadedModule> getCellTable() {
+    CellTable<OSGiCapability> getCellTable() {
         return table;
     }
 
-    OSGiPreloadedModule getSelection() {
+    OSGiCapability getSelection() {
         return selectionModel.getSelectedObject();
     }
 
-    void setModules(List<OSGiPreloadedModule> modules) {
+    void setCapabilities(List<OSGiCapability> capabilities) {
         dataProvider.getList().clear();
-        dataProvider.getList().addAll(modules);
+        dataProvider.getList().addAll(capabilities);
     }
 }

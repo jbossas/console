@@ -93,10 +93,11 @@ public interface UIMessages extends Messages {
 
     String subsys_osgi_activationWarning();
     String subsys_osgi_frameworkPropertiesHelp();
+    String subsys_osgi_capabilitiesHelp();
     String subsys_osgi_removeConfigAdmin();
     String subsys_osgi_removeConfigAdminConfirm(String pid);
-    String subsys_osgi_removePreloadedModule();
-    String subsys_osgi_removePreloadedModuleConfirm(String id);
+    String subsys_osgi_removeCapability();
+    String subsys_osgi_removeCapabilityConfirm(String id);
 
     String subsys_messaging(String providerName);
 

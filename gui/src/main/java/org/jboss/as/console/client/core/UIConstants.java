@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author Heiko Braun
@@ -148,7 +147,7 @@ public interface UIConstants extends Constants {
     String subsys_logging_module();
     String subsys_logging_handlerProperties();
     String subsys_logging_newHandlerProperty();
-    
+
     String subsys_deploymentscanner_scanners();
     String subsys_deploymentscanner_relativeTo();
     String subsys_deploymentscanner_scanEnabled();
@@ -156,7 +155,7 @@ public interface UIConstants extends Constants {
     String subsys_deploymentscanner_autoDeployZipped();
     String subsys_deploymentscanner_autoDeployExploded();
     String subsys_deploymentscanner_deploymentTimeout();
-    
+
     String subsys_infinispan_cache_container();
     String subsys_infinispan_cache_containers();
     String subsys_infinispan_default_cache();
@@ -174,6 +173,12 @@ public interface UIConstants extends Constants {
     String subsys_naming_jndiBindings();
     String subsys_naming_selectedURI();
 
+    String subsys_osgi_capabilities();
+    String subsys_osgi_capability();
+    String subsys_osgi_capabilityAdd();
+    String subsys_osgi_capabilityEdit();
+    String subsys_osgi_capabilityId();
+    String subsys_osgi_capabilityStartLevel();
     String subsys_osgi_configAdmin();
     String subsys_osgi_configAdminAdd();
     String subsys_osgi_configAdminEditPID();
@@ -184,17 +189,12 @@ public interface UIConstants extends Constants {
     String subsys_osgi_configAdminValueAdd();
     String subsys_osgi_configAdminValuesLabel();
     String subsys_osgi_framework();
+    String subsys_osgi_frameworkConfiguration();
     String subsys_osgi_frameworkHeader();
     String subsys_osgi_frameworkProperties();
     String subsys_osgi_frameworkProperty();
     String subsys_osgi_frameworkPropertyAdd();
-    String subsys_osgi_preloadedModule();
-    String subsys_osgi_preloadedModuleAdd();
-    String subsys_osgi_preloadedModuleEdit();
-    String subsys_osgi_preloadedModuleId();
-    String subsys_osgi_preloadedModuleStartLevel();
-    String subsys_osgi_preloadedModules();
-
+    String subsys_osgi_properties();
 
     String subsys_messaging_jms_provider();
     String subsys_messaging_jms_destinations();

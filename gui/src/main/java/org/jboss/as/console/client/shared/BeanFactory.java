@@ -60,7 +60,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
+import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
@@ -122,7 +122,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<WebServiceEndpoint> webServiceEndpoint();
 
     AutoBean<OSGiSubsystem> osgiSubsystem();
-    AutoBean<OSGiPreloadedModule> osgiPreloadedModule();
+    AutoBean<OSGiCapability> osgiCapability();
     AutoBean<OSGiConfigAdminData> osgiConfigAdminData();
     AutoBean<HeapMetric> heapMetric();
     AutoBean<ThreadMetric> threadMetric();
