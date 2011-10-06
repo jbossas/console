@@ -44,7 +44,8 @@ public enum FormItemType {
     NUMBER_BOX(new NumberBoxItemFactory()),
     NUMBER_BOX_ALLOW_NEGATIVE(new NumberBoxItemFactory(true)),
     ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
-    EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"}));
+    EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
+    PROPERTY_EDITOR(new PropertyEditorItemFactory());
     
     private FormItemFactory factory;
     
@@ -188,6 +189,10 @@ public enum FormItemType {
     public static class PropertyEditorItemFactory implements FormItemFactory {
         private String addDialogTitle;
         private int rows;
+        
+        public PropertyEditorItemFactory() {
+            this(Console.CONSTANTS.common_label_addProperty(), 5);
+        }
         
         /**
          * @param addDialogTitle The title shown when the Add button is pressed on the PropertyEditor.

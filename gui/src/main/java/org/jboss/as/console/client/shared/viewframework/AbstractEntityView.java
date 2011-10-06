@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -43,6 +42,11 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView {
 
     protected EntityEditor<T> entityEditor;
+    protected Class<?> beanType;
+    
+    public AbstractEntityView(Class<?> beanType) {
+        this.beanType = beanType;
+    }
 
     /**
      * Get the FormMetaData for the Entity.
@@ -115,7 +119,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The details form.
      */
     protected FormAdapter<T> makeEditEntityDetailsForm() {
-        Form<T> form = new Form(DeploymentScanner.class);
+        Form<T> form = new Form(beanType);
         form.setNumColumns(2);
         FormMetaData attributes = getFormMetaData();
         

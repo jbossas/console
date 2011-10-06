@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
+import java.util.Collections;
 import org.jboss.as.console.client.shared.viewframework.FormItemType;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 
@@ -30,6 +31,8 @@ public class PropertyBinding {
     private String detypedName;
     private String javaName;
     private String javaTypeName;
+    private Class<?> listType;
+    private EntityAdapter entityAdapterForList;
     private boolean isKey = false;
     private String defaultValue;
     private String label;
@@ -45,10 +48,15 @@ public class PropertyBinding {
         this.isKey = isKey;
     }
     
-    public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey,
+    public PropertyBinding(String javaName, String detypedName, String javaTypeName, 
+                           Class<?> listType, PropertyMetaData propMetaData, boolean isKey,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, String subgroup) {
         this(javaName, detypedName, javaTypeName, isKey);
+        this.listType = listType;
+        if (listType != null) {
+            this.entityAdapterForList = new EntityAdapter(listType, propMetaData);
+        }
         this.defaultValue = defaultValue;
         this.label = label;
         this.isRequired = isRequired;
@@ -88,9 +96,23 @@ public class PropertyBinding {
         if ("java.lang.Integer".equals(javaTypeName)) return Integer.parseInt(defaultValue);
         if ("java.lang.Double".equals(javaTypeName)) return Double.parseDouble(defaultValue);
         if ("java.lang.Float".equals(javaTypeName)) return Float.parseFloat(defaultValue);
+        if ("java.util.List".equals(javaTypeName)) return Collections.EMPTY_LIST;
         
         throw new RuntimeException("Unable to convert " + javaName + " default value " +
                                    defaultValue + " to type " + javaTypeName);
+    }
+    
+    /**
+     * 
+     * @return If the binding is a List type, this returns the class type that the list holds.  Otherwise,
+     *         return <code>null</code>
+     */
+    public Class<?> getListType() {
+        return this.listType;
+    }
+    
+    public EntityAdapter getEntityAdapterForList() {
+        return this.entityAdapterForList;
     }
     
     public FormItem getFormItemForAdd() {

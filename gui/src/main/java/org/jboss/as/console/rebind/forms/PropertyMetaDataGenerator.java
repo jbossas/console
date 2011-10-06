@@ -190,16 +190,23 @@ public class PropertyMetaDataGenerator extends Generator{
                             
                             if(bindDecl.skip()) continue;
 
-                            String labelVar = "label_" +  beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            String labelVar = "label_" + beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
                             if (formDecl.localLabel().equals("")) {
                                 sourceWriter.println("String " + labelVar + " = \"" +  formDecl.label() + "\";");
                             } else {
                                 sourceWriter.println("String " + labelVar + " = Console.CONSTANTS." + formDecl.localLabel() + "();");
                             }
+                            String listTypeVar = "listType_" + beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            if (bindDecl.listType().equals("")) {
+                                sourceWriter.println("Class<?> " + listTypeVar + " = null;");
+                            } else {
+                                sourceWriter.println("Class<?> " + listTypeVar + " = " + bindDecl.listType() + ".class;");
+                            }
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
-                                                                      "\", \"" + bindDecl.getJavaTypeName() + "\", " + bindDecl.key() + 
+                                                                      "\", \"" + bindDecl.getJavaTypeName() + 
+                                                                      "\"," + listTypeVar + ", this, " + bindDecl.key() + 
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() + "\")");
@@ -376,6 +383,7 @@ public class PropertyMetaDataGenerator extends Generator{
 
         String javaName = normalized;
         String detypedName = javaName;
+        String listType = "";
 
         // @Binding can override the detyped name
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
@@ -385,11 +393,12 @@ public class PropertyMetaDataGenerator extends Generator{
         if(bindingDeclaration!=null)
         {
             detypedName = bindingDeclaration.detypedName()!= null ? bindingDeclaration.detypedName() : "not-set";
+            listType = bindingDeclaration.listType();
             skip = bindingDeclaration.skip();
             key = bindingDeclaration.key();
         }
 
-        BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, skip, beanTypeClass.getName());
+        BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, listType, skip, beanTypeClass.getName());
         decl.setJavaTypeName(method.getReturnType().getName());
         decl.setKey(key);
 

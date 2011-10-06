@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
@@ -21,7 +22,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 9/23/11
  */
 public class EntityAdapter<T> {
-
+    private final  EntityFactory<PropertyRecord> propertyRecordFactory;
     private Class<?> type;
     private PropertyMetaData metaData;
     private KeyAssignment keyAssignment = null;
@@ -29,6 +30,7 @@ public class EntityAdapter<T> {
     public EntityAdapter(Class<?> type, PropertyMetaData metaData) {
         this.type = type;
         this.metaData = metaData;
+        this.propertyRecordFactory = metaData.getFactory(PropertyRecord.class);
     }
 
     public EntityAdapter<T> with(KeyAssignment keyAssignment)
@@ -168,6 +170,21 @@ public class EntityAdapter<T> {
                         value = actualPayload.get(propBinding.getDetypedName()).asString();
                     else
                         value = "";
+                } 
+                else if ("java.util.List".equals(propBinding.getJavaTypeName()))
+                {
+                    ModelNode list = actualPayload.get(propBinding.getDetypedName());
+                    if (actualPayload.hasDefined(propBinding.getDetypedName()) && !list.asList().isEmpty()) {
+                        if (list.asList().get(0).getType().equals(ModelType.PROPERTY)) {
+                            value = propBinding.getEntityAdapterForList().fromDMRPropertyList(list.asPropertyList());
+                        } else {
+                            value = propBinding.getEntityAdapterForList().fromDMRList(list.asList());
+                        }
+                    } 
+                    else
+                    {
+                        value = new LinkedList();
+                    }
                 }
 
                 // invoke the mutator
@@ -208,6 +225,19 @@ public class EntityAdapter<T> {
 
         return entities;
     }
+    
+    public List<PropertyRecord> fromDMRPropertyList(List<Property> dmr) {
+        List<PropertyRecord> entities = new LinkedList<PropertyRecord>();
+
+        for (Property prop : dmr) {
+            PropertyRecord property = propertyRecordFactory.create();
+            property.setKey(prop.getName());
+            property.setValue(prop.getValue().asString());
+            entities.add(property);
+        }
+
+        return entities;
+    }
 
     /**
      * Create a plain DMR representation of an entity.
@@ -231,7 +261,14 @@ public class EntityAdapter<T> {
             if(value!=null)
             {
                 try {
-                    operation.get(property.getDetypedName()).set(resolveModelType(property.getJavaTypeName()), value);
+                    ModelType modelType = resolveModelType(property.getJavaTypeName());
+                    if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
+                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)value));
+                    } else if (modelType == ModelType.LIST) {
+                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityList((List)value));
+                    } else {
+                        operation.get(property.getDetypedName()).set(modelType, value);
+                    }
                 } catch (RuntimeException e) {
                     throw new RuntimeException("Failed to get value "+property.getJavaName(), e);
                 }
@@ -255,9 +292,12 @@ public class EntityAdapter<T> {
             type = ModelType.BOOLEAN;
         else if("java.lang.Double".equals(javaTypeName))
             type = ModelType.DOUBLE;
-        else
+        else if("java.util.List".equals(javaTypeName)) {
+            type = ModelType.LIST;
+        } else {
             throw new RuntimeException("Failed to resolve ModelType for '"+ javaTypeName+"'");
-
+        }
+        
         return type;
     }
 
@@ -284,7 +324,16 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-
+    
+    public ModelNode fromEntityPropertyList(List<PropertyRecord> entities) 
+    {
+        ModelNode propList = new ModelNode();
+        for (PropertyRecord prop : entities) {
+            propList.add(prop.getKey(), prop.getValue());
+        }
+        return propList;
+    }
+    
     /**
      * Turns a changeset into a composite write attribute operation.
      *
@@ -343,6 +392,14 @@ public class EntityAdapter<T> {
                 else if (Float.class == type)
                 {
                     step.get(VALUE).set((Float)value);
+                } 
+                else if (binding.getListType() != null)
+                {
+                    if (binding.getListType() == PropertyRecord.class) {
+                        step.get(VALUE).set(fromEntityPropertyList((List)value));
+                    } else {
+                        step.get(VALUE).set(fromEntityList((List)value));
+                    }
                 }
                 else
                 {
@@ -352,7 +409,6 @@ public class EntityAdapter<T> {
                 steps.add(step);
             }
         }
-
 
         operation.get(STEPS).set(steps);
         return operation;
