@@ -47,6 +47,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     
     @Inject
     public CacheContainerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(CacheContainer.class);
         formMetaData = propertyMetaData.getBeanMetaData(CacheContainer.class).getFormMetaData();
         bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
     }

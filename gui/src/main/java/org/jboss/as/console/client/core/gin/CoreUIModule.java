@@ -126,6 +126,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
+import org.jboss.as.console.client.shared.subsys.threads.BoundedQueueThreadPoolPresenter;
+import org.jboss.as.console.client.shared.subsys.threads.BoundedQueueThreadPoolView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
@@ -362,6 +364,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ScannerPresenter.MyView.class,
                 ScannerView.class,
                 ScannerPresenter.MyProxy.class);
+        
+        bindPresenter(BoundedQueueThreadPoolPresenter.class,
+                BoundedQueueThreadPoolPresenter.MyView.class,
+                BoundedQueueThreadPoolView.class,
+                BoundedQueueThreadPoolPresenter.MyProxy.class);
         
         bindPresenter(OSGiPresenter.class,
                 OSGiPresenter.MyView.class,

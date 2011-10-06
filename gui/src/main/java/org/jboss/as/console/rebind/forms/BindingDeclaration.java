@@ -32,14 +32,24 @@ public class BindingDeclaration implements Binding  {
     private String detypedName;
     private String javaName;
     private String javaTypeName;
+    private String listType;
     private boolean doSkip = false;
     private boolean isKey = false;
 
     private String beanClassName;
     
-    public BindingDeclaration(String detypedName, String javaName, boolean ignore, String beanClassName) {
+    /**
+     * 
+     * @param detypedName
+     * @param javaName
+     * @param listType Fully-qualified type of the List, or <code>null</code> if the java type is not java.util.List
+     * @param ignore
+     * @param beanClassName 
+     */
+    public BindingDeclaration(String detypedName, String javaName, String listType, boolean ignore, String beanClassName) {
         this.detypedName = detypedName;
         this.javaName = javaName;
+        this.listType = listType;
         this.doSkip = ignore;
         this.beanClassName = beanClassName;
     }
@@ -85,6 +95,11 @@ public class BindingDeclaration implements Binding  {
 
     public String getDetypedName() {
         return detypedName;
+    }
+
+    @Override
+    public String listType() {
+        return listType;
     }
 
     public String getJavaName() {

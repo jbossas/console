@@ -33,6 +33,13 @@ import java.lang.annotation.Target;
 public @interface Binding {
 
     String detypedName() default "";
+    
+    /**
+     * If the type is a java.util.List, specify the fully-qualified name of the List type.
+     * @return 
+     */
+    String listType() default "";
+    
     boolean skip() default false;
     boolean key() default false;
 }

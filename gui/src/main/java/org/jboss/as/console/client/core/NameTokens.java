@@ -29,6 +29,7 @@ public class NameTokens {
 
     public static final String BeanPoolsPresenter = "bean-pools";
     public static final String BeanServicesPresenter = "bean-services";
+    public static final String BoundedQueueThreadPoolPresenter = "threads";
     public static final String DataSourcePresenter = "datasources";
     public static final String DebugToolsPresenter = "debug-tools";
     public static final String HostInterfacesPresenter = "host-interfaces";

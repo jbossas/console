@@ -36,6 +36,7 @@ public interface UIConstants extends Constants {
     String common_error_unknownError();
     String common_error_failure();
 
+    String common_label_addProperty();
     String common_label_hostManagement();
     String common_label_profileManagement();
     String common_label_groupManagement();

@@ -17,14 +17,12 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys.deploymentscanner;
+package org.jboss.as.console.client.shared.subsys.threads;
 
 import javax.inject.Inject;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
+import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
-import org.jboss.as.console.client.shared.viewframework.Columns.EnabledColumn;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
@@ -40,16 +38,16 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class ScannerView extends AbstractEntityView<DeploymentScanner> implements ScannerPresenter.MyView {
+public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueThreadPool> implements BoundedQueueThreadPoolPresenter.MyView {
 
-    private EntityToDmrBridge scannerBridge;
+    private EntityToDmrBridge threadPoolBridge;
     private FormMetaData formMetaData;
 
     @Inject
-    public ScannerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(DeploymentScanner.class);
-        formMetaData = propertyMetaData.getBeanMetaData(DeploymentScanner.class).getFormMetaData();
-        scannerBridge = new EntityToDmrBridgeImpl<DeploymentScanner>(propertyMetaData, DeploymentScanner.class, this, dispatcher);
+    public BoundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(BoundedQueueThreadPool.class);
+        formMetaData = propertyMetaData.getBeanMetaData(BoundedQueueThreadPool.class).getFormMetaData();
+        threadPoolBridge = new EntityToDmrBridgeImpl<BoundedQueueThreadPool>(propertyMetaData, BoundedQueueThreadPool.class, this, dispatcher);
     }
     
     @Override
@@ -59,31 +57,27 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
 
     @Override
     protected EntityToDmrBridge getEntityBridge() {
-        return this.scannerBridge;
+        return this.threadPoolBridge;
     }
 
     @Override
     protected String getPluralEntityName() {
-        return Console.CONSTANTS.subsys_deploymentscanner_scanners();
+        return "Bounded Queue Thread Pools";
     }
 
     @Override
-    protected FormAdapter<DeploymentScanner> makeAddEntityForm() {
-        Form<DeploymentScanner> form = new Form(DeploymentScanner.class);
+    protected FormAdapter<BoundedQueueThreadPool> makeAddEntityForm() {
+        Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
         form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("path").getFormItemForAdd(),
-                       formMetaData.findAttribute("relativeTo").getFormItemForAdd(),
-                       formMetaData.findAttribute("enabled").getFormItemForAdd());
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd());
         return form;
     }
 
     @Override
-    protected DefaultCellTable<DeploymentScanner> makeEntityTable() {
-        DefaultCellTable<DeploymentScanner> table = new DefaultCellTable<DeploymentScanner>(4);
+    protected DefaultCellTable<BoundedQueueThreadPool> makeEntityTable() {
+        DefaultCellTable<BoundedQueueThreadPool> table = new DefaultCellTable<BoundedQueueThreadPool>(4);
         
         table.addColumn(new NameColumn(), NameColumn.LABEL);
-        table.addColumn(new EnabledColumn(), EnabledColumn.LABEL);
         
         return table;
     }

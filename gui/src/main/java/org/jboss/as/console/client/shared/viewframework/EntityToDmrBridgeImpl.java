@@ -204,6 +204,13 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
                 Console.info(successMessage);
                 loadEntities(nameEditedOrAdded);
             }
+
+            @Override
+            public void onDmrFailure(ModelNode response) {
+                super.onDmrFailure(response);
+                loadEntities(nameEditedOrAdded);
+            }
+            
         });
     }
 }

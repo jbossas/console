@@ -61,6 +61,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiPreloadedModule;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -294,6 +295,11 @@ public class BeanFactoryImpl implements BeanFactory {
 
     public AutoBean<OSMetric> osmetric(){
         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 
