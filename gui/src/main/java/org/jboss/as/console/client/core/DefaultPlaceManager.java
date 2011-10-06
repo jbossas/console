@@ -47,6 +47,9 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
 
     @Override
     public void revealErrorPlace(String invalidHistoryToken) {
+
+        // TODO: beware of XSS
+
         messageCenter.notify(
                 new Message("Could not reveal: "+invalidHistoryToken,
                         Message.Severity.Fatal)
@@ -66,6 +69,9 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
 
     @Override
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
+
+        // TODO: beware of XSS
+
         discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.signInPage) );
     }
