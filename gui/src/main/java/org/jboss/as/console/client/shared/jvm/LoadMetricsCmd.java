@@ -52,7 +52,6 @@ public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<
 
     @Override
     public void execute(final AsyncCallback<CompositeVMMetric> callback) {
-        // /host=master/server=server-one/
 
         ModelNode composite = new ModelNode();
         composite.get(OP).set(COMPOSITE);

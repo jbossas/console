@@ -3,13 +3,14 @@ package org.jboss.as.console.client.shared.jvm;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
 import org.jboss.as.console.client.shared.jvm.charts.ThreadChartView;
@@ -19,11 +20,14 @@ import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.ComboBox;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -31,7 +35,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
  */
 public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPresenter.MyView {
 
-    private VMMetricsPresenter presenter;
+    private VMMetricsManagement presenter;
 
     private HorizontalPanel heapPanel;
     private HorizontalPanel threadPanel;
@@ -47,8 +51,10 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private HTML processors;
     private ToolButton pauseBtn;
 
+    private ComboBox vmSelection;
+
     @Override
-    public void setPresenter(VMMetricsPresenter presenter) {
+    public void setPresenter(VMMetricsManagement presenter) {
         this.presenter = presenter;
     }
 
@@ -98,8 +104,26 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // ------------------------
 
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("fill-layout-width");
+
         vmName = new ContentHeaderLabel("");
-        vpanel.add(vmName);
+        header.add(vmName);
+
+        vmSelection = new ComboBox();
+        vmSelection.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                presenter.onVMSelection(event.getValue());
+            }
+        });
+
+        header.add(vmSelection.asWidget());
+
+        vpanel.add(header);
+
+        // -------------------------
+
 
         vpanel.add(new ContentGroupLabel("Threads"));
 
@@ -154,22 +178,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         this.threadChart=null;
     }
 
-
-    private Form<HeapMetric> createHeapForm() {
-        Form<HeapMetric> heapForm = new Form<HeapMetric>(HeapMetric.class);
-
-        NumberBoxItem initItem = new NumberBoxItem("init", "Init");
-        NumberBoxItem usedItem = new NumberBoxItem("used", "Used");
-        NumberBoxItem committedItem = new NumberBoxItem("committed", "Committed");
-        NumberBoxItem maxItem = new NumberBoxItem("max", "Max");
-
-        heapForm.setFields(initItem, usedItem, committedItem, maxItem);
-
-        heapForm.setEnabled(false);
-        heapForm.setNumColumns(2);
-        return heapForm;
-    }
-
     @Override
     public void setHeap(HeapMetric heap) {
 
@@ -216,5 +224,18 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     @Override
     public void reset() {
         pauseBtn.setText("Stop");
+
+        if(heapChart!=null)
+        {
+            heapChart.clearSamples();
+            nonHeapChart.clearSamples();
+            threadChart.clearSamples();
+        }
+    }
+
+    @Override
+    public void setVMKeys(List<String> vmkeys) {
+        vmSelection.setValues(vmkeys);
+        vmSelection.setItemSelected(0, true);
     }
 }

@@ -4,7 +4,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -16,20 +15,21 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
-import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
-import org.jboss.as.console.client.shared.jvm.model.OSMetric;
-import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
-import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 9/28/11
  */
-public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMMetricsPresenter.MyProxy> implements VMMetricsManagement {
+public class VMMetricsPresenter
+        extends Presenter<VMView, VMMetricsPresenter.MyProxy>
+        implements VMMetricsManagement {
 
     private static final int POLL_INTERVAL = 5000;
     private DispatchAsync dispatcher;
@@ -40,14 +40,14 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
     private LoadMetricsCmd loadMetricCmd;
+    private List<String> vmkeys;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
     public interface MyProxy extends Proxy<VMMetricsPresenter>, Place {
     }
 
-    public interface MyView extends View, VMView {
-        void setPresenter(VMMetricsPresenter presenter);
+    public interface MyView extends VMView {
     }
 
     @Inject
@@ -63,6 +63,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
         this.dispatcher = dispatcher;
 
         this.loadMetricCmd = new LoadMetricsCmd(dispatcher, factory, new ModelNode(), metaData);
+        this.vmkeys = new ArrayList<String>();
+        this.vmkeys.add("Standalone Server");
     }
 
     @Override
@@ -74,7 +76,6 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     @Override
     protected void onHide() {
         super.onHide();
-
         getView().detachCharts();
     }
 
@@ -85,6 +86,7 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
 
         getView().reset();
+        getView().setVMKeys(vmkeys);
 
         if(Console.visAPILoaded())
             getView().attachCharts();
@@ -155,4 +157,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
 
     }
 
+    @Override
+    public void onVMSelection(String vmKey) {
+        // ignore. there is only single vm
+    }
 }
