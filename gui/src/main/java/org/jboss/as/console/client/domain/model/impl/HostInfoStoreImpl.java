@@ -109,7 +109,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
         operation.get(RECURSIVE).set(true);
-        //operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
+        operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -150,9 +150,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         // TODO: https://issues.jboss.org/browse/JBAS-9163
 
                     }
-
-                    record.setStarted(server.get("status").asString().equals("STARTED"));
-
 
                     List<PropertyRecord> propertyRecords = ModelAdapter.model2Property(factory, server);
                     record.setProperties(propertyRecords);

@@ -99,19 +99,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         selectedHost = request.getParameter("host", null);
-
-        String action = request.getParameter("action", null);
-        if(action!=null)
-        {
-            Window.alert("Not yet implemented");
-        }
     }
 
     @Override
     protected void onReset() {
         super.onReset();
         refreshView();
-
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override

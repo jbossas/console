@@ -41,10 +41,6 @@ public interface Server {
     boolean isAutoStart();
     void setAutoStart(boolean b);
 
-    @Binding(detypedName = "none", skip = true)
-    boolean isStarted();
-    void setStarted(boolean b);
-
     @Binding(detypedName = "socket-binding-group")
     String getSocketBinding();
     void setSocketBinding(String socketBindingRef);
@@ -53,9 +49,11 @@ public interface Server {
     int getPortOffset();
     void setPortOffset(int offset);
 
+    @Binding(skip=true)
     Jvm getJvm();
     void setJvm(Jvm jvm);
 
+    @Binding(skip=true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 }

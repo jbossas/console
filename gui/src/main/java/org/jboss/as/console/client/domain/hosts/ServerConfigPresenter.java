@@ -23,6 +23,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -47,6 +48,8 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
@@ -66,7 +69,7 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.JVM;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -382,6 +385,35 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void deleteCurrentRecord() {
+
+        // check if instance exist
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("server", selectedRecord.getName());
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                String outcome = response.get(OUTCOME).asString();
+                Boolean serverIsRunning = outcome.equals(SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
+                if(!serverIsRunning)
+                    performDeleteOperation();
+                else
+                    Console.error(
+                            "Failed to delete server configuration",
+                            "The server instance is still running: "+selectedRecord.getName()
+                    );
+            }
+        });
+
+
+    }
+
+    private void performDeleteOperation() {
+
         hostInfoStore.deleteServerConfig(selectedHost, selectedRecord, new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -411,7 +443,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
     }
-
 
     public String getSelectedHost() {
         return selectedHost;
