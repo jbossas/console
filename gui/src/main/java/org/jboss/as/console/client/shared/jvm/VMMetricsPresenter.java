@@ -46,19 +46,8 @@ public class VMMetricsPresenter extends Presenter<VMMetricsPresenter.MyView, VMM
     public interface MyProxy extends Proxy<VMMetricsPresenter>, Place {
     }
 
-    public interface MyView extends View {
+    public interface MyView extends View, VMView {
         void setPresenter(VMMetricsPresenter presenter);
-
-        void setHeap(HeapMetric heap);
-        void setNonHeap(HeapMetric nonHeap);
-        void setThreads(ThreadMetric thread);
-        void setOSMetric(OSMetric osMetric);
-        void setRuntimeMetric(RuntimeMetric runtime);
-
-        void attachCharts();
-        void detachCharts();
-
-        void reset();
     }
 
     @Inject

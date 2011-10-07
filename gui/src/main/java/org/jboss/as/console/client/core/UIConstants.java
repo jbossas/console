@@ -225,4 +225,6 @@ public interface UIConstants extends Constants {
     String common_label_refresh();
 
     String common_label_clear();
+
+    String common_label_hostVm();
 }

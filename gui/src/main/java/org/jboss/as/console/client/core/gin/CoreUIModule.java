@@ -58,10 +58,12 @@ import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
+import org.jboss.as.console.client.domain.hosts.HostVMView;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigView;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesView;
+import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesView;
 import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
@@ -418,6 +420,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 VMMetricsPresenter.MyView.class,
                 VMMetricsView.class,
                 VMMetricsPresenter.MyProxy.class);
+
+         bindPresenter(HostVMMetricPresenter.class,
+                HostVMMetricPresenter.MyView.class,
+                HostVMView.class,
+                HostVMMetricPresenter.MyProxy.class);
     }
 
 }

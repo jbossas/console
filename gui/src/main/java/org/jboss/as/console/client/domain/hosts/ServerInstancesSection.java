@@ -48,18 +48,33 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
 
         instanceTree = new LHSNavTree("hosts");
 
-        LHSNavTreeItem overview = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverStatus(), new ClickHandler()
+        LHSNavTreeItem status = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverStatus(), new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event) {
-                String token = buildToken();
+                String token = buildToken(NameTokens.InstancesPresenter);
                 Console.MODULES.getPlaceManager().revealPlaceHierarchy(
                         Places.fromString(token)
                 );
             }
         });
 
-        instanceTree.addItem(overview);
+        instanceTree.addItem(status);
+
+        LHSNavTreeItem vmView = new LHSNavTreeItem(Console.CONSTANTS.common_label_hostVm(), new ClickHandler()
+               {
+                   @Override
+                   public void onClick(ClickEvent event) {
+                       String token = buildToken(NameTokens.HostVMMetricPresenter);
+                       Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                               Places.fromString(token)
+                       );
+                   }
+               });
+
+               instanceTree.addItem(status);
+
+        instanceTree.addItem(vmView);
 
         // listen on host selection events
         Console.MODULES.getEventBus().addHandler(
@@ -83,9 +98,9 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
         this.selectedHost = hostName;
     }
 
-    private String buildToken() {
+    private String buildToken(String presenter) {
         assert selectedHost!=null : "host selection is null!";
-        final String token = "hosts/" + NameTokens.InstancesPresenter+";host="+selectedHost;
+        final String token = "hosts/" +presenter+";host="+selectedHost;
         return token;
     }
 }

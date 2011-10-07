@@ -47,6 +47,7 @@ import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
+import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
@@ -217,5 +218,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JndiPresenter> getJndiPresenter();
 
     AsyncProvider<VMMetricsPresenter> getVMMetricsPresenter();
+    AsyncProvider<HostVMMetricPresenter> getServerVMMetricPresenter();
 
 }
