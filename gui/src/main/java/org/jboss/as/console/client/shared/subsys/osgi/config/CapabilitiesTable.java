@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi;
+package org.jboss.as.console.client.shared.subsys.osgi.config;
 
 import java.util.Comparator;
 import java.util.List;
@@ -30,7 +30,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 

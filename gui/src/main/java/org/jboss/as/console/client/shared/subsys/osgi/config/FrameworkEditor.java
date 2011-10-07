@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi;
+package org.jboss.as.console.client.shared.subsys.osgi.config;
 
 import java.util.List;
 
@@ -35,8 +35,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -49,12 +49,12 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
  * @author David Bosschaert
  */
 public class FrameworkEditor {
-    private final OSGiPresenter presenter;
+    private final OSGiConfigurationPresenter presenter;
     private Form<OSGiSubsystem> form;
     private FrameworkPropertiesTable propertiesTable;
     private CapabilitiesTable capabilitiesTable;
 
-    FrameworkEditor(OSGiPresenter presenter) {
+    FrameworkEditor(OSGiConfigurationPresenter presenter) {
         this.presenter = presenter;
     }
 

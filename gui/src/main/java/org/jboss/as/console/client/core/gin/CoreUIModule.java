@@ -126,8 +126,10 @@ import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiView;
-import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
-import org.jboss.as.console.client.shared.subsys.osgi.OSGiSubsystemView;
+import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
+import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimeView;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
@@ -367,17 +369,22 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ScannerPresenter.MyView.class,
                 ScannerView.class,
                 ScannerPresenter.MyProxy.class);
-        
+
         bindPresenter(ThreadsPresenter.class,
                 ThreadsPresenter.MyView.class,
                 ThreadsView.class,
                 ThreadsPresenter.MyProxy.class);
         
-        bindPresenter(OSGiPresenter.class,
-                OSGiPresenter.MyView.class,
+        bindPresenter(OSGiConfigurationPresenter.class,
+                OSGiConfigurationPresenter.MyView.class,
                 OSGiSubsystemView.class,
-                OSGiPresenter.MyProxy.class);
-        
+                OSGiConfigurationPresenter.MyProxy.class);
+
+        bindPresenter(OSGiRuntimePresenter.class,
+                OSGiRuntimePresenter.MyView.class,
+                OSGiRuntimeView.class,
+                OSGiRuntimePresenter.MyProxy.class);
+
         bindPresenter(CacheContainerPresenter.class,
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,

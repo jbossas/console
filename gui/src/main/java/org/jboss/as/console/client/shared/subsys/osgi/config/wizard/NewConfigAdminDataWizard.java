@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.wizard;
+package org.jboss.as.console.client.shared.subsys.osgi.config.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -44,12 +44,12 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
  * @author David Bosschaert
  */
 public class NewConfigAdminDataWizard implements PropertyManagement {
-    private final OSGiPresenter presenter;
+    private final OSGiConfigurationPresenter presenter;
     private final List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
     private PropertyEditor propEditor;
     private BeanFactory factory = GWT.create(BeanFactory.class);
 
-    public NewConfigAdminDataWizard(OSGiPresenter presenter) {
+    public NewConfigAdminDataWizard(OSGiConfigurationPresenter presenter) {
         this.presenter = presenter;
     }
 

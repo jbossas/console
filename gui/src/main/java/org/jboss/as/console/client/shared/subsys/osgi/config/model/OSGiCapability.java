@@ -16,12 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.model;
+package org.jboss.as.console.client.shared.subsys.osgi.config.model;
+
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
+ * This interface is implemented by an AutoBean to interface with the capability sub-resource in the
+ * detyped server API of the OSGi subsystem.
  * @author David Bosschaert
  */
-public interface OSGiSubsystem {
-    boolean isLazyActivation();
-    void setLazyActivation(boolean lazy);
+public interface OSGiCapability {
+    String getIdentifier();
+    void setIdentifier(String id);
+
+    // Start Level is really an integer, but it can also be ommitted and
+    // the autobean handling of no value -> null doesn't work for Integers
+    @Binding(detypedName = "startlevel")
+    String getStartLevel();
+    void setStartLevel(String sl);
 }

@@ -39,11 +39,11 @@ import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
 import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
 import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -58,9 +58,10 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvid
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.Bundle;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
@@ -124,6 +125,8 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<OSGiSubsystem> osgiSubsystem();
     AutoBean<OSGiCapability> osgiCapability();
     AutoBean<OSGiConfigAdminData> osgiConfigAdminData();
+    AutoBean<Bundle> osgiBundle();
+
     AutoBean<HeapMetric> heapMetric();
     AutoBean<ThreadMetric> threadMetric();
     AutoBean<RuntimeMetric> runtime();

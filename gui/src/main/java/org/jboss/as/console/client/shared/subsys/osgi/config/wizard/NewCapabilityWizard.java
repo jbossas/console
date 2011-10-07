@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.wizard;
+package org.jboss.as.console.client.shared.subsys.osgi.config.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,8 +26,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.osgi.OSGiPresenter;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -40,10 +40,10 @@ import org.jboss.dmr.client.ModelNode;
  * @author David Bosschaert
  */
 public class NewCapabilityWizard {
-    private final OSGiPresenter presenter;
+    private final OSGiConfigurationPresenter presenter;
     private final OSGiCapability capability;
 
-    public NewCapabilityWizard(OSGiPresenter presenter, OSGiCapability capability) {
+    public NewCapabilityWizard(OSGiConfigurationPresenter presenter, OSGiCapability capability) {
         this.presenter = presenter;
         this.capability = capability;
     }
@@ -63,8 +63,8 @@ public class NewCapabilityWizard {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = Baseadress.get();
-                address.add(ModelDescriptionConstants.SUBSYSTEM, OSGiPresenter.OSGI_SUBSYSTEM);
-                address.add(OSGiPresenter.CAPABILITY_RESOURCE, "*");
+                address.add(ModelDescriptionConstants.SUBSYSTEM, OSGiConfigurationPresenter.OSGI_SUBSYSTEM);
+                address.add(OSGiConfigurationPresenter.CAPABILITY_RESOURCE, "*");
                 return address;
             }
         }, form);

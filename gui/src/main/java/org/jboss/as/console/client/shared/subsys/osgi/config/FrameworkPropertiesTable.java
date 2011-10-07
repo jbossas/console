@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi;
+package org.jboss.as.console.client.shared.subsys.osgi.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +27,19 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewPropertyWizard;
+import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewPropertyWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
  * @author David Bosschaert
  */
 public class FrameworkPropertiesTable implements PropertyManagement {
-    private final OSGiPresenter presenter;
+    private final OSGiConfigurationPresenter presenter;
     private List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
     private DefaultWindow propertyWindow;
     private PropertyEditor propEditor;
 
-    FrameworkPropertiesTable(OSGiPresenter presenter) {
+    FrameworkPropertiesTable(OSGiConfigurationPresenter presenter) {
         this.presenter = presenter;
     }
 

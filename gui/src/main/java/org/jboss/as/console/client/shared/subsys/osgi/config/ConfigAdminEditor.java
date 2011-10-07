@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi;
+package org.jboss.as.console.client.shared.subsys.osgi.config;
 
 import java.util.List;
 
@@ -36,8 +36,8 @@ import org.jboss.as.console.client.shared.general.InputWindow;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewPropertyWizard;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewPropertyWizard;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -49,12 +49,12 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
  * @author David Bosschaert
  */
 public class ConfigAdminEditor implements PropertyManagement {
-    private final OSGiPresenter presenter;
+    private final OSGiConfigurationPresenter presenter;
     private PIDTable pidTable;
     private PropertyEditor propertyEditor;
     private DefaultWindow dialog;
 
-    ConfigAdminEditor(OSGiPresenter presenter) {
+    ConfigAdminEditor(OSGiConfigurationPresenter presenter) {
         this.presenter = presenter;
     }
 

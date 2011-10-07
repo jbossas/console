@@ -21,7 +21,6 @@ package org.jboss.as.console.client.shared;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -45,7 +44,7 @@ public class SubsystemMetaData {
     private static final String EJB = "EJB";
 
     private static final String OSGI = "OSGi";
-    
+
     private static final String INFINISPAN = "Infinispan";
 
     private static final String SECURITY = "Security";
@@ -97,8 +96,9 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
 
-        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi"));
-        
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Runtime", "osgi", NameTokens.OSGiRuntimePresenter));
+
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.CacheContainerPresenter));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));

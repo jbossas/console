@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi;
+package org.jboss.as.console.client.shared.subsys.osgi.config;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -57,11 +57,11 @@ import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
-import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewCapabilityWizard;
-import org.jboss.as.console.client.shared.subsys.osgi.wizard.NewConfigAdminDataWizard;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewCapabilityWizard;
+import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewConfigAdminDataWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -69,7 +69,7 @@ import org.jboss.dmr.client.Property;
 /**
  * @author David Bosschaert
  */
-public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter.MyProxy> {
+public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPresenter.MyView, OSGiConfigurationPresenter.MyProxy> {
     public static final String OSGI_SUBSYSTEM = "osgi";
 
     public static final String CAPABILITY_RESOURCE = "capability";
@@ -85,12 +85,12 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
     private DefaultWindow window;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.OSGiPresenter)
-    public interface MyProxy extends Proxy<OSGiPresenter>, Place {
+    @NameToken(NameTokens.OSGiConfigurationPresenter)
+    public interface MyProxy extends Proxy<OSGiConfigurationPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(OSGiPresenter presenter);
+        void setPresenter(OSGiConfigurationPresenter presenter);
         void setProviderDetails(OSGiSubsystem provider);
         void updateProperties(List<PropertyRecord> properties);
         void updateCapabilities(List<OSGiCapability> capabilities);
@@ -98,7 +98,7 @@ public class OSGiPresenter extends Presenter<OSGiPresenter.MyView, OSGiPresenter
     }
 
     @Inject
-    public OSGiPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+    public OSGiConfigurationPresenter(EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);

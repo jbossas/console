@@ -16,19 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.model;
-
-import java.util.List;
-
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
+package org.jboss.as.console.client.shared.subsys.osgi.config.model;
 
 /**
  * @author David Bosschaert
  */
-public interface OSGiConfigAdminData {
-    String getPid();
-    void setPid(String pid);
-
-    List<PropertyRecord> getProperties();
-    void setProperties(List<PropertyRecord> properties);
+public interface OSGiSubsystem {
+    boolean isLazyActivation();
+    void setLazyActivation(boolean lazy);
 }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.wizard;
+package org.jboss.as.console.client.shared.subsys.osgi.config.wizard;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
