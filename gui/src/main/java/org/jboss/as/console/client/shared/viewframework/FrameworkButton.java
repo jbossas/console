@@ -18,37 +18,20 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import com.google.gwt.user.client.ui.Widget;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 /**
- * Super interface for Views that use this framework.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface FrameworkView {
+public enum FrameworkButton {
+    ADD,
+    REMOVE,
+    EDIT_SAVE, // EDIT and SAVE are the same button
+    CANCEL;
     
-    /**
-     * Retrieves this view as a {@link Widget} so that it can be inserted within
-     * the DOM.
-     * 
-     * @return This view as a DOM object.
-     */
-    public Widget asWidget();
-  
-    /**
-     * Call for Entities to be loaded into the view for the first time.
-     */
-    public void initialLoad();
-    
-    /**
-     * Called whenever the data in the view needs to be refreshed.
-     */
-    public void refresh();
-    
-    /**
-     * Tells the view if editing should be enabled.
-     * 
-     * @param isEnabled 
-     */
-    public void setEditingEnabled(boolean isEnabled);
+    public static EnumSet<FrameworkButton> asSet(FrameworkButton... buttons) {
+        return EnumSet.copyOf(Arrays.asList(buttons));
+    }
 }

@@ -21,14 +21,13 @@ package org.jboss.as.console.client.shared.subsys.threads;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-
 
 
 /**
@@ -36,20 +35,20 @@ import org.jboss.as.console.client.shared.viewframework.FrameworkView;
  * @author Stan Silvert
  * @date 9/15/11
  */
-public class BoundedQueueThreadPoolPresenter extends Presenter<BoundedQueueThreadPoolPresenter.MyView, BoundedQueueThreadPoolPresenter.MyProxy> {
+public class ThreadsPresenter extends Presenter<ThreadsPresenter.MyView, ThreadsPresenter.MyProxy> {
 
     private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.BoundedQueueThreadPoolPresenter)
-    public interface MyProxy extends Proxy<BoundedQueueThreadPoolPresenter>, Place {
+    public interface MyProxy extends Proxy<ThreadsPresenter>, Place {
     }
 
-    public interface MyView extends FrameworkView {
+    public interface MyView extends View {
     }
 
     @Inject
-    public BoundedQueueThreadPoolPresenter(
+    public ThreadsPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
@@ -65,7 +64,7 @@ public class BoundedQueueThreadPoolPresenter extends Presenter<BoundedQueueThrea
     @Override
     protected void onReset() {
         super.onReset();
-        getView().initialLoad();
+        ((ThreadsView)getView()).initialLoad();
     }
 
     @Override

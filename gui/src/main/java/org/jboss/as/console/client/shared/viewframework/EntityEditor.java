@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
+import java.util.EnumSet;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -52,6 +53,7 @@ public class EntityEditor<T> {
     private EntityDetails<T> details;
     private boolean doneInitialSelection = false;
     private DefaultPager pager;
+    private EnumSet<FrameworkButton> hideButtons;
 
     /**
      * Create a new Entity.
@@ -62,10 +64,24 @@ public class EntityEditor<T> {
      * @param details  The EntityDetails that manages CRUD for the selected entity.
      */
     public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, EntityDetails<T> details) {
+        this(entitiesName, window, table, details, EnumSet.noneOf(FrameworkButton.class));
+    }
+    
+    /**
+     * Create a new Entity.
+     * 
+     * @param entitiesName The display name (plural) of the entities.
+     * @param window The window used for creating a new entity.
+     * @param table The table that holds the entities.
+     * @param details  The EntityDetails that manages CRUD for the selected entity.
+     */
+    public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, 
+                        EntityDetails<T> details, EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.window = window;
         this.table = table;
         this.details = details;
+        this.hideButtons = hideButtons;
     }
 
     public Widget asWidget() {
@@ -80,13 +96,16 @@ public class EntityEditor<T> {
         scroll.add(layout);
 
         final ToolStrip toolStrip = new ToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                window.setNewBean();
-                window.show();
-            }
-        }));
+        
+        if (!hideButtons.contains(FrameworkButton.ADD)) {
+            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    window.setNewBean();
+                    window.show();
+                }
+            }));
+        }
 
         panel.add(toolStrip);
         

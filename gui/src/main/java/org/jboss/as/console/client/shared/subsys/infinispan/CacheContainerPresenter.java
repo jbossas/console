@@ -21,17 +21,14 @@ package org.jboss.as.console.client.shared.subsys.infinispan;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 
 
 
@@ -49,7 +46,7 @@ public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.M
     public interface MyProxy extends Proxy<CacheContainerPresenter>, Place {
     }
 
-    public interface MyView extends FrameworkView {
+    public interface MyView extends FrameworkView, View {
     }
 
     @Inject
