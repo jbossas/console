@@ -134,6 +134,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     public void loadVMStatus() {
         createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
+
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Console.error("No VM Metrics available", caught.getMessage());
+                keepPolling(false);
+            }
+
             @Override
             public void onSuccess(CompositeVMMetric result) {
                 getView().setHeap(result.getHeap());
@@ -191,5 +199,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         this.currentServer = vmKey;
 
         getView().reset();
+        keepPolling(true);
     }
 }

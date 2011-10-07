@@ -236,6 +236,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     @Override
     public void setVMKeys(List<String> vmkeys) {
         vmSelection.setValues(vmkeys);
+        vmSelection.clearSelection();
         vmSelection.setItemSelected(0, true);
     }
 }

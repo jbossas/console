@@ -123,7 +123,6 @@ public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<
                 if(ModelAdapter.wasSuccess(response))
                 {
                     // memory
-
                     ModelNode memory  = steps.get("step-1").get(RESULT);
                     HeapMetric heap = heapMetricAdapter.fromDMR(memory.get("heap-memory-usage"));
                     HeapMetric nonHeap = heapMetricAdapter.fromDMR(memory.get("non-heap-memory-usage"));
@@ -156,10 +155,12 @@ public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<
 
                     callback.onSuccess(metric);
 
+
                 }
                 else
                 {
-                    callback.onFailure(new RuntimeException("Failed to load VM metrics: "+response.toString()));
+                    callback.onFailure(new RuntimeException("The server doesn't seem to be running: "+address));
+                    //callback.onFailure(new RuntimeException("Failed to load VM metrics: "+response.toString()));
                 }
             }
         });
