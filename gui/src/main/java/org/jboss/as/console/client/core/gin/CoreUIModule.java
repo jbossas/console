@@ -55,6 +55,7 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.domain.hosts.CurrentServerConfigurations;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -279,6 +280,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(CurrentHostSelection.class).in(Singleton.class);
+        bind(CurrentServerConfigurations.class).in(Singleton.class);
 
         // domain/server-group
         bindPresenter(ServerGroupMgmtPresenter.class,

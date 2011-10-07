@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -42,6 +43,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
     private static final int POLL_INTERVAL = 5000;
+    private CurrentServerConfigurations serverConfigs;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostVMMetricPresenter)
@@ -56,7 +58,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, CurrentHostSelection currentHost,
             DispatchAsync dispatcher, BeanFactory factory,
-            PropertyMetaData metaData) {
+            PropertyMetaData metaData, CurrentServerConfigurations serverConfigs) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -64,6 +66,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
+        this.serverConfigs = serverConfigs;
     }
 
     @Override
@@ -94,10 +97,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     private List<String> loadVMKeys() {
+
         List<String> vmkeys = new ArrayList<String>();
-        vmkeys.add("server-one");
-        vmkeys.add("server-two");
-        vmkeys.add("server-three");
+
+        for(Server s : serverConfigs.getServerConfigs())
+        {
+            vmkeys.add(s.getName());
+        }
+
         return vmkeys;
     }
 

@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.model.impl;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.domain.hosts.CurrentServerConfigurations;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -54,12 +55,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
+    private CurrentServerConfigurations currentConfigs;
 
     @Inject
-    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMeta) {
+    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMeta,
+                             CurrentServerConfigurations currentConfigs) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData = propertyMeta;
+        this.currentConfigs =currentConfigs;
     }
 
     @Override
@@ -158,6 +162,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     records.add(record);
                 }
+
+                currentConfigs.setServerConfigs(records);
 
                 callback.onSuccess(records);
             }

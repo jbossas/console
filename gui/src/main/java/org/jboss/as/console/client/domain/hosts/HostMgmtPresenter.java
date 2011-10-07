@@ -98,6 +98,7 @@ public class HostMgmtPresenter
         hostSelection = request.getParameter("host", hostSelection);// set once and keep it
     }
 
+    // TODO: Shouldn't this be onReset()?
     @Override
     protected void onReveal() {
         super.onReveal();
