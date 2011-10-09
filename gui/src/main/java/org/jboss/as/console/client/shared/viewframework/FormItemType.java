@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.viewframework;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditorFormItem;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -43,6 +44,7 @@ public enum FormItemType {
     LIST_BOX(new ListBoxItemFactory()),
     NUMBER_BOX(new NumberBoxItemFactory()),
     NUMBER_BOX_ALLOW_NEGATIVE(new NumberBoxItemFactory(true)),
+    COMBO_BOX(new ComboBoxItemFactory()),
     ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
     EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
     PROPERTY_EDITOR(new PropertyEditorItemFactory());
@@ -58,33 +60,33 @@ public enum FormItemType {
     }
     
     public static interface FormItemFactory {
-        FormItem makeFormItem(String beanPropName, String label, boolean isRequired);
+        ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers);
     }
     
     public static class TextItemFactory implements FormItemFactory {
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            TextItem textItem = new TextItem(beanPropName, label);
-            textItem.setRequired(isRequired);
-            return textItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            TextItem textItem = new TextItem(propBinding.getJavaName(), propBinding.getLabel());
+            textItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, textItem, observers);
         }
     }
     
     public static class TextBoxItemFactory implements FormItemFactory {
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            TextBoxItem textBoxItem = new TextBoxItem(beanPropName, label);
-            textBoxItem.setRequired(isRequired);
-            return textBoxItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            TextBoxItem textBoxItem = new TextBoxItem(propBinding.getJavaName(), propBinding.getLabel());
+            textBoxItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, textBoxItem, observers);
         }
     }
  
     public static class ByteUnitItemFactory implements FormItemFactory {
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            ByteUnitItem byteUnitItem = new ByteUnitItem(beanPropName, label);
-            byteUnitItem.setRequired(isRequired);
-            return byteUnitItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            ByteUnitItem byteUnitItem = new ByteUnitItem(propBinding.getJavaName(), propBinding.getLabel());
+            byteUnitItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, byteUnitItem, observers);
         }
         
         private static class ByteUnitItem extends TextBoxItem {
@@ -131,36 +133,38 @@ public enum FormItemType {
     }
     
     public static class ComboBoxItemFactory implements FormItemFactory {
-        private String[] values;
+        private String[] values = new String[0];
+        
+        public ComboBoxItemFactory() {}
         
         public ComboBoxItemFactory(String[] values) {
             this.values = values;
         }
         
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            ComboBoxItem comboBoxItem = new ComboBoxItem(beanPropName, label);
-            comboBoxItem.setRequired(isRequired);
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            ComboBoxItem comboBoxItem = new ComboBoxItem(propBinding.getJavaName(), propBinding.getLabel());
+            comboBoxItem.setRequired(propBinding.isRequired());
             comboBoxItem.setValueMap(values);
-            return comboBoxItem;
+            return new ObservableFormItem(propBinding, comboBoxItem, observers);
         }
     }
     
     public static class CheckBoxItemFactory implements FormItemFactory {
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            CheckBoxItem checkBoxItem = new CheckBoxItem(beanPropName, label);
-            checkBoxItem.setRequired(isRequired);
-            return checkBoxItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            CheckBoxItem checkBoxItem = new CheckBoxItem(propBinding.getJavaName(), propBinding.getLabel());
+            checkBoxItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, checkBoxItem, observers);
         }
     }
     
     public static class ListBoxItemFactory implements FormItemFactory {
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            ListItem listItem = new ListItem(beanPropName, label, true);
-            listItem.setRequired(isRequired);
-            return listItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            ListItem listItem = new ListItem(propBinding.getJavaName(), propBinding.getLabel(), true);
+            listItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, listItem, observers);
         }
     }
     
@@ -179,10 +183,10 @@ public enum FormItemType {
         }
         
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            NumberBoxItem numberItem = new NumberBoxItem(beanPropName, label, this.allowNegativeNumber);
-            numberItem.setRequired(isRequired);
-            return numberItem;
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            NumberBoxItem numberItem = new NumberBoxItem(propBinding.getJavaName(), propBinding.getLabel(), this.allowNegativeNumber);
+            numberItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, numberItem, observers);
         }
     }
     
@@ -204,13 +208,13 @@ public enum FormItemType {
         }
         
         @Override
-        public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(beanPropName, 
-                                                                           label, 
+        public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(propBinding.getJavaName(), 
+                                                                           propBinding.getLabel(), 
                                                                            addDialogTitle, 
                                                                            rows);
-            propEditor.setRequired(isRequired);
-            return propEditor;
+            propEditor.setRequired(propBinding.isRequired());
+            return new ObservableFormItem(propBinding, propEditor, observers);
         }
     }
 }

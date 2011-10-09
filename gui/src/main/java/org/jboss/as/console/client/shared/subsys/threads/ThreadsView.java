@@ -25,47 +25,29 @@ import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
-import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
-import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
- * Main view class for Deployment Scanners.  This class assembles the editor and reacts to 
- * FrameworkView callbacks.
+ * Main view class for the Threads subsystem.  
  * 
  * @author Stan Silvert
  */
 public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter.MyView {
 
+    private ThreadFactoryView threadFactoryView;
     private BoundedQueueThreadPoolView boundedQueueView;
     private BoundedQueueThreadPoolView boundedQueueView2;
 
     @Inject
     public ThreadsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        boundedQueueView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher) {
-            @Override
-            public Widget createWidget() {
-                entityEditor = makeEntityEditor();
-                return entityEditor.asWidget();
-            }
-        };
+        
+        
+        boundedQueueView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
         
         // TODO: replace with another type of pool view
-        boundedQueueView2 = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher) {
-            @Override
-            public Widget createWidget() {
-                entityEditor = makeEntityEditor();
-                return entityEditor.asWidget();
-            }
-        };
+        boundedQueueView2 = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
+        
+        threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher, boundedQueueView);
     }
 
     @Override
@@ -73,12 +55,14 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
         
+        tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getPluralEntityName());
         tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getPluralEntityName());
         tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getPluralEntityName());
         return tabLayoutpanel;
     }
     
     public void initialLoad() {
+        this.threadFactoryView.initialLoad();
         this.boundedQueueView.initialLoad();
         this.boundedQueueView2.initialLoad();
     }

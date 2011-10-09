@@ -20,6 +20,7 @@ package org.jboss.as.console.client.widgets.forms;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,12 @@ import java.util.Set;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class FormMetaData {
+    private Comparator<PropertyBinding> orderComparator = new Comparator<PropertyBinding>() {
+        @Override
+        public int compare(PropertyBinding item1, PropertyBinding item2) {
+            return item1.getOrder() - item2.getOrder();
+        }
+    };
     
     private List<PropertyBinding> baseAttributes = new ArrayList<PropertyBinding>();
     private Map<String, List<PropertyBinding>> groupedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
@@ -48,6 +55,12 @@ public class FormMetaData {
                }
                subgroupData.add(binding);
            }
+        }
+        
+        Collections.sort(baseAttributes, orderComparator);
+        
+        for (Map.Entry<String, List<PropertyBinding>> entry : groupedAttributes.entrySet()) {
+            Collections.sort(entry.getValue(), orderComparator);
         }
     }
     

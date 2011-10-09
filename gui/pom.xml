@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <ballroom.version>1.0.0.Beta9</ballroom.version>
+        <ballroom.version>1.0.0.Beta9-SNAPSHOT</ballroom.version>
         <console.profile>jboss</console.profile>
         <product.version>7</product.version>
     </properties>

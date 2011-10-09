@@ -131,7 +131,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         for (PropertyBinding attrib : attributes.getBaseAttributes()) {
             if (changedValues.containsKey(attrib.getJavaName())) {
                 operation.get(attrib.getDetypedName()).set(changedValues.get(attrib.getJavaName()).toString());
-            } else {
+            } else if (attrib.getDefaultValue() != null) {
                 operation.get(attrib.getDetypedName()).set(attrib.getDefaultValue().toString());
             }
         }

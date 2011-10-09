@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import java.util.Collections;
+import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemType;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 
@@ -34,12 +35,13 @@ public class PropertyBinding {
     private Class<?> listType;
     private EntityAdapter entityAdapterForList;
     private boolean isKey = false;
-    private String defaultValue;
+    private String defaultValue = null;
     private String label;
     private boolean isRequired;
     private FormItemType formItemTypeForEdit;
     private FormItemType formItemTypeForAdd;
     private String subgroup;
+    private int order;
 
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey) {
         this.detypedName = detypedName;
@@ -51,18 +53,22 @@ public class PropertyBinding {
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, 
                            Class<?> listType, PropertyMetaData propMetaData, boolean isKey,
                            String defaultValue, String label, boolean isRequired,
-                           String formItemTypeForEdit, String formItemTypeForAdd, String subgroup) {
+                           String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, int order) {
         this(javaName, detypedName, javaTypeName, isKey);
         this.listType = listType;
         if (listType != null) {
             this.entityAdapterForList = new EntityAdapter(listType, propMetaData);
         }
-        this.defaultValue = defaultValue;
+        
+        if (!defaultValue.equals(org.jboss.as.console.client.widgets.forms.FormItem.NULL)) {
+            this.defaultValue = defaultValue;
+        }
         this.label = label;
         this.isRequired = isRequired;
         this.formItemTypeForEdit = FormItemType.valueOf(formItemTypeForEdit);
         this.formItemTypeForAdd = FormItemType.valueOf(formItemTypeForAdd);
         this.subgroup = subgroup;
+        this.order = order;
     }
 
     public String getJavaTypeName() {
@@ -90,6 +96,7 @@ public class PropertyBinding {
     }
     
     public Object getDefaultValue() {
+        if (defaultValue == null) return null;
         if ("java.lang.String".equals(javaTypeName)) return defaultValue;
         if ("java.lang.Boolean".equals(javaTypeName)) return Boolean.valueOf(defaultValue);
         if ("java.lang.Long".equals(javaTypeName)) return Long.parseLong(defaultValue);
@@ -115,12 +122,12 @@ public class PropertyBinding {
         return this.entityAdapterForList;
     }
     
-    public FormItem getFormItemForAdd() {
-        return formItemTypeForAdd.getFactory().makeFormItem(javaName, label, isRequired);
+    public FormItem getFormItemForAdd(FormItemObserver... observers) {
+        return formItemTypeForAdd.getFactory().makeFormItem(this, observers);
     }
 
-    public FormItem getFormItemForEdit() {
-        return formItemTypeForEdit.getFactory().makeFormItem(javaName, label, isRequired);
+    public FormItem getFormItemForEdit(FormItemObserver... observers) {
+        return formItemTypeForEdit.getFactory().makeFormItem(this, observers);
     }
 
     public boolean isRequired() {
@@ -133,6 +140,10 @@ public class PropertyBinding {
     
     public String getSubgroup() {
         return subgroup;
+    }
+    
+    public int getOrder() {
+        return order;
     }
 
     @Override
