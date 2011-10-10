@@ -80,8 +80,8 @@ public class ModelAdapter {
                 step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();
-                if(FormItem.VALUE.class == type) {
-                    // if we don't provide a value, it will be persisted as UNDEFINED
+                if(FormItem.UNDEFINED.class == type) {
+                    // skip, it would be persisted as UNDEFINED otherwise
                 }
                 else if(String.class == type)
                 {

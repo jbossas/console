@@ -366,8 +366,9 @@ public class EntityAdapter<T> {
                 step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();
-                if(FormItem.VALUE.class == type) {
-                    // if we don't provide a value, it will be persisted as UNDEFINED
+                if(FormItem.UNDEFINED.class == type) {
+                    // skip undefined form item values (FormItem.UNDEFINED.Value)
+                    // otherwise this property would be persisted as UNDEFINED
                 }
                 else if(String.class == type)
                 {
