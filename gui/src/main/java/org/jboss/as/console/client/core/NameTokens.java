@@ -27,11 +27,10 @@ public class NameTokens {
 
     public static final String mainLayout = "main";
 
-    public static final String BeanPoolsPresenter = "bean-pools";
-    public static final String BeanServicesPresenter = "bean-services";
     public static final String BoundedQueueThreadPoolPresenter = "threads";
     public static final String DataSourcePresenter = "datasources";
     public static final String DebugToolsPresenter = "debug-tools";
+    public static final String EJB3Presenter = "ejb3";
     public static final String HostInterfacesPresenter = "host-interfaces";
     public static final String HostJVMPresenter = "host-jvms";
     public static final String HostPropertiesPresenter = "host-properties";
@@ -41,7 +40,6 @@ public class NameTokens {
     public static final String JndiPresenter = "naming";
     public static final String LoggingPresenter = "logging";
     public static final String ScannerPresenter = "deployment-scanner";
-    public static final String MessageDrivenBeanPresenter = "mdb";
     public static final String MessagingPresenter = "messaging";
     public static final String MetricsPresenter = "invocation-metrics";
     public static final String ModelBrowserPresenter = "model-browser";
@@ -50,7 +48,6 @@ public class NameTokens {
     public static final String PropertiesPresenter = "properties";
     public static final String ResourceAdapterPresenter ="resource-adapters";
     public static final String SettingsPresenter = "settings";
-    public static final String SessionBeanPresenter = "session-bean";
     public static final String SocketBindingPresenter = "socket-bindings";
     public static final String StandaloneServerPresenter = "standalone-server";
     public static final String WebPresenter = "web";

@@ -40,10 +40,9 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
-import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
-import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -96,9 +95,8 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<Topic> topic();
     AutoBean<ConnectionFactory> connectionFactory();
 
-    AutoBean<SessionBeans> sessionBeans();
-    AutoBean<MessageDrivenBeans> messageDrivenBeans();
-    AutoBean<EJBPool> ejbPool();
+    AutoBean<EJB3Subsystem> ejb3Subsystem();
+    AutoBean<StrictMaxBeanPool> strictMaxBeanPool();
     AutoBean<TimerService> timerService();
 
     AutoBean<LoggingHandler> loggingHandler();

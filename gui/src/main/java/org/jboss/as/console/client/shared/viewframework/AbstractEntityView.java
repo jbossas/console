@@ -20,13 +20,14 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.EnumSet;
-import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -36,21 +37,21 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 
 /**
- * An abstract view class with a full EntityEditor.  This class assembles the editor and reacts to 
+ * An abstract view class with a full EntityEditor.  This class assembles the editor and reacts to
  * FrameworkView callbacks.
- * 
+ *
  * @author Stan Silvert
  */
 public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView, FormItemObserver {
 
     protected EntityEditor<T> entityEditor;
     protected Class<?> beanType;
-    protected EnumSet hideButtons;
-    
+    protected EnumSet<FrameworkButton> hideButtons;
+
     public AbstractEntityView(Class<?> beanType) {
         this(beanType, EnumSet.noneOf(FrameworkButton.class));
     }
-    
+
     public AbstractEntityView(Class<?> beanType, EnumSet<FrameworkButton> hideButtons) {
         this.beanType = beanType;
         this.hideButtons = hideButtons;
@@ -61,77 +62,77 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The FormMetaData.
      */
     protected abstract FormMetaData getFormMetaData();
-    
+
     /**
      * Get the EntityToDmrBridge for the Entity.
      * @return The bridge.
      */
     protected abstract EntityToDmrBridge<T> getEntityBridge();
-    
+
     /**
      * Create the table with the desired columns for the Entity.
      * @return The table.
      */
     protected abstract DefaultCellTable<T> makeEntityTable();
-    
+
     /**
      * Create the form with fields used for creating a new Entity.
      * @return The "Add" form.
      */
     protected abstract FormAdapter<T> makeAddEntityForm();
-    
+
     /**
      * Get the plural name of the Entity to be displayed.
      * @return The Entity name.
      */
     protected abstract String getPluralEntityName();
-    
+
     @Override
     public Widget createWidget() {
         entityEditor = makeEntityEditor();
-        
+
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
-        
+
         tabLayoutpanel.add(entityEditor.asWidget(), getPluralEntityName());
 
         return tabLayoutpanel;
     }
-    
+
     /**
      * Create the EntityEditor with the following pieces:
      * - A title obtained from getPluralEntityName()
      * - A table obtained from makeEntityTable()
      * - An AddEntityWindow with a form from makeAddEntityForm()
      * - An EntityDetails with a form from makeEditEntityDetailsForm()
-     * 
+     *
      * @return The EntityEditor
      */
     protected EntityEditor<T> makeEntityEditor() {
-        EntityDetails<T> scannerDetails = new EntityDetails<T>(getPluralEntityName(), 
-                                                               makeEditEntityDetailsForm(), 
+        EntityDetails<T> scannerDetails = new EntityDetails<T>(getPluralEntityName(),
+                                                               makeEditEntityDetailsForm(),
                                                                getEntityBridge(),
                                                                hideButtons);
         String title = Console.CONSTANTS.common_label_add() + " " + getPluralEntityName();
-        EntityPopupWindow<T> window = new AddEntityWindow<T>(title, 
-                                                             makeAddEntityForm(), 
+        EntityPopupWindow<T> window = new AddEntityWindow<T>(title,
+                                                             makeAddEntityForm(),
                                                              getEntityBridge());
         DefaultCellTable<T> table = makeEntityTable();
         return new EntityEditor<T>(getPluralEntityName(), window, table, scannerDetails, hideButtons);
     }
-    
+
     /**
      * Creates an details for for the Entity.  This method will add all the Entity's Attributes to
      * the form in a 2-column format.  If you desire a different layout or you want to exclude
      * some attributes, you should override this method.
-     * 
+     *
      * @return The details form.
      */
     protected FormAdapter<T> makeEditEntityDetailsForm() {
         Form<T> form = new Form(beanType);
         form.setNumColumns(2);
         FormMetaData attributes = getFormMetaData();
-        
+
         // add base items to form
         FormItem[] items = new FormItem[attributes.getBaseAttributes().size()];
         int i=0;
@@ -139,7 +140,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
             items[i++] = attrib.getFormItemForEdit(this);
         }
         form.setFields(items);
-        
+
         // add grouped items to form
         for (String subgroup : attributes.getGroupNames()) {
             FormItem[] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()];
@@ -149,13 +150,13 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
             }
             form.setFieldsInGroup(subgroup, groupItems);
         }
-        
+
         return form;
     }
-    
+
     /**
      * Called when the user requests details to be edited.
-     * @param isEnabled 
+     * @param isEnabled
      */
     @Override
     public void setEditingEnabled(boolean isEnabled) {
@@ -166,7 +167,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     public void initialLoad() {
         getEntityBridge().loadEntities(null);
     }
-    
+
     /**
      * Called whenever there is a change to any Entity
      */

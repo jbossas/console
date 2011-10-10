@@ -46,9 +46,9 @@ import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.CurrentServerConfigurations;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
+import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerInstancesPresenter;
-import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostInterfacesPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostJVMPresenter;
 import org.jboss.as.console.client.domain.hosts.general.HostPropertiesPresenter;
@@ -69,10 +69,8 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.jvm.VMMetricsPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansPresenter;
+import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -85,7 +83,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
@@ -187,10 +184,7 @@ public interface CoreUI extends Ginjector {
     StandaloneDriverStrategy getStandloneDriverStrategy();
     DriverRegistry getDriverRegistry();
 
-    AsyncProvider<SessionBeansPresenter> getSessionBeanPresenter();
-    AsyncProvider<MessageDrivenBeansPresenter> getMessageDrivenBeanPresenter();
-    AsyncProvider<BeanPoolsPresenter> getBeanPoolsPresenter();
-    AsyncProvider<EJBServicesPresenter> getBeanServicesPresenter();
+    AsyncProvider<EJB3Presenter> getEJB3Presenter();
 
     AsyncProvider<MessagingPresenter> getMessagingPresenter();
     AsyncProvider<LoggingPresenter> getLoggingPresenter();

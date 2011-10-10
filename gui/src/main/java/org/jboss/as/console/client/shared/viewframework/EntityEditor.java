@@ -19,6 +19,9 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
+import java.util.EnumSet;
+import java.util.List;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,7 +31,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
-import java.util.EnumSet;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -37,12 +40,10 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
-import java.util.List;
-
 /**
  * The editor that allows CRUD operations on an Entity.  This includes an Entity table, add button, and
  * EntityDetails editor.
- * 
+ *
  * @author Stan Silvert
  */
 public class EntityEditor<T> {
@@ -57,7 +58,7 @@ public class EntityEditor<T> {
 
     /**
      * Create a new Entity.
-     * 
+     *
      * @param entitiesName The display name (plural) of the entities.
      * @param window The window used for creating a new entity.
      * @param table The table that holds the entities.
@@ -66,16 +67,16 @@ public class EntityEditor<T> {
     public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, EntityDetails<T> details) {
         this(entitiesName, window, table, details, EnumSet.noneOf(FrameworkButton.class));
     }
-    
+
     /**
      * Create a new Entity.
-     * 
+     *
      * @param entitiesName The display name (plural) of the entities.
      * @param window The window used for creating a new entity.
      * @param table The table that holds the entities.
      * @param details  The EntityDetails that manages CRUD for the selected entity.
      */
-    public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, 
+    public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table,
                         EntityDetails<T> details, EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.window = window;
@@ -85,18 +86,22 @@ public class EntityEditor<T> {
     }
 
     public Widget asWidget() {
-
         LayoutPanel panel = new LayoutPanel();
-
         ScrollPanel scroll = new ScrollPanel();
-
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("rhs-content-panel");
-        
-        scroll.add(layout);
 
+        scroll.add(layout);
+        panel.add(scroll);
+        panel.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        addWidgetToPanel(layout);
+        return panel;
+    }
+
+    public void addWidgetToPanel(VerticalPanel layout) {
         final ToolStrip toolStrip = new ToolStrip();
-        
+
         if (!hideButtons.contains(FrameworkButton.ADD)) {
             toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                 @Override
@@ -107,50 +112,43 @@ public class EntityEditor<T> {
             }));
         }
 
-        panel.add(toolStrip);
-        
+        layout.add(toolStrip);
         layout.add(new ContentHeaderLabel(entitiesName));
-        
+
         table.setSelectionModel(new SingleSelectionModel<T>());
         dataProvider = new ListDataProvider<T>();
         dataProvider.addDataDisplay(table);
-        
+
         layout.add(table);
-        
+
         pager = new DefaultPager();
         pager.setDisplay(table);
-        layout.add(pager);
-        
+        if (table.isVisible())
+            layout.add(pager);
+
         details.bind(table);
         layout.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         layout.add(details.asWidget());
-
-        panel.add(scroll);
-
-        panel.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
-        panel.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        return panel;
     }
-    
+
     public void updateEntityList(List<T> entityList, T lastEdited) {
-        dataProvider.setList(entityList); 
+        dataProvider.setList(entityList);
 
         if (table.isEmpty()) return;
-        
+
         if (!doneInitialSelection) {
             setSelected(entityList.get(0));
             return;
         }
-        
+
         if(lastEdited == null) {
             setSelected(entityList.get(0));
             return;
         }
-        
+
         setSelected(lastEdited);
     }
-    
+
     private void setSelected(T entity) {
         table.getSelectionModel().setSelected(entity, true);
         doneInitialSelection = true;
@@ -159,7 +157,7 @@ public class EntityEditor<T> {
         int page = position/table.getPageSize();
         pager.setPage(page);
     }
-    
+
     public void setEditingEnabled(boolean isEnabled) {
         this.details.setEditingEnabled(isEnabled);
     }
