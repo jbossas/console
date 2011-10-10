@@ -65,25 +65,31 @@ public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncComma
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<Property> payload = response.get(RESULT).asPropertyList();
 
+                System.out.println(response);
+
                 List<Interface> interfaces = new ArrayList<Interface>(payload.size());
                 for(Property property : payload)
                 {
-                    ModelNode item = property.getValue();
                     Interface intf = factory.interfaceDeclaration().as();
+                    ModelNode item = property.getValue();
                     intf.setName(item.get("name").asString());
-                    ModelNode criteria = item.get("criteria").asObject();
 
-                    // TODO: remaining criteria types
-                    if(criteria.hasDefined("inet-address"))
+                    if(item.hasDefined("criteria")) // TODO: How can this happen?
                     {
-                        String expr = criteria.get("inet-address").asString();
-                        intf.setCriteria(expr);
-                    }
-                    else {
-                        intf.setCriteria(criteria.toString());
-                    }
+                        ModelNode criteria = item.get("criteria").asObject();
 
-                    interfaces.add(intf);
+                        // TODO: remaining criteria types
+                        if(criteria.hasDefined("inet-address"))
+                        {
+                            String expr = criteria.get("inet-address").asString();
+                            intf.setCriteria(expr);
+                        }
+                        else {
+                            intf.setCriteria(criteria.toString());
+                        }
+
+                        interfaces.add(intf);
+                    }
                 }
 
                 callback.onSuccess(interfaces);
