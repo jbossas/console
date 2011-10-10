@@ -54,7 +54,6 @@ import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
-import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
@@ -63,6 +62,7 @@ import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -131,5 +131,6 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<CacheContainer> cacheContainer();
 
+    AutoBean<ThreadFactory> threadFactory();
     AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool();
 }

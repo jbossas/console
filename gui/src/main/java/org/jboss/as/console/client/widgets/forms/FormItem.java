@@ -30,7 +30,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface FormItem {
-
+    /**
+     * Used for defaultValue.  Since annotations can not accept a value of null, use this String constant
+     * to tell the PropertyBinding to set the default value to null.
+     */
+    public static final String NULL = "FormItem#undefined";
+    
     String defaultValue() default "";
     String label() default "";
     String localLabel() default "";
@@ -38,4 +43,5 @@ public @interface FormItem {
     String formItemTypeForEdit() default "TEXT_BOX";
     String formItemTypeForAdd() default "TEXT_BOX";
     String subgroup() default "";
+    int order() default 100;
 }

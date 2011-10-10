@@ -19,15 +19,12 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 import com.google.gwt.user.client.ui.Widget;
-import java.util.ArrayList;
-import java.util.List;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.shared.viewframework.ObservableFormItem;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
@@ -38,50 +35,35 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
- * Main view class for Bounded Queue Thread Pools
+ * Main view class for Thread Factories.
  * 
  * @author Stan Silvert
  */
-public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueThreadPool> implements FrameworkView {
+public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> implements FrameworkView {
 
     private EntityToDmrBridge threadPoolBridge;
     private FormMetaData formMetaData;
-    private ComboBoxItem threadFactoryComboForAdd;
-    private ComboBoxItem threadFactoryComboForEdit;
+    private BoundedQueueThreadPoolView poolview;
 
-    public BoundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(BoundedQueueThreadPool.class); //, FrameworkButton.asSet(FrameworkButton.values()));
-        formMetaData = propertyMetaData.getBeanMetaData(BoundedQueueThreadPool.class).getFormMetaData();
-        threadPoolBridge = new EntityToDmrBridgeImpl<BoundedQueueThreadPool>(propertyMetaData, BoundedQueueThreadPool.class, this, dispatcher);
-    }
-
-    @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        if (item.getPropertyBinding().getJavaName().equals("threadFactory") && (action == Action.CREATED)) {
-            ComboBoxItem comboBox = (ComboBoxItem) item.getWrapped();
-            if (threadFactoryComboForAdd == null) {
-                threadFactoryComboForAdd = comboBox;
-            } else {
-                threadFactoryComboForEdit = comboBox;
-            }
-        }
-    }
-
-    public void setThreadFactoryComboValues(List<NamedEntity> threadFactories) {
-        List<String> factoryNames = new ArrayList<String>();
-        factoryNames.add("");  // factory not required.  Empty String is a valid choice.
-        for (NamedEntity factory : threadFactories) {
-            factoryNames.add(factory.getName());
-        }
-
-        this.threadFactoryComboForAdd.setValueMap(factoryNames);
-        this.threadFactoryComboForEdit.setValueMap(factoryNames);
+    public ThreadFactoryView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher, BoundedQueueThreadPoolView poolView) {
+        super(ThreadFactory.class);
+        this.poolview = poolView;
+        formMetaData = propertyMetaData.getBeanMetaData(ThreadFactory.class).getFormMetaData();
+        threadPoolBridge = new EntityToDmrBridgeImpl<ThreadFactory>(propertyMetaData, ThreadFactory.class, this, dispatcher);
     }
 
     @Override
     public Widget createWidget() {
         entityEditor = makeEntityEditor();
         return entityEditor.asWidget();
+    }
+
+    @Override
+    public void itemAction(Action action, ObservableFormItem item) {
+        if (item.getPropertyBinding().getJavaName().equals("priority") && (action == Action.CREATED)) {
+            ComboBoxItem comboBox = (ComboBoxItem) item.getWrapped();
+            comboBox.setValueMap(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
+        }
     }
 
     @Override
@@ -96,24 +78,31 @@ public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueT
 
     @Override
     protected String getPluralEntityName() {
-        return "Bounded Queue Thread Pools";
+        return "Thread Factories";
     }
 
     @Override
-    protected FormAdapter<BoundedQueueThreadPool> makeAddEntityForm() {
-        Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
+    protected FormAdapter<ThreadFactory> makeAddEntityForm() {
+        Form<ThreadFactory> form = new Form(ThreadFactory.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("threadFactory").getFormItemForAdd(this));
+                       formMetaData.findAttribute("priority").getFormItemForAdd(this));
         return form;
     }
 
     @Override
-    protected DefaultCellTable<BoundedQueueThreadPool> makeEntityTable() {
-        DefaultCellTable<BoundedQueueThreadPool> table = new DefaultCellTable<BoundedQueueThreadPool>(4);
+    protected DefaultCellTable<ThreadFactory> makeEntityTable() {
+        DefaultCellTable<ThreadFactory> table = new DefaultCellTable<ThreadFactory>(4);
 
         table.addColumn(new NameColumn(), NameColumn.LABEL);
 
         return table;
     }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        this.poolview.setThreadFactoryComboValues(this.getEntityBridge().getEntityList());
+    }
+    
 }

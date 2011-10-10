@@ -209,7 +209,8 @@ public class PropertyMetaDataGenerator extends Generator{
                                                                       "\"," + listTypeVar + ", this, " + bindDecl.key() + 
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
-                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() + "\")");
+                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
+                                                                      "\", " + formDecl.order() + ")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -357,6 +358,7 @@ public class PropertyMetaDataGenerator extends Generator{
         String formItemTypeForEdit = "TEXT_BOX";
         String formItemTypeForAdd = "TEXT_BOX";
         String subgroup = "";
+        int order = 100;
 
         if(formItemDeclaration!=null)
         {
@@ -367,10 +369,11 @@ public class PropertyMetaDataGenerator extends Generator{
             formItemTypeForEdit = formItemDeclaration.formItemTypeForEdit();
             formItemTypeForAdd = formItemDeclaration.formItemTypeForAdd();
             subgroup = formItemDeclaration.subgroup();
+            order = formItemDeclaration.order();
         }
 
         FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
-                                                         formItemTypeForEdit, formItemTypeForAdd, subgroup);
+                                                         formItemTypeForEdit, formItemTypeForAdd, subgroup, order);
         return decl;
     }
     

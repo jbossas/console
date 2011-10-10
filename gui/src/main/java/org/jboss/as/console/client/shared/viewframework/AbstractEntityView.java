@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.EnumSet;
+import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -40,7 +41,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView {
+public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView, FormItemObserver {
 
     protected EntityEditor<T> entityEditor;
     protected Class<?> beanType;
@@ -135,7 +136,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         FormItem[] items = new FormItem[attributes.getBaseAttributes().size()];
         int i=0;
         for (PropertyBinding attrib : attributes.getBaseAttributes()) {
-            items[i++] = attrib.getFormItemForEdit();
+            items[i++] = attrib.getFormItemForEdit(this);
         }
         form.setFields(items);
         
@@ -144,7 +145,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
             FormItem[] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()];
             int j=0;
             for (PropertyBinding attrib : attributes.getGroupedAttribtes(subgroup)) {
-                groupItems[j++] = attrib.getFormItemForEdit();
+                groupItems[j++] = attrib.getFormItemForEdit(this);
             }
             form.setFieldsInGroup(subgroup, groupItems);
         }
@@ -179,6 +180,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         }
 
         entityEditor.updateEntityList(entityBridge.getEntityList(), lastEntityEdited);
+    }
+
+    @Override
+    public void itemAction(Action action, ObservableFormItem item) {
     }
 
 }
