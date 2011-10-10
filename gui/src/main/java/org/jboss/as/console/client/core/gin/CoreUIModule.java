@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -102,14 +103,8 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.MessageDrivenBeansView;
-import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.pool.BeanPoolsView;
-import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.service.EJBServicesView;
-import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansPresenter;
-import org.jboss.as.console.client.shared.subsys.ejb.session.SessionBeansView;
+import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
+import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -335,25 +330,10 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(DomainDriverStrategy.class).in(Singleton.class);
         bind(StandaloneDriverStrategy.class).in(Singleton.class);
 
-        bindPresenter(SessionBeansPresenter.class,
-                SessionBeansPresenter.MyView.class,
-                SessionBeansView.class,
-                SessionBeansPresenter.MyProxy.class);
-
-        bindPresenter(MessageDrivenBeansPresenter.class,
-                MessageDrivenBeansPresenter.MyView.class,
-                MessageDrivenBeansView.class,
-                MessageDrivenBeansPresenter.MyProxy.class);
-
-        bindPresenter(BeanPoolsPresenter.class,
-                BeanPoolsPresenter.MyView.class,
-                BeanPoolsView.class,
-                BeanPoolsPresenter.MyProxy.class);
-
-        bindPresenter(EJBServicesPresenter.class,
-                EJBServicesPresenter.MyView.class,
-                EJBServicesView.class,
-                EJBServicesPresenter.MyProxy.class);
+        bindPresenter(EJB3Presenter.class,
+                EJB3Presenter.MyView.class,
+                EJB3View.class,
+                EJB3Presenter.MyProxy.class);
 
         bindPresenter(MessagingPresenter.class,
                 MessagingPresenter.MyView.class,
@@ -374,7 +354,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ThreadsPresenter.MyView.class,
                 ThreadsView.class,
                 ThreadsPresenter.MyProxy.class);
-        
+
         bindPresenter(OSGiConfigurationPresenter.class,
                 OSGiConfigurationPresenter.MyView.class,
                 OSGiSubsystemView.class,

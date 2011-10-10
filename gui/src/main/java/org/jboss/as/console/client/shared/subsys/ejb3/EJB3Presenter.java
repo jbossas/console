@@ -16,9 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb.service;
+package org.jboss.as.console.client.shared.subsys.ejb3;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -27,59 +31,55 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.ejb.EJBPresenterBase;
-import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
+import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
-public class EJBServicesPresenter extends Presenter<EJBServicesPresenter.MyView, EJBServicesPresenter.MyProxy> {
-    private static final String SUBSYSTEM = "ejb3";
-
+public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter.MyProxy>{
     private final DispatchAsync dispatcher;
-    private final BeanFactory factory;
     private final RevealStrategy revealStrategy;
+    private final BeanMetaData slsbMetaData;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.BeanServicesPresenter)
-    public interface MyProxy extends Proxy<EJBServicesPresenter>, Place {
+    @NameToken(NameTokens.EJB3Presenter)
+    public interface MyProxy extends Proxy<EJB3Presenter>, Place {
     }
 
-    public interface MyView extends View {
-        void setPresenter(EJBServicesPresenter presenter);
-        void setTimerServiceDetails(TimerService ts);
+    public interface MyView extends View, FrameworkView {
+        void loadPools();
+        void loadTimerService();
+        void setPoolNames(List<String> poolNames);
     }
 
     @Inject
-    public EJBServicesPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-            DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
+    public EJB3Presenter(EventBus eventBus, MyView view, MyProxy proxy,
+        DispatchAsync dispatcher, PropertyMetaData propertyMetaData, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
-        this.factory = factory;
         this.revealStrategy = revealStrategy;
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
+        this.slsbMetaData = propertyMetaData.getBeanMetaData(StrictMaxBeanPool.class);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        loadDetails();
+        loadPoolNames();
     }
 
     @Override
@@ -87,32 +87,38 @@ public class EJBServicesPresenter extends Presenter<EJBServicesPresenter.MyView,
         revealStrategy.revealInParent(this);
     }
 
-    private void loadDetails() {
-        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add("service", "timer-service");
+    private void loadPoolNames() {
+        AddressBinding address = slsbMetaData.getAddress();
+        ModelNode operation = address.asSubresource(Baseadress.get());
+        operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode model = response.get(ModelDescriptionConstants.RESULT);
+                ModelNode res = response.get(ModelDescriptionConstants.RESULT);
+                List<String> poolNames = new ArrayList<String>();
+                for (ModelNode n : res.asList()) {
+                    poolNames.add(n.asString());
+                }
+                getView().setPoolNames(poolNames);
+                getView().initialLoad();
 
-                TimerService ts = factory.timerService().as();
-                ts.setCoreThreads(model.get("core-threads").asInt());
-                ts.setMaxThreads(model.get("max-threads").asInt());
-                ts.setPath(model.get("path").asString());
-                ts.setRelativeTo(model.get("relative-to").asString());
+                // Load these async to speed things up
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        getView().loadPools();
 
-                getView().setTimerServiceDetails(ts);
+                        Console.schedule(new Command() {
+                            @Override
+                            public void execute() {
+                                getView().loadTimerService();
+                            }
+                        });
+                    }
+                });
             }
         });
-    }
-
-    private ModelNode createOperation(String operator) {
-        ModelNode operation = new ModelNode();
-        operation.get(ModelDescriptionConstants.OP).set(operator);
-        operation.get(ModelDescriptionConstants.ADDRESS).set(Baseadress.get());
-        operation.get(ModelDescriptionConstants.ADDRESS).add(ModelDescriptionConstants.SUBSYSTEM, EJBPresenterBase.SUBSYSTEM_NAME);
-        return operation;
     }
 }
