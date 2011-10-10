@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.general.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/17/11
@@ -27,6 +29,7 @@ public interface Interface{
     String getName();
     void setName(String name);
 
+    @Binding(expr = true)
     String getCriteria();
     void setCriteria(String criteria);
 }

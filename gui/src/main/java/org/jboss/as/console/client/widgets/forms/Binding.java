@@ -32,6 +32,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface Binding {
 
+    /**
+     * The name of the detyped property
+     * @return
+     */
     String detypedName() default "";
     
     /**
@@ -39,7 +43,23 @@ public @interface Binding {
      * @return 
      */
     String listType() default "";
-    
+
+    /**
+     * Shold be skipped?
+     *
+     * @return
+     */
     boolean skip() default false;
+
+    /**
+     * Does act as a key?
+     * @return
+     */
     boolean key() default false;
+
+    /**
+     * Does support expressions?
+     * @return
+     */
+    boolean expr() default false;
 }

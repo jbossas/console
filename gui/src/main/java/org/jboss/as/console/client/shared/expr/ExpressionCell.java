@@ -41,7 +41,7 @@ public class ExpressionCell extends AbstractCell<String> {
 
         expr = Expression.fromString(value);
         SafeHtml html = new SafeHtmlBuilder()
-                .appendHtmlConstant( "<div tabindex=\"-1\" class='cell-popup'>"+expr.toString()+"</div>").toSafeHtml();
+                .appendHtmlConstant( "<div tabindex=\"-1\" class='expression-cell'>"+expr.toString()+"</div>").toSafeHtml();
 
         sb.append(html);
 
