@@ -3,13 +3,13 @@ package org.jboss.as.console.client.widgets.forms;
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class EntityAdapter<T> {
 
-    public static final String EXPR_TAG = "EXPRESSIONS";
+
     private final  EntityFactory<PropertyRecord> propertyRecordFactory;
     private Class<?> type;
     private PropertyMetaData metaData;
@@ -59,7 +59,7 @@ public class EntityAdapter<T> {
         if(null==factory)
             throw new IllegalArgumentException("No factory method for " + type);
 
-        T protoType = (T) factory.create();
+        T entity = (T) factory.create();
 
         KeyAssignment keyDelegation = null;
 
@@ -118,16 +118,11 @@ public class EntityAdapter<T> {
                             && actualPayload.get(propBinding.getDetypedName()).getType() == ModelType.EXPRESSION)
                     {
                         String exprValue = actualPayload.get(propBinding.getDetypedName()).asString();
-                        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(protoType);
+                        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(entity);
 
-                        Map<String, String> exprMap = autoBean.getTag(EXPR_TAG)!=null ?
-                                (Map<String, String>)autoBean.getTag(EXPR_TAG) : new HashMap<String,String>();
-
+                        Map<String, String> exprMap = Form.getExpressions(entity);
                         exprMap.put(propBinding.getJavaName(), exprValue);
-
-                        System.out.println(exprValue);
-
-                        autoBean.setTag(EXPR_TAG, exprMap);
+                        Form.setExpressions(entity, exprMap);
 
                         // Skip ahead
                         continue;
@@ -213,7 +208,7 @@ public class EntityAdapter<T> {
                         value = actualPayload.get(propBinding.getDetypedName()).asString();
                     else
                         value = "";
-                } 
+                }
                 else if ("java.util.List".equals(propBinding.getJavaTypeName()))
                 {
                     ModelNode list = actualPayload.get(propBinding.getDetypedName());
@@ -223,7 +218,7 @@ public class EntityAdapter<T> {
                         } else {
                             value = propBinding.getEntityAdapterForList().fromDMRList(list.asList());
                         }
-                    } 
+                    }
                     else
                     {
                         value = new LinkedList();
@@ -232,7 +227,7 @@ public class EntityAdapter<T> {
 
                 // invoke the mutator
                 if(value!=null)
-                    mutator.setValue(protoType, propBinding.getJavaName(), value);
+                    mutator.setValue(entity, propBinding.getJavaName(), value);
 
             }
             catch (RuntimeException e)
@@ -247,7 +242,7 @@ public class EntityAdapter<T> {
 
         }
 
-        return protoType;
+        return entity;
     }
 
     /**
@@ -268,7 +263,7 @@ public class EntityAdapter<T> {
 
         return entities;
     }
-    
+
     public List<PropertyRecord> fromDMRPropertyList(List<Property> dmr) {
         List<PropertyRecord> entities = new LinkedList<PropertyRecord>();
 
@@ -297,20 +292,40 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding property : properties)
         {
-            // TODO: How to deal with keys?
+            /**
+             * KEYS
+             */
             if(property.isKey()) continue;
 
-            Object value = mutator.getValue(entity, property.getJavaName());
-            if(value!=null)
+            Object propertyValue = mutator.getValue(entity, property.getJavaName());
+
+            /**
+             * EXPRESSIONS
+             */
+            if(property.doesSupportExpression())
+            {
+                Map<String, String> exprMap = Form.getExpressions(entity);
+
+                String exprValue = exprMap.get(property.getJavaName());
+                if(exprValue!=null)
+                    operation.get(property.getDetypedName()).setExpression(exprValue);
+
+                continue;
+            }
+
+            /**
+             * VALUES
+             */
+            if(propertyValue!=null)
             {
                 try {
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
-                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)value));
+                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityList((List)value));
+                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
                     } else {
-                        operation.get(property.getDetypedName()).set(modelType, value);
+                        operation.get(property.getDetypedName()).set(modelType, propertyValue);
                     }
                 } catch (RuntimeException e) {
                     throw new RuntimeException("Failed to get value "+property.getJavaName(), e);
@@ -340,7 +355,7 @@ public class EntityAdapter<T> {
         } else {
             throw new RuntimeException("Failed to resolve ModelType for '"+ javaTypeName+"'");
         }
-        
+
         return type;
     }
 
@@ -367,8 +382,8 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-    
-    public ModelNode fromEntityPropertyList(List<PropertyRecord> entities) 
+
+    public ModelNode fromEntityPropertyList(List<PropertyRecord> entities)
     {
         ModelNode propList = new ModelNode();
         for (PropertyRecord prop : entities) {
@@ -376,7 +391,7 @@ public class EntityAdapter<T> {
         }
         return propList;
     }
-    
+
     /**
      * Turns a changeset into a composite write attribute operation.
      *
@@ -410,8 +425,6 @@ public class EntityAdapter<T> {
 
                 Class type = value.getClass();
 
-                System.out.println(binding.getJavaName()+">"+type+":"+value);
-
                 if(FormItem.UNDEFINED.class == type) {
                     // skip undefined form item values (FormItem.UNDEFINED.Value)
                     // otherwise this property would be persisted as UNDEFINED
@@ -444,7 +457,7 @@ public class EntityAdapter<T> {
                 else if (Float.class == type)
                 {
                     step.get(VALUE).set((Float)value);
-                } 
+                }
                 else if (binding.getListType() != null)
                 {
                     if (binding.getListType() == PropertyRecord.class) {
@@ -465,4 +478,5 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
+
 }
