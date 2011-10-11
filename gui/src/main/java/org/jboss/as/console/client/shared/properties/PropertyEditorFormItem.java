@@ -112,22 +112,22 @@ public class PropertyEditorFormItem extends FormItem<List<PropertyRecord>> imple
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-        this.value.add(prop);
+       /* this.value.add(prop);
         this.propertyEditor.setProperties(reference, value);
-        isModified = true;
-        closePropertyDialoge();
+        setModified(true);
+        closePropertyDialoge();*/
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-        this.value.remove(prop);
+        /*this.value.remove(prop);
         this.propertyEditor.setProperties(reference, value);
-        isModified = true;
+        setModified(true);*/
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        isModified = true;
+        //setModified(true);
     }
     
 }

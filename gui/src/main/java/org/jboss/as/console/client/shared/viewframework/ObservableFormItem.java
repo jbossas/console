@@ -115,6 +115,7 @@ public class ObservableFormItem extends FormItem {
         wrapped.setRequired(required);
     }
 
+
     @Override
     public Widget asWidget() {
         return wrapped.asWidget();
