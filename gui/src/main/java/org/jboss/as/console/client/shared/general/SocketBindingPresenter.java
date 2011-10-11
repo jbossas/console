@@ -223,11 +223,12 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     public void createNewSocketBinding(final SocketBinding socketBinding) {
         closeDialoge();
 
-        ModelNode operation = new ModelNode();
+        ModelNode operation = entityAdapter.fromEntity(socketBinding);
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("socket-binding-group", socketBinding.getGroup());
         operation.get(ADDRESS).add("socket-binding", socketBinding.getName());
-        operation.get("port").set(socketBinding.getPort());
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

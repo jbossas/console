@@ -38,7 +38,12 @@ public class NewSocketWizard {
         final Form<SocketBinding> form = new Form(SocketBinding.class);
 
         TextBoxItem nameItem = new TextBoxItem("name", "Name");
-        NumberBoxItem portItem = new NumberBoxItem("port", "Port");
+        NumberBoxItem portItem = new NumberBoxItem("port", "Port") {
+            @Override
+            public boolean validate(Number value) {
+                return true;
+            }
+        };
         final ComboBoxItem groupItem = new ComboBoxItem("group", "Binding Group");
 
         groupItem.setValueMap(bindingGroups);
