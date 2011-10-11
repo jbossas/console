@@ -118,14 +118,12 @@ public class EntityAdapter<T> {
                             && actualPayload.get(propBinding.getDetypedName()).getType() == ModelType.EXPRESSION)
                     {
                         String exprValue = actualPayload.get(propBinding.getDetypedName()).asString();
-                        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(entity);
 
                         Map<String, String> exprMap = Form.getExpressions(entity);
                         exprMap.put(propBinding.getJavaName(), exprValue);
                         Form.setExpressions(entity, exprMap);
 
-                        // Skip ahead
-                        continue;
+                        continue; // expression have precedence over real values
 
                     }
                 }
@@ -310,7 +308,7 @@ public class EntityAdapter<T> {
                 if(exprValue!=null)
                     operation.get(property.getDetypedName()).setExpression(exprValue);
 
-                continue;
+                continue; // expression have precedence over real values
             }
 
             /**
