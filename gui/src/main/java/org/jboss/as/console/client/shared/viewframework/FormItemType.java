@@ -19,13 +19,13 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.properties.PropertyEditorFormItem;
+import org.jboss.ballroom.client.widgets.forms.PropertyEditorFormItem;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 
@@ -209,7 +209,7 @@ public enum FormItemType {
         
         @Override
         public ObservableFormItem makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
-            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(propBinding.getJavaName(), 
+            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(propBinding.getJavaName(),
                                                                            propBinding.getLabel(), 
                                                                            addDialogTitle, 
                                                                            rows);

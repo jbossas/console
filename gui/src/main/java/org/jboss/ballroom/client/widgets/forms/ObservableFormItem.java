@@ -16,9 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.viewframework;
+package org.jboss.ballroom.client.widgets.forms;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -115,6 +116,13 @@ public class ObservableFormItem extends FormItem {
         wrapped.setRequired(required);
     }
 
+    void setModified(boolean modified) {
+        wrapped.setModified(modified);
+    }
+
+    void setUndefined(boolean undefined) {
+        wrapped.setUndefined(undefined);
+    }
 
     @Override
     public Widget asWidget() {

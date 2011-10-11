@@ -16,15 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.properties;
+package org.jboss.ballroom.client.widgets.forms;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
  * FormItem that wraps a PropertyEditor table.
@@ -112,22 +116,22 @@ public class PropertyEditorFormItem extends FormItem<List<PropertyRecord>> imple
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-       /* this.value.add(prop);
+        this.value.add(prop);
         this.propertyEditor.setProperties(reference, value);
         setModified(true);
-        closePropertyDialoge();*/
+        closePropertyDialoge();
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-        /*this.value.remove(prop);
+        this.value.remove(prop);
         this.propertyEditor.setProperties(reference, value);
-        setModified(true);*/
+        setModified(true);
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        //setModified(true);
+        setModified(true);
     }
     
 }

@@ -18,7 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import org.jboss.as.console.client.shared.properties.PropertyEditorFormItem;
+import org.jboss.ballroom.client.widgets.forms.PropertyEditorFormItem;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -282,7 +282,7 @@ public enum HandlerAttribute {
     private static class PropertyEditorItemFactory implements FormItemFactory {
         @Override
         public FormItem makeFormItem(String beanPropName, String label, boolean isRequired) {
-            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(beanPropName, 
+            PropertyEditorFormItem propEditor = new PropertyEditorFormItem(beanPropName,
                                                                            label, 
                                                                            Console.CONSTANTS.subsys_logging_newHandlerProperty(), 
                                                                            3);

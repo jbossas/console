@@ -28,7 +28,7 @@ import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
-import org.jboss.as.console.client.shared.viewframework.ObservableFormItem;
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;

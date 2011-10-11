@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+
 /**
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
