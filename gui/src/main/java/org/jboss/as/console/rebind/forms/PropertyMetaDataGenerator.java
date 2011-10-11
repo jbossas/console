@@ -206,7 +206,8 @@ public class PropertyMetaDataGenerator extends Generator{
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
                                                                       "\", \"" + bindDecl.getJavaTypeName() + 
-                                                                      "\"," + listTypeVar + ", this, " + bindDecl.key() + 
+                                                                      "\"," + listTypeVar + ", this, " + bindDecl.key()
+                                                                        + ", " + bindDecl.expr() +
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
@@ -392,6 +393,7 @@ public class PropertyMetaDataGenerator extends Generator{
         Binding bindingDeclaration = method.getAnnotation(Binding.class);
         boolean skip = false;
         boolean key = false;
+        boolean expr = false;
         
         if(bindingDeclaration!=null)
         {
@@ -399,11 +401,13 @@ public class PropertyMetaDataGenerator extends Generator{
             listType = bindingDeclaration.listType();
             skip = bindingDeclaration.skip();
             key = bindingDeclaration.key();
+            expr = bindingDeclaration.expr();
         }
 
         BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, listType, skip, beanTypeClass.getName());
         decl.setJavaTypeName(method.getReturnType().getName());
         decl.setKey(key);
+        decl.setSupportExpr(expr);
 
         return decl;
     }

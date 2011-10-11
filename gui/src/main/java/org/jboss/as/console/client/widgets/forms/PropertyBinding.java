@@ -33,6 +33,8 @@ public class PropertyBinding {
     private String javaName;
     private String javaTypeName;
     private Class<?> listType;
+    private boolean supportExpression;
+
     private EntityAdapter entityAdapterForList;
     private boolean isKey = false;
     private String defaultValue = null;
@@ -43,18 +45,19 @@ public class PropertyBinding {
     private String subgroup;
     private int order;
 
-    public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey) {
+    public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey, boolean expr) {
         this.detypedName = detypedName;
         this.javaName = javaName;
         this.javaTypeName = javaTypeName;
         this.isKey = isKey;
+        this.supportExpression = expr;
     }
     
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, 
-                           Class<?> listType, PropertyMetaData propMetaData, boolean isKey,
+                           Class<?> listType, PropertyMetaData propMetaData, boolean isKey, boolean expr,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, int order) {
-        this(javaName, detypedName, javaTypeName, isKey);
+        this(javaName, detypedName, javaTypeName, isKey, expr);
         this.listType = listType;
         if (listType != null) {
             this.entityAdapterForList = new EntityAdapter(listType, propMetaData);

@@ -37,7 +37,8 @@ public class BindingDeclaration implements Binding  {
     private boolean isKey = false;
 
     private String beanClassName;
-    
+    private boolean supportExpr;
+
     /**
      * 
      * @param detypedName
@@ -56,6 +57,10 @@ public class BindingDeclaration implements Binding  {
 
     public void setKey(boolean key) {
         isKey = key;
+    }
+
+    public void setSupportExpr(boolean supportExpr) {
+        this.supportExpr = supportExpr;
     }
 
     @Override
@@ -125,6 +130,11 @@ public class BindingDeclaration implements Binding  {
     @Override
     public boolean skip() {
         return doSkip;
+    }
+
+    @Override
+    public boolean expr() {
+        return supportExpr;
     }
 
     @Override
