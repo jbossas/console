@@ -149,6 +149,10 @@ public class PropertyBinding {
         return order;
     }
 
+    public boolean doesSupportExpression() {
+        return supportExpression;
+    }
+
     @Override
     public String toString() {
 

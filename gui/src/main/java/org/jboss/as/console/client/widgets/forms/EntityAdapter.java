@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
@@ -7,6 +9,7 @@ import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 9/23/11
  */
 public class EntityAdapter<T> {
+
+    public static final String EXPR_TAG = "EXPRESSIONS";
     private final  EntityFactory<PropertyRecord> propertyRecordFactory;
     private Class<?> type;
     private PropertyMetaData metaData;
@@ -101,6 +106,39 @@ public class EntityAdapter<T> {
 
             try
             {
+
+
+                /**
+                 * EXPRESSIONS
+                 */
+
+                if(propBinding.doesSupportExpression())
+                {
+                    if(actualPayload.hasDefined(propBinding.getDetypedName())
+                            && actualPayload.get(propBinding.getDetypedName()).getType() == ModelType.EXPRESSION)
+                    {
+                        String exprValue = actualPayload.get(propBinding.getDetypedName()).asString();
+                        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(protoType);
+
+                        Map<String, String> exprMap = autoBean.getTag(EXPR_TAG)!=null ?
+                                (Map<String, String>)autoBean.getTag(EXPR_TAG) : new HashMap<String,String>();
+
+                        exprMap.put(propBinding.getJavaName(), exprValue);
+
+                        System.out.println(exprValue);
+
+                        autoBean.setTag(EXPR_TAG, exprMap);
+
+                        // Skip ahead
+                        continue;
+
+                    }
+                }
+
+                /**
+                 * KEYS
+                 */
+
                 if(propBinding.isKey())
                 {
                     // key resolution strategy:
@@ -128,6 +166,11 @@ public class EntityAdapter<T> {
                         throw new IllegalArgumentException("Key property declared, but no key assignment available: "+propBinding);
                     }
                 }
+
+                /**
+                 * VALUES
+                 */
+
                 else if("java.lang.Boolean".equals(propBinding.getJavaTypeName()))
                 {
                     if(actualPayload.hasDefined(propBinding.getDetypedName()))
@@ -188,8 +231,8 @@ public class EntityAdapter<T> {
                 }
 
                 // invoke the mutator
-                mutator.setValue(protoType, propBinding.getJavaName(), value);
-
+                if(value!=null)
+                    mutator.setValue(protoType, propBinding.getJavaName(), value);
 
             }
             catch (RuntimeException e)

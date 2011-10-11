@@ -34,6 +34,7 @@ public interface SocketBinding {
     void setGroup(String name);
     String getGroup();
 
+    @Binding(expr = true)
     int getPort();
     void setPort(int port);
 

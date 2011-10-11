@@ -397,7 +397,11 @@ public class PropertyMetaDataGenerator extends Generator{
         
         if(bindingDeclaration!=null)
         {
-            detypedName = bindingDeclaration.detypedName()!= null ? bindingDeclaration.detypedName() : javaName;
+            if(bindingDeclaration.detypedName()!= null && !bindingDeclaration.detypedName().equals(""))
+                detypedName = bindingDeclaration.detypedName();
+            else
+                detypedName = javaName;
+
             listType = bindingDeclaration.listType();
             skip = bindingDeclaration.skip();
             key = bindingDeclaration.key();
