@@ -30,20 +30,23 @@ public interface SocketBinding {
     String getName();
     void setName(String name);
 
+    @Binding(skip = true)
+    void setGroup(String name);
+    String getGroup();
+
     int getPort();
     void setPort(int port);
 
+    @Binding(expr = true)
     String getInterface();
     void setInterface(String name);
 
-    @Binding(detypedName = "multicast-address")
+    @Binding(detypedName = "multicast-address", expr=true)
     String getMultiCastAddress();
     void setMultiCastAddress(String address);
 
-    @Binding(detypedName = "multicast-port")
+    @Binding(detypedName = "multicast-port", expr=true)
     int getMultiCastPort();
     void setMultiCastPort(int port);
 
-    void setGroup(String name);
-    String getGroup();
 }

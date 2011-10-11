@@ -62,7 +62,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private RevealStrategy revealStrategy;
     private DefaultWindow window;
     private List<String> bindingGroups;
-    private PropertyMetaData propertyMetaData;
+    private PropertyMetaData metaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -88,7 +88,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
-        this.propertyMetaData = propertyMetaData;
+        this.metaData = propertyMetaData;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     private void loadBindings(final String groupName) {
 
-        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, groupName);
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, metaData, groupName);
         cmd.execute(new SimpleCallback<List<SocketBinding>>() {
             @Override
             public void onSuccess(List<SocketBinding> result) {
@@ -164,7 +164,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         proto.get(ADDRESS).add("socket-binding-group", group);
         proto.get(ADDRESS).add("socket-binding", name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(SocketBinding.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(SocketBinding.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

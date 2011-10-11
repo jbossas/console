@@ -23,7 +23,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -582,7 +581,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         String socketBinding = selectedRecord.getSocketBinding()!=null ?
                 selectedRecord.getSocketBinding() : "standard-sockets";
 
-        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, socketBinding);
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, propertyMetaData, socketBinding);
         cmd.execute(new SimpleCallback<List<SocketBinding>>() {
             @Override
             public void onSuccess(List<SocketBinding> result) {

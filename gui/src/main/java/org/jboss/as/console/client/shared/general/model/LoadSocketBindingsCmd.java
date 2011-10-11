@@ -7,6 +7,8 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -23,11 +25,16 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
     private DispatchAsync dispatcher;
     private String groupName;
     private BeanFactory factory;
+    private PropertyMetaData metaData;
+    private EntityAdapter<SocketBinding> entityAdapter;
 
-    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, String groupName) {
+    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData, String groupName) {
         this.dispatcher = dispatcher;
-        this.groupName = groupName;
         this.factory = factory;
+        this.metaData = metaData;
+        this.groupName = groupName;
+
+        this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
     }
 
     @Override
@@ -54,7 +61,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
 
                     ModelNode value = socket.asProperty().getValue();
 
-                    SocketBinding sb = factory.socketBinding().as();
+                    /*SocketBinding sb = factory.socketBinding().as();
 
                     sb.setName(value.get("name").asString());
                     sb.setGroup(groupName);
@@ -74,7 +81,12 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                         sb.setMultiCastAddress("");
                         sb.setMultiCastPort(0);
                     }
-                    bindings.add(sb);
+
+                    */
+
+                    SocketBinding socketBinding = entityAdapter.fromDMR(value);
+                    socketBinding.setGroup(groupName);
+                    bindings.add(socketBinding);
                 }
 
                 callback.onSuccess(bindings);
