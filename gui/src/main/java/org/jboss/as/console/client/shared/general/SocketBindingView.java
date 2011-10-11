@@ -150,7 +150,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                         SocketBinding updatedEntity = form.getUpdatedEntity();
                         presenter.saveSocketBinding(
                                 updatedEntity.getName(),
-                                updatedEntity.getGroup(),
+                                form.getEditedEntity().getGroup(),  // TODO: why does it not get pushed through?
                                 form.getChangedValues()
                         );
                     }
@@ -173,8 +173,18 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         TextItem nameItem = new TextItem("name", "Name");
         TextItem interfaceItem = new TextItem("interface", "Interface");
         NumberBoxItem portItem = new NumberBoxItem("port", "Port");
-        TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address");
-        NumberBoxItem multicastPortItem = new NumberBoxItem("multiCastPort", "Multicast Port");
+        TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address") {
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
+        };
+        NumberBoxItem multicastPortItem = new NumberBoxItem("multiCastPort", "Multicast Port") {
+            @Override
+            public boolean isRequired() {
+                return false;
+            }
+        };
 
         form.setFields(nameItem, interfaceItem, portItem, multicastItem, multicastPortItem);
         form.bind(socketTable.getCellTable());

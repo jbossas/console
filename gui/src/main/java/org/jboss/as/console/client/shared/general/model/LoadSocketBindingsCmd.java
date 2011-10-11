@@ -33,7 +33,6 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
         this.factory = factory;
         this.metaData = metaData;
         this.groupName = groupName;
-
         this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
     }
 
@@ -85,7 +84,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                     */
 
                     SocketBinding socketBinding = entityAdapter.fromDMR(value);
-                    socketBinding.setGroup(groupName);
+                    socketBinding.setGroup(getGroupName());
                     bindings.add(socketBinding);
                 }
 
@@ -93,5 +92,9 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
 
             }
         });
+    }
+
+    private String getGroupName() {
+        return groupName;
     }
 }

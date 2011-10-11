@@ -39,7 +39,7 @@ import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -63,6 +63,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private DefaultWindow window;
     private List<String> bindingGroups;
     private PropertyMetaData metaData;
+    private EntityAdapter<SocketBinding> entityAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -89,6 +90,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         this.factory = factory;
         this.revealStrategy = revealStrategy;
         this.metaData = propertyMetaData;
+
+        this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
     }
 
     @Override
@@ -152,20 +155,14 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         });
     }
 
-    public void editSocketBinding(SocketBinding editedEntity) {
-        getView().setEnabled(true);
-    }
-
     public void saveSocketBinding(final String name, final String group, Map<String, Object> changeset) {
-        getView().setEnabled(false);
 
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).add("socket-binding-group", group);
-        proto.get(ADDRESS).add("socket-binding", name);
+        ModelNode address = new ModelNode();
+        address.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        address.get(ADDRESS).add("socket-binding-group", group);
+        address.get(ADDRESS).add("socket-binding", name);
 
-        List<PropertyBinding> bindings = metaData.getBindingsForType(SocketBinding.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changeset, bindings);
+        ModelNode operation = entityAdapter.fromChangeset(changeset, address);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
