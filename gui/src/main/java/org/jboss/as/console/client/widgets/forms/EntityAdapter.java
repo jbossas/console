@@ -1,7 +1,5 @@
 package org.jboss.as.console.client.widgets.forms;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -121,7 +119,6 @@ public class EntityAdapter<T> {
 
                         Map<String, String> exprMap = Form.getExpressions(entity);
                         exprMap.put(propBinding.getJavaName(), exprValue);
-                        Form.setExpressions(entity, exprMap);
 
                         continue; // expression have precedence over real values
 
