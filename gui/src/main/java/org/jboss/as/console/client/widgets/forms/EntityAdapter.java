@@ -409,13 +409,21 @@ public class EntityAdapter<T> {
                 step.get(NAME).set(binding.getDetypedName());
 
                 Class type = value.getClass();
+
+                System.out.println(binding.getJavaName()+">"+type+":"+value);
+
                 if(FormItem.UNDEFINED.class == type) {
                     // skip undefined form item values (FormItem.UNDEFINED.Value)
                     // otherwise this property would be persisted as UNDEFINED
                 }
                 else if(String.class == type)
                 {
-                    step.get(VALUE).set((String) value);
+
+                    String stringValue = (String) value;
+                    if(stringValue.startsWith("$"))     // TODO: further constraints
+                        step.get(VALUE).setExpression(stringValue);
+                    else
+                        step.get(VALUE).set(stringValue);
                 }
                 else if(Boolean.class == type)
                 {

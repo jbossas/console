@@ -164,6 +164,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
         ModelNode operation = entityAdapter.fromChangeset(changeset, address);
 
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
