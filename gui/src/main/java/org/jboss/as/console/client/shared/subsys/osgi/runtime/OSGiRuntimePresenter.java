@@ -26,14 +26,27 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.Bundle;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.dmr.client.ModelDescriptionConstants;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
 public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView, OSGiRuntimePresenter.MyProxy> {
+    private final BeanMetaData bundleMetaData;
+    private final DispatchAsync dispatcher;
     private final RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
@@ -42,15 +55,24 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     }
 
     public interface MyView extends View, FrameworkView {
+        void setPresenter(OSGiRuntimePresenter osGiRuntimePresenter);
     }
 
     @Inject
     public OSGiRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            RevealStrategy revealStrategy) {
+            DispatchAsync dispatcher, PropertyMetaData propertyMetaData, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
+        this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
+        this.bundleMetaData = propertyMetaData.getBeanMetaData(Bundle.class);
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override
@@ -64,5 +86,26 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+
+    void startBundle(Bundle bundle) {
+        bundleAction(bundle, "start");
+    }
+
+    void stopBundle(Bundle bundle) {
+        bundleAction(bundle, "stop");
+    }
+
+    private void bundleAction(Bundle bundle, String operationName) {
+        AddressBinding address = bundleMetaData.getAddress();
+        ModelNode operation = address.asResource(bundle.getName());
+        operation.get(ModelDescriptionConstants.OP).set(operationName);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                onReset();
+            }
+        });
     }
 }
