@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
@@ -64,6 +65,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
         void loadPools();
         void loadTimerService();
         void setPoolNames(List<String> poolNames);
+        void setPoolTimeoutUnits(Collection<String> units, String defaultUnit);
     }
 
     @Inject
@@ -108,14 +110,42 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
                 Console.schedule(new Command() {
                     @Override
                     public void execute() {
-                        getView().loadPools();
+                        loadPoolTimeoutUnits();
+                    }
+                });
+            }
+        });
+    }
 
-                        Console.schedule(new Command() {
-                            @Override
-                            public void execute() {
-                                getView().loadTimerService();
-                            }
-                        });
+    private void loadPoolTimeoutUnits() {
+        AddressBinding address = slsbMetaData.getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), "*");
+        operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
+                if (res.size() > 0) {
+                    ModelNode attrDesc = res.get(0).get(ModelDescriptionConstants.RESULT,
+                            ModelDescriptionConstants.ATTRIBUTES, "timeout-unit");
+
+                    List<String> values = new ArrayList<String>();
+                    for (ModelNode allowed : attrDesc.get(ModelDescriptionConstants.ALLOWED).asList()) {
+                        values.add(allowed.asString());
+                    }
+                    String defVal = attrDesc.get(ModelDescriptionConstants.DEFAULT).asString();
+                    getView().setPoolTimeoutUnits(values, defVal);
+                }
+
+                getView().loadPools();
+
+                // Load the rest async to speed things up
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        getView().loadTimerService();
                     }
                 });
             }

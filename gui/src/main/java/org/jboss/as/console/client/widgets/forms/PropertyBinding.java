@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import java.util.Collections;
+
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemType;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -52,8 +53,8 @@ public class PropertyBinding {
         this.isKey = isKey;
         this.supportExpression = expr;
     }
-    
-    public PropertyBinding(String javaName, String detypedName, String javaTypeName, 
+
+    public PropertyBinding(String javaName, String detypedName, String javaTypeName,
                            Class<?> listType, PropertyMetaData propMetaData, boolean isKey, boolean expr,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, int order) {
@@ -62,7 +63,7 @@ public class PropertyBinding {
         if (listType != null) {
             this.entityAdapterForList = new EntityAdapter(listType, propMetaData);
         }
-        
+
         if (!defaultValue.equals(org.jboss.as.console.client.widgets.forms.FormItem.NULL)) {
             this.defaultValue = defaultValue;
         }
@@ -97,7 +98,7 @@ public class PropertyBinding {
     public boolean isKey() {
         return isKey;
     }
-    
+
     public Object getDefaultValue() {
         if (defaultValue == null) return null;
         if ("java.lang.String".equals(javaTypeName)) return defaultValue;
@@ -107,29 +108,29 @@ public class PropertyBinding {
         if ("java.lang.Double".equals(javaTypeName)) return Double.parseDouble(defaultValue);
         if ("java.lang.Float".equals(javaTypeName)) return Float.parseFloat(defaultValue);
         if ("java.util.List".equals(javaTypeName)) return Collections.EMPTY_LIST;
-        
+
         throw new RuntimeException("Unable to convert " + javaName + " default value " +
                                    defaultValue + " to type " + javaTypeName);
     }
-    
+
     /**
-     * 
+     *
      * @return If the binding is a List type, this returns the class type that the list holds.  Otherwise,
      *         return <code>null</code>
      */
     public Class<?> getListType() {
         return this.listType;
     }
-    
+
     public EntityAdapter getEntityAdapterForList() {
         return this.entityAdapterForList;
     }
-    
-    public FormItem getFormItemForAdd(FormItemObserver... observers) {
+
+    public FormItem[] getFormItemForAdd(FormItemObserver... observers) {
         return formItemTypeForAdd.getFactory().makeFormItem(this, observers);
     }
 
-    public FormItem getFormItemForEdit(FormItemObserver... observers) {
+    public FormItem[] getFormItemForEdit(FormItemObserver... observers) {
         return formItemTypeForEdit.getFactory().makeFormItem(this, observers);
     }
 
@@ -140,11 +141,11 @@ public class PropertyBinding {
     public String getLabel() {
         return label;
     }
-    
+
     public String getSubgroup() {
         return subgroup;
     }
-    
+
     public int getOrder() {
         return order;
     }

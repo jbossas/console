@@ -49,13 +49,13 @@ public interface StrictMaxBeanPool extends NamedEntity {
 
     @FormItem(defaultValue="5",
             label="Timeout",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX")
+            formItemTypeForAdd="NUMBER_UNIT_BOX",
+            formItemTypeForEdit="NUMBER_UNIT_BOX")
     long getTimeout();
     void setTimeout(long timeout);
 
     @Binding(detypedName="timeout-unit")
-    // @FormItem(defaultValue)
+    @FormItem(formItemTypeForEdit="UNITS")
     String getTimeoutUnit();
     void setTimeoutUnit(String unit);
 }

@@ -149,7 +149,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         FormMetaData attributes = getFormMetaData();
 
         // add base items to form
-        FormItem[] items = new FormItem[attributes.getBaseAttributes().size()];
+        FormItem[][] items = new FormItem[attributes.getBaseAttributes().size()][];
         int i=0;
         for (PropertyBinding attrib : attributes.getBaseAttributes()) {
             items[i++] = attrib.getFormItemForEdit(this);
@@ -158,7 +158,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
         // add grouped items to form
         for (String subgroup : attributes.getGroupNames()) {
-            FormItem[] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()];
+            FormItem[][] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()][];
             int j=0;
             for (PropertyBinding attrib : attributes.getGroupedAttribtes(subgroup)) {
                 groupItems[j++] = attrib.getFormItemForEdit(this);

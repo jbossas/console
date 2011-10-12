@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -146,6 +147,11 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
             defaultMDBPoolItem.setValueMap(poolNames);
         if (defaultSLSBPoolItem != null)
             defaultSLSBPoolItem.setValueMap(poolNames);
+    }
+
+    @Override
+    public void setPoolTimeoutUnits(Collection<String> units, String defaultUnit) {
+        poolsSection.setTimeoutUnits(units, defaultUnit);
     }
 
     @Override

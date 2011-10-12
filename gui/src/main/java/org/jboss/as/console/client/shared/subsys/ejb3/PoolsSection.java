@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -27,9 +29,13 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+import org.jboss.ballroom.client.widgets.forms.UnitBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
@@ -37,10 +43,13 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
     private final EntityToDmrBridgeImpl<StrictMaxBeanPool> bridge;
+    private final FormMetaData formMetaData;
+    private UnitBoxItem<?> timeoutItem;
 
     public PoolsSection(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(StrictMaxBeanPool.class, propertyMetaData);
 
+        formMetaData = propertyMetaData.getBeanMetaData(StrictMaxBeanPool.class).getFormMetaData();
         bridge = new EntityToDmrBridgeImpl<StrictMaxBeanPool>(propertyMetaData, StrictMaxBeanPool.class, this, dispatcher);
     }
 
@@ -53,6 +62,23 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
     }
 
     @Override
+    public void itemAction(Action action, ObservableFormItem item) {
+        if (item.getPropertyBinding().getJavaName().equals("timeout") && action == Action.CREATED) {
+            FormItem<?> wrapped = item.getWrapped();
+            if (wrapped instanceof UnitBoxItem) {
+                timeoutItem = (UnitBoxItem<?>) wrapped;
+                timeoutItem.setUnitPropertyName("timeoutUnit");
+            }
+        }
+    }
+
+    @Override
+    protected FormMetaData getFormMetaData() {
+        return formMetaData;
+    }
+
+    @Override
+
     protected EntityToDmrBridge<StrictMaxBeanPool> getEntityBridge() {
         return bridge;
     }
@@ -77,4 +103,9 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
         return "Pools";
     }
 
+    void setTimeoutUnits(Collection<String> units, String defUnit) {
+        if (timeoutItem != null) {
+            timeoutItem.setChoices(units, defUnit);
+        }
+    }
 }
