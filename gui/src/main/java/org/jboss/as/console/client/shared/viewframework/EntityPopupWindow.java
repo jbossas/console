@@ -41,11 +41,13 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
     
     protected EntityToDmrBridge<T> bridge;
     protected FormAdapter<T> form;
+    protected Widget helpWidget;
     
-    public EntityPopupWindow(String title, FormAdapter<T> form, EntityToDmrBridge<T> bridge) {
+    public EntityPopupWindow(String title, FormAdapter<T> form, Widget helpWidget, EntityToDmrBridge<T> bridge) {
         super(title);
         this.form = form;
         this.bridge = bridge;
+        this.helpWidget = helpWidget;
         setWidth(480);
         setHeight(360);
 
@@ -66,6 +68,10 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
+        if (helpWidget != null) {
+            layout.add(helpWidget);
+        }
+        
         layout.add(form.asWidget());
 
         ClickHandler cancelHandler = new ClickHandler() {

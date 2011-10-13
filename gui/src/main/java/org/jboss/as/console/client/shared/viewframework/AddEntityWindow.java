@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
@@ -27,8 +28,8 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  */
 public class AddEntityWindow<T> extends EntityPopupWindow<T> {
 
-    public AddEntityWindow(String title, FormAdapter<T> form, EntityToDmrBridge<T> commandAdapter) {
-        super(title, form, commandAdapter);
+    public AddEntityWindow(String title, FormAdapter<T> form, AddressBinding address, EntityToDmrBridge<T> commandAdapter) {
+        super(title, form, HelpWidgetFactory.makeHelpWidget(address, form), commandAdapter);
     }
 
     @Override

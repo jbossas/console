@@ -130,6 +130,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         String title = Console.CONSTANTS.common_label_add() + " " + getPluralEntityName();
         EntityPopupWindow<T> window = new AddEntityWindow<T>(title,
                                                              makeAddEntityForm(),
+                                                             getAddress(),
                                                              getEntityBridge());
         DefaultCellTable<T> table = makeEntityTable();
         return new EntityEditor<T>(getPluralEntityName(), window, table, scannerDetails, hideButtons);
