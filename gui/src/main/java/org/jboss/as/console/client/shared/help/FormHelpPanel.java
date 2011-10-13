@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.dmr.client.ModelNode;
 
@@ -24,10 +24,10 @@ public class FormHelpPanel {
 
     private DisclosurePanel helpPanel;
     private AddressCallback address;
-    private Form form;
+    private FormAdapter form;
     private boolean hasBeenBuild;
 
-    public FormHelpPanel(AddressCallback address, Form form) {
+    public FormHelpPanel(AddressCallback address, FormAdapter form) {
         this.address = address;
         this.form = form;
     }

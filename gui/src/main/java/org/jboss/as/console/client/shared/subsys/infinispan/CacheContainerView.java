@@ -28,7 +28,6 @@ import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -42,21 +41,14 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class CacheContainerView extends AbstractEntityView<CacheContainer> implements CacheContainerPresenter.MyView {
 
-    private FormMetaData formMetaData;
     private EntityToDmrBridge bridge;
     
     @Inject
     public CacheContainerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(CacheContainer.class);
-        formMetaData = propertyMetaData.getBeanMetaData(CacheContainer.class).getFormMetaData();
+        super(CacheContainer.class, propertyMetaData);
         bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
     }
     
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return formMetaData;
-    }
-
     @Override
     protected EntityToDmrBridge getEntityBridge() {
         return bridge;

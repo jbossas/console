@@ -27,8 +27,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -48,22 +50,32 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected EntityEditor<T> entityEditor;
     protected Class<?> beanType;
     protected EnumSet<FrameworkButton> hideButtons;
+    protected FormMetaData formMetaData;
+    protected AddressBinding address;
 
-    public AbstractEntityView(Class<?> beanType) {
-        this(beanType, EnumSet.noneOf(FrameworkButton.class));
+    public AbstractEntityView(Class<?> beanType, PropertyMetaData propertyMetaData) {
+        this(beanType, propertyMetaData, EnumSet.noneOf(FrameworkButton.class));
     }
 
-    public AbstractEntityView(Class<?> beanType, EnumSet<FrameworkButton> hideButtons) {
+    public AbstractEntityView(Class<?> beanType, PropertyMetaData propertyMetaData, EnumSet<FrameworkButton> hideButtons) {
         this.beanType = beanType;
         this.hideButtons = hideButtons;
+        formMetaData = propertyMetaData.getBeanMetaData(beanType).getFormMetaData();
+        address = propertyMetaData.getBeanMetaData(beanType).getAddress();
     }
 
     /**
      * Get the FormMetaData for the Entity.
      * @return The FormMetaData.
      */
-    protected abstract FormMetaData getFormMetaData();
-
+    protected FormMetaData getFormMetaData() {
+        return this.formMetaData;
+    }
+    
+    protected AddressBinding getAddress() {
+        return this.address;
+    }
+    
     /**
      * Get the EntityToDmrBridge for the Entity.
      * @return The bridge.
@@ -113,6 +125,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         EntityDetails<T> scannerDetails = new EntityDetails<T>(getPluralEntityName(),
                                                                makeEditEntityDetailsForm(),
                                                                getEntityBridge(),
+                                                               address,
                                                                hideButtons);
         String title = Console.CONSTANTS.common_label_add() + " " + getPluralEntityName();
         EntityPopupWindow<T> window = new AddEntityWindow<T>(title,

@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.help;
 
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.dmr.client.ModelDescriptionConstants.CHILDREN;
@@ -24,7 +25,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -45,7 +45,7 @@ public class HelpSystem {
 
     public void getAttributeDescriptions(
             ModelNode resourceAddress,
-            final Form form,
+            final FormAdapter form,
             final AsyncCallback<Widget> callback)
     {
 

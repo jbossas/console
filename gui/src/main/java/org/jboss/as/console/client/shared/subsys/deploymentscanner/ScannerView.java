@@ -27,7 +27,6 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.EnabledColumn;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -43,20 +42,13 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class ScannerView extends AbstractEntityView<DeploymentScanner> implements ScannerPresenter.MyView {
 
     private EntityToDmrBridge scannerBridge;
-    private FormMetaData formMetaData;
 
     @Inject
     public ScannerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(DeploymentScanner.class);
-        formMetaData = propertyMetaData.getBeanMetaData(DeploymentScanner.class).getFormMetaData();
+        super(DeploymentScanner.class, propertyMetaData);
         scannerBridge = new EntityToDmrBridgeImpl<DeploymentScanner>(propertyMetaData, DeploymentScanner.class, this, dispatcher);
     }
     
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return this.formMetaData;
-    }
-
     @Override
     protected EntityToDmrBridge getEntityBridge() {
         return this.scannerBridge;

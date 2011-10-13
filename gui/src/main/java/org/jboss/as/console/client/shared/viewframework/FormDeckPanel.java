@@ -73,6 +73,15 @@ public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
         return forms.get(visibleWidgetName());
     }
     
+    /**
+     * Returns the form item names of the currently visible Form.
+     * @return The names
+     */
+    @Override
+    public List<String> getFormItemNames() {
+        return getVisibleForm().getFormItemNames();
+    }
+    
     @Override
     public T getEditedEntity() {
         if (getVisibleForm() == null) return null;

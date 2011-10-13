@@ -26,7 +26,6 @@ import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -42,13 +41,11 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> implements FrameworkView {
 
     private EntityToDmrBridge threadPoolBridge;
-    private FormMetaData formMetaData;
     private BoundedQueueThreadPoolView poolview;
 
     public ThreadFactoryView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher, BoundedQueueThreadPoolView poolView) {
-        super(ThreadFactory.class);
+        super(ThreadFactory.class, propertyMetaData);
         this.poolview = poolView;
-        formMetaData = propertyMetaData.getBeanMetaData(ThreadFactory.class).getFormMetaData();
         threadPoolBridge = new EntityToDmrBridgeImpl<ThreadFactory>(propertyMetaData, ThreadFactory.class, this, dispatcher);
     }
 
@@ -64,11 +61,6 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
             ComboBoxItem comboBox = (ComboBoxItem) item.getWrapped();
             comboBox.setValueMap(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
         }
-    }
-
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return this.formMetaData;
     }
 
     @Override

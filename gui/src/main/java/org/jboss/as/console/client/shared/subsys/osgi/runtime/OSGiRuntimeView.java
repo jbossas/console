@@ -44,7 +44,6 @@ import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -57,14 +56,12 @@ import org.jboss.dmr.client.ModelNode;
  * @author David Bosschaert
  */
 public class OSGiRuntimeView extends AbstractEntityView<Bundle> implements OSGiRuntimePresenter.MyView {
-    private final FormMetaData formMetaData;
     private final EntityToDmrBridgeImpl<Bundle> bridge;
     private OSGiRuntimePresenter presenter;
 
     @Inject
     public OSGiRuntimeView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(Bundle.class, EnumSet.allOf(FrameworkButton.class));
-        formMetaData = propertyMetaData.getBeanMetaData(Bundle.class).getFormMetaData();
+        super(Bundle.class, propertyMetaData, EnumSet.allOf(FrameworkButton.class));
         bridge = new EntityToDmrBridgeImpl<Bundle>(propertyMetaData, Bundle.class, this, dispatcher) {
             @Override
             public void loadEntities(String name) {
@@ -90,11 +87,6 @@ public class OSGiRuntimeView extends AbstractEntityView<Bundle> implements OSGiR
                 });
             }
         };
-    }
-
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return formMetaData;
     }
 
     @Override
