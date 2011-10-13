@@ -26,8 +26,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.EnumSet;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -35,10 +33,6 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.
@@ -150,7 +144,7 @@ public class EntityDetails<T> implements EditListener {
         detailPanel.add(detailToolStrip);
 
         if (address != null) {
-            detailPanel.add(makeHelpWidget());
+            detailPanel.add(HelpWidgetFactory.makeHelpWidget(address, form));
         }
 
         detailPanel.add(form.asWidget());
@@ -160,30 +154,6 @@ public class EntityDetails<T> implements EditListener {
 
         ScrollPanel scroll = new ScrollPanel(detailPanel);
         return scroll;
-    }
-
-    protected Widget makeHelpWidget() {
-        final FormHelpPanel helpPanel = new FormHelpPanel(
-                new FormHelpPanel.AddressCallback() {
-
-                    @Override
-                    public org.jboss.dmr.client.ModelNode getAddress() {
-                        String wildCards[] = new String[address.getNumWildCards()];
-                        for (int i = 0; i < wildCards.length; i++) {
-                            wildCards[i] = "*";
-                        }
-
-                        ModelNode addressAsResource = address.asResource(wildCards);
-                        ModelNode addressNode = Baseadress.get();
-                        for (Property address : addressAsResource.get(ADDRESS).asPropertyList()) {
-                            addressNode.add(address.getName(), address.getValue());
-                        }
-
-                        return addressNode;
-                    }
-                }, form);
-
-        return helpPanel.asWidget();
     }
 
     /**
