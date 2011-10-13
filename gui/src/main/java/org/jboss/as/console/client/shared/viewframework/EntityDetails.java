@@ -26,13 +26,19 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.EnumSet;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.
@@ -48,6 +54,7 @@ public class EntityDetails<T> implements EditListener {
     private ToolButton removeBtn;
     private EntityToDmrBridge executor;
     private EnumSet<FrameworkButton> hideButtons;
+    private AddressBinding address;
 
     /**
      * Create a new EntityDetails.
@@ -56,14 +63,19 @@ public class EntityDetails<T> implements EditListener {
      * @param form The form containing all AttributesMetadata that can be displayed or edited.
      * @param executor The EntityToDmrBridge that will be called for various actions.
      */
-    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor) {
-        this(entitiesName, form, executor, EnumSet.noneOf(FrameworkButton.class));
+    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor, AddressBinding address) {
+        this(entitiesName, form, executor, address, EnumSet.noneOf(FrameworkButton.class));
     }
-    
-    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor, EnumSet<FrameworkButton> hideButtons) {
+
+    public EntityDetails(String entitiesName,
+            FormAdapter form,
+            EntityToDmrBridge executor,
+            AddressBinding address,
+            EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
         this.executor = executor;
+        this.address = address;
         this.hideButtons = hideButtons;
     }
 
@@ -112,6 +124,7 @@ public class EntityDetails<T> implements EditListener {
                 Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
                         Console.MESSAGES.removeFromConfirm(executor.getName(form.getEditedEntity()), entitiesName),
                         new Feedback.ConfirmationHandler() {
+
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
@@ -123,12 +136,22 @@ public class EntityDetails<T> implements EditListener {
         };
         removeBtn.addClickHandler(removeHandler);
 
-        
-        if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) detailToolStrip.addToolButton(editBtn);
-        if (!hideButtons.contains(FrameworkButton.CANCEL)) detailToolStrip.addToolButton(cancelBtn);
-        if (!hideButtons.contains(FrameworkButton.REMOVE)) detailToolStrip.addToolButton(removeBtn);
+
+        if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) {
+            detailToolStrip.addToolButton(editBtn);
+        }
+        if (!hideButtons.contains(FrameworkButton.CANCEL)) {
+            detailToolStrip.addToolButton(cancelBtn);
+        }
+        if (!hideButtons.contains(FrameworkButton.REMOVE)) {
+            detailToolStrip.addToolButton(removeBtn);
+        }
 
         detailPanel.add(detailToolStrip);
+
+        if (address != null) {
+            detailPanel.add(makeHelpWidget());
+        }
 
         detailPanel.add(form.asWidget());
         form.addEditListener(this);
@@ -137,6 +160,30 @@ public class EntityDetails<T> implements EditListener {
 
         ScrollPanel scroll = new ScrollPanel(detailPanel);
         return scroll;
+    }
+
+    protected Widget makeHelpWidget() {
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+
+                    @Override
+                    public org.jboss.dmr.client.ModelNode getAddress() {
+                        String wildCards[] = new String[address.getNumWildCards()];
+                        for (int i = 0; i < wildCards.length; i++) {
+                            wildCards[i] = "*";
+                        }
+
+                        ModelNode addressAsResource = address.asResource(wildCards);
+                        ModelNode addressNode = Baseadress.get();
+                        for (Property address : addressAsResource.get(ADDRESS).asPropertyList()) {
+                            addressNode.add(address.getName(), address.getValue());
+                        }
+
+                        return addressNode;
+                    }
+                }, form);
+
+        return helpPanel.asWidget();
     }
 
     /**
@@ -155,7 +202,7 @@ public class EntityDetails<T> implements EditListener {
         form.setEnabled(isEnabled);
         cancelBtn.setVisible(isEnabled);
         removeBtn.setVisible(!isEnabled);
-        
+
         if (isEnabled) {
             editBtn.setText(Console.CONSTANTS.common_label_save());
         } else {

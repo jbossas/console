@@ -27,7 +27,6 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -38,12 +37,10 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
     private final EntityToDmrBridgeImpl<StrictMaxBeanPool> bridge;
-    private final FormMetaData formMetaData;
 
     public PoolsSection(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(StrictMaxBeanPool.class);
+        super(StrictMaxBeanPool.class, propertyMetaData);
 
-        formMetaData = propertyMetaData.getBeanMetaData(StrictMaxBeanPool.class).getFormMetaData();
         bridge = new EntityToDmrBridgeImpl<StrictMaxBeanPool>(propertyMetaData, StrictMaxBeanPool.class, this, dispatcher);
     }
 
@@ -53,11 +50,6 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
         VerticalPanel vpanel = new VerticalPanel();
         entityEditor.addWidgetToPanel(vpanel);
         return vpanel;
-    }
-
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return formMetaData;
     }
 
     @Override

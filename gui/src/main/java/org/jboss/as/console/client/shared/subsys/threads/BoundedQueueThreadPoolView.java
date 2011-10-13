@@ -29,7 +29,6 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -45,13 +44,11 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueThreadPool> implements FrameworkView {
 
     private EntityToDmrBridge threadPoolBridge;
-    private FormMetaData formMetaData;
     private ComboBoxItem threadFactoryComboForAdd;
     private ComboBoxItem threadFactoryComboForEdit;
 
     public BoundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(BoundedQueueThreadPool.class); //, FrameworkButton.asSet(FrameworkButton.values()));
-        formMetaData = propertyMetaData.getBeanMetaData(BoundedQueueThreadPool.class).getFormMetaData();
+        super(BoundedQueueThreadPool.class, propertyMetaData); //, FrameworkButton.asSet(FrameworkButton.values()));
         threadPoolBridge = new EntityToDmrBridgeImpl<BoundedQueueThreadPool>(propertyMetaData, BoundedQueueThreadPool.class, this, dispatcher);
     }
 
@@ -82,11 +79,6 @@ public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueT
     public Widget createWidget() {
         entityEditor = makeEntityEditor();
         return entityEditor.asWidget();
-    }
-
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return this.formMetaData;
     }
 
     @Override

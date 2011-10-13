@@ -37,7 +37,6 @@ import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -50,15 +49,13 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3Presenter.MyView {
     private final EntityToDmrBridge<EJB3Subsystem> bridge;
-    private final FormMetaData formMetaData;
     private final PoolsSection poolsSection;
     private final TimerServiceView timerServiceView;
     private ComboBoxItem defaultSLSBPoolItem, defaultMDBPoolItem;
 
     @Inject
     public EJB3View(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(EJB3Subsystem.class, EnumSet.of(FrameworkButton.ADD));
-        formMetaData = propertyMetaData.getBeanMetaData(EJB3Subsystem.class).getFormMetaData();
+        super(EJB3Subsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD));
         bridge = new SingleEntityToDmrBridgeImpl<EJB3Subsystem>(propertyMetaData, EJB3Subsystem.class, this, dispatcher);
 
         poolsSection = new PoolsSection(propertyMetaData, dispatcher);
@@ -110,13 +107,12 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected EntityEditor<EJB3Subsystem> makeEntityEditor() {
-        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getPluralEntityName(), makeEditEntityDetailsForm(), getEntityBridge(), hideButtons);
+        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getPluralEntityName(), 
+                                                                                makeEditEntityDetailsForm(), 
+                                                                                getEntityBridge(), 
+                                                                                getAddress(),
+                                                                                hideButtons);
         return new EntityEditor<EJB3Subsystem>(getPluralEntityName(), null, makeEntityTable(), details, hideButtons);
-    }
-
-    @Override
-    protected FormMetaData getFormMetaData() {
-        return formMetaData;
     }
 
     @Override
