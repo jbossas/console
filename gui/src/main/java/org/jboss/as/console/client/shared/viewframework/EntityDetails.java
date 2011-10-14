@@ -152,8 +152,7 @@ public class EntityDetails<T> implements EditListener {
 
         setEditingEnabled(false);  // initially don't allow edit
 
-        ScrollPanel scroll = new ScrollPanel(detailPanel);
-        return scroll;
+        return detailPanel;
     }
 
     /**
