@@ -95,8 +95,8 @@ public class EntityEditor<T> {
 
     public Widget asWidget() {
 
-        //LayoutPanel layout = new LayoutPanel();
-        //layout.setStyleName("fill-layout");
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout"); // FF hack
 
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
@@ -125,9 +125,9 @@ public class EntityEditor<T> {
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         panel.add(details.asWidget());
 
-        //layout.add(panel);
+        layout.add(panel);
 
-        return panel;
+        return layout;
     }
 
     public ToolStrip createTools() {

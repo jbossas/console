@@ -50,14 +50,7 @@ public class TimerServiceView extends AbstractEntityView<TimerService> {
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        entityEditor = makeEntityEditor();
-        Widget widget = entityEditor.setIncludeTools(false).asWidget();
-        widget.addStyleName("rhs-content-panel");
-        layout.add(widget);
-
-        return layout;
+        return createEmbeddableWidget();
     }
 
     @Override
