@@ -112,7 +112,9 @@ public class EntityEditor<T> {
             }));
         }
 
-        layout.add(toolStrip);
+        if(toolStrip.hasButtons())
+            layout.add(toolStrip);
+
         layout.add(new ContentHeaderLabel(entitiesName));
 
         table.setSelectionModel(new SingleSelectionModel<T>());
