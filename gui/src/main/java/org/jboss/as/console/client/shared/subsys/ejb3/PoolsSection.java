@@ -20,6 +20,9 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import java.util.Collection;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,9 +59,21 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
     @Override
     public Widget createWidget() {
         entityEditor = makeEntityEditor();
+
+        LayoutPanel layout = new LayoutPanel();
+        layout.setStyleName("fill-layout");
+
         VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("rhs-content-panel");
+
         entityEditor.addWidgetToPanel(vpanel);
-        return vpanel;
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.setWidget(vpanel);
+        layout.add(scroll);
+
+        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
     }
 
     @Override

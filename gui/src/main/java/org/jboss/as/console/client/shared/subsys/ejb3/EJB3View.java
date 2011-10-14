@@ -78,30 +78,17 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     public Widget createWidget() {
-        LayoutPanel layout = new LayoutPanel();
-        ScrollPanel scroll = new ScrollPanel();
-        VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("rhs-content-pane");
-        scroll.add(vpanel);
-
-        layout.add(scroll);
-        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         entityEditor = makeEntityEditor();
-        entityEditor.addWidgetToPanel(vpanel);
 
-        TabPanel bottomPanel = new TabPanel();
-        bottomPanel.setStyleName("default-tabpanel");
-        bottomPanel.add(poolsSection.asWidget(), poolsSection.getPluralEntityName());
-        bottomPanel.selectTab(0);
-        vpanel.add(bottomPanel);
-
+        // overall layout
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(layout, "Pools");
+        tabLayoutPanel.add(entityEditor.asWidget(), "Container");
+        tabLayoutPanel.add(poolsSection.asWidget(), "Pools");
         tabLayoutPanel.add(timerServiceView.asWidget(), "Services");
-        tabLayoutPanel.selectTab(0);
+
 
         return tabLayoutPanel;
     }
@@ -138,7 +125,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected String getPluralEntityName() {
-        return "EJB3 Subsystem"; // TODO i18n // is this one used at all?
+        return "EJB3 Container"; // TODO i18n // is this one used at all?
     }
 
     @Override
