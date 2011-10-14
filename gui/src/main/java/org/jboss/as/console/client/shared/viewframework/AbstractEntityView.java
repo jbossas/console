@@ -19,12 +19,9 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
@@ -36,7 +33,9 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
+import java.util.EnumSet;
 
 
 /**
@@ -102,14 +101,20 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
     @Override
     public Widget createWidget() {
+
+        LayoutPanel layout = new LayoutPanel();
+
+        FakeTabPanel titleBar = new FakeTabPanel(getPluralEntityName());
+        layout.add(titleBar);
+
         entityEditor = makeEntityEditor();
+        Widget widget = entityEditor.asWidget();
+        layout.add(widget);
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(widget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        tabLayoutpanel.add(entityEditor.asWidget(), getPluralEntityName());
-
-        return tabLayoutpanel;
+        return layout;
     }
 
     /**
