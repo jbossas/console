@@ -74,6 +74,11 @@ public class JndiView extends DisposableViewImpl implements JndiPresenter.MyView
                 uriLabel.setHTML(SELECTED_URI_PREFIX + entry.getURI());
             }
         });
+
+        // open first element
+        TreeNode rootNode = tree.getRootTreeNode();
+        TreeNode firstItem = rootNode.setChildOpen(0, true);
+
     }
 
     interface Applicable {
