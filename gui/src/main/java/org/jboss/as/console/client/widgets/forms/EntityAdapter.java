@@ -135,7 +135,7 @@ public class EntityAdapter<T> {
                 /**
                  * KEYS
                  */
-
+                
                 if(propBinding.isKey())
                 {
                     // key resolution strategy:
@@ -422,13 +422,13 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding binding : propertyBindings)
         {
-
+            
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
                 ModelNode step = protoType.clone();
 
-                // account for sub-attribute paths
+             // account for sub-attribute paths
                 String[] splitDetypedName = binding.getDetypedName().split("/");
                 step.get(NAME).set(splitDetypedName[0]);
                 splitDetypedName[0] = VALUE;
@@ -490,5 +490,5 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-
+    
 }
