@@ -66,7 +66,8 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
-        entityEditor.addWidgetToPanel(vpanel);
+        vpanel.add(entityEditor.asWidget());
+
         ScrollPanel scroll = new ScrollPanel();
         scroll.setWidget(vpanel);
         layout.add(scroll);

@@ -21,6 +21,8 @@ package org.jboss.as.console.client.shared.viewframework;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -34,6 +36,7 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.EnumSet;
 
@@ -99,6 +102,14 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      */
     protected abstract String getPluralEntityName();
 
+    /**
+     * This is the default view assembly routine. It simly creates a single
+     * top level tab and adds the editors contents to it.<p/>
+     * Feel free to override this method in order to create more sophisticated
+     * view compositions.
+     *
+     * @return
+     */
     @Override
     public Widget createWidget() {
 
@@ -107,12 +118,32 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         FakeTabPanel titleBar = new FakeTabPanel(getPluralEntityName());
         layout.add(titleBar);
 
-        entityEditor = makeEntityEditor();
-        Widget widget = entityEditor.asWidget();
-        layout.add(widget);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(widget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("rhs-content-panel");
+
+        ScrollPanel scrollPanel = new ScrollPanel(panel);
+        layout.add(scrollPanel);
+
+        entityEditor = makeEntityEditor();
+        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        panel.add(editorWidget);
+
+        ToolStrip tools = entityEditor.createTools();
+
+        if(tools.hasButtons())
+        {
+            layout.add(tools);
+
+            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(tools, 28, Style.Unit.PX, 30, Style.Unit.PX);
+            layout.setWidgetTopHeight(scrollPanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        }
+        else
+        {
+            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(scrollPanel, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        }
 
         return layout;
     }

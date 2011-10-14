@@ -25,6 +25,7 @@ import java.util.List;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -56,6 +57,8 @@ public class EntityEditor<T> {
     private DefaultPager pager;
     private EnumSet<FrameworkButton> hideButtons;
 
+    private boolean includeTools = true;
+
     /**
      * Create a new Entity.
      *
@@ -85,21 +88,49 @@ public class EntityEditor<T> {
         this.hideButtons = hideButtons;
     }
 
+    public EntityEditor<T> setIncludeTools(boolean includeTools) {
+        this.includeTools = includeTools;
+        return this;
+    }
+
     public Widget asWidget() {
-        LayoutPanel panel = new LayoutPanel();
-        ScrollPanel scroll = new ScrollPanel();
-        VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("rhs-content-panel");
 
-        scroll.add(layout);
-        panel.add(scroll);
-        panel.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
+        //LayoutPanel layout = new LayoutPanel();
+        //layout.setStyleName("fill-layout");
 
-        addWidgetToPanel(layout);
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout-width");
+
+        if(includeTools)
+        {
+            final ToolStrip toolStrip = createTools();
+            if(toolStrip.hasButtons())
+                panel.add(toolStrip);
+        }
+
+        panel.add(new ContentHeaderLabel(entitiesName));
+
+        table.setSelectionModel(new SingleSelectionModel<T>());
+        dataProvider = new ListDataProvider<T>();
+        dataProvider.addDataDisplay(table);
+
+        panel.add(table);
+
+        pager = new DefaultPager();
+        pager.setDisplay(table);
+        if (table.isVisible())
+            panel.add(pager);
+
+        details.bind(table);
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
+        panel.add(details.asWidget());
+
+        //layout.add(panel);
+
         return panel;
     }
 
-    public void addWidgetToPanel(VerticalPanel layout) {
+    public ToolStrip createTools() {
         final ToolStrip toolStrip = new ToolStrip();
 
         if (!hideButtons.contains(FrameworkButton.ADD)) {
@@ -112,25 +143,7 @@ public class EntityEditor<T> {
             }));
         }
 
-        if(toolStrip.hasButtons())
-            layout.add(toolStrip);
-
-        layout.add(new ContentHeaderLabel(entitiesName));
-
-        table.setSelectionModel(new SingleSelectionModel<T>());
-        dataProvider = new ListDataProvider<T>();
-        dataProvider.addDataDisplay(table);
-
-        layout.add(table);
-
-        pager = new DefaultPager();
-        pager.setDisplay(table);
-        if (table.isVisible())
-            layout.add(pager);
-
-        details.bind(table);
-        layout.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
-        layout.add(details.asWidget());
+        return toolStrip;
     }
 
     public void updateEntityList(List<T> entityList, T lastEdited) {
