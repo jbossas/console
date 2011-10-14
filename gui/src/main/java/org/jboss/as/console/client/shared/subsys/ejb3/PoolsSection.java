@@ -40,6 +40,7 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.forms.UnitBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author David Bosschaert
@@ -66,13 +67,16 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
-        vpanel.add(entityEditor.asWidget());
+        ToolStrip tools = entityEditor.createTools();
+        layout.add(tools);
+        vpanel.add(entityEditor.setIncludeTools(false).asWidget());
 
         ScrollPanel scroll = new ScrollPanel();
         scroll.setWidget(vpanel);
         layout.add(scroll);
 
-        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(tools, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }

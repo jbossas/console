@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import java.util.EnumSet;
 
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -48,8 +49,15 @@ public class TimerServiceView extends AbstractEntityView<TimerService> {
 
     @Override
     public Widget createWidget() {
+
+        LayoutPanel layout = new LayoutPanel();
+
         entityEditor = makeEntityEditor();
-        return entityEditor.asWidget();
+        Widget widget = entityEditor.setIncludeTools(false).asWidget();
+        widget.addStyleName("rhs-content-panel");
+        layout.add(widget);
+
+        return layout;
     }
 
     @Override
