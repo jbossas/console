@@ -77,8 +77,7 @@ public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueT
 
     @Override
     public Widget createWidget() {
-        entityEditor = makeEntityEditor();
-        return entityEditor.asWidget();
+        return super.createEmbeddableWidget();
     }
 
     @Override

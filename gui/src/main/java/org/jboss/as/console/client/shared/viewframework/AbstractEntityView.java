@@ -149,6 +149,44 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     }
 
     /**
+     * Creates a default widget without the top most tab.
+     * It can be easily embedded into a TablayoutPanel for instance.
+     *
+     * @return
+     */
+    public Widget createEmbeddableWidget() {
+
+        LayoutPanel layout = new LayoutPanel();
+        layout.setStyleName("fill-layout");
+
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("rhs-content-panel");
+
+        ScrollPanel scrollPanel = new ScrollPanel(panel);
+        layout.add(scrollPanel);
+
+        entityEditor = makeEntityEditor();
+        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        panel.add(editorWidget);
+
+        ToolStrip tools = entityEditor.createTools();
+
+        if(tools.hasButtons())
+        {
+            layout.add(tools);
+
+            layout.setWidgetTopHeight(tools, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(scrollPanel, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        }
+        else
+        {
+            layout.setWidgetTopHeight(scrollPanel, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+        }
+
+        return layout;
+    }
+
+    /**
      * Create the EntityEditor with the following pieces:
      * - A title obtained from getPluralEntityName()
      * - A table obtained from makeEntityTable()
