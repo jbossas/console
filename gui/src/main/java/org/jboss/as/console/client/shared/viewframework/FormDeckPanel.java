@@ -169,9 +169,4 @@ public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
     public FormValidation validate() {
         return getVisibleForm().validate();
     }
-
-    @Override
-    public List<String> getFormItemNames() {
-        throw new RuntimeException("Not implemented (missing commit)!");
-    }
 }
