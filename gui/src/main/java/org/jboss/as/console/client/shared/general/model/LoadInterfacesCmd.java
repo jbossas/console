@@ -65,8 +65,6 @@ public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncComma
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<Property> payload = response.get(RESULT).asPropertyList();
 
-                System.out.println(response);
-
                 List<Interface> interfaces = new ArrayList<Interface>(payload.size());
                 for(Property property : payload)
                 {

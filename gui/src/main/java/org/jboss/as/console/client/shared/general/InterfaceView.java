@@ -64,19 +64,8 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
             }
         };
 
-        Column<Interface, String> exprCol =
-                new Column<Interface, String>(new ExpressionCell() ) {
-
-            @Override
-            public String getValue(Interface hasExpr) {
-                return hasExpr.getCriteria();
-            }
-
-        };
-
         table.addColumn(nameColumn, "Name");
         table.addColumn(criteriaColumn, "Criteria");
-        table.addColumn(exprCol, "Expression");
 
         layout.add(table);
 
