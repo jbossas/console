@@ -97,34 +97,6 @@ public class DataSourceModelTest {
         assertTrue("Callback not executed", callback.hasBeenExecuted());
     }
 
-    // https://issues.jboss.org/browse/JBAS-9341
-    @Test
-    @Ignore
-    public void enableDataSources() throws Exception
-    {
-        DataSourceStore store = injector.getInstance(DataSourceStore.class);
-
-        DataSource entity = createEntity();
-        entity.setName("java:/H2DS"); // default DS should exist
-        TestCallback<ResponseWrapper<Boolean>> secondCallback = new TestCallback<ResponseWrapper<Boolean>>() {
-
-            @Override
-            public void onSuccess(ResponseWrapper<Boolean> response) {
-                assertTrue("Expected successful outcome", response.getUnderlying());
-
-                didCallback = true;
-            }
-        };
-
-        store.enableDataSource(entity, false, secondCallback);
-
-        synchronized (secondCallback) {
-            secondCallback.wait(500);
-        }
-
-        assertTrue("Callback not executed", secondCallback.hasBeenExecuted());
-    }
-
 
     private DataSource createEntity() {
 
