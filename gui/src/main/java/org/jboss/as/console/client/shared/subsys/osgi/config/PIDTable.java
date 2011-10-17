@@ -44,7 +44,7 @@ public class PIDTable {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        table = new DefaultCellTable<OSGiConfigAdminData>(20);
+        table = new DefaultCellTable<OSGiConfigAdminData>(10);
         dataProvider = new ListDataProvider<OSGiConfigAdminData>();
         dataProvider.addDataDisplay(table);
 

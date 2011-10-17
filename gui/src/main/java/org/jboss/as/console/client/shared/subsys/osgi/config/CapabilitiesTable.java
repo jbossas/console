@@ -46,7 +46,7 @@ public class CapabilitiesTable {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        table = new DefaultCellTable<OSGiCapability>(25);
+        table = new DefaultCellTable<OSGiCapability>(10);
         dataProvider = new ListDataProvider<OSGiCapability>();
         dataProvider.addDataDisplay(table);
 
