@@ -82,5 +82,53 @@ public interface BoundedQueueThreadPool extends NamedEntity {
             order=Integer.MAX_VALUE)
    List<PropertyRecord> getProperties();
    void setProperties(List<PropertyRecord> properties);
- 
+   
+   @Binding(detypedName="keepalive-time/time")
+   @FormItem(defaultValue="5",
+            label="Keepalive Timeout",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+    Integer getKeepaliveTimeout();
+    void setKeepaliveTimeout(Integer timeout);
+
+   @Binding(detypedName="keepalive-time/unit")
+   @FormItem(defaultValue="",
+            label="Keepalive Timeout Unit",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
+   String getKeepaliveTimeoutUnit();
+   void setKeepaliveTimeoutUnit(String unit);
+    
+   @Binding(detypedName="max-threads/count")
+   @FormItem(defaultValue="5",
+            label="Max Threads Count",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getMaxThreadsCount();
+   void setMaxThreadsCount(Integer maxThreadsCount);
+    
+   @Binding(detypedName="max-threads/per-cpu")
+   @FormItem(defaultValue="5",
+            label="Max Threads Per CPU",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getMaxThreadsPerCPU();
+   void setMaxThreadsPerCPU(Integer maxThreadsCount);
+   
+   @Binding(detypedName="queue-length/count")
+   @FormItem(defaultValue="5",
+            label="Queue Length Count",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getQueueLengthCount();
+   void setQueueLengthCount(Integer maxThreadsCount);
+    
+   @Binding(detypedName="queue-length/per-cpu")
+   @FormItem(defaultValue="5",
+            label="Queue Length Per CPU",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getQueueLengthPerCPU();
+   void setQueueLengthPerCPU(Integer maxThreadsCount);
 }

@@ -100,6 +100,8 @@ public class EntityAdapter<T> {
         for(PropertyBinding propBinding : beanMetaData.getProperties())
         {
 
+            String[] splitDetypedName = propBinding.getDetypedName().split("/");
+            ModelNode propValue = actualPayload.get(splitDetypedName);
             Object value = null;
 
             try
@@ -112,8 +114,8 @@ public class EntityAdapter<T> {
 
                 if(propBinding.doesSupportExpression())
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName())
-                            && actualPayload.get(propBinding.getDetypedName()).getType() == ModelType.EXPRESSION)
+                    if(propValue.isDefined()
+                            && propValue.getType() == ModelType.EXPRESSION)
                     {
                         String exprValue = actualPayload.get(propBinding.getDetypedName()).asString();
 
@@ -127,7 +129,7 @@ public class EntityAdapter<T> {
                 /**
                  * KEYS
                  */
-
+                
                 if(propBinding.isKey())
                 {
                     // key resolution strategy:
@@ -162,51 +164,51 @@ public class EntityAdapter<T> {
 
                 else if("java.lang.Boolean".equals(propBinding.getJavaTypeName()))
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asBoolean();
+                    if(propValue.isDefined())
+                        value = propValue.asBoolean();
                     else
                         value = false;
                 }
                 else if("java.lang.Long".equals(propBinding.getJavaTypeName()))
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asLong();
+                    if(propValue.isDefined())
+                        value = propValue.asLong();
                     else
                         value = -1;
                 }
                 else if("java.lang.Integer".equals(propBinding.getJavaTypeName()))
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asInt();
+                    if(propValue.isDefined())
+                        value = propValue.asInt();
                     else
                         value = -1;
                 }
                 else if("java.lang.Double".equals(propBinding.getJavaTypeName()))
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    if(propValue.isDefined())
+                        value = propValue.asDouble();
                     else
                         value = -1;
                 }
                 else if("java.lang.Float".equals(propBinding.getJavaTypeName()))
                 {
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asDouble();
+                    if(propValue.isDefined())
+                        value = propValue.asDouble();
                     else
                         value = -1;
                 }
                 else if("java.lang.String".equals(propBinding.getJavaTypeName()))
                 {
                     // default
-                    if(actualPayload.hasDefined(propBinding.getDetypedName()))
-                        value = actualPayload.get(propBinding.getDetypedName()).asString();
+                    if(propValue.isDefined())
+                        value = propValue.asString();
                     else
                         value = "";
                 }
                 else if ("java.util.List".equals(propBinding.getJavaTypeName()))
                 {
                     ModelNode list = actualPayload.get(propBinding.getDetypedName());
-                    if (actualPayload.hasDefined(propBinding.getDetypedName()) && !list.asList().isEmpty()) {
+                    if (propValue.isDefined() && !list.asList().isEmpty()) {
                         if (list.asList().get(0).getType().equals(ModelType.PROPERTY)) {
                             value = propBinding.getEntityAdapterForList().fromDMRPropertyList(list.asPropertyList());
                         } else {
@@ -286,6 +288,8 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding property : properties)
         {
+            String[] splitDetypedName = property.getDetypedName().split("/");
+            
             /**
              * KEYS
              */
@@ -303,7 +307,7 @@ public class EntityAdapter<T> {
                 );
 
                 if(exprValue!=null)
-                    operation.get(property.getDetypedName()).setExpression(exprValue);
+                    operation.get(splitDetypedName).setExpression(exprValue);
 
                 continue; // expression have precedence over real values
             }
@@ -316,11 +320,11 @@ public class EntityAdapter<T> {
                 try {
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
-                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        operation.get(property.getDetypedName()).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
                     } else {
-                        operation.get(property.getDetypedName()).set(modelType, propertyValue);
+                        operation.get(splitDetypedName).set(modelType, propertyValue);
                     }
                 } catch (RuntimeException e) {
                     throw new RuntimeException("Failed to get value "+property.getJavaName(), e);
@@ -411,12 +415,17 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding binding : propertyBindings)
         {
-
+            
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
                 ModelNode step = protoType.clone();
-                step.get(NAME).set(binding.getDetypedName());
+                
+                // account for sub-attribute paths
+                String[] splitDetypedName = binding.getDetypedName().split("/");
+                step.get(NAME).set(splitDetypedName[0]);
+                splitDetypedName[0] = VALUE;
+                ModelNode nodeToSetValueUpon = step.get(splitDetypedName);
 
                 Class type = value.getClass();
 
@@ -429,36 +438,37 @@ public class EntityAdapter<T> {
 
                     String stringValue = (String) value;
                     if(stringValue.startsWith("$"))     // TODO: further constraints
-                        step.get(VALUE).setExpression(stringValue);
+                        nodeToSetValueUpon.setExpression(stringValue);
                     else
-                        step.get(VALUE).set(stringValue);
+                        nodeToSetValueUpon.set(stringValue);
                 }
                 else if(Boolean.class == type)
                 {
-                    step.get(VALUE).set((Boolean)value);
+                    nodeToSetValueUpon.set((Boolean)value);
                 }
                 else if(Integer.class == type)
                 {
-                    step.get(VALUE).set((Integer)value);
+                    System.out.println("setting " + nodeToSetValueUpon + " to " + value);
+                    nodeToSetValueUpon.set((Integer)value);
                 }
                 else if(Double.class == type)
                 {
-                    step.get(VALUE).set((Double)value);
+                    nodeToSetValueUpon.set((Double)value);
                 }
                 else if (Long.class == type)
                 {
-                    step.get(VALUE).set((Long)value);
+                    nodeToSetValueUpon.set((Long)value);
                 }
                 else if (Float.class == type)
                 {
-                    step.get(VALUE).set((Float)value);
+                    nodeToSetValueUpon.set((Float)value);
                 }
                 else if (binding.getListType() != null)
                 {
                     if (binding.getListType() == PropertyRecord.class) {
-                        step.get(VALUE).set(fromEntityPropertyList((List)value));
+                        nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
                     } else {
-                        step.get(VALUE).set(fromEntityList((List)value));
+                        nodeToSetValueUpon.set(fromEntityList((List)value));
                     }
                 }
                 else
@@ -473,5 +483,5 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-
+    
 }
