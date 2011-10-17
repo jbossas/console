@@ -39,8 +39,6 @@ public class DefaultExpressionResolver extends ExpressionResolver {
                 String resolved =  null;
                 for(PropertyRecord prop : result)
                 {
-
-                    System.out.println(expr.getKey()+">"+prop.getValue());
                     if(prop.getKey().equals(expr.getKey()))
                     {
                         resolved = prop.getValue();
