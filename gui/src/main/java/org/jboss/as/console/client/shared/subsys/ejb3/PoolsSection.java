@@ -120,7 +120,7 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
 
     @Override
     protected String getPluralEntityName() {
-        return "Pools";
+        return "EJB3 Pools";
     }
 
     void setTimeoutUnits(Collection<String> units, String defUnit) {

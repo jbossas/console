@@ -86,6 +86,6 @@ public class TimerServiceView extends AbstractEntityView<TimerService> {
 
     @Override
     protected String getPluralEntityName() {
-        return "Timer Service"; // needed?
+        return "EJB3 Timer Service"; // needed?
     }
 }
