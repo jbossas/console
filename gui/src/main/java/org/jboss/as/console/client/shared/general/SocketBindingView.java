@@ -172,12 +172,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         TextItem nameItem = new TextItem("name", "Name");
         TextItem interfaceItem = new TextItem("interface", "Interface");
-        NumberBoxItem portItem = new NumberBoxItem("port", "Port") {
-            @Override
-            public boolean validate(Number value) {
-                return true; // TODO: validation strategy for expressions
-            }
-        };
+        NumberBoxItem portItem = new NumberBoxItem("port", "Port");
         TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address") {
             @Override
             public boolean isRequired() {
