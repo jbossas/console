@@ -1,12 +1,18 @@
 package org.jboss.as.console.client.shared.general;
 
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.expr.ExpressionColumn;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -32,12 +38,34 @@ public class SocketTable {
         dataProvider = new ListDataProvider<SocketBinding>();
         dataProvider.addDataDisplay(table);
 
-        TextColumn<SocketBinding> nameColumn = new TextColumn<SocketBinding>() {
+        ColumnSortEvent.ListHandler<SocketBinding> sortHandler =
+                new ColumnSortEvent.ListHandler<SocketBinding>(dataProvider.getList());
+
+        Column<SocketBinding, String> nameColumn = new Column<SocketBinding, String>(new TextCell()) {
+            {
+                setFieldUpdater(new FieldUpdater<SocketBinding, String>() {
+
+                    @Override
+                    public void update(int index, SocketBinding object, String value) {
+                        object.setName(value);
+                    }
+                });
+            }
+
             @Override
-            public String getValue(SocketBinding record) {
-                return record.getName();
+            public String getValue(SocketBinding object) {
+                return object.getName();
             }
         };
+
+        nameColumn.setSortable(true);
+        sortHandler.setComparator(nameColumn, new Comparator<SocketBinding>() {
+            @Override
+            public int compare(SocketBinding o1, SocketBinding o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+
 
         ExpressionColumn<SocketBinding> portColumn = new ExpressionColumn<SocketBinding>("port") {
             @Override
@@ -59,9 +87,13 @@ public class SocketTable {
             }
         };
 
+
         table.addColumn(nameColumn, "Name");
         table.addColumn(portColumn, "Port");
         table.addColumn(mcastColumn, "MCast Port");
+
+        table.addColumnSortHandler(sortHandler);
+        table.getColumnSortList().push(nameColumn);
 
         return table;
     }
@@ -71,8 +103,14 @@ public class SocketTable {
     }
 
     public void updateFrom(String groupName, List<SocketBinding> bindings) {
-        dataProvider.setList(bindings);
+
+        List<SocketBinding> list = dataProvider.getList();
+        list.clear(); // cannot call setList() as that breaks the sort handler
+        list.addAll(bindings);
+
         if(!bindings.isEmpty() && table.getSelectionModel()!=null)
             table.getSelectionModel().setSelected(bindings.get(0), true);
+
+        ColumnSortEvent.fire(table, table.getColumnSortList());
     }
 }
