@@ -40,10 +40,9 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
-import org.jboss.as.console.client.shared.subsys.ejb.mdb.model.MessageDrivenBeans;
-import org.jboss.as.console.client.shared.subsys.ejb.pool.model.EJBPool;
-import org.jboss.as.console.client.shared.subsys.ejb.service.model.TimerService;
-import org.jboss.as.console.client.shared.subsys.ejb.session.model.SessionBeans;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -58,10 +57,12 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvid
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiConfigAdminData;
-import org.jboss.as.console.client.shared.subsys.osgi.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.Bundle;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -124,21 +125,6 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     public AutoBean<PoolConfig> poolConfig() {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public AutoBean<SessionBeans> sessionBeans() {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public AutoBean<MessageDrivenBeans> messageDrivenBeans() {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public AutoBean<EJBPool> ejbPool() {
         throw new RuntimeException("not implemented");
     }
 
@@ -258,6 +244,16 @@ public class BeanFactoryImpl implements BeanFactory {
     }
 
     @Override
+    public AutoBean<EJB3Subsystem> ejb3Subsystem() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<StrictMaxBeanPool> strictMaxBeanPool() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
     public AutoBean<OSGiSubsystem> osgiSubsystem() {
         throw new RuntimeException("not implemented");
     }
@@ -269,6 +265,16 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public AutoBean<OSGiConfigAdminData> osgiConfigAdminData() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<Bundle> osgiBundle() {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public AutoBean<ThreadFactory> threadFactory() {
         throw new RuntimeException("not implemented");
     }
 
