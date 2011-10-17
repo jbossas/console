@@ -27,6 +27,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ProfileStoreImpl;
 import org.jboss.as.console.client.domain.model.impl.ServerGroupStoreImpl;
+import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.model.BeanFactoryImpl;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -36,6 +37,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -63,5 +65,7 @@ public class TestModule extends AbstractModule {
         bind(HostInformationStore.class).to(HostInfoStoreImpl.class).in(Singleton.class);
         bind(DataSourceStore.class).to(DataSourceStoreImpl.class).in(Singleton.class);
 
+        bind(CurrentProfileSelection.class).in(Singleton.class);
+        bind(Baseadress.class).in(Singleton.class);
     }
 }

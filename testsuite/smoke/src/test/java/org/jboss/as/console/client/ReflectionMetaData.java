@@ -19,14 +19,18 @@
 
 package org.jboss.as.console.client;
 
+import org.jboss.as.console.client.model.AutoBeanStub;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;
+import org.jboss.as.console.client.widgets.forms.Getter;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.Setter;
 import org.jboss.as.console.rebind.forms.AddressDeclaration;
+import org.jboss.as.console.rebind.forms.BindingDeclaration;
 import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
 
 import javax.inject.Inject;
@@ -48,17 +52,18 @@ public class ReflectionMetaData implements PropertyMetaData {
 
     private BeanFactory factory;
     private Map<Class<?>, EntityFactory> factories = new HashMap<Class<?>, EntityFactory>();
+    private Map<Class<?>, Mutator> mutators = new HashMap<Class<?>, Mutator>();
 
     @Inject
     public ReflectionMetaData(BeanFactory factory) {
         this.factory = factory;
 
-        setupFactories();
+        setup();
+
     }
 
-    private void setupFactories() {
-        try
-        {
+    private void setup() {
+        try {
             Class<?> beanFactoryClass =
                     getClass().getClassLoader().loadClass("org.jboss.as.console.client.shared.BeanFactory");
 
@@ -67,32 +72,123 @@ public class ReflectionMetaData implements PropertyMetaData {
 
                 Type returnType = method.getGenericReturnType();
                 if(returnType instanceof ParameterizedType){
+
                     ParameterizedType type = (ParameterizedType) returnType;
                     Type[] typeArguments = type.getActualTypeArguments();
 
                     if(typeArguments[0] instanceof Class)
                     {
                         Class beanTypeClass = (Class) typeArguments[0];
-
-                        factories.put(beanTypeClass, new EntityFactory() {
-                            @Override
-                            public Object create() {
-                                try {
-                                    return method.invoke(null);
-                                } catch (Throwable e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
-
+                        setupMutators(beanTypeClass);
+                        setupFactories(method, beanTypeClass);
                     }
                 }
             }
-
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    private void setupMutators(final Class beanTypeClass) {
+
+        Mutator mut = new Mutator();
+        mutators.put(beanTypeClass, mut);
+
+        List<PropertyMetaDataGenerator.PropBindingDeclarations> bindings = PropertyMetaDataGenerator.mapProperties(beanTypeClass);
+
+        for(PropertyMetaDataGenerator.PropBindingDeclarations binding : bindings)
+        {
+
+            final BindingDeclaration bindDecl = binding.getBindingDeclaration();
+            //if(bindDecl.skip()) continue;
+
+            // create and register setters
+            final Method setter = findMatchingSetter(bindDecl.getJavaName(), beanTypeClass);
+
+            mut.register(bindDecl.getJavaName(), new Setter() {
+                @Override
+                public void invoke(Object entity, Object value) {
+                    try {
+                        if(entity instanceof AutoBeanStub)
+                            setter.invoke(((AutoBeanStub)entity).as(), value);
+                        else
+                            setter.invoke(entity, value);
+                    } catch (Throwable e) {
+                        throw new RuntimeException("Failed to invoke "+setter.getName(), e);
+                    }
+                }
+            });
+
+            final Method getter = findMatchingGetter(bindDecl.getJavaName(), beanTypeClass);
+            mut.register(bindDecl.getJavaName(), new Getter() {
+                @Override
+                public Object invoke(Object entity) {
+                    try {
+
+                        if(entity instanceof AutoBeanStub)
+                            return getter.invoke(((AutoBeanStub)entity).as(), null);
+                        else
+                            return getter.invoke(entity, null);
+
+                    } catch (Throwable e) {
+                        throw new RuntimeException("Failed to invoke "+getter.getName(), e);
+                    }
+                }
+            });
+        }
+    }
+
+    private Method findMatchingSetter(String javaName, Class beanTypeClass) {
+        Method match = null;
+        Method[] methods = beanTypeClass.getMethods();
+        for(Method m : methods) {
+
+            if(m.getName().startsWith("set") && m.getName().toLowerCase().indexOf(javaName.toLowerCase())!=-1)
+            {
+                match = m;
+                break;
+            }
+        }
+
+        if(null==match)
+            throw new IllegalArgumentException("No setter for field '" +javaName + "' on " + beanTypeClass);
+        return match;
+    }
+
+
+    private Method findMatchingGetter(String javaName, Class beanTypeClass) {
+        Method match = null;
+        Method[] methods = beanTypeClass.getMethods();
+        for(Method m : methods) {
+            if(
+                    (m.getName().startsWith("get") || m.getName().startsWith("is"))
+                            && m.getName().toLowerCase().indexOf(javaName.toLowerCase())!=-1)
+            {
+                match = m;
+                break;
+            }
+        }
+
+        if(null==match)
+            throw new IllegalArgumentException("No getter for field '" +javaName + "' on " + beanTypeClass);
+
+        return match;
+    }
+
+    private void setupFactories(final Method method, Class beanTypeClass) {
+        // entity factory
+        factories.put(beanTypeClass, new EntityFactory() {
+            @Override
+            public Object create() {
+                try {
+                    return method.invoke(factory, null);
+
+                } catch (Throwable e) {
+                    throw new RuntimeException("error on "+method.getName(), e);
+                }
+            }
+        });
     }
 
     @Override
@@ -138,7 +234,7 @@ public class ReflectionMetaData implements PropertyMetaData {
 
     @Override
     public Mutator getMutator(Class<?> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return mutators.get(type);
     }
 
 }

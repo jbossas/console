@@ -19,9 +19,10 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.dmr.client.ModelNode;
+
+import javax.inject.Inject;
 
 /**
  * @author Heiko Braun
@@ -29,14 +30,32 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class Baseadress {
 
+    private static CurrentProfileSelection profileSelection;
+
+    @Inject
+    public Baseadress(CurrentProfileSelection profileSelection) {
+        this.profileSelection = profileSelection;
+    }
+
+
     public static ModelNode get() {
         ModelNode baseAddress = new ModelNode();
         baseAddress.setEmptyList();
 
-        CurrentProfileSelection currentProfile = Console.MODULES.getCurrentSelectedProfile();
-        if(currentProfile.getName()!=null)
-            baseAddress.add("profile", currentProfile.getName());
+        if(profileSelection.getName()!=null)
+            baseAddress.add("profile", profileSelection.getName());
 
         return baseAddress;
     }
+
+    public ModelNode getAdress() {
+        ModelNode baseAddress = new ModelNode();
+        baseAddress.setEmptyList();
+
+        if(profileSelection.getName()!=null)
+            baseAddress.add("profile", profileSelection.getName());
+
+        return baseAddress;
+    }
+
 }
