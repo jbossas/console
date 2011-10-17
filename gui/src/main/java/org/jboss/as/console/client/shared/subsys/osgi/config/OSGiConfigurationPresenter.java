@@ -73,7 +73,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
     public static final String OSGI_SUBSYSTEM = "osgi";
 
     public static final String CAPABILITY_RESOURCE = "capability";
-    public static final String FRAMEWORK_PROPERTY_RESOURCE = "framework-property";
+    public static final String FRAMEWORK_PROPERTY_RESOURCE = "property";
 
     public static final String ACTIVATION_ATTRIBUTE = "activation";
     public static final String STARTLEVEL_ATTRIBUTE = "startlevel";
