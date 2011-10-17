@@ -59,12 +59,10 @@ public class SubsystemMetaData {
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
-        groups.put(EJB, new SubsystemGroup(EJB));
         groups.put(SECURITY, new SubsystemGroup(SECURITY));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OSGI, new SubsystemGroup(OSGI));
-        groups.put(INFINISPAN, new SubsystemGroup(INFINISPAN));
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
@@ -73,21 +71,20 @@ public class SubsystemMetaData {
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
 
-        groups.get(EJB).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
-
-        groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet", "web"));
+        groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet/HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
 
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("JMS", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
-        groups.get(CORE).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Deployment Scanners", "deployment-scanner"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", NameTokens.BoundedQueueThreadPoolPresenter));
 
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
@@ -96,7 +93,7 @@ public class SubsystemMetaData {
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Runtime", "osgi", NameTokens.OSGiRuntimePresenter));
 
-        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.CacheContainerPresenter));
+        groups.get(OTHER).getItems().add(new SubsystemGroupItem("Infinispan", NameTokens.CacheContainerPresenter));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
