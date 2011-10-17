@@ -19,15 +19,24 @@
 
 package org.jboss.as.console.client;
 
+import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.rebind.forms.AddressDeclaration;
 import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
 
+import javax.inject.Inject;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -35,6 +44,57 @@ import java.util.List;
  * @date 4/27/11
  */
 public class ReflectionMetaData implements PropertyMetaData {
+
+
+    private BeanFactory factory;
+    private Map<Class<?>, EntityFactory> factories = new HashMap<Class<?>, EntityFactory>();
+
+    @Inject
+    public ReflectionMetaData(BeanFactory factory) {
+        this.factory = factory;
+
+        setupFactories();
+    }
+
+    private void setupFactories() {
+        try
+        {
+            Class<?> beanFactoryClass =
+                    getClass().getClassLoader().loadClass("org.jboss.as.console.client.shared.BeanFactory");
+
+            for(final Method method : beanFactoryClass.getDeclaredMethods())
+            {
+
+                Type returnType = method.getGenericReturnType();
+                if(returnType instanceof ParameterizedType){
+                    ParameterizedType type = (ParameterizedType) returnType;
+                    Type[] typeArguments = type.getActualTypeArguments();
+
+                    if(typeArguments[0] instanceof Class)
+                    {
+                        Class beanTypeClass = (Class) typeArguments[0];
+
+                        factories.put(beanTypeClass, new EntityFactory() {
+                            @Override
+                            public Object create() {
+                                try {
+                                    return method.invoke(null);
+                                } catch (Throwable e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
+
+                    }
+                }
+            }
+
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public List<PropertyBinding> getBindingsForType(Class<?> type) {
         List<PropertyBinding> bindings = new ArrayList<PropertyBinding>();
@@ -42,15 +102,16 @@ public class ReflectionMetaData implements PropertyMetaData {
         List<PropertyMetaDataGenerator.PropBindingDeclarations> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
         for(PropertyMetaDataGenerator.PropBindingDeclarations decl : bindingDeclarations)
         {
-            bindings.add(
-                    new PropertyBinding(
-                            decl.getBindingDeclaration().getJavaName(),
-                            decl.getBindingDeclaration().getDetypedName(),
-                            decl.getBindingDeclaration().getJavaTypeName(),
-                            decl.getBindingDeclaration().key(),
-                            decl.getBindingDeclaration().expr()
-                    )
+            PropertyBinding propertyBinding = new PropertyBinding(
+                    decl.getBindingDeclaration().getJavaName(),
+                    decl.getBindingDeclaration().getDetypedName(),
+                    decl.getBindingDeclaration().getJavaTypeName(),
+                    decl.getBindingDeclaration().key(),
+                    decl.getBindingDeclaration().expr()
             );
+
+
+            bindings.add(propertyBinding);
         }
 
         return bindings;
@@ -58,12 +119,21 @@ public class ReflectionMetaData implements PropertyMetaData {
 
     @Override
     public BeanMetaData getBeanMetaData(Class<?> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        AddressDeclaration address = PropertyMetaDataGenerator.parseAddress(type);
+        AddressBinding addressBinding = new AddressBinding();
+        for(String[] tuple : address.getAddress())
+        {
+            addressBinding.add(tuple[0], tuple[1]);
+        }
+
+        BeanMetaData metaData = new BeanMetaData(type, addressBinding, getBindingsForType(type));
+        return metaData;
     }
 
     @Override
     public <T> EntityFactory<T> getFactory(Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return factories.get(type);
     }
 
     @Override

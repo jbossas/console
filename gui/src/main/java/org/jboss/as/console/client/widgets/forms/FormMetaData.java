@@ -45,7 +45,7 @@ public class FormMetaData {
     FormMetaData(BeanMetaData beanMetaData) {
         for (PropertyBinding binding : beanMetaData.getProperties()) {
            String subgroup = binding.getSubgroup();
-           if (subgroup.equals("")) {
+           if ("".equals(subgroup)) {
                baseAttributes.add(binding);
            } else {
                List<PropertyBinding> subgroupData = groupedAttributes.get(subgroup);

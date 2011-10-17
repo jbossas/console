@@ -13,6 +13,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <ballroom.version>1.0.0.Beta10</ballroom.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -28,6 +32,13 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.ballroom</groupId>
+            <artifactId>widgets</artifactId>
+            <version>${ballroom.version}</version>
             <scope>test</scope>
         </dependency>
 
