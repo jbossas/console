@@ -47,7 +47,8 @@ public class ReflectionMetaData implements PropertyMetaData {
                             decl.getBindingDeclaration().getJavaName(),
                             decl.getBindingDeclaration().getDetypedName(),
                             decl.getBindingDeclaration().getJavaTypeName(),
-                            decl.getBindingDeclaration().key()
+                            decl.getBindingDeclaration().key(),
+                            decl.getBindingDeclaration().expr()
                     )
             );
         }

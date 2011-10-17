@@ -71,16 +71,6 @@ public class ServerImpl implements Server {
     }
 
     @Override
-    public boolean isStarted() {
-        return isStarted;
-    }
-
-    @Override
-    public void setStarted(boolean b) {
-        this.isStarted =b;
-    }
-
-    @Override
     public String getSocketBinding() {
         return socketBinding;
     }
