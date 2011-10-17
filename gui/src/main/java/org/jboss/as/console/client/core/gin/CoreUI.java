@@ -62,7 +62,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
-import org.jboss.as.console.client.shared.expr.ExpressionManager;
+import org.jboss.as.console.client.shared.expr.ExpressionResolver;
 import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
@@ -128,7 +128,7 @@ public interface CoreUI extends Ginjector {
 
     HelpSystem getHelpSystem();
 
-    ExpressionManager getExpressionManager();
+    ExpressionResolver getExpressionManager();
 
     // ----------------------------------------------------------------------
 

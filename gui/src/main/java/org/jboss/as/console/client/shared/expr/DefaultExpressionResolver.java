@@ -15,14 +15,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 10/4/11
  */
-public class DefaultExpressionManagerImpl extends ExpressionManager {
+public class DefaultExpressionResolver extends ExpressionResolver {
 
     private DispatchAsync dispatcher;
     private LoadPropertiesCmd loadPropCmd;
     private BeanFactory factory;
 
     @Inject
-    public DefaultExpressionManagerImpl(
+    public DefaultExpressionResolver(
             DispatchAsync dispatcher, BeanFactory factory) {
         this.dispatcher = dispatcher;
         this.factory = factory;

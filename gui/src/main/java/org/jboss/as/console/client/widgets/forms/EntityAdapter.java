@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelType;
@@ -117,8 +117,7 @@ public class EntityAdapter<T> {
                     {
                         String exprValue = actualPayload.get(propBinding.getDetypedName()).asString();
 
-                        Map<String, String> exprMap = Form.getExpressions(entity);
-                        exprMap.put(propBinding.getJavaName(), exprValue);
+                        ExpressionAdapter.setExpressionValue(entity, propBinding.getJavaName(), exprValue);
 
                         continue; // expression have precedence over real values
 
@@ -299,9 +298,10 @@ public class EntityAdapter<T> {
              */
             if(property.doesSupportExpression())
             {
-                Map<String, String> exprMap = Form.getExpressions(entity);
+                String exprValue = ExpressionAdapter.getExpressionValue(
+                        entity, property.getJavaName()
+                );
 
-                String exprValue = exprMap.get(property.getJavaName());
                 if(exprValue!=null)
                     operation.get(property.getDetypedName()).setExpression(exprValue);
 

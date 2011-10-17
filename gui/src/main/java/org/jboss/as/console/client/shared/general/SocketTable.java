@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.general;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.shared.expr.ExpressionColumn;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
@@ -38,9 +39,9 @@ public class SocketTable {
             }
         };
 
-        TextColumn<SocketBinding> portColumn = new TextColumn<SocketBinding>() {
+        ExpressionColumn<SocketBinding> portColumn = new ExpressionColumn<SocketBinding>("port") {
             @Override
-            public String getValue(SocketBinding record) {
+            public String getRealValue(SocketBinding record) {
                 if(record.getPort()>0)
                     return String.valueOf(record.getPort()+portOffset);
                 else
