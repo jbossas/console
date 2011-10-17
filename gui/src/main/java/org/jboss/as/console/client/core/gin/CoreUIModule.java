@@ -103,6 +103,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
@@ -169,6 +170,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(HelpSystem.class).in(Singleton.class);
 
         bind(ExpressionResolver.class).to(DefaultExpressionResolver.class).in(Singleton.class);
+        bind(Baseadress.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 

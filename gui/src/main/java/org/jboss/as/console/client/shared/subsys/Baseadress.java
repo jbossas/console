@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.dmr.client.ModelNode;
 
@@ -37,15 +38,9 @@ public class Baseadress {
         this.profileSelection = profileSelection;
     }
 
-
+    @Deprecated
     public static ModelNode get() {
-        ModelNode baseAddress = new ModelNode();
-        baseAddress.setEmptyList();
-
-        if(profileSelection.getName()!=null)
-            baseAddress.add("profile", profileSelection.getName());
-
-        return baseAddress;
+        return Console.MODULES.getBaseadress().getAdress();
     }
 
     public ModelNode getAdress() {

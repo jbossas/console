@@ -70,6 +70,7 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.jvm.VMMetricsPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
@@ -129,6 +130,7 @@ public interface CoreUI extends Ginjector {
     HelpSystem getHelpSystem();
 
     ExpressionResolver getExpressionManager();
+    Baseadress getBaseadress();
 
     // ----------------------------------------------------------------------
 
