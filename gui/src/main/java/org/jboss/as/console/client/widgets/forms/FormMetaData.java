@@ -41,6 +41,7 @@ public class FormMetaData {
     
     private List<PropertyBinding> baseAttributes = new ArrayList<PropertyBinding>();
     private Map<String, List<PropertyBinding>> groupedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
+    private boolean isFlattened = false;
     
     FormMetaData(BeanMetaData beanMetaData) {
         for (PropertyBinding binding : beanMetaData.getProperties()) {
@@ -55,6 +56,8 @@ public class FormMetaData {
                }
                subgroupData.add(binding);
            }
+           
+           if (binding.getDetypedName().contains("/")) isFlattened = true;
         }
         
         Collections.sort(baseAttributes, orderComparator);
@@ -84,6 +87,16 @@ public class FormMetaData {
      */
     public Set<String> getGroupNames() {
         return groupedAttributes.keySet();
+    }
+    
+    /**
+     * Returns true if the Form contains one or more attributes that are accessed as
+     * sub-attributes.
+     * 
+     * @return <code>true</code> if the structure has been flattened, <code>false</code> otherwise.
+     */
+    public boolean isFlattened() {
+        return this.isFlattened;
     }
     
     /**
