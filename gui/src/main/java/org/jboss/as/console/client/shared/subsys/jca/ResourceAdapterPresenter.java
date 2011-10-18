@@ -51,8 +51,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 7/19/11
  */
 public class ResourceAdapterPresenter
-        extends Presenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy>
-        implements PropertyManagement {
+        extends Presenter<ResourceAdapterPresenter.MyView, ResourceAdapterPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
@@ -68,6 +67,10 @@ public class ResourceAdapterPresenter
 
     public BeanFactory getFactory() {
         return factory;
+    }
+
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
     }
 
 
@@ -304,7 +307,7 @@ public class ResourceAdapterPresenter
             createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
             createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
             createProp.get(ADDRESS).add("config-properties", prop.getKey());
-            createProp.get("value", prop.getValue());
+            createProp.get("value").set(prop.getValue());
 
             steps.add(createProp);
 
@@ -336,29 +339,19 @@ public class ResourceAdapterPresenter
 
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-1379
-    @Override
-    public void onCreateProperty(final String ref, final PropertyRecord prop) {
+    public void createProperty(final ResourceAdapter ra, final PropertyRecord prop) {
         closePropertyDialoge();
 
-        AddressBinding address = raMetaData.getAddress();
-        ModelNode operation = address.asResource(Baseadress.get(), ref);
-        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        ModelNode createProp = new ModelNode();
+        createProp.get(OP).set(ADD);
+        createProp.get(ADDRESS).set(Baseadress.get());
+        createProp.get(ADDRESS).add("subsystem","resource-adapters");
+        createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        createProp.get(ADDRESS).add("config-properties", prop.getKey());
+        createProp.get("value").set(prop.getValue());
 
-        ResourceAdapter ra = resolveAdapter(ref);
-
-        // poperties
-        ModelNode cfg = new ModelNode();
-        cfg.setEmptyList();
-        for(PropertyRecord cfgProp : ra.getProperties())
-        {
-            cfg.add(cfgProp.getKey(), cfgProp.getValue());
-        }
-
-        operation.get(NAME).set("config-properties");
-        operation.get(VALUE).set(cfg);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(createProp), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -380,35 +373,38 @@ public class ResourceAdapterPresenter
 
     }
 
-    private ResourceAdapter resolveAdapter(String reference)
-    {
-        ResourceAdapter match = null;
-        for(ResourceAdapter ra : resourceAdapters)
-        {
-            if(ra.getArchive().equals(reference))
-            {
-                match = ra;
-                break;
+    public void onDeleteProperty(ResourceAdapter ra, final PropertyRecord prop) {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem","resource-adapters");
+        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                loadResourceAdapter();
             }
-        }
 
-        return match;
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(result))
+                    Console.info(Console.MESSAGES.deleted("property " + prop.getKey()));
+                else
+                    Console.error(Console.MESSAGES.deletionFailed("property " + prop.getKey()), result.toString());
+
+                loadResourceAdapter();
+            }
+        });
     }
 
-    @Override
-    public void onDeleteProperty(String ref, PropertyRecord prop) {
-        Console.error("Not implemented");
-
-        // TODO: https://issues.jboss.org/browse/AS7-1381
-    }
-
-    @Override
-    public void onChangeProperty(String ref, PropertyRecord prop) {
-        Console.error("Not implemented yet!");
-    }
-
-    @Override
-    public void launchNewPropertyDialoge(String reference) {
+    public void launchNewPropertyDialoge(final ResourceAdapter ra) {
         propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Configuration Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
@@ -420,17 +416,38 @@ public class ResourceAdapterPresenter
         });
 
         propertyWindow.setWidget(
-                new NewPropertyWizard(this, reference).asWidget()
+                new NewPropertyWizard(new PropertyManagement() {
+                    @Override
+                    public void onCreateProperty(String reference, PropertyRecord prop) {
+                        createProperty(ra, prop);
+                    }
+
+                    @Override
+                    public void onDeleteProperty(String reference, PropertyRecord prop) {
+
+                    }
+
+                    @Override
+                    public void onChangeProperty(String reference, PropertyRecord prop) {
+
+                    }
+
+                    @Override
+                    public void launchNewPropertyDialoge(String reference) {
+
+                    }
+
+                    @Override
+                    public void closePropertyDialoge() {
+                        propertyWindow.hide();
+                    }
+                }, "").asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);
         propertyWindow.center();
     }
 
-    @Override
-    public void closePropertyDialoge() {
-        propertyWindow.hide();
-    }
 
     public void loadPoolConfig(final ResourceAdapter ra) {
 

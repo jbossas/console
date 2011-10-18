@@ -76,7 +76,8 @@ public class NewPropertyWizard {
                     public void onClick(ClickEvent event) {
                          // save
                         PropertyRecord property = form.getUpdatedEntity();
-                        presenter.onCreateProperty(reference, property);
+                        if(!form.validate().hasErrors())
+                            presenter.onCreateProperty(reference, property);
                     }
                 },
                 new ClickHandler() {
