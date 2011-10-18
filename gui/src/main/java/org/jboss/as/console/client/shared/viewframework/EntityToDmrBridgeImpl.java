@@ -50,7 +50,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected EntityAdapter<T> entityAdapter;
     protected DispatchAsync dispatcher;
     protected FrameworkView view;
-    protected FormMetaData attributes;
+    protected FormMetaData formMetaData;
     protected List<T> entityList = Collections.EMPTY_LIST;
     protected String nameOfLastEdited;
     
@@ -69,7 +69,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         this.type = type;
         this.view = view;
         this.dispatcher = dispatcher;
-        this.attributes = propertyMetadata.getBeanMetaData(type).getFormMetaData();
+        this.formMetaData = propertyMetadata.getBeanMetaData(type).getFormMetaData();
     }
 
     /**
@@ -90,7 +90,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public FormMetaData getEntityAttributes() {
-        return this.attributes;
+        return this.formMetaData;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         operation.get(OP).set(ADD);
 
         Map<String, Object> changedValues = form.getChangedValues();
-        for (PropertyBinding attrib : attributes.getBaseAttributes()) {
+        for (PropertyBinding attrib : formMetaData.getBaseAttributes()) {
             if (changedValues.containsKey(attrib.getJavaName())) {
                 operation.get(attrib.getDetypedName()).set(changedValues.get(attrib.getJavaName()).toString());
             } else if (attrib.getDefaultValue() != null) {
@@ -179,7 +179,10 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
         ModelNode operation = address.asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(RECURSIVE).set(true);
+        
+        if (formMetaData.isFlattened()) {
+            operation.get(RECURSIVE).set(true);
+        }
 
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
