@@ -143,19 +143,22 @@ public class ResourceAdapterPresenter
                         ra.setConnectionClass(connection.get("class-name").asString());
                         ra.setPoolName(connection.get("pool-name").asString());
 
-                        List<Property> properties = connection.get("config-properties").asPropertyList();
-                        List<PropertyRecord> props = new ArrayList<PropertyRecord>(properties.size());
-                        for(Property prop : properties)
+                        List<PropertyRecord> props = new ArrayList<PropertyRecord>();
+                        if(connection.hasDefined("config-properties"))
                         {
-                            ModelNode propWrapper = prop.getValue();
-                            String value = propWrapper.get("value").asString();
+                            List<Property> properties = connection.get("config-properties").asPropertyList();
+                            for(Property prop : properties)
+                            {
+                                ModelNode propWrapper = prop.getValue();
+                                String value = propWrapper.get("value").asString();
 
-                            PropertyRecord propertyRepresentation = factory.property().as();
-                            propertyRepresentation.setKey(prop.getName());
-                            propertyRepresentation.setValue(value);
-                            props.add(propertyRepresentation);
+                                PropertyRecord propertyRepresentation = factory.property().as();
+                                propertyRepresentation.setKey(prop.getName());
+                                propertyRepresentation.setValue(value);
+                                props.add(propertyRepresentation);
+                            }
+
                         }
-
                         ra.setProperties(props);
 
                         resourceAdapters.add(ra);
@@ -209,26 +212,16 @@ public class ResourceAdapterPresenter
 
     public void onSave(final String name, Map<String, Object> changedValues) {
 
-        getView().setEnabled(false);
-
-        if(changedValues.isEmpty())
-        {
-            Console.warning("No changes saved!");
-            return;
-        }
-
         AddressBinding address = raMetaData.getAddress();
         ModelNode addressModel = address.asResource(Baseadress.get(), name);
         addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
 
         EntityAdapter<ResourceAdapter> adapter = new EntityAdapter<ResourceAdapter>(
-            ResourceAdapter.class, metaData
+                ResourceAdapter.class, metaData
         );
 
         ModelNode operation = adapter.fromChangeset(changedValues, addressModel);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
@@ -272,30 +265,55 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
-        AddressBinding address = raMetaData.getAddress();
-        ModelNode operation = address.asResource(Baseadress.get(), ra.getArchive());
-        operation.get(OP).set(ADD);
-        operation.get("archive").set(ra.getArchive());
-        operation.get("transaction-support").set(ra.getTransactionSupport());
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
 
-        // submodel
-        ModelNode conDef = new ModelNode();
-        conDef.get("class-name").set(ra.getConnectionClass());
-        conDef.get("jndi-name").set(ra.getJndiName());
-        conDef.get("pool-name").set(ra.getPoolName());
+        List<ModelNode> steps = new ArrayList<ModelNode>();
 
-        List<ModelNode> list = new ArrayList<ModelNode>();
-        list.add(conDef);
-        operation.get("connection-definitions").set(list);
+        // the top level ra element. this step may fail (if exists already)
+        ModelNode createParent = new ModelNode();
+        createParent.get(OP).set(ADD);
+        createParent.get(ADDRESS).set(Baseadress.get());
+        createParent.get(ADDRESS).add("subsystem","resource-adapters");
+        createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        createParent.get("archive").set(ra.getArchive());
 
-        // poperties
-        operation.get("config-properties").setEmptyList();
+        steps.add(createParent);
+
+        // the specific connection definition
+        ModelNode createConnection = new ModelNode();
+        createConnection.get(OP).set(ADD);
+        createConnection.get(ADDRESS).set(Baseadress.get());
+        createConnection.get(ADDRESS).add("subsystem","resource-adapters");
+        createConnection.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        createConnection.get("jndi-name").set(ra.getJndiName());
+        createConnection.get("class-name").set(ra.getConnectionClass());
+
+        steps.add(createConnection);
+
+        // connection properties
+
         for(PropertyRecord prop : ra.getProperties())
         {
-            operation.get("config-properties").add(prop.getKey(), prop.getValue());
+            ModelNode createProp = new ModelNode();
+            createProp.get(OP).set(ADD);
+            createProp.get(ADDRESS).set(Baseadress.get());
+            createProp.get(ADDRESS).add("subsystem","resource-adapters");
+            createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
+            createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+            createProp.get(ADDRESS).add("config-properties", prop.getKey());
+            createProp.get("value", prop.getValue());
+
+            steps.add(createProp);
+
         }
+        operation.get(STEPS).set(steps);
+
 
         System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -438,6 +456,7 @@ public class ResourceAdapterPresenter
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
+                System.out.println(response);
                 ModelNode payload = response.get(RESULT).asObject();
 
                 PoolConfig poolConfig = factory.poolConfig().as();

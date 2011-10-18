@@ -85,7 +85,7 @@ public class AdapterDetails {
 
         layout.add(form.asWidget());
 
-        form.setEnabled(false );
+        form.setEnabled(false   );
 
     }
 
