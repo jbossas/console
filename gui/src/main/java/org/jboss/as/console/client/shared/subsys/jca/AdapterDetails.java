@@ -58,9 +58,7 @@ public class AdapterDetails {
         // ----
 
         TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem poolItem = new TextBoxItem("poolName", "Pool");
-        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
-        TextItem archiveItem = new TextItem("archive", "Archive");
+        TextItem jndiItem = new TextItem("jndiName", "JNDI");
 
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);
@@ -69,7 +67,7 @@ public class AdapterDetails {
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
 
 
-        form.setFields(nameItem, jndiItem, poolItem, archiveItem);
+        form.setFields(nameItem, jndiItem);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), txItem, classItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
@@ -87,7 +85,7 @@ public class AdapterDetails {
 
         layout.add(form.asWidget());
 
-        form.setEnabled(false   );
+        form.setEnabled(false );
 
     }
 

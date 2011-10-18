@@ -33,7 +33,6 @@ import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -108,54 +107,62 @@ public class ResourceAdapterPresenter
 
     private void loadResourceAdapter() {
 
-        AddressBinding address = raMetaData.getAddress();
-        ModelNode operation = address.asSubresource(Baseadress.get());
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+        operation.get(ADDRESS).add("resource-adapter", "*");
+        operation.get(RECURSIVE).set(true);
+
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse response) {
                 ModelNode result = ModelNode.fromBase64(response.getResponseText());
 
-                List<Property> props = result.get(RESULT).asPropertyList();
-                List<ResourceAdapter> adapters = new ArrayList<ResourceAdapter>(props.size());
+                List<ModelNode> children = result.get(RESULT).asList();
+                List<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>(children.size());
 
-                for(Property prop : props) {
-                    String name = prop.getName();
-                    ModelNode model = prop.getValue();
+                for(ModelNode child : children)
+                {
+                    ModelNode raConfig = child.get(RESULT);
+                    System.out.println(raConfig);
 
-                    ModelNode connDef = model.get("connection-definitions").asList().get(0);
+                    // for each connection definition create an RA representation (archive+jndi=key)
                     ResourceAdapter ra = factory.resourceAdapter().as();
-                    ra.setName(name);
+                    ra.setArchive(raConfig.get("archive").asString());
+                    ra.setName(ra.getArchive());
 
-                    ra.setJndiName(connDef.get("jndi-name").asString());
-                    ra.setConnectionClass(connDef.get("class-name").asString());
-                    ra.setPoolName(connDef.get("pool-name").asString());
-
-                    ra.setTransactionSupport(model.get("transaction-support").asString());
-                    ra.setArchive(model.get("archive").asString());
-
-                    if(model.hasDefined("config-properties"))
+                    List<Property> conDefs = raConfig.get("connection-definitions").asPropertyList();
+                    for(Property conDef : conDefs)
                     {
-                        List<Property> config = model.get("config-properties").asPropertyList();
-                        List<PropertyRecord> propertyList = new ArrayList<PropertyRecord>(config.size());
-                        for(Property cfg : config) {
-                            PropertyRecord propModel = factory.property().as();
-                            propModel.setKey(cfg.getName());
-                            propModel.setValue(cfg.getValue().asString());
+                        ModelNode connection = conDef.getValue();
+                        ra.setJndiName(connection.get("jndi-name").asString());
+                        ra.setEnabled(connection.get("enabled").asBoolean());
 
-                            propertyList.add(propModel);
+                        ra.setConnectionClass(connection.get("class-name").asString());
+                        ra.setPoolName(connection.get("pool-name").asString());
+
+                        List<Property> properties = connection.get("config-properties").asPropertyList();
+                        List<PropertyRecord> props = new ArrayList<PropertyRecord>(properties.size());
+                        for(Property prop : properties)
+                        {
+                            ModelNode propWrapper = prop.getValue();
+                            String value = propWrapper.get("value").asString();
+
+                            PropertyRecord propertyRepresentation = factory.property().as();
+                            propertyRepresentation.setKey(prop.getName());
+                            propertyRepresentation.setValue(value);
+                            props.add(propertyRepresentation);
                         }
 
-                        ra.setProperties(propertyList);
+                        ra.setProperties(props);
+
+                        resourceAdapters.add(ra);
                     }
-
-                    adapters.add(ra);
-
                 }
 
-                resourceAdapters = adapters;
-                getView().setAdapters(adapters);
+                getView().setAdapters(resourceAdapters);
 
             }
         });
@@ -245,10 +252,6 @@ public class ResourceAdapterPresenter
         });
     }
 
-    public void onEdit(ResourceAdapter editedEntity) {
-        getView().setEnabled(true);
-    }
-
     public void launchNewAdapterWizard() {
         window = new DefaultWindow(Console.MESSAGES.createTitle("resource adapter"));
         window.setWidth(480);
@@ -292,6 +295,7 @@ public class ResourceAdapterPresenter
             operation.get("config-properties").add(prop.getKey(), prop.getValue());
         }
 
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -410,11 +414,15 @@ public class ResourceAdapterPresenter
         propertyWindow.hide();
     }
 
-    public void loadPoolConfig(final String name) {
+    public void loadPoolConfig(final ResourceAdapter ra) {
 
 
-        AddressBinding address = raMetaData.getAddress();
-        ModelNode operation = address.asResource(Baseadress.get(), name);
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "resource-adapters");
+        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
 
@@ -454,22 +462,24 @@ public class ResourceAdapterPresenter
                 else
                     poolConfig.setPoolStrictMin(false);
 
-                getView().setPoolConfig(name, poolConfig);
+                getView().setPoolConfig(ra.getArchive(), poolConfig);
             }
         });
     }
 
-    public void onSavePoolConfig(final String editedName, Map<String, Object> changeset) {
+    public void onSavePoolConfig(final ResourceAdapter ra, Map<String, Object> changeset) {
 
-        AddressBinding address = raMetaData.getAddress();
-        ModelNode addressModel = address.asResource(Baseadress.get(), editedName);
-        addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        ModelNode proto = new ModelNode();
+        proto.get(ADDRESS).set(Baseadress.get());
+        proto.get(ADDRESS).add("subsystem", "resource-adapters");
+        proto.get(ADDRESS).add("resource-adapter", ra.getArchive());
+        proto.get(ADDRESS).add("connection-definitions", ra.getJndiName());
 
         EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(
                 PoolConfig.class, metaData
         );
 
-        ModelNode operation = adapter.fromChangeset(changeset, addressModel);
+        ModelNode operation = adapter.fromChangeset(changeset, proto);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -485,21 +495,21 @@ public class ResourceAdapterPresenter
                 if(response.getUnderlying())
                     Console.info(Console.MESSAGES.saved("pool settings"));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("pool settings "+editedName), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ra.getArchive()), response.getResponse().toString());
 
-                loadPoolConfig(editedName);
+                loadPoolConfig(ra);
             }
         });
     }
 
-    public void onDeletePoolConfig(final String editedName, PoolConfig entity) {
+    public void onDeletePoolConfig(final ResourceAdapter ra, PoolConfig entity) {
         Map<String, Object> resetValues = new HashMap<String, Object>();
         resetValues.put("minPoolSize", 0);
         resetValues.put("maxPoolSize", 20);
         resetValues.put("poolStrictMin", false);
         resetValues.put("poolPrefill", false);
 
-        onSavePoolConfig(editedName, resetValues);
+        onSavePoolConfig(ra, resetValues);
 
     }
 

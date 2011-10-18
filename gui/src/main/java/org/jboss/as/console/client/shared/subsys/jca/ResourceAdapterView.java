@@ -40,7 +40,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     private CellTable<ResourceAdapter> table;
     private ListDataProvider<ResourceAdapter> dataProvider;
     private AdapterDetails detailsPanel;
-    private AdapterConfigDetails configPanel;
+    private AdapterConfigProperties configPanel;
     private PoolConfigurationView poolConfig;
 
     @Override
@@ -126,16 +126,8 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
             }
         };
 
-        TextColumn<ResourceAdapter> poolColumn = new TextColumn<ResourceAdapter>() {
-            @Override
-            public String getValue(ResourceAdapter record) {
-                return record.getPoolName();
-            }
-        };
-
         table.addColumn(nameColumn, "Name");
         table.addColumn(jndiNameColumn, "JNDI Name");
-        table.addColumn(poolColumn, "Pool");
 
 
         vpanel.add(table);
@@ -157,8 +149,8 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         detailsPanel.getForm().bind(table);
         bottomPanel.add(detailsPanel.asWidget(), "Attributes");
 
-        configPanel = new AdapterConfigDetails(presenter);
-        bottomPanel.add(configPanel.asWidget(), "Configuration");
+        configPanel = new AdapterConfigProperties(presenter);
+        bottomPanel.add(configPanel.asWidget(), "Properties");
 
         final SingleSelectionModel<ResourceAdapter> selectionModel =
                 (SingleSelectionModel<ResourceAdapter>)table.getSelectionModel();
@@ -173,12 +165,12 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
             public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
-                presenter.onSavePoolConfig(parentName, changeset);
+                presenter.onSavePoolConfig(getCurrentSelection(), changeset);
             }
 
             @Override
             public void onResetPoolConfig(String parentName, PoolConfig entity) {
-                presenter.onDeletePoolConfig(parentName, entity);
+                presenter.onDeletePoolConfig(getCurrentSelection(), entity);
             }
         });
 
@@ -187,7 +179,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ResourceAdapter selectedObject = ((SingleSelectionModel<ResourceAdapter >) table.getSelectionModel()).getSelectedObject();
-                presenter.loadPoolConfig(selectedObject.getName());
+                presenter.loadPoolConfig(selectedObject);
             }
         });
 
@@ -199,6 +191,11 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
 
         return layout;
+    }
+
+    private ResourceAdapter getCurrentSelection() {
+        ResourceAdapter selection = ((SingleSelectionModel<ResourceAdapter>) table.getSelectionModel()).getSelectedObject();
+        return selection;
     }
 
     @Override

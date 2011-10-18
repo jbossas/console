@@ -13,7 +13,7 @@ import java.util.List;
 @Address("/subsystem=resource-adapters/resource-adapter={0}")
 public interface ResourceAdapter {
 
-    @Binding(key = true)
+    @Binding(detypedName= "archive")
     String getName();
     void setName(String name);
 
@@ -41,4 +41,7 @@ public interface ResourceAdapter {
     @Binding(skip = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
+
+    void setEnabled(boolean enabled);
+    boolean isEnabled();
 }

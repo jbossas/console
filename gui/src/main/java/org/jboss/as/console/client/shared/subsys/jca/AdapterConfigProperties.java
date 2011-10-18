@@ -9,12 +9,12 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
  * @author Heiko Braun
  * @date 7/19/11
  */
-public class AdapterConfigDetails {
+public class AdapterConfigProperties {
 
     private ResourceAdapterPresenter presenter;
     private PropertyEditor propertyEditor;
 
-    public AdapterConfigDetails(ResourceAdapterPresenter presenter) {
+    public AdapterConfigProperties(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
     }
 
