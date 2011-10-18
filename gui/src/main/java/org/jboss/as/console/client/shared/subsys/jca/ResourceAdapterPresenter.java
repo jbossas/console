@@ -265,6 +265,7 @@ public class ResourceAdapterPresenter
         window.hide();
     }
 
+    // TODO: https://issues.jboss.org/browse/AS7-2148
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
