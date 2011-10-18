@@ -129,7 +129,6 @@ public class ResourceAdapterPresenter
                 for(ModelNode child : children)
                 {
                     ModelNode raConfig = child.get(RESULT);
-                    System.out.println(raConfig);
 
                     // for each connection definition create an RA representation (archive+jndi=key)
                     ResourceAdapter ra = factory.resourceAdapter().as();
@@ -315,9 +314,6 @@ public class ResourceAdapterPresenter
         }
         operation.get(STEPS).set(steps);
 
-
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -474,7 +470,6 @@ public class ResourceAdapterPresenter
 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
 
-                System.out.println(response);
                 ModelNode payload = response.get(RESULT).asObject();
 
                 PoolConfig poolConfig = factory.poolConfig().as();
