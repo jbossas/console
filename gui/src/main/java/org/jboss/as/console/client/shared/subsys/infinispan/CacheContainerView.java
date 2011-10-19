@@ -55,7 +55,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     }
 
     @Override
-    protected String getPluralEntityName() {
+    protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_infinispan_cache_containers();
     }
 

@@ -55,9 +55,9 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
         
-        tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getPluralEntityName());
-        tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getPluralEntityName());
-        tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getPluralEntityName());
+        tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getEntityDisplayName());
+        tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getEntityDisplayName());
+        tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getEntityDisplayName());
         return tabLayoutpanel;
     }
     

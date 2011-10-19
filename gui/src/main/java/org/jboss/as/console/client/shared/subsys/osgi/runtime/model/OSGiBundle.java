@@ -27,7 +27,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author David Bosschaert
  */
 @Address("/subsystem=osgi/bundle={0}")
-public interface Bundle extends NamedEntity {
+public interface OSGiBundle extends NamedEntity {
     @Override
     @Binding(detypedName="id", key=true)
     @FormItem(label="Bundle ID",
@@ -37,7 +37,7 @@ public interface Bundle extends NamedEntity {
     @Override
     public void setName(String name);
 
-    @FormItem(label="State", order=5)
+    @FormItem(label="State", order=6)
     public String getState();
     public void setState(String s);
 
@@ -49,9 +49,13 @@ public interface Bundle extends NamedEntity {
     @Binding(detypedName="startlevel")
     @FormItem(label="Start Level",
               formItemTypeForEdit="NUMBER_BOX",
-              order=4)
+              order=5)
     public int getStartLevel();
     public void setStartLevel(int sl);
+
+    @FormItem(label="Type", order=4)
+    public String getType();
+    public void setType(String type);
 
     @FormItem(label="Version", order=3)
     public String getVersion();

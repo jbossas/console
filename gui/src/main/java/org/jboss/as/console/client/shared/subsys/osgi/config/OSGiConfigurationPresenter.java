@@ -53,7 +53,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
-import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -278,29 +277,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
     }
 
     void onActivationChange(final boolean isLazy) {
-        if (!isLazy) {
-            window = new DefaultWindow(Console.CONSTANTS.common_label_changeActivation());
-            window.setWidth(320);
-            window.setHeight(140);
-            window.setWidget(new MessageWindow(Console.MESSAGES.subsys_osgi_activationWarning(),
-                new MessageWindow.Result() {
-                    @Override
-                    public void result(boolean result) {
-                        closeDialogue();
-                        if (result)
-                            applyActivationChange(isLazy);
-                        else
-                            loadOSGiDetails();
-                    }
-                }).asWidget());
-            window.setGlassEnabled(true);
-            window.center();
-        } else {
-            applyActivationChange(isLazy);
-        }
-    }
-
-    private void applyActivationChange(boolean isLazy) {
         ModelNode operation = createOperation(WRITE_ATTRIBUTE_OPERATION);
         final String stringValue = isLazy ? "lazy" : "eager";
         operation.get(NAME).set(ACTIVATION_ATTRIBUTE);

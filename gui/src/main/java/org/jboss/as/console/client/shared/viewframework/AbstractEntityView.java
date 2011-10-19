@@ -100,7 +100,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * Get the plural name of the Entity to be displayed.
      * @return The Entity name.
      */
-    protected abstract String getPluralEntityName();
+    protected abstract String getEntityDisplayName();
 
     /**
      * This is the default view assembly routine. It simly creates a single
@@ -115,7 +115,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(getPluralEntityName());
+        FakeTabPanel titleBar = new FakeTabPanel(getEntityDisplayName());
         layout.add(titleBar);
 
 
@@ -196,18 +196,18 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The EntityEditor
      */
     protected EntityEditor<T> makeEntityEditor() {
-        EntityDetails<T> scannerDetails = new EntityDetails<T>(getPluralEntityName(),
+        EntityDetails<T> scannerDetails = new EntityDetails<T>(getEntityDisplayName(),
                                                                makeEditEntityDetailsForm(),
                                                                getEntityBridge(),
                                                                address,
                                                                hideButtons);
-        String title = Console.CONSTANTS.common_label_add() + " " + getPluralEntityName();
+        String title = Console.CONSTANTS.common_label_add() + " " + getEntityDisplayName();
         EntityPopupWindow<T> window = new AddEntityWindow<T>(title,
                                                              makeAddEntityForm(),
                                                              getAddress(),
                                                              getEntityBridge());
         DefaultCellTable<T> table = makeEntityTable();
-        return new EntityEditor<T>(getPluralEntityName(), window, table, scannerDetails, hideButtons);
+        return new EntityEditor<T>(getEntityDisplayName(), window, table, scannerDetails, hideButtons);
     }
 
     /**

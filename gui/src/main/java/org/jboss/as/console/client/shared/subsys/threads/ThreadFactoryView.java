@@ -71,7 +71,7 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
     }
 
     @Override
-    protected String getPluralEntityName() {
+    protected String getEntityDisplayName() {
         return "Thread Factories";
     }
 
