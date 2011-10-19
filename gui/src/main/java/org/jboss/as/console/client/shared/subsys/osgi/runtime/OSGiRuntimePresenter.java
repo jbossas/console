@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
@@ -30,7 +29,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -39,7 +37,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -60,9 +57,9 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     public interface MyProxy extends Proxy<OSGiRuntimePresenter>, Place {
     }
 
-    public interface MyView extends View, FrameworkView {
+    public interface MyView extends View {
+        void initialLoad();
         void setPresenter(OSGiRuntimePresenter osGiRuntimePresenter);
-        void loadFramework();
     }
 
     @Inject
@@ -85,16 +82,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
-
         getView().initialLoad();
-
-        // Async to speed up loading
-        Console.schedule(new Command() {
-            @Override
-            public void execute() {
-                getView().loadFramework();
-            }
-        });
     }
 
     @Override
