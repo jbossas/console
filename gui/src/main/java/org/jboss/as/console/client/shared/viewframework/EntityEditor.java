@@ -55,7 +55,6 @@ public class EntityEditor<T> {
     private ToolStrip toolStrip;
 
     private boolean includeTools = true;
-    private boolean alwaysShowTools = false;
 
     /**
      * Create a new Entity.
@@ -92,7 +91,6 @@ public class EntityEditor<T> {
 
     public EntityEditor<T> setIncludeTools(boolean includeTools) {
         this.includeTools = includeTools;
-        this.alwaysShowTools = includeTools;
         return this;
     }
 
@@ -107,7 +105,7 @@ public class EntityEditor<T> {
         if(includeTools)
         {
             toolStrip = createTools();
-            if(toolStrip.hasButtons() || alwaysShowTools)
+            if(toolStrip.hasButtons())
                 panel.add(toolStrip);
         }
 

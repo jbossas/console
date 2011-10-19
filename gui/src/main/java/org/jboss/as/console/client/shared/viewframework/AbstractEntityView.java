@@ -19,11 +19,14 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
+import java.util.EnumSet;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
@@ -37,8 +40,6 @@ import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-
-import java.util.EnumSet;
 
 
 /**
@@ -73,11 +74,11 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected FormMetaData getFormMetaData() {
         return this.formMetaData;
     }
-    
+
     protected AddressBinding getAddress() {
         return this.address;
     }
-    
+
     /**
      * Get the EntityToDmrBridge for the Entity.
      * @return The bridge.
@@ -129,7 +130,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 
-        ToolStrip tools = entityEditor.createTools();
+        ToolStrip tools = createToolStrip();
 
         if(tools.hasButtons())
         {
@@ -169,7 +170,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 
-        ToolStrip tools = entityEditor.createTools();
+        ToolStrip tools = createToolStrip();
 
         if(tools.hasButtons())
         {
@@ -184,6 +185,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         }
 
         return layout;
+    }
+
+    protected ToolStrip createToolStrip() {
+        return entityEditor.createTools();
     }
 
     /**
