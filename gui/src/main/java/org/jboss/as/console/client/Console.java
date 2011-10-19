@@ -28,8 +28,13 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
@@ -70,10 +75,18 @@ public class Console implements EntryPoint {
 
     public void onModuleLoad2() {
 
-        final Image loadingImage = new Image("images/loading_lite.gif");
-        loadingImage.getElement().setAttribute("style", "margin-top:200px;margin-left:auto;margin-right:auto;");
+        final HorizontalPanel loadingPanel = new HorizontalPanel();
+        loadingPanel.setStyleName("loading-panel");
 
-        RootLayoutPanel.get().add(loadingImage);
+        Image loadingImage = new Image("images/loading_lite.gif");
+        Label label = new Label("Loading ...");
+
+        loadingPanel.add(loadingImage);
+        loadingPanel.add(label);
+
+        loadingImage.getElement().getParentElement().setAttribute("style","vertical-align:center;padding:10px");
+        label.getElement().getParentElement().setAttribute("style","font-weight:bold; vertical-align:center;;padding:10px");
+        RootLayoutPanel.get().add(loadingPanel);
 
 
         GWT.runAsync(new RunAsyncCallback() {
@@ -85,7 +98,7 @@ public class Console implements EntryPoint {
                 DelayedBindRegistry.bind(MODULES);
                 bootstrap();
 
-                RootLayoutPanel.get().remove(loadingImage);
+                RootLayoutPanel.get().remove(loadingPanel);
 
                 // google vis API
                 VisualizationUtils.loadVisualizationApi(
