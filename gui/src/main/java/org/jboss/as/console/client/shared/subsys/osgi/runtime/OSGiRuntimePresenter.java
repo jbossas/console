@@ -19,6 +19,9 @@
 package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -27,17 +30,20 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.MessageWindow;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.Bundle;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
@@ -56,6 +62,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
 
     public interface MyView extends View, FrameworkView {
         void setPresenter(OSGiRuntimePresenter osGiRuntimePresenter);
+        void loadFramework();
     }
 
     @Inject
@@ -66,7 +73,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
 
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
-        this.bundleMetaData = propertyMetaData.getBeanMetaData(Bundle.class);
+        this.bundleMetaData = propertyMetaData.getBeanMetaData(OSGiBundle.class);
     }
 
     @Override
@@ -81,6 +88,13 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
 
         getView().initialLoad();
 
+        // Async to speed up loading
+        Console.schedule(new Command() {
+            @Override
+            public void execute() {
+                getView().loadFramework();
+            }
+        });
     }
 
     @Override
@@ -88,15 +102,15 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         revealStrategy.revealInParent(this);
     }
 
-    void startBundle(Bundle bundle) {
+    void startBundle(OSGiBundle bundle) {
         bundleAction(bundle, "start");
     }
 
-    void stopBundle(Bundle bundle) {
+    void stopBundle(OSGiBundle bundle) {
         bundleAction(bundle, "stop");
     }
 
-    private void bundleAction(Bundle bundle, String operationName) {
+    private void bundleAction(OSGiBundle bundle, String operationName) {
         AddressBinding address = bundleMetaData.getAddress();
         ModelNode operation = address.asResource(bundle.getName());
         operation.get(ModelDescriptionConstants.OP).set(operationName);
@@ -104,7 +118,58 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                onReset();
+                getView().initialLoad();
+            }
+        });
+    }
+
+    public void askToActivateSubsystem() {
+        final DefaultWindow window = new DefaultWindow("OSGi Subsystem");
+        window.setWidth(320);
+        window.setHeight(140);
+        window.setWidget(new MessageWindow("The OSGi Subsystem is not active. Click 'OK' to activate it now.",
+            new MessageWindow.Result() {
+                @Override
+                public void result(boolean result) {
+                    window.hide();
+                    if (result)
+                        activateSubsystem();
+                }
+            }).asWidget());
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    protected void activateSubsystem() {
+        // Since it takes a few moments for the subsystem to activate we're showing a window indicating this
+        final DefaultWindow window = new DefaultWindow("OSGi Subsystem");
+        window.setWidth(320);
+        window.setHeight(140);
+        window.setWidget(new HTML("Activating..."));
+        window.setGlassEnabled(true);
+        window.center();
+
+        AddressBinding address = bundleMetaData.getAddress();
+        ModelNode operation = address.asSubresource(); // get an operation on the parent address...
+        operation.get(ModelDescriptionConstants.OP).set("activate");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Timer t = new Timer() {
+                    @Override
+                    public void run() {
+                        window.hide();
+                        onReset();
+                    }
+                };
+                t.schedule(4000);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                window.hide();
+                super.onFailure(caught);
             }
         });
     }

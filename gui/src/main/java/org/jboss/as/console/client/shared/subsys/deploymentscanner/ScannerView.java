@@ -55,7 +55,7 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
     }
 
     @Override
-    protected String getPluralEntityName() {
+    protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_deploymentscanner_scanners();
     }
 

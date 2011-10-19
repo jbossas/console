@@ -16,14 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb3;
+package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import java.util.EnumSet;
 
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
+import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
@@ -37,49 +37,49 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 /**
  * @author David Bosschaert
  */
-public class TimerServiceView extends AbstractEntityView<TimerService> {
-    private final EntityToDmrBridge<TimerService> bridge;
+public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
+    private SingleEntityToDmrBridgeImpl<OSGiFramework> bridge;
 
-    public TimerServiceView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(TimerService.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD));
-        bridge = new SingleEntityToDmrBridgeImpl<TimerService>(propertyMetaData, TimerService.class, this, dispatcher);
+    public FrameworkRuntimeView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(OSGiFramework.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
+        bridge = new SingleEntityToDmrBridgeImpl<OSGiFramework>(propertyMetaData, OSGiFramework.class, this, dispatcher);
     }
 
     @Override
     public Widget createWidget() {
-
         return createEmbeddableWidget();
     }
 
     @Override
-    protected EntityEditor<TimerService> makeEntityEditor() {
-        EntityDetails<TimerService> details = new EntityDetails<TimerService>(getEntityDisplayName(),
-                                                                              makeEditEntityDetailsForm(),
-                                                                              getEntityBridge(),
-                                                                              getAddress(),
-                                                                              hideButtons);
-        return new EntityEditor<TimerService>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
+    protected EntityEditor<OSGiFramework> makeEntityEditor() {
+        EntityDetails<OSGiFramework> details = new EntityDetails<OSGiFramework>(getEntityDisplayName(),
+                                                             makeEditEntityDetailsForm(),
+                                                             getEntityBridge(),
+                                                             getAddress(),
+                                                             hideButtons);
+        return new EntityEditor<OSGiFramework>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
 
     @Override
-    protected EntityToDmrBridge<TimerService> getEntityBridge() {
+    protected EntityToDmrBridge<OSGiFramework> getEntityBridge() {
         return bridge;
     }
 
     @Override
-    protected DefaultCellTable<TimerService> makeEntityTable() {
-        DefaultCellTable<TimerService> table = new DefaultCellTable<TimerService>(5);
-        table.setVisible(false);
+    protected DefaultCellTable<OSGiFramework> makeEntityTable() {
+        DefaultCellTable<OSGiFramework> table = new DefaultCellTable<OSGiFramework>(5);
+        table.setVisible(false); // This table is not visible...
         return table;
     }
 
     @Override
-    protected FormAdapter<TimerService> makeAddEntityForm() {
-        return null;
+    protected FormAdapter<OSGiFramework> makeAddEntityForm() {
+        return null; // This entity can't be created
     }
 
     @Override
     protected String getEntityDisplayName() {
-        return "EJB3 Timer Service"; // needed?
+        return "Framework";
     }
+
 }

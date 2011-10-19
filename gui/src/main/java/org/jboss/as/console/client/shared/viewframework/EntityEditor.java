@@ -22,12 +22,8 @@ package org.jboss.as.console.client.shared.viewframework;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -56,8 +52,10 @@ public class EntityEditor<T> {
     private boolean doneInitialSelection = false;
     private DefaultPager pager;
     private EnumSet<FrameworkButton> hideButtons;
+    private ToolStrip toolStrip;
 
     private boolean includeTools = true;
+    private boolean alwaysShowTools = false;
 
     /**
      * Create a new Entity.
@@ -88,8 +86,13 @@ public class EntityEditor<T> {
         this.hideButtons = hideButtons;
     }
 
+    public ToolStrip getToolStrip() {
+        return toolStrip;
+    }
+
     public EntityEditor<T> setIncludeTools(boolean includeTools) {
         this.includeTools = includeTools;
+        this.alwaysShowTools = includeTools;
         return this;
     }
 
@@ -103,8 +106,8 @@ public class EntityEditor<T> {
 
         if(includeTools)
         {
-            final ToolStrip toolStrip = createTools();
-            if(toolStrip.hasButtons())
+            toolStrip = createTools();
+            if(toolStrip.hasButtons() || alwaysShowTools)
                 panel.add(toolStrip);
         }
 
@@ -146,8 +149,16 @@ public class EntityEditor<T> {
         return toolStrip;
     }
 
+    public ListDataProvider<T> getDataProvider() {
+        return dataProvider;
+    }
+
     public void updateEntityList(List<T> entityList, T lastEdited) {
-        dataProvider.setList(entityList);
+        // cannot do dataProvider.setList(entityList) as this breaks any sorting
+        List<T> list = dataProvider.getList();
+        list.clear();
+        list.addAll(entityList);
+        dataProvider.flush();
 
         if (table.isEmpty()) return;
 

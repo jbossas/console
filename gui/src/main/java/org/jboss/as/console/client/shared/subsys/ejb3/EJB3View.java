@@ -23,11 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -38,9 +34,9 @@ import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -50,7 +46,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3Presenter.MyView {
     private final EntityToDmrBridge<EJB3Subsystem> bridge;
-    private final PoolsSection poolsSection;
+    private final PoolsView poolsView;
     private final TimerServiceView timerServiceView;
     private ComboBoxItem defaultSLSBPoolItem, defaultMDBPoolItem;
 
@@ -59,7 +55,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
         super(EJB3Subsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD));
         bridge = new SingleEntityToDmrBridgeImpl<EJB3Subsystem>(propertyMetaData, EJB3Subsystem.class, this, dispatcher);
 
-        poolsSection = new PoolsSection(propertyMetaData, dispatcher);
+        poolsView = new PoolsView(propertyMetaData, dispatcher);
 
         timerServiceView = new TimerServiceView(propertyMetaData, dispatcher);
     }
@@ -89,7 +85,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
         entityEditorWidget.addStyleName("rhs-content-panel");
 
         tabLayoutPanel.add(entityEditorWidget, "Container");
-        tabLayoutPanel.add(poolsSection.asWidget(), "Pools");
+        tabLayoutPanel.add(poolsView.asWidget(), "Pools");
         tabLayoutPanel.add(timerServiceView.asWidget(), "Services");
 
 
@@ -98,12 +94,12 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected EntityEditor<EJB3Subsystem> makeEntityEditor() {
-        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getPluralEntityName(), 
-                                                                                makeEditEntityDetailsForm(), 
-                                                                                getEntityBridge(), 
+        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getEntityDisplayName(),
+                                                                                makeEditEntityDetailsForm(),
+                                                                                getEntityBridge(),
                                                                                 getAddress(),
                                                                                 hideButtons);
-        return new EntityEditor<EJB3Subsystem>(getPluralEntityName(), null, makeEntityTable(), details, hideButtons);
+        return new EntityEditor<EJB3Subsystem>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
 
     @Override
@@ -120,14 +116,11 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected FormAdapter<EJB3Subsystem> makeAddEntityForm() {
-        // TODO delete this!
-        Form<EJB3Subsystem> form = new Form<EJB3Subsystem>(EJB3Subsystem.class);
-        form.setNumColumns(1);
-        return form;
+        return null;
     }
 
     @Override
-    protected String getPluralEntityName() {
+    protected String getEntityDisplayName() {
         return "EJB3 Container"; // TODO i18n // is this one used at all?
     }
 
@@ -141,12 +134,12 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     public void setPoolTimeoutUnits(Collection<String> units, String defaultUnit) {
-        poolsSection.setTimeoutUnits(units, defaultUnit);
+        poolsView.setTimeoutUnits(units, defaultUnit);
     }
 
     @Override
     public void loadPools() {
-        poolsSection.initialLoad();
+        poolsView.initialLoad();
     }
 
     @Override

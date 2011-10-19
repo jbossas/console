@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb3;
+package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +26,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.viewframework.DmrCallback;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -73,6 +70,7 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     public void loadEntities(String nameEditedOrAdded) {
         ModelNode operation = address.asResource(Baseadress.get());
         operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override

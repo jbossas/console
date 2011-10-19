@@ -45,12 +45,12 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 /**
  * @author David Bosschaert
  */
-public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
+public class PoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     private final EntityToDmrBridgeImpl<StrictMaxBeanPool> bridge;
     private final FormMetaData formMetaData;
     private UnitBoxItem<?> timeoutItem;
 
-    public PoolsSection(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public PoolsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(StrictMaxBeanPool.class, propertyMetaData);
 
         formMetaData = propertyMetaData.getBeanMetaData(StrictMaxBeanPool.class).getFormMetaData();
@@ -119,7 +119,7 @@ public class PoolsSection extends AbstractEntityView<StrictMaxBeanPool> {
     }
 
     @Override
-    protected String getPluralEntityName() {
+    protected String getEntityDisplayName() {
         return "EJB3 Pools";
     }
 
