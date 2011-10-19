@@ -130,15 +130,16 @@ public class ResourceAdapterPresenter
                 {
                     ModelNode raConfig = child.get(RESULT);
 
-                    // for each connection definition create an RA representation (archive+jndi=key)
-                    ResourceAdapter ra = factory.resourceAdapter().as();
-                    ra.setArchive(raConfig.get("archive").asString());
-                    ra.setName(ra.getArchive());
-
                     List<Property> conDefs = raConfig.get("connection-definitions").asPropertyList();
                     for(Property conDef : conDefs)
                     {
+                        // for each connection definition create an RA representation (archive+jndi=key)
+                        ResourceAdapter ra = factory.resourceAdapter().as();
+                        ra.setArchive(raConfig.get("archive").asString());
+                        ra.setName(ra.getArchive());
+
                         ModelNode connection = conDef.getValue();
+
                         ra.setJndiName(connection.get("jndi-name").asString());
                         ra.setEnabled(connection.get("enabled").asBoolean());
 
@@ -167,6 +168,7 @@ public class ResourceAdapterPresenter
                     }
                 }
 
+                ResourceAdapterPresenter.this.resourceAdapters = resourceAdapters;
                 getView().setAdapters(resourceAdapters);
 
             }
@@ -264,7 +266,6 @@ public class ResourceAdapterPresenter
         window.hide();
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2148
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
@@ -274,15 +275,17 @@ public class ResourceAdapterPresenter
 
         List<ModelNode> steps = new ArrayList<ModelNode>();
 
-        // the top level ra element. this step may fail (if exists already)
-        ModelNode createParent = new ModelNode();
-        createParent.get(OP).set(ADD);
-        createParent.get(ADDRESS).set(Baseadress.get());
-        createParent.get(ADDRESS).add("subsystem","resource-adapters");
-        createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        createParent.get("archive").set(ra.getArchive());
+        if(!adapterExists(ra)) {
+            // the top level ra element. this step may fail (if exists already)
+            ModelNode createParent = new ModelNode();
+            createParent.get(OP).set(ADD);
+            createParent.get(ADDRESS).set(Baseadress.get());
+            createParent.get(ADDRESS).add("subsystem","resource-adapters");
+            createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
+            createParent.get("archive").set(ra.getArchive());
 
-        steps.add(createParent);
+            steps.add(createParent);
+        }
 
         // the specific connection definition
         ModelNode createConnection = new ModelNode();
@@ -314,6 +317,7 @@ public class ResourceAdapterPresenter
         }
         operation.get(STEPS).set(steps);
 
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -334,6 +338,19 @@ public class ResourceAdapterPresenter
             }
         });
 
+    }
+
+    private boolean adapterExists(ResourceAdapter ra) {
+        boolean match = false;
+        for(ResourceAdapter candidate : resourceAdapters)
+        {
+            if(candidate.getArchive().equals(ra.getArchive()))
+            {
+                match = true;
+                break;
+            }
+        }
+        return match;
     }
 
     public void createProperty(final ResourceAdapter ra, final PropertyRecord prop) {
