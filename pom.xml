@@ -83,14 +83,16 @@
     </licenses>
 
     <properties>
-        <gwt.version>2.2.0</gwt.version>
-        <gwt.maven>2.2.0</gwt.maven>
-        <gwt-log.version>3.1.0</gwt-log.version>
+        <gwt.version>2.3.0</gwt.version>
+        <gwtp.version>0.6</gwtp.version>
+        <gwt.maven>2.3.0</gwt.maven>
+        <gwt-log.version>3.1.3</gwt-log.version>
         <gwt-vis.version>1.1.1</gwt-vis.version>
-        <gin.version>1.0_r170</gin.version>
-        <guice.version>3.0-rc2</guice.version>
-        <gwtp.version>0.6-2.17</gwtp.version>
         <junit.version>4.8.1</junit.version>
+
+        <gin.version>1.5_past22</gin.version>
+        <guice.version>3.0</guice.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -122,6 +124,20 @@
             </dependency>
 
             <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+                <classifier>sources</classifier>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.code</groupId>
                 <artifactId>gwt-visualization</artifactId>
                 <version>${gwt-vis.version}</version>
@@ -141,32 +157,12 @@
             </dependency>
 
             <dependency>
-                <groupId>com.gwtplatform</groupId>
-                <artifactId>gwtp-all</artifactId>
-                <version>${gwtp.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sourceforge.htmlunit</groupId>
-                        <artifactId>crawl_htmlunit</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+                 <groupId>com.gwtplatform</groupId>
+                 <artifactId>gwtp-mvp-client</artifactId>
+                 <version>${gwtp.version}</version>
+                 <scope>provided</scope>
+               </dependency>
+
 
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -175,15 +171,15 @@
             </dependency>
 
             <dependency>
-                <groupId>com.google.gwt.inject</groupId>
-                <artifactId>gin</artifactId>
-                <version>${gin.version}</version>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-assistedinject</artifactId>
+                <version>${guice.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.mycila.com.google.inject.extensions</groupId>
-                <artifactId>guice-assisted-inject</artifactId>
-                <version>3.0-20100927</version>
+                <groupId>com.google.gwt.inject</groupId>
+                <artifactId>gin</artifactId>
+                <version>${gin.version}</version>
             </dependency>
 
         </dependencies>
@@ -259,27 +255,6 @@
             </plugin>
 
         </plugins>
-
-        <!-- PluginManagement -->
-        <!--pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2.SP1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>net.sourceforge.maven-taglib</groupId>
-                    <artifactId>maven-taglib-plugin</artifactId>
-                    <version>2.3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement-->
 
     </build>
 

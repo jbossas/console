@@ -26,7 +26,6 @@ import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.ProxyFailureHandler;
 
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -110,7 +109,7 @@ public interface CoreUI extends Ginjector {
 
     PlaceManager getPlaceManager();
     EventBus getEventBus();
-    ProxyFailureHandler getProxyFailureHandler();
+    //ProxyFailureHandler getProxyFailureHandler();
 
     //@DefaultGatekeeper
     Gatekeeper getLoggedInGatekeeper();
