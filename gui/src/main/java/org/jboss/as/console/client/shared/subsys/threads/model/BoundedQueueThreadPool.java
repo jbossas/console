@@ -54,6 +54,15 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    String getThreadFactory();
    void setThreadFactory(String threadFactory);
    
+   @Binding(detypedName="handoff-executor")
+   @FormItem(defaultValue="",
+            label="Handoff Executor",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
+   String getHandoffExecutor();
+   void setHandoffExecutor(String handoffExecutor);
+   
    @Binding(detypedName="allow-core-timeout")
    @FormItem(defaultValue="true",
             label="Allow Core Timeout",
@@ -72,17 +81,6 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    boolean isBlocking();
    void setBlocking(boolean blocking);
    
-   @Binding(detypedName="properties", 
-           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
-   @FormItem(defaultValue="",
-            label="Properties",
-            required=false,
-            formItemTypeForEdit="PROPERTY_EDITOR",
-            formItemTypeForAdd="PROPERTY_EDITOR",
-            order=Integer.MAX_VALUE)
-   List<PropertyRecord> getProperties();
-   void setProperties(List<PropertyRecord> properties);
-   
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="5",
             label="Keepalive Timeout",
@@ -95,16 +93,36 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    @FormItem(defaultValue="",
             label="Keepalive Timeout Unit",
             required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX")
+            formItemTypeForEdit="TIME_UNITS",
+            formItemTypeForAdd="TIME_UNITS")
    String getKeepaliveTimeoutUnit();
    void setKeepaliveTimeoutUnit(String unit);
+   
+   // ---- SIZING TAB --------------------
+   @Binding(detypedName="core-threads/count")
+   @FormItem(defaultValue="5",
+            label="Core Threads Count",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
+   Integer getCoreThreadsCount();
+   void setCoreThreadsCount(Integer coreThreadsCount);
     
+   @Binding(detypedName="core-threads/per-cpu")
+   @FormItem(defaultValue="5",
+            label="Core Threads Per CPU",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
+   Integer getCoreThreadsPerCPU();
+   void setCoreThreadsPerCPU(Integer coreThreadsPerCPU);
+   
    @Binding(detypedName="max-threads/count")
    @FormItem(defaultValue="5",
             label="Max Threads Count",
             formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX")
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
    Integer getMaxThreadsCount();
    void setMaxThreadsCount(Integer maxThreadsCount);
     
@@ -112,23 +130,38 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    @FormItem(defaultValue="5",
             label="Max Threads Per CPU",
             formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX")
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
    Integer getMaxThreadsPerCPU();
-   void setMaxThreadsPerCPU(Integer maxThreadsCount);
+   void setMaxThreadsPerCPU(Integer maxThreadsPerCPU);
    
    @Binding(detypedName="queue-length/count")
    @FormItem(defaultValue="5",
             label="Queue Length Count",
             formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX")
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
    Integer getQueueLengthCount();
-   void setQueueLengthCount(Integer maxThreadsCount);
+   void setQueueLengthCount(Integer queueLengthCount);
     
    @Binding(detypedName="queue-length/per-cpu")
    @FormItem(defaultValue="5",
             label="Queue Length Per CPU",
             formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX")
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
    Integer getQueueLengthPerCPU();
-   void setQueueLengthPerCPU(Integer maxThreadsCount);
+   void setQueueLengthPerCPU(Integer queueLengthPerCPU);
+   
+   // ------ PROPERTIES TAB --------------
+   @Binding(detypedName="properties", 
+           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+   @FormItem(defaultValue="",
+            label="Properties",
+            required=false,
+            formItemTypeForEdit="PROPERTY_EDITOR",
+            formItemTypeForAdd="PROPERTY_EDITOR",
+            tabName="common_label_properties")
+   List<PropertyRecord> getProperties();
+   void setProperties(List<PropertyRecord> properties);
 }

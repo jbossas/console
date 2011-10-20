@@ -190,18 +190,21 @@ public class PropertyMetaDataGenerator extends Generator{
                             
                             if(bindDecl.skip()) continue;
 
-                            String labelVar = "label_" + beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            String varSuffix = beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            String labelVar = "label_" + varSuffix;
                             if (formDecl.localLabel().equals("")) {
                                 sourceWriter.println("String " + labelVar + " = \"" +  formDecl.label() + "\";");
                             } else {
                                 sourceWriter.println("String " + labelVar + " = Console.CONSTANTS." + formDecl.localLabel() + "();");
                             }
-                            String listTypeVar = "listType_" + beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
+                            String listTypeVar = "listType_" + varSuffix;
                             if (bindDecl.listType().equals("")) {
                                 sourceWriter.println("Class<?> " + listTypeVar + " = null;");
                             } else {
                                 sourceWriter.println("Class<?> " + listTypeVar + " = " + bindDecl.listType() + ".class;");
                             }
+                            String tabNameVar = "tabName_" + varSuffix;
+                            sourceWriter.println("String " + tabNameVar + " = Console.CONSTANTS." + formDecl.tabName() + "();");
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
@@ -211,7 +214,7 @@ public class PropertyMetaDataGenerator extends Generator{
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
-                                                                      "\", " + formDecl.order() + ")");
+                                                                      "\", " + tabNameVar + ", " + formDecl.order() + ")");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -359,6 +362,7 @@ public class PropertyMetaDataGenerator extends Generator{
         String formItemTypeForEdit = "TEXT_BOX";
         String formItemTypeForAdd = "TEXT_BOX";
         String subgroup = "";
+        String tabName = "common_label_attributes";
         int order = 100;
 
         if(formItemDeclaration!=null)
@@ -370,11 +374,13 @@ public class PropertyMetaDataGenerator extends Generator{
             formItemTypeForEdit = formItemDeclaration.formItemTypeForEdit();
             formItemTypeForAdd = formItemDeclaration.formItemTypeForAdd();
             subgroup = formItemDeclaration.subgroup();
+            tabName = formItemDeclaration.tabName();
             order = formItemDeclaration.order();
         }
 
         FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
-                                                         formItemTypeForEdit, formItemTypeForAdd, subgroup, order);
+                                                         formItemTypeForEdit, formItemTypeForAdd, 
+                                                         subgroup, tabName, order);
         return decl;
     }
     

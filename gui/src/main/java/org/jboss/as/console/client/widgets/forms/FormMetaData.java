@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jboss.as.console.client.Console;
 
 /**
  * Aggregator for PropertyBinding instances.  Allows searching and grouping.
@@ -32,6 +33,8 @@ import java.util.Set;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class FormMetaData {
+    public static final String DEFAULT_TAB = Console.CONSTANTS.common_label_attributes();
+    
     private Comparator<PropertyBinding> orderComparator = new Comparator<PropertyBinding>() {
         @Override
         public int compare(PropertyBinding item1, PropertyBinding item2) {
@@ -41,9 +44,13 @@ public class FormMetaData {
     
     private List<PropertyBinding> baseAttributes = new ArrayList<PropertyBinding>();
     private Map<String, List<PropertyBinding>> groupedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
+    private Map<String, List<PropertyBinding>> tabbedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
     private boolean isFlattened = false;
     
     FormMetaData(BeanMetaData beanMetaData) {
+        // make sure default is first
+        tabbedAttributes.put(DEFAULT_TAB, new ArrayList<PropertyBinding>());
+        
         for (PropertyBinding binding : beanMetaData.getProperties()) {
            String subgroup = binding.getSubgroup();
            if ("".equals(subgroup)) {
@@ -57,13 +64,38 @@ public class FormMetaData {
                subgroupData.add(binding);
            }
            
+           List<PropertyBinding> tabData = tabbedAttributes.get(binding.getTabName());
+           if (tabData == null) {
+               tabData = new ArrayList<PropertyBinding>();
+               tabbedAttributes.put(binding.getTabName(), tabData);
+           }
+           tabData.add(binding);
+           
            if (binding.getDetypedName().contains("/")) isFlattened = true;
         }
+
+        if (tabbedAttributes.get(DEFAULT_TAB).isEmpty()) tabbedAttributes.remove(DEFAULT_TAB);
         
         Collections.sort(baseAttributes, orderComparator);
         
         for (Map.Entry<String, List<PropertyBinding>> entry : groupedAttributes.entrySet()) {
             Collections.sort(entry.getValue(), orderComparator);
+        }
+        
+        doGroupCheck();
+    }
+    
+    // make sure all grouped attributes are on the same tab
+    private void doGroupCheck() {
+        if (!hasTabs()) return;
+        
+        for (String groupName : getGroupNames()) {
+            String tabName = getGroupedAttribtes(groupName).get(0).getTabName();
+            for (PropertyBinding propBinding : getGroupedAttribtes(groupName)) {
+                if (!tabName.equals(propBinding.getTabName())) {
+                    throw new RuntimeException("FormItem " + propBinding.getJavaName() + " must be on the same tab with all members of its subgroup.");
+                }
+            }
         }
     }
     
@@ -97,6 +129,14 @@ public class FormMetaData {
      */
     public boolean isFlattened() {
         return this.isFlattened;
+    }
+    
+    public boolean hasTabs() {
+        return this.tabbedAttributes.size() > 1;
+    }
+    
+    public Map<String, List<PropertyBinding>> getTabbedAttributes() {
+        return this.tabbedAttributes;
     }
     
     /**

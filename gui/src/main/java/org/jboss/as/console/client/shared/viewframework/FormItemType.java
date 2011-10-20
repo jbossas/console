@@ -50,6 +50,7 @@ public enum FormItemType {
     COMBO_BOX(new ComboBoxItemFactory()),
     ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
     EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
+    TIME_UNITS(new ComboBoxItemFactory(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"})),
     PROPERTY_EDITOR(new PropertyEditorItemFactory());
 
     private FormItemFactory factory;
@@ -231,7 +232,7 @@ public enum FormItemType {
         @Override
         public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
             PropertyEditorFormItem propEditor = new PropertyEditorFormItem(propBinding.getJavaName(),
-                                                                           propBinding.getLabel(),
+                                                                           "",
                                                                            addDialogTitle,
                                                                            rows);
             propEditor.setRequired(propBinding.isRequired());
