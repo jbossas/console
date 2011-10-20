@@ -47,14 +47,14 @@ public interface EJB3Subsystem {
     String getDefaultRA();
     void setDefaultRA(String name);
 
-    @Binding(detypedName="default-singleton-access-timeout")
+    @Binding(detypedName="default-singleton-bean-access-timeout")
     @FormItem(label="Singleton Access Timeout",
               required=true,
               formItemTypeForEdit="NUMBER_BOX")
     long getDefaultSingletonAccessTimeout();
     void setDefaultSingletonAccessTimeout(long timeout);
 
-    @Binding(detypedName="default-stateful-access-timeout")
+    @Binding(detypedName="default-stateful-bean-access-timeout")
     @FormItem(label="Stateful Access Timeout",
               required=true,
               formItemTypeForEdit="NUMBER_BOX")

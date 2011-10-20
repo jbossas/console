@@ -52,7 +52,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Inject
     public EJB3View(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(EJB3Subsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD));
+        super(EJB3Subsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<EJB3Subsystem>(propertyMetaData, EJB3Subsystem.class, this, dispatcher);
 
         poolsView = new PoolsView(propertyMetaData, dispatcher);

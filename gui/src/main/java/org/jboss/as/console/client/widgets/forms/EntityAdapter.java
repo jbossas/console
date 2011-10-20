@@ -1,18 +1,24 @@
 package org.jboss.as.console.client.widgets.forms;
 
-import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
-import org.jboss.dmr.client.Property;
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.COMPOSITE;
+import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
+import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
+import static org.jboss.dmr.client.ModelDescriptionConstants.STEPS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
+import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
+import org.jboss.dmr.client.Property;
 
 /**
  * Adopts DMR to Entity T and vice versa.<p/>
@@ -129,7 +135,7 @@ public class EntityAdapter<T> {
                 /**
                  * KEYS
                  */
-                
+
                 if(propBinding.isKey())
                 {
                     // key resolution strategy:
@@ -174,7 +180,8 @@ public class EntityAdapter<T> {
                     if(propValue.isDefined())
                         value = propValue.asLong();
                     else
-                        value = -1;
+                        // need to make sure to use the proper type otherwise ClassCastExceptions occur down the line (after boxing)
+                        value = -1L;
                 }
                 else if("java.lang.Integer".equals(propBinding.getJavaTypeName()))
                 {
@@ -188,14 +195,14 @@ public class EntityAdapter<T> {
                     if(propValue.isDefined())
                         value = propValue.asDouble();
                     else
-                        value = -1;
+                        value = -1.0;
                 }
                 else if("java.lang.Float".equals(propBinding.getJavaTypeName()))
                 {
                     if(propValue.isDefined())
                         value = propValue.asDouble();
                     else
-                        value = -1;
+                        value = -1.0;
                 }
                 else if("java.lang.String".equals(propBinding.getJavaTypeName()))
                 {
@@ -289,7 +296,7 @@ public class EntityAdapter<T> {
         for(PropertyBinding property : properties)
         {
             String[] splitDetypedName = property.getDetypedName().split("/");
-            
+
             /**
              * KEYS
              */
@@ -415,12 +422,12 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding binding : propertyBindings)
         {
-            
+
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
                 ModelNode step = protoType.clone();
-                
+
                 // account for sub-attribute paths
                 String[] splitDetypedName = binding.getDetypedName().split("/");
                 step.get(NAME).set(splitDetypedName[0]);
@@ -483,5 +490,5 @@ public class EntityAdapter<T> {
         operation.get(STEPS).set(steps);
         return operation;
     }
-    
+
 }
