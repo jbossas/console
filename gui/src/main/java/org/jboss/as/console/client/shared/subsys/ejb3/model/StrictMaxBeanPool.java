@@ -55,7 +55,8 @@ public interface StrictMaxBeanPool extends NamedEntity {
     void setTimeout(long timeout);
 
     @Binding(detypedName="timeout-unit")
-    @FormItem(formItemTypeForEdit="UNITS")
+    @FormItem(defaultValue="MINUTES",
+              formItemTypeForEdit="UNITS")
     String getTimeoutUnit();
     void setTimeoutUnit(String unit);
 }
