@@ -127,13 +127,17 @@ public class ProfileMgmtPresenter
                 Timer t = new Timer() {
                     @Override
                     public void run() {
-                        placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
+                        revealDefaultSubsystem();
                     }
                 };
 
-                t.schedule(500);
+                t.schedule(250);
             }
         }
+    }
+
+    private void revealDefaultSubsystem() {
+        placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
     }
 
     @Override
@@ -164,6 +168,7 @@ public class ProfileMgmtPresenter
             @Override
             public void onSuccess(List<SubsystemRecord> result) {
                 getView().setSubsystems(result);
+                revealDefaultSubsystem();
             }
         });
     }
