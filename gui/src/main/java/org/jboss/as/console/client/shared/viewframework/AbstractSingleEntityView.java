@@ -16,22 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.ejb3;
+package org.jboss.as.console.client.shared.viewframework;
+
+import java.util.EnumSet;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
  * @author David Bosschaert
  */
-public class TimerServiceView extends AbstractThreadPoolView<TimerService> {
-    public TimerServiceView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(TimerService.class, propertyMetaData, dispatcher);
+public abstract class AbstractSingleEntityView<T> extends AbstractEntityView<T> {
+    private final EntityToDmrBridge<T> bridge;
+
+    protected AbstractSingleEntityView(Class<? extends T> beanType, PropertyMetaData propertyMetaData,
+            DispatchAsync dispatcher, EnumSet<FrameworkButton> hideButtons) {
+        super(beanType, propertyMetaData, hideButtons);
+        bridge = new SingleEntityToDmrBridgeImpl<T>(propertyMetaData, beanType, this, dispatcher);
     }
 
     @Override
-    protected String getEntityDisplayName() {
-        return "Timer Service";
+    protected EntityToDmrBridge<T> getEntityBridge() {
+        return bridge;
+    }
+
+    @Override
+    protected DefaultCellTable<T> makeEntityTable() {
+        DefaultCellTable<T> table = new DefaultCellTable<T>(5);
+        table.setVisible(false);
+        return table;
+    }
+
+    @Override
+    protected FormAdapter<T> makeAddEntityForm() {
+        return new Form<T>(beanType);
     }
 }

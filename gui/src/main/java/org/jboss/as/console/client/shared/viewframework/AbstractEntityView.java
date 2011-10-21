@@ -49,8 +49,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
  * @author Stan Silvert
  */
 public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView, FormItemObserver {
-
     protected EntityEditor<T> entityEditor;
+    protected EntityDetails<T> entityDetails;
     protected Class<?> beanType;
     protected EnumSet<FrameworkButton> hideButtons;
     protected FormMetaData formMetaData;
@@ -201,7 +201,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The EntityEditor
      */
     protected EntityEditor<T> makeEntityEditor() {
-        EntityDetails<T> scannerDetails = new EntityDetails<T>(getEntityDisplayName(),
+        entityDetails = new EntityDetails<T>(getEntityDisplayName(),
                                                                makeEditEntityDetailsForm(),
                                                                getEntityBridge(),
                                                                address,
@@ -212,7 +212,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
                                                              getAddress(),
                                                              getEntityBridge());
         DefaultCellTable<T> table = makeEntityTable();
-        return new EntityEditor<T>(getEntityDisplayName(), window, table, scannerDetails, hideButtons);
+        return new EntityEditor<T>(getEntityDisplayName(), window, table, entityDetails, hideButtons);
     }
 
     /**

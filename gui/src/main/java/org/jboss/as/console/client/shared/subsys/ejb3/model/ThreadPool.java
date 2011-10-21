@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3.model;
 
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
@@ -25,18 +26,37 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 /**
  * @author David Bosschaert
  */
-@Address("/subsystem=ejb3/service=timer-service")
-public interface TimerService extends ThreadPoolEntity {
-    @FormItem(label="Path",
+@Address("/subsystem=ejb3/thread-pool={0}")
+public interface ThreadPool extends NamedEntity {
+    @Override
+    @Binding(detypedName="name", key=true)
+    @FormItem(defaultValue="",
+              localLabel="common_label_name",
               required=true,
-              order=20)
-    String getPath();
-    void setPath(String path);
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX",
+              order=1)
+    String getName();
+    @Override
+    void setName(String name);
 
-    @Binding(detypedName="relative-to")
-    @FormItem(label="Relative To",
+    @Binding(detypedName="keepalive-time")
+    @FormItem(defaultValue="0",
+              label="Keep-Alive Time",
               required=true,
-              order=25)
-    String getRelativeTo();
-    void setRelativeTo(String location);
+              formItemTypeForAdd="NUMBER_BOX",
+              formItemTypeForEdit="NUMBER_BOX",
+              order=10)
+    int getKeepAliveTime();
+    void setKeepAliveTime(int millis);
+
+    @Binding(detypedName="max-threads")
+    @FormItem(defaultValue="4",
+              label="Max Threads",
+              required=true,
+              formItemTypeForAdd="NUMBER_BOX",
+              formItemTypeForEdit="NUMBER_BOX",
+              order=5)
+    int getMaxThreads();
+    void setMaxThreads(int threads);
 }

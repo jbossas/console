@@ -25,18 +25,11 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 /**
  * @author David Bosschaert
  */
-@Address("/subsystem=ejb3/service=timer-service")
-public interface TimerService extends ThreadPoolEntity {
-    @FormItem(label="Path",
-              required=true,
+@Address("/subsystem=ejb3/service=remote")
+public interface RemoteService extends ThreadPoolEntity {
+    @Binding(detypedName="connector-ref")
+    @FormItem(label="Connector",
               order=20)
-    String getPath();
-    void setPath(String path);
-
-    @Binding(detypedName="relative-to")
-    @FormItem(label="Relative To",
-              required=true,
-              order=25)
-    String getRelativeTo();
-    void setRelativeTo(String location);
+    String getConnector();
+    void setConnector(String connector);
 }
