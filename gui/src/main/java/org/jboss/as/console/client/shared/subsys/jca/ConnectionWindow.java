@@ -56,7 +56,7 @@ public class ConnectionWindow {
         if(isValidConnection)
             panel.add(new HTML("Successfully connected to database "+ ds.getName()+"."));
         else
-            panel.add(new HTML("Please verify the connection settings or database "+ ds.getName()+"."));
+            panel.add(new HTML("Please verify the connection settings for datasource "+ ds.getName()+"."));
 
         ClickHandler confirmHandler = new ClickHandler() {
 
