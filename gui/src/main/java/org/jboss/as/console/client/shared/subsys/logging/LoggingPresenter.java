@@ -254,6 +254,11 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
             }
         }
 
+
+        //TODO: Workaround for https://issues.jboss.org/browse/AS7-2195
+        operation.get("suffix").set(".yyyy-MM-dd");
+
+
         System.out.println(operation);
 
         execute(operation, name, true, "Success: Updated Log Level");
