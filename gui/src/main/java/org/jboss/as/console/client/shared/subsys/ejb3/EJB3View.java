@@ -75,15 +75,9 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     public Widget createWidget() {
-
-//        entityEditor = makeEntityEditor();
-
         // overall layout
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
-
-//        Widget entityEditorWidget = entityEditor.asWidget();
-//        entityEditorWidget.addStyleName("rhs-content-panel");
 
         tabLayoutPanel.add(createEmbeddableWidget(), getEntityDisplayName());
         tabLayoutPanel.add(servicesView.asWidget(), "Services");
