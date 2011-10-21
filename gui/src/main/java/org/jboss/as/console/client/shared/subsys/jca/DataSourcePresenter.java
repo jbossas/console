@@ -22,6 +22,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -85,6 +86,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void setXAPoolConfig(String dsName, PoolConfig underlying);
 
         void setXAProperties(String dataSourceName, List<PropertyRecord> result);
+
+        void setConnectionVerified(boolean b);
     }
 
     @Inject
@@ -411,4 +414,19 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
+    public void verifyConnection(final DataSource dataSource) {
+
+        dataSourceStore.verifyConnection(dataSource, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean outcome) {
+
+                if(outcome)
+                    Console.info("Success: Connection settings on "+ dataSource.getName());
+                else
+                    Console.error("Failed: Connection settings on "+ dataSource.getName());
+
+                getView().setConnectionVerified(outcome);
+            }
+        });
+    }
 }

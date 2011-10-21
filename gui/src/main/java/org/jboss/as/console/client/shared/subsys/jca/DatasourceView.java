@@ -60,6 +60,11 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     }
 
     @Override
+    public void setConnectionVerified(boolean b) {
+        dataSourceEditor.setConnectionVerified(b);
+    }
+
+    @Override
     public void setXAProperties(String dataSourceName, List<PropertyRecord> result) {
         xaDataSourceEditor.setXaProperties(dataSourceName, result);
     }

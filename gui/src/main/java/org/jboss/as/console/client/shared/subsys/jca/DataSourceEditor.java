@@ -192,4 +192,9 @@ public class DataSourceEditor {
     public void setPoolConfig(String name, PoolConfig poolConfig) {
         this.poolConfig.updateFrom(name, poolConfig);
     }
+
+    public void setConnectionVerified(boolean isValidConnection) {
+        new ConnectionWindow(details.getCurrentSelection(), isValidConnection).show();
+
+    }
 }

@@ -227,4 +227,6 @@ public interface UIConstants extends Constants {
     String common_label_clear();
 
     String common_label_hostVm();
+
+    String subsys_jca_dataSource_verify();
 }

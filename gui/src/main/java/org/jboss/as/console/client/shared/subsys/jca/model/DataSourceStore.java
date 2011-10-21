@@ -52,4 +52,6 @@ public interface DataSourceStore {
     void deletePoolConfig(boolean isXA, String dsName, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
     void loadXAProperties(String dataSourceName, AsyncCallback<List<PropertyRecord>> callback);
+
+    void verifyConnection(DataSource dataSource, AsyncCallback<Boolean> callback);
 }

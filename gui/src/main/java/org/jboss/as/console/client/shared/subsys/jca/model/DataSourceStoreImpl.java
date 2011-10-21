@@ -471,4 +471,26 @@ public class DataSourceStoreImpl implements DataSourceStore {
         savePoolConfig(isXA, dsName, resetValues, callback);
 
     }
+
+    @Override
+    public void verifyConnection(DataSource dataSource, final AsyncCallback<Boolean> callback) {
+        AddressBinding address = dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), dataSource.getName());
+        operation.get(OP).set("test-connection-in-pool");
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+             callback.onFailure(throwable);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                callback.onSuccess(result.get(OUTCOME).asString().equals("success"));
+            }
+        });
+
+    }
 }

@@ -31,6 +31,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
@@ -50,11 +51,19 @@ public class DataSourceDetails {
 
     private Form<DataSource> form;
     private DataSourcePresenter presenter;
+    private ToolButton disableBtn;
 
     public DataSourceDetails(DataSourcePresenter presenter) {
         this.presenter = presenter;
         form = new Form(DataSource.class);
         form.setNumColumns(2);
+        form.addEditListener(new EditListener<DataSource>() {
+            @Override
+            public void editingBean(DataSource bean) {
+                String nextState = bean.isEnabled() ? "Disable":"Enable";
+                disableBtn.setText(nextState);
+            }
+        });
     }
 
     public Widget asWidget() {
@@ -81,7 +90,13 @@ public class DataSourceDetails {
             }
         };
 
-        ToolButton disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
+        disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
+        ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                presenter.verifyConnection(form.getEditedEntity());
+            }
+        });
 
         FormToolStrip<DataSource> toolStrip = new FormToolStrip<DataSource>(
                 form,
@@ -99,6 +114,7 @@ public class DataSourceDetails {
 
         toolStrip.providesDeleteOp(false);
         toolStrip.addToolButtonRight(disableBtn);
+        toolStrip.addToolButtonRight(verifyBtn);
 
         detailPanel.add(toolStrip.asWidget());
 
