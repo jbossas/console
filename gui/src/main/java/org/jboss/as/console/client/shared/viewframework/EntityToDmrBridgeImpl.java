@@ -181,7 +181,6 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
         ModelNode operation = address.asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(RECURSIVE).set(true);
 
         if (formMetaData.isFlattened()) {
             operation.get(RECURSIVE).set(true);
@@ -211,8 +210,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
-        System.out.println("execute:");
-        System.out.println(operation.toString());
+        //System.out.println("execute:");
+        //System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override

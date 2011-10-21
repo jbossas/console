@@ -86,6 +86,8 @@ public class EntityDetails<T> implements EditListener {
 
             @Override
             public void onClick(ClickEvent event) {
+                if (bridge.getEntityList().isEmpty()) return;
+                
                 if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
                     bridge.onEdit();
                 } else {
@@ -114,6 +116,8 @@ public class EntityDetails<T> implements EditListener {
 
             @Override
             public void onClick(ClickEvent event) {
+                if (bridge.getEntityList().isEmpty()) return;
+                
                 Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
                         Console.MESSAGES.removeFromConfirm(bridge.getName(form.getEditedEntity()), entitiesName),
                         new Feedback.ConfirmationHandler() {

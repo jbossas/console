@@ -18,40 +18,36 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads;
 
-
-
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Main view class for Bounded Queue Thread Pools
+ * Main view class for Unbounded Queue Thread Pools
  *
  * @author Stan Silvert
  */
-public class BoundedQueueThreadPoolView extends AbstractThreadPoolView<BoundedQueueThreadPool> implements FrameworkView {
+public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<UnboundedQueueThreadPool> implements FrameworkView {
 
-    public BoundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
+    public UnboundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(UnboundedQueueThreadPool.class, propertyMetaData, dispatcher);
     }
 
     @Override
     protected String getEntityDisplayName() {
-        return "Bounded Queue Pools";
+        return "Unbounded Queue Pools";
     }
 
     @Override
-    protected FormAdapter<BoundedQueueThreadPool> makeAddEntityForm() {
-        Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
+    protected FormAdapter<UnboundedQueueThreadPool> makeAddEntityForm() {
+        Form<UnboundedQueueThreadPool> form = new Form(UnboundedQueueThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
                        formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd(),
-                       formMetaData.findAttribute("queueLengthCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("queueLengthPerCPU").getFormItemForAdd());
+                       formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
         return form;
     }
 }
