@@ -26,19 +26,19 @@ import static org.jboss.as.console.client.shared.subsys.logging.HandlerAttribute
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public enum HandlerType {
-    CONSOLE("console-handler", NAME, LEVEL, AUTOFLUSH, ENCODING, FILTER, FORMATTER, TARGET),
+    CONSOLE("console-handler", NAME, LEVEL, AUTOFLUSH,  FORMATTER, TARGET),
     
     ASYNC("async-handler", NAME, LEVEL, OVERFLOW_ACTION, QUEUE_LENGTH, SUBHANDLERS),
     
-    FILE("file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, APPEND, FILE_RELATIVE_TO, FILE_PATH),
+    FILE("file-handler", NAME, LEVEL, FORMATTER, AUTOFLUSH, APPEND, FILE_RELATIVE_TO, FILE_PATH),
     
-    SIZE_ROTATING_FILE("size-rotating-file-handler", NAME, LEVEL, ENCODING, FORMATTER, AUTOFLUSH, FILE_RELATIVE_TO, 
+    SIZE_ROTATING_FILE("size-rotating-file-handler", NAME, LEVEL, FORMATTER, AUTOFLUSH, FILE_RELATIVE_TO,
                                                      FILE_PATH, ROTATE_SIZE, MAX_BACKUP_INDEX),
     
-    PERIODIC_ROTATING_FILE("periodic-rotating-file-handler", NAME, LEVEL, ENCODING, FILTER, FORMATTER, AUTOFLUSH, 
-                                                             APPEND, FILE_RELATIVE_TO, FILE_PATH, SUFFIX),
+    PERIODIC_ROTATING_FILE("periodic-rotating-file-handler", NAME, LEVEL,  FORMATTER, AUTOFLUSH,
+                                                             APPEND, FILE_RELATIVE_TO, FILE_PATH, SUFFIX ),
     
-    CUSTOM("custom-handler", NAME, MODULE, CLASS, LEVEL, ENCODING, FORMATTER, PROPERTIES);
+    CUSTOM("custom-handler", NAME, MODULE, CLASS, LEVEL, FORMATTER, PROPERTIES);
     
     private final String displayName;
     

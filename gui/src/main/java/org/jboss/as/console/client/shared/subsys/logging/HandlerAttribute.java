@@ -38,8 +38,8 @@ public enum HandlerAttribute {
     
     NAME(true, "name", "name", "", Console.CONSTANTS.common_label_name(), new TextBoxItemFactory(), new TextItemFactory()),
     LEVEL(true, "level", "level", "INFO", Console.CONSTANTS.subsys_logging_logLevel(), new ComboBoxItemFactory(LogLevel.STRINGS)),
-    ENCODING(true, "encoding", "encoding", "UTF-8", Console.CONSTANTS.subsys_logging_encoding(), new TextBoxItemFactory()),
-    FILTER(false, "filter", "filter", "", Console.CONSTANTS.subsys_logging_filter(), new TextBoxItemFactory()),
+    //ENCODING(true, "encoding", "encoding", "UTF-8", Console.CONSTANTS.subsys_logging_encoding(), new TextBoxItemFactory()),
+    //FILTER(false, "filter", "filter", "", Console.CONSTANTS.subsys_logging_filter(), new TextBoxItemFactory()),
     FORMATTER(false, "formatter", "formatter", "%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n", Console.CONSTANTS.subsys_logging_formatter(), new FormatterItemFactory()),
     AUTOFLUSH(false, "autoflush", "autoflush", "true", Console.CONSTANTS.subsys_logging_autoFlush(), new CheckBoxItemFactory()),
     APPEND(false, "append", "append", "false", Console.CONSTANTS.subsys_logging_append(), new CheckBoxItemFactory()),

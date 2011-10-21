@@ -126,7 +126,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         }
         
         HandlerAttribute[] stringAttributes = new HandlerAttribute[] { 
-            HandlerAttribute.ENCODING, HandlerAttribute.FILTER, HandlerAttribute.FORMATTER, 
+            HandlerAttribute.FORMATTER,
             HandlerAttribute.ROTATE_SIZE, HandlerAttribute.MAX_BACKUP_INDEX, HandlerAttribute.TARGET,
             HandlerAttribute.TARGET, HandlerAttribute.SUFFIX, HandlerAttribute.OVERFLOW_ACTION, HandlerAttribute.QUEUE_LENGTH };
         
@@ -253,7 +253,9 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
                 operation.get(dmrName).set(value.toString());
             }
         }
-        
+
+        System.out.println(operation);
+
         execute(operation, name, true, "Success: Updated Log Level");
     }
     
