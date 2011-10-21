@@ -28,6 +28,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.ballroom.client.widgets.forms.ButtonItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
@@ -62,6 +63,16 @@ public class DataSourceStep3 {
         TextBoxItem user = new TextBoxItem("username", "Username");
         PasswordBoxItem pass = new PasswordBoxItem("password", "Password");
 
+
+        /*
+        TODO: Doesn't work atm, because the DS needs to be created first
+        ButtonItem testBtn = new ButtonItem("connectionUrl", "Connection", "Test");
+        testBtn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                wizard.getPresenter().verifyConnectionFromWizard(form.getUpdatedEntity());
+            }
+        });*/
 
         form.setFields(connectionUrl,user,pass);
 

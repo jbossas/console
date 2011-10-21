@@ -70,7 +70,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private RevealStrategy revealStrategy;
     private ApplicationProperties bootstrap;
 
-
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
     public interface MyProxy extends Proxy<DataSourcePresenter>, Place {
@@ -423,7 +422,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 if(outcome)
                     Console.info("Success: Connection settings on "+ dataSource.getName());
                 else
-                    Console.error("Failed: Connection settings on "+ dataSource.getName());
+                    Console.error("Failed: Connection settings on " + dataSource.getName());
 
                 getView().setConnectionVerified(outcome);
             }
