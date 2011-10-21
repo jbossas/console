@@ -97,7 +97,10 @@ public class BoundedQueueThreadPoolView extends AbstractEntityView<BoundedQueueT
         Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("threadFactory").getFormItemForAdd(this));
+                       formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
+                       formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd(),
+                       formMetaData.findAttribute("queueLengthCount").getFormItemForAdd(),
+                       formMetaData.findAttribute("queueLengthPerCPU").getFormItemForAdd());
         return form;
     }
 

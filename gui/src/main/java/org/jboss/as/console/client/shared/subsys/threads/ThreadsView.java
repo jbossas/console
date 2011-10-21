@@ -36,17 +36,10 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
 
     private ThreadFactoryView threadFactoryView;
     private BoundedQueueThreadPoolView boundedQueueView;
-    private BoundedQueueThreadPoolView boundedQueueView2;
 
     @Inject
     public ThreadsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        
-        
         boundedQueueView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
-        
-        // TODO: replace with another type of pool view
-        boundedQueueView2 = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
-        
         threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher, boundedQueueView);
     }
 
@@ -57,14 +50,12 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
         
         tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getEntityDisplayName());
         tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getEntityDisplayName());
-        tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getEntityDisplayName());
         return tabLayoutpanel;
     }
     
     public void initialLoad() {
         this.threadFactoryView.initialLoad();
         this.boundedQueueView.initialLoad();
-        this.boundedQueueView2.initialLoad();
     }
   
 }

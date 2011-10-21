@@ -82,7 +82,7 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    void setBlocking(boolean blocking);
    
    @Binding(detypedName="keepalive-time/time")
-   @FormItem(defaultValue="5",
+   @FormItem(defaultValue="60",
             label="Keepalive Timeout",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX")
@@ -90,7 +90,7 @@ public interface BoundedQueueThreadPool extends NamedEntity {
     void setKeepaliveTimeout(Integer timeout);
 
    @Binding(detypedName="keepalive-time/unit")
-   @FormItem(defaultValue="",
+   @FormItem(defaultValue="SECONDS",
             label="Keepalive Timeout Unit",
             required=false,
             formItemTypeForEdit="TIME_UNITS",
@@ -99,26 +99,9 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    void setKeepaliveTimeoutUnit(String unit);
    
    // ---- SIZING TAB --------------------
-   @Binding(detypedName="core-threads/count")
-   @FormItem(defaultValue="5",
-            label="Core Threads Count",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getCoreThreadsCount();
-   void setCoreThreadsCount(Integer coreThreadsCount);
-    
-   @Binding(detypedName="core-threads/per-cpu")
-   @FormItem(defaultValue="5",
-            label="Core Threads Per CPU",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getCoreThreadsPerCPU();
-   void setCoreThreadsPerCPU(Integer coreThreadsPerCPU);
-   
    @Binding(detypedName="max-threads/count")
-   @FormItem(defaultValue="5",
+   @FormItem(defaultValue="2",
+            required=true,
             label="Max Threads Count",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",
@@ -127,7 +110,8 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    void setMaxThreadsCount(Integer maxThreadsCount);
     
    @Binding(detypedName="max-threads/per-cpu")
-   @FormItem(defaultValue="5",
+   @FormItem(defaultValue="1",
+            required=true,
             label="Max Threads Per CPU",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",
@@ -136,7 +120,8 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    void setMaxThreadsPerCPU(Integer maxThreadsPerCPU);
    
    @Binding(detypedName="queue-length/count")
-   @FormItem(defaultValue="5",
+   @FormItem(defaultValue="2",
+            required=true,
             label="Queue Length Count",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",
@@ -145,13 +130,32 @@ public interface BoundedQueueThreadPool extends NamedEntity {
    void setQueueLengthCount(Integer queueLengthCount);
     
    @Binding(detypedName="queue-length/per-cpu")
-   @FormItem(defaultValue="5",
+   @FormItem(defaultValue="1",
+            required=true,
             label="Queue Length Per CPU",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",
             tabName="subsys_threads_sizing")
    Integer getQueueLengthPerCPU();
    void setQueueLengthPerCPU(Integer queueLengthPerCPU);
+   
+   @Binding(detypedName="core-threads/count")
+   @FormItem(defaultValue="2",
+            label="Core Threads Count",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
+   Integer getCoreThreadsCount();
+   void setCoreThreadsCount(Integer coreThreadsCount);
+    
+   @Binding(detypedName="core-threads/per-cpu")
+   @FormItem(defaultValue="1",
+            label="Core Threads Per CPU",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX",
+            tabName="subsys_threads_sizing")
+   Integer getCoreThreadsPerCPU();
+   void setCoreThreadsPerCPU(Integer coreThreadsPerCPU);
    
    // ------ PROPERTIES TAB --------------
    @Binding(detypedName="properties", 
