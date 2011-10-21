@@ -50,4 +50,12 @@ public interface SocketBinding {
     int getMultiCastPort();
     void setMultiCastPort(int port);
 
+    @Binding(skip=true)
+    String getDefaultInterface();
+    void setDefaultInterface(String intf);
+
+    @Binding(detypedName = "fixed-port")
+    boolean isFixedPort();
+    void setFixedPort(boolean b);
+
 }

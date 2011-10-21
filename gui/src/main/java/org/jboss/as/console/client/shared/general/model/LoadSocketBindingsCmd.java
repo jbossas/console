@@ -54,37 +54,20 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
 
                 List<ModelNode> socketDescriptions= payload.get("socket-binding").asList();
 
+                String defaultInterface = payload.get("default-interface").asString();
                 List<SocketBinding> bindings = new ArrayList<SocketBinding>();
                 for(ModelNode socket : socketDescriptions)
                 {
 
                     ModelNode value = socket.asProperty().getValue();
 
-                    /*SocketBinding sb = factory.socketBinding().as();
-
-                    sb.setName(value.get("name").asString());
-                    sb.setGroup(groupName);
-                    sb.setPort(value.get("port").asInt());
-                    String interfaceValue = value.get("interface").isDefined() ?
-                            value.get("interface").asString() : "not set";
-
-                    sb.setInterface(interfaceValue);
-
-                    if(value.hasDefined("multicast-port"))
-                    {
-                        sb.setMultiCastAddress(value.get("multicast-address").asString());
-                        sb.setMultiCastPort(value.get("multicast-port").asInt());
-                    }
-                    else
-                    {
-                        sb.setMultiCastAddress("");
-                        sb.setMultiCastPort(0);
-                    }
-
-                    */
-
                     SocketBinding socketBinding = entityAdapter.fromDMR(value);
                     socketBinding.setGroup(getGroupName());
+                    socketBinding.setDefaultInterface(
+                            socketBinding.getInterface()!=null ?
+                                    socketBinding.getInterface():defaultInterface
+                    );
+                    socketBinding.setDefaultInterface(defaultInterface);
                     bindings.add(socketBinding);
                 }
 
