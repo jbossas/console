@@ -182,11 +182,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public void loadEntities(String nameEditedOrAdded) {
+        loadEntities(nameEditedOrAdded, Baseadress.get());
+    }
+
+    void loadEntities(String nameEditedOrAdded, ModelNode baseAddress) {
         this.nameOfLastEdited = nameEditedOrAdded;
 
-        ModelNode operation = address.asSubresource(Baseadress.get());
+        ModelNode operation = address.asSubresource(baseAddress);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(RECURSIVE).set(true);
 
         if (formMetaData.isFlattened()) {
             operation.get(RECURSIVE).set(true);
