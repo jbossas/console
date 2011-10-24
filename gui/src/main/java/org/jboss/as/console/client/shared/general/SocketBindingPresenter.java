@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.general;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -35,6 +37,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
@@ -226,7 +229,9 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         operation.get(ADDRESS).add("socket-binding-group", socketBinding.getGroup());
         operation.get(ADDRESS).add("socket-binding", socketBinding.getName());
 
-        System.out.println(operation);
+
+        // TODO: Workaround for https://issues.jboss.org/browse/AS7-2215
+        operation.remove("multicast-port");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
