@@ -292,6 +292,13 @@
                         <additionalClasspathElement>${basedir}/target/generated-sources/</additionalClasspathElement>
                         <additionalClasspathElement>${project.build.testSourceDirectory}</additionalClasspathElement>
                     </additionalClasspathElements>
+                    <includes>
+                      <include>org/jboss/as/console/client/forms/**</include>
+                      <!-- Do not include all of the GWT tests individually, but use a test suite
+                           to run them instead. This speeds up test execution as the GWT runner only 
+                           gets loaded once per suite. -->
+                      <include>**/*TestSuite.java</include>
+                    </includes>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <forkMode>always</forkMode>
                     <skipTests>false</skipTests>

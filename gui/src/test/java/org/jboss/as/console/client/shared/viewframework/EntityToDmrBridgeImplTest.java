@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import junit.framework.Assert;
@@ -54,7 +55,12 @@ import org.junit.Test;
 /**
  * @author David Bosschaert
  */
-public class EntityToDmrBridgeImplTest {
+public class EntityToDmrBridgeImplTest extends GWTTestCase {
+    @Override
+    public String getModuleName() {
+        return "org.jboss.as.console.App";
+    }
+
     @Test
     public void testLoadEntitiesIncludeRuntime() {
         TestDispatchAsync testDispatcher = new TestDispatchAsync();
