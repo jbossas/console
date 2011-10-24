@@ -391,12 +391,18 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         operation.get(ADDRESS).add("server", selectedRecord.getName());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                performDeleteOperation();
+            }
 
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 String outcome = response.get(OUTCOME).asString();
+
                 Boolean serverIsRunning = outcome.equals(SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
                 if(!serverIsRunning)
                     performDeleteOperation();
