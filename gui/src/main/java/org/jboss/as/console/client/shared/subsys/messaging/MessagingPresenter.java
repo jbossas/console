@@ -174,6 +174,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 MessagingProvider provider = providerAdapter.fromDMR(response.get(RESULT));
+                provider.setName(currentServer);
                 getView().setProviderDetails(provider);
 
             }
