@@ -72,7 +72,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewInterfaceDialogue();
+                //presenter.launchNewInterfaceDialogue();
             }
         }));
 
@@ -81,7 +81,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
             @Override
             public void onClick(ClickEvent event) {
 
-                final Interface editedEntity = form.getEditedEntity();
+                /*final Interface editedEntity = form.getEditedEntity();
                 Feedback.confirm("Remove Interface Declaration",
                         "Really remove interface " + editedEntity.getName() + "?",
                         new Feedback.ConfirmationHandler() {
@@ -92,7 +92,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
                             }
                         });
 
-                presenter.onRemoveInterface(form.getEditedEntity());
+                presenter.onRemoveInterface(form.getEditedEntity());*/
             }
         }));
 

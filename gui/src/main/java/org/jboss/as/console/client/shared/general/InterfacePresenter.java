@@ -32,14 +32,19 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -53,6 +58,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private LoadInterfacesCmd loadInterfacesCmd;
     private RevealStrategy revealStrategy;
     private DefaultWindow window;
+    private EntityAdapter<Interface> entityAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
@@ -81,7 +87,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ModelNode address = new ModelNode();
         address.setEmptyList();
         loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
-
+        entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
     }
 
     @Override
@@ -127,7 +133,17 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     }
 
     public void createNewInterface(Interface entity) {
+        ModelNode operation = entityAdapter.fromEntity(entity);
+        operation.get(ADDRESS).add("interface", entity.getName());
+        operation.get(OP).set(ADD);
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                System.out.println(result);
+            }
+        });
     }
 
     public void closeDialoge() {
