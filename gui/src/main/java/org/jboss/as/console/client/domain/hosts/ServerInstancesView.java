@@ -46,6 +46,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -71,6 +72,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private String selectedHost = null;
     private ComboBox groupFilter;
     private CellTable<ServerInstance> instanceTable;
+    private ToolButton startBtn;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -190,25 +192,33 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         form.setNumColumns(2);
 
         ToolStrip formTools = new ToolStrip();
-        formTools.addToolButtonRight(new ToolButton("Start/Stop", new ClickHandler() {
+        startBtn = new ToolButton("Start/Stop", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isRunning() ? "stop" : "start";
                 Feedback.confirm(Console.CONSTANTS.common_label_serverStatus(), Console.MESSAGES.changeServerStatus(state, form.getEditedEntity().getName()),
-                        new Feedback.ConfirmationHandler()
-                        {
+                        new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                {
+                                if (isConfirmed) {
                                     ServerInstance instance = form.getEditedEntity();
                                     presenter.startServer(instance.getServer(), !instance.isRunning());
                                 }
                             }
                         });
             }
-        }));
+        });
+        formTools.addToolButtonRight(startBtn);
+        form.addEditListener(new EditListener<ServerInstance>(
+
+        ) {
+            @Override
+            public void editingBean(ServerInstance serverInstance) {
+                String label = serverInstance.isRunning() ? "Stop":"Start";
+                startBtn.setText(label);
+            }
+        });
 
         /* https://issues.jboss.org/browse/AS7-953
         formTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
@@ -246,7 +256,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         form.setEnabled(false);
 
         Widget formWidget = form.asWidget();
-        //formWidget.getElement().setAttribute("style", "margin-top:15px;");
+        formWidget.getElement().setAttribute("style", "margin-top:15px;");
 
         formPanel.add(formWidget);
 
@@ -256,9 +266,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
         bottomLayout.add(formPanel, "Availability");
-
-        // TODO: server VM metrics
-        //bottomLayout.add(new HTML("This going to display heap, permgen, etc, "), Console.CONSTANTS.common_label_virtualMachine());
 
         bottomLayout.selectTab(0);
 
