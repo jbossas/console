@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.general.InterfaceEditor;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -38,29 +39,17 @@ import java.util.List;
 public class HostInterfacesView extends DisposableViewImpl implements HostInterfacesPresenter.MyView{
 
     private HostInterfacesPresenter presenter;
-    private CellTable<Interface> table;
+
+    private InterfaceEditor editor;
+
+
+    public HostInterfacesView() {
+        this.editor = new InterfaceEditor("Host Interfaces");
+    }
 
     @Override
     public Widget createWidget() {
-        LayoutPanel layout = new RHSContentPanel("Host Interfaces");
-
-        layout.add(new ContentHeaderLabel("Interface Declarations"));
-
-        table = new DefaultCellTable<Interface>(10);
-
-        TextColumn<Interface> nameColumn = new TextColumn<Interface>() {
-            @Override
-            public String getValue(Interface record) {
-                return record.getName();
-            }
-        };
-
-
-        table.addColumn(nameColumn, "Name");
-
-        layout.add(table);
-
-        return layout;
+        return editor.asWidget();
     }
 
     @Override
@@ -70,7 +59,6 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
 
     @Override
     public void setInterfaces(List<Interface> interfaces) {
-        table.setRowCount(interfaces.size(), true);
-        table.setRowData(interfaces);
+       editor.setInterfaces(interfaces);
     }
 }
