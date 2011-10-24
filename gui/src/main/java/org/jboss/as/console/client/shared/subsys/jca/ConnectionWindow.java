@@ -25,7 +25,7 @@ public class ConnectionWindow {
     public ConnectionWindow(DataSource ds, boolean isValidConnection) {
 
         String message = isValidConnection ?
-                "Successfully connected to database." : "Connection failed!";
+                "Successfully created JDBC connection." : "Failed to create JDBC connection!";
 
 
         window = new DefaultWindow("Datasource Connection");
