@@ -44,6 +44,7 @@ public class PropertyBinding {
     private FormItemType formItemTypeForEdit;
     private FormItemType formItemTypeForAdd;
     private String subgroup;
+    private String tabName;
     private int order;
 
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey, boolean expr) {
@@ -57,7 +58,8 @@ public class PropertyBinding {
     public PropertyBinding(String javaName, String detypedName, String javaTypeName,
                            Class<?> listType, PropertyMetaData propMetaData, boolean isKey, boolean expr,
                            String defaultValue, String label, boolean isRequired,
-                           String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, int order) {
+                           String formItemTypeForEdit, String formItemTypeForAdd, 
+                           String subgroup, String tabName, int order) {
         this(javaName, detypedName, javaTypeName, isKey, expr);
         this.listType = listType;
         if (listType != null) {
@@ -72,6 +74,7 @@ public class PropertyBinding {
         this.formItemTypeForEdit = FormItemType.valueOf(formItemTypeForEdit);
         this.formItemTypeForAdd = FormItemType.valueOf(formItemTypeForAdd);
         this.subgroup = subgroup;
+        this.tabName = tabName;
         this.order = order;
     }
 
@@ -144,6 +147,10 @@ public class PropertyBinding {
 
     public String getSubgroup() {
         return subgroup;
+    }
+    
+    public String getTabName() {
+        return tabName;
     }
 
     public int getOrder() {

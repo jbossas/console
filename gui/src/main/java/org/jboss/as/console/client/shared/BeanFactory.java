@@ -66,7 +66,10 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
+import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -142,4 +145,7 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<ThreadFactory> threadFactory();
     AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool();
+    AutoBean<UnboundedQueueThreadPool> unboundedQueueThreadPool();
+    AutoBean<QueuelessThreadPool> queuelessThreadPool();
+    AutoBean<ScheduledThreadPool> scheduledThreadPool();
 }

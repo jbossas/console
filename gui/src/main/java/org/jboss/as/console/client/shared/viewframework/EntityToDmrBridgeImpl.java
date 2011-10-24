@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.dmr.client.Property;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
@@ -133,16 +134,10 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         String name = entity.getName();
         ModelNode operation = address.asResource(name);
         operation.get(OP).set(ADD);
-
-        Map<String, Object> changedValues = form.getChangedValues();
-        for (PropertyBinding attrib : formMetaData.getBaseAttributes()) {
-            if (changedValues.containsKey(attrib.getJavaName())) {
-                operation.get(attrib.getDetypedName()).set(changedValues.get(attrib.getJavaName()).toString());
-            } else if (attrib.getDefaultValue() != null) {
-                operation.get(attrib.getDetypedName()).set(attrib.getDefaultValue().toString());
-            }
+        ModelNode attributes = this.entityAdapter.fromEntity(form.getUpdatedEntity());
+        for (Property prop : attributes.asPropertyList()) {
+            operation.get(prop.getName()).set(prop.getValue());
         }
-
         execute(operation, name, "Success: Added " + name);
     }
 
@@ -219,6 +214,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
+        //System.out.println("execute:");
+        //System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override

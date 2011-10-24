@@ -21,7 +21,6 @@ package org.jboss.as.console.client.shared.viewframework;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.EnumSet;
@@ -46,7 +45,7 @@ public class EntityDetails<T> implements EditListener {
     private ToolButton editBtn;
     private ToolButton cancelBtn;
     private ToolButton removeBtn;
-    private EntityToDmrBridge executor;
+    private EntityToDmrBridge bridge;
     private EnumSet<FrameworkButton> hideButtons;
     private AddressBinding address;
 
@@ -55,20 +54,20 @@ public class EntityDetails<T> implements EditListener {
      * 
      * @param entitiesName The heading for the details form
      * @param form The form containing all AttributesMetadata that can be displayed or edited.
-     * @param executor The EntityToDmrBridge that will be called for various actions.
+     * @param bridge The EntityToDmrBridge that will be called for various actions.
      */
-    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge executor, AddressBinding address) {
-        this(entitiesName, form, executor, address, EnumSet.noneOf(FrameworkButton.class));
+    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge bridge, AddressBinding address) {
+        this(entitiesName, form, bridge, address, EnumSet.noneOf(FrameworkButton.class));
     }
 
     public EntityDetails(String entitiesName,
             FormAdapter form,
-            EntityToDmrBridge executor,
+            EntityToDmrBridge bridge,
             AddressBinding address,
             EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
-        this.executor = executor;
+        this.bridge = bridge;
         this.address = address;
         this.hideButtons = hideButtons;
     }
@@ -87,12 +86,14 @@ public class EntityDetails<T> implements EditListener {
 
             @Override
             public void onClick(ClickEvent event) {
+                if (bridge.getEntityList().isEmpty()) return;
+                
                 if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
-                    executor.onEdit();
+                    bridge.onEdit();
                 } else {
                     FormValidation validation = form.validate();
                     if (!validation.hasErrors()) {
-                        executor.onSaveDetails(form);
+                        bridge.onSaveDetails(form);
                     }
                 }
             }
@@ -115,14 +116,16 @@ public class EntityDetails<T> implements EditListener {
 
             @Override
             public void onClick(ClickEvent event) {
+                if (bridge.getEntityList().isEmpty()) return;
+                
                 Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
-                        Console.MESSAGES.removeFromConfirm(executor.getName(form.getEditedEntity()), entitiesName),
+                        Console.MESSAGES.removeFromConfirm(bridge.getName(form.getEditedEntity()), entitiesName),
                         new Feedback.ConfirmationHandler() {
 
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    executor.onRemove(form);
+                                    bridge.onRemove(form);
                                 }
                             }
                         });

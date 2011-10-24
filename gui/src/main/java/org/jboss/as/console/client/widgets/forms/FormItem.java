@@ -43,5 +43,6 @@ public @interface FormItem {
     String formItemTypeForEdit() default "TEXT_BOX";
     String formItemTypeForAdd() default "TEXT_BOX";
     String subgroup() default "";
+    String tabName() default "common_label_attributes";
     int order() default 100;
 }

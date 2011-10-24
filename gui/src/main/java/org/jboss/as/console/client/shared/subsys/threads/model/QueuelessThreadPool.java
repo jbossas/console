@@ -25,12 +25,12 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Model for a Bounded Queue Thread Pool
+ * Model for a Queueless Thread Pool
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=threads/bounded-queue-thread-pool={0}")
-public interface BoundedQueueThreadPool extends ThreadPool {
+@Address("/subsystem=threads/queueless-thread-pool={0}")
+public interface QueuelessThreadPool extends ThreadPool {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -61,15 +61,6 @@ public interface BoundedQueueThreadPool extends ThreadPool {
             formItemTypeForAdd="TEXT_BOX")
    String getHandoffExecutor();
    void setHandoffExecutor(String handoffExecutor);
-   
-   @Binding(detypedName="allow-core-timeout")
-   @FormItem(defaultValue="true",
-            label="Allow Core Timeout",
-            required=false,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-   boolean isAllowCoreTimeout();
-   void setAllowCoreTimeout(boolean allowCoreTimeout);
    
    @Binding(detypedName="blocking")
    @FormItem(defaultValue="true",
@@ -119,44 +110,6 @@ public interface BoundedQueueThreadPool extends ThreadPool {
             tabName="subsys_threads_sizing")
    Integer getMaxThreadsPerCPU();
    void setMaxThreadsPerCPU(Integer maxThreadsPerCPU);
-   
-   @Binding(detypedName="queue-length/count")
-   @FormItem(defaultValue="2",
-            required=true,
-            label="Queue Length Count",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getQueueLengthCount();
-   void setQueueLengthCount(Integer queueLengthCount);
-    
-   @Binding(detypedName="queue-length/per-cpu")
-   @FormItem(defaultValue="1",
-            required=true,
-            label="Queue Length Per CPU",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getQueueLengthPerCPU();
-   void setQueueLengthPerCPU(Integer queueLengthPerCPU);
-   
-   @Binding(detypedName="core-threads/count")
-   @FormItem(defaultValue="2",
-            label="Core Threads Count",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getCoreThreadsCount();
-   void setCoreThreadsCount(Integer coreThreadsCount);
-    
-   @Binding(detypedName="core-threads/per-cpu")
-   @FormItem(defaultValue="1",
-            label="Core Threads Per CPU",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getCoreThreadsPerCPU();
-   void setCoreThreadsPerCPU(Integer coreThreadsPerCPU);
    
    // ------ PROPERTIES TAB --------------
    @Binding(detypedName="properties", 

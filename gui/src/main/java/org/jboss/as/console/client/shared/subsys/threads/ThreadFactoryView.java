@@ -43,11 +43,11 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> implements FrameworkView {
 
     private EntityToDmrBridge threadPoolBridge;
-    private BoundedQueueThreadPoolView poolview;
+    private AbstractThreadPoolView[] poolviews;
 
-    public ThreadFactoryView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher, BoundedQueueThreadPoolView poolView) {
+    public ThreadFactoryView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher, AbstractThreadPoolView... poolViews) {
         super(ThreadFactory.class, propertyMetaData);
-        this.poolview = poolView;
+        this.poolviews = poolViews;
         threadPoolBridge = new EntityToDmrBridgeImpl<ThreadFactory>(propertyMetaData, ThreadFactory.class, this, dispatcher);
     }
 
@@ -96,7 +96,9 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
     @Override
     public void refresh() {
         super.refresh();
-        this.poolview.setThreadFactoryComboValues(this.getEntityBridge().getEntityList());
+        for (AbstractThreadPoolView poolView : this.poolviews) {
+            poolView.setThreadFactoryComboValues(this.getEntityBridge().getEntityList());
+        }
     }
     
 }

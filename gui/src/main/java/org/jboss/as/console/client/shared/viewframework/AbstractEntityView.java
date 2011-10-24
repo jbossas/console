@@ -223,6 +223,15 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The details form.
      */
     protected FormAdapter<T> makeEditEntityDetailsForm() {
+        if (getFormMetaData().hasTabs()) {
+            TabbedFormLayoutPanel tabPanel = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
+            return tabPanel;
+        } else {
+            return makeSimpleForm();
+        }
+    }
+    
+    private FormAdapter<T> makeSimpleForm() {
         Form<T> form = new Form(beanType);
         form.setNumColumns(2);
         FormMetaData attributes = getFormMetaData();

@@ -34,10 +34,12 @@ public class FormItemDeclaration implements FormItem  {
     private String formItemTypeForEdit;
     private String formItemTypeForAdd;
     private String subgroup;
+    private String tabName;
     private int order;
     
     public FormItemDeclaration(String defaultValue, String label, String localLabel, boolean isRequired,
-                              String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, int order) {
+                              String formItemTypeForEdit, String formItemTypeForAdd, String subgroup, 
+                              String tabName, int order) {
         this.defaultValue = defaultValue;
         this.label = label;
         this.localLabel = localLabel;
@@ -45,6 +47,7 @@ public class FormItemDeclaration implements FormItem  {
         this.formItemTypeForEdit = formItemTypeForEdit;
         this.formItemTypeForAdd = formItemTypeForAdd;
         this.subgroup = subgroup;
+        this.tabName = tabName;
         this.order = order;
     }
 
@@ -82,6 +85,11 @@ public class FormItemDeclaration implements FormItem  {
     @Override
     public String subgroup() {
         return this.subgroup;
+    }
+    
+    @Override
+    public String tabName() {
+        return this.tabName;
     }
 
     @Override

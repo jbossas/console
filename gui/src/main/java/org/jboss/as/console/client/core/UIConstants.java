@@ -71,6 +71,7 @@ public interface UIConstants extends Constants {
     String common_label_portOffset();
     String common_label_hosts();
     String common_label_profiles();
+    String common_label_properties();
     String common_label_noRecentMessages();
     String common_label_messageDetail();
     String common_label_messages();
@@ -195,6 +196,8 @@ public interface UIConstants extends Constants {
     String subsys_osgi_frameworkProperty();
     String subsys_osgi_frameworkPropertyAdd();
     String subsys_osgi_properties();
+    
+    String subsys_threads_sizing();
 
     String subsys_messaging_jms_provider();
     String subsys_messaging_jms_destinations();

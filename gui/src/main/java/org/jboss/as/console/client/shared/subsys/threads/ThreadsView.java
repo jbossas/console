@@ -35,19 +35,19 @@ import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter.MyView {
 
     private ThreadFactoryView threadFactoryView;
-    private BoundedQueueThreadPoolView boundedQueueView;
-    private BoundedQueueThreadPoolView boundedQueueView2;
+    private BoundedQueueThreadPoolView boundedQueuePoolView;
+    private UnboundedQueueThreadPoolView unboundedQueuePoolView;
+    private QueuelessThreadPoolView queuelessPoolView;
+    private ScheduledThreadPoolView scheduledPoolView;
 
     @Inject
     public ThreadsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        
-        
-        boundedQueueView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
-        
-        // TODO: replace with another type of pool view
-        boundedQueueView2 = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
-        
-        threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher, boundedQueueView);
+        queuelessPoolView = new QueuelessThreadPoolView(propertyMetaData, dispatcher);
+        unboundedQueuePoolView = new UnboundedQueueThreadPoolView(propertyMetaData, dispatcher);
+        boundedQueuePoolView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
+        scheduledPoolView = new ScheduledThreadPoolView(propertyMetaData, dispatcher);
+        threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher, 
+                queuelessPoolView, unboundedQueuePoolView, boundedQueuePoolView, scheduledPoolView);
     }
 
     @Override
@@ -56,15 +56,19 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
         tabLayoutpanel.addStyleName("default-tabpanel");
         
         tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getEntityDisplayName());
-        tabLayoutpanel.add(boundedQueueView.asWidget(), boundedQueueView.getEntityDisplayName());
-        tabLayoutpanel.add(boundedQueueView2.asWidget(), boundedQueueView.getEntityDisplayName());
+        tabLayoutpanel.add(queuelessPoolView.asWidget(), queuelessPoolView.getEntityDisplayName());
+        tabLayoutpanel.add(unboundedQueuePoolView.asWidget(), unboundedQueuePoolView.getEntityDisplayName());
+        tabLayoutpanel.add(boundedQueuePoolView.asWidget(), boundedQueuePoolView.getEntityDisplayName());
+        tabLayoutpanel.add(scheduledPoolView.asWidget(), scheduledPoolView.getEntityDisplayName());
         return tabLayoutpanel;
     }
     
     public void initialLoad() {
         this.threadFactoryView.initialLoad();
-        this.boundedQueueView.initialLoad();
-        this.boundedQueueView2.initialLoad();
+        this.queuelessPoolView.initialLoad();
+        this.unboundedQueuePoolView.initialLoad();
+        this.boundedQueuePoolView.initialLoad();
+        this.scheduledPoolView.initialLoad();
     }
   
 }

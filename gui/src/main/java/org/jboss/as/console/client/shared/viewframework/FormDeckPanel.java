@@ -41,9 +41,9 @@ import java.util.Map;
 public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
     
     private String triggerProperty;
-    private Map<String, FormAdapter<T>> forms;
+    protected Map<String, FormAdapter<T>> forms;
     private List<EditListener> listeners = new ArrayList<EditListener>();
-    private String defaultForm;
+    protected String defaultForm;
     
     /**
      * Create a new FormDeckPanel.
@@ -134,7 +134,7 @@ public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
         notifyListeners(bean);
     }
     
-    private void notifyListeners(T bean) {
+    protected void notifyListeners(T bean) {
         for (EditListener listener : listeners) {
             listener.editingBean(bean);
         }
