@@ -43,6 +43,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -64,14 +65,37 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
         FakeTabPanel titleBar = new FakeTabPanel("Interfaces");
         layout.add(titleBar);
 
+        final Form<Interface> form = new Form<Interface>(Interface.class);
+
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewInterfaceDialogue();
             }
         }));
+
+        topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final Interface editedEntity = form.getEditedEntity();
+                Feedback.confirm("Remove Interface Declaration",
+                        "Really remove interface " + editedEntity.getName() + "?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onRemoveInterface(editedEntity);
+                            }
+                        });
+
+                presenter.onRemoveInterface(form.getEditedEntity());
+            }
+        }));
+
 
         layout.add(topLevelTools);
 
@@ -97,7 +121,6 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
         panel.add(new ContentGroupLabel("Interface"));
 
-        Form<Interface> form = new Form<Interface>(Interface.class);
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
@@ -144,6 +167,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
                     }
                 });
 
+        toolstrip.providesDeleteOp(false);
 
         form.bind(table);
         form.setEnabled(false);
@@ -184,16 +208,5 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
         if(!interfaces.isEmpty())
             table.getSelectionModel().setSelected(interfaces.get(0), true);
-    }
-
-    class NonRequiredTextBoxItem extends TextBoxItem {
-        NonRequiredTextBoxItem(String name, String title) {
-            super(name, title);
-        }
-
-        @Override
-        public boolean isRequired() {
-            return false;
-        }
     }
 }

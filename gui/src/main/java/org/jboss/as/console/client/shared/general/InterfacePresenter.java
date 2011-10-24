@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private DispatchAsync dispatcher;
     private LoadInterfacesCmd loadInterfacesCmd;
     private RevealStrategy revealStrategy;
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
@@ -108,6 +110,32 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     @Override
     protected void revealInParent() {
-       revealStrategy.revealInParent(this);
+        revealStrategy.revealInParent(this);
     }
+
+    public void launchNewInterfaceDialogue() {
+        window = new DefaultWindow("New Interface Declaration");
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewInterfaceWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void createNewInterface(Interface entity) {
+
+    }
+
+    public void closeDialoge() {
+        window.hide();
+    }
+
+    public void onRemoveInterface(Interface entity) {
+
+    }
+
 }

@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.general;
 
+import com.gargoylesoftware.htmlunit.ConfirmHandler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,6 +49,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -78,6 +80,22 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewSocketDialogue();
+            }
+        }));
+
+        toolstrip.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final SocketBinding editedEntity = form.getEditedEntity();
+                Feedback.confirm("Remove Socket Binding", "Really remove socket binding "+editedEntity.getName()+"?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                    presenter.onDelete(editedEntity);
+                            }
+                        });
+                presenter.onDelete(editedEntity);
             }
         }));
 
@@ -159,11 +177,12 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
                     @Override
                     public void onDelete(SocketBinding entity) {
-                        presenter.onDelete(entity);
+
                     }
                 }
         );
 
+        detailToolStrip.providesDeleteOp(false);
 
         panel.add(new ContentGroupLabel("Socket Binding"));
 

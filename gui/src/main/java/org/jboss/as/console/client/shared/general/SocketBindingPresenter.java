@@ -206,7 +206,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     public void launchNewSocketDialogue() {
-        window = new DefaultWindow("Create Socket Binding");
+        window = new DefaultWindow("New Socket Binding");
         window.setWidth(480);
         window.setHeight(360);
 
@@ -225,6 +225,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).add("socket-binding-group", socketBinding.getGroup());
         operation.get(ADDRESS).add("socket-binding", socketBinding.getName());
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
