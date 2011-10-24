@@ -38,7 +38,7 @@ public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<Unbound
 
     @Override
     protected String getEntityDisplayName() {
-        return "Unbounded Queue Pools";
+        return "Unbounded Pools";
     }
 
     @Override

@@ -40,7 +40,7 @@ public class BoundedQueueThreadPoolView extends AbstractThreadPoolView<BoundedQu
 
     @Override
     protected String getEntityDisplayName() {
-        return "Bounded Queue Pools";
+        return "Bounded Pools";
     }
 
     @Override
