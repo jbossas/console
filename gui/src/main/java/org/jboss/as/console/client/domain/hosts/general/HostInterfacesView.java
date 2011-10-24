@@ -55,15 +55,8 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
             }
         };
 
-         TextColumn<Interface> criteriaColumn = new TextColumn<Interface>() {
-            @Override
-            public String getValue(Interface record) {
-                return record.getCriteria();
-            }
-        };
 
         table.addColumn(nameColumn, "Name");
-        table.addColumn(criteriaColumn, "Criteria");
 
         layout.add(table);
 

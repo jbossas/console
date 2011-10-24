@@ -289,7 +289,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
             Map<String,Object> changedValues = form.getChangedValues();
 
-            // https://issues.jboss.org/browse/AS7-662
+            // TODO: https://issues.jboss.org/browse/AS7-662
             if(changedValues.containsKey("portOffset"))
                 changedValues.put("socketBinding", updatedEntity.getSocketBinding());
             else if(changedValues.containsKey("socketBinding"))

@@ -37,6 +37,7 @@ import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private CurrentHostSelection currentHost;
+    private PropertyMetaData metaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostInterfacesPresenter)
@@ -67,7 +69,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     public HostInterfacesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, CurrentHostSelection currentHost,
-            DispatchAsync dispatcher, BeanFactory factory
+            DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData
     ) {
         super(eventBus, view, proxy);
 
@@ -75,6 +77,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.currentHost = currentHost;
+        this.metaData = metaData;
     }
 
     @Override
@@ -95,7 +98,8 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
 
         ModelNode address = new ModelNode();
         address.add("host", currentHost.getName());
-        LoadInterfacesCmd loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, factory, address);
+
+        LoadInterfacesCmd loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
 
         loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
             @Override

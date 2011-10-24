@@ -25,11 +25,69 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 5/17/11
  */
-public interface Interface{
+public interface Interface {
+
     String getName();
     void setName(String name);
 
+    @Binding(detypedName = "any-address")
+    boolean isAnyAddress();
+    void setAnyAddress(boolean b);
+
+    @Binding(detypedName = "any-ipv4-address")
+    boolean isAnyIP6Address();
+    void setAnyIP6Address(boolean b);
+
+    @Binding(detypedName = "any-ipv6-address")
+    boolean isAnyIP4Address();
+    void setAnyIP4Address(boolean b);
+
+    @Binding(expr = true, detypedName = "inet-address")
+    String getInetAddress();
+    void setInetAddress(String addr);
+
+    @Binding(detypedName = "link-local-address")
+    boolean isLinkLocal();
+    void setLinkLocal(boolean b);
+
+    @Binding(detypedName = "loopback")
+    boolean isLoopback();
+    void setLoopback(boolean b);
+
+    @Binding(detypedName = "loopback-address", expr = true)
+    String getLoopbackAddress();
+    void setLoopbackAddress(String addr);
+
+    boolean isMulticast();
+    void setMulticast(boolean b);
+
     @Binding(expr = true)
-    String getCriteria();
-    void setCriteria(String criteria);
+    String getNic();
+    void setNic(String addr);
+
+    @Binding(expr = true, detypedName = "nic-match")
+    String getNicMatch();
+    void setNicMatch(String addr);
+
+    @Binding(detypedName = "point-to-point")
+    boolean isP2P();
+    void setP2P(boolean b);
+
+    @Binding(detypedName = "public-address")
+    boolean isPublicAddress();
+    void setPublicAddress(boolean b);
+
+    @Binding(detypedName = "site-local-address")
+    boolean isSiteLocal();
+    void setSiteLocal(boolean b);
+
+    @Binding(expr = true, detypedName = "subnet-match")
+    String getSubnetMatch();
+    void setSubnetMatch(String addr);
+
+    boolean isUp();
+    void setUp(boolean b);
+
+    boolean isVirtual();
+    void setVirtual(boolean b);
 }

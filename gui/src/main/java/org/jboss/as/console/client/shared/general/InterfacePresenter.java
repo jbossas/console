@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -66,7 +67,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             DispatchAsync dispatcher,
-            BeanFactory factory, RevealStrategy revealStrategy) {
+            BeanFactory factory, RevealStrategy revealStrategy,
+            PropertyMetaData metaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -76,7 +78,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
         ModelNode address = new ModelNode();
         address.setEmptyList();
-        loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, factory, address);
+        loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
 
     }
 

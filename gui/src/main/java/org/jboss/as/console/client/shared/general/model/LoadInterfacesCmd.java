@@ -20,13 +20,12 @@
 package org.jboss.as.console.client.shared.general.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.shared.BeanFactory;
-import org.jboss.as.console.client.shared.dispatch.AddressableModelCmd;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.expr.Expression;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -39,10 +38,18 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/18/11
  */
-public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncCommand<List<Interface>>{
+public class LoadInterfacesCmd implements AsyncCommand<List<Interface>>{
 
-    public LoadInterfacesCmd(DispatchAsync dispatcher, BeanFactory factory, ModelNode address) {
-        super(dispatcher, factory, address);
+    private EntityAdapter<Interface> entityAdapter;
+    private DispatchAsync dispatcher;
+    private ModelNode address;
+
+    public LoadInterfacesCmd(
+            DispatchAsync dispatcher,
+            ModelNode address, PropertyMetaData metaData) {
+        this.dispatcher = dispatcher;
+        this.address = address;
+        this.entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
     }
 
     @Override
@@ -68,26 +75,10 @@ public class LoadInterfacesCmd extends AddressableModelCmd implements AsyncComma
                 List<Interface> interfaces = new ArrayList<Interface>(payload.size());
                 for(Property property : payload)
                 {
-                    Interface intf = factory.interfaceDeclaration().as();
                     ModelNode item = property.getValue();
-                    intf.setName(item.get("name").asString());
+                    Interface intf = entityAdapter.fromDMR(item);
+                    interfaces.add(intf);
 
-                    if(item.hasDefined("criteria")) // TODO: How can this happen?
-                    {
-                        ModelNode criteria = item.get("criteria").asObject();
-
-                        // TODO: remaining criteria types
-                        if(criteria.hasDefined("inet-address"))
-                        {
-                            String expr = criteria.get("inet-address").asString();
-                            intf.setCriteria(expr);
-                        }
-                        else {
-                            intf.setCriteria(criteria.toString());
-                        }
-
-                        interfaces.add(intf);
-                    }
                 }
 
                 callback.onSuccess(interfaces);

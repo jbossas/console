@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.help;
 
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ATTRIBUTES;
@@ -59,7 +60,8 @@ public class HelpSystem {
         // build field name list
 
         List<String> formItemNames = form.getFormItemNames();
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(form.getConversionType());
+        BeanMetaData beanMetaData = propertyMetaData.getBeanMetaData(form.getConversionType());
+        List<PropertyBinding> bindings = beanMetaData.getProperties();
         final List<String> fieldNames = new ArrayList<String>();
 
         for(PropertyBinding binding : bindings)
