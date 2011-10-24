@@ -248,7 +248,7 @@ public class ServerGroupPresenter
                     if(wasSuccessful)
                     {
                         Console.MODULES.getMessageCenter().notify(
-                                new Message("Deleted server group "+deletion.getGroupName())
+                                new Message("Removed server group "+deletion.getGroupName())
                         );
 
                         getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
@@ -256,7 +256,7 @@ public class ServerGroupPresenter
                     else
                     {
                         Console.MODULES.getMessageCenter().notify(
-                                new Message("Failed to delete "+deletion.getGroupName(), Message.Severity.Error)
+                                new Message("Failed to remove "+deletion.getGroupName(), Message.Severity.Error)
                         );
                     }
 

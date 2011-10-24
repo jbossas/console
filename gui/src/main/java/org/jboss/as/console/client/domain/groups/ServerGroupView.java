@@ -143,7 +143,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                         });
             }
         });
-        toolStrip.addToolButtonRight(delete);
+
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_newServerGroup(), new ClickHandler() {
             @Override
@@ -151,6 +151,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 presenter.launchNewGroupDialoge();
             }
         }));
+
+        toolStrip.addToolButtonRight(delete);
 
         layout.add(toolStrip);
 
