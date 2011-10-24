@@ -288,6 +288,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     @Override
     public void setNoGroupsAvailable(boolean b) {
+        nameLabel.setHTML("");
         form.clearValues();
         jvmEditor.clearValues();
         propertyEditor.clearValues();
