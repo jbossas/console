@@ -129,7 +129,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if(isConfirmed)
-                                    presenter.deleteCurrentRecord();
+                                    presenter.tryDeleteCurrentRecord();
                             }
                         });
             }

@@ -383,7 +383,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         getView().setEnabled(true);
     }
 
-    public void deleteCurrentRecord() {
+    public void tryDeleteCurrentRecord() {
 
         // check if instance exist
         ModelNode operation = new ModelNode();
