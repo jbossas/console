@@ -314,9 +314,10 @@ public class EntityAdapter<T> {
                 );
 
                 if(exprValue!=null)
+                {
                     operation.get(splitDetypedName).setExpression(exprValue);
-
-                continue; // expression have precedence over real values
+                    continue; // expression have precedence over real values
+                }
             }
 
             /**
