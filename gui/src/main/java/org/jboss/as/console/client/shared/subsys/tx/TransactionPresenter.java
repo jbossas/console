@@ -9,18 +9,22 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -34,10 +38,10 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
-    private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private PropertyMetaData metaData;
     private BeanMetaData beanMetaData ;
+    private EntityAdapter<TransactionManager> entityAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TransactionPresenter)
@@ -46,6 +50,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
     public interface MyView extends View {
         void setPresenter(TransactionPresenter presenter);
+        void setTransactionManager(TransactionManager transactionManager);
     }
 
     @Inject
@@ -63,6 +68,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
         this.metaData = metaData;
 
         this.beanMetaData = metaData.getBeanMetaData(TransactionManager.class);
+        this.entityAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
     }
 
 
@@ -83,11 +89,14 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
         ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                TransactionManager transactionManager = entityAdapter.fromDMR(response.get(RESULT));
+                getView().setTransactionManager(transactionManager);
             }
         });
 
@@ -96,5 +105,28 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+
+    public void onSaveConfig(Map<String, Object> changeset) {
+        ModelNode operation =
+                entityAdapter.fromChangeset(
+                        changeset,
+                        beanMetaData.getAddress().asResource(Baseadress.get()
+                        )
+                );
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                boolean success = ModelAdapter.wasSuccess(response);
+                if(success)
+                    Console.info("Success: Update transaction manager settings");
+                else
+                    Console.error("Failed: Failed to update transaction manager settings");
+
+                loadModel();
+            }
+        });
     }
 }

@@ -7,7 +7,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 10/25/11
  */
-@Address("/subsystem=transaction")
+@Address("/subsystem=transactions")
 public interface TransactionManager {
 
     @Binding(detypedName = "socket-binding")
