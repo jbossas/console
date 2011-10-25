@@ -59,10 +59,10 @@ public class XADatasourceStep1 {
 
         TextBoxItem name = new TextBoxItem("name", "Name");
         TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
-        CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
-        enabled.setValue(Boolean.TRUE);
+        //CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
+        //enabled.setValue(Boolean.TRUE);
 
-        form.setFields(name, jndiName, enabled);
+        form.setFields(name, jndiName);
 
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
