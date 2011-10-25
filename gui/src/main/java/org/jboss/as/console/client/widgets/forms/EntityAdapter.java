@@ -456,7 +456,6 @@ public class EntityAdapter<T> {
                 }
                 else if(Integer.class == type)
                 {
-                    System.out.println("setting " + nodeToSetValueUpon + " to " + value);
                     nodeToSetValueUpon.set((Integer)value);
                 }
                 else if(Double.class == type)
