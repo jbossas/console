@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -34,7 +33,6 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
@@ -179,6 +177,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     public void onAddLogger(final String name, final String level) {
         ModelNode operation = LoggingOperation.make(ADD);
         operation.get(ADDRESS).add("logger", name);
+        operation.get("category").set(name);
         operation.get("level").set(level);
         
         execute(operation, name, false, "Success: Added logger " + name);
