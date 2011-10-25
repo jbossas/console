@@ -92,7 +92,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     @Override
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton("Refresh List", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 initialLoad();
