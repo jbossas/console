@@ -142,6 +142,7 @@ public class DataSourceEditor {
             public void onSelectionChange(SelectionChangeEvent event) {
                 DataSource selectedObject = ((SingleSelectionModel<DataSource>) dataSourceTable.getCellTable().getSelectionModel()).getSelectedObject();
                 presenter.loadPoolConfig(false, selectedObject.getName());
+                presenter.onLoadConnectionProperties(selectedObject.getName());
 
             }
         });
@@ -156,7 +157,7 @@ public class DataSourceEditor {
         // -----------------
 
         connectionProps = new ConnectionProperties(presenter);
-        bottomPanel.add(connectionProps.asWidget(), "Connection Properties");
+        bottomPanel.add(connectionProps.asWidget(), "Properties");
 
         // -----------------
 
@@ -175,15 +176,6 @@ public class DataSourceEditor {
         bottomPanel.add(poolConfig.asWidget(), "Pool");
         bottomPanel.selectTab(0);
 
-        bottomPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-            @Override
-            public void onSelection(SelectionEvent<Integer> selection) {
-                if(1 == selection.getSelectedItem())
-                {
-                    presenter.onLoadConnectionProperties(details.getCurrentSelection().getName());
-                }
-            }
-        });
         // -----------------
 
         vpanel.add(new ContentGroupLabel("Datasource"));

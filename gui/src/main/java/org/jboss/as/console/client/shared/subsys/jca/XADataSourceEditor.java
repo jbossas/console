@@ -217,9 +217,8 @@ public class XADataSourceEditor implements PropertyManagement {
         bottomPanel.setStyleName("default-tabpanel");
 
         bottomPanel.add(details.asWidget(), "Attributes");
-        bottomPanel.add(propertyEditor.asWidget(), "XA Properties");
-        propertyEditor.setAllowEditProps(false); // TODO: modifications of XA properties
-        // See https://issues.jboss.org/browse/AS7-874
+        bottomPanel.add(propertyEditor.asWidget(), "Properties");
+        propertyEditor.setAllowEditProps(false);
 
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
@@ -236,7 +235,7 @@ public class XADataSourceEditor implements PropertyManagement {
         bottomPanel.add(poolConfig.asWidget(), "Pool");
 
         bottomPanel.selectTab(0);
-        vpanel.add(new ContentGroupLabel("Datasource"));
+        vpanel.add(new ContentGroupLabel("XA Datasource"));
         vpanel.add(bottomPanel);
         return layout;
     }
@@ -256,7 +255,7 @@ public class XADataSourceEditor implements PropertyManagement {
 
 
     // property management below
-    // TODO: https://issues.jboss.org/browse/AS7-874
+    // TODO: https://issues.jboss.org/browse/AS7-2240
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
