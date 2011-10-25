@@ -127,6 +127,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresent
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimeView;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsView;
+import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
+import org.jboss.as.console.client.shared.subsys.tx.TransactionView;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebSubsystemView;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
@@ -388,7 +390,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 StandaloneServerView.class,
                 StandaloneServerPresenter.MyProxy.class);
 
-         bindPresenter(WebServicePresenter.class,
+        bindPresenter(WebServicePresenter.class,
                 WebServicePresenter.MyView.class,
                 WebServiceView.class,
                 WebServicePresenter.MyProxy.class);
@@ -412,10 +414,16 @@ public class CoreUIModule extends AbstractPresenterModule {
                 VMMetricsView.class,
                 VMMetricsPresenter.MyProxy.class);
 
-         bindPresenter(HostVMMetricPresenter.class,
+        bindPresenter(HostVMMetricPresenter.class,
                 HostVMMetricPresenter.MyView.class,
                 HostVMView.class,
                 HostVMMetricPresenter.MyProxy.class);
+
+
+        bindPresenter(TransactionPresenter.class,
+                TransactionPresenter.MyView.class,
+                TransactionView.class,
+                TransactionPresenter.MyProxy.class);
     }
 
 }

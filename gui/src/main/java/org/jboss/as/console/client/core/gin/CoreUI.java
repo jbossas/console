@@ -85,6 +85,7 @@ import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
+import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
@@ -222,5 +223,7 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<VMMetricsPresenter> getVMMetricsPresenter();
     AsyncProvider<HostVMMetricPresenter> getServerVMMetricPresenter();
+
+    AsyncProvider<TransactionPresenter> getTransactionPresenter();
 
 }

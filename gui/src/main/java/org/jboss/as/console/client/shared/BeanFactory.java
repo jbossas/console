@@ -70,6 +70,7 @@ import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPo
 import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
@@ -148,4 +149,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<UnboundedQueueThreadPool> unboundedQueueThreadPool();
     AutoBean<QueuelessThreadPool> queuelessThreadPool();
     AutoBean<ScheduledThreadPool> scheduledThreadPool();
+
+    AutoBean<TransactionManager> transactionManager();
 }

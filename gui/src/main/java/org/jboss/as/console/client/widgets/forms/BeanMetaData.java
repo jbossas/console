@@ -15,6 +15,11 @@ public class BeanMetaData {
 
     public BeanMetaData(Class<?> beanType, AddressBinding address, List<PropertyBinding> properties) {
         this.beanType = beanType;
+
+        if(null==properties)
+            throw new IllegalStateException("No meta data available for type "+beanType+
+                    ". Make sure its exposed through the BeanFactory.");
+
         this.address = address;
         this.properties = properties;
         this.formMetaData = new FormMetaData(this);
