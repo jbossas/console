@@ -7,7 +7,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
  * @author Heiko Braun
  * @date 10/25/11
  */
-public interface TXMetricSampler {
+public interface TXExecutionSampler {
 
     Widget asWidget();
 

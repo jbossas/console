@@ -10,12 +10,12 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
  * @author Heiko Braun
  * @date 10/25/11
  */
-public class TXMetricView implements TXMetricSampler {
+public class TXExecutionView implements TXExecutionSampler {
 
     private TransactionPresenter presenter;
-    private TXMetricSampler sampler = null;
+    private TXExecutionSampler sampler = null;
 
-    public TXMetricView(TransactionPresenter presenter) {
+    public TXExecutionView(TransactionPresenter presenter) {
         this.presenter = presenter;
     }
 

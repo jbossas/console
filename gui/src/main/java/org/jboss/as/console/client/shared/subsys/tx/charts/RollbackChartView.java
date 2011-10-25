@@ -11,8 +11,8 @@ import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
-import org.jboss.as.console.client.shared.subsys.tx.TXExecutionSampler;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
+import org.jboss.as.console.client.shared.subsys.tx.TXRollbackSampler;
+import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
 
 import java.util.Date;
 
@@ -20,21 +20,19 @@ import java.util.Date;
  * @author Heiko Braun
  * @date 10/25/11
  */
-public class TXChartView extends AbstractChartView implements TXExecutionSampler {
+public class RollbackChartView extends AbstractChartView implements TXRollbackSampler {
 
     private DataTable data;
     private LineChart chart;
 
-    private HTML totalLabel;
-    private HTML commitedLabel;
-    private HTML abortedLabel;
-    private HTML timedOutLabel;
+    private HTML appLabel;
+    private HTML resourceLabel;
 
-    public TXChartView(String title) {
+    public RollbackChartView(String title) {
         super(title);
     }
 
-    public TXChartView(int width, int height, String title) {
+    public RollbackChartView(int width, int height, String title) {
         super(width, height, title);
     }
 
@@ -47,17 +45,12 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
 
         // labels
 
-        totalLabel  = new HTML();
-        commitedLabel = new HTML();
-        abortedLabel = new HTML();
-        timedOutLabel= new HTML();
-
+        appLabel = new HTML();
+        resourceLabel = new HTML();
 
         HorizontalPanel labels = new HorizontalPanel();
-        labels.add(totalLabel);
-        labels.add(commitedLabel);
-        labels.add(abortedLabel);
-        labels.add(timedOutLabel);
+        labels.add(appLabel);
+        labels.add(resourceLabel);
 
         layout.add(labels);
         labels.getElement().getParentElement().setAttribute("align", "center");
@@ -68,10 +61,8 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
     private DataTable createTable() {
         data = DataTable.create();
         data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Total");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Committed");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Aborted");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Timed Out");
+        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Applications");
+        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Resources");
         return data;
     }
 
@@ -84,19 +75,17 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         return options;
     }
 
-    public void addSample(TXMetric metric) {
+    public void addSample(RollbackMetric metric) {
 
-        totalLabel.setHTML("Total: " + metric.getTotal());
-        commitedLabel.setHTML("Committed: "+metric.getCommitted());
+        appLabel.setHTML("Applications: " + metric.getAppRollback());
+        resourceLabel.setHTML("Resources: "+metric.getResourceRollback());
 
         data.addRow();
         int nextRow = data.getNumberOfRows()-1;
 
         data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
-        data.setValue(nextRow, 1, metric.getTotal());
-        data.setValue(nextRow, 2, metric.getCommitted());
-        data.setValue(nextRow, 3, metric.getAborted());
-        data.setValue(nextRow, 4, metric.getTimedOut());
+        data.setValue(nextRow, 1, metric.getAppRollback());
+        data.setValue(nextRow, 2, metric.getResourceRollback());
 
         Options options = createOptions();
 
@@ -117,4 +106,5 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
     public long numSamples() {
         return data.getNumberOfRows();
     }
+
 }

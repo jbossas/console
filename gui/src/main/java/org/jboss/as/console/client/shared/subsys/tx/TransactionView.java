@@ -6,12 +6,11 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
 import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -20,7 +19,6 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.Map;
 
@@ -33,7 +31,7 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
     private TransactionPresenter presenter = null;
 
     private boolean provideMetrics = true;
-    private TXMetricView overviewMetric;
+    private TXExecutionView executionMetric;
     private TXRollbackView rollbackMetric;
 
     private Form<TransactionManager> form ;
@@ -112,8 +110,8 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
             bottomLayout.addStyleName("default-tabpanel");
             bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
 
-            this.overviewMetric = new TXMetricView(presenter);
-            bottomLayout.add(overviewMetric.asWidget(),"Transactions");
+            this.executionMetric = new TXExecutionView(presenter);
+            bottomLayout.add(executionMetric.asWidget(),"Transactions");
 
             this.rollbackMetric = new TXRollbackView(presenter);
             bottomLayout.add(rollbackMetric.asWidget(),"Rollbacks");
@@ -130,12 +128,19 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
     public void setTransactionManager(TransactionManager tm) {
         form.edit(tm);
 
-        overviewMetric.addSample(
+        executionMetric.addSample(
                 new TXMetric(
                         tm.getNumTransactions(),
                         tm.getNumCommittedTransactions(),
                         tm.getNumAbortedTransactions(),
                         tm.getNumTimeoutTransactions())
         );
+
+        rollbackMetric.addSample(
+                new RollbackMetric(
+                        tm.getNumApplicationRollback(),
+                        tm.getNumResourceRollback())
+        );
+
     }
 }

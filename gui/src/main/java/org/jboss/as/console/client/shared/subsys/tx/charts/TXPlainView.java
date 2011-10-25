@@ -1,9 +1,8 @@
 package org.jboss.as.console.client.shared.subsys.tx.charts;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.tx.TXMetricSampler;
+import org.jboss.as.console.client.shared.subsys.tx.TXExecutionSampler;
 import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -12,7 +11,7 @@ import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
  * @author Heiko Braun
  * @date 10/25/11
  */
-public class TXPlainView implements TXMetricSampler {
+public class TXPlainView implements TXExecutionSampler {
 
     private TextBoxItem total;
     private TextBoxItem committed;
