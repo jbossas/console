@@ -22,6 +22,8 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -54,6 +57,7 @@ public class DataSourceEditor {
     private DatasourceTable dataSourceTable;
     private DataSourceDetails details;
     private PoolConfigurationView poolConfig;
+    private ConnectionProperties connectionProps ;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -142,10 +146,19 @@ public class DataSourceEditor {
             }
         });
 
+        // -----------------
+
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
         bottomPanel.add(details.asWidget(), "Attributes");
+
+        // -----------------
+
+        connectionProps = new ConnectionProperties(presenter);
+        bottomPanel.add(connectionProps.asWidget(), "Connection Properties");
+
+        // -----------------
 
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
@@ -160,9 +173,18 @@ public class DataSourceEditor {
         });
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");
-
-        //bottomPanel.add(new HTML("Pool-size, connections in use, etc"), "Metrics");
         bottomPanel.selectTab(0);
+
+        bottomPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+            @Override
+            public void onSelection(SelectionEvent<Integer> selection) {
+                if(1 == selection.getSelectedItem())
+                {
+                    presenter.onLoadConnectionProperties(details.getCurrentSelection().getName());
+                }
+            }
+        });
+        // -----------------
 
         vpanel.add(new ContentGroupLabel("Datasource"));
         vpanel.add(bottomPanel);
@@ -196,5 +218,9 @@ public class DataSourceEditor {
     public void setConnectionVerified(boolean isValidConnection) {
         new ConnectionWindow(details.getCurrentSelection(), isValidConnection).show();
 
+    }
+
+    public void setConnectionProperties(String reference, List<PropertyRecord> properties) {
+        connectionProps.setProperties(reference, properties);
     }
 }

@@ -482,7 +482,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onFailure(Throwable throwable) {
-             callback.onFailure(throwable);
+                callback.onFailure(throwable);
             }
 
             @Override
@@ -492,5 +492,85 @@ public class DataSourceStoreImpl implements DataSourceStore {
             }
         });
 
+    }
+
+    @Override
+    public void loadConnectionProperties(String reference, final AsyncCallback<List<PropertyRecord>> callback) {
+        AddressBinding address = dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), reference);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("connection-properties");
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+
+                List<Property> properties = result.get(RESULT).asPropertyList();
+                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+                for(Property prop : properties)
+                {
+                    String name = prop.getName();
+                    String value = prop.getValue().asObject().get("value").asString();
+                    PropertyRecord propertyRecord = factory.property().as();
+                    propertyRecord.setKey(name);
+                    propertyRecord.setValue(value);
+                    records.add(propertyRecord);
+                }
+
+                callback.onSuccess(records);
+            }
+        });
+    }
+
+    @Override
+    public void createConnectionProperty(String reference, PropertyRecord prop, final AsyncCallback<Boolean> callback) {
+        AddressBinding address = dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), reference);
+        operation.get(ADDRESS).add("connection-properties", prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                callback.onSuccess(ModelAdapter.wasSuccess(result));
+            }
+        });
+    }
+
+    @Override
+    public void deleteConnectionProperty(String reference, PropertyRecord prop, final AsyncCallback<Boolean> callback) {
+        AddressBinding address = dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), reference);
+        operation.get(ADDRESS).add("connection-properties", prop.getKey());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                callback.onSuccess(ModelAdapter.wasSuccess(result));
+            }
+        });
     }
 }

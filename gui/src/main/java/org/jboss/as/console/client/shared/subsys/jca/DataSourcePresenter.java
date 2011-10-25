@@ -36,6 +36,8 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -48,19 +50,17 @@ import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
  * @author Heiko Braun
  * @date 3/24/11
  */
-public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy>
+        implements PropertyManagement {
 
     private boolean hasBeenRevealed = false;
     private DefaultWindow window;
@@ -69,6 +69,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     private DriverStrategy driverRegistry;
     private RevealStrategy revealStrategy;
     private ApplicationProperties bootstrap;
+    private DefaultWindow propertyWindow;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourcePresenter)
@@ -83,10 +84,10 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void enableXADetails(boolean b);
         void setPoolConfig(String name, PoolConfig poolConfig);
         void setXAPoolConfig(String dsName, PoolConfig underlying);
-
         void setXAProperties(String dataSourceName, List<PropertyRecord> result);
-
         void setConnectionVerified(boolean b);
+        void setConnectionProperties(String reference, List<PropertyRecord> properties);
+
     }
 
     @Inject
@@ -427,5 +428,82 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 getView().setConnectionVerified(outcome);
             }
         });
+    }
+
+    public void onLoadConnectionProperties(final String datasourceName) {
+        dataSourceStore.loadConnectionProperties(datasourceName, new AsyncCallback<List<PropertyRecord>>(){
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error("Failed to read connection properties on datasource "+datasourceName);
+            }
+
+            @Override
+            public void onSuccess(List<PropertyRecord> propertyRecords) {
+                getView().setConnectionProperties(datasourceName, propertyRecords);
+            }
+        });
+    }
+
+    @Override
+    public void onCreateProperty(final String reference, final PropertyRecord prop) {
+
+        closePropertyDialoge();
+
+        dataSourceStore.createConnectionProperty(reference, prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if(success)
+                    Console.info("Success: Added connection property "+prop.getKey());
+                else
+                    Console.error("Failed: Adding connection property " + prop.getKey());
+
+                onLoadConnectionProperties(reference);
+            }
+        });
+    }
+
+    @Override
+    public void onDeleteProperty(final String reference, final PropertyRecord prop) {
+        dataSourceStore.deleteConnectionProperty(reference, prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+               if(success)
+                    Console.info("Success: Removed connection property "+prop.getKey());
+                else
+                    Console.error("Failed: Removing connection property " + prop.getKey());
+
+                onLoadConnectionProperties(reference);
+            }
+        });
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // not possible
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow("New Connection Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
     }
 }

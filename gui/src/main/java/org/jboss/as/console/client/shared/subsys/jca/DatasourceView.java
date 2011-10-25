@@ -103,4 +103,9 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     public void setXAPoolConfig(String name, PoolConfig poolConfig) {
         xaDataSourceEditor.setPoolConfig(name, poolConfig);
     }
+
+    public void setConnectionProperties(String reference, List<PropertyRecord> properties) {
+        dataSourceEditor.setConnectionProperties(reference, properties);
+    }
+
 }
