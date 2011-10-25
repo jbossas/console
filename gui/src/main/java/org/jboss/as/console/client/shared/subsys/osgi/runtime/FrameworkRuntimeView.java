@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import java.util.EnumSet;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -33,6 +35,8 @@ import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeI
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author David Bosschaert
@@ -48,6 +52,18 @@ public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
     @Override
     public Widget createWidget() {
         return createEmbeddableWidget();
+    }
+
+    @Override
+    protected ToolStrip createToolStrip() {
+        ToolStrip toolStrip = super.createToolStrip();
+        toolStrip.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                initialLoad();
+            }
+        }));
+        return toolStrip;
     }
 
     @Override
