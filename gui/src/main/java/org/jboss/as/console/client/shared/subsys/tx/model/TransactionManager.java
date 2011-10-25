@@ -18,6 +18,21 @@ public interface TransactionManager {
     String getStatusSocketBinding();
     void setStatusSocketBinding(String s);
 
+    String getPath();
+    void setPath(String s);
+
+    @Binding(detypedName = "relative-to")
+    String getRelativeTo();
+    void setRelativeTo(String s);
+
+    @Binding(detypedName = "object-store-relative-to")
+    String getObjectStoreRelativeTo();
+    void setObjectStoreRelativeTo(String s);
+
+    @Binding(detypedName = "object-store-path")
+    String getObjectStorePath();
+    void setObjectStorePath(String s);
+
     @Binding(detypedName = "default-timeout")
     int getDefaultTimeout();
     void setDefaultTimeout(int t);

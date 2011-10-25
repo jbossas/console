@@ -50,4 +50,9 @@ public class TXExecutionView implements TXExecutionSampler {
     public long numSamples() {
         return sampler.numSamples();
     }
+
+    @Override
+    public void recycle() {
+        sampler.recycle();
+    }
 }

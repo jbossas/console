@@ -50,4 +50,9 @@ public class TXRollbackView implements TXRollbackSampler {
     public long numSamples() {
         return sampler.numSamples();
     }
+
+    @Override
+    public void recycle() {
+        sampler.recycle();
+    }
 }

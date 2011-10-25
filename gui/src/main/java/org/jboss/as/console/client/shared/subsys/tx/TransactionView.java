@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
 import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
@@ -19,6 +21,7 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
 
@@ -85,19 +88,34 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         panel.add(new ContentGroupLabel("Attributes"));
 
 
-
         NumberBoxItem defaultTimeout = new NumberBoxItem("defaultTimeout", "Default Timeout");
         CheckBoxItem enableStatistics = new CheckBoxItem("enableStatistics", "Enable Statistics");
         CheckBoxItem enableTsm = new CheckBoxItem("enableTsmStatus", "Enable TSM Status");
+
+        TextBoxItem path = new TextBoxItem("path", "Path");
+        TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
+        TextBoxItem objectStorePath = new TextBoxItem("objectStorePath", "Object Store Path");
+        TextBoxItem objectStorePathRelativeTo = new TextBoxItem("ObjectStoreRelativeTo", "Object Store Relative To");
 
         CheckBoxItem recoveryListener = new CheckBoxItem("recoveryListener", "Recovery Listener");
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
         TextBoxItem statusSocketBinding = new TextBoxItem("statusSocketBinding", "Status Socket Binding");
 
         form.setFields(enableStatistics, enableTsm, defaultTimeout);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), socketBinding, statusSocketBinding, recoveryListener);
+        form.setFieldsInGroup("Storage", new DisclosureGroupRenderer(), path, relativeTo, objectStorePath, objectStorePathRelativeTo);
+        form.setFieldsInGroup("Recovery", new DisclosureGroupRenderer(), socketBinding, statusSocketBinding, recoveryListener);
 
         form.setEnabled(false);
+
+
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "transactions");
+                return address;
+            }
+        }, form);
 
         panel.add(form.asWidget());
 
@@ -142,5 +160,11 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
                         tm.getNumResourceRollback())
         );
 
+    }
+
+    @Override
+    public void recycleCharts() {
+        executionMetric.recycle();
+        rollbackMetric.recycle();
     }
 }

@@ -30,6 +30,8 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
     private HTML abortedLabel;
     private HTML timedOutLabel;
 
+    private VerticalPanel layout;
+
     public TXChartView(String title) {
         super(title);
     }
@@ -39,7 +41,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
     }
 
     public Widget asWidget() {
-        VerticalPanel layout = new VerticalPanel();
+        layout = new VerticalPanel();
 
         // chart
         chart = new LineChart(createTable(), createOptions()) ;
@@ -116,5 +118,16 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
 
     public long numSamples() {
         return data.getNumberOfRows();
+    }
+
+    @Override
+    public void recycle() {
+        if(chart!=null)
+        {
+            layout.remove(chart);
+            chart = new LineChart(createTable(), createOptions()) ;
+            layout.add(chart);
+        }
+
     }
 }

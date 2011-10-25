@@ -16,4 +16,6 @@ public interface TXExecutionSampler {
     void clearSamples();
 
     long numSamples();
+
+    void recycle();
 }

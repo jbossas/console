@@ -52,4 +52,9 @@ public class RollbackPlainView implements TXRollbackSampler {
     public long numSamples() {
         return 1;
     }
+
+    @Override
+    public void recycle() {
+
+    }
 }

@@ -59,4 +59,9 @@ public class TXPlainView implements TXExecutionSampler {
     public long numSamples() {
         return 1;
     }
+
+    @Override
+    public void recycle() {
+
+    }
 }

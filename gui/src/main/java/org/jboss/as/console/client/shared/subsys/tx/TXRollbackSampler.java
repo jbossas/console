@@ -17,4 +17,6 @@ public interface TXRollbackSampler {
     void clearSamples();
 
     long numSamples();
+
+    void recycle();
 }

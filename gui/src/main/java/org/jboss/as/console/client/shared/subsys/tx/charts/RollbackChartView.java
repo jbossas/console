@@ -27,6 +27,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
 
     private HTML appLabel;
     private HTML resourceLabel;
+    private VerticalPanel layout;
 
     public RollbackChartView(String title) {
         super(title);
@@ -37,7 +38,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
     }
 
     public Widget asWidget() {
-        VerticalPanel layout = new VerticalPanel();
+        layout = new VerticalPanel();
 
         // chart
         chart = new LineChart(createTable(), createOptions()) ;
@@ -107,4 +108,14 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         return data.getNumberOfRows();
     }
 
+    @Override
+    public void recycle() {
+        if(chart!=null)
+        {
+            layout.remove(chart);
+            chart = new LineChart(createTable(), createOptions()) ;
+            layout.add(chart);
+
+        }
+    }
 }

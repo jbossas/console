@@ -51,6 +51,8 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     public interface MyView extends View {
         void setPresenter(TransactionPresenter presenter);
         void setTransactionManager(TransactionManager transactionManager);
+
+        void recycleCharts();
     }
 
     @Inject
@@ -82,7 +84,10 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
+        // TODO: optimize recycle behaviour
+        getView().recycleCharts();
         loadModel();
+
     }
 
     private void loadModel() {
