@@ -255,31 +255,30 @@ public class XADataSourceEditor implements PropertyManagement {
 
 
     // property management below
-    // TODO: https://issues.jboss.org/browse/AS7-2240
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-
+        presenter.onCreateXAProperty(reference, prop);
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-        Console.error("Not implemented yet!");
+        presenter.onDeleteXAProperty(reference, prop);
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        Console.error("Not implemented yet!");
+
     }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        Console.error("Not implemented yet!");    // https://issues.jboss.org/browse/AS7-874
+        presenter.launchNewXAPropertyDialoge(reference);
     }
 
     @Override
     public void closePropertyDialoge() {
-
+        presenter.closeXAPropertyDialoge();
     }
 
     public void enableDetails(boolean b) {

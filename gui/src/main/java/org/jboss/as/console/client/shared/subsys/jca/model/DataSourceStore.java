@@ -58,4 +58,7 @@ public interface DataSourceStore {
     void loadConnectionProperties(String reference, AsyncCallback<List<PropertyRecord>> callback);
     void createConnectionProperty(String reference, PropertyRecord prop, AsyncCallback<Boolean> callback);
     void deleteConnectionProperty(String reference, PropertyRecord prop, AsyncCallback<Boolean> callback);
+
+    void createXAConnectionProperty(String reference, PropertyRecord prop, AsyncCallback<Boolean> callback);
+    void deleteXAConnectionProperty(String reference, PropertyRecord prop, AsyncCallback<Boolean> callback);
 }

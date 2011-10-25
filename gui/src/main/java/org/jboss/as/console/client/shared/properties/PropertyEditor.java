@@ -92,7 +92,6 @@ public class PropertyEditor {
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
-
         ToolStrip propTools = new ToolStrip();
 
         addProp = new ToolButton(Console.CONSTANTS.common_label_add());
@@ -259,6 +258,9 @@ public class PropertyEditor {
 
     public void setEnabled(boolean enabled)
     {
+        if(null==propertyTable)
+            throw new IllegalStateException("You need to call asWidget() before enabling the PropertyEditor");
+
         this.enabled = enabled;
         propertyTable.setEnabled(enabled && allowEditProps);
         addProp.setEnabled(enabled);
@@ -271,11 +273,19 @@ public class PropertyEditor {
      * @param allowEditProps 
      */
     public void setAllowEditProps(boolean allowEditProps) {
+
+        if(null==propertyTable)
+            throw new IllegalStateException("You need to call asWidget() before enabling the PropertyEditor");
+
         this.allowEditProps = allowEditProps;
         propertyTable.setEnabled(enabled && allowEditProps);
     }
 
     public void clearValues() {
+
+        if(null==propertyTable)
+            throw new IllegalStateException("You need to call asWidget() before clearing the values");
+
         propertyProvider.setList(new ArrayList<PropertyRecord>());
         setEnabled(false);
     }

@@ -414,6 +414,85 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
     }
 
+    public void onCreateXAProperty(final String reference, final PropertyRecord prop) {
+
+        closePropertyDialoge();
+
+        dataSourceStore.createXAConnectionProperty(reference, prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if (success)
+                    Console.info("Success: Added XA property " + prop.getKey());
+                else
+                    Console.error("Failed: Adding XA property " + prop.getKey());
+
+                loadXAProperties(reference);
+            }
+        });
+    }
+
+    public void onDeleteXAProperty(final String reference, final PropertyRecord prop) {
+        dataSourceStore.deleteXAConnectionProperty(reference, prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if (success)
+                    Console.info("Success: Removed XA property " + prop.getKey());
+                else
+                    Console.error("Failed: Removing XA property " + prop.getKey());
+
+                loadXAProperties(reference);
+            }
+        });
+    }
+
+    public void launchNewXAPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow("New XA Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(new PropertyManagement() {
+                    @Override
+                    public void onCreateProperty(String reference, PropertyRecord prop) {
+                        onCreateXAProperty(reference, prop);
+                    }
+
+                    @Override
+                    public void onDeleteProperty(String reference, PropertyRecord prop) {
+
+                    }
+
+                    @Override
+                    public void onChangeProperty(String reference, PropertyRecord prop) {
+
+                    }
+
+                    @Override
+                    public void launchNewPropertyDialoge(String reference) {
+
+                    }
+
+                    @Override
+                    public void closePropertyDialoge() {
+
+                    }
+                }, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    public void closeXAPropertyDialoge() {
+        propertyWindow.hide();
+    }
+
     public void verifyConnection(final DataSource dataSource) {
 
         dataSourceStore.verifyConnection(dataSource, new SimpleCallback<Boolean>() {

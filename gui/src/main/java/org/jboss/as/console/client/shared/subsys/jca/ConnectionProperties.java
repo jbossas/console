@@ -13,20 +13,26 @@ import java.util.List;
 public class ConnectionProperties {
 
     private DataSourcePresenter presenter;
-    private PropertyEditor propEditor;
+    private PropertyEditor propEditor = null;
+    private Widget widget;
 
     public ConnectionProperties(DataSourcePresenter presenter) {
         this.presenter = presenter;
+        propEditor = new PropertyEditor(presenter, true);
+        propEditor.setHelpText("JDBC connection properties");
+        widget = propEditor.asWidget();
+        propEditor.setAllowEditProps(false);
     }
 
     Widget asWidget() {
-        propEditor = new PropertyEditor(presenter, true);
-        propEditor.setHelpText("JDBC connection properties");
-        return propEditor.asWidget();
-
+       return widget;
     }
 
     public void setProperties(String reference, List<PropertyRecord> properties) {
-        propEditor.setProperties(reference, properties);
+
+        if(propEditor!=null)
+            propEditor.setProperties(reference, properties);
     }
+
+
 }
