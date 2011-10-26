@@ -67,9 +67,9 @@ public class LHSStandaloneNavigation {
         // ----------------------------------------------------
 
         Tree serverTree = new LHSNavTree("profiles");
-        serverTree.addItem(new LHSNavTreeItem("Virtual Machine", NameTokens.VirtualMachine));
-        serverTree.addItem(new LHSNavTreeItem("Deployments", NameTokens.DeploymentListPresenter));
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Server").asWidget();
+        serverTree.addItem(new LHSNavTreeItem("VM Status", NameTokens.VirtualMachine));
+        serverTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
+        DisclosurePanel serverPanel  = new DisclosureStackPanel("Runtime Status").asWidget();
         serverPanel.setContent(serverTree);
 
         stack.add(serverPanel);
