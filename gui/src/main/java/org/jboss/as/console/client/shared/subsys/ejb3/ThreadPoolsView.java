@@ -22,6 +22,7 @@ import java.util.EnumSet;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -82,7 +83,7 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
 
     @Override
     protected String getEntityDisplayName() {
-        return "Thread Pools";
+        return Console.CONSTANTS.subsys_ejb3_threadPools();
     }
 
     public void setPresenter(EJB3Presenter presenter) {

@@ -22,6 +22,7 @@ import java.util.Collection;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -113,7 +114,7 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
 
     @Override
     protected String getEntityDisplayName() {
-        return "Bean Pools";
+        return Console.CONSTANTS.subsys_ejb3_beanPools();
     }
 
     public void setPresenter(EJB3Presenter presenter) {

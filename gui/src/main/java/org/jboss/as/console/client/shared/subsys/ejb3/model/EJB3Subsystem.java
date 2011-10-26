@@ -28,34 +28,34 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 @Address("/subsystem=ejb3")
 public interface EJB3Subsystem {
     @Binding(detypedName="default-slsb-instance-pool")
-    @FormItem(label="Stateless Session Bean Pool",
+    @FormItem(localLabel="subsys_ejb3_statelessSessionBeanPool",
               required=true,
               formItemTypeForEdit="COMBO_BOX")
     String getDefaultSLSBPool();
     void setDefaultSLSBPool(String name);
 
     @Binding(detypedName="default-mdb-instance-pool")
-    @FormItem(label="Message Driven Bean Pool",
+    @FormItem(localLabel="subsys_ejb3_messageDrivenBeanPool",
               required=true,
               formItemTypeForEdit="COMBO_BOX")
     String getDefaultMDBPool();
     void setDefaultMDBPool(String name);
 
     @Binding(detypedName="default-resource-adapter-name")
-    @FormItem(label="Resource Adapter",
+    @FormItem(localLabel="subsys_ejb3_defaultResourceAdapter",
               required=true)
     String getDefaultRA();
     void setDefaultRA(String name);
 
     @Binding(detypedName="default-singleton-bean-access-timeout")
-    @FormItem(label="Singleton Access Timeout",
+    @FormItem(localLabel="subsys_ejb3_singletonAccessTimeout",
               required=true,
               formItemTypeForEdit="NUMBER_BOX")
     long getDefaultSingletonAccessTimeout();
     void setDefaultSingletonAccessTimeout(long timeout);
 
     @Binding(detypedName="default-stateful-bean-access-timeout")
-    @FormItem(label="Stateful Access Timeout",
+    @FormItem(localLabel="subsys_ejb3_statefulAccessTimeout",
               required=true,
               formItemTypeForEdit="NUMBER_BOX")
     long getDefaultStatefulAccessTimeout();

@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -32,6 +33,6 @@ public class TimerServiceView extends AbstractThreadPoolView<TimerService> {
 
     @Override
     protected String getEntityDisplayName() {
-        return "Timer Service";
+        return Console.CONSTANTS.subsys_ejb3_timerService();
     }
 }

@@ -27,14 +27,14 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  */
 @Address("/subsystem=ejb3/service=timer-service")
 public interface TimerService extends ThreadPoolEntity {
-    @FormItem(label="Path",
+    @FormItem(localLabel="subsys_ejb3_timerServicePath",
               required=true,
               order=20)
     String getPath();
     void setPath(String path);
 
     @Binding(detypedName="relative-to")
-    @FormItem(label="Relative To",
+    @FormItem(localLabel="subsys_ejb3_timerServiceRelativeTo",
               required=true,
               order=25)
     String getRelativeTo();

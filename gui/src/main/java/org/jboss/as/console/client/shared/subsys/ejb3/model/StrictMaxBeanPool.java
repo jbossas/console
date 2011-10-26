@@ -41,14 +41,14 @@ public interface StrictMaxBeanPool extends NamedEntity {
 
     @Binding(detypedName="max-pool-size")
     @FormItem(defaultValue="20",
-              label="Max Pool Size",
+              localLabel="subsys_ejb3_maxPoolSize",
               formItemTypeForEdit="NUMBER_BOX",
               formItemTypeForAdd="NUMBER_BOX")
     int getMaxPoolSize();
     void setMaxPoolSize(int maxSize);
 
     @FormItem(defaultValue="5",
-            label="Timeout",
+            localLabel="subsys_ejb3_beanPoolTimeout",
             formItemTypeForAdd="NUMBER_UNIT_BOX",
             formItemTypeForEdit="NUMBER_UNIT_BOX")
     long getTimeout();
