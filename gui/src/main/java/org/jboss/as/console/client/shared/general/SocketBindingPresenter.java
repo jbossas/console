@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.shared.general;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -37,7 +35,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
@@ -149,8 +146,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     private void loadBindings(final String groupName) {
 
-        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, metaData, groupName);
-        cmd.execute(new SimpleCallback<List<SocketBinding>>() {
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, metaData);
+        cmd.execute(groupName, new SimpleCallback<List<SocketBinding>>() {
             @Override
             public void onSuccess(List<SocketBinding> result) {
                 getView().setBindings(groupName, result);

@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
@@ -72,6 +72,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private JvmEditor jvmEditor;
     private PropertyEditor propertyEditor;
     private ToolButton cancelBtn = null;
+
+    private PortsView portsView;
 
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
@@ -145,14 +147,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         }));
 
         toolStrip.addToolButtonRight(delete);
-
-        toolStrip.addToolButtonRight(new ToolButton("Ports", new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.onShowEffectivePorts();
-            }
-        }));
-
 
         layout.add(toolStrip);
 
@@ -257,6 +251,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
         propertyEditor.setAllowEditProps(false);
 
+        portsView = new PortsView();
+        bottomLayout.add(portsView.asWidget(), "Ports");
 
         panel.add(new ContentGroupLabel("Subresources"));
 
@@ -287,14 +283,21 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     }
 
     @Override
-    public void setSelectedRecord(Server selectedRecord) {
+    public void setSelectedRecord(Server server) {
 
-        nameLabel.setText(selectedRecord.getName());
+        nameLabel.setText(server.getName());
         socketItem.clearSelection();
-        form.edit(selectedRecord);
+        form.edit(server);
 
-        presenter.loadJVMConfiguration(selectedRecord);
-        presenter.loadProperties(selectedRecord);
+        presenter.loadJVMConfiguration(server);
+        presenter.loadProperties(server);
+        presenter.onShowEffectivePorts();
+
+    }
+
+    @Override
+    public void setPorts(String socketBinding, Server server, List<SocketBinding> sockets) {
+        portsView.setPorts(server.getSocketBinding(), server, sockets);
     }
 
     @Override

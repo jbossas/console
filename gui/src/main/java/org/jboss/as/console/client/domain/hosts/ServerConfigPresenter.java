@@ -96,6 +96,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private BeanFactory factory;
     private PlaceManager placeManager;
 
+    private LoadSocketBindingsCmd loadSocketCmd;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
     public interface MyProxy extends Proxy<ServerConfigPresenter>, Place {
@@ -110,6 +112,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setJvm(String reference, Jvm jvm);
 
         void setProperties(String reference, List<PropertyRecord> properties);
+
+        void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
     }
 
     @Inject
@@ -128,6 +132,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         this.propertyMetaData = propertyMetaData;
         this.factory = factory;
         this.placeManager = placeManager;
+
+        this.loadSocketCmd = new LoadSocketBindingsCmd(
+                dispatcher, factory, propertyMetaData
+        );
     }
 
     @Override
@@ -568,25 +576,18 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         assert selectedRecord!=null : "No record selected!";
 
-        window = new DefaultWindow("Server Ports");
-        window.setWidth(480);
-        window.setHeight(360);
+        if(selectedRecord.getSocketBinding()==null)
+            throw new RuntimeException("SocketBinding not available!");
 
-        String socketBinding = selectedRecord.getSocketBinding()!=null ?
-                selectedRecord.getSocketBinding() : "standard-sockets";
+        loadSocketCmd.execute(selectedRecord.getSocketBinding(),
+                new SimpleCallback<List<SocketBinding>>() {
+                    @Override
+                    public void onSuccess(List<SocketBinding> result) {
 
-        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, propertyMetaData, socketBinding);
-        cmd.execute(new SimpleCallback<List<SocketBinding>>() {
-            @Override
-            public void onSuccess(List<SocketBinding> result) {
-                window.setWidget(
-                        new EffectivePortsDialogue(ServerConfigPresenter.this, result, selectedRecord).asWidget()
-                );
-
-                window.setGlassEnabled(true);
-                window.center();
-            }
-        });
+                        getView().setPorts(selectedRecord.getSocketBinding(), selectedRecord, result);
+                    }
+                }
+        );
     }
 
     @Override

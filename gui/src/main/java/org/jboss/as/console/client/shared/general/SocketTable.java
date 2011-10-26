@@ -113,4 +113,10 @@ public class SocketTable {
 
         ColumnSortEvent.fire(table, table.getColumnSortList());
     }
+
+     public void updateFrom(String groupName, List<SocketBinding> bindings, int portOffset) {
+
+         this.portOffset = portOffset;
+         updateFrom(groupName, bindings);
+    }
 }

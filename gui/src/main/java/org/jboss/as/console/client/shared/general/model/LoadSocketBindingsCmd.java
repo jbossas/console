@@ -23,21 +23,18 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> {
 
     private DispatchAsync dispatcher;
-    private String groupName;
     private BeanFactory factory;
     private PropertyMetaData metaData;
     private EntityAdapter<SocketBinding> entityAdapter;
 
-    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData, String groupName) {
+    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
-        this.groupName = groupName;
         this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
     }
 
-    @Override
-    public void execute(final AsyncCallback<List<SocketBinding>> callback) {
+    public void execute(final String groupName, final AsyncCallback<List<SocketBinding>> callback) {
         // /socket-binding-group=standard-sockets:read-resource(recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("socket-binding-group", groupName);
@@ -62,7 +59,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                     ModelNode value = socket.asProperty().getValue();
 
                     SocketBinding socketBinding = entityAdapter.fromDMR(value);
-                    socketBinding.setGroup(getGroupName());
+                    socketBinding.setGroup(groupName);
                     socketBinding.setDefaultInterface(
                             socketBinding.getInterface()!=null ?
                                     socketBinding.getInterface():defaultInterface
@@ -77,7 +74,9 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
         });
     }
 
-    private String getGroupName() {
-        return groupName;
+
+    @Override
+    public void execute(AsyncCallback<List<SocketBinding>> listAsyncCallback) {
+        throw new RuntimeException("Use overridden method instead!");
     }
 }
