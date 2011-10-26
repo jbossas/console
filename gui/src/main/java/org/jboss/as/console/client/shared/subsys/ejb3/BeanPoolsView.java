@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -35,17 +36,26 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.forms.UnitBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
 public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     private final EntityToDmrBridgeImpl<StrictMaxBeanPool> bridge;
-    private UnitBoxItem<?> timeoutItem;
+    private EJB3Presenter presenter;
+    private UnitBoxItem<?> timeoutItem; // used in editor
+    private UnitBoxItem<?> timeoutItemAdd; // used in add dialog
 
     public BeanPoolsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(StrictMaxBeanPool.class, propertyMetaData);
-        bridge = new EntityToDmrBridgeImpl<StrictMaxBeanPool>(propertyMetaData, StrictMaxBeanPool.class, this, dispatcher);
+        bridge = new EntityToDmrBridgeImpl<StrictMaxBeanPool>(propertyMetaData, StrictMaxBeanPool.class, this, dispatcher) {
+            @Override
+            protected void onLoadEntitiesSuccess(ModelNode response) {
+                super.onLoadEntitiesSuccess(response);
+                presenter.propagateBeanPoolNames(entityList);
+            }
+        };
     }
 
     @Override
@@ -55,11 +65,19 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
 
     @Override
     public void itemAction(Action action, ObservableFormItem item) {
+        timeoutUnitItemAction(action, item, true);
+    }
+
+    private void timeoutUnitItemAction(Action action, ObservableFormItem item, boolean mainEditor) {
         if (item.getPropertyBinding().getJavaName().equals("timeout") && action == Action.CREATED) {
             FormItem<?> wrapped = item.getWrapped();
             if (wrapped instanceof UnitBoxItem) {
-                timeoutItem = (UnitBoxItem<?>) wrapped;
-                timeoutItem.setUnitPropertyName("timeoutUnit");
+                UnitBoxItem<?> unitBoxItem = (UnitBoxItem<?>) wrapped;
+                unitBoxItem.setUnitPropertyName("timeoutUnit");
+                if (mainEditor)
+                    timeoutItem = unitBoxItem;
+                else
+                    timeoutItemAdd = unitBoxItem;
             }
         }
     }
@@ -80,7 +98,16 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     protected FormAdapter<StrictMaxBeanPool> makeAddEntityForm() {
         Form<StrictMaxBeanPool> form = new Form<StrictMaxBeanPool>(StrictMaxBeanPool.class);
         form.setNumColumns(1);
-        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
+        FormItemObserver listener = new FormItemObserver() {
+            @Override
+            public void itemAction(Action action, ObservableFormItem item) {
+                timeoutUnitItemAction(action, item, false);
+            }
+        };
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                       formMetaData.findAttribute("maxPoolSize").getFormItemForAdd(),
+                       formMetaData.findAttribute("timeout").getFormItemForAdd(listener),
+                       formMetaData.findAttribute("timeoutUnit").getFormItemForAdd());
         return form;
     }
 
@@ -89,9 +116,16 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
         return "Bean Pools";
     }
 
+    public void setPresenter(EJB3Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     void setTimeoutUnits(Collection<String> units, String defUnit) {
         if (timeoutItem != null) {
             timeoutItem.setChoices(units, defUnit);
+        }
+        if (timeoutItemAdd != null) {
+            timeoutItemAdd.setChoices(units, defUnit);
         }
     }
 }

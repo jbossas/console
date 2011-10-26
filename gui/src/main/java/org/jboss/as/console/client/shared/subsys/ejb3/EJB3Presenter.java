@@ -54,7 +54,6 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
     private final DispatchAsync dispatcher;
     private final RevealStrategy revealStrategy;
     private final BeanMetaData slsbMetaData;
-    private final BeanMetaData threadPoolMetaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.EJB3Presenter)
@@ -62,12 +61,13 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
     }
 
     public interface MyView extends View, FrameworkView {
-        void loadPools();
+        void loadBeanPools();
         void loadThreadPools();
         void loadServices();
         void setBeanPoolNames(List<String> poolNames);
         void setPoolTimeoutUnits(Collection<String> units, String defaultUnit);
         void setThreadPoolNames(List<String> threadPoolNames);
+        void setPresenter(EJB3Presenter ejb3Presenter);
     }
 
     @Inject
@@ -78,13 +78,18 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
         this.slsbMetaData = propertyMetaData.getBeanMetaData(StrictMaxBeanPool.class);
-        this.threadPoolMetaData = propertyMetaData.getBeanMetaData(ThreadPool.class);
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        loadBeanPoolNames();
+        loadBeanPoolTimeoutUnits();
     }
 
     @Override
@@ -92,28 +97,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
         revealStrategy.revealInParent(this);
     }
 
-    private void loadBeanPoolNames() {
-        AddressBinding address = slsbMetaData.getAddress();
-        ModelNode operation = address.asSubresource(Baseadress.get());
-        operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode res = response.get(ModelDescriptionConstants.RESULT);
-                List<String> poolNames = new ArrayList<String>();
-                for (ModelNode n : res.asList()) {
-                    poolNames.add(n.asString());
-                }
-                getView().setBeanPoolNames(poolNames);
-                getView().initialLoad();
-                loadPoolTimeoutUnits();
-            }
-        });
-    }
-
-    private void loadPoolTimeoutUnits() {
+    private void loadBeanPoolTimeoutUnits() {
         AddressBinding address = slsbMetaData.getAddress();
         ModelNode operation = address.asResource(Baseadress.get(), "*");
         operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
@@ -135,31 +119,29 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
                     getView().setPoolTimeoutUnits(values, defVal);
                 }
 
-                getView().loadPools();
-                loadThreadPoolNames();
+                getView().loadBeanPools();
+                getView().loadThreadPools();
             }
         });
     }
 
-    private void loadThreadPoolNames() {
-        AddressBinding address = threadPoolMetaData.getAddress();
-        ModelNode operation = address.asSubresource(Baseadress.get());
-        operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION);
+    // Invoked once the bean pools have been loaded
+    void propagateBeanPoolNames(List<StrictMaxBeanPool> entityList) {
+        List<String> poolNames = new ArrayList<String>();
+        for (StrictMaxBeanPool bp : entityList) {
+            poolNames.add(bp.getName());
+        }
+        getView().setBeanPoolNames(poolNames);
+        getView().initialLoad();
+    }
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
-                List<String> poolNames = new ArrayList<String>();
-                for (ModelNode n : res) {
-                    poolNames.add(n.asString());
-                }
-
-                getView().setThreadPoolNames(poolNames);
-                getView().loadThreadPools();
-                getView().loadServices();
-            }
-        });
+    // Invoked once the thread pools are loaded
+    public void propagateThreadPoolNames(List<ThreadPool> entityList) {
+        List<String> poolNames = new ArrayList<String>();
+        for (ThreadPool tp : entityList) {
+            poolNames.add(tp.getName());
+        }
+        getView().setThreadPoolNames(poolNames);
+        getView().loadServices();
     }
 }
