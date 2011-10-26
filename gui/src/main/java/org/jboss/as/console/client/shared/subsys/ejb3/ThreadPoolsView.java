@@ -33,16 +33,24 @@ import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
 public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     private final EntityToDmrBridgeImpl<ThreadPool> bridge;
+    private EJB3Presenter presenter;
 
     public ThreadPoolsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ThreadPool.class, propertyMetaData, EnumSet.of(FrameworkButton.EDIT_SAVE));
-        bridge = new EntityToDmrBridgeImpl<ThreadPool>(propertyMetaData, ThreadPool.class, this, dispatcher);
+        bridge = new EntityToDmrBridgeImpl<ThreadPool>(propertyMetaData, ThreadPool.class, this, dispatcher) {
+            @Override
+            protected void onLoadEntitiesSuccess(ModelNode response) {
+                super.onLoadEntitiesSuccess(response);
+                presenter.propagateThreadPoolNames(entityList);
+            }
+        };
     }
 
     @Override
@@ -75,5 +83,9 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     @Override
     protected String getEntityDisplayName() {
         return "Thread Pools";
+    }
+
+    public void setPresenter(EJB3Presenter presenter) {
+        this.presenter = presenter;
     }
 }

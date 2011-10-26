@@ -121,6 +121,12 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
     }
 
     @Override
+    public void setPresenter(EJB3Presenter presenter) {
+        beanPoolsView.setPresenter(presenter);
+        threadPoolsView.setPresenter(presenter);
+    }
+
+    @Override
     public void setBeanPoolNames(List<String> poolNames) {
         if (defaultMDBPoolItem != null)
             defaultMDBPoolItem.setValueMap(poolNames);
@@ -139,7 +145,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
     }
 
     @Override
-    public void loadPools() {
+    public void loadBeanPools() {
         beanPoolsView.initialLoad();
     }
 

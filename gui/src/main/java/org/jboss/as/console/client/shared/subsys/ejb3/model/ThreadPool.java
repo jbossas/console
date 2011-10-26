@@ -41,7 +41,7 @@ public interface ThreadPool extends NamedEntity {
     void setName(String name);
 
     @Binding(detypedName="keepalive-time")
-    @FormItem(defaultValue="0",
+    @FormItem(defaultValue="100",
               label="Keep-Alive Time",
               required=true,
               formItemTypeForAdd="NUMBER_BOX",
