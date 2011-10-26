@@ -2,3 +2,25 @@
     margin-bottom: 5px;
     margin-top: 10px;
 }
+
+
+.celltable-button {
+
+    background-color: #ffffff;
+    border: 1px solid #A7ABB4;
+    border-radius: 2px 2px 2px 2px;
+    color: #606060 !important;
+    cursor: pointer;
+    float: left;
+    font-size: 9px;
+    margin: 2px;
+    outline: medium none;
+    padding: 2px 10px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.celltable-button:hover {
+    background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
+    color:#000!important;
+}
