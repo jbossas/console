@@ -61,7 +61,7 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
 
         instanceTree.addItem(status);
 
-        LHSNavTreeItem vmView = new LHSNavTreeItem(Console.CONSTANTS.common_label_hostVm(), new ClickHandler()
+        /*LHSNavTreeItem vmView = new LHSNavTreeItem(Console.CONSTANTS.common_label_hostVm(), new ClickHandler()
                {
                    @Override
                    public void onClick(ClickEvent event) {
@@ -72,9 +72,20 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
                    }
                });
 
-               instanceTree.addItem(status);
+        instanceTree.addItem(vmView);*/
 
-        instanceTree.addItem(vmView);
+        final ClickHandler noop = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+
+            }
+        };
+
+        LHSNavTreeItem deployments = new LHSNavTreeItem("Deployed Applications", noop);
+        instanceTree.addItem(deployments);
+
+        LHSNavTreeItem subsystems = new LHSNavTreeItem("Subsystem State", noop);
+        instanceTree.addItem(subsystems);
 
         // listen on host selection events
         Console.MODULES.getEventBus().addHandler(

@@ -114,7 +114,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void execute() {
                 getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, "Server Status", "hosts")
+                        new LHSHighlightEvent(null, "Server Instances", "hosts")
 
                 );
             }

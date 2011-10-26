@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -265,11 +266,12 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         bottomLayout.addStyleName("default-tabpanel");
         bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
-        bottomLayout.add(formPanel, "Status");
+        bottomLayout.add(formPanel, "Availability");
+        bottomLayout.add(new HTML(""), "JVM Status");
 
         bottomLayout.selectTab(0);
 
-        vpanel.add(new ContentGroupLabel("Instance"));
+        vpanel.add(new ContentGroupLabel("Status"));
 
         vpanel.add(bottomLayout);
 
