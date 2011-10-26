@@ -66,19 +66,19 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         ToolStrip topLevelTools = new ToolStrip();
 
-        pauseBtn = new ToolButton("Stop Polling");
+        pauseBtn = new ToolButton("Stop Monitor");
         ClickHandler clickHandler = new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
 
-                boolean b = pauseBtn.getText().equals("Start Polling");
+                boolean b = pauseBtn.getText().equals("Start Monitor");
                 presenter.keepPolling(b);
 
-                if(pauseBtn.getText().equals("Stop Polling"))
-                    pauseBtn.setText("Start Polling");
+                if(pauseBtn.getText().equals("Stop Monitor"))
+                    pauseBtn.setText("Start Monitor");
                 else
-                    pauseBtn.setText("Stop Polling");
+                    pauseBtn.setText("Stop Monitor");
 
             }
         };
@@ -221,7 +221,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     @Override
     public void reset() {
-        pauseBtn.setText("Stop Polling");
+        pauseBtn.setText("Stop Monitor");
 
         if(heapChart!=null)
         {
