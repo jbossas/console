@@ -105,9 +105,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setPresenter(ServerConfigPresenter presenter);
         void setEnabled(boolean isEnabled);
         void setSelectedRecord(Server selectedRecord);
-        void updateServerGroups(List<ServerGroupRecord> serverGroupRecords);
         void updateSocketBindings(List<String> result);
-        void updateVirtualMachines(List<String> result);
+
+        void setJvm(String reference, Jvm jvm);
+
+        void setProperties(String reference, List<PropertyRecord> properties);
     }
 
     @Inject
@@ -153,17 +155,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         super.onReset();
 
         // step1
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-            @Override
-            public void onSuccess(List<ServerGroupRecord> result) {
-                serverGroups = result;
-                getView().updateServerGroups(result);
-
-                // step2
-                loadSocketBindings();
-            }
-        });
-
+        loadSocketBindings();
     }
 
     private void loadSocketBindings() {
@@ -172,7 +164,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(List<String> result) {
                 getView().updateSocketBindings(result);
 
-                // step3
+                // step2
                 loadServerConfigurations();
             }
         });
@@ -182,8 +174,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         if(selectedHost !=null && serverName!=null)
         {
-            loadJVMs(selectedHost);
-
             hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
                 @Override
                 public void onSuccess(List<Server> result) {
@@ -211,15 +201,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 }
             });
         }
-    }
-
-    private void loadJVMs(String host) {
-        hostInfoStore.getVirtualMachines(host, new SimpleCallback<List<String>>() {
-            @Override
-            public void onSuccess(List<String> result) {
-                getView().updateVirtualMachines(result);
-            }
-        });
     }
 
     @Override
@@ -281,7 +262,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 if(!result.isEmpty()) {
                     workOn(result.get(0));
                     serverName = selectedRecord.getName();
-                    loadJVMs(hostName);
                 }
                 else {
                     noServerAvailable();
@@ -345,12 +325,20 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         getView().setSelectedRecord(record);
     }
 
-    public void onSaveChanges(final String name, Map<String, Object> changedValues) {
+    public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
 
         getView().setEnabled(false);
 
         if(changedValues.size()>0)
         {
+
+            if(changedValues.containsKey("portOffset"))
+                changedValues.put("socketBinding", entity.getSocketBinding());
+            else if(changedValues.containsKey("socketBinding"))
+                changedValues.put("portOffset", entity.getPortOffset());
+
+            final String name = entity.getName();
+
             hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new AsyncCallback<Boolean>() {
 
                 @Override
@@ -604,5 +592,23 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     @Override
     public void launchWizard(String HostName) {
         launchNewConfigDialoge();
+    }
+
+    public void loadJVMConfiguration(final Server server) {
+        hostInfoStore.loadJVMConfiguration(selectedHost, server, new SimpleCallback<Jvm>() {
+            @Override
+            public void onSuccess(Jvm jvm) {
+                getView().setJvm(server.getName(), jvm);
+            }
+        });
+    }
+
+    public void loadProperties(final Server server) {
+        hostInfoStore.loadProperties(selectedHost, server, new SimpleCallback<List<PropertyRecord>>() {
+            @Override
+            public void onSuccess(List<PropertyRecord> properties) {
+                getView().setProperties(server.getName(), properties);
+            }
+        });
     }
 }

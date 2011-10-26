@@ -35,10 +35,12 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,9 @@ public class HostInfoStoreImpl implements HostInformationStore {
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
     private CurrentServerConfigurations currentConfigs;
+    private EntityAdapter<Server> serverAdapter;
+    private EntityAdapter<Jvm> jvmAdapter;
+    private EntityAdapter<PropertyRecord> propertyAdapter;
 
     @Inject
     public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMeta,
@@ -64,6 +69,9 @@ public class HostInfoStoreImpl implements HostInformationStore {
         this.factory = factory;
         this.propertyMetaData = propertyMeta;
         this.currentConfigs =currentConfigs;
+        serverAdapter = new EntityAdapter<Server>(Server.class, propertyMeta);
+        jvmAdapter = new EntityAdapter<Jvm>(Jvm.class, propertyMeta);
+        propertyAdapter = new EntityAdapter<PropertyRecord>(PropertyRecord.class, propertyMeta);
     }
 
     @Override
@@ -123,41 +131,12 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
 
-                //System.out.println(response.toString());
-
                 List<Server> records = new ArrayList<Server>(payload.size());
                 for(ModelNode item : payload)
                 {
-                    Server record = factory.server().as();
-
-                    ModelNode server = item.asProperty().getValue();
-
-                    record.setName(server.get("name").asString());
-                    record.setGroup(server.get("group").asString());
-
-                    if(server.hasDefined("socket-binding-group"))
-                        record.setSocketBinding(server.get("socket-binding-group").asString());
-
-                    try {
-                        record.setPortOffset(server.get("socket-binding-port-offset").asInt());
-                    } catch (IllegalArgumentException e) {
-                        //
-                    }
-
-                    try {
-                        record.setAutoStart(server.get("auto-start").asBoolean());
-                    } catch (IllegalArgumentException e) {
-                        // TODO: https://issues.jboss.org/browse/JBAS-9163
-
-                    }
-
-                    List<PropertyRecord> propertyRecords = ModelAdapter.model2Property(factory, server);
-                    record.setProperties(propertyRecords);
-
-                    Jvm jvm = ModelAdapter.model2JVM(factory, server);
-                    record.setJvm(jvm);
-
-                    records.add(record);
+                    ModelNode model = item.asProperty().getValue();
+                    Server server = serverAdapter.fromDMR(model);
+                    records.add(server);
                 }
 
                 currentConfigs.setServerConfigs(records);
@@ -392,6 +371,67 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
                 callback.onSuccess(wasSuccessful);
+            }
+        });
+    }
+
+    @Override
+    public void loadJVMConfiguration(String host, Server server, final AsyncCallback<Jvm> callback) {
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, server.getName());
+        operation.get(ADDRESS).add("jvm", "default");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+
+                if(ModelAdapter.wasSuccess(result))
+                {
+                    Jvm jvm = jvmAdapter.fromDMR(result.get(RESULT).asObject());
+                    jvm.setName("default");
+                    callback.onSuccess(jvm);
+                }
+                else
+                {
+                    callback.onSuccess(null);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void loadProperties(String host, Server server, final AsyncCallback<List<PropertyRecord>> callback) {
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, server.getName());
+        operation.get(CHILD_TYPE).set("system-property");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                List<Property> properties = result.get(RESULT).asPropertyList();
+                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+
+                for(Property prop : properties)
+                {
+                    PropertyRecord record = factory.property().as();
+                    record.setKey(prop.getName());
+                    ModelNode payload = prop.getValue().asObject();
+                    record.setValue(payload.get("value").asString());
+                    record.setBootTime(payload.get("boot-time").asBoolean());
+
+                    records.add(record);
+                }
+
+                callback.onSuccess(records);
             }
         });
     }

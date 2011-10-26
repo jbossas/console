@@ -34,19 +34,20 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -192,9 +193,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         TextItem nameItem = new TextItem("name", "Name");
 
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
-        //groupItem = new ComboBoxItem("group", "Server Group");
-
-        // TODO: https://issues.jboss.org/browse/AS7-661
         TextItem groupItem = new TextItem("group", Console.CONSTANTS.common_label_serverGroup());
 
         // ------------------------------------------------------
@@ -217,13 +215,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         };
 
 
-        form.setFields(nameItem, groupItem, startedItem);
-        form.setFieldsInGroup(
-                "Advanced",
-                new DisclosureGroupRenderer(),
-                socketItem, portOffset
-        );
-
+        form.setFields(nameItem, groupItem, socketItem, portOffset, startedItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
@@ -284,18 +276,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             cancelBtn.setVisible(true);
 
             Server updatedEntity = form.getUpdatedEntity();
-
-            System.out.println(updatedEntity.getName());
-
             Map<String,Object> changedValues = form.getChangedValues();
-
-            // TODO: https://issues.jboss.org/browse/AS7-662
-            if(changedValues.containsKey("portOffset"))
-                changedValues.put("socketBinding", updatedEntity.getSocketBinding());
-            else if(changedValues.containsKey("socketBinding"))
-                changedValues.put("portOffset", updatedEntity.getPortOffset());
-
-            presenter.onSaveChanges(updatedEntity.getName(), changedValues);
+            presenter.onSaveChanges(updatedEntity, changedValues);
         }
     }
 
@@ -308,37 +290,24 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     public void setSelectedRecord(Server selectedRecord) {
 
         nameLabel.setText(selectedRecord.getName());
+        socketItem.clearSelection();
         form.edit(selectedRecord);
 
-        jvmEditor.setSelectedRecord(selectedRecord.getName(), selectedRecord.getJvm());
-        propertyEditor.setProperties(selectedRecord.getName(), selectedRecord.getProperties());
+        presenter.loadJVMConfiguration(selectedRecord);
+        presenter.loadProperties(selectedRecord);
     }
 
     @Override
-    public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
-
-        /*
-
-        TODO: https://issues.jboss.org/browse/AS7-661
-
-        String[] names = new String[serverGroupRecords.size()];
-        int i=0;
-        for(ServerGroupRecord group : serverGroupRecords)
-        {
-            names[i] = group.getGroupName();
-            i++;
-        }
-        groupItem.setValueMap(names);*/
+    public void setJvm(String reference, Jvm jvm) {
+        if(jvm!=null)
+            jvmEditor.setSelectedRecord(reference, jvm);
+        else
+            jvmEditor.clearValues();
     }
 
     @Override
     public void updateSocketBindings(List<String> result) {
         socketItem.setValueMap(result);
-    }
-
-    @Override
-    public void updateVirtualMachines(List<String> result) {
-        //jvmItem.setValueMap(result);
     }
 
     @Override
@@ -348,5 +317,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         edit.setText(
                 isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
         );
+    }
+
+    @Override
+    public void setProperties(String reference, List<PropertyRecord> properties) {
+        propertyEditor.setProperties(reference, properties);
     }
 }

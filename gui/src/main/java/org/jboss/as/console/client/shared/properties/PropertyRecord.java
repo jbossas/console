@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.properties;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 2/21/11
@@ -31,6 +33,7 @@ public interface PropertyRecord {
     public String getValue();
     public void setValue(String value);
 
+    @Binding(detypedName = "boot-time")
     public void setBootTime(boolean b);
     public boolean isBootTime();
 }
