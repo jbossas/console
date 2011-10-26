@@ -64,6 +64,10 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private List<ServerInstance> serverInstances;
     private boolean hasBeenRevealed = false;
 
+    public String getCurrentHostSelection() {
+        return selectedHost;
+    }
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -135,6 +139,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
                 @Override
                 public void onSuccess(List<Host> result) {
+
                     loadHostData(result.get(0).getName());
                 }
             });

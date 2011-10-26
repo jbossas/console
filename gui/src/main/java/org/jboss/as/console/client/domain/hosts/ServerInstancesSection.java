@@ -44,11 +44,11 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
 
     public ServerInstancesSection() {
 
-        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverInstances()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_runtimeStatus()).asWidget();
 
         instanceTree = new LHSNavTree("hosts");
 
-        LHSNavTreeItem status = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverStatus(), new ClickHandler()
+        LHSNavTreeItem status = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event) {

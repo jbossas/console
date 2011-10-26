@@ -118,4 +118,6 @@ public interface UIMessages extends Messages {
 
     String modified(String name);
     String modificationFailed(String name);
+
+    String serversRunningOnHost(String hostName);
 }

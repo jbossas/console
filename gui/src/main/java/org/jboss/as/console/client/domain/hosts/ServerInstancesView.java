@@ -92,7 +92,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_serverStatus());
+        nameLabel = new ContentHeaderLabel("replace me");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -197,7 +197,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             public void onClick(ClickEvent event) {
 
                 String state = form.getEditedEntity().isRunning() ? "stop" : "start";
-                Feedback.confirm(Console.CONSTANTS.common_label_serverStatus(), Console.MESSAGES.changeServerStatus(state, form.getEditedEntity().getName()),
+                Feedback.confirm(Console.CONSTANTS.common_label_serverInstances(), Console.MESSAGES.changeServerStatus(state, form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -265,11 +265,11 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         bottomLayout.addStyleName("default-tabpanel");
         bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
-        bottomLayout.add(formPanel, "Availability");
+        bottomLayout.add(formPanel, "Status");
 
         bottomLayout.selectTab(0);
 
-        vpanel.add(new ContentGroupLabel("Status"));
+        vpanel.add(new ContentGroupLabel("Instance"));
 
         vpanel.add(bottomLayout);
 
@@ -279,7 +279,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     @Override
     public void setSelectedHost(String selectedHost) {
         this.selectedHost = selectedHost;
-        //nameLabel.setText("Server Status ("+selectedHost+")");
+        nameLabel.setText(Console.MESSAGES.serversRunningOnHost(presenter.getCurrentHostSelection()));
     }
 
     @Override

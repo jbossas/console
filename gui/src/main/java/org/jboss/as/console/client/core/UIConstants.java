@@ -39,8 +39,8 @@ public interface UIConstants extends Constants {
     String common_label_hostManagement();
     String common_label_profileManagement();
     String common_label_groupManagement();
+    String common_label_runtimeStatus();
     String common_label_serverInstances();
-    String common_label_serverStatus();
     String common_label_serverGroup();
     String common_label_status();
     String common_label_server();
