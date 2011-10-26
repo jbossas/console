@@ -268,6 +268,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         bottomLayout.add(formPanel, "Availability");
         bottomLayout.add(new HTML(""), "JVM Status");
+        bottomLayout.add(new HTML(""), "Deployed Applications");
+        bottomLayout.add(new HTML(""), "Subsystem Metrics");
 
         bottomLayout.selectTab(0);
 

@@ -81,11 +81,11 @@ public class ServerInstancesSection implements HostSelectionEvent.HostSelectionL
             }
         };
 
-        LHSNavTreeItem deployments = new LHSNavTreeItem("Deployed Applications", noop);
+        /*LHSNavTreeItem deployments = new LHSNavTreeItem("Deployed Applications", noop);
         instanceTree.addItem(deployments);
 
         LHSNavTreeItem subsystems = new LHSNavTreeItem("Subsystem State", noop);
-        instanceTree.addItem(subsystems);
+        instanceTree.addItem(subsystems);*/
 
         // listen on host selection events
         Console.MODULES.getEventBus().addHandler(
