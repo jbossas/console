@@ -21,8 +21,6 @@ import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -63,24 +61,24 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("Virtual Machine");
+        FakeTabPanel titleBar = new FakeTabPanel("Virtual Machine Status");
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
 
-        pauseBtn = new ToolButton("Stop");
+        pauseBtn = new ToolButton("Stop Polling");
         ClickHandler clickHandler = new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
 
-                boolean b = pauseBtn.getText().equals("Start");
+                boolean b = pauseBtn.getText().equals("Start Polling");
                 presenter.keepPolling(b);
 
-                if(pauseBtn.getText().equals("Stop"))
-                    pauseBtn.setText("Start");
+                if(pauseBtn.getText().equals("Stop Polling"))
+                    pauseBtn.setText("Start Polling");
                 else
-                    pauseBtn.setText("Stop");
+                    pauseBtn.setText("Stop Polling");
 
             }
         };
@@ -223,7 +221,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     @Override
     public void reset() {
-        pauseBtn.setText("Stop");
+        pauseBtn.setText("Stop Polling");
 
         if(heapChart!=null)
         {
