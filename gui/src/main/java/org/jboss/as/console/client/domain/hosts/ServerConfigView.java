@@ -299,10 +299,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void setJvm(String reference, Jvm jvm) {
-        if(jvm!=null)
-            jvmEditor.setSelectedRecord(reference, jvm);
-        else
-            jvmEditor.clearValues();
+        jvmEditor.setSelectedRecord(reference, jvm);
     }
 
     @Override

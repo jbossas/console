@@ -598,6 +598,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.loadJVMConfiguration(selectedHost, server, new SimpleCallback<Jvm>() {
             @Override
             public void onSuccess(Jvm jvm) {
+
                 getView().setJvm(server.getName(), jvm);
             }
         });

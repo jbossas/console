@@ -379,26 +379,31 @@ public class HostInfoStoreImpl implements HostInformationStore {
     public void loadJVMConfiguration(String host, Server server, final AsyncCallback<Jvm> callback) {
 
         final ModelNode operation = new ModelNode();
-        operation.get(OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).add("host", host);
         operation.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, server.getName());
-        operation.get(ADDRESS).add("jvm", "default");
+        operation.get(CHILD_TYPE).set("jvm");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
 
-                if(ModelAdapter.wasSuccess(result))
+                List<Property> jvms = result.get(RESULT).asPropertyList();
+                if(!jvms.isEmpty())
                 {
-                    Jvm jvm = jvmAdapter.fromDMR(result.get(RESULT).asObject());
-                    jvm.setName("default");
+                    // select first entry
+                    Property property = jvms.get(0);
+                    Jvm jvm = jvmAdapter.fromDMR(property.getValue().asObject());
+                    jvm.setName(property.getName());
+
                     callback.onSuccess(jvm);
                 }
                 else
                 {
                     callback.onSuccess(null);
                 }
+
             }
         });
 
