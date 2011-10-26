@@ -25,12 +25,15 @@ package org.jboss.as.console.client.shared.subsys.logging;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public enum LogLevel {
-    FATAL,
-    ERROR,
-    WARN,
+    SEVERE,
+    WARNING,
     INFO,
-    DEBUG,
-    TRACE;
+    FINE,
+    FINER,
+    FINEST,
+    CONFIG,
+    ALL,
+    OFF;
     
     public static final String[] STRINGS;
     
