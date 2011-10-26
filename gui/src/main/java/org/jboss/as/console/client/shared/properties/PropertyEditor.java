@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +37,7 @@ import com.google.gwt.view.client.ListDataProvider;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -199,7 +201,20 @@ public class PropertyEditor {
         };
 
 
-        MenuColumn menuCol = new MenuColumn("...", removeCmd);
+        //MenuColumn menuCol = new MenuColumn("...", removeCmd);
+        Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
+                new ButtonCell<PropertyRecord>("Remove", new ActionCell.Delegate<PropertyRecord>() {
+                    @Override
+                    public void execute(PropertyRecord o) {
+                        presenter.onDeleteProperty(reference, o);
+                    }
+                })
+        ) {
+            @Override
+            public PropertyRecord getValue(PropertyRecord propertyRecord) {
+                return propertyRecord;
+            }
+        };
 
         // Add the columns.
         propertyTable.addColumn(keyColumn, Console.CONSTANTS.common_label_key());
@@ -208,7 +223,7 @@ public class PropertyEditor {
         if(!simpleView)
             propertyTable.addColumn(bootColumn, "Boot-Time?");
 
-        propertyTable.addColumn(menuCol, Console.CONSTANTS.common_label_option());
+        propertyTable.addColumn(removeCol, Console.CONSTANTS.common_label_option());
 
 
         propertyTable.setColumnWidth(keyColumn, 30, Style.Unit.PCT);
@@ -217,7 +232,7 @@ public class PropertyEditor {
         if(!simpleView)
             propertyTable.setColumnWidth(bootColumn, 20, Style.Unit.PCT);
 
-        propertyTable.setColumnWidth(menuCol, 20, Style.Unit.PCT);
+        propertyTable.setColumnWidth(removeCol, 20, Style.Unit.PCT);
 
         propertyTable.addColumnSortHandler(sortHandler);
         propertyTable.getColumnSortList().push(keyColumn);

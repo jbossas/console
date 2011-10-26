@@ -49,6 +49,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -108,7 +109,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
 
     @Override
     protected DefaultCellTable<OSGiBundle> makeEntityTable() {
-        bundleTable = new DefaultCellTable<OSGiBundle>(15);
+        bundleTable = new DefaultCellTable<OSGiBundle>(8);
         sortHandler = new MyListHandler<OSGiBundle>();
 
         TextColumn<OSGiBundle> idColumn = new TextColumn<OSGiBundle>() {
@@ -184,7 +185,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return record;
             }
         };
-        ActionCell<OSGiBundle> startCell = new ActionCell<OSGiBundle>("Start", new ActionCell.Delegate<OSGiBundle>() {
+        ButtonCell<OSGiBundle> startCell = new ButtonCell<OSGiBundle>("Start", new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {
@@ -195,7 +196,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
             }
         });
 
-        final ActionCell<OSGiBundle> stopCell = new ActionCell<OSGiBundle>("Stop", new ActionCell.Delegate<OSGiBundle>() {
+        final ButtonCell<OSGiBundle> stopCell = new ButtonCell<OSGiBundle>("Stop", new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {

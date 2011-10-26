@@ -46,7 +46,7 @@ public class DeploymentCommandCell extends ActionCell<DeploymentRecord> {
 
     @Override
     public void render(Context context, DeploymentRecord record, SafeHtmlBuilder sb) {
-        SafeHtml html = new SafeHtmlBuilder().appendHtmlConstant("<button type=\"button\" tabindex=\"-1\">")
+        SafeHtml html = new SafeHtmlBuilder().appendHtmlConstant("<button class='celltable-button' type=\"button\" tabindex=\"-1\">")
                                              .appendHtmlConstant(this.command.getLabel(record))
                                              .appendHtmlConstant("</button>")
                                              .toSafeHtml();
