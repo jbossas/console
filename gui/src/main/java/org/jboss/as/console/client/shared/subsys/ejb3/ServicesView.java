@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -47,7 +48,7 @@ public class ServicesView extends SuspendableViewImpl {
     public Widget createWidget() {
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
-        vpanel.add(new ContentGroupLabel("EJB Services"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_ejb3_ejbServices()));
 
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");

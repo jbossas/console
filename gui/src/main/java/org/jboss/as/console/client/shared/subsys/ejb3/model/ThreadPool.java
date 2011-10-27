@@ -42,7 +42,7 @@ public interface ThreadPool extends NamedEntity {
 
     @Binding(detypedName="keepalive-time")
     @FormItem(defaultValue="100",
-              label="Keep-Alive Time",
+              localLabel="subsys_ejb3_threadPoolKeepAliveTime",
               required=true,
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
@@ -52,7 +52,7 @@ public interface ThreadPool extends NamedEntity {
 
     @Binding(detypedName="max-threads")
     @FormItem(defaultValue="4",
-              label="Max Threads",
+              localLabel="subsys_ejb3_threadPoolMaxThreads",
               required=true,
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",

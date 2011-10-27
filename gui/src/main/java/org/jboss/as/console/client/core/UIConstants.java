@@ -196,7 +196,7 @@ public interface UIConstants extends Constants {
     String subsys_osgi_frameworkProperty();
     String subsys_osgi_frameworkPropertyAdd();
     String subsys_osgi_properties();
-    
+
     String subsys_threads_sizing();
 
     String subsys_messaging_jms_provider();
@@ -232,4 +232,26 @@ public interface UIConstants extends Constants {
     String common_label_hostVm();
 
     String subsys_jca_dataSource_verify();
+
+    String subsys_ejb3_asyncService();
+    String subsys_ejb3_beanPoolTimeout();
+    String subsys_ejb3_beanPools();
+    String subsys_ejb3_container();
+    String subsys_ejb3_defaultResourceAdapter();
+    String subsys_ejb3_ejbServices();
+    String subsys_ejb3_maxPoolSize();
+    String subsys_ejb3_messageDrivenBeanPool();
+    String subsys_ejb3_remoteService();
+    String subsys_ejb3_remoteServiceConnector();
+    String subsys_ejb3_services();
+    String subsys_ejb3_singletonAccessTimeout();
+    String subsys_ejb3_statefulAccessTimeout();
+    String subsys_ejb3_statelessSessionBeanPool();
+    String subsys_ejb3_threadPool();
+    String subsys_ejb3_threadPoolKeepAliveTime();
+    String subsys_ejb3_threadPoolMaxThreads();
+    String subsys_ejb3_threadPools();
+    String subsys_ejb3_timerService();
+    String subsys_ejb3_timerServicePath();
+    String subsys_ejb3_timerServiceRelativeTo();
 }

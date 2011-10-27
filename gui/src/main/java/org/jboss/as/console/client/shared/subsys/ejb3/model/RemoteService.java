@@ -28,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 @Address("/subsystem=ejb3/service=remote")
 public interface RemoteService extends ThreadPoolEntity {
     @Binding(detypedName="connector-ref")
-    @FormItem(label="Connector",
+    @FormItem(localLabel="subsys_ejb3_remoteServiceConnector",
               order=20)
     String getConnector();
     void setConnector(String connector);

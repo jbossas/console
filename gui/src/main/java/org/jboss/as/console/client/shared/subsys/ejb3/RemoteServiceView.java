@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
@@ -12,6 +13,6 @@ public class RemoteServiceView extends AbstractThreadPoolView<RemoteService> {
 
     @Override
     protected String getEntityDisplayName() {
-        return "Remote Service";
+        return Console.CONSTANTS.subsys_ejb3_remoteService();
     }
 }

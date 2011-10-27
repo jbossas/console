@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -80,7 +81,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(createEmbeddableWidget(), getEntityDisplayName());
-        tabLayoutPanel.add(servicesView.asWidget(), "Services");
+        tabLayoutPanel.add(servicesView.asWidget(), Console.CONSTANTS.subsys_ejb3_services());
         tabLayoutPanel.add(beanPoolsView.asWidget(), beanPoolsView.getEntityDisplayName());
         tabLayoutPanel.add(threadPoolsView.asWidget(), threadPoolsView.getEntityDisplayName());
 
@@ -117,7 +118,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected String getEntityDisplayName() {
-        return "Container"; // TODO i18n // is this one used at all?
+        return Console.CONSTANTS.subsys_ejb3_container();
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  */
 public interface ThreadPoolEntity {
     @Binding(detypedName="thread-pool-name")
-    @FormItem(label="Thread Pool",
+    @FormItem(localLabel="subsys_ejb3_threadPool",
               required=true,
               formItemTypeForEdit="COMBO_BOX",
               order=10)
