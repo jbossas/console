@@ -66,6 +66,8 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
                        formMetaData.findAttribute("path").getFormItemForAdd(),
                        formMetaData.findAttribute("relativeTo").getFormItemForAdd(),
+                       formMetaData.findAttribute("scanInterval").getFormItemForAdd(),
+                       formMetaData.findAttribute("deploymentTimeout").getFormItemForAdd(),
                        formMetaData.findAttribute("enabled").getFormItemForAdd());
         return form;
     }
