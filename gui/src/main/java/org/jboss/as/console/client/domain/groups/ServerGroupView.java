@@ -19,37 +19,37 @@
 
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
-import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -61,23 +61,14 @@ import java.util.List;
 public class ServerGroupView extends SuspendableViewImpl implements ServerGroupPresenter.MyView {
 
     private ServerGroupPresenter presenter;
-    private Form<ServerGroupRecord> form;
-    private ContentHeaderLabel nameLabel;
-    private ComboBoxItem socketBindingItem;
-    private ToolButton edit;
-
     private VerticalPanel panel;
 
     private PropertyEditor propertyEditor;
     private JvmEditor jvmEditor;
-    private HelpSystem help;
-    private DisclosurePanel helpPanel ;
-    private ToolButton cancelBtn = null;
 
-    @Inject
-    public ServerGroupView(HelpSystem help) {
-        this.help = help;
-    }
+    private DefaultCellTable<ServerGroupRecord> serverGroupTable;
+    private ListDataProvider<ServerGroupRecord> serverGroupProvider;
+    private ServerGroupDetails details;
 
     @Override
     public void setPresenter(ServerGroupPresenter presenter) {
@@ -95,55 +86,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // ----
 
         final ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
-        edit.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
-                {
-                    onEdit();
-                }
-                else
-                {
-                    onSave();
-                }
-            }
-        });
-
-        toolStrip.addToolButton(edit);
-
-        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
-        cancelBtn.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                cancelBtn.setVisible(false);
-                form.cancel();
-                form.setEnabled(false);
-                edit.setText(Console.CONSTANTS.common_label_edit());
-
-            }
-        });
-        toolStrip.addToolButton(cancelBtn);
-        cancelBtn.setVisible(false);
-
-
-        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
-        delete.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                Feedback.confirm(
-                        Console.MESSAGES.deleteServerGroup(),
-                        Console.MESSAGES.deleteServerGroupConfirm(form.getEditedEntity().getGroupName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                    presenter.deleteCurrentRecord();
-                            }
-                        });
-            }
-        });
-
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_newServerGroup(), new ClickHandler() {
             @Override
@@ -151,6 +93,25 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 presenter.launchNewGroupDialoge();
             }
         }));
+
+        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
+        delete.addClickHandler(new ClickHandler(){
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                final ServerGroupRecord serverGroup = getSelectionModel().getSelectedObject();
+                Feedback.confirm(
+                        Console.MESSAGES.deleteServerGroup(),
+                        Console.MESSAGES.deleteServerGroupConfirm(serverGroup.getGroupName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteGroup(serverGroup);
+                            }
+                        });
+            }
+        });
+
 
         toolStrip.addToolButtonRight(delete);
 
@@ -170,44 +131,40 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------
 
-        nameLabel = new ContentHeaderLabel("");
+        serverGroupTable = new DefaultCellTable<ServerGroupRecord>(10);
+        serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
+        serverGroupProvider.addDataDisplay(serverGroupTable);
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.serverGroup());
-        horzPanel.add(image);
-        horzPanel.add(nameLabel);
-        image.getElement().getParentElement().setAttribute("width", "25");
+        // Create columns
+        Column<ServerGroupRecord, String> nameColumn = new Column<ServerGroupRecord, String>(new TextCell()) {
+            @Override
+            public String getValue(ServerGroupRecord object) {
+                return object.getGroupName();
+            }
+        };
 
-        panel.add(horzPanel);
+
+        Column<ServerGroupRecord, String> profileColumn = new Column<ServerGroupRecord, String>(new TextCell()) {
+            @Override
+            public String getValue(ServerGroupRecord object) {
+                return object.getProfileName();
+            }
+        };
+
+
+        serverGroupTable.addColumn(nameColumn, "Group Name");
+        serverGroupTable.addColumn(profileColumn, "Profile");
+
+        panel.add(serverGroupTable);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(serverGroupTable);
+        panel.add(pager);
+
 
         // ---------------------------------------------------
 
-        form = new Form<ServerGroupRecord>(ServerGroupRecord.class);
-        form.setNumColumns(2);
-
-        TextItem nameItem = new TextItem("groupName", "Name");
-        TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
-        socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());
-        socketBindingItem.setDefaultToFirstOption(true);
-
-        form.setFields(nameItem, profileItem, socketBindingItem);
-
-        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
-
-        final FormHelpPanel helpPanel = new FormHelpPanel(
-                new FormHelpPanel.AddressCallback() {
-                    @Override
-                    public ModelNode getAddress() {
-                        ModelNode address = new ModelNode();
-                        address.add("server-group", "*");
-                        return address;
-                    }
-                }, form
-        );
-        panel.add(helpPanel.asWidget());
-
-        panel.add(form.asWidget());
+        details =new ServerGroupDetails(presenter);
 
         // ---------------------------------------------------
 
@@ -215,13 +172,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
 
-
+        bottomLayout.add(details.asWidget(), "Attributes");
         jvmEditor = new JvmEditor(presenter);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
-                address.add("server-group", nameLabel.getText());
+                address.add("server-group", getSelectionModel().getSelectedObject().getGroupName());
                 address.add("jvm", "*");
                 return address;
             }
@@ -238,59 +195,48 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         panel.add(new ContentGroupLabel("Subresources"));
         panel.add(bottomLayout);
 
+        details.bind(serverGroupTable);
+
+
+        // --------------------
+
+
+        serverGroupTable.getSelectionModel().addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                ServerGroupRecord group = getSelectionModel().getSelectedObject();
+                presenter.loadJVMConfiguration(group);
+                presenter.loadProperties(group);
+            }
+        });
+
         return layout;
     }
 
+    public void setServerGroups(final List<ServerGroupRecord> groups) {
 
-    private void onSave() {
-
-        if(!form.validate().hasErrors())
-        {
-            cancelBtn.setVisible(false);
-            ServerGroupRecord updatedEntity = form.getUpdatedEntity();
-            presenter.onSaveChanges(updatedEntity.getGroupName(), form.getChangedValues());
-        }
-    }
-
-    private void onEdit() {
-        presenter.editCurrentRecord();
-        cancelBtn.setVisible(true);
-    }
-
-
-    public void setSelectedRecord(final ServerGroupRecord record) {
-
-        // title
-        final String selectedGroupName = record.getGroupName();
-        nameLabel.setHTML(selectedGroupName);
-
-        // form
-        form.edit(record);
-
-        propertyEditor.setProperties(record.getGroupName(), record.getProperties());
-        propertyEditor.setEnabled(true); // otherwise delete would not work
-        jvmEditor.setSelectedRecord(record.getGroupName(), record.getJvm());
-    }
-
-    public void setEnabled(boolean isEnabled) {
-
-        form.setEnabled(isEnabled);
-
-        edit.setText(
-                isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
-        );
+        serverGroupProvider.setList(groups);
+        if(!groups.isEmpty())
+            getSelectionModel().setSelected(groups.get(0), true);
     }
 
     @Override
     public void updateSocketBindings(List<String> result) {
-        socketBindingItem.setValueMap(result);
+        details.setSocketBindings(result);
+    }
+
+    private SingleSelectionModel<ServerGroupRecord> getSelectionModel() {
+        return ((SingleSelectionModel<ServerGroupRecord>) serverGroupTable.getSelectionModel());
     }
 
     @Override
-    public void setNoGroupsAvailable(boolean b) {
-        nameLabel.setHTML("");
-        form.clearValues();
-        jvmEditor.clearValues();
-        propertyEditor.clearValues();
+    public void setJvm(ServerGroupRecord group, Jvm jvm) {
+        jvmEditor.setSelectedRecord(group.getGroupName(), jvm);
+    }
+
+    @Override
+    public void setProperties(ServerGroupRecord group, List<PropertyRecord> properties) {
+        propertyEditor.setProperties(group.getGroupName(), properties);
     }
 }

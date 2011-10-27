@@ -20,6 +20,8 @@
 package org.jboss.as.console.client.domain.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.shared.jvm.Jvm;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 import java.util.List;
 import java.util.Map;
@@ -39,4 +41,8 @@ public interface ServerGroupStore {
     void delete(ServerGroupRecord selectedRecord, AsyncCallback<Boolean> callback);
 
     void saveJvm(String groupName, String jvmName, Map<String,Object> changedValues, AsyncCallback <Boolean> simpleCallback);
+
+    void loadJVMConfiguration(ServerGroupRecord group, AsyncCallback<Jvm> callback);
+
+    void loadProperties(ServerGroupRecord group, AsyncCallback<List<PropertyRecord>> callback);
 }

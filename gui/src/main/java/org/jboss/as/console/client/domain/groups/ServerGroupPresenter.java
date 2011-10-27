@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -44,7 +42,6 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.CreateJvmCmd;
@@ -57,8 +54,8 @@ import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -77,11 +74,9 @@ public class ServerGroupPresenter
     private ServerGroupStore serverGroupStore;
     private ProfileStore profileStore;
 
-    private List<ServerGroupRecord> serverGroups;
-    private ServerGroupRecord selectedRecord;
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
-    private String groupName;
+
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
@@ -96,11 +91,12 @@ public class ServerGroupPresenter
 
     public interface MyView extends SuspendableView {
         void setPresenter(ServerGroupPresenter presenter);
-        void setSelectedRecord(ServerGroupRecord record);
-        void setEnabled(boolean isEnabled);
+        void setServerGroups(List<ServerGroupRecord> groups);
         void updateSocketBindings(List<String> result);
 
-        void setNoGroupsAvailable(boolean b);
+        void setJvm(ServerGroupRecord group, Jvm jvm);
+
+        void setProperties(ServerGroupRecord group, List<PropertyRecord> properties);
     }
 
     @Inject
@@ -128,7 +124,6 @@ public class ServerGroupPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
 
-        this.groupName = request.getParameter("name", null);
         final String action = request.getParameter("action", null);
 
         if("new".equals(action))
@@ -157,73 +152,17 @@ public class ServerGroupPresenter
             }
         });
 
-        refreshServerGroups();
+        loadServerGroups();
 
     }
 
-    private void refreshServerGroups() {
+    private void loadServerGroups() {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
-
-                serverGroups = result;
-                if(groupName!=null)
-                {
-                    for(ServerGroupRecord record : result)
-                    {
-                        if(groupName.equals(record.getGroupName()))
-                        {
-                            selectedRecord = record;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    if(!result.isEmpty())
-                    {
-                        Log.warn("Parameter 'name' missing, fallback to default group");
-
-                        // select first item
-                        groupName = result.get(0).getGroupName();
-                        selectedRecord = result.get(0);
-
-                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                            @Override
-                            public void execute() {
-                                getEventBus().fireEvent(
-                                        new LHSHighlightEvent(null, selectedRecord.getGroupName(), "groups")
-
-                                );
-                            }
-                        });
-                    }
-                    else
-                    {
-                        getView().setNoGroupsAvailable(true);
-                    }
-
-                }
-
-                if(selectedRecord!=null)
-                {
-                    loadServerGroup(selectedRecord.getGroupName());
-                    getView().setEnabled(false);
-                }
-
+                getView().setServerGroups(result);
             }
         });
-    }
-
-    private void loadServerGroup(String name)
-    {
-        serverGroupStore.loadServerGroup(name, new SimpleCallback<ServerGroupRecord>() {
-            @Override
-            public void onSuccess(ServerGroupRecord result) {
-                workOn(result);
-            }
-        });
-
     }
 
     @Override
@@ -233,51 +172,27 @@ public class ServerGroupPresenter
 
     // ----------------------------------------------------------------
 
-    public void editCurrentRecord() {
-        getView().setEnabled(true);
-    }
 
-    public void deleteCurrentRecord() {
+    public void onDeleteGroup(final ServerGroupRecord group) {
 
-        if(selectedRecord!=null)
-        {
-            final ServerGroupRecord deletion = selectedRecord;
-            serverGroupStore.delete(deletion, new SimpleCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean wasSuccessful) {
-                    if(wasSuccessful)
-                    {
-                        Console.MODULES.getMessageCenter().notify(
-                                new Message("Removed server group "+deletion.getGroupName())
-                        );
-
-                        getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
-                    }
-                    else
-                    {
-                        Console.MODULES.getMessageCenter().notify(
-                                new Message("Failed to remove "+deletion.getGroupName(), Message.Severity.Error)
-                        );
-                    }
-
-                    groupName=null;
-                    selectedRecord=null;
-                    refreshServerGroups();
-                }
-            });
-
-
-        }
-
-        // switch to alternate record instead
-        /*serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+        serverGroupStore.delete(group, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(List<ServerGroupRecord> result) {
-                if(result.size()>0)
-                    workOn(serverGroups.get(0));
-            }
-        });*/
+            public void onSuccess(Boolean wasSuccessful) {
+                if (wasSuccessful) {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Removed server group " + group.getGroupName())
+                    );
 
+                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
+                } else {
+                    Console.MODULES.getMessageCenter().notify(
+                            new Message("Failed to remove " + group.getGroupName(), Message.Severity.Error)
+                    );
+                }
+
+                loadServerGroups();
+            }
+        });
     }
 
     public void createNewGroup(final ServerGroupRecord newGroup) {
@@ -287,8 +202,6 @@ public class ServerGroupPresenter
         {
             window.hide();
         }
-
-        getView().setEnabled(false);
 
         serverGroupStore.create(newGroup, new SimpleCallback<Boolean>() {
             @Override
@@ -302,8 +215,7 @@ public class ServerGroupPresenter
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
 
-                    loadServerGroup(newGroup.getGroupName());
-
+                    loadServerGroups();
 
                 } else {
                     Console.MODULES.getMessageCenter().notify(
@@ -316,50 +228,35 @@ public class ServerGroupPresenter
         });
     }
 
-    public void onSaveChanges(final String name, Map<String,Object> changeset) {
-        getView().setEnabled(false);
+    public void onSaveChanges(final ServerGroupRecord group, Map<String,Object> changeset) {
 
-        if(changeset.size()>0)
-        {
-            serverGroupStore.save(name, changeset, new AsyncCallback<Boolean>() {
+        serverGroupStore.save(group.getGroupName(), changeset, new AsyncCallback<Boolean>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    // log and reset when something fails
-                    Console.error("Failed to modify server-group "+name);
-                    refreshServerGroups();
+            @Override
+            public void onFailure(Throwable caught) {
+                // log and reset when something fails
+                Console.error("Failed to modify server-group "+group.getGroupName());
+                loadServerGroups();
+            }
+
+            @Override
+            public void onSuccess(Boolean wasSuccessful) {
+                if(wasSuccessful)
+                {
+                    Console.info("Modified server-group "+group.getGroupName());
+                }
+                else
+                {
+                    Console.error("Failed to modify server-group "+group.getGroupName());
                 }
 
-                @Override
-                public void onSuccess(Boolean wasSuccessful) {
-                    if(wasSuccessful)
-                    {
-                        Console.info("Modified server-group "+name);
-                    }
-                    else
-                    {
-                        Console.error("Failed to modify server-group "+name);
-                    }
+                loadServerGroups();
+            }
+        });
 
-                    refreshServerGroups();
-                }
-            });
-        }
-        else
-        {
-            Console.warning("No changes applied!");
-        }
-    }
-
-    private void workOn(ServerGroupRecord record) {
-        this.selectedRecord = record;
-        getView().setSelectedRecord(selectedRecord);
     }
 
     public void launchNewGroupDialoge() {
-
-        selectedRecord = null;
-        groupName = null;
 
         window = new DefaultWindow("Create Server Group");
         window.setWidth(480);
@@ -372,7 +269,7 @@ public class ServerGroupPresenter
         });
 
         window.setWidget(
-                new NewServerGroupWizard(this, serverGroups, existingProfiles, existingSockets).asWidget()
+                new NewServerGroupWizard(this, existingProfiles, existingSockets).asWidget()
         );
 
         window.setGlassEnabled(true);
@@ -396,7 +293,7 @@ public class ServerGroupPresenter
             cmd.execute(changedValues, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
-                    loadServerGroup(groupName);
+                    loadServerGroups();
                 }
             });
         }
@@ -412,7 +309,7 @@ public class ServerGroupPresenter
         cmd.execute(jvm, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerGroup(groupName);
+                loadServerGroups();
             }
         });
 
@@ -428,7 +325,7 @@ public class ServerGroupPresenter
         cmd.execute(new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerGroup(groupName);
+                loadServerGroups();
             }
         });
     }
@@ -459,7 +356,6 @@ public class ServerGroupPresenter
 
     public void onCreateProperty(final String groupName, final PropertyRecord prop)
     {
-
         if(propertyWindow!=null && propertyWindow.isShowing())
         {
             propertyWindow.hide();
@@ -473,17 +369,13 @@ public class ServerGroupPresenter
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerGroup(groupName);
+                loadServerGroups();
             }
         });
-
-
     }
 
     public void onDeleteProperty(final String groupName, final PropertyRecord prop)
     {
-        System.out.println("Delete prop "+prop.getKey());
-
         ModelNode address = new ModelNode();
         address.add("server-group", groupName);
         address.add("system-property", prop.getValue());
@@ -492,7 +384,7 @@ public class ServerGroupPresenter
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerGroup(groupName);
+                loadServerGroups();
             }
         });
     }
@@ -502,5 +394,22 @@ public class ServerGroupPresenter
         // do nothing
     }
 
-    
+    public void loadJVMConfiguration(final ServerGroupRecord group) {
+        serverGroupStore.loadJVMConfiguration(group, new SimpleCallback<Jvm>() {
+            @Override
+            public void onSuccess(Jvm jvm) {
+                getView().setJvm(group, jvm);
+            }
+        });
+    }
+
+    public void loadProperties(final ServerGroupRecord group) {
+         serverGroupStore.loadProperties(group, new SimpleCallback<List<PropertyRecord>>() {
+            @Override
+            public void onSuccess(List<PropertyRecord> properties) {
+                getView().setProperties(group, properties);
+            }
+        });
+    }
+
 }

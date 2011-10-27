@@ -27,13 +27,12 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.ballroom.client.widgets.window.DialogueOptions;
-import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -45,17 +44,15 @@ import java.util.List;
 class NewServerGroupWizard {
 
     private ServerGroupPresenter presenter;
-    private List<ServerGroupRecord> existingGroups;
+
     private List<ProfileRecord> existingProfiles;
     private List<String> existingSockets;
 
     public NewServerGroupWizard(
             final ServerGroupPresenter presenter,
-            final List<ServerGroupRecord> existing,
             List<ProfileRecord> existingProfiles,
             List<String> existingSockets) {
         this.presenter = presenter;
-        this.existingGroups = existing;
         this.existingProfiles = existingProfiles;
         this.existingSockets = existingSockets;
 
@@ -82,26 +79,6 @@ class NewServerGroupWizard {
                 return Console.MESSAGES.common_validation_notEmptyNoSpace();
             }
         };
-
-        /*final ComboBoxItem basedOnSelection = new ComboBoxItem("based-on", Console.CONSTANTS.common_label_basedOn());
-        basedOnSelection.setDefaultToFirstOption(true);
-
-        if(existingGroups.isEmpty())
-        {
-            basedOnSelection.setValueMap(new String[]{"none"});
-        }
-        else
-        {
-            String[] exists = new String[existingGroups.size()];
-            int i=0;
-            for(ServerGroupRecord rec : existingGroups)
-            {
-                exists[i] = rec.getGroupName();
-                i++;
-            }
-            basedOnSelection.setValueMap(exists);
-        }      */
-
 
         String[] profiles = new String[existingProfiles.size()];
         int i=0;
@@ -133,25 +110,6 @@ class NewServerGroupWizard {
                         FormValidation validation = form.validate();
                         if(validation.hasErrors())
                             return;
-
-                        /*ServerGroupRecord base = null;
-                        for(ServerGroupRecord rec : existingGroups)
-                        {
-                            if(rec.getGroupName().equals(basedOnSelection.getValue()))
-                            {
-                                base = rec;
-                                break;
-                            }
-                        }
-
-                        if(base!=null)
-                        {
-                            newGroup.setJvm(base.getJvm());
-                            newGroup.setSocketBinding(base.getSocketBinding());
-                            newGroup.setProfileName(base.getProfileName());
-                            newGroup.setProperties(base.getProperties());
-                        }
-                          */
 
                         presenter.createNewGroup(newGroup);
 

@@ -23,6 +23,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -30,6 +31,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
@@ -52,12 +54,17 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private PropertyMetaData propertyMetaData;
+    private EntityAdapter<Jvm> jvmAdapter;
 
     @Inject
-    public ServerGroupStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMetaData) {
+    public ServerGroupStoreImpl(
+            DispatchAsync dispatcher,
+            BeanFactory factory,
+            PropertyMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData = propertyMetaData;
+        jvmAdapter = new EntityAdapter<Jvm>(Jvm.class, propertyMetaData);
     }
 
     @Override
@@ -292,6 +299,67 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+            }
+        });
+    }
+
+    @Override
+    public void loadJVMConfiguration(ServerGroupRecord group, final AsyncCallback<Jvm> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).add("server-group", group.getGroupName());
+        operation.get(CHILD_TYPE).set("jvm");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+
+                List<Property> jvms = result.get(RESULT).asPropertyList();
+                if(!jvms.isEmpty())
+                {
+                    // select first entry
+                    Property property = jvms.get(0);
+                    Jvm jvm = jvmAdapter.fromDMR(property.getValue().asObject());
+                    jvm.setName(property.getName());
+
+                    callback.onSuccess(jvm);
+                }
+                else
+                {
+                    callback.onSuccess(null);
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void loadProperties(ServerGroupRecord group, final AsyncCallback<List<PropertyRecord>> callback) {
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).add("server-group", group.getGroupName());
+        operation.get(CHILD_TYPE).set("system-property");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                List<Property> properties = result.get(RESULT).asPropertyList();
+                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+
+                for(Property prop : properties)
+                {
+                    PropertyRecord record = factory.property().as();
+                    record.setKey(prop.getName());
+                    ModelNode payload = prop.getValue().asObject();
+                    record.setValue(payload.get("value").asString());
+                    record.setBootTime(payload.get("boot-time").asBoolean());
+
+                    records.add(record);
+                }
+
+                callback.onSuccess(records);
             }
         });
     }
