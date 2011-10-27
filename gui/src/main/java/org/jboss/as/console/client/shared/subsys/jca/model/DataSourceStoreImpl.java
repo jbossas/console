@@ -204,6 +204,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).set(addressModel.get(ADDRESS));
 
+        for(PropertyRecord prop : datasource.getProperties())
+            operation.get("xa-datasource-properties").add(prop.getKey(), prop.getValue());
+
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
