@@ -44,7 +44,7 @@ public class ServerConfigDetails {
 
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+                presenter.onSaveChanges(form.getEditedEntity(), changeset);
             }
 
             @Override

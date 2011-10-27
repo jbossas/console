@@ -23,6 +23,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -68,7 +69,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private PropertyEditor propertyEditor;
 
     private PortsView portsView;
-    private DefaultCellTable serverConfigTable;
+    private DefaultCellTable<Server> serverConfigTable;
     private ListDataProvider serverConfigProvider;
 
     @Override
@@ -255,7 +256,10 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         serverConfigProvider.setList(servers);
 
         if(!servers.isEmpty())
+        {
             getSelectionModel().setSelected(servers.get(0), true);
+        }
 
     }
+
 }
