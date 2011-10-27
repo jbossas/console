@@ -44,6 +44,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -99,10 +100,11 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         Image image = new Image(Icons.INSTANCE.serverInstance());
         horzPanel.add(image);
         horzPanel.add(nameLabel);
-
         image.getElement().getParentElement().setAttribute("width", "25");
 
         vpanel.add(horzPanel);
+
+        vpanel.add(new ContentDescription("Server instances represent the server runtime state. This includes the virtual machine status, as well as deployments and subsystem specific state (i.e. datasource pool sizes)."));
 
         // ----------------------------------------------------------------------
 
