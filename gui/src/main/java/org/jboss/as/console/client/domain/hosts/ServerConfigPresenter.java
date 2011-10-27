@@ -84,7 +84,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private Server selectedRecord = null;
     private ServerGroupStore serverGroupStore;
 
-    private String serverName;
     private String selectedHost;
 
     private DefaultWindow window = null;
@@ -105,14 +104,12 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public interface MyView extends SuspendableView {
         void setPresenter(ServerConfigPresenter presenter);
-
         void updateSocketBindings(List<String> result);
-
         void setJvm(String reference, Jvm jvm);
-
         void setProperties(String reference, List<PropertyRecord> properties);
-
         void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
+
+        void setConfigurations(String selectedHost, List<Server> servers);
     }
 
     @Inject
@@ -148,7 +145,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         selectedHost = request.getParameter("host", null);
-        serverName = request.getParameter("server", null);
         String action= request.getParameter("action", null);
 
         if("new".equals(action))
@@ -179,36 +175,31 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private void loadServerConfigurations() {
 
-        if(selectedHost !=null && serverName!=null)
+        if(selectedHost==null)
         {
-            hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
                 @Override
-                public void onSuccess(List<Server> result) {
-
-                    for(Server server : result)
-                    {
-                        if(server.getName().equals(serverName))
-                        {
-                            serverName = server.getName();
-                            workOn(server);
-                            break;
-                        }
-                    }
+                public void onSuccess(List<Host> hosts) {
+                    selectedHost = hosts.get(0).getName();
+                    loadServerConfigurations();
                 }
             });
         }
         else
         {
-            // fallback (first request)
-            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+            hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
                 @Override
-                public void onSuccess(List<Host> result) {
-                    selectedHost = result.get(0).getName();
-                    loadDefaultForHost(selectedHost);
+                public void onSuccess(List<Server> result) {
+
+                    if(result.isEmpty())
+                        noServerAvailable();
+                    else
+                        getView().setConfigurations(selectedHost, result);
                 }
             });
         }
     }
+
 
     @Override
     protected void revealInParent() {
@@ -217,14 +208,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void onHostSelection(String hostName) {
-
-        // display first server config by default
-        //loadDefaultForHost(selectedHost);
+        loadServerConfigurations();
     }
 
     public void launchNewConfigDialoge() {
 
-        serverName = null;
         selectedRecord = null;
 
         window = new DefaultWindow("Create Server Configuration");
@@ -259,23 +247,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         {
             window.hide();
         }
-    }
-
-    private void loadDefaultForHost(final String hostName) {
-        hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
-            @Override
-            public void onSuccess(List<Server> result) {
-
-                if(!result.isEmpty()) {
-                    workOn(result.get(0));
-                    serverName = selectedRecord.getName();
-                }
-                else {
-                    noServerAvailable();
-                }
-
-            }
-        });
     }
 
     private void noServerAvailable() {
@@ -426,7 +397,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
 
-                    loadDefaultForHost(selectedHost);
+                    loadServerConfigurations();
                 }
                 else
                 {

@@ -30,6 +30,9 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
@@ -39,6 +42,7 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -49,6 +53,7 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.logging.Handler;
 
 /**
  * @author Heiko Braun
@@ -132,6 +137,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // table
 
         panel.add(new ContentHeaderLabel("Available Server Configurations"));
+        panel.add(new ContentDescription("A list of server configurations on the selected host. A server configuration can be started and perform work. Server configurations belong to server groups."));
 
         serverConfigTable = new DefaultCellTable<Server>(10);
         serverConfigProvider = new ListDataProvider<Server>();
@@ -154,11 +160,11 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         };
 
 
-        serverConfigTable.addColumn(nameColumn, Console.CONSTANTS.common_label_server());
+        serverConfigTable.addColumn(nameColumn, "Configuration Name");
         serverConfigTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
 
         panel.add(serverConfigTable);
-        
+
 
         // ---------------------
 
@@ -169,6 +175,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         details = new ServerConfigDetails(presenter);
         bottomLayout.add(details.asWidget(), "Attributes");
+        details.bind(serverConfigTable);
 
         // jvm editor
         jvmEditor = new JvmEditor(presenter);
@@ -202,7 +209,25 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         bottomLayout.selectTab(0);
 
+
+        // --------------------
+
+
+        serverConfigTable.getSelectionModel().addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                Server server = getSelectionModel().getSelectedObject();
+                presenter.loadJVMConfiguration(server);
+                presenter.loadProperties(server);
+            }
+        });
+
         return layout;
+    }
+
+    private SingleSelectionModel<Server> getSelectionModel() {
+        return ((SingleSelectionModel<Server>) serverConfigTable.getSelectionModel());
     }
 
     @Override
@@ -225,5 +250,12 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         propertyEditor.setProperties(reference, properties);
     }
 
+    @Override
+    public void setConfigurations(String selectedHost, List<Server> servers) {
+        serverConfigProvider.setList(servers);
 
+        if(!servers.isEmpty())
+            getSelectionModel().setSelected(servers.get(0), true);
+
+    }
 }
