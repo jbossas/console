@@ -188,11 +188,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
                 @Override
                 public void onSuccess(List<Server> result) {
-
-                    if(result.isEmpty())
-                        noServerAvailable();
-                    else
-                        getView().setConfigurations(selectedHost, result);
+                    getView().setConfigurations(selectedHost, result);
                 }
             });
         }
@@ -243,10 +239,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         {
             window.hide();
         }
-    }
-
-    private void noServerAvailable() {
-        placeManager.revealPlace(new PlaceRequest(NameTokens.InstancesPresenter));
     }
 
     public void createServerConfig(final Server newServer) {
