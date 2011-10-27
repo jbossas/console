@@ -101,8 +101,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             @Override
             public void onClick(ClickEvent clickEvent) {
 
+                final Server server = getSelectionModel().getSelectedObject();
 
-                Server server = null;
                 Feedback.confirm(
                         Console.MESSAGES.deleteServerConfig(),
                         Console.MESSAGES.deleteServerConfigConfirm(server.getName()),
@@ -110,7 +110,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if(isConfirmed)
-                                    presenter.tryDeleteCurrentRecord();
+                                    presenter.tryDelete(server);
                             }
                         });
             }
@@ -221,6 +221,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                 Server server = getSelectionModel().getSelectedObject();
                 presenter.loadJVMConfiguration(server);
                 presenter.loadProperties(server);
+                presenter.loadPorts(server);
             }
         });
 

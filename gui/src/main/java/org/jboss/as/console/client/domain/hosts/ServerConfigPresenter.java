@@ -80,8 +80,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         JvmManagement, PropertyManagement {
 
     private HostInformationStore hostInfoStore;
-
-    private Server selectedRecord = null;
     private ServerGroupStore serverGroupStore;
 
     private String selectedHost;
@@ -213,8 +211,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void launchNewConfigDialoge() {
 
-        selectedRecord = null;
-
         window = new DefaultWindow("Create Server Configuration");
         window.setWidth(480);
         window.setHeight(360);
@@ -274,7 +270,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                         }
                     });
 
-                    workOn(newServer);
+                    loadServerConfigurations();
 
                 } else {
                     closeDialoge();
@@ -295,12 +291,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
             }
         });
-    }
-
-    private void workOn(Server record) {
-
-        selectedRecord = record;
-
     }
 
     public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
@@ -343,19 +333,19 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
 
-    public void tryDeleteCurrentRecord() {
+    public void tryDelete(final Server server) {
 
         // check if instance exist
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("host", selectedHost);
-        operation.get(ADDRESS).add("server", selectedRecord.getName());
+        operation.get(ADDRESS).add("server", server.getName());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable throwable) {
-                performDeleteOperation();
+                performDeleteOperation(server);
             }
 
             @Override
@@ -365,11 +355,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                 Boolean serverIsRunning = outcome.equals(SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
                 if(!serverIsRunning)
-                    performDeleteOperation();
+                    performDeleteOperation(server);
                 else
                     Console.error(
                             "Failed to delete server configuration",
-                            "The server instance is still running: "+selectedRecord.getName()
+                            "The server instance is still running: "+server.getName()
                     );
             }
         });
@@ -377,13 +367,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     }
 
-    private void performDeleteOperation() {
+    private void performDeleteOperation(final Server server) {
 
-        hostInfoStore.deleteServerConfig(selectedHost, selectedRecord, new AsyncCallback<Boolean>() {
+        hostInfoStore.deleteServerConfig(selectedHost, server, new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
                 Console.MODULES.getMessageCenter().notify(
-                        new Message("Failed to delete server config "+selectedRecord.getName(), Message.Severity.Error)
+                        new Message("Failed to delete server config "+server.getName(), Message.Severity.Error)
                 );
             }
 
@@ -392,7 +382,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 if(wasSuccessful)
                 {
                     Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully deleted server config "+selectedRecord.getName())
+                            new Message("Successfully deleted server config "+server.getName())
                     );
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
@@ -402,7 +392,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 else
                 {
                     Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to delete server config "+selectedRecord.getName(), Message.Severity.Error)
+                            new Message("Failed to delete server config "+server.getName(), Message.Severity.Error)
                     );
                 }
             }
@@ -536,22 +526,23 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         propertyWindow.hide();
     }
 
-    public void onShowEffectivePorts() {
+    public void loadPorts(final Server server) {
 
-        assert selectedRecord!=null : "No record selected!";
+        if(server.getSocketBinding()!=null &&
+                !server.getSocketBinding().equals(""))
+        {
 
-        if(selectedRecord.getSocketBinding()==null)
-            throw new RuntimeException("SocketBinding not available!");
+            loadSocketCmd.execute(server.getSocketBinding(),
+                    new SimpleCallback<List<SocketBinding>>() {
+                        @Override
+                        public void onSuccess(List<SocketBinding> result) {
 
-        loadSocketCmd.execute(selectedRecord.getSocketBinding(),
-                new SimpleCallback<List<SocketBinding>>() {
-                    @Override
-                    public void onSuccess(List<SocketBinding> result) {
-
-                        getView().setPorts(selectedRecord.getSocketBinding(), selectedRecord, result);
+                            getView().setPorts(server.getSocketBinding(), server, result);
+                        }
                     }
-                }
-        );
+            );
+        }
+
     }
 
     @Override

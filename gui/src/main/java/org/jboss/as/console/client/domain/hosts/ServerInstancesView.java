@@ -92,7 +92,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Server Status");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_serverInstances());
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -105,8 +105,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         vpanel.add(horzPanel);
 
         // ----------------------------------------------------------------------
-
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_serverInstances()));
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");

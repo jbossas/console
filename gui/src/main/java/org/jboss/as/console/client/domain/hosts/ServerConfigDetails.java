@@ -56,7 +56,7 @@ public class ServerConfigDetails {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed)
-                                    presenter.tryDeleteCurrentRecord();
+                                    presenter.tryDelete(form.getEditedEntity());
                             }
                         });
             }
