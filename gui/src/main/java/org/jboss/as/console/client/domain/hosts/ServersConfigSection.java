@@ -22,9 +22,7 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
@@ -32,7 +30,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
+import org.jboss.ballroom.client.util.Places;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
@@ -50,7 +48,7 @@ class ServersConfigSection {
 
     public ServersConfigSection() {
 
-        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_server()).asWidget();
         hostTree = new LHSNavTree("hosts");
 
         panel.setContent(hostTree);
@@ -70,7 +68,7 @@ class ServersConfigSection {
 
         hostTree.removeItems();
 
-        for(Server server: servers)
+        /*for(Server server: servers)
         {
             final String serverName = server.getName();
             final TreeItem item = new LHSNavTreeItem(serverName, buildToken(serverName));
@@ -91,6 +89,32 @@ class ServersConfigSection {
             }));
 
         }
+        */
+
+        LHSNavTreeItem serverConfigs = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.ServerPresenter)
+                );
+            }
+        });
+
+        hostTree.addItem(serverConfigs);
+
+        LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_runtimeStatus(), new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.InstancesPresenter)
+                );
+            }
+        });
+
+        hostTree.addItem(serverInstances);
+
 
     }
 

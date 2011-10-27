@@ -36,10 +36,9 @@ import java.util.List;
 class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
     private static final int SELECTOR_HEIGHT = 60;
-    private static final int HEADER_SIZE = 28;
 
     private ServersConfigSection serversSection;
-    private ServerInstancesSection instanceSection;
+
     private HostConfigSection hostConfigSection;
 
     private HostSelector selector;
@@ -60,9 +59,6 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
         serversSection = new ServersConfigSection();
         stack.add(serversSection.asWidget());
-
-        instanceSection = new ServerInstancesSection();
-        stack.add(instanceSection.asWidget());
 
         hostConfigSection = new HostConfigSection();
         stack.add(hostConfigSection.asWidget());
@@ -96,7 +92,6 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
     @Override
     public void onHostSelection(String hostName) {
         serversSection.setSelectedHost(hostName);
-        instanceSection.setSelectedHost(hostName);
 
         Console.MODULES.getCurrentSelectedHost().setName(hostName);
     }

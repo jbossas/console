@@ -105,8 +105,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public interface MyView extends SuspendableView {
         void setPresenter(ServerConfigPresenter presenter);
-        void setEnabled(boolean isEnabled);
-        void setSelectedRecord(Server selectedRecord);
+
         void updateSocketBindings(List<String> result);
 
         void setJvm(String reference, Jvm jvm);
@@ -328,14 +327,12 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     private void workOn(Server record) {
-        getView().setEnabled(false); // default edit state
+
         selectedRecord = record;
-        getView().setSelectedRecord(record);
+
     }
 
     public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
-
-        getView().setEnabled(false);
 
         if(changedValues.size()>0)
         {
@@ -374,10 +371,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         }
     }
 
-
-    public void editCurrentRecord() {
-        getView().setEnabled(true);
-    }
 
     public void tryDeleteCurrentRecord() {
 

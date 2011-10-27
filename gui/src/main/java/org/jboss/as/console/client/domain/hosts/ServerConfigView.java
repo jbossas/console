@@ -19,16 +19,17 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
@@ -40,13 +41,7 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormValidation;
-import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -54,7 +49,6 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -62,18 +56,15 @@ import java.util.Map;
  */
 public class ServerConfigView extends SuspendableViewImpl implements ServerConfigPresenter.MyView{
 
-
     private ServerConfigPresenter presenter;
-    private Form<Server> form;
-    private ContentHeaderLabel nameLabel;
-    private ComboBoxItem socketItem;
-    private ToolButton edit;
 
+    private ServerConfigDetails details;
     private JvmEditor jvmEditor;
     private PropertyEditor propertyEditor;
-    private ToolButton cancelBtn = null;
 
     private PortsView portsView;
+    private DefaultCellTable serverConfigTable;
+    private ListDataProvider serverConfigProvider;
 
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
@@ -85,49 +76,30 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverConfig());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverConfigs());
         layout.add(titleBar);
 
         // ----
 
         final ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton(Console.CONSTANTS.common_label_edit());
-        edit.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                if(edit.getText().equals(Console.CONSTANTS.common_label_edit()))
-                {
-                    onEdit();
-                }
-                else
-                {
-                    onSave();
-                }
-            }
-        });
 
-        toolStrip.addToolButton(edit);
-
-        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
-        cancelBtn.addClickHandler(new ClickHandler(){
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
             @Override
-            public void onClick(ClickEvent clickEvent) {
-                cancelBtn.setVisible(false);
-                form.cancel();
-                form.setEnabled(false);
-                edit.setText(Console.CONSTANTS.common_label_edit());
+            public void onClick(ClickEvent event) {
+                presenter.launchNewConfigDialoge();
             }
-        });
-        toolStrip.addToolButton(cancelBtn);
-        cancelBtn.setVisible(false);
+        }));
 
         ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
         delete.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
+
+
+                Server server = null;
                 Feedback.confirm(
                         Console.MESSAGES.deleteServerConfig(),
-                        Console.MESSAGES.deleteServerConfigConfirm(form.getEditedEntity().getName()),
+                        Console.MESSAGES.deleteServerConfigConfirm(server.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -137,14 +109,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                         });
             }
         });
-
-
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.launchNewConfigDialoge();
-            }
-        }));
 
         toolStrip.addToolButtonRight(delete);
 
@@ -163,83 +127,60 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         layout.setWidgetTopHeight(scrollPanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
-        // --------------------------------------------------------
-
-        nameLabel = new ContentHeaderLabel("");
-
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.server());
-        horzPanel.add(image);
-        horzPanel.add(nameLabel);
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        panel.add(horzPanel);
-
-        // ----------------------------------------------------------------------
-
-
-        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_attributes()));
-
-        form = new Form<Server>(Server.class);
-        form.setNumColumns(2);
-
-        TextItem nameItem = new TextItem("name", "Name");
-
-        CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
-        TextItem groupItem = new TextItem("group", Console.CONSTANTS.common_label_serverGroup());
-
         // ------------------------------------------------------
 
-        final NumberBoxItem portOffset = new NumberBoxItem("portOffset", Console.CONSTANTS.common_label_portOffset());
+        // table
 
-        socketItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding())
-        {
-            @Override
-            public boolean validate(String value) {
-                boolean parentValid = super.validate(value);
-                //boolean portDefined = !portOffset.isModified();
-                return parentValid ;//&& portDefined;
-            }
+        panel.add(new ContentHeaderLabel("Available Server Configurations"));
 
+        serverConfigTable = new DefaultCellTable<Server>(10);
+        serverConfigProvider = new ListDataProvider<Server>();
+        serverConfigProvider.addDataDisplay(serverConfigTable);
+
+        // Create columns
+        Column<Server, String> nameColumn = new Column<Server, String>(new TextCell()) {
             @Override
-            public String getErrMessage() {
-                return Console.MESSAGES.common_validation_portOffsetUndefined(super.getErrMessage());
+            public String getValue(Server object) {
+                return object.getName();
             }
         };
 
 
-        form.setFields(nameItem, groupItem, socketItem, portOffset, startedItem);
+        Column<Server, String> groupColumn = new Column<Server, String>(new TextCell()) {
+            @Override
+            public String getValue(Server object) {
+                return object.getGroup();
+            }
+        };
 
-        final FormHelpPanel helpPanel = new FormHelpPanel(
-                new FormHelpPanel.AddressCallback() {
-                    @Override
-                    public ModelNode getAddress() {
-                        ModelNode address = new ModelNode();
-                        address.add("host", presenter.getSelectedHost());
-                        address.add("server-config", "*");
-                        return address;
-                    }
-                }, form
-        );
-        panel.add(helpPanel.asWidget());
 
-        panel.add(form.asWidget());
-        form.setEnabled(false);
+        serverConfigTable.addColumn(nameColumn, Console.CONSTANTS.common_label_server());
+        serverConfigTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
 
-        // ------------------------------------------------------
+        panel.add(serverConfigTable);
+        
+
+        // ---------------------
 
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
+
+        // details
+
+        details = new ServerConfigDetails(presenter);
+        bottomLayout.add(details.asWidget(), "Attributes");
 
         // jvm editor
         jvmEditor = new JvmEditor(presenter);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
+
+
+
                 ModelNode address = new ModelNode();
                 address.add("host", presenter.getSelectedHost());
-                address.add("server-config", nameLabel.getText());
+                address.add("server-config", "TODO");  // TODO
                 address.add("jvm", "*");
                 return address;
             }
@@ -254,45 +195,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         portsView = new PortsView();
         bottomLayout.add(portsView.asWidget(), "Ports");
 
-        panel.add(new ContentGroupLabel("Subresources"));
+        // ------------
 
+        panel.add(new ContentGroupLabel("Server Configuration"));
         panel.add(bottomLayout);
 
         bottomLayout.selectTab(0);
 
         return layout;
-    }
-
-    private void onSave() {
-
-        FormValidation validation = form.validate();
-
-        if(!validation.hasErrors())
-        {
-            cancelBtn.setVisible(true);
-
-            Server updatedEntity = form.getUpdatedEntity();
-            Map<String,Object> changedValues = form.getChangedValues();
-            presenter.onSaveChanges(updatedEntity, changedValues);
-        }
-    }
-
-    private void onEdit() {
-        presenter.editCurrentRecord();
-        cancelBtn.setVisible(true);
-    }
-
-    @Override
-    public void setSelectedRecord(Server server) {
-
-        nameLabel.setText(server.getName());
-        socketItem.clearSelection();
-        form.edit(server);
-
-        presenter.loadJVMConfiguration(server);
-        presenter.loadProperties(server);
-        presenter.onShowEffectivePorts();
-
     }
 
     @Override
@@ -307,20 +217,13 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void updateSocketBindings(List<String> result) {
-        socketItem.setValueMap(result);
-    }
-
-    @Override
-    public void setEnabled(boolean isEnabled) {
-        form.setEnabled(isEnabled);
-
-        edit.setText(
-                isEnabled ? Console.CONSTANTS.common_label_save() : Console.CONSTANTS.common_label_edit()
-        );
+        details.setAvailableSockets(result);
     }
 
     @Override
     public void setProperties(String reference, List<PropertyRecord> properties) {
         propertyEditor.setProperties(reference, properties);
     }
+
+
 }

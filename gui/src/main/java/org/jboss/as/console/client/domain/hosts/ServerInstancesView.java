@@ -68,7 +68,6 @@ import java.util.List;
 public class ServerInstancesView extends SuspendableViewImpl implements ServerInstancesPresenter.MyView {
 
     private ServerInstancesPresenter presenter;
-    private ContentHeaderLabel nameLabel;
     private ListDataProvider<ServerInstance> instanceProvider;
     private String selectedHost = null;
     private ComboBox groupFilter;
@@ -85,7 +84,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverInstances());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_runtimeStatus());
         layout.add(titleBar);
 
         VerticalPanel vpanel = new VerticalPanel();
@@ -93,7 +92,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        nameLabel = new ContentHeaderLabel("replace me");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Server Status");
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -107,7 +106,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        vpanel.add(new ContentGroupLabel("Server Instances"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_serverInstances()));
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
@@ -283,7 +282,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     @Override
     public void setSelectedHost(String selectedHost) {
         this.selectedHost = selectedHost;
-        nameLabel.setText(Console.MESSAGES.serversRunningOnHost(presenter.getCurrentHostSelection()));
     }
 
     @Override
