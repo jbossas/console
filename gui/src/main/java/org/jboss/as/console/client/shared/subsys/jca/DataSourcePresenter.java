@@ -574,7 +574,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         });
 
         propertyWindow.setWidget(
-                new NewPropertyWizard(this, reference).asWidget()
+                new NewPropertyWizard(this, reference, false).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);
