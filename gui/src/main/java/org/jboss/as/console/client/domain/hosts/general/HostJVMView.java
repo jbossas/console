@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -62,7 +63,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("Host JVM");
+        FakeTabPanel titleBar = new FakeTabPanel("Host JVM Configurations");
         layout.add(titleBar);
 
         ToolStrip toolStrip = new ToolStrip();
@@ -90,13 +91,10 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         // ---
 
-        panel.add(new ContentHeaderLabel("Host JVM Declarations"));
-        StaticHelpPanel helpPanel = new StaticHelpPanel(
-                "These JVM settings will be inherited by any server on this host."
-        );
-        panel.add(helpPanel.asWidget());
+        panel.add(new ContentHeaderLabel("Available JVM Configurations"));
+        panel.add(new ContentDescription("These JVM configuration are applicable to any server on a host. " +
+                "JVM configurations can be assigned to server configuration by name."));
 
-        panel.add(new ContentGroupLabel("Available JVM Declarations"));
 
         table = new DefaultCellTable<Jvm>(10);
 

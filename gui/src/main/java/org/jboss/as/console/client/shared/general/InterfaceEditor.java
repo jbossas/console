@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -36,9 +37,13 @@ public class InterfaceEditor {
 
     private CellTable<Interface> table;
     private String title;
-
+    private String description = null;
     public InterfaceEditor(String title) {
         this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Widget asWidget() {
@@ -86,6 +91,9 @@ public class InterfaceEditor {
         panel.setStyleName("rhs-content-panel");
 
         panel.add(new ContentHeaderLabel("Interface Declarations"));
+
+        if(description!=null)
+            panel.add(new ContentDescription(description));
 
         table = new DefaultCellTable<Interface>(10);
 

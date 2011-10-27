@@ -45,6 +45,7 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
 
     public HostInterfacesView() {
         this.editor = new InterfaceEditor("Host Interfaces");
+        editor.setDescription("Specific rules to bind interfaces on a host. A server configuration will reference an interface by name.");
     }
 
     @Override

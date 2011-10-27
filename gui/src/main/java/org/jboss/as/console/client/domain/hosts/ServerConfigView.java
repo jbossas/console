@@ -136,7 +136,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         // table
 
         panel.add(new ContentHeaderLabel("Available Server Configurations"));
-        panel.add(new ContentDescription("A Server Configuration does specify the overall configuration of a server. A server configuration can be started and perform work. Server configurations belong to server groups."));
+        panel.add(new ContentDescription("A server configuration does specify the overall configuration of a server. A server configuration can be started and perform work. Server configurations belong to server groups."));
 
         serverConfigTable = new DefaultCellTable<Server>(10);
         serverConfigProvider = new ListDataProvider<Server>();
