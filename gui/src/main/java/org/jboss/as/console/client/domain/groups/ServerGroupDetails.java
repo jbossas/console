@@ -51,6 +51,8 @@ public class ServerGroupDetails {
                 }
         );
 
+        toolstrip.providesDeleteOp(false);
+
         TextItem nameItem = new TextItem("groupName", "Name");
         TextItem profileItem = new TextItem("profileName", Console.CONSTANTS.common_label_profile());
         socketBindingItem = new ComboBoxItem("socketBinding", Console.CONSTANTS.common_label_socketBinding());

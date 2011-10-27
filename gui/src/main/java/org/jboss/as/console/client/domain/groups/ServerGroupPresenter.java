@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.groups;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -55,6 +56,7 @@ import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -93,9 +95,7 @@ public class ServerGroupPresenter
         void setPresenter(ServerGroupPresenter presenter);
         void setServerGroups(List<ServerGroupRecord> groups);
         void updateSocketBindings(List<String> result);
-
         void setJvm(ServerGroupRecord group, Jvm jvm);
-
         void setProperties(ServerGroupRecord group, List<PropertyRecord> properties);
     }
 
@@ -153,6 +153,16 @@ public class ServerGroupPresenter
         });
 
         loadServerGroups();
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                getEventBus().fireEvent(
+                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverGroupConfigurations(), "groups")
+
+                );
+            }
+        });
 
     }
 
@@ -404,7 +414,7 @@ public class ServerGroupPresenter
     }
 
     public void loadProperties(final ServerGroupRecord group) {
-         serverGroupStore.loadProperties(group, new SimpleCallback<List<PropertyRecord>>() {
+        serverGroupStore.loadProperties(group, new SimpleCallback<List<PropertyRecord>>() {
             @Override
             public void onSuccess(List<PropertyRecord> properties) {
                 getView().setProperties(group, properties);

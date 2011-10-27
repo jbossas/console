@@ -62,6 +62,7 @@ public class ServerConfigDetails {
             }
         });
 
+        toolStrip.providesDeleteOp(false);
 
         layout.add(toolStrip.asWidget());
 

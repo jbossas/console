@@ -19,20 +19,15 @@
 
 package org.jboss.as.console.client.domain.groups;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
@@ -50,6 +45,11 @@ class ServerGroupSection {
 
         panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverGroups()).asWidget();
         serverGroupTree = new LHSNavTree("groups");
+
+        final String token = "domain/" + NameTokens.ServerGroupPresenter;
+        final TreeItem item = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), token);
+        serverGroupTree.addItem(item);
+
         panel.setContent(serverGroupTree);
     }
 
@@ -58,33 +58,9 @@ class ServerGroupSection {
         return panel;
     }
 
+    @Deprecated
     public void updateFrom(List<ServerGroupRecord> serverGroups) {
 
-        serverGroupTree.removeItems();
-
-        for(ServerGroupRecord record : serverGroups)
-        {
-            String groupName = record.getGroupName();
-            final String token = "domain/" + NameTokens.ServerGroupPresenter + ";name=" + groupName;
-            final TreeItem item = new LHSNavTreeItem(groupName, token);
-            serverGroupTree.addItem(item);
-        }
-
-
-        if(serverGroups.isEmpty())
-        {
-            TreeItem empty = new TreeItem(new HTML(Console.CONSTANTS.common_label_noRecords()));
-            serverGroupTree.addItem(empty);
-            serverGroupTree.addItem(new DefaultButton("Create New Group", new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    Console.MODULES.getPlaceManager().revealPlace(
-                            new PlaceRequest(NameTokens.ServerGroupPresenter).with("action", "new")
-                    );
-                }
-            }));
-
-        }
     }
 
 

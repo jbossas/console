@@ -41,7 +41,9 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -80,7 +82,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverGroup());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverGroupConfigurations());
         layout.add(titleBar);
 
         // ----
@@ -130,6 +132,9 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---------------------------------------------
+
+        panel.add(new ContentHeaderLabel("Available Server Group Configurations"));
+        panel.add(new ContentDescription("A Server Group does specify a common management policy for a set of servers. Server Groups are associated with profiles."));
 
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(10);
         serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
@@ -192,7 +197,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         bottomLayout.selectTab(0);
 
-        panel.add(new ContentGroupLabel("Subresources"));
+        panel.add(new ContentGroupLabel("Server Group"));
         panel.add(bottomLayout);
 
         details.bind(serverGroupTable);
