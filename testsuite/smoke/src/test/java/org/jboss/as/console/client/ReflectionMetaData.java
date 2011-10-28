@@ -31,8 +31,8 @@ import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.Setter;
 import org.jboss.as.console.rebind.forms.AddressDeclaration;
+import org.jboss.as.console.rebind.forms.ApplicationMetaDataGenerator;
 import org.jboss.as.console.rebind.forms.BindingDeclaration;
-import org.jboss.as.console.rebind.forms.PropertyMetaDataGenerator;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -96,9 +96,9 @@ public class ReflectionMetaData implements ApplicationMetaData {
         Mutator mut = new Mutator();
         mutators.put(beanTypeClass, mut);
 
-        List<PropertyMetaDataGenerator.PropBindingDeclarations> bindings = PropertyMetaDataGenerator.mapProperties(beanTypeClass);
+        List<ApplicationMetaDataGenerator.PropBindingDeclarations> bindings = ApplicationMetaDataGenerator.mapProperties(beanTypeClass);
 
-        for(PropertyMetaDataGenerator.PropBindingDeclarations binding : bindings)
+        for(ApplicationMetaDataGenerator.PropBindingDeclarations binding : bindings)
         {
 
             final BindingDeclaration bindDecl = binding.getBindingDeclaration();
@@ -196,8 +196,8 @@ public class ReflectionMetaData implements ApplicationMetaData {
     public List<PropertyBinding> getBindingsForType(Class<?> type) {
         List<PropertyBinding> bindings = new ArrayList<PropertyBinding>();
 
-        List<PropertyMetaDataGenerator.PropBindingDeclarations> bindingDeclarations = PropertyMetaDataGenerator.mapProperties(type);
-        for(PropertyMetaDataGenerator.PropBindingDeclarations decl : bindingDeclarations)
+        List<ApplicationMetaDataGenerator.PropBindingDeclarations> bindingDeclarations = ApplicationMetaDataGenerator.mapProperties(type);
+        for(ApplicationMetaDataGenerator.PropBindingDeclarations decl : bindingDeclarations)
         {
             PropertyBinding propertyBinding = new PropertyBinding(
                     decl.getBindingDeclaration().getJavaName(),
@@ -217,7 +217,7 @@ public class ReflectionMetaData implements ApplicationMetaData {
     @Override
     public BeanMetaData getBeanMetaData(Class<?> type) {
 
-        AddressDeclaration address = PropertyMetaDataGenerator.parseAddress(type);
+        AddressDeclaration address = ApplicationMetaDataGenerator.parseAddress(type);
         AddressBinding addressBinding = new AddressBinding();
         for(String[] tuple : address.getAddress())
         {
