@@ -26,16 +26,17 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
@@ -49,6 +50,7 @@ public class XADataSourceDetails {
 
     private Form<XADataSource> form;
     private DataSourcePresenter presenter;
+    private ToolButton disableBtn;
 
     public XADataSourceDetails(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -57,6 +59,14 @@ public class XADataSourceDetails {
     }
 
     public Widget asWidget() {
+
+        form.addEditListener(new EditListener<DataSource>() {
+            @Override
+            public void editingBean(DataSource bean) {
+                String nextState = bean.isEnabled() ? "Disable":"Enable";
+                disableBtn.setText(nextState);
+            }
+        });
 
         ClickHandler disableHandler = new ClickHandler() {
             @Override
@@ -75,8 +85,8 @@ public class XADataSourceDetails {
             }
         };
 
-        ToolButton enableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
-        enableBtn.addClickHandler(disableHandler);
+        disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
+        disableBtn.addClickHandler(disableHandler);
 
 
         FormToolStrip<XADataSource> toolStrip = new FormToolStrip<XADataSource>(
@@ -94,7 +104,7 @@ public class XADataSourceDetails {
                 });
 
         toolStrip.providesDeleteOp(false);
-        toolStrip.addToolButtonRight(enableBtn);
+        toolStrip.addToolButtonRight(disableBtn);
 
 
         VerticalPanel panel = new VerticalPanel();

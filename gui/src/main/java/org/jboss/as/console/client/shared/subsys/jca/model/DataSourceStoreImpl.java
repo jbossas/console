@@ -133,38 +133,37 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public void loadXAProperties(final String dataSourceName, final AsyncCallback<List<PropertyRecord>> callback) {
 
         AddressBinding address = xadsMetaData.getAddress();
-        ModelNode operation =  address.asResource(baseadress.getAdress(), dataSourceName);
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        ModelNode operation = address.asResource(baseadress.getAdress(), dataSourceName);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("xa-datasource-properties");
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
 
-                ModelNode payload = response.get(RESULT).asObject();
+            @Override
+            public void onSuccess(DMRResponse response) {
+                ModelNode result = ModelNode.fromBase64(response.getResponseText());
 
-                List<PropertyRecord> xaProperties = new ArrayList<PropertyRecord>();
-                if(payload.hasDefined("xa-datasource-properties"))
+                List<Property> properties = result.get(RESULT).asPropertyList();
+                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
+                for(Property prop : properties)
                 {
-                    List<ModelNode> properties = payload.get("xa-datasource-properties").asList();
-
-                    for(ModelNode xaProp : properties)
-                    {
-                        Property p = xaProp.asProperty();
-                        PropertyRecord propRecord = factory.property().as();
-
-                        propRecord.setKey(p.getName());
-                        ModelNode value = p.getValue();
-                        propRecord.setValue(value.asString());
-
-                        xaProperties.add(propRecord);
-                    }
+                    String name = prop.getName();
+                    String value = prop.getValue().asObject().get("value").asString();
+                    PropertyRecord propertyRecord = factory.property().as();
+                    propertyRecord.setKey(name);
+                    propertyRecord.setValue(value);
+                    records.add(propertyRecord);
                 }
 
-                callback.onSuccess(xaProperties);
+                callback.onSuccess(records);
             }
         });
+
     }
 
     @Override
@@ -197,17 +196,36 @@ public class DataSourceStoreImpl implements DataSourceStore {
     @Override
     public void createXADataSource(XADataSource datasource, final AsyncCallback<ResponseWrapper<Boolean>> callback) {
 
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        // create XA datasource
         AddressBinding address = xadsMetaData.getAddress();
         ModelNode addressModel =  address.asResource(baseadress.getAdress(), datasource.getName());
 
-        ModelNode operation = xaDataSourceAdapter.fromEntity(datasource);
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).set(addressModel.get(ADDRESS));
+        ModelNode createResource = xaDataSourceAdapter.fromEntity(datasource);
+        createResource.get(OP).set(ADD);
+        createResource.get(ADDRESS).set(addressModel.get(ADDRESS));
 
+        steps.add(createResource);
+
+        // create xa properties
         for(PropertyRecord prop : datasource.getProperties())
-            operation.get("xa-datasource-properties").add(prop.getKey(), prop.getValue());
+        {
+            ModelNode createProperty = new ModelNode();
+            createProperty.get(ADDRESS).set(addressModel.get(ADDRESS));
+            createProperty.get(ADDRESS).add("xa-datasource-properties", prop.getKey());
+            createProperty.get(OP).set(ADD);
+            createProperty.get(VALUE).set(prop.getValue());
 
-        System.out.println(operation);
+            steps.add(createProperty);
+        }
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -582,6 +600,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse response) {
                 ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                System.out.println(result);
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });
