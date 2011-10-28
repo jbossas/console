@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
@@ -22,7 +21,7 @@ public class ConnectionWindow {
 
     private DefaultWindow window;
 
-    public ConnectionWindow(DataSource ds, boolean isValidConnection) {
+    public ConnectionWindow(String name, boolean isValidConnection) {
 
         String message = isValidConnection ?
                 "Successfully created JDBC connection." : "Failed to create JDBC connection!";
@@ -54,9 +53,9 @@ public class ConnectionWindow {
         panel.add(header);
 
         if(isValidConnection)
-            panel.add(new HTML("Successfully connected to database "+ ds.getName()+"."));
+            panel.add(new HTML("Successfully connected to database "+ name+"."));
         else
-            panel.add(new HTML("Please verify the connection settings for datasource "+ ds.getName()+"."));
+            panel.add(new HTML("Please verify the connection settings for datasource "+ name+"."));
 
         ClickHandler confirmHandler = new ClickHandler() {
 

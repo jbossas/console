@@ -73,7 +73,7 @@ public class XADataSourceDetails {
             public void onClick(ClickEvent event) {
 
                 final boolean doEnable = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(Console.MESSAGES.modify("datasource"), Console.MESSAGES.modifyConfirm("datasource " + form.getEditedEntity().getName()),
+                Feedback.confirm(Console.MESSAGES.modify("XA datasource"), Console.MESSAGES.modifyConfirm("XA datasource " + form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {

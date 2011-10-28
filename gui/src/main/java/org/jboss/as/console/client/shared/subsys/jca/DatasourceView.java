@@ -60,8 +60,8 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
     }
 
     @Override
-    public void setConnectionVerified(boolean b) {
-        dataSourceEditor.setConnectionVerified(b);
+    public void setConnectionVerified(boolean b, String name) {
+        new ConnectionWindow(name, b).show();
     }
 
     @Override

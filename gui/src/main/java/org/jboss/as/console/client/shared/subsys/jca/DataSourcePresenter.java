@@ -85,7 +85,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         void setPoolConfig(String name, PoolConfig poolConfig);
         void setXAPoolConfig(String dsName, PoolConfig underlying);
         void setXAProperties(String dataSourceName, List<PropertyRecord> result);
-        void setConnectionVerified(boolean b);
+        void setConnectionVerified(boolean b, String dataSourceName);
         void setConnectionProperties(String reference, List<PropertyRecord> properties);
 
     }
@@ -506,7 +506,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 else
                     Console.error("Failed: Connection settings on " + dataSourceName);
 
-                getView().setConnectionVerified(outcome);
+                getView().setConnectionVerified(outcome, dataSourceName);
             }
         });
     }

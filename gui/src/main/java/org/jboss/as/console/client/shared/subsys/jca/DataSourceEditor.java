@@ -207,11 +207,6 @@ public class DataSourceEditor {
         this.poolConfig.updateFrom(name, poolConfig);
     }
 
-    public void setConnectionVerified(boolean isValidConnection) {
-        new ConnectionWindow(details.getCurrentSelection(), isValidConnection).show();
-
-    }
-
     public void setConnectionProperties(String reference, List<PropertyRecord> properties) {
         connectionProps.setProperties(reference, properties);
     }
