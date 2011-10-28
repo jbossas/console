@@ -497,16 +497,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void verifyConnection(final String dataSourceName, boolean isXA) {
 
-        dataSourceStore.verifyConnection(dataSourceName, isXA, new SimpleCallback<Boolean>() {
+        dataSourceStore.verifyConnection(dataSourceName, isXA, new SimpleCallback<ResponseWrapper<Boolean>>() {
             @Override
-            public void onSuccess(Boolean outcome) {
+            public void onSuccess(ResponseWrapper<Boolean> response) {
 
-                if(outcome)
+                if(response.getUnderlying())
                     Console.info("Success: Connection settings on "+ dataSourceName);
                 else
-                    Console.error("Failed: Connection settings on " + dataSourceName);
+                    Console.error("Failed: Connection settings on " + dataSourceName, response.getResponse().toString());
 
-                getView().setConnectionVerified(outcome, dataSourceName);
+                getView().setConnectionVerified(response.getUnderlying(), dataSourceName);
             }
         });
     }

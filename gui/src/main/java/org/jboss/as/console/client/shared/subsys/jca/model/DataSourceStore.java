@@ -53,7 +53,7 @@ public interface DataSourceStore {
 
     void loadXAProperties(String dataSourceName, AsyncCallback<List<PropertyRecord>> callback);
 
-    void verifyConnection(String dataSourceName, boolean isXA, AsyncCallback<Boolean> callback);
+    void verifyConnection(String dataSourceName, boolean isXA, AsyncCallback<ResponseWrapper<Boolean>> callback);
 
     void loadConnectionProperties(String reference, AsyncCallback<List<PropertyRecord>> callback);
     void createConnectionProperty(String reference, PropertyRecord prop, AsyncCallback<Boolean> callback);
