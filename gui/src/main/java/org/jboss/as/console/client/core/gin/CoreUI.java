@@ -79,7 +79,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
-import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
+import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;

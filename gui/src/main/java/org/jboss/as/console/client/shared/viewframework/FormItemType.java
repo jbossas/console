@@ -40,6 +40,7 @@ public enum FormItemType {
 
     TEXT(new TextItemFactory()),
     TEXT_BOX(new TextBoxItemFactory()),
+    FREE_FORM_TEXT_BOX(new FreeFormTextBoxItemFactory()),
     BYTE_UNIT(new ByteUnitItemFactory()),
     CHECK_BOX(new CheckBoxItemFactory()),
     LIST_BOX(new ListBoxItemFactory()),
@@ -82,6 +83,28 @@ public enum FormItemType {
             TextBoxItem textBoxItem = new TextBoxItem(propBinding.getJavaName(), propBinding.getLabel());
             textBoxItem.setRequired(propBinding.isRequired());
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
+        }
+    }
+    
+    /**
+     * Unvalidated except for the required flag.
+     */
+    public static class FreeFormTextBoxItemFactory implements FormItemFactory {
+        @Override
+        public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            TextBoxItem textBoxItem = new FreeFormTextBoxItem(propBinding.getJavaName(), propBinding.getLabel());
+            textBoxItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
+        }
+        
+        private static class FreeFormTextBoxItem extends TextBoxItem {
+            public FreeFormTextBoxItem(String name, String title) {
+                super(name, title);
+            }
+            @Override
+            public boolean validate(String value) {
+                return true;
+            }
         }
     }
 

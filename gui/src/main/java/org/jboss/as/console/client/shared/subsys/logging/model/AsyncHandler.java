@@ -26,12 +26,12 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Console Handler Entity
+ * Async Handler Entity
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging/console-handler={0}")
-public interface ConsoleHandler extends NamedEntity {
+@Address("/subsystem=logging/async-handler={0}")
+public interface AsyncHandler extends NamedEntity {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -53,56 +53,49 @@ public interface ConsoleHandler extends NamedEntity {
     public String getLevel();
     public void setLevel(String logLevel);
     
-    @Binding(detypedName="encoding")
-    @FormItem(defaultValue="UTF-8",
-              localLabel="subsys_logging_encoding",
-              required=false,
-              formItemTypeForEdit="TEXT_BOX",
-              formItemTypeForAdd="TEXT_BOX")
-    public String getEncoding();
-    public void setEncoding(String encoding);
-    
     /* Filters not implemented yet
     public String getFilter();
     public void setFilter(String filter);
     */
     
-    @Binding(detypedName="formatter")
-    @FormItem(defaultValue="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
-              localLabel="subsys_logging_formatter",
-              required=false,
-              formItemTypeForEdit="FREE_FORM_TEXT_BOX",
-              formItemTypeForAdd="FREE_FORM_TEXT_BOX")
-    public String getFormatter();
-    public void setFormatter(String formatter);
+    @Binding(detypedName="queue-length")
+    @FormItem(defaultValue="512",
+              localLabel="subsys_logging_queueLength",
+              required=true,
+              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="NUMBER_BOX")
+    public Integer getQueueLength();
+    public void setQueueLength(Integer queueLength);
     
-    @Binding(detypedName="target")
-    @FormItem(defaultValue="System.out",
-              localLabel="subsys_logging_target",
+    @Binding(detypedName="overflow-action")
+    @FormItem(defaultValue="BLOCK",
+              localLabel="subsys_logging_overflowAction",
               required=true,
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX")
-    public String getTarget();
-    public void setTarget(String target);
-    
-    @Binding(detypedName="autoflush")
-    @FormItem(defaultValue="true",
-            localLabel="subsys_logging_autoFlush",
-            required=false,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-    public boolean isAutoFlush();
-    public void setAutoFlush(boolean autoFlush);
-    
+    public String getOverflowAction();
+    public void setOverflowAction(String overflowAction);
+               
+    @Binding(detypedName="subhandlers", 
+             listType="java.lang.String")
+    @FormItem(defaultValue="",
+             localLabel="subsys_logging_subhandlers",
+             required=false,
+             formItemTypeForEdit="LIST_BOX",
+             formItemTypeForAdd="LIST_BOX",
+             tabName="subsys_logging_subhandlers")
+    public List<String> getSubhandlers();
+    public void setSubhandlers(List<String> subhandlers);
+             
     // ------ PROPERTIES TAB --------------
-   @Binding(detypedName="properties", 
-           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
-   @FormItem(defaultValue="",
-            localLabel="common_label_properties",
-            required=false,
-            formItemTypeForEdit="PROPERTY_EDITOR",
-            formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="common_label_properties")
-   List<PropertyRecord> getProperties();
-   void setProperties(List<PropertyRecord> properties);
+    @Binding(detypedName="properties", 
+            listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+    @FormItem(defaultValue="",
+             localLabel="common_label_properties",
+             required=false,
+             formItemTypeForEdit="PROPERTY_EDITOR",
+             formItemTypeForAdd="PROPERTY_EDITOR",
+             tabName="common_label_properties")
+    public List<PropertyRecord> getProperties();
+    public void setProperties(List<PropertyRecord> properties);
 }

@@ -300,7 +300,7 @@ public class EntityAdapter<T> {
             /**
              * KEYS
              */
-            if(property.isKey()) continue;
+           // if(property.isKey()) continue;
 
             Object propertyValue = mutator.getValue(entity, property.getJavaName());
 

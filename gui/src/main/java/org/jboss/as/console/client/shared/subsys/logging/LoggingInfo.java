@@ -153,7 +153,8 @@ public class LoggingInfo {
     }
 
     private LoggerConfig makeLogger(ModelNode node, String name) {
-        LoggerConfig model = factory.loggerConfig().as();
+        return null;
+/*        LoggerConfig model = factory.loggerConfig().as();
         model.setName(name);
         model.setLevel(node.get("level").asString());
 
@@ -168,7 +169,7 @@ public class LoggingInfo {
 
         model.setHandlers(handlers);
 
-        return model;
+        return model; */
     }
 
     /**
@@ -236,16 +237,88 @@ public class LoggingInfo {
                     }
                 }
 
-                LoggingInfo.this.handlers = sortHandlers(handlers);
-                LoggingInfo.this.loggers = sortLoggers(loggers);
+                        private List<LoggingHandler> sortHandlers(List<LoggingHandler> handlers) {
+                            Collections.sort(handlers, handlerComparator);
+                            return handlers;
+                        }
+                        
+                        private LoggingHandler makeHandler(ModelNode node, String name) {
+                            return null;
+           /*                 LoggingHandler model = factory.loggingHandler().as();
+                            model.setName(name);
+                            model.setType(handlerType);
+                            model.setLevel(node.get("level").asString());
+                            
+                            if (node.get("encoding").isDefined()) {
+                                model.setEncoding(node.get("encoding").asString());
+                            }
+                            
+                            model.setFilter(node.get("filter").asString());
+                            
+                            if (node.get("formatter").isDefined()) {
+                                model.setFormatter(node.get("formatter").asString());
+                            }
+                            
+                            if (node.get("autoflush").isDefined()) {
+                                model.setAutoflush(node.get("autoflush").asBoolean());
+                            }
+                            
+                            if (node.get("append").isDefined()) {
+                                model.setAppend(node.get("append").asBoolean());
+                            }
+                            
+                            if (node.get("file").isDefined()) {
+                                model.setFileRelativeTo(node.get("file").get("relative-to").asString());
+                                model.setFilePath(node.get("file").get("path").asString());
+                            }
+                            
+                            model.setRotateSize(node.get("rotate-size").asString());
+                            
+                            if (node.get("max-backup-index").isDefined()) {
+                                model.setMaxBackupIndex(node.get("max-backup-index").asString());
+                            }
+                            
+                            model.setTarget(node.get("target").asString());
+                            
+                            model.setOverflowAction(node.get("overflow-action").asString());
+                            
+                            if (node.get("subhandlers").isDefined()) {
+                                List<ModelNode> subhandlerNodes = node.get("subhandlers").asList();
+                                List<String> subhandlers = new ArrayList<String>(subhandlerNodes.size());
+                                for (ModelNode handlerNode : subhandlerNodes) {
+                                    subhandlers.add(handlerNode.asString());
+                                }
+                                model.setSubhandlers(subhandlers);
+                            }
+                            
+                            model.setQueueLength(node.get("queue-length").asString());
+                            model.setSuffix(node.get("suffix").asString());
 
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        view.updateLoggingInfo(LoggingInfo.this);
-                    }
-                });
-
+                            if (node.get("class").isDefined()) {
+                                model.setClassName(node.get("class").asString());
+                            }
+                            
+                            if (node.get("module").isDefined()) {
+                                model.setModule(node.get("module").asString());
+                            }
+                            
+                            List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
+                            if (node.get("properties").isDefined()) {
+                                List<Property> props = node.get("properties").asPropertyList();
+                                for (Property prop : props) {
+                                    PropertyRecord property = factory.property().as();
+                                    property.setKey(prop.getName());
+                                    property.setValue(prop.getValue().asString());
+                                    properties.add(property);
+                                }
+                            }
+                            model.setProperties(properties);
+                            
+                            return model; */
+                        }
+                        
+                    });
+                }
             }
         });
     }

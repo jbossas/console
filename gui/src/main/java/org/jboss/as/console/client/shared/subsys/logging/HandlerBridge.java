@@ -76,7 +76,8 @@ public class HandlerBridge implements EntityBridge<LoggingHandler> {
 
     @Override
     public AutoBean<LoggingHandler> newEntity() {
-        return presenter.getBeanFactory().loggingHandler();
+        return null;
+//        return presenter.getBeanFactory().loggingHandler();
     }
 
     @Override

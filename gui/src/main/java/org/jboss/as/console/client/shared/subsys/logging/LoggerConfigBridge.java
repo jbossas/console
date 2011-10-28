@@ -76,7 +76,8 @@ public class LoggerConfigBridge implements EntityBridge<LoggerConfig> {
 
     @Override
     public AutoBean<LoggerConfig> newEntity() {
-        return presenter.getBeanFactory().loggerConfig();
+        return null;
+//        return presenter.getBeanFactory().loggerConfig();
     }
 
     @Override

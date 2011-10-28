@@ -26,12 +26,12 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Console Handler Entity
+ * File Handler Entity
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging/console-handler={0}")
-public interface ConsoleHandler extends NamedEntity {
+@Address("/subsystem=logging/periodic-rotating-file-handler={0}")
+public interface SizeRotatingFileHandler extends NamedEntity {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -56,7 +56,7 @@ public interface ConsoleHandler extends NamedEntity {
     @Binding(detypedName="encoding")
     @FormItem(defaultValue="UTF-8",
               localLabel="subsys_logging_encoding",
-              required=false,
+              required=true,
               formItemTypeForEdit="TEXT_BOX",
               formItemTypeForAdd="TEXT_BOX")
     public String getEncoding();
@@ -70,20 +70,47 @@ public interface ConsoleHandler extends NamedEntity {
     @Binding(detypedName="formatter")
     @FormItem(defaultValue="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
               localLabel="subsys_logging_formatter",
-              required=false,
-              formItemTypeForEdit="FREE_FORM_TEXT_BOX",
-              formItemTypeForAdd="FREE_FORM_TEXT_BOX")
+              required=true,
+              formItemTypeForEdit="TEXT_BOX",
+              formItemTypeForAdd="TEXT_BOX")
     public String getFormatter();
     public void setFormatter(String formatter);
     
-    @Binding(detypedName="target")
-    @FormItem(defaultValue="System.out",
-              localLabel="subsys_logging_target",
+    @Binding(detypedName="file")
+    @FormItem(defaultValue="",
+              localLabel="subsys_logging_filePath",
               required=true,
-              formItemTypeForEdit="COMBO_BOX",
-              formItemTypeForAdd="COMBO_BOX")
-    public String getTarget();
-    public void setTarget(String target);
+              formItemTypeForEdit="TEXT_BOX",
+              formItemTypeForAdd="TEXT_BOX")
+    public String getFile();
+    public void setFile(String file);
+    
+    @Binding(detypedName="rotate-size")
+    @FormItem(defaultValue="2m",
+              localLabel="subsys_logging_rotateSize",
+              required=true,
+              formItemTypeForEdit="BYTE_UNIT",
+              formItemTypeForAdd="BYTE_UNIT")
+    public String getRotateSize();
+    public void setRotateSize(String rotateSize);
+   
+    @Binding(detypedName="max-backup-index")
+    @FormItem(defaultValue="1",
+              localLabel="subsys_logging_maxBackupIndex",
+              required=true,
+              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="NUMBER_BOX")
+    public Integer getMaxBackupIndex();
+    public void setMaxBackupIndex(Integer maxBackupIndex);
+
+    @Binding(detypedName="append")
+    @FormItem(defaultValue="true",
+            localLabel="subsys_logging_append",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public boolean isAppend();
+    public void setAppend(boolean append);
     
     @Binding(detypedName="autoflush")
     @FormItem(defaultValue="true",

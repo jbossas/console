@@ -151,6 +151,9 @@ public interface UIConstants extends Constants {
     String subsys_logging_module();
     String subsys_logging_handlerProperties();
     String subsys_logging_newHandlerProperty();
+    String subsys_logging_useParentHandlers();
+    String subsys_logging_category();
+    String subsys_logging_consoleHandlers();
 
     String subsys_deploymentscanner_scanners();
     String subsys_deploymentscanner_relativeTo();
