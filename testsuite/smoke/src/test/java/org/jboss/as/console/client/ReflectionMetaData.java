@@ -22,12 +22,13 @@ package org.jboss.as.console.client;
 import org.jboss.as.console.client.model.AutoBeanStub;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Getter;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
 import org.jboss.as.console.client.widgets.forms.Setter;
 import org.jboss.as.console.rebind.forms.AddressDeclaration;
 import org.jboss.as.console.rebind.forms.BindingDeclaration;
@@ -47,7 +48,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 4/27/11
  */
-public class ReflectionMetaData implements PropertyMetaData {
+public class ReflectionMetaData implements ApplicationMetaData {
 
 
     private BeanFactory factory;
@@ -237,4 +238,8 @@ public class ReflectionMetaData implements PropertyMetaData {
         return mutators.get(type);
     }
 
+    @Override
+    public FormMetaData getFormMetaData(Class<?> type) {
+        throw new RuntimeException("Not yet implemented!");
+    }
 }
