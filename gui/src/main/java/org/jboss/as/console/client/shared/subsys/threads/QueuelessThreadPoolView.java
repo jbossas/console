@@ -20,7 +20,7 @@ package org.jboss.as.console.client.shared.subsys.threads;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
@@ -31,7 +31,7 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  */
 public class QueuelessThreadPoolView extends AbstractThreadPoolView<QueuelessThreadPool> {
 
-    public QueuelessThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public QueuelessThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(QueuelessThreadPool.class, propertyMetaData, dispatcher);
     }
 

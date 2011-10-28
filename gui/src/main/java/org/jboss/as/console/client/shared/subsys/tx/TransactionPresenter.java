@@ -21,7 +21,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -39,7 +39,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private RevealStrategy revealStrategy;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private BeanMetaData beanMetaData ;
     private EntityAdapter<TransactionManager> entityAdapter;
 
@@ -60,7 +60,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            PropertyMetaData metaData)
+            ApplicationMetaData metaData)
     {
         super(eventBus, view, proxy);
 

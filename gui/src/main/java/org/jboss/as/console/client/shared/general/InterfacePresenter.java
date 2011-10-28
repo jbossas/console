@@ -38,7 +38,7 @@ import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -76,7 +76,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             PlaceManager placeManager,
             DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            PropertyMetaData metaData) {
+            ApplicationMetaData metaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

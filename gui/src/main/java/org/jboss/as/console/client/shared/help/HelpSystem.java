@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -36,10 +36,10 @@ import org.jboss.dmr.client.Property;
 public class HelpSystem {
 
     private DispatchAsync dispatcher;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
 
     @Inject
-    public HelpSystem(DispatchAsync dispatcher, PropertyMetaData propertyMetaData) {
+    public HelpSystem(DispatchAsync dispatcher, ApplicationMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
         this.propertyMetaData = propertyMetaData;
     }

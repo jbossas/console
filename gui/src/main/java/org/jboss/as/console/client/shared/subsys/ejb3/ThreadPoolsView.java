@@ -30,7 +30,7 @@ import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -43,7 +43,7 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     private final EntityToDmrBridgeImpl<ThreadPool> bridge;
     private EJB3Presenter presenter;
 
-    public ThreadPoolsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public ThreadPoolsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ThreadPool.class, propertyMetaData, EnumSet.of(FrameworkButton.EDIT_SAVE));
         bridge = new EntityToDmrBridgeImpl<ThreadPool>(propertyMetaData, ThreadPool.class, this, dispatcher) {
             @Override

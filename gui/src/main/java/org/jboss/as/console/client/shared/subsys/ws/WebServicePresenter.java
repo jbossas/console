@@ -16,7 +16,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     private MessagingProvider providerEntity;
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
     private EndpointRegistry endpointRegistry;
 
     @ProxyCodeSplit
@@ -51,7 +51,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            PropertyMetaData propertyMetaData, EndpointRegistry registry) {
+            ApplicationMetaData propertyMetaData, EndpointRegistry registry) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

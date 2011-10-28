@@ -28,7 +28,7 @@ import org.jboss.as.console.client.shared.viewframework.Columns.EnabledColumn;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -44,7 +44,7 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
     private EntityToDmrBridge scannerBridge;
 
     @Inject
-    public ScannerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public ScannerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(DeploymentScanner.class, propertyMetaData);
         scannerBridge = new EntityToDmrBridgeImpl<DeploymentScanner>(propertyMetaData, DeploymentScanner.class, this, dispatcher);
     }

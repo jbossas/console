@@ -56,7 +56,7 @@ public class PropertyBinding {
     }
 
     public PropertyBinding(String javaName, String detypedName, String javaTypeName,
-                           Class<?> listType, PropertyMetaData propMetaData, boolean isKey, boolean expr,
+                           Class<?> listType, ApplicationMetaData propMetaData, boolean isKey, boolean expr,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, 
                            String subgroup, String tabName, int order) {

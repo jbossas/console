@@ -46,7 +46,7 @@ import org.jboss.as.console.client.shared.jvm.JvmManagement;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -68,7 +68,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     private DefaultWindow propertyWindow;
     private CurrentHostSelection currentHost;
     private BeanFactory factory;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
     private DefaultWindow window;
 
     @ProxyCodeSplit
@@ -86,7 +86,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, CurrentHostSelection currentHost,
-            PropertyMetaData propertyMetaData) {
+            ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

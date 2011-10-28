@@ -32,7 +32,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -56,14 +56,14 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected FormMetaData formMetaData;
     protected AddressBinding address;
 
-    public AbstractEntityView(Class<?> beanType, PropertyMetaData propertyMetaData) {
+    public AbstractEntityView(Class<?> beanType, ApplicationMetaData propertyMetaData) {
         this(beanType, propertyMetaData, EnumSet.noneOf(FrameworkButton.class));
     }
 
-    public AbstractEntityView(Class<?> beanType, PropertyMetaData propertyMetaData, EnumSet<FrameworkButton> hideButtons) {
+    public AbstractEntityView(Class<?> beanType, ApplicationMetaData propertyMetaData, EnumSet<FrameworkButton> hideButtons) {
         this.beanType = beanType;
         this.hideButtons = hideButtons;
-        formMetaData = propertyMetaData.getBeanMetaData(beanType).getFormMetaData();
+        formMetaData = propertyMetaData.getFormMetaData(beanType);
         address = propertyMetaData.getBeanMetaData(beanType).getAddress();
     }
 

@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.viewframework;
 import java.util.EnumSet;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -32,7 +32,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public abstract class AbstractSingleEntityView<T> extends AbstractEntityView<T> {
     private final EntityToDmrBridge<T> bridge;
 
-    protected AbstractSingleEntityView(Class<? extends T> beanType, PropertyMetaData propertyMetaData,
+    protected AbstractSingleEntityView(Class<? extends T> beanType, ApplicationMetaData propertyMetaData,
             DispatchAsync dispatcher, EnumSet<FrameworkButton> hideButtons) {
         super(beanType, propertyMetaData, hideButtons);
         bridge = new SingleEntityToDmrBridgeImpl<T>(propertyMetaData, beanType, this, dispatcher);

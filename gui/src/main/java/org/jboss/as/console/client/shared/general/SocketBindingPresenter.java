@@ -40,7 +40,7 @@ import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -62,7 +62,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private RevealStrategy revealStrategy;
     private DefaultWindow window;
     private List<String> bindingGroups;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private EntityAdapter<SocketBinding> entityAdapter;
 
     @ProxyCodeSplit
@@ -82,7 +82,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            PropertyMetaData propertyMetaData) {
+            ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

@@ -3,10 +3,10 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 public class RemoteServiceView extends AbstractThreadPoolView<RemoteService> {
-    protected RemoteServiceView(PropertyMetaData propertyMetaData,
+    protected RemoteServiceView(ApplicationMetaData propertyMetaData,
             DispatchAsync dispatcher) {
         super(RemoteService.class, propertyMetaData, dispatcher);
     }

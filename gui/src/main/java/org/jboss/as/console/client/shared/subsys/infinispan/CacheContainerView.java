@@ -29,7 +29,7 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -44,7 +44,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     private EntityToDmrBridge bridge;
     
     @Inject
-    public CacheContainerView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public CacheContainerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(CacheContainer.class, propertyMetaData);
         bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
     }

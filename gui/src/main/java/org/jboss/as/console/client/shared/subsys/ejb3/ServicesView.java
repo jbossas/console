@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 
 /**
@@ -38,7 +38,7 @@ public class ServicesView extends SuspendableViewImpl {
     private final TimerServiceView timerServiceView;
     private final RemoteServiceView remoteServiceView;
 
-    public ServicesView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public ServicesView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         asyncServiceView = new AsyncServiceView(propertyMetaData, dispatcher);
         timerServiceView = new TimerServiceView(propertyMetaData, dispatcher);
         remoteServiceView = new RemoteServiceView(propertyMetaData, dispatcher);

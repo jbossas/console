@@ -29,7 +29,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -43,9 +43,9 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class UpdateJvmCmd extends AddressableModelCmd implements AsyncCommand<Boolean>{
 
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
 
-    public UpdateJvmCmd(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData, ModelNode address) {
+    public UpdateJvmCmd(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metaData, ModelNode address) {
         super(dispatcher, factory, address);
         this.metaData = metaData;
     }

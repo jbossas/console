@@ -48,7 +48,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -69,7 +69,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     private OSGiRuntimePresenter presenter;
     private MyListHandler<OSGiBundle> sortHandler;
 
-    public BundleRuntimeView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public BundleRuntimeView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(OSGiBundle.class, propertyMetaData, EnumSet.allOf(FrameworkButton.class));
         bridge = new EntityToDmrBridgeImpl<OSGiBundle>(propertyMetaData, OSGiBundle.class, this, dispatcher) {
             @Override

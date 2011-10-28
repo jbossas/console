@@ -44,7 +44,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Heiko Braun
  * @date 4/19/11
  */
-public class PropertyMetaDataGenerator extends Generator{
+public class ApplicationMetaDataGenerator extends Generator{
 
     private static final String BEAN_FACTORY_NAME = "org.jboss.as.console.client.shared.BeanFactory";
     /**
@@ -117,7 +117,7 @@ public class PropertyMetaDataGenerator extends Generator{
         composerFactory.addImport("java.util.*");
 
         // Interfaces
-        composerFactory.addImplementedInterface("org.jboss.as.console.client.widgets.forms.PropertyMetaData");
+        composerFactory.addImplementedInterface("org.jboss.as.console.client.widgets.forms.ApplicationMetaData");
 
         // SourceWriter
         SourceWriter sourceWriter = composerFactory.createSourceWriter(context, printWriter);
@@ -437,6 +437,11 @@ public class PropertyMetaDataGenerator extends Generator{
         sourceWriter.outdent();
         sourceWriter.println("}");
 
+        sourceWriter.println("public FormMetaData getFormMetaData(Class<?> type) { ");
+        sourceWriter.indent();
+        sourceWriter.println("return new FormMetaData(type, registry.get(type));");
+        sourceWriter.outdent();
+        sourceWriter.println("}");
 
         sourceWriter.println("public Mutator getMutator(Class<?> type) { ");
         sourceWriter.indent();

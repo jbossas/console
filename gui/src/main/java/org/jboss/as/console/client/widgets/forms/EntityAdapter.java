@@ -33,10 +33,10 @@ public class EntityAdapter<T> {
 
     private final  EntityFactory<PropertyRecord> propertyRecordFactory;
     private Class<?> type;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private KeyAssignment keyAssignment = null;
 
-    public EntityAdapter(Class<?> type, PropertyMetaData metaData) {
+    public EntityAdapter(Class<?> type, ApplicationMetaData metaData) {
         this.type = type;
         this.metaData = metaData;
         this.propertyRecordFactory = metaData.getFactory(PropertyRecord.class);

@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -46,7 +46,7 @@ public class LoadInterfacesCmd implements AsyncCommand<List<Interface>>{
 
     public LoadInterfacesCmd(
             DispatchAsync dispatcher,
-            ModelNode address, PropertyMetaData metaData) {
+            ModelNode address, ApplicationMetaData metaData) {
         this.dispatcher = dispatcher;
         this.address = address;
         this.entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);

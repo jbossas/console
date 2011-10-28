@@ -25,13 +25,17 @@ import java.util.List;
  * @author Heiko Braun
  * @date 4/19/11
  */
-public interface PropertyMetaData {
+public interface ApplicationMetaData {
 
     // Use BeanMetaData instead
     @Deprecated
     List<PropertyBinding> getBindingsForType(Class<?> type);
 
     BeanMetaData getBeanMetaData(Class<?> type);
+
     Mutator getMutator(Class<?> type);
+
     <T> EntityFactory<T> getFactory(Class<T> type);
+
+    FormMetaData getFormMetaData(Class<?> type);
 }

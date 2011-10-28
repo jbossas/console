@@ -17,7 +17,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class VMMetricsPresenter
     private static final int POLL_INTERVAL = 5000;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private RevealStrategy revealStrategy;
 
     private boolean keepPolling = true;
@@ -54,7 +54,7 @@ public class VMMetricsPresenter
     public VMMetricsPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             RevealStrategy revealStrategy,
-            DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMetaData) {
+            DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.revealStrategy = revealStrategy;

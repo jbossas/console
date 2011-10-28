@@ -46,12 +46,16 @@ public class FormMetaData {
     private Map<String, List<PropertyBinding>> groupedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
     private Map<String, List<PropertyBinding>> tabbedAttributes = new LinkedHashMap<String, List<PropertyBinding>>();
     private boolean isFlattened = false;
-    
-    FormMetaData(BeanMetaData beanMetaData) {
+    private Class<?> type;
+
+    FormMetaData(Class<?> type, List<PropertyBinding> propertyMetaData) {
+
+        this.type = type;
+
         // make sure default is first
         tabbedAttributes.put(DEFAULT_TAB, new ArrayList<PropertyBinding>());
         
-        for (PropertyBinding binding : beanMetaData.getProperties()) {
+        for (PropertyBinding binding : propertyMetaData) {
            String subgroup = binding.getSubgroup();
            if ("".equals(subgroup)) {
                baseAttributes.add(binding);

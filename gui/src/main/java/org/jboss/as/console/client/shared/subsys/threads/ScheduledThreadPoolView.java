@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.subsys.threads;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
@@ -32,7 +32,7 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  */
 public class ScheduledThreadPoolView extends AbstractThreadPoolView<ScheduledThreadPool> implements FrameworkView {
 
-    public ScheduledThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public ScheduledThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ScheduledThreadPool.class, propertyMetaData, dispatcher);
     }
 

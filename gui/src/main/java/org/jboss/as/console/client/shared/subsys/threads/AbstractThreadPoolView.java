@@ -28,10 +28,9 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
@@ -47,7 +46,7 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
     protected EntityToDmrBridgeImpl threadPoolBridge;
     private ComboBoxItem threadFactoryComboForEdit;
     
-    public AbstractThreadPoolView(Class<?> beanType, PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public AbstractThreadPoolView(Class<?> beanType, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(beanType, propertyMetaData);
         this.threadPoolBridge = new EntityToDmrBridgeImpl(propertyMetaData, beanType, this, dispatcher);
     }

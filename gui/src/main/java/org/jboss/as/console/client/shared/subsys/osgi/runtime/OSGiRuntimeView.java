@@ -28,7 +28,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
@@ -40,7 +40,7 @@ public class OSGiRuntimeView extends SuspendableViewImpl implements OSGiRuntimeP
     private final FrameworkRuntimeView framework;
 
     @Inject
-    public OSGiRuntimeView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public OSGiRuntimeView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         framework = new FrameworkRuntimeView(propertyMetaData, dispatcher);
         bundles = new BundleRuntimeView(propertyMetaData, dispatcher);
     }

@@ -11,7 +11,6 @@ public class BeanMetaData {
     private Class<?> beanType;
     private AddressBinding address;
     private List<PropertyBinding> properties;
-    private FormMetaData formMetaData;
 
     public BeanMetaData(Class<?> beanType, AddressBinding address, List<PropertyBinding> properties) {
         this.beanType = beanType;
@@ -22,7 +21,6 @@ public class BeanMetaData {
 
         this.address = address;
         this.properties = properties;
-        this.formMetaData = new FormMetaData(this);
     }
 
     public Class<?> getBeanType() {
@@ -35,9 +33,5 @@ public class BeanMetaData {
 
     public List<PropertyBinding> getProperties() {
         return properties;
-    }
-    
-    public FormMetaData getFormMetaData() {
-        return formMetaData;
     }
 }

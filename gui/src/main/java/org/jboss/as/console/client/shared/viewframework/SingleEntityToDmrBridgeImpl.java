@@ -30,7 +30,7 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
@@ -43,18 +43,18 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     protected final FormMetaData attributes;
     protected final DispatchAsync dispatcher;
     protected final EntityAdapter<T> entityAdapter;
-    protected final PropertyMetaData propertyMetaData;
+    protected final ApplicationMetaData propertyMetaData;
     protected final Class<? extends T> type;
     protected final FrameworkView view;
     protected T entity;
 
-    public SingleEntityToDmrBridgeImpl(PropertyMetaData propertyMetaData, Class<? extends T> type,
+    public SingleEntityToDmrBridgeImpl(ApplicationMetaData propertyMetaData, Class<? extends T> type,
         FrameworkView view, DispatchAsync dispatcher) {
         BeanMetaData beanMetaData = propertyMetaData.getBeanMetaData(type);
 
         this.propertyMetaData = propertyMetaData;
         this.address = beanMetaData.getAddress();
-        this.attributes = beanMetaData.getFormMetaData();
+        this.attributes = propertyMetaData.getFormMetaData(type);
         this.entityAdapter = new EntityAdapter<T>(type, propertyMetaData);
         this.type = type;
         this.view = view;

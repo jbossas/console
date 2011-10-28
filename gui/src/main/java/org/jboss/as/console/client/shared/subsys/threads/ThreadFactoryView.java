@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
@@ -29,7 +27,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -45,7 +43,7 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
     private EntityToDmrBridge threadPoolBridge;
     private AbstractThreadPoolView[] poolviews;
 
-    public ThreadFactoryView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher, AbstractThreadPoolView... poolViews) {
+    public ThreadFactoryView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher, AbstractThreadPoolView... poolViews) {
         super(ThreadFactory.class, propertyMetaData);
         this.poolviews = poolViews;
         threadPoolBridge = new EntityToDmrBridgeImpl<ThreadFactory>(propertyMetaData, ThreadFactory.class, this, dispatcher);

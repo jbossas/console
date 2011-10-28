@@ -37,7 +37,7 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -56,14 +56,14 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
     private CurrentServerConfigurations currentConfigs;
     private EntityAdapter<Server> serverAdapter;
     private EntityAdapter<Jvm> jvmAdapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
 
     @Inject
-    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMeta,
+    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMeta,
                              CurrentServerConfigurations currentConfigs) {
         this.dispatcher = dispatcher;
         this.factory = factory;

@@ -30,7 +30,7 @@ import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -48,7 +48,7 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     private UnitBoxItem<?> timeoutItem; // used in editor
     private UnitBoxItem<?> timeoutItemAdd; // used in add dialog
 
-    public BeanPoolsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public BeanPoolsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(StrictMaxBeanPool.class, propertyMetaData);
         bridge = new EntityToDmrBridgeImpl<StrictMaxBeanPool>(propertyMetaData, StrictMaxBeanPool.class, this, dispatcher) {
             @Override

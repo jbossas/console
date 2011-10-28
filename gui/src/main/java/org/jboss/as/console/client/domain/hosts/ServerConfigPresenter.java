@@ -61,7 +61,7 @@ import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -89,7 +89,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private DefaultWindow propertyWindow;
     private DispatchAsync dispatcher;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
     private BeanFactory factory;
     private PlaceManager placeManager;
 
@@ -116,7 +116,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             HostInformationStore hostInfoStore,
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher,
-            PropertyMetaData propertyMetaData, BeanFactory factory,
+            ApplicationMetaData propertyMetaData, BeanFactory factory,
             PlaceManager placeManager) {
         super(eventBus, view, proxy);
 

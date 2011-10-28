@@ -21,13 +21,13 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
  * @author David Bosschaert
  */
 public class TimerServiceView extends AbstractThreadPoolView<TimerService> {
-    public TimerServiceView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public TimerServiceView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(TimerService.class, propertyMetaData, dispatcher);
     }
 

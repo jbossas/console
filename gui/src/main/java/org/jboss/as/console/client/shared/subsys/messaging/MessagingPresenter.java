@@ -54,9 +54,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -80,7 +79,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private MessagingProvider providerEntity;
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private List<SecurityPattern> securitySettings = new ArrayList<SecurityPattern>();
 
     private EntityAdapter<MessagingProvider> providerAdapter;
@@ -115,7 +114,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            PropertyMetaData propertyMetaData) {
+            ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

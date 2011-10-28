@@ -46,7 +46,7 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -68,7 +68,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
 
     private DefaultWindow window;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
 
     private List<HttpConnector> connectors;
     private RevealStrategy revealStrategy;
@@ -96,7 +96,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             BeanFactory factory, DispatchAsync dispatcher,
-            PropertyMetaData propertyMetaData,
+            ApplicationMetaData propertyMetaData,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 

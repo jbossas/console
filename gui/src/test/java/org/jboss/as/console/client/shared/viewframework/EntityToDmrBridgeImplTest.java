@@ -48,7 +48,7 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.junit.Test;
 
@@ -134,7 +134,7 @@ public class EntityToDmrBridgeImplTest extends GWTTestCase {
         }
     }
 
-    private static class TestPropertyMetaData implements PropertyMetaData {
+    private static class TestPropertyMetaData implements ApplicationMetaData {
         private Map<Class<?>, BeanMetaData> beanMetaData = new HashMap<Class<?>, BeanMetaData>();
 
         @Override

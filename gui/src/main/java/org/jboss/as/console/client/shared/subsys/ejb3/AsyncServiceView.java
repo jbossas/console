@@ -21,13 +21,13 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
  * @author David Bosschaert
  */
 public class AsyncServiceView extends AbstractThreadPoolView<AsyncService> {
-    public AsyncServiceView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public AsyncServiceView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(AsyncService.class, propertyMetaData, dispatcher);
     }
 

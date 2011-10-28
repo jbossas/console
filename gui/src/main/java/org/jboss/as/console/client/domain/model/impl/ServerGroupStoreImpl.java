@@ -33,7 +33,7 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -53,14 +53,14 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
     private EntityAdapter<Jvm> jvmAdapter;
 
     @Inject
     public ServerGroupStoreImpl(
             DispatchAsync dispatcher,
             BeanFactory factory,
-            PropertyMetaData propertyMetaData) {
+            ApplicationMetaData propertyMetaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData = propertyMetaData;

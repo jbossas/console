@@ -32,7 +32,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -44,7 +44,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
     private SingleEntityToDmrBridgeImpl<OSGiFramework> bridge;
 
-    public FrameworkRuntimeView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public FrameworkRuntimeView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(OSGiFramework.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<OSGiFramework>(propertyMetaData, OSGiFramework.class, this, dispatcher);
     }

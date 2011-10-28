@@ -41,7 +41,7 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
 
@@ -52,7 +52,7 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmrBridge<T> {
 
-    protected PropertyMetaData propertyMetadata;
+    protected ApplicationMetaData propertyMetadata;
     protected AddressBinding address;
     protected Class<?> type;
     protected EntityAdapter<T> entityAdapter;
@@ -69,7 +69,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         }
     };
 
-    public EntityToDmrBridgeImpl(PropertyMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
+    public EntityToDmrBridgeImpl(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
                                  DispatchAsync dispatcher) {
         this.propertyMetadata = propertyMetadata;
         this.address = propertyMetadata.getBeanMetaData(type).getAddress();
@@ -77,7 +77,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         this.type = type;
         this.view = view;
         this.dispatcher = dispatcher;
-        this.formMetaData = propertyMetadata.getBeanMetaData(type).getFormMetaData();
+        this.formMetaData = propertyMetadata.getFormMetaData(type);
     }
 
     /**

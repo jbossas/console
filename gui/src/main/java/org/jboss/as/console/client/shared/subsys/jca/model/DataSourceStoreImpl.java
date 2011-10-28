@@ -34,7 +34,7 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -54,7 +54,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private CurrentProfileSelection currentProfile;
 
     private EntityAdapter<DataSource> dataSourceAdapter;
@@ -69,7 +69,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     public DataSourceStoreImpl(
             DispatchAsync dispatcher,
             BeanFactory factory,
-            PropertyMetaData propertyMetaData,
+            ApplicationMetaData propertyMetaData,
             CurrentProfileSelection currentProfile, Baseadress baseadress) {
         this.dispatcher = dispatcher;
         this.factory = factory;

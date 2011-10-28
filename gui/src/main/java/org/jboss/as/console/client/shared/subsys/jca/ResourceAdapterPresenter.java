@@ -33,7 +33,7 @@ import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
@@ -61,7 +61,7 @@ public class ResourceAdapterPresenter
     private DefaultWindow propertyWindow;
 
     private List<ResourceAdapter> resourceAdapters;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
 
     private BeanMetaData raMetaData;
 
@@ -90,7 +90,7 @@ public class ResourceAdapterPresenter
     public ResourceAdapterPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, RevealStrategy revealStrategy,
-            DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData propertyMetaData) {
+            DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

@@ -21,7 +21,7 @@ package org.jboss.as.console.client.shared.subsys.threads;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
@@ -32,7 +32,7 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  */
 public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<UnboundedQueueThreadPool> implements FrameworkView {
 
-    public UnboundedQueueThreadPoolView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public UnboundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(UnboundedQueueThreadPool.class, propertyMetaData, dispatcher);
     }
 

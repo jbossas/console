@@ -36,7 +36,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
@@ -53,7 +53,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
     private ComboBoxItem defaultSLSBPoolItem, defaultMDBPoolItem;
 
     @Inject
-    public EJB3View(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public EJB3View(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(EJB3Subsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<EJB3Subsystem>(propertyMetaData, EJB3Subsystem.class, this, dispatcher);
 

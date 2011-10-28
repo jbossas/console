@@ -27,7 +27,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPoolEntity;
 import org.jboss.as.console.client.shared.viewframework.AbstractSingleEntityView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 
@@ -37,7 +37,7 @@ import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 public abstract class AbstractThreadPoolView<T extends ThreadPoolEntity> extends AbstractSingleEntityView<T> {
     private ComboBoxItem threadPoolItem;
 
-    protected AbstractThreadPoolView(Class<? extends T> beanType, PropertyMetaData propertyMetaData,
+    protected AbstractThreadPoolView(Class<? extends T> beanType, ApplicationMetaData propertyMetaData,
             DispatchAsync dispatcher) {
         super(beanType, propertyMetaData, dispatcher, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
     }

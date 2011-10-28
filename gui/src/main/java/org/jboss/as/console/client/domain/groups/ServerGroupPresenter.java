@@ -55,7 +55,7 @@ import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -81,7 +81,7 @@ public class ServerGroupPresenter
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData propertyMetaData;
+    private ApplicationMetaData propertyMetaData;
 
     private List<ProfileRecord> existingProfiles;
     private List<String> existingSockets;
@@ -105,7 +105,7 @@ public class ServerGroupPresenter
             ServerGroupStore serverGroupStore,
             ProfileStore profileStore,
             DispatchAsync dispatcher, BeanFactory factory,
-            PropertyMetaData propertyMetaData) {
+            ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.serverGroupStore = serverGroupStore;

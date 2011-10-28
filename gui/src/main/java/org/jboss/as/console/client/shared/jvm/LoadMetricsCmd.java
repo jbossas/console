@@ -16,7 +16,7 @@ import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<
             DispatchAsync dispatcher,
             BeanFactory factory,
             ModelNode address,
-            PropertyMetaData metaData)
+            ApplicationMetaData metaData)
     {
         super(dispatcher, factory, address);
 

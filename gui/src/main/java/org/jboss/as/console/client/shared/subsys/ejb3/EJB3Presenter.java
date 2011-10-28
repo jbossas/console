@@ -43,7 +43,7 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
@@ -72,7 +72,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
 
     @Inject
     public EJB3Presenter(EventBus eventBus, MyView view, MyProxy proxy,
-        DispatchAsync dispatcher, PropertyMetaData propertyMetaData, RevealStrategy revealStrategy) {
+        DispatchAsync dispatcher, ApplicationMetaData propertyMetaData, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;

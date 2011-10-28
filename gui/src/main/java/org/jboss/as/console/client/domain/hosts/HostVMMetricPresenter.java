@@ -20,7 +20,7 @@ import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.VMMetricsManagement;
 import org.jboss.as.console.client.shared.jvm.VMView;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     private final PlaceManager placeManager;
     private CurrentHostSelection currentHost;
     private DispatchAsync dispatcher;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private BeanFactory factory;
     private String currentServer;
 
@@ -58,7 +58,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, CurrentHostSelection currentHost,
             DispatchAsync dispatcher, BeanFactory factory,
-            PropertyMetaData metaData, CurrentServerConfigurations serverConfigs) {
+            ApplicationMetaData metaData, CurrentServerConfigurations serverConfigs) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;

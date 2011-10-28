@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
  * Main view class for the Threads subsystem.  
@@ -41,7 +41,7 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
     private ScheduledThreadPoolView scheduledPoolView;
 
     @Inject
-    public ThreadsView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public ThreadsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         queuelessPoolView = new QueuelessThreadPoolView(propertyMetaData, dispatcher);
         unboundedQueuePoolView = new UnboundedQueueThreadPoolView(propertyMetaData, dispatcher);
         boundedQueuePoolView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);

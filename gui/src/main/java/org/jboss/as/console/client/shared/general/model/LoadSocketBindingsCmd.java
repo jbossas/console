@@ -8,7 +8,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -24,10 +24,10 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private PropertyMetaData metaData;
+    private ApplicationMetaData metaData;
     private EntityAdapter<SocketBinding> entityAdapter;
 
-    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, PropertyMetaData metaData) {
+    public LoadSocketBindingsCmd(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metaData) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
