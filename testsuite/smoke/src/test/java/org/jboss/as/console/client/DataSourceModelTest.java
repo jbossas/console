@@ -82,7 +82,6 @@ public class DataSourceModelTest {
             @Override
             public void onSuccess(ResponseWrapper<Boolean> response) {
                 assertTrue("Expected successful outcome", response.getUnderlying());
-
                 didCallback = true;
             }
         };
@@ -94,7 +93,25 @@ public class DataSourceModelTest {
             callback.wait(500);
         }
 
-        assertTrue("Callback not executed", callback.hasBeenExecuted());
+        removeDatasource(store, entity);
+    }
+
+    private void removeDatasource(DataSourceStore store, DataSource entity) throws Exception {
+        // remove it as well
+        TestCallback<Boolean> removeCallback = new TestCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                assertTrue("Failed to remove datasource", success);
+                didCallback = true;
+            }
+        };
+        store.deleteDataSource(entity, removeCallback);
+
+        synchronized (removeCallback) {
+            removeCallback.wait(500);
+        }
+
+        assertTrue("Callback not executed", removeCallback.hasBeenExecuted());
     }
 
 
