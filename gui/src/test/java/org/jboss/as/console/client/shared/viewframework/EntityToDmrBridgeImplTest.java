@@ -46,6 +46,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityFactory;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -155,6 +156,11 @@ public class EntityToDmrBridgeImplTest extends GWTTestCase {
         @Override
         public <T> EntityFactory<T> getFactory(Class<T> type) {
             return null;
+        }
+
+        @Override
+        public FormMetaData getFormMetaData(Class<?> type) {
+            return new FormMetaData(type, beanMetaData.get(type).getProperties());
         }
     }
 

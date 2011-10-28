@@ -48,7 +48,7 @@ public class FormMetaData {
     private boolean isFlattened = false;
     private Class<?> type;
 
-    FormMetaData(Class<?> type, List<PropertyBinding> propertyMetaData) {
+    public FormMetaData(Class<?> type, List<PropertyBinding> propertyMetaData) {
 
         this.type = type;
 
