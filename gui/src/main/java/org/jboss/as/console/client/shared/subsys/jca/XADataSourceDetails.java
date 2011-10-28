@@ -88,13 +88,19 @@ public class XADataSourceDetails {
         disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
         disableBtn.addClickHandler(disableHandler);
 
+        ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                presenter.verifyConnection(form.getEditedEntity().getName(), true);
+            }
+        });
 
         FormToolStrip<XADataSource> toolStrip = new FormToolStrip<XADataSource>(
                 form,
                 new FormToolStrip.FormCallback<XADataSource>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveDSDetails(form.getEditedEntity().getName(), form.getChangedValues());
+                        presenter.onSaveXADetails(form.getEditedEntity().getName(), form.getChangedValues());
                     }
 
                     @Override
@@ -105,7 +111,7 @@ public class XADataSourceDetails {
 
         toolStrip.providesDeleteOp(false);
         toolStrip.addToolButtonRight(disableBtn);
-
+        toolStrip.addToolButtonRight(verifyBtn);
 
         VerticalPanel panel = new VerticalPanel();
         panel.add(toolStrip.asWidget());

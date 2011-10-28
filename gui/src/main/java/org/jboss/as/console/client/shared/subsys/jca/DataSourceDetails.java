@@ -94,7 +94,7 @@ public class DataSourceDetails {
         ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                presenter.verifyConnection(form.getEditedEntity());
+                presenter.verifyConnection(form.getEditedEntity().getName(), false);
             }
         });
 

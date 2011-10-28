@@ -114,7 +114,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     protected void onReset() {
         super.onReset();
 
-        loadDataSources();
+        loadRegularDataSources();
+        loadXADataSources();
 
         if(!hasBeenRevealed)
         {
@@ -132,19 +133,17 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         super.onReveal();
     }
 
-    void loadDataSources() {
-
+    private void loadRegularDataSources() {
         dataSourceStore.loadDataSources(new SimpleCallback<List<DataSource>>() {
-
             @Override
             public void onSuccess(List<DataSource> result) {
                 getView().updateDataSources(result);
             }
         });
 
+    }
 
-        //  xa datasources
-
+    private void loadXADataSources() {
         dataSourceStore.loadXADataSources(new SimpleCallback<List<XADataSource>>() {
 
             @Override
@@ -152,7 +151,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 getView().updateXADataSources(result);
             }
         });
-
     }
 
     public void launchNewDatasourceWizard() {
@@ -220,7 +218,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
                     Console.info(Console.MESSAGES.added("datasource ")+ datasource.getName());
-                    loadDataSources();
+                    loadRegularDataSources();
                 }
                 else
                     Console.error(Console.MESSAGES.addingFailed("datasource " + datasource.getName()), result.getResponse().toString());
@@ -244,13 +242,12 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    loadDataSources();
                     Console.info(Console.MESSAGES.deleted("datasource ") + entity.getName());
                 } else {
                     Console.error(Console.MESSAGES.deletionFailed("datasource ") + entity.getName());
                 }
 
-                loadDataSources();
+                loadRegularDataSources();
             }
         });
     }
@@ -266,7 +263,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     Console.error(Console.MESSAGES.modificationFailed("datasource ") + entity.getName(), result.getResponse().toString());
                 }
 
-                loadDataSources();
+                loadRegularDataSources();
             }
         });
     }
@@ -287,7 +284,10 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                         Console.info(Console.MESSAGES.saved("datasource "+name));
                     else
                         Console.error(Console.MESSAGES.saveFailed("datasource ") + name, response.getResponse().toString());
+
+                    loadRegularDataSources();
                 }
+
             });
         }
     }
@@ -305,6 +305,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                         Console.info(Console.MESSAGES.saved("xa datasource "+name));
                     else
                         Console.error(Console.MESSAGES.saveFailed("xa datasource " + name), response.getResponse().toString());
+
+                    loadXADataSources();
                 }
             });
         }
@@ -321,7 +323,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 else
                     Console.error(Console.MESSAGES.addingFailed("xa datasource " + updatedEntity.getName()), response.getResponse().toString());
 
-                loadDataSources();
+                loadXADataSources();
             }
         });
     }
@@ -339,7 +341,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     Console.error(Console.MESSAGES.modificationFailed("datasource " + entity.getName()), result.getResponse().toString());
                 }
 
-                loadDataSources();
+                loadXADataSources();
             }
         });
     }
@@ -355,7 +357,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     Console.error(Console.MESSAGES.deletionFailed("datasource " + entity.getName()));
                 }
 
-                loadDataSources();
+                loadXADataSources();
             }
         });
     }
@@ -493,16 +495,16 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         propertyWindow.hide();
     }
 
-    public void verifyConnection(final DataSource dataSource) {
+    public void verifyConnection(final String dataSourceName, boolean isXA) {
 
-        dataSourceStore.verifyConnection(dataSource, new SimpleCallback<Boolean>() {
+        dataSourceStore.verifyConnection(dataSourceName, isXA, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean outcome) {
 
                 if(outcome)
-                    Console.info("Success: Connection settings on "+ dataSource.getName());
+                    Console.info("Success: Connection settings on "+ dataSourceName);
                 else
-                    Console.error("Failed: Connection settings on " + dataSource.getName());
+                    Console.error("Failed: Connection settings on " + dataSourceName);
 
                 getView().setConnectionVerified(outcome);
             }

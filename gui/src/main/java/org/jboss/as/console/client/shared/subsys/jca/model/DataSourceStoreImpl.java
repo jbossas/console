@@ -481,10 +481,12 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     @Override
-    public void verifyConnection(DataSource dataSource, final AsyncCallback<Boolean> callback) {
-        AddressBinding address = dsMetaData.getAddress();
-        ModelNode operation = address.asResource(baseadress.getAdress(), dataSource.getName());
+    public void verifyConnection(final String dataSourceName, boolean isXA, final AsyncCallback<Boolean> callback) {
+        AddressBinding address = isXA ? xadsMetaData.getAddress() : dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), dataSourceName);
         operation.get(OP).set("test-connection-in-pool");
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
