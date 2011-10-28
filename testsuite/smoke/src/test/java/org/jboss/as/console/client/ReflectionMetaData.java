@@ -183,7 +183,8 @@ public class ReflectionMetaData implements ApplicationMetaData {
             @Override
             public Object create() {
                 try {
-                    return method.invoke(factory, null);
+                    AutoBeanStub stub = (AutoBeanStub)method.invoke(factory, null);
+                    return stub.as();
 
                 } catch (Throwable e) {
                     throw new RuntimeException("error on "+method.getName(), e);
