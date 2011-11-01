@@ -29,10 +29,10 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging/logger={0}")
-public interface Logger extends NamedEntity {
+@Address("/subsystem=logging")
+public interface RootLogger extends NamedEntity {
     @Override
-    @Binding(detypedName="category", key=true)
+    @Binding(detypedName="root-logger", key=true)
     @FormItem(defaultValue="",
              localLabel="common_label_name",
              required=true,
@@ -42,7 +42,7 @@ public interface Logger extends NamedEntity {
     @Override
     public void setName(String name);
 
-    @Binding(detypedName="level")
+    @Binding(detypedName="root-logger/level")
     @FormItem(defaultValue="INFO",
              localLabel="subsys_logging_logLevel",
              required=true,
@@ -56,16 +56,7 @@ public interface Logger extends NamedEntity {
     public void setFilter(String filter);
     */
 
-    @Binding(detypedName="use-parent-handlers")
-    @FormItem(defaultValue="true",
-            localLabel="subsys_logging_useParentHandlers",
-            required=true,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-    public boolean isUseParentHandlers();
-    public void setUseParentHandlers(boolean useParentHandlers);
-    
-    @Binding(detypedName="handlers", 
+    @Binding(detypedName="root-logger/handlers", 
              listType="java.lang.String")
     @FormItem(defaultValue="",
              localLabel="subsys_logging_handlers",

@@ -57,6 +57,7 @@ import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.FileHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.RootLogger;
 import org.jboss.as.console.client.shared.subsys.logging.model.SizeRotatingFileHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -118,6 +119,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<RemoteService> remoteService();
 
     // logging subsystem
+ //   AutoBean<RootLogger> rootLogger();
     AutoBean<Logger> logger();
     AutoBean<AsyncHandler> asyncHandler();
     AutoBean<ConsoleHandler> consoleHanlder();

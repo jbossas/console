@@ -93,16 +93,4 @@ public interface ConsoleHandler extends NamedEntity {
             formItemTypeForAdd="CHECK_BOX")
     public boolean isAutoFlush();
     public void setAutoFlush(boolean autoFlush);
-    
-    // ------ PROPERTIES TAB --------------
-   @Binding(detypedName="properties", 
-           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
-   @FormItem(defaultValue="",
-            localLabel="common_label_properties",
-            required=false,
-            formItemTypeForEdit="PROPERTY_EDITOR",
-            formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="common_label_properties")
-   List<PropertyRecord> getProperties();
-   void setProperties(List<PropertyRecord> properties);
 }

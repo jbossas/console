@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
  * Main view class for the Logging subsystem.  
@@ -36,14 +36,22 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
 
     private DispatchAsync dispatcher;
     
-    private LoggerSubview loggerView;
+  //  private RootLoggerSubview rootLoggerSubview;
+    private LoggerSubview loggerSubview;
     private ConsoleHandlerSubview consoleHandlerSubview;
 
     @Inject
-    public LoggingView(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
+    public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
         this.dispatcher = dispatcher;
-        loggerView = new LoggerSubview(propertyMetaData, dispatcher);
-        consoleHandlerSubview = new ConsoleHandlerSubview(propertyMetaData, dispatcher);
+        
+       // rootLoggerSubview = new RootLoggerSubview(applicationMetaData, dispatcher);
+        loggerSubview = new LoggerSubview(applicationMetaData, dispatcher);
+        
+        HandlerListManager handlerListManager = new HandlerListManager(loggerSubview);
+        
+        consoleHandlerSubview = new ConsoleHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        
+        handlerListManager.setViewsOfAssignableHandlers(consoleHandlerSubview);
     }
 
     @Override
@@ -51,17 +59,19 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
         
-        tabLayoutpanel.add(loggerView.asWidget(), loggerView.getEntityDisplayName());
+     //   tabLayoutpanel.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
+        tabLayoutpanel.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName());
         tabLayoutpanel.add(consoleHandlerSubview.asWidget(), consoleHandlerSubview.getEntityDisplayName());
         
-        LoggingLevelProducer.getLogLevels(dispatcher, loggerView, consoleHandlerSubview);
+        LoggingLevelProducer.getLogLevels(dispatcher, loggerSubview, consoleHandlerSubview);
         
         return tabLayoutpanel;
     }
     
     public void initialLoad() {
-        this.loggerView.initialLoad();
+     //   this.rootLoggerSubview.initialLoad();
+        this.loggerSubview.initialLoad();
         this.consoleHandlerSubview.initialLoad();
     }
-  
+    
 }

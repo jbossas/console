@@ -17,18 +17,18 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
-import com.google.gwt.user.cellview.client.TextColumn;
+import java.util.EnumSet;
 import java.util.List;
-import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.logging.model.RootLogger;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
-import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
+import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -41,15 +41,15 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class LoggerSubview extends AbstractLoggingSubview<Logger> implements FrameworkView, LogLevelConsumer, CanAssignHandlers {
+public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implements FrameworkView, LogLevelConsumer, CanAssignHandlers {
 
-    private EntityToDmrBridge loggerBridge;
+    private EntityToDmrBridge rootLoggerBridge;
     
     private ListEditorFormItem handlerListEditor;
     
-    public LoggerSubview(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
-        super(Logger.class, applicationMetaData);
-        loggerBridge = new EntityToDmrBridgeImpl<Logger>(applicationMetaData, Logger.class, this, dispatcher);
+    public RootLoggerSubview(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
+        super(RootLogger.class, applicationMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
+        rootLoggerBridge = new SingleEntityToDmrBridgeImpl<RootLogger>(applicationMetaData, RootLogger.class, this, dispatcher);
     }
 
     @Override
@@ -68,37 +68,23 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
     
     @Override
     protected EntityToDmrBridge getEntityBridge() {
-        return this.loggerBridge;
+        return this.rootLoggerBridge;
     }
 
     @Override
     protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_logging_loggers();
+        return Console.CONSTANTS.subsys_logging_rootLogger();
     }
 
     @Override
-    protected FormAdapter<Logger> makeAddEntityForm() {
-        Form<Logger> form = new Form(Logger.class);
-        form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
-                       levelItemForAdd);
-        return form;
+    protected FormAdapter<RootLogger> makeAddEntityForm() {
+        return new Form<RootLogger>(beanType);
     }
 
     @Override
-    protected DefaultCellTable<Logger> makeEntityTable() {
-        DefaultCellTable<Logger> table = new DefaultCellTable<Logger>(4);
-
-        table.addColumn(new NameColumn(), NameColumn.LABEL);
-
-        TextColumn<Logger> levelColumn = new TextColumn<Logger>() {
-            @Override
-            public String getValue(Logger record) {
-                return record.getLevel();
-            }
-        };
-        table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        
+    protected DefaultCellTable<RootLogger> makeEntityTable() {
+        DefaultCellTable<RootLogger> table = new DefaultCellTable<RootLogger>(5);
+        table.setVisible(false);
         return table;
     }
 

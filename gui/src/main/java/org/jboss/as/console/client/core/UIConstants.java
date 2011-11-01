@@ -35,6 +35,7 @@ public interface UIConstants extends Constants {
     String common_error_unknownError();
     String common_error_failure();
 
+    String common_label_addItem();
     String common_label_addProperty();
     String common_label_hostManagement();
     String common_label_profileManagement();
@@ -154,6 +155,7 @@ public interface UIConstants extends Constants {
     String subsys_logging_useParentHandlers();
     String subsys_logging_category();
     String subsys_logging_consoleHandlers();
+    String subsys_logging_rootLogger();
 
     String subsys_deploymentscanner_scanners();
     String subsys_deploymentscanner_relativeTo();

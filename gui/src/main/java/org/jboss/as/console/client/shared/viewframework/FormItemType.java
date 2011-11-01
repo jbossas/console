@@ -22,6 +22,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
@@ -52,6 +53,7 @@ public enum FormItemType {
     ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
     EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
     TIME_UNITS(new ComboBoxItemFactory(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"})),
+    STRING_LIST_EDITOR(new StringListEditorItemFactory()),
     PROPERTY_EDITOR(new PropertyEditorItemFactory());
 
     private FormItemFactory factory;
@@ -233,6 +235,35 @@ public enum FormItemType {
             return new ObservableFormItem[] {};
         }
 
+    }
+    
+    public static class StringListEditorItemFactory implements FormItemFactory {
+        private String addDialogTitle;
+        private int rows;
+
+        public StringListEditorItemFactory() {
+            this(Console.CONSTANTS.common_label_addItem(), 5);
+        }
+
+        /**
+         * @param addDialogTitle The title shown when the Add button is pressed on the ListEditor.
+         * @param rows The number of rows in the PropertyEditor.
+         */
+        public StringListEditorItemFactory(String addDialogTitle, int rows) {
+            this.addDialogTitle = addDialogTitle;
+            this.rows = rows;
+        }
+
+        @Override
+        public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            ListEditorFormItem listEditor = new ListEditorFormItem(propBinding.getJavaName(),
+                                                                   "",
+                                                                   addDialogTitle,
+                                                                   rows,
+                                                                   true);
+            listEditor.setRequired(propBinding.isRequired());
+            return new ObservableFormItem[] {new ObservableFormItem(propBinding, listEditor, observers)};
+        }
     }
 
     public static class PropertyEditorItemFactory implements FormItemFactory {

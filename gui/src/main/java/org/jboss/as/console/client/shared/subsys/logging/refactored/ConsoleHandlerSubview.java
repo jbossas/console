@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
 import com.google.gwt.user.cellview.client.TextColumn;
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
 
 import org.jboss.as.console.client.Console;
@@ -27,7 +29,8 @@ import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -39,15 +42,24 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class ConsoleHandlerSubview extends AbstractLoggingSubview<ConsoleHandler> implements FrameworkView, LogLevelConsumer {
+public class ConsoleHandlerSubview extends AbstractLoggingSubview<ConsoleHandler> implements FrameworkView, LogLevelConsumer, HasAssignableHandlers {
 
     private EntityToDmrBridge loggerBridge;
+    private HandlerListManager handlerListManager;
     
-    public ConsoleHandlerSubview(PropertyMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(ConsoleHandler.class, propertyMetaData);
-        loggerBridge = new EntityToDmrBridgeImpl<ConsoleHandler>(propertyMetaData, ConsoleHandler.class, this, dispatcher);
+    public ConsoleHandlerSubview(ApplicationMetaData applicationMetaData, 
+                                 DispatchAsync dispatcher, 
+                                 HandlerListManager handlerListManager) {
+        super(ConsoleHandler.class, applicationMetaData);
+        loggerBridge = new EntityToDmrBridgeImpl<ConsoleHandler>(applicationMetaData, ConsoleHandler.class, this, dispatcher);
+        this.handlerListManager = handlerListManager;
     }
 
+    @Override
+    public List<NamedEntity> getHandlers() {
+        return (List<NamedEntity>)getEntityBridge().getEntityList();
+    }
+    
     @Override
     public void itemAction(Action action, ObservableFormItem item) {
         super.itemAction(action, item);
@@ -91,6 +103,12 @@ public class ConsoleHandlerSubview extends AbstractLoggingSubview<ConsoleHandler
         table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
         
         return table;
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        this.handlerListManager.handlerListUpdated();
     }
 
 }

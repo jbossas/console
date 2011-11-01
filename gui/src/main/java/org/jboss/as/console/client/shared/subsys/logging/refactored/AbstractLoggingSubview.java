@@ -19,12 +19,14 @@
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
 
 import com.google.gwt.user.client.ui.Widget;
+import java.util.EnumSet;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
+import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
-import org.jboss.as.console.client.widgets.forms.PropertyMetaData;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 
 /**
@@ -37,8 +39,12 @@ public abstract class AbstractLoggingSubview<T> extends AbstractEntityView<T> im
     protected ComboBoxItem levelItemForEdit;
     protected FormItem[] levelItemForAdd;
 
-    public AbstractLoggingSubview(Class<?> type, PropertyMetaData propertyMetaData) {
-        super(type, propertyMetaData);
+    public AbstractLoggingSubview(Class<?> beanType, ApplicationMetaData propertyMetaData) {
+        this(beanType, propertyMetaData, EnumSet.noneOf(FrameworkButton.class));
+    }
+    
+    public AbstractLoggingSubview(Class<?> type, ApplicationMetaData applicationMetaData, EnumSet<FrameworkButton> hideButtons) {
+        super(type, applicationMetaData, hideButtons);
         levelItemForAdd = formMetaData.findAttribute("level").getFormItemForAdd();
     }
 
