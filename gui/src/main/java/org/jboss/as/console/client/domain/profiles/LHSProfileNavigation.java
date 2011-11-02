@@ -20,13 +20,19 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -55,6 +61,18 @@ class LHSProfileNavigation {
 
         profileSection = new ProfileSection();
         stack.add(profileSection.asWidget());
+
+        // -------- groups
+
+
+        DisclosurePanel groupsPanel = new DisclosureStackPanel("Server Groups").asWidget();
+        LHSNavTree groupsTree = new LHSNavTree("profiles");
+        groupsPanel.setContent(groupsTree);
+
+        groupsTree.addItem(new LHSNavTreeItem("Group Configurations", NameTokens.ServerGroupPresenter));
+        stack.add(groupsPanel);
+
+        // --------
 
         CommonConfigSection commonSection = new CommonConfigSection();
         stack.add(commonSection.asWidget());
