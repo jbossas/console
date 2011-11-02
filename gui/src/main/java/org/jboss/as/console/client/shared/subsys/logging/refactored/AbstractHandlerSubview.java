@@ -18,22 +18,21 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.List;
-import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.logging.model.HasLevel;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
@@ -41,29 +40,25 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class LoggerSubview extends AbstractLoggingSubview<Logger> implements FrameworkView, LogLevelConsumer, HandlerConsumer {
+public abstract class AbstractHandlerSubview<T extends NamedEntity> extends AbstractLoggingSubview implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    private EntityToDmrBridge loggerBridge;
+    private EntityToDmrBridge<T> loggerBridge;
+    private HandlerListManager handlerListManager;
+    protected Class<T> type;
     
-    private ListEditorFormItem handlerListEditor;
-    
-    public LoggerSubview(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
-        super(Logger.class, applicationMetaData);
-        loggerBridge = new EntityToDmrBridgeImpl<Logger>(applicationMetaData, Logger.class, this, dispatcher);
+    public AbstractHandlerSubview(Class<T> type,
+                                 ApplicationMetaData applicationMetaData, 
+                                 DispatchAsync dispatcher, 
+                                 HandlerListManager handlerListManager) {
+        super(type, applicationMetaData);
+        this.type = type;
+        loggerBridge = new EntityToDmrBridgeImpl(applicationMetaData, type, this, dispatcher);
+        this.handlerListManager = handlerListManager;
     }
 
     @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        super.itemAction(action, item);
-        
-        if (item.getPropertyBinding().getJavaName().equals("handlers") && (action == Action.CREATED)) {
-            handlerListEditor = (ListEditorFormItem)item.getWrapped();
-        }
-    }
-    
-    @Override
-    public void handlersUpdated(List<String> handlerList) {
-        handlerListEditor.setAvailableChoices(handlerList);
+    public List<NamedEntity> getHandlers() {
+        return (List<NamedEntity>)getEntityBridge().getEntityList();
     }
     
     @Override
@@ -72,13 +67,8 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
     }
 
     @Override
-    protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_logging_loggers();
-    }
-
-    @Override
-    protected FormAdapter<Logger> makeAddEntityForm() {
-        Form<Logger> form = new Form(Logger.class);
+    protected FormAdapter<T> makeAddEntityForm() {
+        Form<T> form = new Form(type);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
                        levelItemForAdd);
@@ -86,20 +76,26 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
     }
 
     @Override
-    protected DefaultCellTable<Logger> makeEntityTable() {
-        DefaultCellTable<Logger> table = new DefaultCellTable<Logger>(4);
+    protected DefaultCellTable<T> makeEntityTable() {
+        DefaultCellTable<T> table = new DefaultCellTable<T>(4);
 
         table.addColumn(new NameColumn(), NameColumn.LABEL);
 
-        TextColumn<Logger> levelColumn = new TextColumn<Logger>() {
+        TextColumn<HasLevel> levelColumn = new TextColumn<HasLevel>() {
             @Override
-            public String getValue(Logger record) {
+            public String getValue(HasLevel record) {
                 return record.getLevel();
             }
         };
         table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
         
         return table;
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        this.handlerListManager.handlerListUpdated();
     }
 
 }

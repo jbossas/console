@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
-import java.util.List;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -31,7 +29,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=logging/console-handler={0}")
-public interface ConsoleHandler extends NamedEntity {
+public interface ConsoleHandler extends NamedEntity, HasLevel {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -44,6 +42,7 @@ public interface ConsoleHandler extends NamedEntity {
     @Override
     public void setName(String name);
     
+    @Override
     @Binding(detypedName="level")
     @FormItem(defaultValue="INFO",
               localLabel="subsys_logging_logLevel",
@@ -51,6 +50,7 @@ public interface ConsoleHandler extends NamedEntity {
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX")
     public String getLevel();
+    @Override
     public void setLevel(String logLevel);
     
     @Binding(detypedName="encoding")

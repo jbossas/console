@@ -17,40 +17,29 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
-import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.FileHandler;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 
 /**
- * Subview for Console Handlers.
+ * Subview for File Handlers.
  * 
  * @author Stan Silvert
  */
-public class ConsoleHandlerSubview extends AbstractHandlerSubview<ConsoleHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public class FileHandlerSubview extends AbstractFileHandlerSubview<FileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    public ConsoleHandlerSubview(ApplicationMetaData applicationMetaData, 
-                                 DispatchAsync dispatcher, 
-                                 HandlerListManager handlerListManager) {
-        super(ConsoleHandler.class, applicationMetaData, dispatcher, handlerListManager);
+    public FileHandlerSubview(ApplicationMetaData applicationMetaData, 
+                              DispatchAsync dispatcher, 
+                              HandlerListManager handlerListManager) {
+        super(FileHandler.class, applicationMetaData, dispatcher, handlerListManager);
     }
 
-    @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        super.itemAction(action, item);
-        if (item.getPropertyBinding().getJavaName().equals("target") && (action == Action.CREATED)) {
-            ComboBoxItem targetItem = (ComboBoxItem) item.getWrapped();
-            targetItem.setValueMap(new String[] {"System.out", "System.err"});
-        }
-    }
-    
     @Override
     protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_logging_consoleHandlers();
+        return Console.CONSTANTS.subsys_logging_fileHandlers();
     }
 }

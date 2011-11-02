@@ -17,40 +17,36 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
-import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Subview for Console Handlers.
+ * Main view class for Loggers.
  * 
  * @author Stan Silvert
  */
-public class ConsoleHandlerSubview extends AbstractHandlerSubview<ConsoleHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public abstract class AbstractFileHandlerSubview<T> extends AbstractHandlerSubview implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    public ConsoleHandlerSubview(ApplicationMetaData applicationMetaData, 
+    public AbstractFileHandlerSubview(Class<T> type,
+                                 ApplicationMetaData applicationMetaData, 
                                  DispatchAsync dispatcher, 
                                  HandlerListManager handlerListManager) {
-        super(ConsoleHandler.class, applicationMetaData, dispatcher, handlerListManager);
+        super(type, applicationMetaData, dispatcher, handlerListManager);
     }
 
     @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        super.itemAction(action, item);
-        if (item.getPropertyBinding().getJavaName().equals("target") && (action == Action.CREATED)) {
-            ComboBoxItem targetItem = (ComboBoxItem) item.getWrapped();
-            targetItem.setValueMap(new String[] {"System.out", "System.err"});
-        }
-    }
-    
-    @Override
-    protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_logging_consoleHandlers();
+    protected FormAdapter<T> makeAddEntityForm() {
+        Form<T> form = new Form(type);
+        form.setNumColumns(1);
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
+                       levelItemForAdd,
+                       formMetaData.findAttribute("filePath").getFormItemForAdd(),
+                       formMetaData.findAttribute("fileRelativeTo").getFormItemForAdd());
+        return form;
     }
 }

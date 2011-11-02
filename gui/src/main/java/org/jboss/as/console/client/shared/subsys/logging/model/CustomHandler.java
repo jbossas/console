@@ -18,18 +18,20 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
+import java.util.List;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * File Handler Entity
+ * Custom Handler Entity
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging/file-handler={0}")
-public interface FileHandler extends NamedEntity, HasLevel {
+@Address("/subsystem=logging/custom-handler={0}")
+public interface CustomHandler extends NamedEntity, HasLevel {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -70,45 +72,39 @@ public interface FileHandler extends NamedEntity, HasLevel {
     @Binding(detypedName="formatter")
     @FormItem(defaultValue="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
               localLabel="subsys_logging_formatter",
-              required=true,
+              required=false,
               formItemTypeForEdit="FREE_FORM_TEXT_BOX",
               formItemTypeForAdd="FREE_FORM_TEXT_BOX")
     public String getFormatter();
     public void setFormatter(String formatter);
     
-    @Binding(detypedName="file/relative-to")
-    @FormItem(defaultValue="jboss.server.log.dir",
-              localLabel="subsys_logging_fileRelativeTo",
-              required=true,
-              formItemTypeForEdit="TEXT_BOX",
-              formItemTypeForAdd="TEXT_BOX")
-    public String getFileRelativeTo();
-    public void setFileRelativeTo(String file);
-    
-    @Binding(detypedName="file/path")
+    @Binding(detypedName="module")
     @FormItem(defaultValue="",
-              localLabel="subsys_logging_filePath",
+              localLabel="subsys_logging_module",
               required=true,
               formItemTypeForEdit="TEXT_BOX",
               formItemTypeForAdd="TEXT_BOX")
-    public String getFilePath();
-    public void setFilePath(String file);
+    public String getModule();
+    public void setModule(String module);
     
-    @Binding(detypedName="append")
-    @FormItem(defaultValue="true",
-            localLabel="subsys_logging_append",
-            required=false,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-    public boolean isAppend();
-    public void setAppend(boolean append);
+    @Binding(detypedName="class")
+    @FormItem(defaultValue="",
+            localLabel="subsys_logging_className",
+            required=true,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
+    public String getClassName();
+    public void setClassName(String className);
     
-    @Binding(detypedName="autoflush")
-    @FormItem(defaultValue="true",
-            localLabel="subsys_logging_autoFlush",
+    // ------ PROPERTIES TAB --------------
+   @Binding(detypedName="properties", 
+           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+   @FormItem(defaultValue="",
+            localLabel="subsys_logging_handlerProperties",
             required=false,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-    public boolean isAutoFlush();
-    public void setAutoFlush(boolean autoFlush);
+            formItemTypeForEdit="PROPERTY_EDITOR",
+            formItemTypeForAdd="PROPERTY_EDITOR",
+            tabName="common_label_properties")
+   List<PropertyRecord> getProperties();
+   void setProperties(List<PropertyRecord> properties);
 }

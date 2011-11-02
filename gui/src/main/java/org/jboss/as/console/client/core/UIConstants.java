@@ -132,6 +132,10 @@ public interface UIConstants extends Constants {
     String subsys_logging_removeHandler();
     String subsys_logging_autoFlush();
     String subsys_logging_encoding();
+    String subsys_logging_fileHandlers();
+    String subsys_logging_periodicRotatingFileHandlers();
+    String subsys_logging_sizeRotatingFileHandlers();
+    String subsys_logging_asyncHandlers();
     String subsys_logging_filter();
     String subsys_logging_formatter();
     String subsys_logging_append();

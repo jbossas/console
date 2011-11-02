@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.logging.refactored;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -36,42 +37,80 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
 
     private DispatchAsync dispatcher;
     
-  //  private RootLoggerSubview rootLoggerSubview;
+    private RootLoggerSubview rootLoggerSubview;
     private LoggerSubview loggerSubview;
     private ConsoleHandlerSubview consoleHandlerSubview;
+    private FileHandlerSubview fileHandlerSubview;
+    private PeriodicRotatingFileHandlerSubview periodicRotatingFileHandlerSubview;
+    private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
+    private AsyncHandlerSubview asyncHandlerSubview;
 
     @Inject
     public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
         this.dispatcher = dispatcher;
         
-       // rootLoggerSubview = new RootLoggerSubview(applicationMetaData, dispatcher);
+        HandlerListManager handlerListManager = new HandlerListManager();
+                
+        rootLoggerSubview = new RootLoggerSubview(applicationMetaData, dispatcher);
         loggerSubview = new LoggerSubview(applicationMetaData, dispatcher);
         
-        HandlerListManager handlerListManager = new HandlerListManager(loggerSubview);
-        
         consoleHandlerSubview = new ConsoleHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        fileHandlerSubview = new FileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        periodicRotatingFileHandlerSubview = new PeriodicRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        sizeRotatingFileHandlerSubview = new SizeRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        asyncHandlerSubview = new AsyncHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         
-        handlerListManager.setViewsOfAssignableHandlers(consoleHandlerSubview);
+        handlerListManager.setHandlerConsumers(rootLoggerSubview, loggerSubview, asyncHandlerSubview);
+        handlerListManager.setHandlerProducers(consoleHandlerSubview, 
+                                               fileHandlerSubview, 
+                                               periodicRotatingFileHandlerSubview, 
+                                               sizeRotatingFileHandlerSubview,
+                                               asyncHandlerSubview);
     }
 
     @Override
     public Widget createWidget() {
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutPanel.addStyleName("default-tabpanel");
         
-     //   tabLayoutpanel.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
-        tabLayoutpanel.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName());
-        tabLayoutpanel.add(consoleHandlerSubview.asWidget(), consoleHandlerSubview.getEntityDisplayName());
+        TabPanel loggerPanel = new TabPanel();
+        loggerPanel.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
+        loggerPanel.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName());
+        loggerPanel.setStyleName("fill-layout-width");
+        loggerPanel.selectTab(0);
         
-        LoggingLevelProducer.getLogLevels(dispatcher, loggerSubview, consoleHandlerSubview);
         
-        return tabLayoutpanel;
+        TabPanel handlerPanel = new TabPanel();
+        handlerPanel.add(consoleHandlerSubview.asWidget(), consoleHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(fileHandlerSubview.asWidget(), fileHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(periodicRotatingFileHandlerSubview.asWidget(), periodicRotatingFileHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(sizeRotatingFileHandlerSubview.asWidget(), sizeRotatingFileHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(asyncHandlerSubview.asWidget(), asyncHandlerSubview.getEntityDisplayName());
+        handlerPanel.setStyleName("fill-layout-width");
+        handlerPanel.selectTab(0);
+        
+        tabLayoutPanel.add(loggerPanel.asWidget(), "Loggers");
+        tabLayoutPanel.add(handlerPanel.asWidget(), "Handlers");
+        
+        LoggingLevelProducer.setLogLevels(dispatcher, rootLoggerSubview,
+                                                      loggerSubview, 
+                                                      consoleHandlerSubview, 
+                                                      fileHandlerSubview, 
+                                                      periodicRotatingFileHandlerSubview, 
+                                                      sizeRotatingFileHandlerSubview,
+                                                      asyncHandlerSubview);
+        
+        return tabLayoutPanel;
     }
     
     public void initialLoad() {
-     //   this.rootLoggerSubview.initialLoad();
-        this.loggerSubview.initialLoad();
-        this.consoleHandlerSubview.initialLoad();
+        rootLoggerSubview.initialLoad();
+        loggerSubview.initialLoad();
+        consoleHandlerSubview.initialLoad();
+        fileHandlerSubview.initialLoad();
+        periodicRotatingFileHandlerSubview.initialLoad(); 
+        sizeRotatingFileHandlerSubview.initialLoad();
+        asyncHandlerSubview.initialLoad();
     }
     
 }

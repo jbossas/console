@@ -30,30 +30,35 @@ import org.jboss.as.console.client.shared.viewframework.NamedEntity;
  */
 public class HandlerListManager {
    
-    private CanAssignHandlers[] canAssignHandlersList;
+    private HandlerConsumer[] consumers;
     
-    private HasAssignableHandlers[] hasHandlerList;
+    private HandlerProducer[] producers;
     
-    public HandlerListManager(CanAssignHandlers... canAssignHandlersList) {
-        this.canAssignHandlersList = canAssignHandlersList;
+    public void setHandlerConsumers(HandlerConsumer... consumers) {
+        this.consumers = consumers;
     }
     
-    public void setViewsOfAssignableHandlers(HasAssignableHandlers... hasHandlerList) {
-        this.hasHandlerList = hasHandlerList;
+    public void setHandlerProducers(HandlerProducer... producers) {
+        this.producers = producers;
     }
     
+    /**
+     * HandlerProducers must call handlerListUpdated whenever a handler is created or destroyed.  
+     * This method in turn gathers all the handlers from all HandlerProducers and notifies all
+     * the HandlerConsumers.
+     */
     public void handlerListUpdated() {
         List<String> aggregatedHandlerList = new ArrayList<String>();
         
-        for (HasAssignableHandlers hasHandlers : hasHandlerList) {
-            List<NamedEntity> handlers = hasHandlers.getHandlers();
+        for (HandlerProducer producer : producers) {
+            List<NamedEntity> handlers = producer.getHandlers();
             for (NamedEntity handler : handlers) {
                 aggregatedHandlerList.add(handler.getName());
             }
         }
         
-        for (CanAssignHandlers canAssign : canAssignHandlersList) {
-            canAssign.handlersUpdated(aggregatedHandlerList);
+        for (HandlerConsumer consumer : consumers) {
+            consumer.handlersUpdated(aggregatedHandlerList);
         }
     }
 }

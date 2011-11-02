@@ -119,7 +119,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<RemoteService> remoteService();
 
     // logging subsystem
- //   AutoBean<RootLogger> rootLogger();
+    AutoBean<RootLogger> rootLogger();
     AutoBean<Logger> logger();
     AutoBean<AsyncHandler> asyncHandler();
     AutoBean<ConsoleHandler> consoleHanlder();

@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.viewframework.NamedEntity;
  *
  * @author ssilvert
  */
-public interface HasAssignableHandlers {
+public interface HandlerProducer {
 
     List<NamedEntity> getHandlers();
     

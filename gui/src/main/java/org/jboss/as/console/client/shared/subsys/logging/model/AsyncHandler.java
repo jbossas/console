@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
 import java.util.List;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -31,7 +30,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=logging/async-handler={0}")
-public interface AsyncHandler extends NamedEntity {
+public interface AsyncHandler extends NamedEntity, HasLevel {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -44,6 +43,7 @@ public interface AsyncHandler extends NamedEntity {
     @Override
     public void setName(String name);
     
+    @Override
     @Binding(detypedName="level")
     @FormItem(defaultValue="INFO",
               localLabel="subsys_logging_logLevel",
@@ -51,6 +51,7 @@ public interface AsyncHandler extends NamedEntity {
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX")
     public String getLevel();
+    @Override
     public void setLevel(String logLevel);
     
     /* Filters not implemented yet
@@ -81,21 +82,9 @@ public interface AsyncHandler extends NamedEntity {
     @FormItem(defaultValue="",
              localLabel="subsys_logging_subhandlers",
              required=false,
-             formItemTypeForEdit="LIST_BOX",
-             formItemTypeForAdd="LIST_BOX",
+             formItemTypeForEdit="STRING_LIST_EDITOR",
+             formItemTypeForAdd="STRING_LIST_EDITOR",
              tabName="subsys_logging_subhandlers")
-    public List<String> getSubhandlers();
-    public void setSubhandlers(List<String> subhandlers);
-             
-    // ------ PROPERTIES TAB --------------
-    @Binding(detypedName="properties", 
-            listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
-    @FormItem(defaultValue="",
-             localLabel="common_label_properties",
-             required=false,
-             formItemTypeForEdit="PROPERTY_EDITOR",
-             formItemTypeForAdd="PROPERTY_EDITOR",
-             tabName="common_label_properties")
-    public List<PropertyRecord> getProperties();
-    public void setProperties(List<PropertyRecord> properties);
+    public List<String> getHandlers();
+    public void setHandlers(List<String> handlers);
 }

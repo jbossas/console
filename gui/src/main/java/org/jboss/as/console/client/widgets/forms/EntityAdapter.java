@@ -339,8 +339,7 @@ public class EntityAdapter<T> {
             /**
              * KEYS
              */
-           // UNCOMMENT THIS AFTER JAMES MAKES HIS FIX TO LOGGING
-           // if(property.isKey()) continue;
+      //      if(property.isKey()) continue;
 
             Object propertyValue = mutator.getValue(entity, property.getJavaName());
 
@@ -366,13 +365,11 @@ public class EntityAdapter<T> {
             if(propertyValue!=null)
             {
                 try {
-
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
-
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
                         operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        throw new RuntimeException("Unsupported list type: "+property.getListType());
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
                     } else {
                         operation.get(splitDetypedName).set(modelType, propertyValue);
                     }
@@ -489,7 +486,6 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding binding : propertyBindings)
         {
-            
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
@@ -536,8 +532,7 @@ public class EntityAdapter<T> {
                 {
                     nodeToSetValueUpon.set((Float)value);
                 }
-                else if (binding.getListType() != null
-                        && binding.getListType() == PropertyRecord.class)
+                else if (binding.getListType() != null)
                 {
                     if (binding.getListType() == PropertyRecord.class) {
                         nodeToSetValueUpon.set(fromEntityPropertyList((List)value));

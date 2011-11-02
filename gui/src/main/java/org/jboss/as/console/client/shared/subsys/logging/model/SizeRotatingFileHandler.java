@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
-import java.util.List;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -30,8 +28,8 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging/periodic-rotating-file-handler={0}")
-public interface SizeRotatingFileHandler extends NamedEntity {
+@Address("/subsystem=logging/size-rotating-file-handler={0}")
+public interface SizeRotatingFileHandler extends NamedEntity, HasLevel {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -44,6 +42,7 @@ public interface SizeRotatingFileHandler extends NamedEntity {
     @Override
     public void setName(String name);
     
+    @Override
     @Binding(detypedName="level")
     @FormItem(defaultValue="INFO",
               localLabel="subsys_logging_logLevel",
@@ -51,12 +50,13 @@ public interface SizeRotatingFileHandler extends NamedEntity {
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX")
     public String getLevel();
+    @Override
     public void setLevel(String logLevel);
     
     @Binding(detypedName="encoding")
     @FormItem(defaultValue="UTF-8",
               localLabel="subsys_logging_encoding",
-              required=true,
+              required=false,
               formItemTypeForEdit="TEXT_BOX",
               formItemTypeForAdd="TEXT_BOX")
     public String getEncoding();
@@ -71,19 +71,28 @@ public interface SizeRotatingFileHandler extends NamedEntity {
     @FormItem(defaultValue="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n",
               localLabel="subsys_logging_formatter",
               required=true,
-              formItemTypeForEdit="TEXT_BOX",
-              formItemTypeForAdd="TEXT_BOX")
+              formItemTypeForEdit="FREE_FORM_TEXT_BOX",
+              formItemTypeForAdd="FREE_FORM_TEXT_BOX")
     public String getFormatter();
     public void setFormatter(String formatter);
     
-    @Binding(detypedName="file")
+    @Binding(detypedName="file/relative-to")
+    @FormItem(defaultValue="jboss.server.log.dir",
+              localLabel="subsys_logging_fileRelativeTo",
+              required=true,
+              formItemTypeForEdit="TEXT_BOX",
+              formItemTypeForAdd="TEXT_BOX")
+    public String getFileRelativeTo();
+    public void setFileRelativeTo(String file);
+    
+    @Binding(detypedName="file/path")
     @FormItem(defaultValue="",
               localLabel="subsys_logging_filePath",
               required=true,
               formItemTypeForEdit="TEXT_BOX",
               formItemTypeForAdd="TEXT_BOX")
-    public String getFile();
-    public void setFile(String file);
+    public String getFilePath();
+    public void setFilePath(String file);
     
     @Binding(detypedName="rotate-size")
     @FormItem(defaultValue="2m",

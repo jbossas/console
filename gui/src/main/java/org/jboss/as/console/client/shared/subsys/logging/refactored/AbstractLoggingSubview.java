@@ -50,7 +50,9 @@ public abstract class AbstractLoggingSubview<T> extends AbstractEntityView<T> im
 
     @Override
     public Widget createWidget() {
-        return super.createEmbeddableWidget();
+        Widget widget = super.createEmbeddableWidget();
+        widget.setHeight("1000px");
+        return widget;
     }
 
     @Override

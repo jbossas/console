@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author ssilvert
  */
-public interface CanAssignHandlers {
+public interface HandlerConsumer {
 
     void handlersUpdated(List<String> handlerList);
     

@@ -40,7 +40,11 @@ public class LoggingLevelProducer {
         void setLogLevels(String[] logLevels);
     }
     
-    static void getLogLevels(DispatchAsync dispatcher, final LogLevelConsumer... consumers) {
+    /**
+     * Query the server to find the valid log levels and pass them on to the specified
+     * LogLevelConsumers.
+     */
+    static void setLogLevels(DispatchAsync dispatcher, final LogLevelConsumer... consumers) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ADDRESS).set(Baseadress.get());

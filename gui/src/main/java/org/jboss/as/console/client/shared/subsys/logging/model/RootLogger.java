@@ -29,10 +29,10 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=logging")
+@Address("/subsystem=logging/root-logger={0}")
 public interface RootLogger extends NamedEntity {
     @Override
-    @Binding(detypedName="root-logger", key=true)
+    @Binding(detypedName="name", key=true)
     @FormItem(defaultValue="",
              localLabel="common_label_name",
              required=true,
@@ -42,7 +42,7 @@ public interface RootLogger extends NamedEntity {
     @Override
     public void setName(String name);
 
-    @Binding(detypedName="root-logger/level")
+    @Binding(detypedName="level")
     @FormItem(defaultValue="INFO",
              localLabel="subsys_logging_logLevel",
              required=true,
@@ -56,7 +56,7 @@ public interface RootLogger extends NamedEntity {
     public void setFilter(String filter);
     */
 
-    @Binding(detypedName="root-logger/handlers", 
+    @Binding(detypedName="handlers", 
              listType="java.lang.String")
     @FormItem(defaultValue="",
              localLabel="subsys_logging_handlers",

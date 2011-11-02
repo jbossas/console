@@ -24,11 +24,11 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.model.RootLogger;
 import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -41,7 +41,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implements FrameworkView, LogLevelConsumer, CanAssignHandlers {
+public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implements FrameworkView, LogLevelConsumer, HandlerConsumer {
 
     private EntityToDmrBridge rootLoggerBridge;
     
@@ -49,7 +49,7 @@ public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implem
     
     public RootLoggerSubview(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
         super(RootLogger.class, applicationMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
-        rootLoggerBridge = new SingleEntityToDmrBridgeImpl<RootLogger>(applicationMetaData, RootLogger.class, this, dispatcher);
+        rootLoggerBridge = new EntityToDmrBridgeImpl<RootLogger>(applicationMetaData, RootLogger.class, this, dispatcher);
     }
 
     @Override
