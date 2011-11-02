@@ -103,7 +103,7 @@ class ServersConfigSection {
 
         hostTree.addItem(serverConfigs);
 
-        LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_runtimeStatus(), new ClickHandler()
+       /* LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_runtimeStatus(), new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event) {
@@ -113,7 +113,7 @@ class ServersConfigSection {
             }
         });
 
-        hostTree.addItem(serverInstances);
+        hostTree.addItem(serverInstances); */
 
 
     }

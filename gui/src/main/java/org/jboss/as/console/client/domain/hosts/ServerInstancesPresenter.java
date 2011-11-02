@@ -42,6 +42,7 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.Collections;
@@ -113,7 +114,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void execute() {
                 getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_runtimeStatus(), "hosts")
+                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverInstances(), "domain-runtime")
 
                 );
             }
@@ -179,7 +180,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), HostMgmtPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
     @Override

@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -42,6 +43,7 @@ import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -119,11 +121,20 @@ public class HostMgmtPresenter
             });
 
             placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.InstancesPresenter)
+                    new PlaceRequest(NameTokens.ServerPresenter)
             );
             hasBeenRevealed = true;
         }
 
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                getEventBus().fireEvent(
+                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverConfigs(), "hosts")
+
+                );
+            }
+        });
 
     }
 
