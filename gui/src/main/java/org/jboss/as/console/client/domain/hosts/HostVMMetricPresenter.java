@@ -121,6 +121,9 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         if(!hostSelection.isSet())
             throw new RuntimeException("Host selection not set!");
 
+         if(getCurrentServer()==null)
+            throw new RuntimeException("Current Server not set!");
+
         ModelNode address = new ModelNode();
         address.add("host", hostSelection.getName());
         address.add("server", getCurrentServer());
@@ -201,7 +204,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     public void onVMSelection(String vmKey) {
 
-        System.out.println("Current server: "+vmKey);
         this.currentServer = vmKey;
 
         getView().reset();

@@ -19,6 +19,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.events.ServerSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -34,7 +35,7 @@ import java.util.Timer;
  * @date 11/2/11
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener {
+    implements HostSelectionEvent.HostSelectionListener, ServerSelectionEvent.ServerSelectionListener {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -73,6 +74,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
 
@@ -138,7 +140,14 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onHostSelection(String hostName) {
 
-        System.out.println("**"+hostSelection.getName());
+        System.out.println("Selected host: "+hostSelection.getName());
         hostSelection.setName(hostName);
+    }
+
+    @Override
+    public void onServerSelection(String serverName) {
+
+        System.out.println("Selected server: "+serverName);
+
     }
 }

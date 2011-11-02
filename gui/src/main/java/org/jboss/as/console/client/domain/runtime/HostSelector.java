@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.events.ServerSelectionEvent;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
@@ -43,8 +44,13 @@ public class HostSelector {
         servers = new ComboBox();
         servers.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                // TODO
+            public void onValueChange(final ValueChangeEvent<String> event) {
+                Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        Console.MODULES.getEventBus().fireEvent(new ServerSelectionEvent(event.getValue()));
+                    }
+                });
             }
         });
 
