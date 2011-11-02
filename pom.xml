@@ -23,7 +23,7 @@
     <name>JBoss 7 - Management Console</name>
     <groupId>org.jboss.as</groupId>
     <artifactId>jboss-as-console-parent</artifactId>
-    <version>1.0.0.Beta22</version>
+    <version>1.0.0.CR1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>JBoss AS 7 Management Console</description>
