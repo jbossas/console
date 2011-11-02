@@ -100,9 +100,8 @@ public class HostMgmtPresenter
         hostSelection = request.getParameter("host", hostSelection);// set once and keep it
     }
 
-    // TODO: Shouldn't this be onReset()?
     @Override
-    protected void onReveal() {
+    protected void onReset() {
         super.onReveal();
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
@@ -124,17 +123,20 @@ public class HostMgmtPresenter
                     new PlaceRequest(NameTokens.ServerPresenter)
             );
             hasBeenRevealed = true;
+
+
+            //  highlight LHS nav
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    getEventBus().fireEvent(
+                            new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverConfigs(), "hosts")
+
+                    );
+                }
+            });
+
         }
-
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverConfigs(), "hosts")
-
-                );
-            }
-        });
 
     }
 

@@ -85,7 +85,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_runtimeStatus());
+        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverInstances());
         layout.add(titleBar);
 
         VerticalPanel vpanel = new VerticalPanel();
@@ -93,7 +93,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_serverInstances());
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_runtimeStatus());
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -266,9 +266,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
         bottomLayout.add(formPanel, "Availability");
-        bottomLayout.add(new HTML(""), "JVM Status");
-        bottomLayout.add(new HTML(""), "Deployed Applications");
-        bottomLayout.add(new HTML(""), "Subsystem Metrics");
 
         bottomLayout.selectTab(0);
 

@@ -91,7 +91,7 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
     }
 
     public void updateInstances(List<Server> servers) {
-        serversSection.updateServers(servers);
+
     }
 
     @Override

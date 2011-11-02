@@ -19,18 +19,14 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.util.Places;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
@@ -51,6 +47,9 @@ class ServersConfigSection {
         panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_server()).asWidget();
         hostTree = new LHSNavTree("hosts");
 
+        LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
+        hostTree.addItem(serversItem);
+
         panel.setContent(hostTree);
     }
 
@@ -63,60 +62,6 @@ class ServersConfigSection {
         return panel;
     }
 
-    public void updateServers(List<Server> servers) {
-
-
-        hostTree.removeItems();
-
-        /*for(Server server: servers)
-        {
-            final String serverName = server.getName();
-            final TreeItem item = new LHSNavTreeItem(serverName, buildToken(serverName));
-            hostTree.addItem(item);
-        }
-
-        if(servers.isEmpty())
-        {
-            TreeItem empty = new TreeItem(new HTML(Console.CONSTANTS.common_label_noRecords()));
-            hostTree.addItem(empty);
-            hostTree.addItem(new DefaultButton("Create New Server", new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    Console.MODULES.getPlaceManager().revealPlace(
-                            new PlaceRequest(NameTokens.ServerPresenter).with("action", "new")
-                    );
-                }
-            }));
-
-        }
-        */
-
-        LHSNavTreeItem serverConfigs = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.ServerPresenter)
-                );
-            }
-        });
-
-        hostTree.addItem(serverConfigs);
-
-       /* LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_runtimeStatus(), new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.InstancesPresenter)
-                );
-            }
-        });
-
-        hostTree.addItem(serverInstances); */
-
-
-    }
 
     public String buildToken(String serverName) {
         assert selectedHost!=null : "host selection is null!";
