@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.ballroom.client.layout.LHSNavTree;
-import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
@@ -43,14 +43,14 @@ public class LHSStandaloneNavigation {
 
     private VerticalPanel stack;
 
-    private LayoutPanel layout;
+    private VerticalPanel layout;
     private LHSNavTree subsysTree;
 
     public LHSStandaloneNavigation() {
         super();
 
-        layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
+        layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
@@ -63,16 +63,6 @@ public class LHSStandaloneNavigation {
         DisclosurePanel subsysPanel  = new DisclosureStackPanel("Profile").asWidget();
         subsysPanel.setContent(subsysTree);
         stack.add(subsysPanel);
-
-        // ----------------------------------------------------
-
-        Tree serverTree = new LHSNavTree("profiles");
-        serverTree.addItem(new LHSNavTreeItem("JVM Status", NameTokens.VirtualMachine));
-        serverTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Runtime Status").asWidget();
-        serverPanel.setContent(serverTree);
-
-        stack.add(serverPanel);
 
         // ----------------------------------------------------
 

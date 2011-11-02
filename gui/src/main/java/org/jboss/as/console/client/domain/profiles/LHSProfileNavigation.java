@@ -46,7 +46,7 @@ class LHSProfileNavigation {
     public LHSProfileNavigation() {
 
         layout = new DockLayoutPanel(Style.Unit.PX);
-        layout.setStyleName("fill-layout");
+        layout.setStyleName("fill-layout-width");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
@@ -60,7 +60,11 @@ class LHSProfileNavigation {
         stack.add(commonSection.asWidget());
 
         layout.addNorth(selector.asWidget(), 60);
-        layout.add(stack);
+
+        VerticalPanel wrapper = new VerticalPanel();
+        wrapper.setStyleName("fill-layout-width");
+        wrapper.add(stack);
+        layout.add(wrapper);
 
     }
 

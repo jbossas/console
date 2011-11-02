@@ -66,7 +66,12 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
         // -----------------------------
 
         layout.addNorth(selectorWidget, SELECTOR_HEIGHT);
-        layout.add(stack);
+
+
+        VerticalPanel wrapper = new VerticalPanel();
+        wrapper.setStyleName("fill-layout-width");
+        wrapper.add(stack);
+        layout.add(wrapper);
 
         // listen on host selection events
         // TODO: should this be moved ot presenter onBind()?

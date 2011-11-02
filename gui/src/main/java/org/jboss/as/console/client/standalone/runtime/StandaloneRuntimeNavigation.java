@@ -17,13 +17,13 @@ import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 public class StandaloneRuntimeNavigation {
 
     private VerticalPanel stack;
-    private LayoutPanel layout;
+    private VerticalPanel layout;
     private LHSNavTree subsysTree;
 
     public Widget asWidget()
     {
-        layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
+        layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
@@ -32,7 +32,6 @@ public class StandaloneRuntimeNavigation {
 
 
         subsysTree = new LHSNavTree("standalone-runtime");
-
 
 
         // ----------------------------------------------------
