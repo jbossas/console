@@ -147,7 +147,6 @@ public class HostMgmtPresenter
 
     @Override
     public void onHostSelection(String hostName) {
-        System.out.println("Selected Host: "+hostName);
         hostSelection.setName(hostName);
     }
 

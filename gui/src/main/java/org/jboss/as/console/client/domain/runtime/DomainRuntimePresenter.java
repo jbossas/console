@@ -27,12 +27,14 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
+import java.util.Timer;
 
 /**
  * @author Heiko Braun
  * @date 11/2/11
  */
-public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy> {
+public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
+    implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -50,9 +52,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
-
         void setHosts(List<Host> hosts);
-
         void setServer(String host, List<Server> server);
     }
 
@@ -72,6 +72,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
 
@@ -84,21 +85,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         if(!hasBeenRevealed &&
                 NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
-
-            /*hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                @Override
-                public void onSuccess(List<Host> result) {
-                    getView().updateHosts(result);
-                }
-            }); */
-
             placeManager.revealRelativePlace(
                     new PlaceRequest(NameTokens.InstancesPresenter)
             );
             hasBeenRevealed = true;
 
 
-            //  highliht LHS nav
+            //  highlight LHS nav
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
@@ -111,31 +104,41 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         }
 
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
-            public void onSuccess(List<Host> hosts) {
-                getView().setHosts(hosts);
+            public void execute() {
+                hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                    @Override
+                    public void onSuccess(List<Host> hosts) {
+                        getView().setHosts(hosts);
+                    }
+                });
+
+                if (hostSelection.isSet()) {
+                    hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+                        @Override
+                        public void onSuccess(List<Server> hosts) {
+                            getView().setServer(hostSelection.getName(), hosts);
+                        }
+                    });
+                } else {
+                    throw new RuntimeException("Host selection not set!");
+                }
+
             }
         });
-
-        if(hostSelection.isSet())
-        {
-            hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
-                @Override
-                public void onSuccess(List<Server> hosts) {
-                    getView().setServer(hostSelection.getName(), hosts);
-                }
-            });
-        }
-        else
-        {
-            Console.error("Host selection not set!");
-        }
 
     }
 
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+    }
+
+    @Override
+    public void onHostSelection(String hostName) {
+
+        System.out.println("**"+hostSelection.getName());
+        hostSelection.setName(hostName);
     }
 }
