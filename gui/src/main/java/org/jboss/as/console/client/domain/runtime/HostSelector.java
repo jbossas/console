@@ -76,7 +76,9 @@ public class HostSelector {
 
     public void setServersOnHost(String host, List<String> serverNames)
     {
+        servers.clearSelection();
         servers.setValues(serverNames);
+        servers.setItemSelected(0, true);
 
         for(int i=0; i<hosts.getItemCount();i++)
         {
