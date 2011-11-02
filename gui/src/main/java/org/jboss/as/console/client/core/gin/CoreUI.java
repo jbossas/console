@@ -57,6 +57,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -231,5 +232,5 @@ public interface CoreUI extends Ginjector {
     // runtime
 
     AsyncProvider<StandaloneRuntimePresenter> getRuntimePresenter();
-
+    AsyncProvider<DomainRuntimePresenter> getDomainRuntimePresenter();
 }

@@ -58,12 +58,12 @@ public class Header implements ValueChangeHandler<String> {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
             //new String[]{NameTokens.ServerGroupMgmtPresenter, Console.CONSTANTS.common_label_serverGroups()},
             new String[]{NameTokens.HostMgmtPresenter, Console.CONSTANTS.common_label_hosts()},
-            new String[]{"domain-runtime", "Runtime"}
+            new String[]{NameTokens.DomainRuntimePresenter, "Runtime"}
     };
 
     public static final String[][] SECTIONS_STANADLONE = {
             new String[]{NameTokens.serverConfig, "Profile"},
-            new String[]{"standalone-runtime", "Runtime"}
+            new String[]{NameTokens.StandaloneRuntimePresenter, "Runtime"}
     };
 
     private MessageBar messageBar;

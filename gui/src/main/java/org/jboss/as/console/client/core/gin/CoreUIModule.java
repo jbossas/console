@@ -80,6 +80,8 @@ import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimeView;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -438,6 +440,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 StandaloneRuntimePresenter.MyView.class,
                 StandaloneRuntimeView.class,
                 StandaloneRuntimePresenter.MyProxy.class);
+
+        bindPresenter(DomainRuntimePresenter.class,
+                DomainRuntimePresenter.MyView.class,
+                DomainRuntimeView.class,
+                DomainRuntimePresenter.MyProxy.class);
     }
 
 }
