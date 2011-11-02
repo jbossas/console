@@ -24,12 +24,9 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -39,7 +36,6 @@ class ServersConfigSection {
 
     private Tree hostTree;
 
-    private String selectedHost = null;
     private DisclosurePanel panel;
 
     public ServersConfigSection() {
@@ -53,21 +49,9 @@ class ServersConfigSection {
         panel.setContent(hostTree);
     }
 
-    public void setSelectedHost(String selectedHost) {
-        this.selectedHost = selectedHost;
-    }
 
     public Widget asWidget()
     {
         return panel;
-    }
-
-
-    public String buildToken(String serverName) {
-        assert selectedHost!=null : "host selection is null!";
-        final String token = "hosts/" + NameTokens.ServerPresenter+
-                ";host="+selectedHost +
-                ";server=" + serverName;
-        return token;
     }
 }

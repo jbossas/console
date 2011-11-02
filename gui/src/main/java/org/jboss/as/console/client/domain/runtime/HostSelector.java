@@ -1,8 +1,13 @@
 package org.jboss.as.console.client.domain.runtime;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
@@ -22,7 +27,20 @@ public class HostSelector {
         HorizontalPanel layout = new HorizontalPanel();
         layout.getElement().setAttribute("style","padding:4px;");
         hosts = new ComboBox();
+        hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(event.getValue()));
+            }
+        });
+
         servers = new ComboBox();
+        servers.addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                // TODO
+            }
+        });
 
         Label hostLabel = new Label("Host:");
         hostLabel.setStyleName("header-label");
@@ -51,7 +69,9 @@ public class HostSelector {
 
     public void setHosts(List<String> hostNames)
     {
+        hosts.clearSelection();
         hosts.setValues(hostNames);
+        hosts.setItemSelected(0, true);
     }
 
     public void setServersOnHost(String host, List<String> serverNames)

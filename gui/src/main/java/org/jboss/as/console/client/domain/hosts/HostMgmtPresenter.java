@@ -37,10 +37,10 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
@@ -59,7 +59,7 @@ public class HostMgmtPresenter
     private final PlaceManager placeManager;
 
     private HostInformationStore hostInfoStore;
-    private String hostSelection = null;
+    private CurrentHostSelection hostSelection;
     private boolean hasBeenRevealed;
 
     @ContentSlot
@@ -73,18 +73,18 @@ public class HostMgmtPresenter
     public interface MyView extends View {
         void setPresenter(HostMgmtPresenter presenter);
         void updateHosts(List<Host> hosts);
-        void updateServers(List<Server> servers);
     }
 
     @Inject
     public HostMgmtPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore) {
+            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
+        this.hostSelection = hostSelection;
     }
 
     @Override
@@ -95,10 +95,10 @@ public class HostMgmtPresenter
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        hostSelection = request.getParameter("host", hostSelection);// set once and keep it
-    }
+//    @Override
+//    public void prepareFromRequest(PlaceRequest request) {
+//        hostSelection = request.getParameter("host", hostSelection.getName());// set once and keep it
+//    }
 
     @Override
     protected void onReset() {
@@ -147,27 +147,14 @@ public class HostMgmtPresenter
 
     @Override
     public void onHostSelection(String hostName) {
-
-        hostSelection = hostName;
-
-        hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
-            @Override
-            public void onSuccess(List<Server> result) {
-                getView().updateServers(result);
-            }
-        });
+        hostSelection.setName(hostName);
     }
 
     @Override
     public void onStaleModel(String modelName) {
         if(modelName.equals(StaleModelEvent.SERVER_CONFIGURATIONS))
         {
-            hostInfoStore.getServerConfigurations(hostSelection, new SimpleCallback<List<Server>>() {
-                @Override
-                public void onSuccess(List<Server> result) {
-                    getView().updateServers(result);
-                }
-            });
+            // Can be removed?
         }
     }
 }

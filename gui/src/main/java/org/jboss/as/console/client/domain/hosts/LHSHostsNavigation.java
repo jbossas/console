@@ -19,39 +19,29 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.domain.model.Server;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 3/2/11
  */
-class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
+class LHSHostsNavigation {
 
-    private static final int SELECTOR_HEIGHT = 60;
 
     private ServersConfigSection serversSection;
-
     private HostConfigSection hostConfigSection;
 
-    private HostSelector selector;
     private VerticalPanel stack;
-    private DockLayoutPanel layout;
+    private VerticalPanel layout;
 
     public LHSHostsNavigation() {
 
-        layout = new DockLayoutPanel(Style.Unit.PX);
+        layout = new VerticalPanel();
         layout.setStyleName("fill-layout");
 
-        selector = new HostSelector();
-        final Widget selectorWidget = selector.asWidget();
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
@@ -65,39 +55,11 @@ class LHSHostsNavigation implements HostSelectionEvent.HostSelectionListener {
 
         // -----------------------------
 
-        layout.addNorth(selectorWidget, SELECTOR_HEIGHT);
-
-
-        VerticalPanel wrapper = new VerticalPanel();
-        wrapper.setStyleName("fill-layout-width");
-        wrapper.add(stack);
-        layout.add(wrapper);
-
-        // listen on host selection events
-        // TODO: should this be moved ot presenter onBind()?
-        Console.MODULES.getEventBus().addHandler(
-                HostSelectionEvent.TYPE, this
-        );
-
+        layout.add(stack);
     }
 
     public Widget asWidget()
     {
         return layout;
-    }
-
-    public void updateHosts(List<Host> hosts) {
-        selector.updateHosts(hosts);
-    }
-
-    public void updateInstances(List<Server> servers) {
-
-    }
-
-    @Override
-    public void onHostSelection(String hostName) {
-        serversSection.setSelectedHost(hostName);
-
-        Console.MODULES.getCurrentSelectedHost().setName(hostName);
     }
 }
