@@ -22,10 +22,8 @@ package org.jboss.as.console.client.domain.profiles;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -44,20 +42,17 @@ import java.util.List;
  */
 class LHSProfileNavigation {
 
-    private DockLayoutPanel layout;
+    private VerticalPanel layout;
     private VerticalPanel stack;
-    private ProfileSelector selector;
     private ProfileSection profileSection;
 
     public LHSProfileNavigation() {
 
-        layout = new DockLayoutPanel(Style.Unit.PX);
+        layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
-
-        selector = new ProfileSelector();
 
         profileSection = new ProfileSection();
         stack.add(profileSection.asWidget());
@@ -77,12 +72,7 @@ class LHSProfileNavigation {
         CommonConfigSection commonSection = new CommonConfigSection();
         stack.add(commonSection.asWidget());
 
-        layout.addNorth(selector.asWidget(), 60);
-
-        VerticalPanel wrapper = new VerticalPanel();
-        wrapper.setStyleName("fill-layout-width");
-        wrapper.add(stack);
-        layout.add(wrapper);
+        layout.add(stack);
 
     }
 
@@ -94,11 +84,6 @@ class LHSProfileNavigation {
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
         profileSection.updateSubsystems(subsystems);
-    }
-
-    public void updateProfiles(List<ProfileRecord> profiles) {
-
-        selector.updateProfiles(profiles);
     }
 
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {

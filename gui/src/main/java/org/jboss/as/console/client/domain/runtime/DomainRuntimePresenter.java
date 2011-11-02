@@ -19,6 +19,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -32,6 +33,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
+    private HostInformationStore hostInfoStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -44,14 +46,18 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
+
+        void setHosts(List<Host> hosts);
     }
 
     @Inject
-    public DomainRuntimePresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                                  PlaceManager placeManager) {
+    public DomainRuntimePresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager,  HostInformationStore hostInfoStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+        this.hostInfoStore = hostInfoStore;
     }
 
     @Override
@@ -96,6 +102,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             });
 
         }
+
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+            @Override
+            public void onSuccess(List<Host> hosts) {
+                getView().setHosts(hosts);
+            }
+        });
 
     }
 

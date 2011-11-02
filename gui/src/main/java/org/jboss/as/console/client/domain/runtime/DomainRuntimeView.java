@@ -6,7 +6,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
-import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeNavigation;
+import org.jboss.as.console.client.domain.model.Host;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -20,6 +22,8 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     private LayoutPanel contentCanvas;
     private DomainRuntimeNavigation lhsNavigation;
 
+    private HostSelector hostSelector;
+
     public DomainRuntimeView() {
         super();
 
@@ -29,6 +33,7 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
         lhsNavigation = new DomainRuntimeNavigation();
 
         layout.addWest(lhsNavigation.asWidget(), 180);
+
         layout.add(contentCanvas);
 
     }
@@ -60,5 +65,10 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     @Override
     public void setPresenter(DomainRuntimePresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void setHosts(List<Host> hosts) {
+        Console.MODULES.getHeader().setHosts(hosts);
     }
 }

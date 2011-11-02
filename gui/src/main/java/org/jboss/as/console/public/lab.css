@@ -24,3 +24,10 @@
     background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
     color:#000!important;
 }
+
+
+.header-label {
+    font-weight:BOLD;
+    color: #4A5D75;
+    font-size:14px!important;
+}

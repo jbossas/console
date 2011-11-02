@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,8 +40,14 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.profiles.ProfileSelector;
+import org.jboss.as.console.client.domain.runtime.HostSelector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,9 +61,13 @@ public class Header implements ValueChangeHandler<String> {
     private HTMLPanel linksPane;
     private String currentHighlightedSection = null;
 
+    private DeckPanel subnavigation;
+    private HostSelector runtimeSelector = null;
+    private HostSelector hostSelector = null;
+    private ProfileSelector profileSelector = null;
+
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
-            //new String[]{NameTokens.ServerGroupMgmtPresenter, Console.CONSTANTS.common_label_serverGroups()},
             new String[]{NameTokens.HostMgmtPresenter, Console.CONSTANTS.common_label_hosts()},
             new String[]{NameTokens.DomainRuntimePresenter, "Runtime"}
     };
@@ -85,53 +96,10 @@ public class Header implements ValueChangeHandler<String> {
         LayoutPanel outerLayout = new LayoutPanel();
         outerLayout.addStyleName("page-header");
 
-        //HorizontalPanel contentLayout = new HorizontalPanel();
-
-        //contentLayout.addStyleName("fill-layout-width");
-        //contentLayout.getElement().setAttribute("style", "border:1px solid red;height:34px");
-
         headlineContainer = new LayoutPanel();
         headlineContainer.setStyleName("fill-layout");
 
-        //contentLayout.add(headlineContainer);
-
-        /*HTML debugLink = new HTML("Debug");
-        debugLink.setStyleName("cross-reference");
-        debugLink.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.DebugToolsPresenter)
-                );
-            }
-        });
-        contentLayout.add(debugLink);*/
-
-        /*HTML settingsLink = new HTML(Console.CONSTANTS.common_label_settings());
-        settingsLink.setStyleName("cross-reference");
-        settingsLink.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.SettingsPresenter)
-                );
-            }
-        });
-        contentLayout.add(settingsLink);
-
-
-        //debugLink.getElement().getParentElement().setAttribute("width", "50%");
-        //debugLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
-
-        settingsLink.getElement().getParentElement().setAttribute("width", "50%");
-        settingsLink.getElement().getParentElement().setAttribute("align", "right");
-        settingsLink.getElement().getParentElement().setAttribute("style", "text-align:right; padding-right:20px;color:#4A5D75");
-
-        */
-        //headlineContainer.getElement().getParentElement().setAttribute("width", "50%");
-
         Widget logo = getLogoSection();
-
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
@@ -140,13 +108,11 @@ public class Header implements ValueChangeHandler<String> {
 
         innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PCT);
         innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 50, Style.Unit.PCT);
-        innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 80, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
-        //outerLayout.add(contentLayout);
 
-        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        //outerLayout.setWidgetTopHeight(contentLayout , 34, Style.Unit.PX, 25, Style.Unit.PX);
+        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 80, Style.Unit.PX);
 
         return outerLayout;
     }
@@ -169,11 +135,11 @@ public class Header implements ValueChangeHandler<String> {
         panel.add(prodVersion);
 
 
-        logo.getElement().getParentElement().setAttribute("valign", "bottom");
-        logo.getElement().getParentElement().setAttribute("style", "vertical-align:bottom;");
+        logo.getElement().getParentElement().setAttribute("valign", "top");
+        logo.getElement().getParentElement().setAttribute("style", "vertical-align:top;");
 
-        prodVersion.getElement().getParentElement().setAttribute("valign", "bottom");
-        prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:bottom; padding-bottom:4px");
+        prodVersion.getElement().getParentElement().setAttribute("valign", "top");
+        prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:top;");
         return panel;
     }
 
@@ -200,6 +166,10 @@ public class Header implements ValueChangeHandler<String> {
             linksPane.add(widget, id);
 
         }
+
+        subnavigation = createSubnavigation();
+        linksPane.add(subnavigation, "subnavigation");
+
         return linksPane;
     }
 
@@ -211,7 +181,7 @@ public class Header implements ValueChangeHandler<String> {
 
         if(sections.length>0)
         {
-            headerString.appendHtmlConstant("<table class='header-links' cellpadding=0 cellspacing=0 border=0>");
+            headerString.appendHtmlConstant("<table border=0 class='header-links' cellpadding=0 cellspacing=0 border=0>");
             headerString.appendHtmlConstant("<tr id='header-links-ref'>");
 
             headerString.appendHtmlConstant("<td><img src=\"images/blank.png\" width=1/></td>");
@@ -228,9 +198,12 @@ public class Header implements ValueChangeHandler<String> {
                 //headerString.append(title);
 
                 //headerString.appendHtmlConstant("<td ><img src=\"images/blank.png\" width=1 height=32/></td>");
+
             }
 
-            headerString.appendHtmlConstant("</tr></table>");
+            headerString.appendHtmlConstant("</tr>");
+            headerString.appendHtmlConstant("</table>");
+            headerString.appendHtmlConstant("<div id='subnavigation' style='float:right;clear:right;'/>");
         }
 
         return headerString.toSafeHtml().asString();
@@ -256,6 +229,18 @@ public class Header implements ValueChangeHandler<String> {
 
     public void highlight(String name)
     {
+        if(name.equals(NameTokens.ProfileMgmtPresenter))
+        {
+            subnavigation.showWidget(0);
+        }
+        else if(name.equals(NameTokens.HostMgmtPresenter))
+        {
+            subnavigation.showWidget(1);
+        }
+        else if(name.equals(NameTokens.DomainRuntimePresenter))
+        {
+            subnavigation.showWidget(2);
+        }
 
         com.google.gwt.user.client.Element target = linksPane.getElementById("header-links-ref");
         if(target!=null) // standalone doesn't provide any top level links
@@ -274,10 +259,60 @@ public class Header implements ValueChangeHandler<String> {
                 }
             }
         }
+
     }
 
     public void setContent(Widget content) {
         headlineContainer.clear();
         headlineContainer.add(content);
+    }
+
+    public void setHosts(List<Host> hosts) {
+        if(runtimeSelector!=null)
+        {
+            List<String> hostNames = new ArrayList<String>(hosts.size());
+            for(Host h : hosts)
+            {
+                hostNames.add(h.getName());
+            }
+
+            runtimeSelector.setHosts(hostNames);
+            hostSelector.setHosts(hostNames);
+
+        }
+    }
+
+    public DeckPanel createSubnavigation() {
+
+        DeckPanel subnavigation = new DeckPanel();
+
+        profileSelector = new ProfileSelector();
+        subnavigation.add(profileSelector.asWidget());
+
+        hostSelector = new HostSelector();
+        hostSelector.setServerSelection(false);
+        subnavigation.add(hostSelector.asWidget());
+
+        runtimeSelector = new HostSelector();
+        subnavigation.add(runtimeSelector.asWidget());
+
+        return subnavigation;
+    }
+
+    public void setProfiles(List<ProfileRecord> profiles) {
+
+        if(profileSelector!=null)
+        {
+            List<String> profileNames = new ArrayList<String>(profiles.size());
+            for(ProfileRecord p :profiles)
+            {
+                profileNames.add(p.getName());
+            }
+
+            profileSelector.setProfiles(profileNames);
+
+        }
+
+
     }
 }
