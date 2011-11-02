@@ -147,6 +147,8 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -431,6 +433,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 SecurityPresenter.MyView.class,
                 SecurityView.class,
                 SecurityPresenter.MyProxy.class);
+
+        bindPresenter(StandaloneRuntimePresenter.class,
+                StandaloneRuntimePresenter.MyView.class,
+                StandaloneRuntimeView.class,
+                StandaloneRuntimePresenter.MyProxy.class);
     }
 
 }

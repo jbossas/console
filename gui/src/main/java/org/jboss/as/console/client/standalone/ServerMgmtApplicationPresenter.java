@@ -101,6 +101,8 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     protected void onReset() {
         super.onReset();
 
+        Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+
         if(!hasBeenRevealed)
         {
             Console.MODULES.getHeader().highlight(NameTokens.serverConfig);

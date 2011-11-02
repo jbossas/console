@@ -96,6 +96,7 @@ import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -227,4 +228,8 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<TransactionPresenter> getTransactionPresenter();
     AsyncProvider<SecurityPresenter> getSecurityPresenter();
+    // runtime
+
+    AsyncProvider<StandaloneRuntimePresenter> getRuntimePresenter();
+
 }

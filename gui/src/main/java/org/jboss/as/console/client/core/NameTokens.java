@@ -56,7 +56,8 @@ public class NameTokens {
     public static final String VirtualMachine = "vm";
     public static final String HostVMMetricPresenter = "host-vm";
     public static final String TransactionPresenter = "transactions";
-
+    public static final String StandaloneRuntimePresenter = "standalone-runtime";
+    public static final String DomainRuntimePresenter = "domain-runtime";
 
     public static String getMainLayout() {
         return mainLayout;

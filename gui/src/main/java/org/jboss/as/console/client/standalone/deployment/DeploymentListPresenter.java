@@ -42,6 +42,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
@@ -101,7 +102,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
 
   @Override
   protected void revealInParent() {
-    RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
+    RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
   }
 
   public void onFilterType(String value) {
