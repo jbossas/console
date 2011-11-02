@@ -35,7 +35,6 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  */
 public class TransactionPresenter extends Presenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
 
-
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private RevealStrategy revealStrategy;
@@ -53,6 +52,8 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
         void setTransactionManager(TransactionManager transactionManager);
 
         void recycleCharts();
+
+        void setProvideMetrics(boolean includeMetrics);
     }
 
     @Inject
@@ -78,6 +79,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getView().setProvideMetrics(Console.MODULES.getBootstrapContext().isStandalone());
     }
 
 

@@ -142,29 +142,39 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         return layout;
     }
 
+    public void setProvideMetrics(boolean provideMetrics) {
+        this.provideMetrics = provideMetrics;
+    }
+
     @Override
     public void setTransactionManager(TransactionManager tm) {
         form.edit(tm);
 
-        executionMetric.addSample(
-                new TXMetric(
-                        tm.getNumTransactions(),
-                        tm.getNumCommittedTransactions(),
-                        tm.getNumAbortedTransactions(),
-                        tm.getNumTimeoutTransactions())
-        );
+        if(provideMetrics)
+        {
+            executionMetric.addSample(
+                    new TXMetric(
+                            tm.getNumTransactions(),
+                            tm.getNumCommittedTransactions(),
+                            tm.getNumAbortedTransactions(),
+                            tm.getNumTimeoutTransactions())
+            );
 
-        rollbackMetric.addSample(
-                new RollbackMetric(
-                        tm.getNumApplicationRollback(),
-                        tm.getNumResourceRollback())
-        );
+            rollbackMetric.addSample(
+                    new RollbackMetric(
+                            tm.getNumApplicationRollback(),
+                            tm.getNumResourceRollback())
+            );
+        }
 
     }
 
     @Override
     public void recycleCharts() {
-        executionMetric.recycle();
-        rollbackMetric.recycle();
+        if(provideMetrics)
+        {
+            executionMetric.recycle();
+            rollbackMetric.recycle();
+        }
     }
 }
