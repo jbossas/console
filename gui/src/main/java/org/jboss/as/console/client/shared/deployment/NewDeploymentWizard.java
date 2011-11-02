@@ -53,7 +53,10 @@ public class NewDeploymentWizard  {
     private DefaultWindow window;
     private DispatchAsync dispatcher;
     private DeploymentViewRefresher refresher;
-    
+
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+ 	private static final String APPLICATION_JSON = "application/json";
+
     public NewDeploymentWizard(DefaultWindow window, DispatchAsync dispatcher, DeploymentViewRefresher refresher) {
         this.window = window;
         this.dispatcher = dispatcher;
@@ -118,6 +121,8 @@ public class NewDeploymentWizard  {
                 RequestBuilder.POST,
                 Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.DOMAIN_API)
         );
+
+        rb.setHeader(HEADER_CONTENT_TYPE, APPLICATION_JSON);
 
         try {
             rb.sendRequest(requestJSO, new RequestCallback(){
