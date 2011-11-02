@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.runtime;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -7,7 +8,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
@@ -29,8 +29,14 @@ public class HostSelector {
         hosts = new ComboBox();
         hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(event.getValue()));
+            public void onValueChange(final ValueChangeEvent<String> event) {
+
+                Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(event.getValue()));
+                    }
+                });
             }
         });
 

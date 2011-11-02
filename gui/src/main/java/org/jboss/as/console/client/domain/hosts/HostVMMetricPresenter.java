@@ -35,7 +35,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         implements VMMetricsManagement {
 
     private final PlaceManager placeManager;
-    private CurrentHostSelection currentHost;
+    private CurrentHostSelection hostSelection;
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
     private BeanFactory factory;
@@ -57,13 +57,13 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Inject
     public HostVMMetricPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, CurrentHostSelection currentHost,
+            PlaceManager placeManager, CurrentHostSelection hostSelection,
             DispatchAsync dispatcher, BeanFactory factory,
             ApplicationMetaData metaData, CurrentServerConfigurations serverConfigs) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
-        this.currentHost = currentHost;
+        this.hostSelection = hostSelection;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
@@ -81,6 +81,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
         getView().reset();
 
+        // TODO: cleanup, provide view strategy
         if(Console.visAPILoaded())
             getView().attachCharts();
         else
@@ -116,8 +117,12 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     private LoadMetricsCmd createLoadMetricCmd() {
+
+        if(!hostSelection.isSet())
+            throw new RuntimeException("Host selection not set!");
+
         ModelNode address = new ModelNode();
-        address.add("host", currentHost.getName());
+        address.add("host", hostSelection.getName());
         address.add("server", getCurrentServer());
 
         return new LoadMetricsCmd(
