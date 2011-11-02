@@ -42,6 +42,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.profiles.ProfileSelector;
 import org.jboss.as.console.client.domain.runtime.HostSelector;
 
@@ -278,6 +279,20 @@ public class Header implements ValueChangeHandler<String> {
 
             runtimeSelector.setHosts(hostNames);
             hostSelector.setHosts(hostNames);
+
+        }
+    }
+
+    public void setServers(String host, List<Server> server) {
+        if(runtimeSelector!=null)
+        {
+            List<String> serverNames = new ArrayList<String>(server.size());
+            for(Server s : server)
+            {
+                serverNames.add(s.getName());
+            }
+
+            runtimeSelector.setServersOnHost(host, serverNames);
 
         }
     }

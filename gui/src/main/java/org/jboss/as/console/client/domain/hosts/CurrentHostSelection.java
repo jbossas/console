@@ -38,4 +38,8 @@ public class CurrentHostSelection {
         this.name = name;
     }
 
+    public boolean isSet() {
+        return this.name!=null;
+    }
+
 }

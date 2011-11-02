@@ -53,7 +53,7 @@ public class HostSelectionEvent extends GwtEvent<HostSelectionEvent.HostSelectio
     }
 
     public interface HostSelectionListener extends EventHandler {
-        void onHostSelection(String HostName);
+        void onHostSelection(String hostName);
     }
 }
 

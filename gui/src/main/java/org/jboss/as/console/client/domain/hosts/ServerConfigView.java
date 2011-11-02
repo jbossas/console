@@ -70,6 +70,12 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private DefaultCellTable<Server> serverConfigTable;
     private ListDataProvider serverConfigProvider;
 
+    public ServerConfigView() {
+        serverConfigTable = new DefaultCellTable<Server>(10);
+        serverConfigProvider = new ListDataProvider<Server>();
+        serverConfigProvider.addDataDisplay(serverConfigTable);
+    }
+
     @Override
     public void setPresenter(ServerConfigPresenter presenter) {
         this.presenter = presenter;
@@ -137,10 +143,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         panel.add(new ContentHeaderLabel("Available Server Configurations"));
         panel.add(new ContentDescription("A server configuration does specify the overall configuration of a server. A server configuration can be started and perform work. Server configurations belong to server groups."));
-
-        serverConfigTable = new DefaultCellTable<Server>(10);
-        serverConfigProvider = new ListDataProvider<Server>();
-        serverConfigProvider.addDataDisplay(serverConfigTable);
 
         // Create columns
         Column<Server, String> nameColumn = new Column<Server, String>(new TextCell()) {

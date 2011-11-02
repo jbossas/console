@@ -7,6 +7,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.Server;
 
 import java.util.List;
 
@@ -70,5 +71,10 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     @Override
     public void setHosts(List<Host> hosts) {
         Console.MODULES.getHeader().setHosts(hosts);
+    }
+
+    @Override
+    public void setServer(String host, List<Server> server) {
+        Console.MODULES.getHeader().setServers(host, server);
     }
 }

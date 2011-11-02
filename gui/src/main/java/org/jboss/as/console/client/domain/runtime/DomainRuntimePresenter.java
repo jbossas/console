@@ -18,8 +18,11 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -34,6 +37,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
     private HostInformationStore hostInfoStore;
+    private CurrentHostSelection hostSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -48,16 +52,20 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setPresenter(DomainRuntimePresenter presenter);
 
         void setHosts(List<Host> hosts);
+
+        void setServer(String host, List<Server> server);
     }
 
     @Inject
     public DomainRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager,  HostInformationStore hostInfoStore) {
+            PlaceManager placeManager,  HostInformationStore hostInfoStore,
+            CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
+        this.hostSelection = hostSelection;
     }
 
     @Override
@@ -109,6 +117,20 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 getView().setHosts(hosts);
             }
         });
+
+        if(hostSelection.isSet())
+        {
+            hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+                @Override
+                public void onSuccess(List<Server> hosts) {
+                    getView().setServer(hostSelection.getName(), hosts);
+                }
+            });
+        }
+        else
+        {
+            Console.error("Host selection not set!");
+        }
 
     }
 
