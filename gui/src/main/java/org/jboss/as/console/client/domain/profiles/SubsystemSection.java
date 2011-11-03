@@ -53,7 +53,6 @@ class SubsystemSection {
 
         profileSelector = new ProfileSelector();
         Widget selectorWidget = profileSelector.asWidget();
-        selectorWidget.getElement().setAttribute("style", "padding-left:5px; padding-top:5px; padding-bottom:5px");
         layout.add(selectorWidget);
 
         // ------------
