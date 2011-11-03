@@ -36,14 +36,15 @@ public class TXExecutionView implements Sampler {
                 new NumberColumn("Timed Out")
         };
 
+        String title = "Transaction Execution";
         if(Console.visAPILoaded()) {
-            sampler = new ColumnChartView(320,200, "Transaction Execution")
+            sampler = new ColumnChartView(320,200, title)
                     .setColumns(cols)
                     .setTimelineSeries(false);
         }
         else
         {
-            sampler = new PlainColumnView()
+            sampler = new PlainColumnView(title)
                     .setColumns(cols);
         }
 

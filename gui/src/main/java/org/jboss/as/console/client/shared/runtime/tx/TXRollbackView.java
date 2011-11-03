@@ -39,14 +39,15 @@ public class TXRollbackView implements Sampler {
                 new NumberColumn("Resources")
         };
 
+        String title = "Rollback Origin";
         if(Console.visAPILoaded()) {
-            sampler = new ColumnChartView(320,200, "Rollback Origin")
+            sampler = new ColumnChartView(320,200, title)
                     .setColumns(cols)
                     .setTimelineSeries(false);
         }
         else
         {
-            sampler = new PlainColumnView()
+            sampler = new PlainColumnView(title)
                     .setColumns(cols);
         }
 
