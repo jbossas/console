@@ -103,7 +103,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
-import org.jboss.as.console.client.shared.runtime.tx.TXMetricView;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
@@ -450,7 +450,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bindPresenter(TXMetricPresenter.class,
                 TXMetricPresenter.MyView.class,
-                TXMetricView.class,
+                TXMetricViewImpl.class,
                 TXMetricPresenter.MyProxy.class);
     }
 

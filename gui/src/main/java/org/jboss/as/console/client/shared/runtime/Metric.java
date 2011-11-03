@@ -21,6 +21,11 @@ public class Metric {
             add(String.valueOf(i));
     }
 
+    public Metric(long... values) {
+        for(long l : values)
+            add(String.valueOf(l));
+    }
+
     public void add(String value)
     {
         values.add(value);
