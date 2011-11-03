@@ -9,9 +9,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.hosts.HostSelector;
+import org.jboss.as.console.client.domain.hosts.ServerSelector;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -21,7 +28,9 @@ class DomainRuntimeNavigation {
 
     private VerticalPanel stack;
     private VerticalPanel layout;
-    private LHSNavTree subsysTree;
+
+    private HostSelector hostSelector;
+    private ServerSelector serverSelector;
 
     public Widget asWidget()
     {
@@ -31,14 +40,17 @@ class DomainRuntimeNavigation {
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
 
-        // ----------------------------------------------------
-
-
-        subsysTree = new LHSNavTree("domain-runtime");
-
 
         // ----------------------------------------------------
-        Tree instanceTree = new LHSNavTree("domain-runtime");
+
+
+        VerticalPanel innerlayout = new VerticalPanel();
+        innerlayout.setStyleName("fill-layout-width");
+
+        hostSelector = new HostSelector();
+        innerlayout.add(hostSelector.asWidget());
+
+        Tree statusTree = new LHSNavTree("domain-runtime");
 
         LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), new ClickHandler()
         {
@@ -50,36 +62,37 @@ class DomainRuntimeNavigation {
             }
         });
 
-        instanceTree.addItem(serverInstances);
-        DisclosurePanel instancePanel  = new DisclosureStackPanel("Server").asWidget();
-        instancePanel.setContent(instanceTree);
 
-        stack.add(instancePanel);
-
-        // ----------------------------------------------------
-
-        Tree statusTree = new LHSNavTree("domain-runtime");
-        LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM Status", NameTokens.HostVMMetricPresenter);
-        statusTree.addItem(jvmItem);
+        statusTree.addItem(serverInstances);
+        innerlayout.add(statusTree);
 
 
-        //LHSNavTreeItem metrics = new LHSNavTreeItem("Subsystem Metrics", "metrics");
+        // -------------
+
+        serverSelector= new ServerSelector();
+        Widget serverSelectorWidget = serverSelector.asWidget();
+        serverSelectorWidget.getElement().setAttribute("style", "padding-top:10px; padding-left:4px;padding-right:4px");
+        innerlayout.add(serverSelectorWidget);
+
+        Tree metricTree = new LHSNavTree("domain-runtime");
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
 
-        statusTree.addItem(datasources);
-        statusTree.addItem(jmsQueues);
-        statusTree.addItem(web);
-        statusTree.addItem(tx);
+        metricTree.addItem(datasources);
+        metricTree.addItem(jmsQueues);
+        metricTree.addItem(web);
+        metricTree.addItem(tx);
+
+        innerlayout.add(metricTree);
 
 
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Status").asWidget();
-        serverPanel.setContent(statusTree);
+        DisclosurePanel statusPanel  = new DisclosureStackPanel("Status").asWidget();
+        statusPanel.setContent(innerlayout);
 
-        stack.add(serverPanel);
+        stack.add(statusPanel);
 
         // ----------------------------------------------------
 
@@ -94,5 +107,26 @@ class DomainRuntimeNavigation {
         layout.add(stack);
 
         return layout;
+    }
+
+    public void setHosts(List<Host> hosts) {
+        List<String> hostNames = new ArrayList<String>(hosts.size());
+        for(Host h : hosts)
+        {
+            hostNames.add(h.getName());
+        }
+
+        hostSelector.setHosts(hostNames);
+
+    }
+
+     public void setServer(List<Server> server) {
+        List<String> serverNames = new ArrayList<String>(server.size());
+        for(Server s : server)
+        {
+            serverNames.add(s.getName());
+        }
+
+         serverSelector.setServer(serverNames);
     }
 }

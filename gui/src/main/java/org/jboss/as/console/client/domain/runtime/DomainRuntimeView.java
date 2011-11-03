@@ -71,11 +71,11 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
 
     @Override
     public void setHosts(List<Host> hosts) {
-        // TODO
+        lhsNavigation.setHosts(hosts);
     }
 
     @Override
     public void setServer(String host, List<Server> server) {
-        // TODO
+        lhsNavigation.setServer(server);
     }
 }
