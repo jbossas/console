@@ -44,6 +44,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     private PeriodicRotatingFileHandlerSubview periodicRotatingFileHandlerSubview;
     private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
     private AsyncHandlerSubview asyncHandlerSubview;
+    private CustomHandlerSubview customHandlerSubview;
 
     @Inject
     public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
@@ -59,13 +60,15 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         periodicRotatingFileHandlerSubview = new PeriodicRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         sizeRotatingFileHandlerSubview = new SizeRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         asyncHandlerSubview = new AsyncHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        customHandlerSubview = new CustomHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         
         handlerListManager.setHandlerConsumers(rootLoggerSubview, loggerSubview, asyncHandlerSubview);
         handlerListManager.setHandlerProducers(consoleHandlerSubview, 
                                                fileHandlerSubview, 
                                                periodicRotatingFileHandlerSubview, 
                                                sizeRotatingFileHandlerSubview,
-                                               asyncHandlerSubview);
+                                               asyncHandlerSubview,
+                                               customHandlerSubview);
     }
 
     @Override
@@ -86,6 +89,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         handlerPanel.add(periodicRotatingFileHandlerSubview.asWidget(), periodicRotatingFileHandlerSubview.getEntityDisplayName());
         handlerPanel.add(sizeRotatingFileHandlerSubview.asWidget(), sizeRotatingFileHandlerSubview.getEntityDisplayName());
         handlerPanel.add(asyncHandlerSubview.asWidget(), asyncHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(customHandlerSubview.asWidget(), customHandlerSubview.getEntityDisplayName());
         handlerPanel.setStyleName("fill-layout-width");
         handlerPanel.selectTab(0);
         
@@ -98,7 +102,8 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
                                                       fileHandlerSubview, 
                                                       periodicRotatingFileHandlerSubview, 
                                                       sizeRotatingFileHandlerSubview,
-                                                      asyncHandlerSubview);
+                                                      asyncHandlerSubview,
+                                                      customHandlerSubview);
         
         return tabLayoutPanel;
     }
@@ -111,6 +116,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         periodicRotatingFileHandlerSubview.initialLoad(); 
         sizeRotatingFileHandlerSubview.initialLoad();
         asyncHandlerSubview.initialLoad();
+        customHandlerSubview.initialLoad();
     }
     
 }

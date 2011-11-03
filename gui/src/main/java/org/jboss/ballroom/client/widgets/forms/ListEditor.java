@@ -56,6 +56,8 @@ public class ListEditor<T extends Comparable> {
     private int numRows;
     private boolean enabled = true;
     private boolean allowEditItems = true;
+    
+    private String headerLabel;
 
     public ListEditor(ListManagement<T> listManager) {
         this(listManager, 5);
@@ -63,8 +65,17 @@ public class ListEditor<T extends Comparable> {
     
     
     public ListEditor(ListManagement<T> listManager, int rows) {
+        this(listManager, Console.CONSTANTS.common_label_value(), rows);
+    }
+        
+    public ListEditor(ListManagement<T> listManager, String headerLabel, int rows) {
+        this.headerLabel = headerLabel;
         this.listManager = listManager;
         this.numRows = rows;
+    }
+    
+    public void setValueColumnHeader(String headerLabel) {
+        this.headerLabel = headerLabel;
     }
 
     public Widget asWidget() {
@@ -120,7 +131,7 @@ public class ListEditor<T extends Comparable> {
         };
 
         // Add the columns.
-        listTable.addColumn(valueColumn, Console.CONSTANTS.common_label_value());
+        listTable.addColumn(valueColumn, this.headerLabel);
 
         listTable.addColumn(removeCol, Console.CONSTANTS.common_label_option());
 

@@ -58,6 +58,7 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
         
         if (item.getPropertyBinding().getJavaName().equals("handlers") && (action == Action.CREATED)) {
             handlerListEditor = (ListEditorFormItem)item.getWrapped();
+            handlerListEditor.setValueColumnHeader(Console.CONSTANTS.subsys_logging_handler());
         }
     }
     

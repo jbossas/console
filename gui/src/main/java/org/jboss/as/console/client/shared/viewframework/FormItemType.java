@@ -238,19 +238,17 @@ public enum FormItemType {
     }
     
     public static class StringListEditorItemFactory implements FormItemFactory {
-        private String addDialogTitle;
         private int rows;
 
         public StringListEditorItemFactory() {
-            this(Console.CONSTANTS.common_label_addItem(), 5);
+            this(5);
         }
 
         /**
          * @param addDialogTitle The title shown when the Add button is pressed on the ListEditor.
          * @param rows The number of rows in the PropertyEditor.
          */
-        public StringListEditorItemFactory(String addDialogTitle, int rows) {
-            this.addDialogTitle = addDialogTitle;
+        public StringListEditorItemFactory(int rows) {
             this.rows = rows;
         }
 
@@ -258,7 +256,6 @@ public enum FormItemType {
         public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
             ListEditorFormItem listEditor = new ListEditorFormItem(propBinding.getJavaName(),
                                                                    "",
-                                                                   addDialogTitle,
                                                                    rows,
                                                                    true);
             listEditor.setRequired(propBinding.isRequired());

@@ -54,6 +54,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.CustomHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.FileHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
@@ -126,6 +127,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<FileHandler> fileHandler();
     AutoBean<PeriodicRotatingFileHandler> periodicRotatingFileHandler();
     AutoBean<SizeRotatingFileHandler> sizeRotatingFileHandler();
+    AutoBean<CustomHandler> customHandler();
     
     AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();

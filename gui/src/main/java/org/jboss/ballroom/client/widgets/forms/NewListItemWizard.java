@@ -40,10 +40,15 @@ public class NewListItemWizard {
     private ListManagement<String> listManager;
     private boolean limitChoices = false;
     private FormItem nameItem = null;
+    private String label = "Value";
     
     public NewListItemWizard(ListManagement<String> listManager, boolean limitChoices) {
         this.listManager = listManager;
         this.limitChoices = limitChoices;
+    }
+    
+    public void setLabel(String label) {
+        this.label = label;
     }
     
     public Widget asWidget() {
@@ -57,9 +62,9 @@ public class NewListItemWizard {
         final Form<PropertyRecord> form = new Form<PropertyRecord>(PropertyRecord.class);
 
         if (limitChoices) {
-            this.nameItem = new ComboBoxItem("value", "Value");
+            this.nameItem = new ComboBoxItem("value", label);
         } else {
-            this.nameItem = new TextBoxItem("value", "Value");
+            this.nameItem = new TextBoxItem("value", label);
         }
 
         form.setFields(nameItem);

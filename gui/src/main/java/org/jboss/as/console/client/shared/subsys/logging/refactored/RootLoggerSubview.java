@@ -58,6 +58,7 @@ public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implem
         
         if (item.getPropertyBinding().getJavaName().equals("handlers") && (action == Action.CREATED)) {
             handlerListEditor = (ListEditorFormItem)item.getWrapped();
+            handlerListEditor.setValueColumnHeader(Console.CONSTANTS.subsys_logging_handler());
         }
     }
     

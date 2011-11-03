@@ -26,6 +26,7 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.jboss.as.console.client.Console;
 
 /**
  * FormItem that wraps a ListEditor table.
@@ -39,7 +40,7 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
     protected List<String> value = Collections.EMPTY_LIST;
     
     protected DefaultWindow addItemDialog;
-    protected String addDialogTitle;
+    protected String addDialogTitle = Console.CONSTANTS.common_label_addItem();
     
     protected NewListItemWizard newListItemWizard;
     protected List<String> availableChoices = Collections.EMPTY_LIST;
@@ -55,11 +56,16 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
      *                     in the setAvailableChoices() method.  If <code>false</code> the user may add any String value
      *                     to the list.
      */
-    public ListEditorFormItem(String name, String title, String addDialogTitle, int rows, boolean limitChoices) {
+    public ListEditorFormItem(String name, String title, int rows, boolean limitChoices) {
         super(name, title);
         this.listEditor = new ListEditor(this, rows);
-        this.addDialogTitle = addDialogTitle;
         this.newListItemWizard = new NewListItemWizard(this, limitChoices);
+    }
+    
+    public void setValueColumnHeader(String headerLabel) {
+        this.listEditor.setValueColumnHeader(headerLabel);
+        this.newListItemWizard.setLabel(headerLabel);
+        this.addDialogTitle = Console.CONSTANTS.common_label_add() + " " + headerLabel;
     }
     
     /**

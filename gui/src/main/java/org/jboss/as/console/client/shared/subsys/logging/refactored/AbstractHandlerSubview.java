@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.refactored;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.List;
 
 import org.jboss.as.console.client.Console;

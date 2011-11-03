@@ -75,6 +75,7 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler> im
         
         if (item.getPropertyBinding().getJavaName().equals("handlers")) {
             handlerListEditor = (ListEditorFormItem)item.getWrapped();
+            handlerListEditor.setValueColumnHeader(Console.CONSTANTS.subsys_logging_handler());
         }
         
         if (item.getPropertyBinding().getJavaName().equals("overflowAction")) {

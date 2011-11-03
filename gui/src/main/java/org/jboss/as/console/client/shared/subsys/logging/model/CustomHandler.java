@@ -44,6 +44,26 @@ public interface CustomHandler extends NamedEntity, HasLevel {
     @Override
     public void setName(String name);
     
+    @Binding(detypedName="module")
+    @FormItem(defaultValue="",
+              localLabel="subsys_logging_module",
+              required=true,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX",
+              order=500)
+    public String getModule();
+    public void setModule(String module);
+    
+    @Binding(detypedName="class")
+    @FormItem(defaultValue="",
+            localLabel="subsys_logging_className",
+            required=true,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT_BOX",
+            order=501)
+    public String getClassName();
+    public void setClassName(String className);
+    
     @Override
     @Binding(detypedName="level")
     @FormItem(defaultValue="INFO",
@@ -77,24 +97,6 @@ public interface CustomHandler extends NamedEntity, HasLevel {
               formItemTypeForAdd="FREE_FORM_TEXT_BOX")
     public String getFormatter();
     public void setFormatter(String formatter);
-    
-    @Binding(detypedName="module")
-    @FormItem(defaultValue="",
-              localLabel="subsys_logging_module",
-              required=true,
-              formItemTypeForEdit="TEXT_BOX",
-              formItemTypeForAdd="TEXT_BOX")
-    public String getModule();
-    public void setModule(String module);
-    
-    @Binding(detypedName="class")
-    @FormItem(defaultValue="",
-            localLabel="subsys_logging_className",
-            required=true,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX")
-    public String getClassName();
-    public void setClassName(String className);
     
     // ------ PROPERTIES TAB --------------
    @Binding(detypedName="properties", 
