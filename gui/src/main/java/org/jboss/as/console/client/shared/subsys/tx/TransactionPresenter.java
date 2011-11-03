@@ -19,9 +19,9 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -50,10 +50,6 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     public interface MyView extends View {
         void setPresenter(TransactionPresenter presenter);
         void setTransactionManager(TransactionManager transactionManager);
-
-        void recycleCharts();
-
-        void setProvideMetrics(boolean includeMetrics);
     }
 
     @Inject
@@ -79,15 +75,12 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getView().setProvideMetrics(Console.MODULES.getBootstrapContext().isStandalone());
     }
 
 
     @Override
     protected void onReset() {
         super.onReset();
-        // TODO: optimize recycle behaviour
-        getView().recycleCharts();
         loadModel();
 
     }

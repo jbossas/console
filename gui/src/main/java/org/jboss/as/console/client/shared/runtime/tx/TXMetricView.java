@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.runtime;
+package org.jboss.as.console.client.shared.runtime.tx;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.widgets.nav.ServerSwitch;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -92,12 +93,12 @@ public class TXMetricView extends SuspendableViewImpl implements TXMetricPresent
     }
 
     @Override
-    public void setTxMetric(TXMetric txMetric) {
+    public void setTxMetric(Metric txMetric) {
         this.executionMetric.addSample(txMetric);
     }
 
     @Override
-    public void setRollbackMetric(RollbackMetric rollbackMetric) {
+    public void setRollbackMetric(Metric rollbackMetric) {
         this.rollbackMetric.addSample(rollbackMetric);
     }
 

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.runtime;
+package org.jboss.as.console.client.shared.runtime.tx;
 
 /**
  * @author Heiko Braun

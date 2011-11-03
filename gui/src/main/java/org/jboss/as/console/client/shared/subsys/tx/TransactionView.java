@@ -3,15 +3,10 @@ package org.jboss.as.console.client.shared.subsys.tx;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.runtime.RollbackMetric;
-import org.jboss.as.console.client.shared.runtime.TXExecutionView;
-import org.jboss.as.console.client.shared.runtime.TXMetric;
-import org.jboss.as.console.client.shared.runtime.TXRollbackView;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -34,11 +29,6 @@ import java.util.Map;
 public class TransactionView extends SuspendableViewImpl implements TransactionPresenter.MyView{
 
     private TransactionPresenter presenter = null;
-
-    private boolean provideMetrics = true;
-    private TXExecutionView executionMetric;
-    private TXRollbackView rollbackMetric;
-
     private Form<TransactionManager> form ;
 
     @Override
@@ -121,62 +111,12 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
 
         panel.add(form.asWidget());
 
-        // ----------------------------------
-
-        if(provideMetrics){
-            panel.add(new ContentGroupLabel("Metrics"));
-
-            TabPanel bottomLayout = new TabPanel();
-            bottomLayout.addStyleName("default-tabpanel");
-            bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
-
-            this.executionMetric = new TXExecutionView(presenter);
-            bottomLayout.add(executionMetric.asWidget(),"Transactions");
-
-            this.rollbackMetric = new TXRollbackView(presenter);
-            bottomLayout.add(rollbackMetric.asWidget(),"Rollbacks");
-
-            bottomLayout.selectTab(0);
-
-            panel.add(bottomLayout);
-        }
-
         return layout;
     }
 
-    public void setProvideMetrics(boolean provideMetrics) {
-        this.provideMetrics = provideMetrics;
-    }
 
     @Override
     public void setTransactionManager(TransactionManager tm) {
         form.edit(tm);
-
-        if(provideMetrics)
-        {
-            executionMetric.addSample(
-                    new TXMetric(
-                            tm.getNumTransactions(),
-                            tm.getNumCommittedTransactions(),
-                            tm.getNumAbortedTransactions(),
-                            tm.getNumTimeoutTransactions())
-            );
-
-            rollbackMetric.addSample(
-                    new RollbackMetric(
-                            tm.getNumApplicationRollback(),
-                            tm.getNumResourceRollback())
-            );
-        }
-
-    }
-
-    @Override
-    public void recycleCharts() {
-        if(provideMetrics)
-        {
-            executionMetric.recycle();
-            rollbackMetric.recycle();
-        }
     }
 }

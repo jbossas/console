@@ -1,17 +1,16 @@
-package org.jboss.as.console.client.shared.runtime.plain;
+package org.jboss.as.console.client.shared.runtime;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.runtime.TXMetric;
 
 /**
  * @author Heiko Braun
  * @date 10/25/11
  */
-public interface TXExecutionSampler {
+public interface Sampler {
 
     Widget asWidget();
 
-    void addSample(TXMetric metric);
+    void addSample(Metric metric);
 
     void clearSamples();
 

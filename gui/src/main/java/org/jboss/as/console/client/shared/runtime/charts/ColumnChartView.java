@@ -1,7 +1,5 @@
 package org.jboss.as.console.client.shared.runtime.charts;
 
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -12,8 +10,8 @@ import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
-import org.jboss.as.console.client.shared.runtime.RollbackMetric;
-import org.jboss.as.console.client.shared.runtime.plain.TXRollbackSampler;
+import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.Sampler;
 
 import java.util.Date;
 
@@ -21,21 +19,28 @@ import java.util.Date;
  * @author Heiko Braun
  * @date 10/25/11
  */
-public class RollbackChartView extends AbstractChartView implements TXRollbackSampler {
+public class ColumnChartView extends AbstractChartView implements Sampler {
 
     private DataTable data;
     private ColumnChart chart;
 
-    private HTML appLabel;
-    private HTML resourceLabel;
     private VerticalPanel layout;
+    private Column[] columns = null;
 
-    public RollbackChartView(String title) {
-        super(title);
+    private boolean timelineSeries = true;
+
+    public ColumnChartView(int width, int height, String title) {
+        super(width, height, title);
     }
 
-    public RollbackChartView(int width, int height, String title) {
-        super(width, height, title);
+    public ColumnChartView setColumns(Column... columns) {
+        this.columns = columns;
+        return this;
+    }
+
+    public ColumnChartView setTimelineSeries(boolean timelineSeries) {
+        this.timelineSeries = timelineSeries;
+        return this;
     }
 
     public Widget asWidget() {
@@ -45,26 +50,25 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         chart = new ColumnChart(createTable(), createOptions()) ;
         layout.add(chart);
 
-        // labels
-
-        appLabel = new HTML();
-        resourceLabel = new HTML();
-
-        HorizontalPanel labels = new HorizontalPanel();
-        labels.add(appLabel);
-        labels.add(resourceLabel);
-
-        layout.add(labels);
-        labels.getElement().getParentElement().setAttribute("align", "center");
         return layout;
 
     }
 
     private DataTable createTable() {
+
+        if(null==columns)
+            throw new RuntimeException("Columns not specified");
+
         data = DataTable.create();
-        data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Applications");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Resources");
+
+        // default
+        data.addColumn(AbstractDataTable.ColumnType.DATE, "Time");
+
+        for(Column c : columns)
+        {
+            data.addColumn(c.getType(), c.getLabel());
+        }
+
         return data;
     }
 
@@ -75,27 +79,37 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         options.setTitle(title);
         options.setType(CoreChart.Type.COLUMNS);
         options.setLegend(LegendPosition.BOTTOM);
+
         return options;
     }
 
-    public void addSample(RollbackMetric metric) {
+    public void addSample(Metric metric) {
 
-        if(null==chart)
+
+        System.out.println(metric);
+
+        if(chart==null)
         {
             chart = new ColumnChart(createTable(), createOptions()) ;
+            chart.setTitle(title);
             layout.add(chart);
         }
 
-        appLabel.setHTML("Applications: " + metric.getAppRollback());
-        resourceLabel.setHTML("Resources: "+metric.getResourceRollback());
-
-        if(data.getNumberOfRows()==0)
+        if(data.getNumberOfRows()==0 || timelineSeries)
             data.addRow();
+
         int nextRow = data.getNumberOfRows()-1;
 
+        // default
         data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
-        data.setValue(nextRow, 1, metric.getAppRollback());
-        data.setValue(nextRow, 2, metric.getResourceRollback());
+
+
+        DataTableAdapter adapter = new DataTableAdapter(data);
+
+        for(int i=0; i<metric.getValues().size(); i++)
+        {
+            adapter.setValue(nextRow, i+1, columns[i].cast(metric.get(i)));
+        }
 
         Options options = createOptions();
 
@@ -123,7 +137,6 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         {
             layout.clear();
             chart=null;
-
         }
     }
 }

@@ -11,9 +11,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.shared.runtime.RollbackMetric;
-import org.jboss.as.console.client.shared.runtime.TXMetric;
-import org.jboss.as.console.client.shared.runtime.TXMetricManagement;
+import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricManagement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +33,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     public interface MyView extends View {
         void setPresenter(TXMetricManagement presenter);
-        void setTxMetric(TXMetric txMetric);
-        void setRollbackMetric(RollbackMetric rollbackMetric);
+        void setTxMetric(Metric txMetric);
+        void setRollbackMetric(Metric rollbackMetric);
         void setServerNames(List<String> serverNames);
 
         void recycleCharts();
@@ -77,8 +76,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     @Override
     public void refresh() {
 
-        getView().setTxMetric(new TXMetric(55, 12, 33, 5));
-        getView().setRollbackMetric(new RollbackMetric(77, 12));
+        getView().setTxMetric(new Metric(55, 12, 33, 5));
+        getView().setRollbackMetric(new Metric(77, 12));
 
         List<String> names = new ArrayList<String>();
         names.add("Server One (Production)");
