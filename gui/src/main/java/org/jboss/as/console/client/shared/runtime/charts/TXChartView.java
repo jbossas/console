@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.tx.charts;
+package org.jboss.as.console.client.shared.runtime.charts;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -8,13 +8,12 @@ import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
 import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
-import org.jboss.as.console.client.shared.subsys.tx.TXExecutionSampler;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
+import org.jboss.as.console.client.shared.runtime.TXMetric;
+import org.jboss.as.console.client.shared.runtime.plain.TXExecutionSampler;
 
 import java.util.Date;
 
@@ -92,6 +91,14 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
 
     public void addSample(TXMetric metric) {
 
+
+        if(chart==null)
+        {
+            chart = new ColumnChart(createTable(), createOptions()) ;
+            chart.setTitle(title);
+            layout.add(chart);
+        }
+
         totalLabel.setHTML("Total: " + metric.getTotal());
         commitedLabel.setHTML("Committed: "+metric.getCommitted());
 
@@ -131,11 +138,8 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
     public void recycle() {
         if(chart!=null)
         {
-            layout.remove(chart);
-            chart = new ColumnChart(createTable(), createOptions()) ;
-            chart.setTitle(title);
-            layout.add(chart);
+            layout.clear();
+            chart=null;
         }
-
     }
 }

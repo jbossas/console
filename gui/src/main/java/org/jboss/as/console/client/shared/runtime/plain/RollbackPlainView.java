@@ -1,10 +1,9 @@
-package org.jboss.as.console.client.shared.subsys.tx.charts;
+package org.jboss.as.console.client.shared.runtime.plain;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.tx.TXRollbackSampler;
-import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
+import org.jboss.as.console.client.shared.runtime.RollbackMetric;
+import org.jboss.as.console.client.shared.runtime.TXMetric;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 

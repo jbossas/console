@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.tx.charts;
+package org.jboss.as.console.client.shared.runtime.charts;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -8,14 +8,12 @@ import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
 import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
-import org.jboss.as.console.client.shared.subsys.tx.TXRollbackSampler;
-import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
+import org.jboss.as.console.client.shared.runtime.RollbackMetric;
+import org.jboss.as.console.client.shared.runtime.plain.TXRollbackSampler;
 
 import java.util.Date;
 
@@ -82,6 +80,12 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
 
     public void addSample(RollbackMetric metric) {
 
+        if(null==chart)
+        {
+            chart = new ColumnChart(createTable(), createOptions()) ;
+            layout.add(chart);
+        }
+
         appLabel.setHTML("Applications: " + metric.getAppRollback());
         resourceLabel.setHTML("Resources: "+metric.getResourceRollback());
 
@@ -117,9 +121,8 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
     public void recycle() {
         if(chart!=null)
         {
-            layout.remove(chart);
-            chart = new ColumnChart(createTable(), createOptions()) ;
-            layout.add(chart);
+            layout.clear();
+            chart=null;
 
         }
     }

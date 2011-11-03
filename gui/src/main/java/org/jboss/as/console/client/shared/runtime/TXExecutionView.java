@@ -1,10 +1,11 @@
-package org.jboss.as.console.client.shared.subsys.tx;
+package org.jboss.as.console.client.shared.runtime;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.tx.charts.TXChartView;
-import org.jboss.as.console.client.shared.subsys.tx.charts.TXPlainView;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
+import org.jboss.as.console.client.shared.runtime.charts.TXChartView;
+import org.jboss.as.console.client.shared.runtime.plain.TXPlainView;
+import org.jboss.as.console.client.shared.runtime.plain.TXExecutionSampler;
+import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 
 /**
  * @author Heiko Braun

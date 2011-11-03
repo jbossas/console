@@ -10,10 +10,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.tx.TXExecutionView;
-import org.jboss.as.console.client.shared.subsys.tx.TXRollbackView;
-import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.widgets.nav.ServerSwitch;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -21,7 +17,6 @@ import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -109,5 +104,11 @@ public class TXMetricView extends SuspendableViewImpl implements TXMetricPresent
     @Override
     public void setServerNames(List<String> serverNames) {
         serverSwitch.setServerNames(serverNames);
+    }
+
+    @Override
+    public void recycleCharts() {
+        executionMetric.recycle();
+        rollbackMetric.recycle();
     }
 }

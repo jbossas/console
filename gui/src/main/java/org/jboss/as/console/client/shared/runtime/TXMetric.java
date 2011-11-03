@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.tx.model;
+package org.jboss.as.console.client.shared.runtime;
 
 /**
  * @author Heiko Braun

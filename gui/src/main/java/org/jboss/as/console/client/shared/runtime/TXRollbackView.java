@@ -1,10 +1,11 @@
-package org.jboss.as.console.client.shared.subsys.tx;
+package org.jboss.as.console.client.shared.runtime;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.tx.charts.RollbackChartView;
-import org.jboss.as.console.client.shared.subsys.tx.charts.RollbackPlainView;
-import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
+import org.jboss.as.console.client.shared.runtime.charts.RollbackChartView;
+import org.jboss.as.console.client.shared.runtime.plain.RollbackPlainView;
+import org.jboss.as.console.client.shared.runtime.plain.TXRollbackSampler;
+import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 
 /**
  * @author Heiko Braun

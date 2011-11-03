@@ -1,7 +1,7 @@
-package org.jboss.as.console.client.shared.subsys.tx;
+package org.jboss.as.console.client.shared.runtime.plain;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
+import org.jboss.as.console.client.shared.runtime.TXMetric;
 
 /**
  * @author Heiko Braun
