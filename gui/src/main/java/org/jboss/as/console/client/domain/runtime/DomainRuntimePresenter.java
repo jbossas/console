@@ -106,29 +106,29 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         }
 
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
-            public void execute() {
-                hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                    @Override
-                    public void onSuccess(List<Host> hosts) {
-                        getView().setHosts(hosts);
-                    }
-                });
+            public void onSuccess(List<Host> hosts) {
 
-                if (hostSelection.isSet()) {
-                    hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
-                        @Override
-                        public void onSuccess(List<Server> hosts) {
-                            getView().setServer(hostSelection.getName(), hosts);
-                        }
-                    });
-                } else {
-                    throw new RuntimeException("Host selection not set!");
-                }
+                if(!hosts.isEmpty())
+                    selectDefaultHost(hosts);
 
+                getView().setHosts(hosts);
             }
         });
+
+    }
+
+    private void selectDefaultHost(List<Host> hosts) {
+
+        if(!hostSelection.isSet())
+        {
+            String name = hosts.get(0).getName();
+            System.out.println("Default host selection: "+name);
+            hostSelection.setName(name);
+            getEventBus().fireEvent(new HostSelectionEvent(name));
+        }
 
     }
 
@@ -140,8 +140,14 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onHostSelection(String hostName) {
 
-        System.out.println("Selected host: "+hostSelection.getName());
         hostSelection.setName(hostName);
+
+        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(List<Server> hosts) {
+                getView().setServer(hostSelection.getName(), hosts);
+            }
+        });
     }
 
     @Override

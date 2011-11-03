@@ -37,4 +37,8 @@ public class CurrentProfileSelection {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isSet() {
+        return this.name !=null;
+    }
 }

@@ -62,7 +62,7 @@ public class ProfileMgmtPresenter
     private SubsystemStore subsysStore;
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
-    private CurrentProfileSelection currentProfileSelection;
+    private CurrentProfileSelection profileSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -94,7 +94,7 @@ public class ProfileMgmtPresenter
         this.profileStore = profileStore;
         this.subsysStore = subsysStore;
         this.serverGroupStore = serverGroupStore;
-        this.currentProfileSelection = currentProfileSelection;
+        this.profileSelection = currentProfileSelection;
     }
 
 
@@ -110,6 +110,13 @@ public class ProfileMgmtPresenter
             profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
                 @Override
                 public void onSuccess(List<ProfileRecord> result) {
+
+                    // default profile
+                    if(!result.isEmpty())
+                    {
+                        selectDefaultProfile(result);
+                    }
+
                     getView().setProfiles(result);
                 }
             });
@@ -133,6 +140,16 @@ public class ProfileMgmtPresenter
 
                 t.schedule(250);
             }
+        }
+    }
+
+    private void selectDefaultProfile(List<ProfileRecord> result) {
+        if(!profileSelection.isSet())
+        {
+            String name = result.get(0).getName();
+            System.out.println("Default profile selection: "+name);
+            profileSelection.setName(name);
+            getEventBus().fireEvent(new ProfileSelectionEvent(name));
         }
     }
 
@@ -163,7 +180,7 @@ public class ProfileMgmtPresenter
     @Override
     public void onProfileSelection(String profileName) {
 
-        currentProfileSelection.setName(profileName);
+        profileSelection.setName(profileName);
         subsysStore.loadSubsystems(profileName, new SimpleCallback<List<SubsystemRecord>>() {
             @Override
             public void onSuccess(List<SubsystemRecord> result) {

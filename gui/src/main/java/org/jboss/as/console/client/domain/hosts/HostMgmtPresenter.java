@@ -42,7 +42,6 @@ import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
@@ -55,7 +54,6 @@ public class HostMgmtPresenter
         extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
         implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
 
-    private static final ApplicationHeader APPLICATION_HEADER = new ApplicationHeader(Console.CONSTANTS.common_label_hostManagement());
     private final PlaceManager placeManager;
 
     private HostInformationStore hostInfoStore;
@@ -102,22 +100,15 @@ public class HostMgmtPresenter
 
     @Override
     protected void onReset() {
-        super.onReveal();
+        super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
-        Console.MODULES.getHeader().setContent(APPLICATION_HEADER);
 
         // first request, select default contents
         if(!hasBeenRevealed &&
                 NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
 
-            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                @Override
-                public void onSuccess(List<Host> result) {
-                    getView().updateHosts(result);
-                }
-            });
 
             placeManager.revealRelativePlace(
                     new PlaceRequest(NameTokens.ServerPresenter)
@@ -136,6 +127,27 @@ public class HostMgmtPresenter
                 }
             });
 
+            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                @Override
+                public void onSuccess(List<Host> hosts) {
+                    if(!hosts.isEmpty())
+                        selectDefaultHost(hosts);
+                    getView().updateHosts(hosts);
+                }
+            });
+
+        }
+
+    }
+
+    private void selectDefaultHost(List<Host> hosts) {
+
+        if(!hostSelection.isSet())
+        {
+            String name = hosts.get(0).getName();
+            System.out.println("Default host selection: "+name);
+            hostSelection.setName(name);
+            getEventBus().fireEvent(new HostSelectionEvent(name));
         }
 
     }

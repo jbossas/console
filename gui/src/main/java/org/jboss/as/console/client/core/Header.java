@@ -168,8 +168,8 @@ public class Header implements ValueChangeHandler<String> {
 
         }
 
-        subnavigation = createSubnavigation();
-        linksPane.add(subnavigation, "subnavigation");
+        //subnavigation = createSubnavigation();
+        //linksPane.add(subnavigation, "subnavigation");
 
         return linksPane;
     }
@@ -230,18 +230,7 @@ public class Header implements ValueChangeHandler<String> {
 
     public void highlight(String name)
     {
-        if(name.equals(NameTokens.ProfileMgmtPresenter))
-        {
-            subnavigation.showWidget(0);
-        }
-        else if(name.equals(NameTokens.HostMgmtPresenter))
-        {
-            subnavigation.showWidget(1);
-        }
-        else if(name.equals(NameTokens.DomainRuntimePresenter))
-        {
-            subnavigation.showWidget(2);
-        }
+        toggleSubnavigation(name);
 
         com.google.gwt.user.client.Element target = linksPane.getElementById("header-links-ref");
         if(target!=null) // standalone doesn't provide any top level links
@@ -261,6 +250,24 @@ public class Header implements ValueChangeHandler<String> {
             }
         }
 
+    }
+
+    private void toggleSubnavigation(String name) {
+        if(subnavigation!=null)
+        {
+            if(name.equals(NameTokens.ProfileMgmtPresenter))
+            {
+                subnavigation.showWidget(0);
+            }
+            else if(name.equals(NameTokens.HostMgmtPresenter))
+            {
+                subnavigation.showWidget(1);
+            }
+            else if(name.equals(NameTokens.DomainRuntimePresenter))
+            {
+                subnavigation.showWidget(2);
+            }
+        }
     }
 
     public void setContent(Widget content) {
