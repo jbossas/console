@@ -15,8 +15,8 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -131,8 +131,23 @@ public class VMMetricsPresenter
         loadMetricCmd.execute(new SimpleCallback<CompositeVMMetric>() {
             @Override
             public void onSuccess(CompositeVMMetric result) {
-                getView().setHeap(result.getHeap());
-                getView().setNonHeap(result.getNonHeap());
+
+
+                getView().setHeap(new Metric(
+                        result.getHeap().getUsed(),
+                        result.getHeap().getMax(),
+                        result.getHeap().getCommitted(),
+                        result.getHeap().getInit()
+
+                ));
+
+                getView().setNonHeap(new Metric(
+                        result.getNonHeap().getUsed(),
+                        result.getNonHeap().getMax(),
+                        result.getNonHeap().getCommitted(),
+                        result.getNonHeap().getInit()
+                ));
+
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
                 getView().setThreads(result.getThreads());

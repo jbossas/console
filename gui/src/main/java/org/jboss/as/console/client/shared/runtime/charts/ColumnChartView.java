@@ -4,12 +4,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
-import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 
@@ -84,9 +82,6 @@ public class ColumnChartView extends AbstractChartView implements Sampler {
     }
 
     public void addSample(Metric metric) {
-
-
-        System.out.println(metric);
 
         if(chart==null)
         {

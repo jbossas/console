@@ -5,6 +5,7 @@ import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
+import org.jboss.as.console.client.shared.runtime.Metric;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public interface VMView extends View  {
 
     void setPresenter(VMMetricsManagement presenter);
 
-    void setHeap(HeapMetric heap);
-    void setNonHeap(HeapMetric nonHeap);
+    void setHeap(Metric heap);
+    void setNonHeap(Metric nonHeap);
     void setThreads(ThreadMetric thread);
     void setOSMetric(OSMetric osMetric);
     void setRuntimeMetric(RuntimeMetric runtime);

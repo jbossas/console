@@ -21,6 +21,7 @@ import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.VMMetricsManagement;
 import org.jboss.as.console.client.shared.jvm.VMView;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
@@ -153,8 +154,20 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
             @Override
             public void onSuccess(CompositeVMMetric result) {
-                getView().setHeap(result.getHeap());
-                getView().setNonHeap(result.getNonHeap());
+                getView().setHeap(new Metric(
+                        result.getHeap().getUsed(),
+                        result.getHeap().getMax(),
+                        result.getHeap().getCommitted(),
+                        result.getHeap().getInit()
+                ));
+
+                getView().setNonHeap(new Metric(
+                        result.getNonHeap().getUsed(),
+                        result.getNonHeap().getMax(),
+                        result.getNonHeap().getCommitted(),
+                        result.getNonHeap().getInit()
+
+                ));
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
                 getView().setThreads(result.getThreads());

@@ -18,6 +18,7 @@ import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
@@ -151,8 +152,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     @Override
     public void attachCharts() {
-        heapChart = new HeapChartView(320, 200, "Heap Usage") ;
-        nonHeapChart = new HeapChartView(320, 200, "Non Heap Usage") ;
+        heapChart = new HeapChartView("Heap Usage") ;
+        nonHeapChart = new HeapChartView("Non Heap Usage") ;
 
         heapPanel.add(heapChart.asWidget());
         heapPanel.add(nonHeapChart.asWidget());
@@ -177,7 +178,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     }
 
     @Override
-    public void setHeap(HeapMetric heap) {
+    public void setHeap(Metric heap) {
 
         if(heapChart!=null)
         {
@@ -187,7 +188,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     }
 
     @Override
-    public void setNonHeap(HeapMetric nonHeap) {
+    public void setNonHeap(Metric nonHeap) {
 
         if(nonHeapChart!=null)
         {

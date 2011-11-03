@@ -1,75 +1,119 @@
 package org.jboss.as.console.client.shared.jvm.charts;
 
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.Sampler;
+import org.jboss.as.console.client.shared.runtime.charts.Column;
+import org.jboss.as.console.client.shared.runtime.charts.LineChartView;
+import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
+import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
-import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 
 import java.util.Date;
-
 
 /**
  * @author Heiko Braun
  * @date 9/29/11
  */
-public class HeapChartView extends AbstractChartView {
+public class HeapChartView implements Sampler {
 
-    private DataTable data;
-    private LineChart chart;
-
-    private HTML usedLabel;
-    private HTML maxLabel;
+    private Sampler sampler;
+    private String title;
 
     public HeapChartView(String title) {
-        super(title);
-    }
-
-    public HeapChartView(int width, int height, String title) {
-        super(width, height, title);
+        this.title = title;
     }
 
     public Widget asWidget() {
-        VerticalPanel layout = new VerticalPanel();
-
-        // chart
-        chart = new LineChart(createTable(), createOptions()) ;
-        layout.add(chart);
-
-        // labels
-
-        maxLabel = new HTML();
-        usedLabel = new HTML();
-        usedLabel.getElement().setAttribute("style", "padding-right:5px");
-
-        HorizontalPanel labels = new HorizontalPanel();
-        labels.add(usedLabel);
-        labels.add(maxLabel);
-
-        layout.add(labels);
-        labels.getElement().getParentElement().setAttribute("align", "center");
-        return layout;
-
+        return displayStrategy();
     }
 
-    private DataTable createTable() {
-        data = DataTable.create();
-        data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Used");
-        return data;
+    private Widget displayStrategy() {
+
+        Column[] heapCols = new Column[] {
+                new NumberColumn("Used")
+        };
+
+        if(Console.visAPILoaded()) {
+            sampler = new NormalizedLineChartView(320,200, title)
+                    .setColumns(heapCols);
+        }
+        else
+        {
+            sampler = new PlainColumnView(title)
+                    .setColumns(heapCols);
+        }
+
+        return sampler.asWidget();
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
-        options.setWidth(width);
-        options.setHeight(height);
-        options.setTitle(title +" (mb)");
-        options.setType(CoreChart.Type.LINE);
-        return options;
+    @Override
+    public void addSample(Metric metric) {
+        sampler.addSample(metric);
     }
+
+    @Override
+    public void clearSamples() {
+        sampler.clearSamples();
+    }
+
+    @Override
+    public long numSamples() {
+        return sampler.numSamples();
+    }
+
+    @Override
+    public void recycle() {
+        sampler.recycle();
+    }
+
+
+    class NormalizedLineChartView extends LineChartView {
+        NormalizedLineChartView(int width, int height, String title) {
+            super(width, height, title);
+        }
+
+        @Override
+        public void addSample(Metric metric) {
+            long used = Long.valueOf(metric.get(0));
+            long max = Long.valueOf(metric.get(1));
+
+            long usedMb = ( used/1024)/1024;
+            long maxMb = (max/1024)/1024;
+
+            if(chart==null)
+            {
+                chart = new LineChart(createTable(), createOptions()) ;
+                chart.setTitle(title);
+                layout.add(chart);
+            }
+
+            data.addRow();
+            int nextRow = data.getNumberOfRows()-1;
+
+            // default
+            data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
+
+            data.setValue(nextRow, 1, usedMb);
+
+            Options options = createOptions();
+            AxisOptions vaxis = AxisOptions.create();
+            vaxis.setMaxValue(maxMb);
+            options.setVAxisOptions(vaxis);
+
+            AxisOptions haxis = AxisOptions.create();
+            haxis.set("showTextEvery", "25.00");
+            haxis.set("maxAlternation", "1");
+            options.setHAxisOptions(haxis);
+
+            chart.draw(data, options);
+        }
+    }
+
+   /*
 
     public void addSample(HeapMetric heap) {
 
@@ -89,7 +133,6 @@ public class HeapChartView extends AbstractChartView {
         Options options = createOptions();
         AxisOptions vaxis = AxisOptions.create();
         vaxis.setMaxValue(maxMb);
-        //vaxis.set("vAxis.gridlineColor", "#FF6666");
         options.setVAxisOptions(vaxis);
 
         AxisOptions haxis = AxisOptions.create();
@@ -100,15 +143,7 @@ public class HeapChartView extends AbstractChartView {
         chart.draw(data, options);
     }
 
-    public void clearSamples()
-    {
-        data = createTable();
-        chart.draw(data);
-    }
-
-    public long numSamples() {
-        return data.getNumberOfRows();
-    }
+     */
 
 
 }

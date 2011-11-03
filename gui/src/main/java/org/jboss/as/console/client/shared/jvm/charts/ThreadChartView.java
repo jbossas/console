@@ -11,6 +11,7 @@ import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
+import org.jboss.as.console.client.shared.runtime.charts.AbstractChartView;
 
 import java.util.Date;
 

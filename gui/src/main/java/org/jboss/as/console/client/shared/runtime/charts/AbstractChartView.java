@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jvm.charts;
+package org.jboss.as.console.client.shared.runtime.charts;
 
 import com.google.gwt.user.client.ui.Widget;
 
