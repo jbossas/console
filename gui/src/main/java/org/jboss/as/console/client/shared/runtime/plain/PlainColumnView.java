@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.plain;
 
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -13,6 +14,7 @@ import org.jboss.as.console.client.shared.runtime.charts.Column;
 public class PlainColumnView implements Sampler {
 
     private Column[] columns = null;
+    private Grid grid;
 
     public PlainColumnView setColumns(Column... columns) {
         this.columns = columns;
@@ -25,18 +27,41 @@ public class PlainColumnView implements Sampler {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
+        grid = new Grid(columns.length, 2);
 
+        int row = 0;
+        for(Column c : columns)
+        {
+            grid.setText(row, 0, c.getLabel()+":");
+            grid.setText(row, 1, "");
+            row++;
+        }
+
+        layout.add(grid);
         return layout;
     }
 
     @Override
     public void addSample(Metric metric) {
+        int row=0;
+
+        for(Column c : columns)
+        {
+            grid.setText(row, 1, metric.get(row));
+            row++;
+        }
 
     }
 
     @Override
     public void clearSamples() {
+        int row=0;
 
+        for(Column c : columns)
+        {
+            grid.setText(row, 1, "");
+            row++;
+        }
     }
 
     @Override
