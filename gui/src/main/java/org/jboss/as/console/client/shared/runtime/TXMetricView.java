@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.runtime;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -14,23 +15,28 @@ import org.jboss.as.console.client.shared.subsys.tx.TXRollbackView;
 import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
 import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
+import org.jboss.as.console.client.widgets.nav.ServerSwitch;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 11/3/11
  */
-public class TXMetricView extends SuspendableViewImpl implements TXMetricPresenter.MyView{
+public class TXMetricView extends SuspendableViewImpl implements TXMetricPresenter.MyView {
 
-    private TXMetricPresenter presenter;
+    private TXMetricManagement presenter;
     private TXExecutionView executionMetric;
     private TXRollbackView rollbackMetric;
-
+    private ServerSwitch serverSwitch;
 
     @Override
-    public void setPresenter(TXMetricPresenter presenter) {
+    public void setPresenter(TXMetricManagement presenter) {
         this.presenter = presenter;
     }
 
@@ -39,7 +45,7 @@ public class TXMetricView extends SuspendableViewImpl implements TXMetricPresent
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("Transaction Metrics");
+        FakeTabPanel titleBar = new FakeTabPanel("Transactions");
         layout.add(titleBar);
 
         // ----
@@ -49,7 +55,7 @@ public class TXMetricView extends SuspendableViewImpl implements TXMetricPresent
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.refresh();
             }
         }));
 
@@ -70,17 +76,38 @@ public class TXMetricView extends SuspendableViewImpl implements TXMetricPresent
 
         // --------------
 
+        serverSwitch = new ServerSwitch();
+        panel.add(serverSwitch.asWidget());
+
+        // --------------
+
+        HorizontalPanel outcomePanel = new HorizontalPanel();
+        outcomePanel .setStyleName("fill-layout-width");
+
         this.executionMetric = new TXExecutionView();
-        panel.add(executionMetric.asWidget());
+        outcomePanel .add(executionMetric.asWidget());
 
         this.rollbackMetric = new TXRollbackView();
-        panel.add(rollbackMetric.asWidget());
+        outcomePanel .add(rollbackMetric.asWidget());
 
-
-        // sample data
-        executionMetric.addSample(new TXMetric(55, 12, 33, 5));
-        rollbackMetric.addSample(new RollbackMetric(77, 12));
+        panel.add(new ContentGroupLabel("Transaction Outcome"));
+        panel.add(outcomePanel);
 
         return layout;
+    }
+
+    @Override
+    public void setTxMetric(TXMetric txMetric) {
+        this.executionMetric.addSample(txMetric);
+    }
+
+    @Override
+    public void setRollbackMetric(RollbackMetric rollbackMetric) {
+        this.rollbackMetric.addSample(rollbackMetric);
+    }
+
+    @Override
+    public void setServerNames(List<String> serverNames) {
+        serverSwitch.setServerNames(serverNames);
     }
 }

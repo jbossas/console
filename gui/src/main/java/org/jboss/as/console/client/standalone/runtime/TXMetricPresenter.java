@@ -11,13 +11,20 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.runtime.TXMetricManagement;
+import org.jboss.as.console.client.shared.subsys.tx.model.RollbackMetric;
+import org.jboss.as.console.client.shared.subsys.tx.model.TXMetric;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 11/3/11
  */
-public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMetricPresenter.MyProxy> {
+public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMetricPresenter.MyProxy>
+    implements TXMetricManagement {
 
     private final PlaceManager placeManager;
 
@@ -27,7 +34,10 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     }
 
     public interface MyView extends View {
-        void setPresenter(TXMetricPresenter presenter);
+        void setPresenter(TXMetricManagement presenter);
+        void setTxMetric(TXMetric txMetric);
+        void setRollbackMetric(RollbackMetric rollbackMetric);
+        void setServerNames(List<String> serverNames);
     }
 
     @Inject
@@ -48,10 +58,27 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     @Override
     protected void onReset() {
         super.onReset();
+        refresh();
     }
 
     @Override
     protected void revealInParent() {
        RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
+    }
+
+
+    @Override
+    public void refresh() {
+
+        getView().setTxMetric(new TXMetric(55, 12, 33, 5));
+        getView().setRollbackMetric(new RollbackMetric(77, 12));
+
+        List<String> names = new ArrayList<String>();
+        names.add("Server One (Production)");
+        names.add("Server Three");
+        names.add("Server Staging");
+        names.add("Load Test Environment");
+
+        getView().setServerNames(names);
     }
 }

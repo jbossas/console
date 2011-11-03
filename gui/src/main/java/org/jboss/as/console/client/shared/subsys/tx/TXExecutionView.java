@@ -31,7 +31,7 @@ public class TXExecutionView implements TXExecutionSampler {
     private Widget displayStrategy() {
 
         if(Console.visAPILoaded()) {
-            sampler = new TXChartView("Transaction Outcome");
+            sampler = new TXChartView(320,200, "Transaction Execution");
         }
         else
         {

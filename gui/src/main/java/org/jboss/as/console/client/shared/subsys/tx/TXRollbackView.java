@@ -31,7 +31,7 @@ public class TXRollbackView implements TXRollbackSampler {
     private Widget displayStrategy() {
 
         if(Console.visAPILoaded()) {
-            sampler = new RollbackChartView("Rollback Origin");
+            sampler = new RollbackChartView(320, 200, "Rollback Origin");
         }
         else
         {

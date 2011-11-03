@@ -6,8 +6,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
+import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
@@ -24,7 +26,7 @@ import java.util.Date;
 public class RollbackChartView extends AbstractChartView implements TXRollbackSampler {
 
     private DataTable data;
-    private BarChart chart;
+    private ColumnChart chart;
 
     private HTML appLabel;
     private HTML resourceLabel;
@@ -42,7 +44,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         layout = new VerticalPanel();
 
         // chart
-        chart = new BarChart(createTable(), createOptions()) ;
+        chart = new ColumnChart(createTable(), createOptions()) ;
         layout.add(chart);
 
         // labels
@@ -73,7 +75,8 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         options.setWidth(width);
         options.setHeight(height);
         options.setTitle(title);
-        options.setType(CoreChart.Type.LINE);
+        options.setType(CoreChart.Type.COLUMNS);
+        options.setLegend(LegendPosition.BOTTOM);
         return options;
     }
 
@@ -115,7 +118,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         if(chart!=null)
         {
             layout.remove(chart);
-            chart = new BarChart(createTable(), createOptions()) ;
+            chart = new ColumnChart(createTable(), createOptions()) ;
             layout.add(chart);
 
         }

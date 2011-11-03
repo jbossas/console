@@ -9,6 +9,7 @@ import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
+import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
@@ -24,7 +25,7 @@ import java.util.Date;
 public class TXChartView extends AbstractChartView implements TXExecutionSampler {
 
     private DataTable data;
-    private BarChart chart;
+    private ColumnChart chart;
 
     private HTML totalLabel;
     private HTML commitedLabel;
@@ -45,7 +46,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         layout = new VerticalPanel();
 
         // chart
-        chart = new BarChart(createTable(), createOptions()) ;
+        chart = new ColumnChart(createTable(), createOptions()) ;
         layout.add(chart);
 
         // labels
@@ -83,7 +84,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         options.setWidth(width);
         options.setHeight(height);
         options.setTitle(title);
-        options.setType(CoreChart.Type.BARS);
+        options.setType(CoreChart.Type.COLUMNS);
         options.setLegend(LegendPosition.BOTTOM);
 
         return options;
@@ -131,7 +132,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         if(chart!=null)
         {
             layout.remove(chart);
-            chart = new BarChart(createTable(), createOptions()) ;
+            chart = new ColumnChart(createTable(), createOptions()) ;
             chart.setTitle(title);
             layout.add(chart);
         }
