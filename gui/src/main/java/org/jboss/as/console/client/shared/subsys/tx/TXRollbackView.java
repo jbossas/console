@@ -15,7 +15,12 @@ public class TXRollbackView implements TXRollbackSampler {
     private TransactionPresenter presenter;
     private TXRollbackSampler sampler = null;
 
+    @Deprecated
     public TXRollbackView(TransactionPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public TXRollbackView() {
         this.presenter = presenter;
     }
 
@@ -26,7 +31,7 @@ public class TXRollbackView implements TXRollbackSampler {
     private Widget displayStrategy() {
 
         if(Console.visAPILoaded()) {
-            sampler = new RollbackChartView("");
+            sampler = new RollbackChartView("Rollback Origin");
         }
         else
         {

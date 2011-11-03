@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
+import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
@@ -23,7 +24,7 @@ import java.util.Date;
 public class RollbackChartView extends AbstractChartView implements TXRollbackSampler {
 
     private DataTable data;
-    private LineChart chart;
+    private BarChart chart;
 
     private HTML appLabel;
     private HTML resourceLabel;
@@ -41,7 +42,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         layout = new VerticalPanel();
 
         // chart
-        chart = new LineChart(createTable(), createOptions()) ;
+        chart = new BarChart(createTable(), createOptions()) ;
         layout.add(chart);
 
         // labels
@@ -81,7 +82,8 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         appLabel.setHTML("Applications: " + metric.getAppRollback());
         resourceLabel.setHTML("Resources: "+metric.getResourceRollback());
 
-        data.addRow();
+        if(data.getNumberOfRows()==0)
+            data.addRow();
         int nextRow = data.getNumberOfRows()-1;
 
         data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
@@ -113,7 +115,7 @@ public class RollbackChartView extends AbstractChartView implements TXRollbackSa
         if(chart!=null)
         {
             layout.remove(chart);
-            chart = new LineChart(createTable(), createOptions()) ;
+            chart = new BarChart(createTable(), createOptions()) ;
             layout.add(chart);
 
         }

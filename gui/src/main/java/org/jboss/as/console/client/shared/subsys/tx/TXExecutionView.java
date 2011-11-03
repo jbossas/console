@@ -15,7 +15,12 @@ public class TXExecutionView implements TXExecutionSampler {
     private TransactionPresenter presenter;
     private TXExecutionSampler sampler = null;
 
+    @Deprecated
     public TXExecutionView(TransactionPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public TXExecutionView() {
         this.presenter = presenter;
     }
 
@@ -26,7 +31,7 @@ public class TXExecutionView implements TXExecutionSampler {
     private Widget displayStrategy() {
 
         if(Console.visAPILoaded()) {
-            sampler = new TXChartView("");
+            sampler = new TXChartView("Transaction Outcome");
         }
         else
         {

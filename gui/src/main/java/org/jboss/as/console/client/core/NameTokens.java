@@ -59,6 +59,8 @@ public class NameTokens {
     public static final String StandaloneRuntimePresenter = "standalone-runtime";
     public static final String DomainRuntimePresenter = "domain-runtime";
 
+    public static final String TXMetrics = "tx-metrics";
+
     public static String getMainLayout() {
         return mainLayout;
     }

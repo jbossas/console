@@ -98,6 +98,7 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
+import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -233,4 +234,5 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<StandaloneRuntimePresenter> getRuntimePresenter();
     AsyncProvider<DomainRuntimePresenter> getDomainRuntimePresenter();
+    AsyncProvider<TXMetricPresenter> getTXMetricPresenter();
 }

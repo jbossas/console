@@ -6,9 +6,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
+import com.google.gwt.visualization.client.visualizations.corechart.BarChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 import org.jboss.as.console.client.shared.jvm.charts.AbstractChartView;
 import org.jboss.as.console.client.shared.subsys.tx.TXExecutionSampler;
@@ -23,7 +24,7 @@ import java.util.Date;
 public class TXChartView extends AbstractChartView implements TXExecutionSampler {
 
     private DataTable data;
-    private LineChart chart;
+    private BarChart chart;
 
     private HTML totalLabel;
     private HTML commitedLabel;
@@ -44,7 +45,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         layout = new VerticalPanel();
 
         // chart
-        chart = new LineChart(createTable(), createOptions()) ;
+        chart = new BarChart(createTable(), createOptions()) ;
         layout.add(chart);
 
         // labels
@@ -82,7 +83,9 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         options.setWidth(width);
         options.setHeight(height);
         options.setTitle(title);
-        options.setType(CoreChart.Type.LINE);
+        options.setType(CoreChart.Type.BARS);
+        options.setLegend(LegendPosition.BOTTOM);
+
         return options;
     }
 
@@ -91,7 +94,9 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         totalLabel.setHTML("Total: " + metric.getTotal());
         commitedLabel.setHTML("Committed: "+metric.getCommitted());
 
-        data.addRow();
+        if(data.getNumberOfRows()==0)
+            data.addRow();
+        //data.addRow(); only supports a single sample
         int nextRow = data.getNumberOfRows()-1;
 
         data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
@@ -105,6 +110,7 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         AxisOptions haxis = AxisOptions.create();
         haxis.set("showTextEvery", "10.00");
         haxis.set("maxAlternation", "1");
+        //haxis.set("titleTextStyle", "display:none");
         options.setHAxisOptions(haxis);
 
         chart.draw(data, options);
@@ -125,7 +131,8 @@ public class TXChartView extends AbstractChartView implements TXExecutionSampler
         if(chart!=null)
         {
             layout.remove(chart);
-            chart = new LineChart(createTable(), createOptions()) ;
+            chart = new BarChart(createTable(), createOptions()) ;
+            chart.setTitle(title);
             layout.add(chart);
         }
 

@@ -103,6 +103,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.runtime.TXMetricView;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
@@ -151,6 +152,7 @@ import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
+import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -445,6 +447,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DomainRuntimePresenter.MyView.class,
                 DomainRuntimeView.class,
                 DomainRuntimePresenter.MyProxy.class);
+
+        bindPresenter(TXMetricPresenter.class,
+                TXMetricPresenter.MyView.class,
+                TXMetricView.class,
+                TXMetricPresenter.MyProxy.class);
     }
 
 }
