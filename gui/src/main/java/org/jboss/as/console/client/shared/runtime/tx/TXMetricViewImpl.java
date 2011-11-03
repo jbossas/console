@@ -14,6 +14,7 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.widgets.nav.ServerSwitch;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -30,6 +31,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     private TXExecutionView executionMetric;
     private TXRollbackView rollbackMetric;
     private ServerSwitch serverSwitch;
+    protected boolean supportServers = false;
 
     @Override
     public void setPresenter(TXMetricManagement presenter) {
@@ -72,8 +74,16 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         // --------------
 
-        serverSwitch = new ServerSwitch();
-        panel.add(serverSwitch.asWidget());
+        if(supportServers)
+        {
+            serverSwitch = new ServerSwitch();
+            panel.add(serverSwitch.asWidget());
+        }
+        else
+        {
+            panel.add(new ContentHeaderLabel("Transaction Metrics"));
+        }
+
 
         // --------------
 
@@ -104,7 +114,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
     @Override
     public void setServerNames(List<String> serverNames) {
-        serverSwitch.setServerNames(serverNames);
+        if(supportServers)
+            serverSwitch.setServerNames(serverNames);
     }
 
     @Override
