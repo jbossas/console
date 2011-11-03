@@ -16,37 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging.refactored;
+package org.jboss.as.console.client.shared.subsys.logging;
+import org.jboss.as.console.client.shared.subsys.logging.model.SizeRotatingFileHandler;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.logging.refactored.LoggingLevelProducer.LogLevelConsumer;
+import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Main view class for Loggers.
+ * Subview for SizeRotatingFileHandler.
  * 
  * @author Stan Silvert
  */
-public abstract class AbstractFileHandlerSubview<T> extends AbstractHandlerSubview implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public class SizeRotatingFileHandlerSubview extends AbstractFileHandlerSubview<SizeRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    public AbstractFileHandlerSubview(Class<T> type,
-                                 ApplicationMetaData applicationMetaData, 
-                                 DispatchAsync dispatcher, 
-                                 HandlerListManager handlerListManager) {
-        super(type, applicationMetaData, dispatcher, handlerListManager);
+    public SizeRotatingFileHandlerSubview(ApplicationMetaData applicationMetaData, 
+                              DispatchAsync dispatcher, 
+                              HandlerListManager handlerListManager) {
+        super(SizeRotatingFileHandler.class, applicationMetaData, dispatcher, handlerListManager);
     }
 
     @Override
-    protected FormAdapter<T> makeAddEntityForm() {
-        Form<T> form = new Form(type);
-        form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
-                       levelItemForAdd,
-                       formMetaData.findAttribute("filePath").getFormItemForAdd(),
-                       formMetaData.findAttribute("fileRelativeTo").getFormItemForAdd());
-        return form;
+    protected String getEntityDisplayName() {
+        return Console.CONSTANTS.subsys_logging_sizeRotatingFileHandlers();
     }
 }

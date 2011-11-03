@@ -16,16 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging.refactored;
+package org.jboss.as.console.client.shared.subsys.logging;
 
 import java.util.List;
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 
 /**
  *
  * @author ssilvert
  */
-public interface HandlerConsumer {
+public interface HandlerProducer {
 
-    void handlersUpdated(List<String> handlerList);
+    List<NamedEntity> getHandlers();
     
 }
