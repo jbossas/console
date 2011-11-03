@@ -19,9 +19,7 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
@@ -32,6 +30,7 @@ import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +43,7 @@ class LHSProfileNavigation {
 
     private VerticalPanel layout;
     private VerticalPanel stack;
-    private ProfileSection profileSection;
+    private SubsystemSection subsystemSection;
 
     public LHSProfileNavigation() {
 
@@ -54,8 +53,8 @@ class LHSProfileNavigation {
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
 
-        profileSection = new ProfileSection();
-        stack.add(profileSection.asWidget());
+        subsystemSection = new SubsystemSection();
+        stack.add(subsystemSection.asWidget());
 
         // -------- groups
 
@@ -83,11 +82,22 @@ class LHSProfileNavigation {
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
-        profileSection.updateSubsystems(subsystems);
+        subsystemSection.updateSubsystems(subsystems);
     }
 
     public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
         //serverGroupSection.updateSubsystems(serverGroupRecords);
     }
 
+    public void setProfiles(List<ProfileRecord> profiles) {
+
+        List<String> profileNames = new ArrayList<String>(profiles.size());
+        for(ProfileRecord p :profiles)
+        {
+            profileNames.add(p.getName());
+        }
+
+        subsystemSection.setProfiles(profileNames);
+
+    }
 }

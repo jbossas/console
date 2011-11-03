@@ -93,11 +93,6 @@ public class HostMgmtPresenter
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
-//    @Override
-//    public void prepareFromRequest(PlaceRequest request) {
-//        hostSelection = request.getParameter("host", hostSelection.getName());// set once and keep it
-//    }
-
     @Override
     protected void onReset() {
         super.onReset();

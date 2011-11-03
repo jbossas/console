@@ -29,5 +29,30 @@
 .header-label {
     font-weight:BOLD;
     color: #4A5D75;
-    font-size:14px!important;
+    font-size:12px!important;
+    padding-right:2px;
+}
+
+
+
+.stack-section-header {
+    background-color: #F8F8F8;
+    border-top: 1px solid #A7ABB4;
+    border-bottom: 1px solid #A7ABB4;
+    color: #606060;
+    cursor: pointer;
+    font-family: Arial,Verdana,sans-serif;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-top: 2px;
+    width: 100%;
+}
+
+.stack-section {
+    border-top: none!important;
+    margin: 0;
+    padding-bottom: 15px;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
 }

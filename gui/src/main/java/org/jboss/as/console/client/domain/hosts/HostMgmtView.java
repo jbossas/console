@@ -22,10 +22,8 @@ package org.jboss.as.console.client.domain.hosts;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.domain.model.Server;
 
 import java.util.List;
 
@@ -80,6 +78,6 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
 
     @Override
     public void updateHosts(List<Host> hosts) {
-        Console.MODULES.getHeader().setHosts(hosts);
+        lhsNavigation.setHosts(hosts);
     }
 }

@@ -79,7 +79,7 @@ public class ProfileMgmtView extends SuspendableViewImpl
 
     @Override
     public void setProfiles(List<ProfileRecord> profileRecords) {
-        Console.MODULES.getHeader().setProfiles(profileRecords);
+        lhsNavigation.setProfiles(profileRecords);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.profiles;
+package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
@@ -17,51 +16,44 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/2/11
  */
-public class ProfileSelector {
+public class HostSelector {
 
-    private ComboBox profiles;
+    private ComboBox hosts;
 
     public Widget asWidget() {
 
         HorizontalPanel layout = new HorizontalPanel();
-        layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("style","padding:4px;");
-
-        profiles = new ComboBox();
-        profiles.addValueChangeHandler(new ValueChangeHandler<String>() {
+        hosts = new ComboBox();
+        hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {
 
                 Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
-                        Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(event.getValue()));
+                        Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(event.getValue()));
                     }
                 });
             }
         });
 
-        Label profileLabel = new Label("Profile:");
-        profileLabel.setStyleName("header-label");
-        layout.add(profileLabel);
-        Widget hWidget = profiles.asWidget();
+        Label hostLabel = new Label("Host:");
+        hostLabel.setStyleName("header-label");
+        layout.add(hostLabel);
+        Widget hWidget = hosts.asWidget();
         layout.add(hWidget);
 
-        // the combox box use all available space
+        // combo box use all available space
         hWidget.getElement().getParentElement().setAttribute("width", "100%");
-
 
         return layout;
     }
 
-
-    public void setProfiles(List<String> profileNames)
+    public void setHosts(List<String> hostNames)
     {
-        profiles.clearSelection();
-        profiles.setValues(profileNames);
-        profiles.setItemSelected(0, true);
-
-
+        hosts.clearSelection();
+        hosts.setValues(hostNames);
+        hosts.setItemSelected(0, true);
     }
 }
-

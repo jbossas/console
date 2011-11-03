@@ -19,10 +19,19 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.ProfileRecord;
+import org.jboss.ballroom.client.layout.LHSNavTree;
+import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -30,36 +39,70 @@ import org.jboss.as.console.client.Console;
  */
 class LHSHostsNavigation {
 
-
-    private ServersConfigSection serversSection;
-    private HostConfigSection hostConfigSection;
-
-    private VerticalPanel stack;
     private VerticalPanel layout;
+    private VerticalPanel stack;
+
+    private DisclosurePanel panel;
+    private LHSNavTree hostTree;
+
+    private HostSelector hostSelector;
 
     public LHSHostsNavigation() {
 
-        layout = new VerticalPanel();
-        layout.setStyleName("fill-layout");
 
+        layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
 
+        // --------
 
-        serversSection = new ServersConfigSection();
-        stack.add(serversSection.asWidget());
+        VerticalPanel innerlayout = new VerticalPanel();
+        innerlayout.setStyleName("fill-layout-width");
 
-        hostConfigSection = new HostConfigSection();
-        stack.add(hostConfigSection.asWidget());
+        hostSelector = new HostSelector();
+        innerlayout.add(hostSelector.asWidget());
 
-        // -----------------------------
+        DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_hostConfiguration()).asWidget();
+        hostPanel.setContent(innerlayout);
+
+        hostTree = new LHSNavTree("hosts");
+        innerlayout.add(hostTree);
+
+        LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
+        //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
+        LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "hosts/host-jvms");
+        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "hosts/host-interfaces");
+        LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host/host-properties");
+
+        hostTree.addItem(serversItem);
+        hostTree.addItem(jvms);
+        hostTree.addItem(interfaces);
+        hostTree.addItem(properties);
+
+        stack.add(hostPanel);
+
+        // --------
+
 
         layout.add(stack);
+
     }
 
     public Widget asWidget()
     {
         return layout;
+    }
+
+    public void setHosts(List<Host> hosts) {
+        List<String> hostNames = new ArrayList<String>(hosts.size());
+        for(Host h : hosts)
+        {
+            hostNames.add(h.getName());
+        }
+
+        hostSelector.setHosts(hostNames);
+
     }
 }

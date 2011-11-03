@@ -17,7 +17,7 @@ import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
  * @author Heiko Braun
  * @date 11/2/11
  */
-public class DomainRuntimeNavigation {
+class DomainRuntimeNavigation {
 
     private VerticalPanel stack;
     private VerticalPanel layout;

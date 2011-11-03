@@ -28,25 +28,35 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 2/15/11
  */
-class ProfileSection {
+class SubsystemSection {
 
     private LHSNavTree subsysTree;
     private DisclosurePanel panel;
+    private ProfileSelector profileSelector;
 
-    public ProfileSection()  {
+    public SubsystemSection()  {
 
         panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_subsystems()).asWidget();
         subsysTree = new LHSNavTree("profiles");
-        panel.setContent(subsysTree);
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
+
+        // ------------
+
+        profileSelector = new ProfileSelector();
+        Widget selectorWidget = profileSelector.asWidget();
+        selectorWidget.getElement().setAttribute("style", "padding-left:5px; padding-top:5px; padding-bottom:5px");
+        layout.add(selectorWidget);
+
+        // ------------
 
         layout.add(subsysTree);
 
@@ -64,5 +74,9 @@ class ProfileSection {
         subsysTree.removeItems();
 
         SubsystemTreeBuilder.build("domain/profile/", subsysTree, subsystems);
+    }
+
+    public void setProfiles(List<String> profileNames) {
+        profileSelector.setProfiles(profileNames);
     }
 }

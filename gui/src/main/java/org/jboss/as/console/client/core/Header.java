@@ -40,15 +40,8 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
-import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.Server;
-import org.jboss.as.console.client.domain.profiles.ProfileSelector;
-import org.jboss.as.console.client.domain.runtime.HostSelector;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,9 +56,6 @@ public class Header implements ValueChangeHandler<String> {
     private String currentHighlightedSection = null;
 
     private DeckPanel subnavigation;
-    private HostSelector runtimeSelector = null;
-    private HostSelector hostSelector = null;
-    private ProfileSelector profileSelector = null;
 
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
@@ -253,21 +243,7 @@ public class Header implements ValueChangeHandler<String> {
     }
 
     private void toggleSubnavigation(String name) {
-        if(subnavigation!=null)
-        {
-            if(name.equals(NameTokens.ProfileMgmtPresenter))
-            {
-                subnavigation.showWidget(0);
-            }
-            else if(name.equals(NameTokens.HostMgmtPresenter))
-            {
-                subnavigation.showWidget(1);
-            }
-            else if(name.equals(NameTokens.DomainRuntimePresenter))
-            {
-                subnavigation.showWidget(2);
-            }
-        }
+
     }
 
     public void setContent(Widget content) {
@@ -275,66 +251,12 @@ public class Header implements ValueChangeHandler<String> {
         headlineContainer.add(content);
     }
 
-    public void setHosts(List<Host> hosts) {
-        if(runtimeSelector!=null)
-        {
-            List<String> hostNames = new ArrayList<String>(hosts.size());
-            for(Host h : hosts)
-            {
-                hostNames.add(h.getName());
-            }
-
-            runtimeSelector.setHosts(hostNames);
-            hostSelector.setHosts(hostNames);
-
-        }
-    }
-
-    public void setServers(String host, List<Server> server) {
-        if(runtimeSelector!=null)
-        {
-            List<String> serverNames = new ArrayList<String>(server.size());
-            for(Server s : server)
-            {
-                serverNames.add(s.getName());
-            }
-
-            runtimeSelector.setServersOnHost(host, serverNames);
-
-        }
-    }
-
     public DeckPanel createSubnavigation() {
 
         DeckPanel subnavigation = new DeckPanel();
 
-        profileSelector = new ProfileSelector();
-        subnavigation.add(profileSelector.asWidget());
-
-        hostSelector = new HostSelector();
-        hostSelector.setServerSelection(false);
-        subnavigation.add(hostSelector.asWidget());
-
-        runtimeSelector = new HostSelector();
-        subnavigation.add(runtimeSelector.asWidget());
+        // TODO: fill in contents
 
         return subnavigation;
-    }
-
-    public void setProfiles(List<ProfileRecord> profiles) {
-
-        if(profileSelector!=null)
-        {
-            List<String> profileNames = new ArrayList<String>(profiles.size());
-            for(ProfileRecord p :profiles)
-            {
-                profileNames.add(p.getName());
-            }
-
-            profileSelector.setProfiles(profileNames);
-
-        }
-
-
     }
 }
