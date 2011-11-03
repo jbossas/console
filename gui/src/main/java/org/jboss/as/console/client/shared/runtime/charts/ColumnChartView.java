@@ -78,7 +78,7 @@ public class ColumnChartView extends AbstractChartView implements Sampler {
         options.setHeight(height);
         options.setTitle(title);
         options.setType(CoreChart.Type.COLUMNS);
-        options.setLegend(LegendPosition.BOTTOM);
+        //options.setLegend(LegendPosition.BOTTOM);
 
         return options;
     }
