@@ -62,6 +62,10 @@
     padding:0;
 }
 
+.tablepicker-popup {
+    background-color: #F8F8F8;
+}
+
 .table-picker-value {
     border-bottom: 1px solid #A7ABB4;
     border-left: 1px solid #A7ABB4;

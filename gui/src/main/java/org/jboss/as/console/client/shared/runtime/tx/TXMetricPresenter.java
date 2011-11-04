@@ -10,12 +10,10 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -28,7 +26,6 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -58,7 +55,6 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         void setPresenter(TXMetricManagement presenter);
         void setTxMetric(Metric txMetric);
         void setRollbackMetric(Metric rollbackMetric);
-        void setServerNames(List<String> serverNames);
         void recycleCharts();
         void setSupportServers(boolean b);
     }
@@ -109,11 +105,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> servers) {
-                List<String> names = new ArrayList<String>();
-                for(Server s : servers)
-                    names.add(s.getName());
 
-                getView().setServerNames(names);
+                getView().setServer(servers);
             }
         });
 

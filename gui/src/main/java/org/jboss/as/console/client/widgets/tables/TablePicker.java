@@ -34,10 +34,12 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +52,7 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
 
     private static final int ESCAPE = 27;
     public final static double GOLDEN_RATIO = 1.618;
+    private ValueRenderer<T> renderer;
 
     interface Template extends SafeHtmlTemplates {
         @Template("<div class=\"{0}\">{1}</div>")
@@ -67,6 +70,7 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
     int popupWidth = -1;
 
     private CellTable<T> cellTable;
+    private String description = null;
 
     public interface ValueRenderer<T> {
         String render(T selection);
@@ -75,14 +79,26 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
     public TablePicker(final CellTable<T> table, final ValueRenderer<T> renderer) {
 
         this.cellTable = table;
+        this.renderer = renderer;
+    }
 
-        if(null==table.getSelectionModel())
-            table.setSelectionModel(new SingleSelectionModel<T>());
+    public void setPopupWidth(int popupWidth) {
+        this.popupWidth = popupWidth;
+    }
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Widget asWidget() {
+
+        if(null==cellTable.getSelectionModel())
+            cellTable.setSelectionModel(new SingleSelectionModel<T>());
+
+        cellTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                T selection = ((SingleSelectionModel<T>) table.getSelectionModel()).getSelectedObject();
+                T selection = ((SingleSelectionModel<T>) cellTable.getSelectionModel()).getSelectedObject();
                 String displayValue = renderer.render(selection);
                 currentDisplayedValue.setText(displayValue);
             }
@@ -110,13 +126,27 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
 
         popup.setStyleName("default-popup");
 
-        popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+        /*popup.addCloseHandler(new CloseHandler<PopupPanel>() {
             public void onClose(CloseEvent<PopupPanel> event) {
 
             }
-        });
+        });*/
 
-        popup.setWidget(table);
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
+        layout.addStyleName("tablepicker-popup");
+
+        if(description!=null)
+            layout.add(new HTML(description));
+
+        layout.add(cellTable);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(cellTable);
+        layout.add(pager);
+
+        popup.setWidget(layout);
 
         currentDisplayedValue = new HTML("&nbsp;");
         currentDisplayedValue.setStyleName("table-picker-value");
@@ -148,15 +178,8 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
         currentDisplayedValue.addClickHandler(clickHandler);
         img.addClickHandler(clickHandler);
 
-    }
-
-    public void setPopupWidth(int popupWidth) {
-        this.popupWidth = popupWidth;
-    }
-
-    public Widget asWidget() {
         return header;
-    };
+    }
 
     private void openPanel() {
 

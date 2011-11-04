@@ -79,7 +79,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         ToolStrip topLevelTools = new ToolStrip();
 
-        vmTable = new DefaultCellTable<String>(10);
+        vmTable = new DefaultCellTable<String>(5);
         Column<String, String> nameCol = new Column<String, String>(new TextCell()) {
             @Override
             public String getValue(String object) {
@@ -95,13 +95,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             }
         });
         vmSelection.setPopupWidth(400);
-        vmTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
-            @Override
-            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                String vm = ((SingleSelectionModel<String>) vmTable.getSelectionModel()).getSelectedObject();
-                presenter.onVMSelection(vm);
-            }
-        });
+        vmSelection.setDescription("Please select a server instance:");
+
         pauseBtn = new ToolButton("Stop Monitor");
         ClickHandler clickHandler = new ClickHandler() {
 
@@ -123,8 +118,19 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         topLevelTools.addToolButton(pauseBtn);
 
         Widget vmWidget = vmSelection.asWidget();
-        vmWidget.getElement().setAttribute("style", "width:150px;padding-right:5px;");
+        vmWidget.getElement().setAttribute("style", "width:200px;padding-right:5px;");
         topLevelTools.addToolWidgetRight(vmWidget);
+
+
+        // -------
+
+        vmTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                String vm = ((SingleSelectionModel<String>) vmTable.getSelectionModel()).getSelectedObject();
+                presenter.onVMSelection(vm);
+            }
+        });
 
         layout.add(topLevelTools);
 
@@ -261,5 +267,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     public void setVMKeys(List<String> vmkeys) {
         vmTable.setRowCount(vmkeys.size(), true);
         vmTable.setRowData(vmkeys);
+
+        if(!vmkeys.isEmpty())
+            vmTable.getSelectionModel().setSelected(vmkeys.get(0), true);
     }
 }

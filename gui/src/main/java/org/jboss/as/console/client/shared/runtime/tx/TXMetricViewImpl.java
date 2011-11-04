@@ -10,8 +10,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.hosts.ServerPicker;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.widgets.nav.ServerSwitch;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -29,8 +30,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     private TXMetricManagement presenter;
     private TXExecutionView executionMetric;
     private TXRollbackView rollbackMetric;
-    private ServerSwitch serverSwitch;
     protected boolean supportServers = false;
+    private ServerPicker serverPicker;
 
     @Override
     public void setPresenter(TXMetricManagement presenter) {
@@ -53,13 +54,21 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler(){
+        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 presenter.refresh();
             }
         }));
 
+        serverPicker = new ServerPicker(new ServerPicker.SelectionHandler() {
+            @Override
+            public void onSelection(Server server) {
+
+            }
+        });
+
+        toolStrip.addToolWidgetRight(serverPicker.asWidget());
 
         layout.add(toolStrip);
 
@@ -77,16 +86,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         // --------------
 
-        if(supportServers)
-        {
-            serverSwitch = new ServerSwitch();
-            panel.add(serverSwitch.asWidget());
-        }
-        else
-        {
-            panel.add(new ContentHeaderLabel("Transaction Metrics"));
-        }
-
+        panel.add(new ContentHeaderLabel("Transaction Metrics"));
 
         // --------------
 
@@ -116,9 +116,11 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     }
 
     @Override
-    public void setServerNames(List<String> serverNames) {
-        if(supportServers)
-            serverSwitch.setServerNames(serverNames);
+    public void setServer(List<Server> server) {
+        serverPicker.setServers(server);
+
+        if(!server.isEmpty())
+            serverPicker.setSelected(server.get(0), true);
     }
 
     @Override
