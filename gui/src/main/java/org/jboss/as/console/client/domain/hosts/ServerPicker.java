@@ -4,6 +4,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Server;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ServerPicker {
 
     private DefaultCellTable<Server> serverTable;
+    private ListDataProvider<Server> dataProvider;
     private TablePicker<Server> serverSelection;
 
     private SelectionHandler handler;
@@ -30,6 +32,8 @@ public class ServerPicker {
     public Widget asWidget() {
 
         serverTable = new DefaultCellTable<Server>(5);
+        dataProvider = new ListDataProvider<Server>();
+        dataProvider.addDataDisplay(serverTable);
 
         Column<Server, String> nameCol = new Column<Server, String>(new TextCell()) {
             @Override
@@ -64,8 +68,7 @@ public class ServerPicker {
     }
 
     public void setServers(List<Server> servers) {
-        serverTable.setRowCount(servers.size(), true);
-        serverTable.setRowData(0, servers);
+        dataProvider.setList(servers);
     }
 
     public void setSelected(Server server, boolean isSelected)

@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -138,7 +139,7 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
         layout.addStyleName("tablepicker-popup");
 
         if(description!=null)
-            layout.add(new HTML(description));
+            layout.add(new Label(description));
 
         layout.add(cellTable);
 

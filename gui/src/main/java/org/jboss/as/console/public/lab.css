@@ -66,6 +66,13 @@
     background-color: #F8F8F8;
 }
 
+.tablepicker-popup .gwt-Label{
+    font-weight:BOLD;
+    color: #4A5D75;
+    font-size:12px!important;
+    padding-right:2px;
+}
+
 .table-picker-value {
     border-bottom: 1px solid #A7ABB4;
     border-left: 1px solid #A7ABB4;
