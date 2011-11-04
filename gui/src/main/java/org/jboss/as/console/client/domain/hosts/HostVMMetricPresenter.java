@@ -12,20 +12,20 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
-import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
-import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
+import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,17 +35,17 @@ import java.util.List;
 public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresenter.MyProxy>
         implements VMMetricsManagement {
 
-    private final PlaceManager placeManager;
     private CurrentHostSelection hostSelection;
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
     private BeanFactory factory;
-    private String currentServer;
+
 
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
     private static final int POLL_INTERVAL = 5000;
-    private CurrentServerConfigurations serverConfigs;
+    private HostInformationStore hostInfoStore;
+    private String serverSelection = null;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostVMMetricPresenter)
@@ -60,15 +60,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, CurrentHostSelection hostSelection,
             DispatchAsync dispatcher, BeanFactory factory,
-            ApplicationMetaData metaData, CurrentServerConfigurations serverConfigs) {
+            ApplicationMetaData metaData, HostInformationStore hostInfoStore) {
         super(eventBus, view, proxy);
 
-        this.placeManager = placeManager;
         this.hostSelection = hostSelection;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
-        this.serverConfigs = serverConfigs;
+        this.hostInfoStore = hostInfoStore;
     }
 
     @Override
@@ -80,27 +79,19 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     protected void onReset() {
 
-        List<String> vmkeys = loadVMKeys();
-        getView().setVMKeys(vmkeys);
-        currentServer = vmkeys.get(0);
-
-        // actually load the vm metrics
-
-        loadVMStatus();
-        beginPolling();
-
+        loadServer();
     }
 
-    private List<String> loadVMKeys() {
+    private void loadServer() {
 
-        List<String> vmkeys = new ArrayList<String>();
+        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
+            @Override
+            public void onSuccess(List<ServerInstance> servers) {
 
-        for(Server s : serverConfigs.getServerConfigs())
-        {
-            vmkeys.add(s.getName());
-        }
+                getView().setServer(servers);
+            }
+        });
 
-        return vmkeys;
     }
 
     @Override
@@ -109,17 +100,17 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         getView().recycle();
     }
 
-    private LoadMetricsCmd createLoadMetricCmd() {
+    private LoadMetricsCmd createLoadMetricCmd(String serverName) {
 
         if(!hostSelection.isSet())
             throw new RuntimeException("Host selection not set!");
 
-         if(getCurrentServer()==null)
+         if(serverName==null)
             throw new RuntimeException("Current Server not set!");
 
         ModelNode address = new ModelNode();
         address.add("host", hostSelection.getName());
-        address.add("server", getCurrentServer());
+        address.add("server", serverName);
 
         return new LoadMetricsCmd(
                 dispatcher, factory,
@@ -133,9 +124,8 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         RevealContentEvent.fire(getEventBus(), DomainRuntimePresenter.TYPE_MainContent, this);
     }
 
-    @Override
-    public void loadVMStatus() {
-        createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
+    public void loadVMStatus(final String serverName) {
+        createLoadMetricCmd(serverName).execute(new SimpleCallback<CompositeVMMetric>() {
 
 
             @Override
@@ -180,7 +170,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
                 final boolean keepPooling = isVisible() && !shouldPause();
 
                 if (keepPooling)
-                    loadVMStatus();
+                    loadVMStatus(serverSelection);
                 else
                     Console.warning("Stop polling for VM metrics.");
 
@@ -197,7 +187,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         return !keepPolling;
     }
 
-    @Override
     public void keepPolling(boolean b) {
         this.keepPolling = b;
 
@@ -207,16 +196,12 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
             pollCmd=null;
     }
 
-    public String getCurrentServer() {
-        return currentServer;
-    }
+    public void onServerSelection(String serverName) {
 
-    @Override
-    public void onVMSelection(String vmKey) {
-
-        this.currentServer = vmKey;
+        this.serverSelection = serverName;
 
         getView().reset();
-        keepPolling(true);
+        loadVMStatus(serverName);
+        beginPolling();
     }
 }

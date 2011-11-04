@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.runtime.vm;
 
 import com.gwtplatform.mvp.client.View;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -23,5 +24,6 @@ public interface VMView extends View {
     void setRuntimeMetric(RuntimeMetric runtime);
     void recycle();
     void reset();
-    void setVMKeys(List<String> vmkeys);
+
+    void setServer(List<ServerInstance> servers);
 }

@@ -77,13 +77,8 @@ public class VMMetricsPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        getView().setVMKeys(vmkeys);
-
-        getView().reset();
-        keepPolling = true;
-
         loadVMStatus();
-        beginPolling();
+
     }
 
     private void beginPolling() {
@@ -111,8 +106,6 @@ public class VMMetricsPresenter
         return !keepPolling;
     }
 
-
-    @Override
     public void loadVMStatus() {
         loadMetricCmd.execute(new SimpleCallback<CompositeVMMetric>() {
             @Override
@@ -151,7 +144,6 @@ public class VMMetricsPresenter
         RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 
-    @Override
     public void keepPolling(boolean b) {
 
         this.keepPolling = b;
@@ -164,7 +156,7 @@ public class VMMetricsPresenter
     }
 
     @Override
-    public void onVMSelection(String vmKey) {
-        // ignore. there is only single vm
+    public void onServerSelection(String serverName) {
+        // noop
     }
 }
