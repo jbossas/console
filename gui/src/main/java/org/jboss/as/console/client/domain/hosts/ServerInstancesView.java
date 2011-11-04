@@ -49,6 +49,7 @@ import org.jboss.ballroom.client.widgets.forms.ComboBox;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -171,6 +172,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         instanceTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
         instanceTable.addColumn(statusColumn, Console.CONSTANTS.common_label_status());
         vpanel.add(instanceTable);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(instanceTable);
+        vpanel.add(pager);
 
 
         // scroll enabled

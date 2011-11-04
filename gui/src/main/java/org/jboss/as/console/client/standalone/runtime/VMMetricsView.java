@@ -1,26 +1,30 @@
 package org.jboss.as.console.client.standalone.runtime;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.runtime.vm.HeapChartView;
-import org.jboss.as.console.client.shared.runtime.vm.ThreadChartView;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.vm.HeapChartView;
+import org.jboss.as.console.client.shared.runtime.vm.ThreadChartView;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
+import org.jboss.as.console.client.widgets.tables.TablePicker;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.ComboBox;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -49,7 +53,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private HTML processors;
     private ToolButton pauseBtn;
 
-    private ComboBox vmSelection;
+    private TablePicker<String> vmSelection;
+    private CellTable<String> vmTable;
 
     @Override
     public void setPresenter(VMMetricsManagement presenter) {
@@ -74,6 +79,29 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         ToolStrip topLevelTools = new ToolStrip();
 
+        vmTable = new DefaultCellTable<String>(10);
+        Column<String, String> nameCol = new Column<String, String>(new TextCell()) {
+            @Override
+            public String getValue(String object) {
+                return object;
+            }
+        };
+        vmTable.addColumn(nameCol, "Server Instance");
+
+        vmSelection = new TablePicker(vmTable, new TablePicker.ValueRenderer<String>() {
+            @Override
+            public String render(String selection) {
+                return selection;
+            }
+        });
+        vmSelection.setPopupWidth(400);
+        vmTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                String vm = ((SingleSelectionModel<String>) vmTable.getSelectionModel()).getSelectedObject();
+                presenter.onVMSelection(vm);
+            }
+        });
         pauseBtn = new ToolButton("Stop Monitor");
         ClickHandler clickHandler = new ClickHandler() {
 
@@ -92,7 +120,11 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         };
 
         pauseBtn.addClickHandler(clickHandler);
-        topLevelTools.addToolButtonRight(pauseBtn);
+        topLevelTools.addToolButton(pauseBtn);
+
+        Widget vmWidget = vmSelection.asWidget();
+        vmWidget.getElement().setAttribute("style", "width:150px;padding-right:5px;");
+        topLevelTools.addToolWidgetRight(vmWidget);
 
         layout.add(topLevelTools);
 
@@ -110,7 +142,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // ------------------------
 
-        HorizontalPanel header = new HorizontalPanel();
+        /*HorizontalPanel header = new HorizontalPanel();
         header.setStyleName("fill-layout-width");
 
         vmName = new ContentHeaderLabel("");
@@ -124,9 +156,10 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             }
         });
 
-        header.add(vmSelection.asWidget());
+        header.add(vmSelection.asWidget());*/
 
-        vpanel.add(header);
+        vmName = new ContentHeaderLabel("");
+        vpanel.add(vmName);
 
         // -------------------------
 
@@ -226,8 +259,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     @Override
     public void setVMKeys(List<String> vmkeys) {
-        vmSelection.setValues(vmkeys);
-        vmSelection.clearSelection();
-        vmSelection.setItemSelected(0, true);
+        vmTable.setRowCount(vmkeys.size(), true);
+        vmTable.setRowData(vmkeys);
     }
 }

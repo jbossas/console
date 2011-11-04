@@ -15,4 +15,7 @@ public interface ConsoleIcons extends ClientBundle {
     @Source("connect.png")
     ImageResource resourceAdapter();
 
+    @Source("tablePicker.png")
+    ImageResource tablePicker();
+
 }

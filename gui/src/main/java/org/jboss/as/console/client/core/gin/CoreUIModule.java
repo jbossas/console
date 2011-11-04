@@ -97,6 +97,7 @@ import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
@@ -152,7 +153,6 @@ import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
-import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 

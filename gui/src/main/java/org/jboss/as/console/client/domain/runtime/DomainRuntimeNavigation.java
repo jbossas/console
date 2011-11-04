@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -63,7 +64,11 @@ class DomainRuntimeNavigation {
         });
 
 
+        LHSNavTreeItem jvm = new LHSNavTreeItem("JVM Status", NameTokens.HostVMMetricPresenter);
+
         statusTree.addItem(serverInstances);
+        statusTree.addItem(jvm);
+
         innerlayout.add(statusTree);
 
 
@@ -71,20 +76,25 @@ class DomainRuntimeNavigation {
 
         serverSelector= new ServerSelector();
         Widget serverSelectorWidget = serverSelector.asWidget();
-        serverSelectorWidget.getElement().setAttribute("style", "padding-top:10px; padding-left:4px;padding-right:4px");
+        //serverSelectorWidget.getElement().setAttribute("style", "padding-top:10px; padding-left:4px;padding-right:4px");
         //TODO: innerlayout.add(serverSelectorWidget);
 
         Tree metricTree = new LHSNavTree("domain-runtime");
+
+        TreeItem subsystems = new TreeItem("Subsystems");
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
 
-        metricTree.addItem(datasources);
-        metricTree.addItem(jmsQueues);
-        metricTree.addItem(web);
-        metricTree.addItem(tx);
+        subsystems.addItem(datasources);
+        subsystems.addItem(jmsQueues);
+        subsystems.addItem(web);
+        subsystems.addItem(tx);
+
+        metricTree.addItem(subsystems);
+        subsystems.setState(true); // open by default
 
         innerlayout.add(metricTree);
 

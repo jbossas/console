@@ -216,6 +216,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
         this.currentServer = vmKey;
 
+        getView().reset();
         keepPolling(true);
     }
 }

@@ -98,7 +98,7 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
-import org.jboss.as.console.client.standalone.runtime.TXMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
