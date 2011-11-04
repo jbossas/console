@@ -8,11 +8,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -102,9 +103,9 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     private void loadServerConfigurations() {
 
-        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
             @Override
-            public void onSuccess(List<Server> servers) {
+            public void onSuccess(List<ServerInstance> servers) {
 
                 getView().setServer(servers);
             }
@@ -123,7 +124,12 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
         if(!bootstrapContext.isStandalone())
         {
-            System.out.println("Domain mode not yet supported");
+            Console.warning("Domain mode not yet supported");
+
+            getView().setTxMetric(new Metric(0l,0l,0l,0l));
+
+            getView().setRollbackMetric(new Metric(0l,0l));
+
             return;
         }
 

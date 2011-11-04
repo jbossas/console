@@ -12,6 +12,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -54,7 +55,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler(){
+        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.refresh();
@@ -63,8 +64,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         serverPicker = new ServerPicker(new ServerPicker.SelectionHandler() {
             @Override
-            public void onSelection(Server server) {
-
+            public void onSelection(ServerInstance server) {
+                // TODO: handle selection
             }
         });
 
@@ -116,11 +117,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     }
 
     @Override
-    public void setServer(List<Server> server) {
+    public void setServer(List<ServerInstance> server) {
         serverPicker.setServers(server);
-
-        if(!server.isEmpty())
-            serverPicker.setSelected(server.get(0), true);
     }
 
     @Override

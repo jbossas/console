@@ -2,15 +2,16 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.tables.TablePicker;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,9 +20,9 @@ import java.util.List;
  */
 public class ServerPicker {
 
-    private DefaultCellTable<Server> serverTable;
-    private ListDataProvider<Server> dataProvider;
-    private TablePicker<Server> serverSelection;
+    private DefaultCellTable<ServerInstance> serverTable;
+    private ListDataProvider<ServerInstance> dataProvider;
+    private TablePicker<ServerInstance> serverSelection;
 
     private SelectionHandler handler;
 
@@ -31,21 +32,21 @@ public class ServerPicker {
 
     public Widget asWidget() {
 
-        serverTable = new DefaultCellTable<Server>(5);
-        dataProvider = new ListDataProvider<Server>();
+        serverTable = new DefaultCellTable<ServerInstance>(5);
+        dataProvider = new ListDataProvider<ServerInstance>();
         dataProvider.addDataDisplay(serverTable);
 
-        Column<Server, String> nameCol = new Column<Server, String>(new TextCell()) {
+        Column<ServerInstance, String> nameCol = new Column<ServerInstance, String>(new TextCell()) {
             @Override
-            public String getValue(Server object) {
+            public String getValue(ServerInstance object) {
                 return object.getName();
             }
         };
         serverTable.addColumn(nameCol, "Server");
 
-        serverSelection = new TablePicker(serverTable, new TablePicker.ValueRenderer<Server>() {
+        serverSelection = new TablePicker(serverTable, new TablePicker.ValueRenderer<ServerInstance>() {
             @Override
-            public String render(Server selection) {
+            public String render(ServerInstance selection) {
                 return selection.getName();
             }
         });
@@ -59,7 +60,7 @@ public class ServerPicker {
         serverTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
             @Override
             public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                Server server = ((SingleSelectionModel<Server>) serverTable.getSelectionModel()).getSelectedObject();
+                ServerInstance server = ((SingleSelectionModel<ServerInstance>) serverTable.getSelectionModel()).getSelectedObject();
                 handler.onSelection(server);
             }
         });
@@ -67,17 +68,30 @@ public class ServerPicker {
         return widget;
     }
 
-    public void setServers(List<Server> servers) {
-        dataProvider.setList(servers);
+    public void setServers(List<ServerInstance> servers) {
+
+        List<ServerInstance> active = new LinkedList<ServerInstance>();
+        for(ServerInstance server : servers)
+            if(server.isRunning())
+                active.add(server);
+
+        dataProvider.setList(active);
+
+        // TODO: is a default selection right in this case?
+        if(!active.isEmpty())
+            setSelected(active.get(0), true);
     }
 
-    public void setSelected(Server server, boolean isSelected)
+    public void setSelected(ServerInstance server, boolean isSelected)
     {
+        if(!server.isRunning())
+            Console.warning("Selected in-active server instance:"+server.getName());
+
         serverTable.getSelectionModel().setSelected(server, isSelected);
     }
 
     public interface SelectionHandler {
-        void onSelection(Server server);
+        void onSelection(ServerInstance server);
     }
 
 }
