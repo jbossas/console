@@ -80,14 +80,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     protected void onReset() {
 
-        getView().reset();
-
-        // TODO: cleanup, provide view strategy
-        if(Console.visAPILoaded())
-            getView().attachCharts();
-        else
-            Console.error("Failed load visualization API", "Charts will not be available.");
-
         List<String> vmkeys = loadVMKeys();
         getView().setVMKeys(vmkeys);
         currentServer = vmkeys.get(0);
@@ -114,7 +106,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     protected void onHide() {
         super.onHide();
-        getView().detachCharts();
+        getView().recycle();
     }
 
     private LoadMetricsCmd createLoadMetricCmd() {
@@ -170,7 +162,12 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
                 ));
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
-                getView().setThreads(result.getThreads());
+                getView().setThreads(
+                        new Metric(
+                                result.getThreads().getCount(),
+                                result.getThreads().getDaemonCount()
+                        )
+                );
             }
         });
     }
@@ -219,7 +216,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
         this.currentServer = vmKey;
 
-        getView().reset();
         keepPolling(true);
     }
 }

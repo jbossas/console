@@ -14,10 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
 import org.jboss.as.console.client.shared.jvm.charts.ThreadChartView;
-import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
-import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -55,6 +53,14 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     @Override
     public void setPresenter(VMMetricsManagement presenter) {
         this.presenter = presenter;
+    }
+
+
+    @Override
+    public void recycle() {
+        heapChart.recycle();
+        nonHeapChart.recycle();
+        threadChart.recycle();
     }
 
     @Override
@@ -147,11 +153,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // --
 
-        return layout;
-    }
-
-    @Override
-    public void attachCharts() {
         heapChart = new HeapChartView("Heap Usage") ;
         nonHeapChart = new HeapChartView("Non Heap Usage") ;
 
@@ -160,21 +161,11 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // --
 
-        threadChart = new ThreadChartView(320, 200, "Thread Usage");
+        threadChart = new ThreadChartView("Thread Usage");
         threadPanel.add(threadChart.asWidget());
         threadPanel.add(osPanel);
-    }
 
-    @Override
-    public void detachCharts() {
-        if(heapChart!=null) {
-            heapPanel.clear();
-            threadPanel.clear();
-        }
-
-        this.heapChart=null;
-        this.nonHeapChart=null;
-        this.threadChart=null;
+        return layout;
     }
 
     @Override
@@ -198,7 +189,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     }
 
     @Override
-    public void setThreads(ThreadMetric metric) {
+    public void setThreads(Metric metric) {
 
         if(threadChart!=null)
             threadChart.addSample(metric);

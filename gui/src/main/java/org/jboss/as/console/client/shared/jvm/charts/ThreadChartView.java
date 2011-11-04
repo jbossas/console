@@ -1,124 +1,68 @@
 package org.jboss.as.console.client.shared.jvm.charts;
 
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
-import com.google.gwt.visualization.client.visualizations.corechart.Options;
-import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
-import org.jboss.as.console.client.shared.runtime.charts.AbstractChartView;
-
-import java.util.Date;
-
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.Sampler;
+import org.jboss.as.console.client.shared.runtime.charts.Column;
+import org.jboss.as.console.client.shared.runtime.charts.LineChartView;
+import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
+import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 
 /**
  * @author Heiko Braun
  * @date 9/29/11
  */
-public class ThreadChartView extends AbstractChartView {
+public class ThreadChartView implements Sampler {
 
-    private DataTable data;
-    private LineChart chart;
-
-    private HTML live;
-    private HTML daemon;
-    private HTML peak;
+    private Sampler sampler;
+    private String title;
 
     public ThreadChartView(String title) {
-        super(title);
+        this.title = title;
     }
 
-    public ThreadChartView(int width, int height, String title) {
-        super(width, height, title);
+    public Widget asWidget() {
+        return displayStrategy();
+    }
+
+    private Widget displayStrategy() {
+
+        Column[] threadCols = new Column[] {
+                new NumberColumn("Live"),
+                new NumberColumn("Daemon")
+        };
+
+        if(Console.visAPILoaded()) {
+            sampler = new LineChartView(320,200, title)
+                    .setColumns(threadCols);
+        }
+        else
+        {
+            sampler = new PlainColumnView(title)
+                    .setColumns(threadCols);
+        }
+
+        return sampler.asWidget();
     }
 
     @Override
-    public Widget asWidget() {
-        VerticalPanel layout = new VerticalPanel();
-
-        // chart
-        chart = new LineChart(createTable(), createOptions()) ;
-        layout.add(chart);
-
-        // labels
-
-        live = new HTML();
-        daemon = new HTML();
-        peak = new HTML();
-        live.getElement().setAttribute("style", "padding-right:5px");
-        daemon.getElement().setAttribute("style", "padding-right:5px");
-
-        HorizontalPanel labels = new HorizontalPanel();
-        labels.add(live);
-        labels.add(daemon);
-        labels.add(peak);
-
-        layout.add(labels);
-        labels.getElement().getParentElement().setAttribute("align", "center");
-        return layout;
-
+    public void addSample(Metric metric) {
+        sampler.addSample(metric);
     }
 
-    private DataTable createTable() {
-        data = DataTable.create();
-        data.addColumn(AbstractDataTable.ColumnType.DATETIME, "Time");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Live");
-        data.addColumn(AbstractDataTable.ColumnType.NUMBER, "Daemon");
-        return data;
+    @Override
+    public void clearSamples() {
+        sampler.clearSamples();
     }
 
-    private Options createOptions() {
-        Options options = Options.create();
-        options.setWidth(width);
-        options.setHeight(height);
-        options.setTitle(title);
-        options.setType(CoreChart.Type.LINE);
-        return options;
-    }
-
-    public void addSample(ThreadMetric metric) {
-
-
-        live.setHTML("Live: "+metric.getCount());
-        daemon.setHTML("Daemon: "+metric.getDaemonCount());
-        peak.setHTML("Peak: " + metric.getPeakCount());
-
-        data.addRow();
-        int nextRow = data.getNumberOfRows()-1;
-
-        data.setValue(nextRow, 0, new Date(System.currentTimeMillis()));
-        data.setValue(nextRow, 1, metric.getCount());
-        data.setValue(nextRow, 2, metric.getDaemonCount());
-
-        Options options = createOptions();
-        AxisOptions vaxis = AxisOptions.create();
-        vaxis.setMaxValue(metric.getPeakCount()+10);
-        options.setVAxisOptions(vaxis);
-
-        AxisOptions haxis = AxisOptions.create();
-        haxis.set("showTextEvery", "10.00");
-        haxis.set("maxAlternation", "1");
-        options.setHAxisOptions(haxis);
-
-
-        chart.draw(data, options);
-    }
-
-    public void clearSamples()
-    {
-        data = createTable();
-        chart.draw(data);
-    }
-
+    @Override
     public long numSamples() {
-        return data.getNumberOfRows();
+        return sampler.numSamples();
     }
 
-
+    @Override
+    public void recycle() {
+        sampler.recycle();
+    }
 }
-

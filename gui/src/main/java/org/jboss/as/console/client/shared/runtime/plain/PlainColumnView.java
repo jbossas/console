@@ -34,15 +34,15 @@ public class PlainColumnView implements Sampler {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        layout.add(new HTML("<b>"+title+"</b>"));
+        layout.add(new HTML("<h3>"+title+"</h3>"));
 
         grid = new Grid(columns.length, 2);
 
         int row = 0;
         for(Column c : columns)
         {
-            grid.setText(row, 0, c.getLabel() + ":");
-            grid.setText(row, 1, "");
+            grid.setHTML(row, 0, "<b style='color:#A7ABB4'>"+c.getLabel() + ":</b>");
+            grid.setHTML(row, 1, "");
             row++;
         }
 

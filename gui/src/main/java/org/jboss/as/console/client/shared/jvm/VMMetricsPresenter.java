@@ -16,7 +16,6 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -33,10 +32,7 @@ public class VMMetricsPresenter
         implements VMMetricsManagement {
 
     private static final int POLL_INTERVAL = 5000;
-    private DispatchAsync dispatcher;
-    private BeanFactory factory;
     private ApplicationMetaData metaData;
-    private RevealStrategy revealStrategy;
 
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
@@ -54,15 +50,10 @@ public class VMMetricsPresenter
     @Inject
     public VMMetricsPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            RevealStrategy revealStrategy,
             DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
-        this.revealStrategy = revealStrategy;
         this.metaData = propertyMetaData;
-        this.factory = factory;
-        this.dispatcher = dispatcher;
-
         this.loadMetricCmd = new LoadMetricsCmd(dispatcher, factory, new ModelNode(), metaData);
         this.vmkeys = new ArrayList<String>();
         this.vmkeys.add("Standalone Server");
@@ -77,27 +68,20 @@ public class VMMetricsPresenter
     @Override
     protected void onHide() {
         super.onHide();
-        getView().detachCharts();
+        getView().recycle();
     }
 
 
     @Override
     protected void onReset() {
         super.onReset();
-
-
-        getView().reset();
         getView().setVMKeys(vmkeys);
 
-        if(Console.visAPILoaded())
-            getView().attachCharts();
-        else
-            Console.error("Failed load visualization API", "Charts will not be available.");
+        getView().reset();
+        keepPolling = true;
 
         loadVMStatus();
-
         beginPolling();
-
     }
 
     private void beginPolling() {
@@ -148,9 +132,13 @@ public class VMMetricsPresenter
                         result.getNonHeap().getInit()
                 ));
 
+                getView().setThreads(new Metric(
+                        result.getThreads().getCount(),
+                        result.getThreads().getDaemonCount()
+                ));
+
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
-                getView().setThreads(result.getThreads());
             }
         });
 

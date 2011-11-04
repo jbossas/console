@@ -117,8 +117,11 @@ public class LineChartView extends AbstractChartView implements Sampler {
 
     public void clearSamples()
     {
-        data = createTable();
-        chart.draw(data);
+        if(chart!=null)
+        {
+            data = createTable();
+            chart.draw(data);
+        }
     }
 
     public long numSamples() {
