@@ -65,6 +65,7 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdm
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
+import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
@@ -151,4 +152,5 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<ScheduledThreadPool> scheduledThreadPool();
 
     AutoBean<TransactionManager> transactionManager();
+    AutoBean<SecuritySubsystem> securitySubsystem();
 }
