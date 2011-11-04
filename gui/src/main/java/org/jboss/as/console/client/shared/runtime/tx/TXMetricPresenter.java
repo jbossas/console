@@ -10,7 +10,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.domain.model.impl.HostInfoStoreImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -41,6 +46,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     private EntityAdapter<TransactionManager> entityAdapter;
     private RevealStrategy revealStrategy;
     private BootstrapContext bootstrapContext;
+    private HostInformationStore hostInfoStore;
+    private CurrentHostSelection hostSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TXMetrics)
@@ -61,16 +68,19 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             ApplicationMetaData metaData, RevealStrategy revealStrategy,
-            BootstrapContext bootstrapContext) {
+            BootstrapContext bootstrapContext, HostInformationStore hostInfoStore,
+            CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.metaData = metaData;
         this.revealStrategy = revealStrategy;
+        this.hostSelection = hostSelection;
 
         this.addressBinding = metaData.getBeanMetaData(TransactionManager.class).getAddress();
         this.entityAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
         this.bootstrapContext = bootstrapContext;
+        this.hostInfoStore = hostInfoStore;
     }
 
     @Override
@@ -95,13 +105,18 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     }
 
     private void loadServerConfigurations() {
-        List<String> names = new ArrayList<String>();
-        names.add("Server One (Production)");
-        names.add("Server Three");
-        names.add("Server Staging");
-        names.add("Load Test Environment");
 
-        getView().setServerNames(names);
+        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(List<Server> servers) {
+                List<String> names = new ArrayList<String>();
+                for(Server s : servers)
+                    names.add(s.getName());
+
+                getView().setServerNames(names);
+            }
+        });
+
     }
 
     @Override
