@@ -56,4 +56,8 @@ public interface Server {
     @Binding(skip=true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
+
+    @Binding(skip = true)
+    boolean isStarted();
+    void setStarted(boolean b);
 }

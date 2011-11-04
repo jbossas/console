@@ -43,6 +43,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
 
-                List<Host> records = new ArrayList<Host>(payload.size());
+                List<Host> records = new LinkedList<Host>();
                 for(int i=0; i<payload.size(); i++)
                 {
                     Host record = factory.host().as();
@@ -116,7 +117,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
         operation.get(CHILD_TYPE).set("server-config");
         operation.get(ADDRESS).setEmptyList();
         operation.get(ADDRESS).add("host", host);
-        operation.get(RECURSIVE).set(true);
         operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
@@ -131,11 +131,12 @@ public class HostInfoStoreImpl implements HostInformationStore {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 List<ModelNode> payload = response.get("result").asList();
 
-                List<Server> records = new ArrayList<Server>(payload.size());
+                List<Server> records = new LinkedList<Server>();
                 for(ModelNode item : payload)
                 {
                     ModelNode model = item.asProperty().getValue();
                     Server server = serverAdapter.fromDMR(model);
+                    server.setStarted(model.get("status").asString().equals("STARTED"));
                     records.add(server);
                 }
 
@@ -180,14 +181,26 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
-        final List<ServerInstance> instanceList = new ArrayList<ServerInstance>();
+        final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
 
         getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override
-            public void onSuccess(final List<Server> serverNames) {
+            public void onSuccess(final List<Server> serverConfigs) {
 
+                for(final Server serverConfig : serverConfigs)
+                {
+                    ServerInstance instance = factory.serverInstance().as();
+                    instance.setName(serverConfig.getName());
+                    instance.setServer(serverConfig.getName());
+                    instance.setGroup(serverConfig.getGroup());
+                    instance.setRunning(serverConfig.isStarted());
 
-                for(final Server handle : serverNames)
+                    instanceList.add(instance);
+                }
+
+                callback.onSuccess(instanceList);
+
+                /*for(final Server handle : serverNames)
                 {
                     final ModelNode operation = new ModelNode();
                     operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
@@ -216,7 +229,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         }
                     });
 
-                }
+                } */
             }
         });
     }
