@@ -174,7 +174,7 @@ public class Console implements EntryPoint {
 
     public static native boolean visAPILoaded() /*-{
         if ($wnd['google'] && $wnd.google['load']) {
-            return false;
+            return true;
         }
         return false;
     }-*/;
