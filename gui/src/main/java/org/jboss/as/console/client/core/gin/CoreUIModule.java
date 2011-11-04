@@ -28,6 +28,7 @@ import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -125,6 +126,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPr
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimeView;
+import org.jboss.as.console.client.shared.subsys.security.SecurityPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecurityView;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsView;
 import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
@@ -419,11 +422,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 HostVMView.class,
                 HostVMMetricPresenter.MyProxy.class);
 
-
         bindPresenter(TransactionPresenter.class,
                 TransactionPresenter.MyView.class,
                 TransactionView.class,
                 TransactionPresenter.MyProxy.class);
+
+        bindPresenter(SecurityPresenter.class,
+                SecurityPresenter.MyView.class,
+                SecurityView.class,
+                SecurityPresenter.MyProxy.class);
     }
 
 }
