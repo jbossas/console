@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jvm;
+package org.jboss.as.console.client.shared.runtime.vm;
 
 /**
  * @author Heiko Braun

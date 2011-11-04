@@ -1,12 +1,10 @@
-package org.jboss.as.console.client.shared.jvm;
+package org.jboss.as.console.client.shared.runtime.vm;
 
 import com.gwtplatform.mvp.client.View;
-import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
-import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.shared.runtime.Sampler;
+import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
 
 import java.util.List;
 

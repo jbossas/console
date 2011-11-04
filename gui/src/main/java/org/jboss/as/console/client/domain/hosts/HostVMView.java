@@ -1,6 +1,6 @@
 package org.jboss.as.console.client.domain.hosts;
 
-import org.jboss.as.console.client.shared.jvm.VMMetricsView;
+import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 
 /**
  * @author Heiko Braun

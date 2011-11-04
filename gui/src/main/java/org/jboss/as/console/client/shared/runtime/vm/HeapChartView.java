@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jvm.charts;
+package org.jboss.as.console.client.shared.runtime.vm;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jvm;
+package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,11 +12,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.jvm.charts.HeapChartView;
-import org.jboss.as.console.client.shared.jvm.charts.ThreadChartView;
+import org.jboss.as.console.client.shared.runtime.vm.HeapChartView;
+import org.jboss.as.console.client.shared.runtime.vm.ThreadChartView;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;

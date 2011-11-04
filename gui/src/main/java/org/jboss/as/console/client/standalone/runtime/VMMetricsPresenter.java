@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.jvm;
+package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -14,9 +14,11 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
+import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
+import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
