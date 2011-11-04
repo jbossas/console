@@ -108,7 +108,7 @@ public class LineChartView extends AbstractChartView implements Sampler {
         Options options = createOptions();
 
         AxisOptions haxis = AxisOptions.create();
-        haxis.set("showTextEvery", "10.00");
+        haxis.set("showTextEvery", "25.00");
         haxis.set("maxAlternation", "1");
         options.setHAxisOptions(haxis);
 
