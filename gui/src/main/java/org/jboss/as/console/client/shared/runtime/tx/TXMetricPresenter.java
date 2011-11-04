@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.standalone.runtime;
+package org.jboss.as.console.client.shared.runtime.tx;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -15,8 +15,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.shared.runtime.tx.TXMetricManagement;
-import org.jboss.as.console.client.shared.runtime.tx.TXMetricView;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
