@@ -3,13 +3,12 @@ package org.jboss.as.console.client.standalone.runtime;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -19,6 +18,7 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricManagement;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricView;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -27,6 +27,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
@@ -36,11 +37,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMetricPresenter.MyProxy>
     implements TXMetricManagement {
 
-    private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
     private AddressBinding addressBinding;
     private EntityAdapter<TransactionManager> entityAdapter;
+    private RevealStrategy revealStrategy;
+    private BootstrapContext bootstrapContext;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TXMetrics)
@@ -53,27 +55,31 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         void setRollbackMetric(Metric rollbackMetric);
         void setServerNames(List<String> serverNames);
         void recycleCharts();
+        void setSupportServers(boolean b);
     }
 
     @Inject
     public TXMetricPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
-            ApplicationMetaData metaData) {
+            ApplicationMetaData metaData, RevealStrategy revealStrategy,
+            BootstrapContext bootstrapContext) {
         super(eventBus, view, proxy);
 
-        this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.metaData = metaData;
+        this.revealStrategy = revealStrategy;
 
         this.addressBinding = metaData.getBeanMetaData(TransactionManager.class).getAddress();
         this.entityAdapter = new EntityAdapter<TransactionManager>(TransactionManager.class, metaData);
+        this.bootstrapContext = bootstrapContext;
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getView().setSupportServers(!bootstrapContext.isStandalone());
     }
 
 
@@ -102,12 +108,18 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @Override
     protected void revealInParent() {
-       RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
+       revealStrategy.revealInRuntimeParent(this);
     }
 
 
     @Override
     public void refresh() {
+
+        if(!bootstrapContext.isStandalone())
+        {
+            System.out.println("Domain mode not yet supported");
+            return;
+        }
 
         ModelNode operation = addressBinding.asResource(Baseadress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);

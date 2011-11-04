@@ -72,7 +72,7 @@ class DomainRuntimeNavigation {
         serverSelector= new ServerSelector();
         Widget serverSelectorWidget = serverSelector.asWidget();
         serverSelectorWidget.getElement().setAttribute("style", "padding-top:10px; padding-left:4px;padding-right:4px");
-        innerlayout.add(serverSelectorWidget);
+        //TODO: innerlayout.add(serverSelectorWidget);
 
         Tree metricTree = new LHSNavTree("domain-runtime");
 

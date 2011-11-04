@@ -24,7 +24,9 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
+import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 
 import javax.inject.Inject;
 
@@ -49,5 +51,12 @@ public class RevealStrategy {
             RevealContentEvent.fire(eventBus, ServerMgmtApplicationPresenter.TYPE_MainContent, presenter);
         else
             RevealContentEvent.fire(eventBus, ProfileMgmtPresenter.TYPE_MainContent, presenter);
+    }
+
+    public void revealInRuntimeParent(Presenter presenter) {
+         if(bootstrap.isStandalone())
+            RevealContentEvent.fire(eventBus, StandaloneRuntimePresenter.TYPE_MainContent, presenter);
+        else
+            RevealContentEvent.fire(eventBus, DomainRuntimePresenter.TYPE_MainContent, presenter);
     }
 }

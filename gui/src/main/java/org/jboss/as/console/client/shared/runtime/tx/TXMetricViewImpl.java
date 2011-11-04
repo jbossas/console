@@ -38,6 +38,10 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         this.presenter = presenter;
     }
 
+    public void setSupportServers(boolean supportServers) {
+        this.supportServers = supportServers;
+    }
+
     @Override
     public Widget createWidget() {
 
