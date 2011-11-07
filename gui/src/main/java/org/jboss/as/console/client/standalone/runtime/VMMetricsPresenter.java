@@ -22,9 +22,6 @@ import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Heiko Braun
  * @date 9/28/11
@@ -39,7 +36,6 @@ public class VMMetricsPresenter
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
     private LoadMetricsCmd loadMetricCmd;
-    private List<String> vmkeys;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
@@ -57,14 +53,13 @@ public class VMMetricsPresenter
 
         this.metaData = propertyMetaData;
         this.loadMetricCmd = new LoadMetricsCmd(dispatcher, factory, new ModelNode(), metaData);
-        this.vmkeys = new ArrayList<String>();
-        this.vmkeys.add("Standalone Server");
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+
     }
 
     @Override
@@ -112,6 +107,9 @@ public class VMMetricsPresenter
             public void onSuccess(CompositeVMMetric result) {
 
 
+                System.out.println("*** "+result.getOs().getName());
+
+
                 getView().setHeap(new Metric(
                         result.getHeap().getUsed(),
                         result.getHeap().getMax(),
@@ -134,6 +132,8 @@ public class VMMetricsPresenter
 
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
+
+                beginPolling();
             }
         });
 

@@ -8,5 +8,7 @@ import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
  */
 public class HostVMView extends VMMetricsView implements HostVMMetricPresenter.MyView{
 
-
+    public HostVMView() {
+        this.hasServerPicker = true;
+    }
 }

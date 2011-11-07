@@ -49,6 +49,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private ToolButton pauseBtn;
     private ServerPicker serverPicker;
 
+    protected boolean hasServerPicker = false;
+
     @Override
     public void setPresenter(VMMetricsManagement presenter) {
         this.presenter = presenter;
@@ -101,7 +103,9 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         Widget serverPickerWidget = serverPicker.asWidget();
         serverPickerWidget.getElement().setAttribute("style", "width:200px;padding-right:5px;");
-        topLevelTools.addToolWidgetRight(serverPickerWidget);
+
+        if(hasServerPicker)
+            topLevelTools.addToolWidgetRight(serverPickerWidget);
 
 
         // -------
