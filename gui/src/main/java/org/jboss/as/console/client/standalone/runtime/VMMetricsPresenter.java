@@ -106,10 +106,6 @@ public class VMMetricsPresenter
             @Override
             public void onSuccess(CompositeVMMetric result) {
 
-
-                System.out.println("*** "+result.getOs().getName());
-
-
                 getView().setHeap(new Metric(
                         result.getHeap().getUsed(),
                         result.getHeap().getMax(),

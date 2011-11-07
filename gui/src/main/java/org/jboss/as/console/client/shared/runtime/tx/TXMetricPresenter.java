@@ -103,13 +103,16 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     private void loadServerConfigurations() {
 
-        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
-            @Override
-            public void onSuccess(List<ServerInstance> servers) {
+        if(!bootstrapContext.isStandalone())
+        {
+            hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
+                @Override
+                public void onSuccess(List<ServerInstance> servers) {
 
-                getView().setServer(servers);
-            }
-        });
+                    getView().setServer(servers);
+                }
+            });
+        }
 
     }
 

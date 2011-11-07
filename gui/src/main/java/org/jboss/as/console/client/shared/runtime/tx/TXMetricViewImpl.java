@@ -69,7 +69,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
             }
         });
 
-        toolStrip.addToolWidgetRight(serverPicker.asWidget());
+        if(supportServers)
+            toolStrip.addToolWidgetRight(serverPicker.asWidget());
 
         layout.add(toolStrip);
 
