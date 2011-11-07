@@ -23,6 +23,7 @@ public class HostSelector {
     public Widget asWidget() {
 
         HorizontalPanel layout = new HorizontalPanel();
+        layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("style","padding:4px;");
         hosts = new ComboBox();
         hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
