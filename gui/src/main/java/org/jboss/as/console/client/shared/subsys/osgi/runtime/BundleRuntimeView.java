@@ -41,6 +41,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.Handler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -93,7 +94,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     @Override
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 initialLoad();
@@ -125,7 +126,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return new Long(o1.getName()).compareTo(new Long(o2.getName()));
             }
         });
-        bundleTable.addColumn(idColumn, "Bundle ID");
+        bundleTable.addColumn(idColumn, Console.CONSTANTS.subsys_osgi_bundleID());
 
         TextColumn<OSGiBundle> symbolicNameColumn = new TextColumn<OSGiBundle>() {
             @Override
@@ -140,7 +141,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return o1.getSymbolicName().compareTo(o2.getSymbolicName());
             }
         });
-        bundleTable.addColumn(symbolicNameColumn, "Symbolic Name");
+        bundleTable.addColumn(symbolicNameColumn, Console.CONSTANTS.subsys_osgi_bundleSymbolicName());
 
         TextColumn<OSGiBundle> versionColumn = new TextColumn<OSGiBundle>() {
             @Override
@@ -148,7 +149,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return record.getVersion();
             }
         };
-        bundleTable.addColumn(versionColumn, "Version");
+        bundleTable.addColumn(versionColumn, Console.CONSTANTS.subsys_osgi_bundleVersion());
 
         Column<OSGiBundle, ImageResource> stateColumn = new Column<OSGiBundle, ImageResource>(new ImageResourceCell()) {
             @Override
@@ -173,7 +174,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return i1.compareTo(i2);
             }
         });
-        bundleTable.addColumn(stateColumn, "State");
+        bundleTable.addColumn(stateColumn, Console.CONSTANTS.subsys_osgi_bundleState());
 
         class BundleColumn extends Column<OSGiBundle,OSGiBundle> {
             public BundleColumn(Cell<OSGiBundle> cell) {
@@ -185,22 +186,22 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return record;
             }
         };
-        ButtonCell<OSGiBundle> startCell = new ButtonCell<OSGiBundle>("Start", new ActionCell.Delegate<OSGiBundle>() {
+        ButtonCell<OSGiBundle> startCell = new ButtonCell<OSGiBundle>(Console.CONSTANTS.common_label_start(), new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {
-                    Feedback.alert("OSGi Subsystem", "Can't start a fragment (" + bundle.getSymbolicName() + ").");
+                    Feedback.alert(Console.CONSTANTS.subsys_osgi(), Console.MESSAGES.subsys_osgi_cant_start_fragment(bundle.getSymbolicName()));
                 } else {
                     presenter.startBundle(bundle);
                 }
             }
         });
 
-        final ButtonCell<OSGiBundle> stopCell = new ButtonCell<OSGiBundle>("Stop", new ActionCell.Delegate<OSGiBundle>() {
+        final ButtonCell<OSGiBundle> stopCell = new ButtonCell<OSGiBundle>(Console.CONSTANTS.common_label_stop(), new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {
-                    Feedback.alert("OSGi Subsystem", "Can't stop a fragment (" + bundle.getSymbolicName() + ").");
+                    Feedback.alert(Console.CONSTANTS.subsys_osgi(), Console.MESSAGES.subsys_osgi_cant_stop_fragment(bundle.getSymbolicName()));
                 } else {
                     presenter.stopBundle(bundle);
                 }
@@ -211,7 +212,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
         hasCells.add(new BundleColumn(stopCell));
         BundleColumn myColumn = new BundleColumn(new CompositeCell(hasCells));
 
-        bundleTable.addColumn(myColumn, "Action");
+        bundleTable.addColumn(myColumn, Console.CONSTANTS.common_label_action());
 
         bundleTable.addColumnSortHandler(sortHandler);
         bundleTable.getColumnSortList().push(idColumn); // initial sort is on bundle ID
@@ -226,7 +227,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
 
     @Override
     protected String getEntityDisplayName() {
-        return "Bundles";
+        return Console.CONSTANTS.subsys_osgi_bundles();
     }
 
     @Override

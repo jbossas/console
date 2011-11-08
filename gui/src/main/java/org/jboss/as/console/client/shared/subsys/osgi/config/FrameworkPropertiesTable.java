@@ -48,7 +48,7 @@ public class FrameworkPropertiesTable implements PropertyManagement {
       propEditor.setHelpText(Console.MESSAGES.subsys_osgi_frameworkPropertiesHelp());
 
       Widget widget = propEditor.asWidget();
-      propEditor.setAllowEditProps(false);
+      propEditor.setAllowEditProps(true);
       return widget;
     }
 
@@ -64,9 +64,9 @@ public class FrameworkPropertiesTable implements PropertyManagement {
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        // do nothing
+        presenter.onChangeProperty(prop);
     }
-    
+
     @Override
     public void launchNewPropertyDialoge(String reference) {
         propertyWindow = new DefaultWindow(Console.CONSTANTS.subsys_osgi_frameworkPropertyAdd());

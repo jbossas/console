@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -57,7 +58,7 @@ public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
     @Override
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 initialLoad();
@@ -95,7 +96,7 @@ public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
 
     @Override
     protected String getEntityDisplayName() {
-        return "Framework";
+        return Console.CONSTANTS.subsys_osgi_framework();
     }
 
 }

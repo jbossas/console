@@ -196,6 +196,12 @@ public interface UIConstants extends Constants {
     String subsys_osgi_frameworkProperty();
     String subsys_osgi_frameworkPropertyAdd();
     String subsys_osgi_properties();
+    String subsys_osgi_bundleID();
+    String subsys_osgi_bundleSymbolicName();
+    String subsys_osgi_bundleVersion();
+    String subsys_osgi_bundleState();
+    String subsys_osgi_bundles();
+    String subsys_osgi();
 
     String subsys_threads_sizing();
 
@@ -226,10 +232,12 @@ public interface UIConstants extends Constants {
     String subsys_jca_ra_step2();
 
     String common_label_refresh();
-
     String common_label_clear();
-
     String common_label_hostVm();
+    String common_label_action();
+    String common_label_start();
+    String common_label_stop();
+    String common_label_type();
 
     String subsys_jca_dataSource_verify();
 
