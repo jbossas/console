@@ -14,6 +14,9 @@ import org.jboss.as.console.client.shared.runtime.Sampler;
 import java.util.Date;
 
 /**
+ * Needs to be {@link #recycle()}ed after is was hidden.
+ * Typically this happens in Presenter.onReset()
+ *
  * @author Heiko Braun
  * @date 10/25/11
  */
@@ -85,9 +88,7 @@ public class ColumnChartView extends AbstractChartView implements Sampler {
 
         if(chart==null)
         {
-            chart = new ColumnChart(createTable(), createOptions()) ;
-            chart.setTitle(title);
-            layout.add(chart);
+            throw new RuntimeException("chart is null. Did you forget to #recycle() ?");
         }
 
         if(data.getNumberOfRows()==0 || timelineSeries)
@@ -132,6 +133,10 @@ public class ColumnChartView extends AbstractChartView implements Sampler {
         {
             layout.clear();
             chart=null;
+
+            chart = new ColumnChart(createTable(), createOptions()) ;
+            chart.setTitle(title);
+            layout.add(chart);
         }
     }
 }

@@ -227,6 +227,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     @Override
     public void setServer(List<ServerInstance> servers) {
+
         serverPicker.setServers(servers);
     }
 }

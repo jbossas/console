@@ -11,7 +11,6 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.tables.TablePicker;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -70,16 +69,12 @@ public class ServerPicker {
 
     public void setServers(List<ServerInstance> servers) {
 
-        List<ServerInstance> active = new LinkedList<ServerInstance>();
-        for(ServerInstance server : servers)
-            if(server.isRunning())
-                active.add(server);
-
-        dataProvider.setList(active);
+        serverSelection.clearSelection();
+        dataProvider.setList(servers);
 
         // TODO: is a default selection right in this case?
-        if(!active.isEmpty())
-            setSelected(active.get(0), true);
+        if(!servers.isEmpty())
+            setSelected(servers.get(0), true);
     }
 
     public void setSelected(ServerInstance server, boolean isSelected)

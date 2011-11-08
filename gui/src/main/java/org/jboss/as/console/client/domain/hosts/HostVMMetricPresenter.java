@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -26,6 +27,7 @@ import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,7 +35,7 @@ import java.util.List;
  * @date 10/7/11
  */
 public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresenter.MyProxy>
-        implements VMMetricsManagement {
+        implements VMMetricsManagement, HostSelectionEvent.HostSelectionListener  {
 
     private CurrentHostSelection hostSelection;
     private DispatchAsync dispatcher;
@@ -71,33 +73,51 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        if(isVisible())
+            loadServer();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override
     protected void onReset() {
 
+        getView().recycle();
         loadServer();
     }
 
     private void loadServer() {
 
+        if(!hostSelection.isSet())
+            throw new RuntimeException("Host selection not set!");
+
+        keepPolling = true;
+
         hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> servers) {
 
-                getView().setServer(servers);
+                List<ServerInstance> active = new LinkedList<ServerInstance>();
+                for(ServerInstance server : servers)
+                    if(server.isRunning())
+                        active.add(server);
+
+
+                // apply active servers
+                getView().setServer(active);
+
+                if(active.isEmpty())
+                    getView().reset();
+
             }
         });
 
-    }
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-        getView().recycle();
     }
 
     private LoadMetricsCmd createLoadMetricCmd(String serverName) {
@@ -163,6 +183,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     private void beginPolling() {
+
         pollCmd = new Scheduler.RepeatingCommand() {
             @Override
             public boolean execute() {
@@ -198,10 +219,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     public void onServerSelection(String serverName) {
 
-        this.serverSelection = serverName;
+        // TODO: hacky. somehow the events get fired two times ...
+        if(!serverName.equals(this.serverSelection))
+        {
+            this.serverSelection = serverName;
 
-        getView().reset();
-        loadVMStatus(serverName);
-        beginPolling();
+            getView().reset();
+            loadVMStatus(serverName);
+            beginPolling();
+        }
     }
 }

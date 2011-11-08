@@ -55,6 +55,7 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
     public final static double GOLDEN_RATIO = 1.618;
     private ValueRenderer<T> renderer;
 
+
     interface Template extends SafeHtmlTemplates {
         @Template("<div class=\"{0}\">{1}</div>")
         SafeHtml item(String cssClass, String title);
@@ -219,4 +220,10 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
         for(ValueChangeHandler<T> handler : changeHandlers)
             handler.onValueChange((ValueChangeEvent<T>)gwtEvent);
     }   */
+
+    public void clearSelection() {
+        currentDisplayedValue.setText("");
+    }
+
 }
+
