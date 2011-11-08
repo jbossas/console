@@ -97,6 +97,10 @@ public interface UIMessages extends Messages {
     String subsys_osgi_removeConfigAdminConfirm(String pid);
     String subsys_osgi_removeCapability();
     String subsys_osgi_removeCapabilityConfirm(String id);
+    String subsys_osgi_cant_start_fragment(String bsn);
+    String subsys_osgi_cant_stop_fragment(String bsn);
+    String subsys_osgi_activate();
+    String subsys_osgi_activating();
 
     String subsys_messaging(String providerName);
 

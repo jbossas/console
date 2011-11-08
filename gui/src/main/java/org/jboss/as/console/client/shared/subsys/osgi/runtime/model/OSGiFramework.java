@@ -29,7 +29,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 public interface OSGiFramework {
     @Binding(detypedName="startlevel")
     @FormItem(defaultValue="1",
-              label="Start Level",
+              localLabel="subsys_osgi_capabilityStartLevel",
               formItemTypeForEdit="NUMBER_BOX")
     int getStartLevel();
     void setStartLevel(int startLevel);

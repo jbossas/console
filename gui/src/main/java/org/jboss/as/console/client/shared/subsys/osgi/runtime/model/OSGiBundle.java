@@ -30,34 +30,34 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 public interface OSGiBundle extends NamedEntity {
     @Override
     @Binding(detypedName="id", key=true)
-    @FormItem(label="Bundle ID",
+    @FormItem(localLabel="subsys_osgi_bundleID",
               formItemTypeForEdit="TEXT",
               order=1)
     public String getName();
     @Override
     public void setName(String name);
 
-    @FormItem(label="State", order=6)
+    @FormItem(localLabel="subsys_osgi_bundleState", order=6)
     public String getState();
     public void setState(String s);
 
     @Binding(detypedName="symbolic-name")
-    @FormItem(label="Symbolic Name", order=2)
+    @FormItem(localLabel="subsys_osgi_bundleSymbolicName", order=2)
     public String getSymbolicName();
     public void setSymbolicName(String bsn);
 
     @Binding(detypedName="startlevel")
-    @FormItem(label="Start Level",
+    @FormItem(localLabel="subsys_osgi_capabilityStartLevel",
               formItemTypeForEdit="NUMBER_BOX",
               order=5)
     public int getStartLevel();
     public void setStartLevel(int sl);
 
-    @FormItem(label="Type", order=4)
+    @FormItem(localLabel="common_label_type", order=4)
     public String getType();
     public void setType(String type);
 
-    @FormItem(label="Version", order=3)
+    @FormItem(localLabel="subsys_osgi_bundleVersion", order=3)
     public String getVersion();
     public void setVersion(String version);
 }

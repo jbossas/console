@@ -293,12 +293,22 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
     }
 
     public void onAddProperty(final PropertyRecord prop) {
-        ModelNode operation = createOperation(ADD);
+        onAddChangeProperty(prop, ADD, false);
+    }
+
+    public void onChangeProperty(PropertyRecord prop) {
+        onAddChangeProperty(prop, WRITE_ATTRIBUTE_OPERATION, true);
+    }
+
+    private void onAddChangeProperty(PropertyRecord prop, String opName, boolean addAttrName) {
+        ModelNode operation = createOperation(opName);
         operation.get(ADDRESS).add(FRAMEWORK_PROPERTY_RESOURCE, prop.getKey());
+        if (addAttrName)
+            operation.get(NAME).set("value");
         operation.get("value").set(prop.getValue());
 
         dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_frameworkProperty(), prop.getKey(),
+            new SimpleDMRResponseHandler(opName, Console.CONSTANTS.subsys_osgi_frameworkProperty(), prop.getKey(),
                 new Command() {
                     @Override
                     public void execute() {
