@@ -11,9 +11,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.HostSelector;
-import org.jboss.as.console.client.domain.hosts.ServerSelector;
 import org.jboss.as.console.client.domain.model.Host;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
@@ -31,7 +29,6 @@ class DomainRuntimeNavigation {
     private VerticalPanel layout;
 
     private HostSelector hostSelector;
-    private ServerSelector serverSelector;
 
     public Widget asWidget()
     {
@@ -73,11 +70,6 @@ class DomainRuntimeNavigation {
 
 
         // -------------
-
-        serverSelector= new ServerSelector();
-        Widget serverSelectorWidget = serverSelector.asWidget();
-        //serverSelectorWidget.getElement().setAttribute("style", "padding-top:10px; padding-left:4px;padding-right:4px");
-        //TODO: innerlayout.add(serverSelectorWidget);
 
         Tree metricTree = new LHSNavTree("domain-runtime");
 
@@ -128,15 +120,5 @@ class DomainRuntimeNavigation {
 
         hostSelector.setHosts(hostNames);
 
-    }
-
-     public void setServer(List<Server> server) {
-        List<String> serverNames = new ArrayList<String>(server.size());
-        for(Server s : server)
-        {
-            serverNames.add(s.getName());
-        }
-
-         serverSelector.setServer(serverNames);
     }
 }

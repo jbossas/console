@@ -27,7 +27,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
@@ -37,16 +36,13 @@ import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Predicate;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,19 +52,14 @@ import java.util.List;
  * @date 3/8/11
  */
 public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter.MyView, ServerInstancesPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
+        implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
     private HostInformationStore hostInfoStore;
-    private String selectedHost = null;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
     private boolean hasBeenRevealed = false;
-
-    public String getCurrentHostSelection() {
-        return selectedHost;
-    }
-
+    private String selectedHost = null;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -77,9 +68,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     public interface MyView extends SuspendableView {
         void setPresenter(ServerInstancesPresenter presenter);
-        void setSelectedHost(String selectedHost);
-        void updateInstances(List<ServerInstance> instances);
-        void updateServerConfigurations(List<Server> servers);
+        void updateInstances(String hostName, List<ServerInstance> instances);
     }
 
     @Inject
@@ -98,18 +87,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
-        getEventBus().addHandler(StaleModelEvent.TYPE, this);
-    }
-
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        selectedHost = request.getParameter("host", null);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        refreshView();
+        //refreshView();
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -129,52 +112,19 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         hasBeenRevealed = true;
     }
 
-    private void refreshView() {
+    private void loadHostData() {
 
-        // host selection event may cause this
-        if(!hasBeenRevealed) return;
+        hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
 
-        if(null== selectedHost)
-        {
-            // fallback
-            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                @Override
-                public void onSuccess(List<Host> result) {
+            @Override
+            public void onFailure(Throwable caught) {
+                throw new RuntimeException("", caught);
+            }
 
-                    loadHostData(result.get(0).getName());
-                }
-            });
-        }
-        else
-        {
-            loadHostData(selectedHost);
-        }
-    }
-
-    private void loadHostData(String hostName) {
-
-        selectedHost = hostName;
-
-        getView().setSelectedHost(hostName);
-
-        hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
-                getView().updateInstances(result);
-            }
-        });
-
-        hostInfoStore.getServerConfigurations(hostName, new SimpleCallback<List<Server>>() {
-            @Override
-            public void onSuccess(List<Server> result) {
-                getView().updateServerConfigurations(result);
-
-                if(result.isEmpty())
-                {
-                    // hacky: See HostInfoStore#getServerInstances()
-                    getView().updateInstances(Collections.EMPTY_LIST);
-                }
+                getView().updateInstances(selectedHost, result);
             }
         });
     }
@@ -185,9 +135,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     @Override
-    public void onHostSelection(String hostName) {
-        selectedHost = hostName;
-        refreshView();
+    public void onHostSelection(final String hostName) {
+
+        this.selectedHost = hostName;
+
+        if(isVisible())
+            loadHostData();
     }
 
     public void onFilterByGroup(String serverConfig) {
@@ -197,7 +150,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                 serverInstances
         );
 
-        getView().updateInstances(filtered);
+        getView().updateInstances(selectedHost, filtered);
     }
 
     class ServerGroupPredicate implements Predicate<ServerInstance> {
@@ -217,8 +170,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         }
     }
 
-    public void startServer(final String configName, final boolean startIt) {
-        hostInfoStore.startServer(selectedHost, configName, startIt, new SimpleCallback<Boolean>() {
+    public void startServer(final String hostName, final String configName, final boolean startIt) {
+        hostInfoStore.startServer(hostName, configName, startIt, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean wasSuccessful) {
 
@@ -247,7 +200,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                     // if the operation was success we merge the local state changes into the model
                     // to avoid a polling request (server started async)
 
-                    hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+                    hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
                         @Override
                         public void onSuccess(List<ServerInstance> result) {
                             serverInstances = result;
@@ -256,7 +209,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                             for(ServerInstance instance : result)
                                 if(instance.getServer().equals(configName)) instance.setRunning(startIt);
 
-                            getView().updateInstances(result);
+                            getView().updateInstances(hostName, result);
                         }
                     });
                 }
@@ -264,7 +217,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         });
     }
 
-    public void reloadServer(final String server) {
+    /*public void reloadServer(final String server) {
         hostInfoStore.reloadServer(selectedHost, server, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -274,11 +227,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                     Console.error("Error: Failed to reload server configuration " + server);
             }
         });
-    }
+    } */
 
-    @Override
-    public void onStaleModel(String modelName) {
-        if(StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
-            refreshView();
-    }
 }

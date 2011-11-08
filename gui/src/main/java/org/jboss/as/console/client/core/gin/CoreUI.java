@@ -43,7 +43,6 @@ import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
-import org.jboss.as.console.client.domain.hosts.CurrentServerConfigurations;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
@@ -165,7 +164,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
     CurrentProfileSelection getCurrentSelectedProfile();
     CurrentHostSelection getCurrentSelectedHost();
-    CurrentServerConfigurations getCurrentServerConfigurations();
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 

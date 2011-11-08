@@ -22,7 +22,6 @@ package org.jboss.as.console.client.domain.model.impl;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.domain.hosts.CurrentServerConfigurations;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -35,9 +34,9 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -58,18 +57,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private ApplicationMetaData propertyMetaData;
-    private CurrentServerConfigurations currentConfigs;
     private EntityAdapter<Server> serverAdapter;
     private EntityAdapter<Jvm> jvmAdapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
 
     @Inject
-    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMeta,
-                             CurrentServerConfigurations currentConfigs) {
+    public HostInfoStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData propertyMeta) {
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.propertyMetaData = propertyMeta;
-        this.currentConfigs =currentConfigs;
         serverAdapter = new EntityAdapter<Server>(Server.class, propertyMeta);
         jvmAdapter = new EntityAdapter<Jvm>(Jvm.class, propertyMeta);
         propertyAdapter = new EntityAdapter<PropertyRecord>(PropertyRecord.class, propertyMeta);
@@ -110,7 +106,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void getServerConfigurations(String host, final AsyncCallback<List<Server>> callback) {
 
-        assert host!=null : "Host parameter is null!";
+        if(host==null) throw new RuntimeException("Host parameter is null!");
 
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -140,7 +136,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     records.add(server);
                 }
 
-                currentConfigs.setServerConfigs(records);
 
                 callback.onSuccess(records);
             }
@@ -182,6 +177,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
         final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
+
 
         getServerConfigurations(host, new SimpleCallback<List<Server>>() {
             @Override

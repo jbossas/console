@@ -29,7 +29,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -40,7 +39,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -71,10 +69,11 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
     private ServerInstancesPresenter presenter;
     private ListDataProvider<ServerInstance> instanceProvider;
-    private String selectedHost = null;
     private ComboBox groupFilter;
     private CellTable<ServerInstance> instanceTable;
     private ToolButton startBtn;
+    private String hostName;
+    private ContentHeaderLabel nameLabel;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -94,7 +93,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // ----------------------------------------------------------------------
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_runtimeStatus());
+        nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_runtimeStatus());
 
         HorizontalPanel horzPanel = new HorizontalPanel();
         horzPanel.getElement().setAttribute("style", "width:100%;");
@@ -128,7 +127,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         tableOptions.add(typeFilterWidget);
 
         tableOptions.getElement().setAttribute("style", "float:right;");
-        vpanel.add(tableOptions);
+
+        //TODO: Fixme vpanel.add(tableOptions);
 
         // ----------------------------------------------------------------------
 
@@ -208,7 +208,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
                                     ServerInstance instance = form.getEditedEntity();
-                                    presenter.startServer(instance.getServer(), !instance.isRunning());
+                                    presenter.startServer(hostName, instance.getServer(), !instance.isRunning());
                                 }
                             }
                         });
@@ -281,35 +281,27 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         return layout;
     }
 
-    @Override
-    public void setSelectedHost(String selectedHost) {
-        this.selectedHost = selectedHost;
-    }
 
     @Override
-    public void updateInstances(List<ServerInstance> instances) {
+    public void updateInstances(String hostName, List<ServerInstance> instances) {
+        this.hostName = hostName;
+
+        nameLabel.setText("Instances on host:" +hostName);
+
         instanceProvider.setList(instances);
         if(!instances.isEmpty())
             instanceTable.getSelectionModel().setSelected(instances.get(0), true);
-    }
 
-    @Override
-    public void updateServerConfigurations(List<Server> servers) {
-        List<String> names = new ArrayList<String>(servers.size());
+        /*List<String> names = new ArrayList<String>(instances.size());
         names.add(""); // de-select filter
-        for(Server server : servers)
+        for(ServerInstance instance : instances)
         {
-            if(!names.contains(server.getGroup())) // could be turned into Set based API
-                names.add(server.getGroup());
+            if(!names.contains(instance.getGroup())) // could be turned into Set based API
+                names.add(instance.getGroup());
         }
-        groupFilter.setValues(names);
+        groupFilter.clearSelection();
+        groupFilter.clearValues();
+        groupFilter.setValues(names);*/
     }
 
-    private String buildToken(String serverName) {
-        assert selectedHost!=null : "host selection is null!";
-        final String token = "hosts/" + NameTokens.ServerPresenter+
-                ";host="+selectedHost +
-                ";server=" + serverName;
-        return token;
-    }
 }

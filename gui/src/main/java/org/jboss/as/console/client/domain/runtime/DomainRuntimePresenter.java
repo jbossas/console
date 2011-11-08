@@ -28,14 +28,13 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
-import java.util.Timer;
 
 /**
  * @author Heiko Braun
  * @date 11/2/11
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener, ServerSelectionEvent.ServerSelectionListener {
+    implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -54,7 +53,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
-        void setServer(String host, List<Server> server);
     }
 
     @Inject
@@ -141,19 +139,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public void onHostSelection(String hostName) {
 
         hostSelection.setName(hostName);
-
-        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
-            @Override
-            public void onSuccess(List<Server> hosts) {
-                getView().setServer(hostSelection.getName(), hosts);
-            }
-        });
-    }
-
-    @Override
-    public void onServerSelection(String serverName) {
-
-        System.out.println("Selected server: "+serverName);
 
     }
 }

@@ -204,7 +204,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     @Override
     public void onHostSelection(String hostName) {
         selectedHost = hostName;
-        loadServerConfigurations();
+        if(isVisible())
+            loadServerConfigurations();
     }
 
     public void launchNewConfigDialoge() {

@@ -73,9 +73,4 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     public void setHosts(List<Host> hosts) {
         lhsNavigation.setHosts(hosts);
     }
-
-    @Override
-    public void setServer(String host, List<Server> server) {
-        lhsNavigation.setServer(server);
-    }
 }
