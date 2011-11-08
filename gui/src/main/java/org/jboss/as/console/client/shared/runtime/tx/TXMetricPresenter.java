@@ -11,6 +11,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -27,6 +28,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -36,7 +38,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 11/3/11
  */
 public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMetricPresenter.MyProxy>
-    implements TXMetricManagement {
+    implements TXMetricManagement , HostSelectionEvent.HostSelectionListener {
 
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
@@ -56,8 +58,10 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         void setPresenter(TXMetricManagement presenter);
         void setTxMetric(Metric txMetric);
         void setRollbackMetric(Metric rollbackMetric);
-        void recycleCharts();
+        void recycle();
         void setSupportServers(boolean b);
+
+        void reset();
     }
 
     @Inject
@@ -81,35 +85,53 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        if(isVisible())
+            loadServerConfigurations();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
         getView().setSupportServers(!bootstrapContext.isStandalone());
-    }
-
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-        getView().recycleCharts();
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        refresh();
+
+        getView().recycle();
         loadServerConfigurations();
+        refresh();
     }
 
     private void loadServerConfigurations() {
 
         if(!bootstrapContext.isStandalone())
         {
+
+            if(!hostSelection.isSet())
+                throw new RuntimeException("Host selection not set!");
+
             hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
                 @Override
                 public void onSuccess(List<ServerInstance> servers) {
 
-                    getView().setServer(servers);
+
+                    List<ServerInstance> active = new LinkedList<ServerInstance>();
+                    for(ServerInstance server : servers)
+                        if(server.isRunning())
+                            active.add(server);
+
+
+                    // apply active servers
+                    getView().setServer(active);
+
+                    if(active.isEmpty())
+                        getView().reset();
+
                 }
             });
         }

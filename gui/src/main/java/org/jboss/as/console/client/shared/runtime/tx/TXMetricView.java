@@ -15,5 +15,5 @@ public interface TXMetricView extends View {
     void setTxMetric(Metric txMetric);
     void setRollbackMetric(Metric rollbackMetric);
     void setServer(List<ServerInstance> server);
-    void recycleCharts();
+    void recycle();
 }

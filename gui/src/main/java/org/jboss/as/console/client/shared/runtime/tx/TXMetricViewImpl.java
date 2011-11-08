@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -123,8 +122,14 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     }
 
     @Override
-    public void recycleCharts() {
+    public void recycle() {
         executionMetric.recycle();
         rollbackMetric.recycle();
+    }
+
+    @Override
+    public void reset() {
+        executionMetric.clearSamples();
+        rollbackMetric.clearSamples();
     }
 }
