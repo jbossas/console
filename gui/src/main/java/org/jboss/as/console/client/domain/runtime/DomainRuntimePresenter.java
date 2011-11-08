@@ -23,7 +23,6 @@ import org.jboss.as.console.client.domain.events.ServerSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -137,8 +136,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onHostSelection(String hostName) {
-
         hostSelection.setName(hostName);
-
     }
 }

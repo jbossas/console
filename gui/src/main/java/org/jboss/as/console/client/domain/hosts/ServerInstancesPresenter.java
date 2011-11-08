@@ -34,7 +34,6 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Predicate;
@@ -59,7 +58,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
     private boolean hasBeenRevealed = false;
-    private String selectedHost = null;
+    private CurrentHostSelection hostSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -75,11 +74,12 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public ServerInstancesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore) {
+            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
+        this.hostSelection = hostSelection;
     }
 
     @Override
@@ -114,7 +114,10 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     private void loadHostData() {
 
-        hostInfoStore.getServerInstances(selectedHost, new SimpleCallback<List<ServerInstance>>() {
+        if(!hostSelection.isSet())
+            throw new RuntimeException("Host selection not set!");
+
+        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -124,7 +127,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
-                getView().updateInstances(selectedHost, result);
+                getView().updateInstances(hostSelection.getName(), result);
             }
         });
     }
@@ -137,7 +140,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     @Override
     public void onHostSelection(final String hostName) {
 
-        this.selectedHost = hostName;
+        // current host selection is set in DomainRuntimePresenter
 
         if(isVisible())
             loadHostData();
@@ -150,7 +153,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                 serverInstances
         );
 
-        getView().updateInstances(selectedHost, filtered);
+        getView().updateInstances(hostSelection.getName(), filtered);
     }
 
     class ServerGroupPredicate implements Predicate<ServerInstance> {

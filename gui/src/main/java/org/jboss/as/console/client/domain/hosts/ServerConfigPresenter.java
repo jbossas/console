@@ -40,7 +40,6 @@ import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -83,7 +82,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private HostInformationStore hostInfoStore;
     private ServerGroupStore serverGroupStore;
 
-    private String selectedHost;
+    private CurrentHostSelection hostSelection;
 
     private DefaultWindow window = null;
     private List<ServerGroupRecord> serverGroups;
@@ -107,7 +106,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setJvm(String reference, Jvm jvm);
         void setProperties(String reference, List<PropertyRecord> properties);
         void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
-
         void setConfigurations(String selectedHost, List<Server> servers);
     }
 
@@ -118,7 +116,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             ServerGroupStore serverGroupStore,
             DispatchAsync dispatcher,
             ApplicationMetaData propertyMetaData, BeanFactory factory,
-            PlaceManager placeManager) {
+            PlaceManager placeManager, CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.hostInfoStore = hostInfoStore;
@@ -127,6 +125,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         this.propertyMetaData = propertyMetaData;
         this.factory = factory;
         this.placeManager = placeManager;
+        this.hostSelection = hostSelection;
 
         this.loadSocketCmd = new LoadSocketBindingsCmd(
                 dispatcher, factory, propertyMetaData
@@ -174,25 +173,17 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private void loadServerConfigurations() {
 
-        if(selectedHost==null)
-        {
-            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                @Override
-                public void onSuccess(List<Host> hosts) {
-                    selectedHost = hosts.get(0).getName();
-                    loadServerConfigurations();
-                }
-            });
-        }
-        else
-        {
-            hostInfoStore.getServerConfigurations(selectedHost, new SimpleCallback<List<Server>>() {
-                @Override
-                public void onSuccess(List<Server> result) {
-                    getView().setConfigurations(selectedHost, result);
-                }
-            });
-        }
+        if(!hostSelection.isSet())
+            throw new RuntimeException("Host selection not set!");
+
+
+        hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
+            @Override
+            public void onSuccess(List<Server> result) {
+                getView().setConfigurations(hostSelection.getName(), result);
+            }
+        });
+
     }
 
 
@@ -203,7 +194,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void onHostSelection(String hostName) {
-        selectedHost = hostName;
+
         if(isVisible())
             loadServerConfigurations();
     }
@@ -300,7 +291,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
             final String name = entity.getName();
 
-            hostInfoStore.saveServerConfig(selectedHost, name, changedValues, new AsyncCallback<Boolean>() {
+            hostInfoStore.saveServerConfig(hostSelection.getName(), name, changedValues, new AsyncCallback<Boolean>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -332,7 +323,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         // check if instance exist
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("host", selectedHost);
+        operation.get(ADDRESS).add("host", hostSelection.getName());
         operation.get(ADDRESS).add("server", server.getName());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
 
@@ -364,7 +355,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     private void performDeleteOperation(final Server server) {
 
-        hostInfoStore.deleteServerConfig(selectedHost, server, new AsyncCallback<Boolean>() {
+        hostInfoStore.deleteServerConfig(hostSelection.getName(), server, new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
                 Console.MODULES.getMessageCenter().notify(
@@ -395,14 +386,14 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public String getSelectedHost() {
-        return selectedHost;
+        return hostSelection.getName();
     }
 
 
     @Override
     public void onCreateJvm(String reference, Jvm jvm) {
         ModelNode address = new ModelNode();
-        address.add("host", selectedHost);
+        address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
 
@@ -419,7 +410,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onDeleteJvm(String reference, Jvm jvm) {
 
         ModelNode address = new ModelNode();
-        address.add("host", selectedHost);
+        address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
 
@@ -439,7 +430,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         if(changedValues.size()>0)
         {
             ModelNode address = new ModelNode();
-            address.add("host", selectedHost);
+            address.add("host", hostSelection.getName());
             address.add("server-config", reference);
             address.add(JVM, jvmName);
 
@@ -461,7 +452,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         }
 
         ModelNode address = new ModelNode();
-        address.add("host", selectedHost);
+        address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
 
@@ -478,7 +469,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onDeleteProperty(String reference, final PropertyRecord prop) {
 
         ModelNode address = new ModelNode();
-        address.add("host", selectedHost);
+        address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
 
@@ -490,7 +481,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
     }
-    
+
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
         // do nothing
@@ -546,7 +537,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void loadJVMConfiguration(final Server server) {
-        hostInfoStore.loadJVMConfiguration(selectedHost, server, new SimpleCallback<Jvm>() {
+        hostInfoStore.loadJVMConfiguration(hostSelection.getName(), server, new SimpleCallback<Jvm>() {
             @Override
             public void onSuccess(Jvm jvm) {
 
@@ -556,7 +547,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     public void loadProperties(final Server server) {
-        hostInfoStore.loadProperties(selectedHost, server, new SimpleCallback<List<PropertyRecord>>() {
+        hostInfoStore.loadProperties(hostSelection.getName(), server, new SimpleCallback<List<PropertyRecord>>() {
             @Override
             public void onSuccess(List<PropertyRecord> properties) {
                 getView().setProperties(server.getName(), properties);
