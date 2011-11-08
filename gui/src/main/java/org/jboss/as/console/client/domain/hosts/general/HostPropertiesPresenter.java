@@ -33,6 +33,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -54,7 +55,7 @@ import java.util.List;
  * @date 5/17/11
  */
 public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.MyView, HostPropertiesPresenter.MyProxy>
-        implements PropertyManagement {
+        implements PropertyManagement, HostSelectionEvent.HostSelectionListener  {
 
     private final PlaceManager placeManager;
     private BeanFactory factory;
@@ -86,9 +87,16 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        if(isVisible())
+            loadProperties();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
 
@@ -99,6 +107,9 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     }
 
     private void loadProperties() {
+
+        if(!currentHost.isSet())
+            throw new RuntimeException("Host selection not set!");
 
         ModelNode address = new ModelNode();
         address.add("host", currentHost.getName());

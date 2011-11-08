@@ -34,6 +34,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -61,7 +62,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 5/18/11
  */
 public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVMPresenter.MyProxy>
-        implements JvmManagement {
+        implements JvmManagement , HostSelectionEvent.HostSelectionListener{
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -97,9 +98,16 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        if(isVisible())
+            loadJVMConfig();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
 
@@ -140,7 +148,8 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     private void loadJVMConfig() {
 
-        // /host=local:read-children-resources(child-type=jvm)
+        if(!currentHost.isSet())
+            throw new RuntimeException("Host selection not set!");
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);

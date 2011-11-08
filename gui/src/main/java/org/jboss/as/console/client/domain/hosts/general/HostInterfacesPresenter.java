@@ -30,6 +30,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
@@ -46,7 +47,8 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/18/11
  */
-public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.MyView, HostInterfacesPresenter.MyProxy> {
+public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.MyView, HostInterfacesPresenter.MyProxy>
+    implements HostSelectionEvent.HostSelectionListener{
 
     private final PlaceManager placeManager;
     private LoadInterfacesCmd loadInterfacesCmd;
@@ -81,9 +83,16 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        if(isVisible())
+            loadInterfaces();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
 
@@ -95,6 +104,8 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
 
     private void loadInterfaces() {
 
+        if(!currentHost.isSet())
+            throw new RuntimeException("Host selection not set!");
 
         ModelNode address = new ModelNode();
         address.add("host", currentHost.getName());
