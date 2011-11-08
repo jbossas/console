@@ -87,6 +87,15 @@
     vertical-align: middle;
 }
 
+ .combobox-value, .combobox-item {
+    word-wrap:normal;
+    white-space:nowrap;
+    overflow:hidden!important;
+    -moz-binding:url(/app/ellipsis-xbl.xml#ellipsis)!important;
+    -o-text-overflow:ellipsis!important;
+    text-overflow:ellipsis!important;
+}
+
 
 
 
