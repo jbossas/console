@@ -54,7 +54,6 @@ public class HostSelector {
 
     public void setHosts(List<String> hostNames)
     {
-        hosts.clearSelection();
         hosts.setValues(hostNames);
         hosts.setItemSelected(0, true);
     }

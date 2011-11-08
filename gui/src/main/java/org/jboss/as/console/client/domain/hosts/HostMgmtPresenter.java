@@ -121,18 +121,17 @@ public class HostMgmtPresenter
                     );
                 }
             });
-
-            hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                @Override
-                public void onSuccess(List<Host> hosts) {
-                    if(!hosts.isEmpty())
-                        selectDefaultHost(hosts);
-                    getView().updateHosts(hosts);
-                }
-            });
-
         }
 
+
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+            @Override
+            public void onSuccess(List<Host> hosts) {
+                if(!hosts.isEmpty())
+                    selectDefaultHost(hosts);
+                getView().updateHosts(hosts);
+            }
+        });
     }
 
     private void selectDefaultHost(List<Host> hosts) {
