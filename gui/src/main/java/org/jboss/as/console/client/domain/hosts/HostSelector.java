@@ -55,6 +55,25 @@ public class HostSelector {
     public void setHosts(List<String> hostNames)
     {
         hosts.setValues(hostNames);
-        hosts.setItemSelected(0, true);
+
+        CurrentHostSelection hostSelection = Console.MODULES.getCurrentSelectedHost();
+        if(hostSelection.isSet())
+        {
+            int i = 0;
+            for(String name : hostNames)
+            {
+                if(name.equals(hostSelection.getName()))
+                {
+                    setItemSelected(i, true);
+                    break;
+                }
+                i++;
+            }
+        }
+
+    }
+
+    public void setItemSelected(int item, boolean b) {
+        hosts.setItemSelected(item, b);
     }
 }

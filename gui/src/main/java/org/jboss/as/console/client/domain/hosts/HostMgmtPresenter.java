@@ -38,7 +38,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -52,7 +51,7 @@ import java.util.List;
  */
 public class HostMgmtPresenter
         extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener, StaleModelEvent.StaleModelListener {
+        implements HostSelectionEvent.HostSelectionListener  {
 
     private final PlaceManager placeManager;
 
@@ -90,7 +89,6 @@ public class HostMgmtPresenter
         super.onBind();
         getView().setPresenter(this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
-        getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
     @Override
@@ -127,7 +125,7 @@ public class HostMgmtPresenter
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
             public void onSuccess(List<Host> hosts) {
-                if(!hosts.isEmpty())
+                if(!hostSelection.isSet())
                     selectDefaultHost(hosts);
                 getView().updateHosts(hosts);
             }
@@ -135,15 +133,10 @@ public class HostMgmtPresenter
     }
 
     private void selectDefaultHost(List<Host> hosts) {
-
-        if(!hostSelection.isSet())
-        {
-            String name = hosts.get(0).getName();
-            System.out.println("Default host selection: "+name);
-            hostSelection.setName(name);
-            getEventBus().fireEvent(new HostSelectionEvent(name));
-        }
-
+        String name = hosts.get(0).getName();
+        System.out.println("Default host selection: "+name);
+        hostSelection.setName(name);
+        getEventBus().fireEvent(new HostSelectionEvent(name));
     }
 
     @Override
@@ -154,13 +147,5 @@ public class HostMgmtPresenter
     @Override
     public void onHostSelection(String hostName) {
         hostSelection.setName(hostName);
-    }
-
-    @Override
-    public void onStaleModel(String modelName) {
-        if(modelName.equals(StaleModelEvent.SERVER_CONFIGURATIONS))
-        {
-            // Can be removed?
-        }
     }
 }

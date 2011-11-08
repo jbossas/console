@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.domain.model.impl;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.Host;
@@ -255,8 +254,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onFailure(Throwable caught) {
-                callback.onSuccess(Boolean.FALSE);
-                Log.error("Failed to "+actualOp + " server " +configName);
+                callback.onFailure(caught);
             }
         });
 
@@ -305,8 +303,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
         // TODO: can be null?
         if(record.getJvm()!=null)
             serverConfig.get("jvm").set(record.getJvm().getName());
-        else
-            Log.warn("JVM null for server "+record.getName());
 
         serverConfig.get("socket-binding-group").set(record.getSocketBinding());
         serverConfig.get("socket-binding-port-offset").set(record.getPortOffset());
@@ -317,13 +313,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Failed to create server config: " + caught);
-                callback.onSuccess(Boolean.FALSE);
+
+                callback.onFailure(caught);
             }
 
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                System.out.println(response);
                 String outcome = response.get("outcome").asString();
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
@@ -368,8 +366,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(serverConfig), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
-                Log.error("Failed to create server config: " + caught);
-                callback.onSuccess(Boolean.FALSE);
+                callback.onFailure(caught);
             }
 
             @Override

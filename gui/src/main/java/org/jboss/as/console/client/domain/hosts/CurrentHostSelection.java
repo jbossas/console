@@ -35,6 +35,7 @@ public class CurrentHostSelection {
     }
 
     public void setName(String name) {
+        //System.out.println("Current host: "+name);
         this.name = name;
     }
 
