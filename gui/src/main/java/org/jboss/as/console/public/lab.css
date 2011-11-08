@@ -96,6 +96,11 @@
     text-overflow:ellipsis!important;
 }
 
+.combobox-item-odd {
+    background-color: #FAFAFA;
+    color:#000000!important;
+}
+
 
 
 
