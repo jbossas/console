@@ -93,8 +93,7 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
         TextBoxItem statusSocketBinding = new TextBoxItem("statusSocketBinding", "Status Socket Binding");
 
-        form.setFields(enableStatistics, enableTsm, defaultTimeout);
-        form.setFieldsInGroup("Storage", new DisclosureGroupRenderer(), path, relativeTo, objectStorePath, objectStorePathRelativeTo);
+        form.setFields(enableStatistics, enableTsm, defaultTimeout, path, relativeTo, objectStorePath, objectStorePathRelativeTo);
         form.setFieldsInGroup("Recovery", new DisclosureGroupRenderer(), socketBinding, statusSocketBinding, recoveryListener);
 
         form.setEnabled(false);
