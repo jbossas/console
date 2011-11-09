@@ -101,6 +101,17 @@
     color:#000000!important;
 }
 
+.form-demote {
+    background-color: #ffffff;
+    -webkit-transition: background-color 1s ease-in-out;
+    -moz-transition: background-color 1s ease-in-out;
+    transition: background-color 1s ease-in-out;
+}
 
-
+.form-promote {
+    background-color: #90A8A8;
+    -webkit-transition: background-color 1s ease-in-out;
+    -moz-transition: background-color 1s ease-in-out;
+    transition: background-color 1s ease-in-out;
+}
 
