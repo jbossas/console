@@ -54,7 +54,17 @@ public class SubsystemTreeBuilder {
         // build groups first
         for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
         {
-            final TreeItem groupTreeItem = new TreeItem(group.getName());
+            final TreeItem groupTreeItem = new TreeItem();
+            HTML html = new HTML(group.getName());
+            html.getElement().setAttribute("style", "cursor:pointer;");
+
+            html.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    groupTreeItem.setState(!groupTreeItem.getState());
+                }
+            });
+            groupTreeItem.setWidget(html);
 
             for(final SubsystemGroupItem groupItem : group.getItems())
             {
