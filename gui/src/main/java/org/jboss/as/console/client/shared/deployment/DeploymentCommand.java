@@ -172,12 +172,12 @@ public enum DeploymentCommand {
        
         @Override
         public String makeConfirmMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.addConfirm(record.getName(), Console.CONSTANTS.common_label_selectedDeployments());
+            return Console.MESSAGES.addConfirm(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
 
         @Override
         public String makeFailureMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.failedToAdd(record.getName(), Console.CONSTANTS.common_label_selectedDeployments());
+            return Console.MESSAGES.failedToAdd(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
 
         @Override
@@ -187,7 +187,7 @@ public enum DeploymentCommand {
 
         @Override
         public String makeSuccessMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.successAdd(record.getName(), Console.CONSTANTS.common_label_selectedDeployments());
+            return Console.MESSAGES.successAdd(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
     }
 }

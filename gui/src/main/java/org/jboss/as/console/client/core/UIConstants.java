@@ -116,7 +116,7 @@ public interface UIConstants extends Constants {
     String common_label_success();
     String common_label_reset();
     
-    String common_label_selectedDeployments();
+    String common_label_selectedGroups();
 
     String subsys_jca_dataSources();
     String subsys_jca_dataSourcesXA();
