@@ -187,6 +187,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "web");
+        operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
