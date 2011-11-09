@@ -30,6 +30,7 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 import java.util.Map;
@@ -54,26 +55,19 @@ public class TopicList {
         form = new Form(Topic.class);
         form.setNumColumns(2);
 
-        FormToolStrip<Topic> toolStrip = new FormToolStrip<Topic>(
-                form,
-                new FormToolStrip.FormCallback<Topic>() {
-                    @Override
-                    public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
-                    }
-
-                    @Override
-                    public void onDelete(Topic entity) {
-                        presenter.onDeleteTopic(entity);
-                    }
-                }
-        );
-
+        ToolStrip toolStrip = new ToolStrip();
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewTopicDialogue();
+            }
+        }));
+
+         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.onDeleteTopic(form.getEditedEntity());
             }
         }));
 
