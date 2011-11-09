@@ -71,12 +71,6 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     }
 
     @Override
-    public String getSelectedServerGroup() {
-        int selected = this.tabLayoutpanel.getTabBar().getSelectedTab();
-        return this.tabLayoutpanel.getTabBar().getTabHTML(selected);
-    }
-
-    @Override
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
@@ -100,7 +94,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
         String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
                                               Console.CONSTANTS.common_label_runtimeName(), 
-                                              Console.CONSTANTS.common_label_addToGroup(),
+                                              Console.CONSTANTS.common_label_addToGroups(),
                                               Console.CONSTANTS.common_label_remove()};
         List<Column> columns = makeNameAndRuntimeColumns();
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));

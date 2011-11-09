@@ -124,4 +124,9 @@ public interface UIMessages extends Messages {
     String modificationFailed(String name);
 
     String serversRunningOnHost(String hostName);
+    
+    String selectServerGroups();
+    String selectServerGroupsFor(String deploymentRuntimeName);
+    String alreadyAssignedToAllGroups(String deploymentRuntimeName);
+    String noServerGroupsSelected();
 }

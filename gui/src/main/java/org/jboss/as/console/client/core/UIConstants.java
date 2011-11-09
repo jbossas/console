@@ -94,6 +94,7 @@ public interface UIConstants extends Constants {
     String common_label_subsystems();
     String common_label_areYouSure();
     String common_label_addToGroup();
+    String common_label_addToGroups();
 
     // use the term "delete" instead
     @Deprecated
@@ -114,6 +115,8 @@ public interface UIConstants extends Constants {
     String common_label_changeActivation();
     String common_label_success();
     String common_label_reset();
+    
+    String common_label_selectedGroups();
 
     String subsys_jca_dataSources();
     String subsys_jca_dataSourcesXA();

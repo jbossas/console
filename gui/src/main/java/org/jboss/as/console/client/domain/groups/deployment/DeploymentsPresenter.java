@@ -33,7 +33,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
@@ -78,8 +77,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         void setPresenter(DeploymentsPresenter presenter);
 
         void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo);
-
-        String getSelectedServerGroup();
     }
 
     @Inject
@@ -156,14 +153,8 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     @Override
-    public void addToServerGroup(final String serverGroup, final DeploymentRecord deployment) {
-        if (domainDeploymentInfo.isAssignedToGroup(serverGroup, deployment)) {
-            Exception e = new Exception(Console.MESSAGES.alreadyAssignedTo(deployment.getName(), serverGroup));
-            DeploymentCommand.ADD_TO_GROUP.displayFailureMessage(DeploymentsPresenter.this, deployment, e);
-            return;
-        }
-        
-        deploymentStore.addToServerGroup(serverGroup, deployment, new SimpleCallback<DMRResponse>() {
+    public void addToServerGroup(final DeploymentRecord deployment, final boolean enable, final String... serverGroups) {
+        deploymentStore.addToServerGroups(serverGroups, enable, deployment, new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse response) {
@@ -206,10 +197,22 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     @Override
-    public String getSelectedServerGroup() {
-        return getView().getSelectedServerGroup();
+    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
+        List<ServerGroupRecord> possibleGroupAssignments = new ArrayList<ServerGroupRecord>();
+        for (ServerGroupRecord group : getServerGroups()) {
+            if (!domainDeploymentInfo.isAssignedToGroup(group.getGroupName(), record)) {
+                possibleGroupAssignments.add(group);
+            }
+        }
+        
+        return possibleGroupAssignments;
     }
-
+    
+    @Override
+    public void promptForGroupSelections(DeploymentRecord record) {
+        new ServerGroupSelector(this, record);
+    }
+    
     public void launchNewDeploymentDialoge() {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(480);
@@ -227,7 +230,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         window.setGlassEnabled(true);
         window.center();
     }
-
+    
     public List<ServerGroupRecord> getServerGroups() {
         return serverGroups;
     }

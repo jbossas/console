@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
+import java.util.List;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
@@ -47,11 +49,12 @@ public interface DeployCommandExecutor {
   /**
    * Add the deployment to a server group.
    * 
-   * @param selectedGroup The selected server group.
    * @param record The deployment.
+   * @param enable Enable after adding to group.
+   * @param selectedGroups The selected server groups.
    * @throws UnsupportedOperationException if in standalone mode.
    */
-  public void addToServerGroup(String selectedGroup, DeploymentRecord record);
+  public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups);
   
   /**
    * Remove a deployment from the server.
@@ -61,11 +64,18 @@ public interface DeployCommandExecutor {
   public void removeContent(DeploymentRecord record);
   
   /**
-   * Get the currently selected server group.
-   * 
-   * @return The server group name or <code>null</code> if no server group
-   *         is selected.
-   * @throws UnsupportedOperationException if in standalone mode.
+   * Get the server groups that a deployment might be assigned to.  This returns all
+   * known server groups except those that the deployment is already assigned to.
+   * @param record The deployment.
+   * @return The server groups that the deployment could be assigned to.
    */
-  public String getSelectedServerGroup();
+  public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record);
+          
+  /**
+   * Display a dialog for selecting server groups that the deployment could be assigned to.  The 
+   * prompt will also submit the selections for execution.
+   * 
+   * @param record The deployment record.
+   */
+  public void promptForGroupSelections(DeploymentRecord record);
 }

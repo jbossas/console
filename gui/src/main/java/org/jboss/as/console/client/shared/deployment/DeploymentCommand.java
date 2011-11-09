@@ -53,6 +53,11 @@ public enum DeploymentCommand {
      * @param record The deployment to be manipulated.
      */
     public void execute(final DeployCommandExecutor executor, final DeploymentRecord record) {
+        if  ((this == DeploymentCommand.ADD_TO_GROUP)) {
+            executor.promptForGroupSelections(record);
+            return;
+        }
+        
         Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(), 
                          messageMaker.makeConfirmMessage(record, executor), 
                          new Feedback.ConfirmationHandler() {
@@ -67,16 +72,12 @@ public enum DeploymentCommand {
     }
 
     private void doCommand(DeployCommandExecutor executor, DeploymentRecord record) {
-        String selectedGroup = executor.getSelectedServerGroup();
         switch (this) {
             case ENABLE_DISABLE:
                 executor.enableDisableDeployment(record);
                 break;
             case REMOVE_FROM_GROUP:
                 executor.removeDeploymentFromGroup(record);
-                break;
-            case ADD_TO_GROUP:
-                executor.addToServerGroup(selectedGroup, record);
                 break;
             case REMOVE_FROM_DOMAIN:
                 executor.removeContent(record);
@@ -171,22 +172,22 @@ public enum DeploymentCommand {
        
         @Override
         public String makeConfirmMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.addConfirm(record.getName(), executor.getSelectedServerGroup());
+            return Console.MESSAGES.addConfirm(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
 
         @Override
         public String makeFailureMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.failedToAdd(record.getName(), executor.getSelectedServerGroup());
+            return Console.MESSAGES.failedToAdd(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
 
         @Override
         public String makeLabel(DeploymentRecord record) {
-            return Console.CONSTANTS.common_label_addToGroup();
+            return Console.CONSTANTS.common_label_addToGroups();
         }
 
         @Override
         public String makeSuccessMessage(DeploymentRecord record, DeployCommandExecutor executor) {
-            return Console.MESSAGES.successAdd(record.getName(), executor.getSelectedServerGroup());
+            return Console.MESSAGES.successAdd(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
         }
     }
 }
