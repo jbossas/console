@@ -36,6 +36,7 @@ import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadServersCmd;
+import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
@@ -54,17 +55,7 @@ public class SubsystemTreeBuilder {
         // build groups first
         for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
         {
-            final TreeItem groupTreeItem = new TreeItem();
-            HTML html = new HTML(group.getName());
-            html.getElement().setAttribute("style", "cursor:pointer;");
-
-            html.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent clickEvent) {
-                    groupTreeItem.setState(!groupTreeItem.getState());
-                }
-            });
-            groupTreeItem.setWidget(html);
+            final TreeItem groupTreeItem = new DefaultTreeItem(group.getName());
 
             for(final SubsystemGroupItem groupItem : group.getItems())
             {
