@@ -165,13 +165,13 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
     @Override
     public void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
-        doDeploymentCommand("remove", null, deploymentRecord, callback);
+        doDeploymentCommand(makeOperation("remove", null, deploymentRecord), callback);
     }
 
     @Override
     public void removeDeploymentFromGroup(DeploymentRecord deployment,
                                           AsyncCallback<DMRResponse> callback) {
-        doDeploymentCommand("remove", deployment.getServerGroup(), deployment, callback);
+        doDeploymentCommand(makeOperation("remove", deployment.getServerGroup(), deployment), callback);
     }
 
     @Override
@@ -181,27 +181,46 @@ public class DeploymentStoreImpl implements DeploymentStore {
         if (deployment.isEnabled()) {
             command = "undeploy";
         }
-        doDeploymentCommand(command, deployment.getServerGroup(), deployment, callback);
+        doDeploymentCommand(makeOperation(command, deployment.getServerGroup(), deployment), callback);
     }
 
     @Override
-    public void addToServerGroup(String serverGroup, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback) {
-        doDeploymentCommand(ADD, serverGroup, deploymentRecord, callback);
-    }
-
-    private void doDeploymentCommand(String command,
-                                     String serverGroup,
-                                     DeploymentRecord deployment,
-                                     final AsyncCallback<DMRResponse> callback) {
+    public void addToServerGroups(String[] serverGroups, 
+                                  boolean enable, 
+                                  DeploymentRecord deploymentRecord, 
+                                  AsyncCallback<DMRResponse> callback) {
         ModelNode operation = new ModelNode();
-        //operation.get(OP).set(ADD);
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        for(String group : serverGroups)
+        {
+            steps.add(makeOperation(ADD, group, deploymentRecord));
+            if (enable) {
+                steps.add(makeOperation("deploy", group, deploymentRecord));
+            }
+        }
+
+        operation.get(STEPS).set(steps);
+        
+        doDeploymentCommand(operation, callback);
+    }
+    
+    private ModelNode makeOperation(String command, String serverGroup, DeploymentRecord deployment) {
+        ModelNode operation = new ModelNode();
         if ((serverGroup != null) && (!serverGroup.equals(""))) {
             operation.get(ADDRESS).add("server-group", serverGroup);
         }
 
         operation.get(ADDRESS).add("deployment", deployment.getName());
         operation.get(OP).set(command);
+        return operation;
+    }
 
+    private void doDeploymentCommand(ModelNode operation,
+                                     final AsyncCallback<DMRResponse> callback) {
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override

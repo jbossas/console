@@ -31,8 +31,10 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import java.util.Collections;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
@@ -41,7 +43,6 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
-import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
@@ -147,15 +148,20 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   }
 
   @Override
-  public void addToServerGroup(String selectedGroup, DeploymentRecord record) {
-    throw new UnsupportedOperationException("Not supported in standalone mode.");
+  public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups) {
+      throw new UnsupportedOperationException("Not supported in standalone mode.");
   }
 
   @Override
-  public String getSelectedServerGroup() {
-    return null;
+  public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
+      return Collections.EMPTY_LIST;
   }
-
+  
+  @Override
+  public void promptForGroupSelections(DeploymentRecord record) {
+      throw new UnsupportedOperationException("Not supported in standalone mode.");
+  }
+  
   @Override
   public void removeDeploymentFromGroup(DeploymentRecord record) {
     throw new UnsupportedOperationException("Not supported in standalone mode.");
