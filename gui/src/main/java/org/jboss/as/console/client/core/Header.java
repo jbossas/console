@@ -59,7 +59,7 @@ public class Header implements ValueChangeHandler<String> {
 
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
-            new String[]{NameTokens.HostMgmtPresenter, Console.CONSTANTS.common_label_hosts()},
+            new String[]{NameTokens.HostMgmtPresenter, Console.CONSTANTS.common_label_server()},
             new String[]{NameTokens.DomainRuntimePresenter, "Runtime"}
     };
 
