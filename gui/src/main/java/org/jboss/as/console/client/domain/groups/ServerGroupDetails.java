@@ -75,6 +75,8 @@ public class ServerGroupDetails {
         layout.add(helpPanel.asWidget());
         layout.add(form.asWidget());
 
+        form.setEnabled(false);
+
         return layout;
     }
 
