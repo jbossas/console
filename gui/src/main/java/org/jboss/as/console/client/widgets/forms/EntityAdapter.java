@@ -326,11 +326,13 @@ public class EntityAdapter<T> {
             if(propertyValue!=null)
             {
                 try {
+
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
+
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
                         operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
+                        throw new RuntimeException("Unsupported list type: "+property.getListType());
                     } else {
                         operation.get(splitDetypedName).set(modelType, propertyValue);
                     }
@@ -470,13 +472,10 @@ public class EntityAdapter<T> {
                 {
                     nodeToSetValueUpon.set((Float)value);
                 }
-                else if (binding.getListType() != null)
+                else if (binding.getListType() != null
+                        && binding.getListType() == PropertyRecord.class)
                 {
-                    if (binding.getListType() == PropertyRecord.class) {
-                        nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
-                    } else {
-                        nodeToSetValueUpon.set(fromEntityList((List)value));
-                    }
+                    nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
                 }
                 else
                 {
