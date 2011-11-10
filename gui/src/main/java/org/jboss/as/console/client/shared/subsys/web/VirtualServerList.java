@@ -49,7 +49,6 @@ public class VirtualServerList {
 
     private DefaultCellTable<VirtualServer> table;
     private WebPresenter presenter;
-    private ToolButton edit;
     private Form<VirtualServer> form;
 
     public VirtualServerList(WebPresenter presenter) {
@@ -123,8 +122,6 @@ public class VirtualServerList {
         };
 
 
-
-
         table.addColumn(nameColumn, "Name");
         table.addColumn(aliasColumn, "Alias");
 
@@ -179,11 +176,5 @@ public class VirtualServerList {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(b)
-            edit.setText("Save");
-        else
-            edit.setText("Edit");
-
     }
 }

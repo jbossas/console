@@ -87,7 +87,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void setVirtualServers(List<VirtualServer> servers);
         void enableEditVirtualServer(boolean b);
         void enableJSPConfig(boolean b);
-
         void setJSPConfig(JSPContainerConfiguration jspConfig);
     }
 
@@ -407,8 +406,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         if(server.getDefaultWebModule()!=null)
             operation.get("default-web-module").set(server.getDefaultWebModule());
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -446,6 +443,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(VirtualServer.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -457,7 +456,12 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 else
                     Console.error("Failed to update virtual server " + name, response.toString());
 
-                loadConnectors();
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadVirtualServer();
+                    }
+                });
             }
         });
     }
