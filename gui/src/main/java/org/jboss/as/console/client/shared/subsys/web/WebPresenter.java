@@ -45,6 +45,8 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -434,16 +436,29 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         if(changedValues.isEmpty()) return;
 
-        ModelNode proto = new ModelNode();
-        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        proto.get(ADDRESS).set(Baseadress.get());
-        proto.get(ADDRESS).add("subsystem", "web");
-        proto.get(ADDRESS).add("virtual-server", name);
+        AddressBinding addressBinding = propertyMetaData.getBeanMetaData(VirtualServer.class).getAddress();
+        ModelNode address = addressBinding.asResource(Baseadress.get(), name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(VirtualServer.class);
-        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        EntityAdapter<VirtualServer> adapter = new EntityAdapter<VirtualServer>(VirtualServer.class, propertyMetaData);
+        ModelNode operation = adapter.fromChangeset(changedValues, address);
 
-        System.out.println(operation);
+        if(changedValues.containsKey("alias"))
+        {
+            ModelNode protoType = new ModelNode();
+            protoType.get(ADDRESS).set(address.get(ADDRESS));
+            protoType.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+
+            List<String> values = (List<String>)changedValues.get("alias");
+            ModelNode list = new ModelNode();
+            for(String alias : values)
+                list.add(alias);
+
+            protoType.get(NAME).set("alias");
+            protoType.get(VALUE).set(list);
+
+            operation.get(STEPS).add(protoType);
+
+        }
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

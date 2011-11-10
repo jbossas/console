@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.web.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 import java.util.List;
@@ -27,13 +28,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/11/11
  */
+@Address("/subsystem=web/virtual-server={0}")
 public interface VirtualServer {
 
+    @Binding(skip = true)
     String getName();
     void setName(String name);
 
-    // collections are currently not supported
-    @Binding(detypedName = "none", skip = true)
+    @Binding(skip=true) // not supported stm. needs to be parsed manually
     List<String> getAlias();
     void setAlias(List<String> alias);
 

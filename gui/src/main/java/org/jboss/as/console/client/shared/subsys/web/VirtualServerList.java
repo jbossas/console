@@ -73,19 +73,7 @@ public class VirtualServerList {
 
                     @Override
                     public void onDelete(final VirtualServer entity) {
-
-                        Feedback.confirm("Remove Virtual Server",
-                                "Really remove virtual server '" + entity.getName() + "'?",
-                                new Feedback.ConfirmationHandler() {
-                                    @Override
-                                    public void onConfirmation(boolean isConfirmed) {
-                                        if (isConfirmed) {
-
-                                            presenter.onDeleteVirtualServer(entity.getName());
-
-                                        }
-                                    }
-                                });
+                        presenter.onDeleteVirtualServer(entity.getName());
                     }
                 }
         );

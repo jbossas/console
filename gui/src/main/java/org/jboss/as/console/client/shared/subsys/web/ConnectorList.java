@@ -75,19 +75,7 @@ public class ConnectorList {
 
                     @Override
                     public void onDelete(final HttpConnector entity) {
-
-
-                        Feedback.confirm("Remove Connector",
-                                "Really remove connector '" + entity.getName() + "'?",
-                                new Feedback.ConfirmationHandler() {
-                                    @Override
-                                    public void onConfirmation(boolean isConfirmed) {
-                                        if (isConfirmed) {
-
-                                            presenter.onDeleteConnector(entity.getName());
-                                        }
-                                    }
-                                });
+                        presenter.onDeleteConnector(entity.getName());
                     }
                 }
         );
