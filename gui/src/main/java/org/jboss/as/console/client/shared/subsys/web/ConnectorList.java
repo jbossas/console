@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -140,14 +141,20 @@ public class ConnectorList {
 
 
         TextItem name = new TextItem("name", "Name");
-        TextItem protocol = new TextItem("protocol", "Protocol");
-
-        TextItem scheme = new TextItem("scheme", "Scheme");
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
+
+        ComboBoxItem protocol = new ComboBoxItem("protocol", "Protocol");
+        ComboBoxItem scheme = new ComboBoxItem("scheme", "Scheme");
+
+        protocol.setDefaultToFirstOption(true);
+        protocol.setValueMap(new String[]{"HTTP/1.1", "AJP/1.3"});
+
+        scheme.setDefaultToFirstOption(true);
+        scheme.setValueMap(new String[]{"http", "https"});
 
         CheckBoxItem state = new CheckBoxItem("enabled", "Enabled?");
 
-        form.setFields(name, protocol, scheme, socketBinding, state);
+        form.setFields(name, socketBinding, protocol, scheme, state);
         form.bind(connectorTable);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(

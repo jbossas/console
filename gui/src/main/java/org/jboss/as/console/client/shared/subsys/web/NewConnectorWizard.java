@@ -27,6 +27,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -34,7 +35,9 @@ import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -84,14 +87,18 @@ public class NewConnectorWizard {
             }
         };
 
-        TextBoxItem protocol = new TextBoxItem("protocol", "Protocol");
-        TextBoxItem scheme = new TextBoxItem("scheme", "Scheme");
+
+
+        ComboBoxItem protocol = new ComboBoxItem("protocol", "Protocol");
+        ComboBoxItem scheme = new ComboBoxItem("scheme", "Scheme");
+
+        protocol.setDefaultToFirstOption(true);
+        protocol.setValueMap(new String[]{"HTTP/1.1", "AJP/1.3"});
+
+        scheme.setDefaultToFirstOption(true);
+        scheme.setValueMap(new String[]{"http", "https"});
 
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
-
-        // defaults
-        protocol.setValue("HTTP/1.1");
-        scheme.setValue("http");
         enabled.setValue(Boolean.TRUE);
 
         form.setFields(name,enabled,socket,protocol,scheme);
