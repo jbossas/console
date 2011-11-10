@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.security;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyModule;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.EntityDetails;
@@ -42,11 +44,14 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public class SecurityView extends AbstractEntityView<SecuritySubsystem> implements SecurityPresenter.MyView {
     private final SingleEntityToDmrBridgeImpl<SecuritySubsystem> bridge;
+    private final DomainsView domainsView;
 
     @Inject
     public SecurityView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(SecuritySubsystem.class, propertyMetaData, EnumSet.allOf(FrameworkButton.class));
+        super(SecuritySubsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<SecuritySubsystem>(propertyMetaData, SecuritySubsystem.class, this, dispatcher);
+
+        domainsView = new DomainsView(propertyMetaData, dispatcher);
     }
 
     @Override
@@ -55,9 +60,16 @@ public class SecurityView extends AbstractEntityView<SecuritySubsystem> implemen
         tabLayoutPanel.addStyleName("default-tabpabel");
 
         tabLayoutPanel.add(createEmbeddableWidget(), getEntityDisplayName());
-        tabLayoutPanel.selectTab(0);
+        tabLayoutPanel.add(domainsView.asWidget(), domainsView.getEntityDisplayName());
+        tabLayoutPanel.selectTab(1);
 
         return tabLayoutPanel;
+    }
+
+    @Override
+    public void initialLoad() {
+        super.initialLoad();
+        domainsView.initialLoad();
     }
 
     @Override
@@ -88,7 +100,22 @@ public class SecurityView extends AbstractEntityView<SecuritySubsystem> implemen
     }
 
     @Override
+    public void loadSecurityDomain(String domainName) {
+        domainsView.load(domainName);
+    }
+
+    @Override
     protected String getEntityDisplayName() {
         return "Security";
+    }
+
+    @Override
+    public void setPresenter(SecurityPresenter presenter) {
+        domainsView.setPresenter(presenter);
+    }
+
+    @Override
+    public void setAuthorizationPolicyModules(String domainName, List<AuthorizationPolicyModule> modules) {
+        domainsView.authorizationEditor.setData(domainName, modules);
     }
 }

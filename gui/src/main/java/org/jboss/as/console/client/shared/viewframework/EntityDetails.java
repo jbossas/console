@@ -18,12 +18,14 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import java.util.EnumSet;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.EnumSet;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
@@ -35,7 +37,7 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.
- * 
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class EntityDetails<T> implements EditListener {
@@ -51,7 +53,7 @@ public class EntityDetails<T> implements EditListener {
 
     /**
      * Create a new EntityDetails.
-     * 
+     *
      * @param entitiesName The heading for the details form
      * @param form The form containing all AttributesMetadata that can be displayed or edited.
      * @param bridge The EntityToDmrBridge that will be called for various actions.
@@ -87,7 +89,7 @@ public class EntityDetails<T> implements EditListener {
             @Override
             public void onClick(ClickEvent event) {
                 if (bridge.getEntityList().isEmpty()) return;
-                
+
                 if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
                     bridge.onEdit();
                 } else {
@@ -106,7 +108,7 @@ public class EntityDetails<T> implements EditListener {
             @Override
             public void onClick(ClickEvent event) {
                 form.cancel();
-                EntityDetails.this.setEditingEnabled(false);
+                bridge.onCancel();
             }
         };
         cancelBtn.addClickHandler(cancelHandler);
@@ -117,7 +119,7 @@ public class EntityDetails<T> implements EditListener {
             @Override
             public void onClick(ClickEvent event) {
                 if (bridge.getEntityList().isEmpty()) return;
-                
+
                 Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
                         Console.MESSAGES.removeFromConfirm(bridge.getName(form.getEditedEntity()), entitiesName),
                         new Feedback.ConfirmationHandler() {
