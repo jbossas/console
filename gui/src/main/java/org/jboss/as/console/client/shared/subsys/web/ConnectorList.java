@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -37,11 +38,11 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -51,7 +52,6 @@ public class ConnectorList {
 
     private DefaultCellTable<HttpConnector> connectorTable;
     private WebPresenter presenter;
-    private ToolButton edit;
     private Form<HttpConnector> form;
 
     public ConnectorList(WebPresenter presenter) {
@@ -62,43 +62,37 @@ public class ConnectorList {
 
         VerticalPanel layout = new VerticalPanel();
 
+        form = new Form<HttpConnector>(HttpConnector.class);
+        form.setNumColumns(2);
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+        FormToolStrip<HttpConnector> toolstrip = new FormToolStrip<HttpConnector>(
+                form,
+                new FormToolStrip.FormCallback<HttpConnector>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveConnector(form.getEditedEntity().getName(), changeset);
+                    }
 
-        edit = new ToolButton("Edit", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                if(edit.getText().equals("Edit"))
-                    presenter.onEditConnector();
-                else
-                    presenter.onSaveConnector(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        });
-        toolStrip.addToolButton(edit);
-
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                final HttpConnector connector = form.getEditedEntity();
-
-                Feedback.confirm("Remove Connector", "Really remove connector '" + connector.getName() + "'?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-
-                                    presenter.onDeleteConnector(connector.getName());
-                                }
-                            }
-                        });
-            }
-        }));
+                    @Override
+                    public void onDelete(final HttpConnector entity) {
 
 
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+                        Feedback.confirm("Remove Connector",
+                                "Really remove connector '" + entity.getName() + "'?",
+                                new Feedback.ConfirmationHandler() {
+                                    @Override
+                                    public void onConfirmation(boolean isConfirmed) {
+                                        if (isConfirmed) {
+
+                                            presenter.onDeleteConnector(entity.getName());
+                                        }
+                                    }
+                                });
+                    }
+                }
+        );
+
+        toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchConnectorDialogue();
@@ -106,9 +100,10 @@ public class ConnectorList {
         }));
 
 
-        layout.add(toolStrip);
+        layout.add(toolstrip.asWidget());
 
         // ----
+
 
         connectorTable = new DefaultCellTable<HttpConnector>(10);
 
@@ -154,8 +149,7 @@ public class ConnectorList {
 
         // ---
 
-        form = new Form<HttpConnector>(HttpConnector.class);
-        form.setNumColumns(2);
+
 
         TextItem name = new TextItem("name", "Name");
         TextItem protocol = new TextItem("protocol", "Protocol");
@@ -168,7 +162,7 @@ public class ConnectorList {
         form.setFields(name, protocol, scheme, socketBinding, state);
         form.bind(connectorTable);
 
-         final FormHelpPanel helpPanel = new FormHelpPanel(
+        final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
                     @Override
                     public ModelNode getAddress() {
@@ -199,11 +193,5 @@ public class ConnectorList {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
-
-        if(b)
-            edit.setText("Save");
-        else
-            edit.setText("Edit");
-
     }
 }

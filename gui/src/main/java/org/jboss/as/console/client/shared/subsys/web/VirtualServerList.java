@@ -28,17 +28,18 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -58,44 +59,39 @@ public class VirtualServerList {
     Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout");
 
+        form = new Form<VirtualServer>(VirtualServer.class);
+        form.setNumColumns(2);
 
-        ToolStrip toolStrip = new ToolStrip();
-        toolStrip.getElement().setAttribute("style", "margin-bottom:10px;");
+        FormToolStrip<VirtualServer> toolstrip = new FormToolStrip<VirtualServer>(
+                form,
+                new FormToolStrip.FormCallback<VirtualServer>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveVirtualServer(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
 
-        edit = new ToolButton("Edit", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if(edit.getText().equals("Edit"))
-                    presenter.onEditVirtualServer();
-                else
-                    presenter.onSaveVirtualServer(form.getEditedEntity().getName(), form.getChangedValues());
-            }
-        });
-        toolStrip.addToolButton(edit);
+                    @Override
+                    public void onDelete(final VirtualServer entity) {
 
-        toolStrip.addToolButton(new ToolButton("Delete", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+                        Feedback.confirm("Remove Virtual Server",
+                                "Really remove virtual server '" + entity.getName() + "'?",
+                                new Feedback.ConfirmationHandler() {
+                                    @Override
+                                    public void onConfirmation(boolean isConfirmed) {
+                                        if (isConfirmed) {
 
-                final String serverName = form.getEditedEntity().getName();
+                                            presenter.onDeleteVirtualServer(entity.getName());
 
-                Feedback.confirm("Remove Virtual Server", "Really remove virtual server '" + serverName + "'?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
+                                        }
+                                    }
+                                });
+                    }
+                }
+        );
 
-                                    presenter.onDeleteVirtualServer(serverName);
-
-                                }
-                            }
-                        });
-            }
-        }));
-
-
-        toolStrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchVirtualServerDialogue();
@@ -103,7 +99,7 @@ public class VirtualServerList {
         }));
 
 
-        layout.add(toolStrip);
+        layout.add(toolstrip.asWidget());
 
         // ----
 
@@ -136,9 +132,6 @@ public class VirtualServerList {
 
 
         // ---
-
-        form = new Form<VirtualServer>(VirtualServer.class);
-        form.setNumColumns(2);
 
         TextItem name = new TextItem("name", "Name");
         ListItem alias = new ListItem("alias", "Alias");
