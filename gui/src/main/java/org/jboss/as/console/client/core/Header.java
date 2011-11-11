@@ -41,9 +41,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Top level header, gives access to main applications.
  *
@@ -55,7 +52,7 @@ public class Header implements ValueChangeHandler<String> {
     private HTMLPanel linksPane;
     private String currentHighlightedSection = null;
 
-    private DeckPanel subnavigation;
+    //private DeckPanel subnavigation;
 
     public static final String[][] SECTIONS = {
             new String[]{NameTokens.ProfileMgmtPresenter, Console.CONSTANTS.common_label_profiles()},
@@ -70,7 +67,7 @@ public class Header implements ValueChangeHandler<String> {
 
     private MessageBar messageBar;
 
-    private Map<String,Widget> appLinks = new HashMap<String, Widget>();
+    //private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
     private LayoutPanel headlineContainer;
     private BootstrapContext bootstrap;
