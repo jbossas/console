@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -56,6 +57,8 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected FormMetaData formMetaData;
     protected AddressBinding address;
 
+    private String description = null;
+
     public AbstractEntityView(Class<?> beanType, ApplicationMetaData propertyMetaData) {
         this(beanType, propertyMetaData, EnumSet.noneOf(FrameworkButton.class));
     }
@@ -65,6 +68,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         this.hideButtons = hideButtons;
         formMetaData = propertyMetaData.getFormMetaData(beanType);
         address = propertyMetaData.getBeanMetaData(beanType).getAddress();
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -127,6 +134,8 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         layout.add(scrollPanel);
 
         entityEditor = makeEntityEditor();
+        entityEditor.setDescription(description);
+
         Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 
@@ -167,6 +176,8 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
         layout.add(scrollPanel);
 
         entityEditor = makeEntityEditor();
+        entityEditor.setDescription(description);
+
         Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 

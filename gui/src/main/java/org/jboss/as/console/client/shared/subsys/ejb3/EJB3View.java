@@ -23,7 +23,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -36,11 +39,13 @@ import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author David Bosschaert
@@ -76,14 +81,18 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     public Widget createWidget() {
+
+        this.setDescription("The overall configuration of the ejb3 subsystem. " +
+                "These setting apply to all beans, unless overridden at the deployment or bean level.");
+
         // overall layout
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(createEmbeddableWidget(), getEntityDisplayName());
-        tabLayoutPanel.add(servicesView.asWidget(), Console.CONSTANTS.subsys_ejb3_services());
-        tabLayoutPanel.add(beanPoolsView.asWidget(), beanPoolsView.getEntityDisplayName());
-        tabLayoutPanel.add(threadPoolsView.asWidget(), threadPoolsView.getEntityDisplayName());
+        tabLayoutPanel.add(createEmbeddableWidget(), "Container");
+        tabLayoutPanel.add(servicesView.asWidget(), "Services");
+        tabLayoutPanel.add(beanPoolsView.asWidget(), "Bean Pools");
+        tabLayoutPanel.add(threadPoolsView.asWidget(), "Thread Pools");
 
 
         return tabLayoutPanel;
@@ -92,10 +101,10 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
     @Override
     protected EntityEditor<EJB3Subsystem> makeEntityEditor() {
         EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getEntityDisplayName(),
-                                                                                makeEditEntityDetailsForm(),
-                                                                                getEntityBridge(),
-                                                                                getAddress(),
-                                                                                hideButtons);
+                makeEditEntityDetailsForm(),
+                getEntityBridge(),
+                getAddress(),
+                hideButtons);
         return new EntityEditor<EJB3Subsystem>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
 

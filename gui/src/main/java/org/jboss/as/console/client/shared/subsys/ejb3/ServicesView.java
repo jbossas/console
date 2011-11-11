@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,8 +29,10 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 
 /**
  * @author David Bosschaert
@@ -46,9 +50,12 @@ public class ServicesView extends SuspendableViewImpl {
 
     @Override
     public Widget createWidget() {
+
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_ejb3_ejbServices()));
+
+        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_ejb3_ejbServices()));
+        vpanel.add(new ContentDescription("Centrally configurable services that are part of the EJB3 subsystem."));
 
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
@@ -60,7 +67,8 @@ public class ServicesView extends SuspendableViewImpl {
 
         vpanel.add(bottomPanel);
 
-        return vpanel;
+
+        return new ScrollPanel(vpanel);
     }
 
     public void initialLoad() {

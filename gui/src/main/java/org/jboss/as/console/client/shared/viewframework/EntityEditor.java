@@ -30,6 +30,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -53,6 +54,7 @@ public class EntityEditor<T> {
     private DefaultPager pager;
     private EnumSet<FrameworkButton> hideButtons;
     private ToolStrip toolStrip;
+    private String description = null;
 
     private boolean includeTools = true;
 
@@ -85,6 +87,10 @@ public class EntityEditor<T> {
         this.hideButtons = hideButtons;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ToolStrip getToolStrip() {
         return toolStrip;
     }
@@ -110,6 +116,8 @@ public class EntityEditor<T> {
         }
 
         panel.add(new ContentHeaderLabel(entitiesName));
+        if(description!=null)
+            panel.add(new ContentDescription(description));
 
         table.setSelectionModel(new SingleSelectionModel<T>());
         dataProvider = new ListDataProvider<T>();

@@ -56,6 +56,8 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
 
     @Override
     public Widget createWidget() {
+        setDescription("Thread pool configurations that are referenced by EJB services.");
+
         return createEmbeddableWidget();
     }
 
