@@ -141,7 +141,13 @@ public class Header implements ValueChangeHandler<String> {
         for (String[] section : sections) {
             final String name = section[0];
             final String id = "header-" + name;
-            HTML widget = new HTML(section[1]);
+
+            SafeHtmlBuilder html = new SafeHtmlBuilder();
+            html.appendHtmlConstant("<div style='position:relative;top:8px'>");
+            html.appendHtmlConstant(section[1]);
+            html.appendHtmlConstant("</div>");
+            HTML widget = new HTML(html.toSafeHtml());
+            widget.setStyleName("fill-layout");
 
             widget.addClickHandler(new ClickHandler() {
                 @Override
