@@ -40,7 +40,9 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyModule;
+import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.dmr.client.ModelDescriptionConstants;
@@ -49,7 +51,7 @@ import org.jboss.dmr.client.ModelNode;
 /**
  * @author David Bosschaert
  */
-public class SecurityPresenter extends Presenter<SecurityPresenter.MyView, SecurityPresenter.MyProxy> {
+public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy> {
     public static final String SECURITY_SUBSYSTEM = "security";
 
     private final DispatchAsync dispatcher;
@@ -57,20 +59,20 @@ public class SecurityPresenter extends Presenter<SecurityPresenter.MyView, Secur
     private final RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.SecurityPresenter)
-    public interface MyProxy extends Proxy<SecurityPresenter>, Place {
+    @NameToken(NameTokens.SecurityDomainsPresenter)
+    public interface MyProxy extends Proxy<SecurityDomainsPresenter>, Place {
     }
 
     public interface MyView extends View, FrameworkView {
-        void setPresenter(SecurityPresenter presenter);
-
-        void setAuthorizationPolicyModules(String domainName, List<AuthorizationPolicyModule> modules);
+        void setPresenter(SecurityDomainsPresenter presenter);
+        void setAuthenticationLoginModules(String domainName, List<AuthenticationLoginModule> modules, boolean resourceExists);
+        void setAuthorizationPolicyProviders(String domainName, List<AuthorizationPolicyProvider> providers, boolean resourceExists);
 
         void loadSecurityDomain(String domainName);
     }
 
     @Inject
-    public SecurityPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+    public SecurityDomainsPresenter(EventBus eventBus, MyView view, MyProxy proxy,
         DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
@@ -99,9 +101,14 @@ public class SecurityPresenter extends Presenter<SecurityPresenter.MyView, Secur
     public void updateDomainSelection(final SecurityDomain domain) {
         // load sub-elements which are not automatically loaded by the framework
 
+        loadAuth(domain, "authorization", "policy-modules", AuthorizationPolicyProvider.class);
+        loadAuth(domain, "authentication", "login-modules", AuthenticationLoginModule.class);
+    }
+
+    private <T extends AbstractAuthData> void loadAuth(final SecurityDomain domain, String type, final String attrName, final Class<T> cls) {
         ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
         operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domain.getName());
-        operation.get(ModelDescriptionConstants.ADDRESS).add("authorization", "classic");
+        operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -109,10 +116,11 @@ public class SecurityPresenter extends Presenter<SecurityPresenter.MyView, Secur
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
-                List<AuthorizationPolicyModule> modules = new ArrayList<AuthorizationPolicyModule>();
-                if (model.hasDefined("policy-modules")) {
-                    for (ModelNode node : model.get("policy-modules").asList()) {
-                        AuthorizationPolicyModule pm = factory.authorizationPolicyModule().as();
+                List<T> modules = new ArrayList<T>();
+                boolean resourceExists = model.hasDefined(attrName);
+                if (resourceExists) {
+                    for (ModelNode node : model.get(attrName).asList()) {
+                        T pm = factory.create(cls).as();
 
                         pm.setCode(node.get("code").asString());
                         pm.setFlag(node.get("flag").asString());
@@ -121,36 +129,60 @@ public class SecurityPresenter extends Presenter<SecurityPresenter.MyView, Secur
                     }
                 }
 
-                getView().setAuthorizationPolicyModules(domain.getName(), modules);
+                if (AuthorizationPolicyProvider.class.equals(cls)) {
+                    getView().setAuthorizationPolicyProviders(domain.getName(), (List<AuthorizationPolicyProvider>) modules, resourceExists);
+                } else if (AuthenticationLoginModule.class.equals(cls)) {
+                    getView().setAuthenticationLoginModules(domain.getName(), (List<AuthenticationLoginModule>) modules, resourceExists);
+                }
             }
         });
     }
 
-    public void saveAuthorization(final String domainName, List<AuthorizationPolicyModule> list) {
-        ModelNode operation = createOperation(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domainName);
-        operation.get(ModelDescriptionConstants.ADDRESS).add("authorization", "classic");
-        operation.get(ModelDescriptionConstants.NAME).set("policy-modules");
+    public void saveAuthorization(String domainName, List<AuthorizationPolicyProvider> list, boolean resourceExists) {
+        saveAuth(domainName, list, "authorization", "policy-modules", resourceExists);
+    }
 
-        ModelNode nodeList = new ModelNode();
-        nodeList.setEmptyList();
-        for (AuthorizationPolicyModule pm : list) {
+    public void saveAuthentication(String domainName, List<AuthenticationLoginModule> list, boolean resourceExists) {
+        saveAuth(domainName, list, "authentication", "login-modules", resourceExists);
+    }
+
+    public <T extends AbstractAuthData> void saveAuth(final String domainName, List<T> list, String type, String attrName, boolean resourceExists) {
+        if (list.size() == 0)
+            return;
+
+        ModelNode operation = null;
+
+        ModelNode valueList = new ModelNode();
+        valueList.setEmptyList();
+        for (T pm : list) {
             ModelNode n = new ModelNode();
             n.get("code").set(pm.getCode());
             n.get("flag").set(pm.getFlag());
-            nodeList.add(n);
+            valueList.add(n);
         }
-        operation.get("value").set(nodeList);
+
+        if (resourceExists) {
+            operation = createOperation(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION);
+            operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domainName);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+            operation.get(ModelDescriptionConstants.NAME).set(attrName);
+
+            operation.get("value").set(valueList);
+        } else {
+            operation = createOperation(ModelDescriptionConstants.ADD);
+            operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domainName);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+            operation.get(attrName).set(valueList);
+        }
 
         dispatcher.execute(new DMRAction(operation), new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
-            "policy-modules", domainName, new Command() {
+            attrName, domainName, new Command() {
                 @Override
                 public void execute() {
                     getView().loadSecurityDomain(domainName);
                 }
             }));
     }
-
 
     private ModelNode createOperation(String operator) {
         ModelNode operation = new ModelNode();

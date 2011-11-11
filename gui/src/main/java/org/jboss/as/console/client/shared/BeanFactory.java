@@ -65,7 +65,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdm
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
-import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyModule;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
@@ -156,5 +157,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<TransactionManager> transactionManager();
     AutoBean<SecuritySubsystem> securitySubsystem();
     AutoBean<SecurityDomain> securityDomain();
-    AutoBean<AuthorizationPolicyModule> authorizationPolicyModule();
+    AutoBean<AuthenticationLoginModule> authenticationLoginModule();
+    AutoBean<AuthorizationPolicyProvider> authorizationPolicyModule();
 }
