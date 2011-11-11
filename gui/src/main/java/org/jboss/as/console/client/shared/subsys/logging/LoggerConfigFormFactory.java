@@ -73,7 +73,7 @@ public class LoggerConfigFormFactory<LoggerConfig> implements LoggingEntityFormF
         ListItem handlersItem = new ListItem("handlers", Console.CONSTANTS.subsys_logging_handlers(), true);
 
         Form<LoggerConfig> form = new Form(this.conversionType);
-        form.setNumColumns(1);
+        form.setNumColumns(2);
         form.setFields(nameItem, logLevelItem, handlersItem);
         return form;
     }

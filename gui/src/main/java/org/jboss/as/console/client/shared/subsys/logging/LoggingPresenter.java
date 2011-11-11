@@ -49,7 +49,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 3/29/11
  */
 public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
-    private static final String ROOT_LOGGER = "root-logger";
+
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
@@ -185,7 +185,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     
     public void onRemoveLogger(final String name) {
         ModelNode operation = null;
-        if (name.equals(ROOT_LOGGER)) {
+        if (name.equals(LoggingInfo.ROOT_LOGGER)) {
             operation = LoggingOperation.make("remove-root-logger");
         } else {
             operation = LoggingOperation.make(REMOVE);
@@ -197,7 +197,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     
     public void onAssignHandlerToLogger(String loggerName, String handlerName) {
         ModelNode operation = null;
-        if (loggerName.equals(ROOT_LOGGER)) {
+        if (loggerName.equals(LoggingInfo.ROOT_LOGGER)) {
             operation = LoggingOperation.make("root-logger-assign-handler");
         } else {
             operation = LoggingOperation.make("assign-handler");
@@ -211,7 +211,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     
     public void onUnassignHandlerFromLogger(String loggerName, String handlerName) {
         ModelNode operation = null;
-        if (loggerName.equals(ROOT_LOGGER)) {
+        if (loggerName.equals(LoggingInfo.ROOT_LOGGER)) {
             operation = LoggingOperation.make("root-logger-unassign-handler");
         } else {
             operation = LoggingOperation.make("unassign-handler");
@@ -276,7 +276,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         
         // can only change level for now
         ModelNode operation = null;
-        if (name.equals(ROOT_LOGGER)) {
+        if (name.equals(LoggingInfo.ROOT_LOGGER)) {
             operation = LoggingOperation.make("change-root-log-level");
             if (this.loggingInfo.getRootLogger().getLevel().equals("undefined")) {
                 operation = LoggingOperation.make("set-root-logger");

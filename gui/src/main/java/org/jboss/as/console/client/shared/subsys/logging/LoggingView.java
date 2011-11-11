@@ -56,20 +56,24 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     private DefaultCellTable<LoggingHandler> handlerTable;
     private LoggingEntityFormFactory<LoggingHandler> handlerFormFactory;
     private AssignHandlerChooser<LoggingHandler> loggingHandlerHandlerChooser;
+    private LoggingPresenter presenter;
 
     @Override
     public void setPresenter(LoggingPresenter presenter) {
-        this.loggerConfigBridge = new LoggerConfigBridge(presenter);
-        this.loggerFormFactory = new LoggerConfigFormFactory(LoggerConfig.class, this.loggerConfigBridge);
-        
-        this.handlerBridge = new HandlerBridge(presenter);
-        this.handlerTable = makeHandlerTable(); // need this to be constructed here intead of in createWidget()
-        this.handlerFormFactory = new HandlerFormFactory(LoggingHandler.class, this.handlerBridge);
+        this.presenter = presenter;
     }
 
 
     @Override
     public Widget createWidget() {
+
+        this.loggerConfigBridge = new LoggerConfigBridge(presenter);
+        this.loggerFormFactory = new LoggerConfigFormFactory(LoggerConfig.class, this.loggerConfigBridge);
+
+        this.handlerBridge = new HandlerBridge(presenter);
+        this.handlerTable = makeHandlerTable(); // need this to be constructed here intead of in createWidget()
+        this.handlerFormFactory = new HandlerFormFactory(LoggingHandler.class, this.handlerBridge);
+
         loggerConfigEditor = makeLoggerConfigEditor();
         handlerEditor = makeHandlerEditor();
         
@@ -193,7 +197,8 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
 
     @Override
     public void updateLoggingInfo(LoggingInfo loggingInfo) {
-        List<LoggerConfig> loggers = new ArrayList();
+
+        List<LoggerConfig> loggers = new ArrayList(loggingInfo.getLoggers().size()+1);
         loggers.add(loggingInfo.getRootLogger()); // root logger is always first in list
         loggers.addAll(loggingInfo.getLoggers());
         LoggerConfig lastLoggerConfigEdited = null;
