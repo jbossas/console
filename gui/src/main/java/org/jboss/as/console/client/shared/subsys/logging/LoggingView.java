@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import javax.inject.Inject;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -84,12 +85,12 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         
         
         TabPanel handlerPanel = new TabPanel();
-        handlerPanel.add(consoleHandlerSubview.asWidget(), consoleHandlerSubview.getEntityDisplayName());
-        handlerPanel.add(fileHandlerSubview.asWidget(), fileHandlerSubview.getEntityDisplayName());
-        handlerPanel.add(periodicRotatingFileHandlerSubview.asWidget(), periodicRotatingFileHandlerSubview.getEntityDisplayName());
-        handlerPanel.add(sizeRotatingFileHandlerSubview.asWidget(), sizeRotatingFileHandlerSubview.getEntityDisplayName());
-        handlerPanel.add(asyncHandlerSubview.asWidget(), asyncHandlerSubview.getEntityDisplayName());
-        handlerPanel.add(customHandlerSubview.asWidget(), customHandlerSubview.getEntityDisplayName());
+        handlerPanel.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console());
+        handlerPanel.add(fileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_file());
+        handlerPanel.add(periodicRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_periodic());
+        handlerPanel.add(sizeRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_size());
+        handlerPanel.add(asyncHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_async());
+        handlerPanel.add(customHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_custom());
         handlerPanel.setStyleName("fill-layout-width");
         handlerPanel.selectTab(0);
         
