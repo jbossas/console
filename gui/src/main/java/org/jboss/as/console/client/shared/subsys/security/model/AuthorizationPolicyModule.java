@@ -18,21 +18,20 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.model;
 
-import org.jboss.as.console.client.widgets.forms.Address;
-import org.jboss.as.console.client.widgets.forms.Binding;
-import org.jboss.as.console.client.widgets.forms.FormItem;
+import java.util.List;
+
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 /**
  * @author David Bosschaert
  */
-@Address("/subsystem=security")
-public interface SecuritySubsystem {
-    @Binding(detypedName="deep-copy-subject-mode")
-    @FormItem(label="Deep Copy Subjects",
-              required=false,
-              formItemTypeForAdd="CHECK_BOX",
-              formItemTypeForEdit="CHECK_BOX",
-              order=10)
-    boolean isDeepCopySubjects();
-    void setDeepCopySubjects(boolean value);
+public interface AuthorizationPolicyModule {
+    String getCode();
+    void setCode(String code);
+
+    String getFlag();
+    void setFlag(String flag);
+
+    List<PropertyRecord> getProperties();
+    void setProperties(List<PropertyRecord> properties);
 }

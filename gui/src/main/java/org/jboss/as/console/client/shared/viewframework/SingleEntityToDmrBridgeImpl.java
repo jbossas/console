@@ -27,10 +27,10 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
@@ -104,6 +104,11 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     @Override
     public void onEdit() {
         view.setEditingEnabled(true);
+    }
+
+    @Override
+    public void onCancel() {
+        view.setEditingEnabled(false);
     }
 
     @Override

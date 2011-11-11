@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import org.jboss.dmr.client.Property;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
@@ -37,13 +36,14 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 /**
  * This class knows how to do DMR operations and refresh the view.
@@ -144,6 +144,11 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     @Override
     public void onEdit() {
         view.setEditingEnabled(true);
+    }
+
+    @Override
+    public void onCancel() {
+        view.setEditingEnabled(false);
     }
 
     @Override

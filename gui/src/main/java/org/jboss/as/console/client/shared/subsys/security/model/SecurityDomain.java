@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.model;
 
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
@@ -25,14 +26,23 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 /**
  * @author David Bosschaert
  */
-@Address("/subsystem=security")
-public interface SecuritySubsystem {
-    @Binding(detypedName="deep-copy-subject-mode")
-    @FormItem(label="Deep Copy Subjects",
+@Address("/subsystem=security/security-domain={0}")
+public interface SecurityDomain extends NamedEntity {
+    @Override
+    @Binding(detypedName="name", key=true)
+    @FormItem(label="Name",
+              required=true,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX",
+              tabName="common_label_attributes")
+    String getName();
+    @Override
+    void setName(String name);
+
+    @Binding(detypedName="cache-type")
+    @FormItem(label="Cache Type",
               required=false,
-              formItemTypeForAdd="CHECK_BOX",
-              formItemTypeForEdit="CHECK_BOX",
-              order=10)
-    boolean isDeepCopySubjects();
-    void setDeepCopySubjects(boolean value);
+              tabName="common_label_attributes")
+    String getCacheType();
+    void setCacheType(String type);
 }
