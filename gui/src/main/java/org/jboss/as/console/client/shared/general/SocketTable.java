@@ -110,8 +110,6 @@ public class SocketTable {
 
         if(!bindings.isEmpty() && table.getSelectionModel()!=null)
             table.getSelectionModel().setSelected(bindings.get(0), true);
-
-        ColumnSortEvent.fire(table, table.getColumnSortList());
     }
 
      public void updateFrom(String groupName, List<SocketBinding> bindings, int portOffset) {

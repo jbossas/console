@@ -38,7 +38,8 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
         // /socket-binding-group=standard-sockets:read-resource(recursive=true)
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("socket-binding-group", groupName);
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("socket-binding");
         operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -49,7 +50,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode payload = response.get("result").asObject();
 
-                List<ModelNode> socketDescriptions= payload.get("socket-binding").asList();
+                List<ModelNode> socketDescriptions= payload.asList();
 
                 String defaultInterface = payload.get("default-interface").asString();
                 List<SocketBinding> bindings = new ArrayList<SocketBinding>();
