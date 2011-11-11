@@ -46,9 +46,9 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -70,12 +70,14 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private DispatchAsync dispatcher;
 
     private DefaultWindow window;
-    private ApplicationMetaData propertyMetaData;
+    private ApplicationMetaData metaData;
 
     private List<HttpConnector> connectors;
     private RevealStrategy revealStrategy;
 
     private List<VirtualServer> virtualServers;
+
+    private EntityAdapter<JSPContainerConfiguration> containerAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -88,7 +90,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void enableEditConnector(boolean b);
         void setVirtualServers(List<VirtualServer> servers);
         void enableEditVirtualServer(boolean b);
-        void enableJSPConfig(boolean b);
         void setJSPConfig(JSPContainerConfiguration jspConfig);
     }
 
@@ -97,15 +98,18 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             BeanFactory factory, DispatchAsync dispatcher,
-            ApplicationMetaData propertyMetaData,
+            ApplicationMetaData metaData,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
         this.dispatcher = dispatcher;
-        this.propertyMetaData = propertyMetaData;
+        this.metaData = metaData;
         this.revealStrategy = revealStrategy;
+
+        containerAdapter =
+                new EntityAdapter<JSPContainerConfiguration>(JSPContainerConfiguration.class, metaData);
 
     }
 
@@ -198,7 +202,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
                 ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
                 ModelNode jspCfg  = config.get("jsp-configuration").asObject();
-                ModelNode staticCfg = config.get("static-resources").asObject();
+                //ModelNode staticCfg = config.get("static-resources").asObject();
 
                 JSPContainerConfiguration jspConfig = factory.jspConfig().as();
                 jspConfig.setDisabled(jspCfg.get("disabled").asBoolean());
@@ -206,7 +210,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 jspConfig.setDevelopment(jspCfg.get("development").asBoolean());
                 jspConfig.setDisplaySource(jspCfg.get("display-source-fragment").asBoolean());
                 jspConfig.setKeepGenerated(jspCfg.get("keep-generated").asBoolean());
-                jspConfig.setListings(staticCfg.get("listings").asBoolean());
                 jspConfig.setRecompile(jspCfg.get("recompile-on-fail").asBoolean());
 
                 getView().setJSPConfig(jspConfig);
@@ -281,7 +284,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         proto.get(ADDRESS).add("subsystem", "web");
         proto.get(ADDRESS).add("connector", name);
 
-        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(HttpConnector.class);
+        List<PropertyBinding> bindings = metaData.getBindingsForType(HttpConnector.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -436,10 +439,10 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         if(changedValues.isEmpty()) return;
 
-        AddressBinding addressBinding = propertyMetaData.getBeanMetaData(VirtualServer.class).getAddress();
+        AddressBinding addressBinding = metaData.getBeanMetaData(VirtualServer.class).getAddress();
         ModelNode address = addressBinding.asResource(Baseadress.get(), name);
 
-        EntityAdapter<VirtualServer> adapter = new EntityAdapter<VirtualServer>(VirtualServer.class, propertyMetaData);
+        EntityAdapter<VirtualServer> adapter = new EntityAdapter<VirtualServer>(VirtualServer.class, metaData);
         ModelNode operation = adapter.fromChangeset(changedValues, address);
 
         if(changedValues.containsKey("alias"))
@@ -525,14 +528,34 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     }
 
-    public void onEditJSPConfig() {
-        getView().enableJSPConfig(true);
-        //TODO: implement
-    }
+    public void onSaveJSPConfig(Map<String, Object> changeset) {
 
-    public void onSaveJSPConfig() {
-        getView().enableJSPConfig(false);
-        //TODO: implement
+        AddressBinding addressBinding = metaData.getBeanMetaData(JSPContainerConfiguration.class).getAddress();
+        ModelNode address = addressBinding.asResource(Baseadress.get());
+
+        ModelNode operation = containerAdapter.fromChangeset(changeset, address);
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                if(successful)
+                    Console.info("Success: Update JSP container configuration");
+                else
+                    Console.error("Error: Failed to update JSP container configuration", response.toString());
+
+                Console.schedule(new Command() {
+                    @Override
+                    public void execute() {
+                        loadJSPConfig();
+                    }
+                });
+
+            }
+        });
+
+
     }
 
 

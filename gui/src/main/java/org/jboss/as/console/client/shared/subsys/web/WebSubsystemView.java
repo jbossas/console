@@ -23,10 +23,13 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -35,8 +38,10 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -59,51 +64,55 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         // ----
 
+        form = new Form(JSPContainerConfiguration.class);
+        form.setNumColumns(2);
+
         ContentGroupLabel label = new ContentGroupLabel("JSP Container");
         label.getElement().setAttribute("style", "margin-bottom:0px;");
         layout.add(label);
 
-        /*ToolStrip toolStrip = new ToolStrip();
-        edit = new ToolButton("Edit", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        FormToolStrip toolStrip = new FormToolStrip<JSPContainerConfiguration>(
+                form,
+                new FormToolStrip.FormCallback<JSPContainerConfiguration>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveJSPConfig(changeset);
+                    }
 
-                Console.error("Not implemented yet!");
+                    @Override
+                    public void onDelete(JSPContainerConfiguration entity) {
 
-                if(edit.getText().equals("Edit"))
-                    presenter.onEditJSPConfig();
-                else
-                    presenter.onSaveJSPConfig();
-            }
-        });
-        toolStrip.addToolButton(edit);
+                    }
+                }
+        );
 
-        layout.add(toolStrip);*/
+        toolStrip.providesDeleteOp(false);
+        layout.add(toolStrip.asWidget());
+
 
         // ----
 
-
-        form = new Form(JSPContainerConfiguration.class);
-        form.setNumColumns(2);
-
-        StatusItem listing = new StatusItem("listings", "Listings?");
-
         StatusItem disabled= new StatusItem("disabled", "Disabled?");
-
         StatusItem development= new StatusItem("development", "Development?");
-
         StatusItem keepGenerated= new StatusItem("keepGenerated", "Keep Generated?");
-
         NumberBoxItem checkInterval = new NumberBoxItem("checkInterval", "Check Interval");
-
         StatusItem sourceFragment= new StatusItem("displaySource", "Display Source?");
 
 
         form.setFields(disabled, development);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), listing, keepGenerated, checkInterval, sourceFragment);
+        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), keepGenerated, checkInterval, sourceFragment);
 
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel(WebDescriptions.getJSPConfigDescription());
+        FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "web");
+                address.add("configuration", "jsp-configuration");
+                return address;
+            }
+        },form);
+
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
@@ -152,14 +161,6 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     @Override
     public void enableEditVirtualServer(boolean b) {
         serverList.setEnabled(b);
-    }
-
-    @Override
-    public void enableJSPConfig(boolean b) {
-        if(b)
-            edit.setText("Save");
-        else
-            edit.setText("Edit");
     }
 
     @Override

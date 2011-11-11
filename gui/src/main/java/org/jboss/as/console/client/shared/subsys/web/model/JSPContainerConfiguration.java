@@ -19,35 +19,39 @@
 
 package org.jboss.as.console.client.shared.subsys.web.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 5/11/11
  */
+@Address("/subsystem=web/configuration=jsp-configuration")
 public interface JSPContainerConfiguration {
 
     boolean isDevelopment();
     void setDevelopment(boolean b);
 
+    @Binding(detypedName = "keep-generated")
     boolean isKeepGenerated();
     void setKeepGenerated(boolean b);
 
+    @Binding(detypedName = "recompile-on-fail")
     boolean isRecompile();
     void setRecompile(boolean b);
 
-
+    @Binding(detypedName = "display-source-fragment")
     boolean isDisplaySource();
     void setDisplaySource(boolean b);
-
 
     boolean isDisabled();
     void setDisabled(boolean b);
 
-
+    @Binding(detypedName = "check-interval")
     int getCheckInterval();
     void setCheckInterval(int i);
 
-
-    boolean isListings();
-    void setListings(boolean b);
+    //boolean isListings();
+    //void setListings(boolean b);
 
 }
