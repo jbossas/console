@@ -47,11 +47,9 @@ public class HelpSystem {
     public void getAttributeDescriptions(
             ModelNode resourceAddress,
             final FormAdapter form,
-            final AsyncCallback<Widget> callback)
+            final AsyncCallback<HTML> callback)
     {
 
-        final SafeHtmlBuilder html = new SafeHtmlBuilder();
-        html.appendHtmlConstant("<ul class='help-attribute-descriptions'>");
 
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
@@ -78,13 +76,16 @@ public class HelpSystem {
                 if (response.get(OUTCOME).asString().equals("success")
                         && response.hasDefined(RESULT)) {
 
+                    final SafeHtmlBuilder html = new SafeHtmlBuilder();
+                    html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
+
                     List<ModelNode> modelNodes = response.get(RESULT).asList();
                     for (ModelNode res : modelNodes) {
                         matchAttributes(res, fieldNames, html);
                         matchChildren(res, fieldNames, html);
                     }
 
-                    html.appendHtmlConstant("</ul>");
+                    html.appendHtmlConstant("</table>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
 
                 } else {
@@ -126,10 +127,14 @@ public class HelpSystem {
 
                 if(fieldNames.contains(childName))
                 {
-                    html.appendHtmlConstant("<li>");
+                    html.appendHtmlConstant("<tr>");
+                    html.appendHtmlConstant("<td style='font-size:11px;padding-right:2px;vertical-align:top'>");
                     html.appendEscaped(childName).appendEscaped(": ");
+                    html.appendHtmlConstant("</td>");
+                    html.appendHtmlConstant("<td>");
                     html.appendEscaped(value.get("description").asString());
-                    html.appendHtmlConstant("</li>");
+                    html.appendHtmlConstant("</td>");
+                    html.appendHtmlConstant("</tr>");
                 }
             }
         } catch (IllegalArgumentException e) {

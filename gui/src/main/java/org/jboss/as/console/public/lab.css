@@ -87,6 +87,8 @@
     vertical-align: middle;
 }
 
+/* overrides */
+
  .combobox-value, .combobox-item {
     word-wrap:normal;
     white-space:nowrap;
@@ -141,4 +143,19 @@
     -webkit-transition: background-color .1s ease-in-out;
     -moz-transition: background-color .1s ease-in-out;
     transition: background-color .1s ease-in-out;
+}
+
+.help-panel-open {
+
+    background-color: #fdfcce;
+    border:1px solid #cccccc;
+
+     -moz-border-radius: 3px;
+    border-radius: 3px;
+
+    opacity: 1.0!important;
+
+    -webkit-transition: opacity .15s ease-in-out .05s;
+    -moz-transition: opacity .15s ease-in-out .05s;
+    transition: opacity .15s ease-in-out .05s;
 }

@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.help;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -65,11 +67,18 @@ public class FormHelpPanel {
         if(!hasBeenBuild)
         {
             Console.MODULES.getHelpSystem().getAttributeDescriptions(
-                    address.getAddress(), form, new AsyncCallback<Widget>() {
+                    address.getAddress(), form, new AsyncCallback<HTML>() {
                 @Override
-                public void onSuccess(Widget result) {
+                public void onSuccess(HTML result) {
                     helpPanel.clear();
                     helpPanel.add(result);
+
+                    /*result.addClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent clickEvent) {
+                            helpPanel.setOpen(!helpPanel.isOpen());
+                        }
+                    }); */
                     hasBeenBuild = true;
                 }
 
