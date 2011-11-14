@@ -22,6 +22,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
 import org.jboss.ballroom.client.widgets.forms.ListItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
@@ -40,6 +41,7 @@ public enum FormItemType {
 
     TEXT(new TextItemFactory()),
     TEXT_BOX(new TextBoxItemFactory()),
+    FREE_FORM_TEXT_BOX(new FreeFormTextBoxItemFactory()),
     BYTE_UNIT(new ByteUnitItemFactory()),
     CHECK_BOX(new CheckBoxItemFactory()),
     LIST_BOX(new ListBoxItemFactory()),
@@ -51,6 +53,7 @@ public enum FormItemType {
     ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
     EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
     TIME_UNITS(new ComboBoxItemFactory(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"})),
+    STRING_LIST_EDITOR(new StringListEditorItemFactory()),
     PROPERTY_EDITOR(new PropertyEditorItemFactory());
 
     private FormItemFactory factory;
@@ -82,6 +85,28 @@ public enum FormItemType {
             TextBoxItem textBoxItem = new TextBoxItem(propBinding.getJavaName(), propBinding.getLabel());
             textBoxItem.setRequired(propBinding.isRequired());
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
+        }
+    }
+    
+    /**
+     * Unvalidated except for the required flag.
+     */
+    public static class FreeFormTextBoxItemFactory implements FormItemFactory {
+        @Override
+        public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            TextBoxItem textBoxItem = new FreeFormTextBoxItem(propBinding.getJavaName(), propBinding.getLabel());
+            textBoxItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
+        }
+        
+        private static class FreeFormTextBoxItem extends TextBoxItem {
+            public FreeFormTextBoxItem(String name, String title) {
+                super(name, title);
+            }
+            @Override
+            public boolean validate(String value) {
+                return true;
+            }
         }
     }
 
@@ -210,6 +235,32 @@ public enum FormItemType {
             return new ObservableFormItem[] {};
         }
 
+    }
+    
+    public static class StringListEditorItemFactory implements FormItemFactory {
+        private int rows;
+
+        public StringListEditorItemFactory() {
+            this(5);
+        }
+
+        /**
+         * @param addDialogTitle The title shown when the Add button is pressed on the ListEditor.
+         * @param rows The number of rows in the PropertyEditor.
+         */
+        public StringListEditorItemFactory(int rows) {
+            this.rows = rows;
+        }
+
+        @Override
+        public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            ListEditorFormItem listEditor = new ListEditorFormItem(propBinding.getJavaName(),
+                                                                   "",
+                                                                   rows,
+                                                                   true);
+            listEditor.setRequired(propBinding.isRequired());
+            return new ObservableFormItem[] {new ObservableFormItem(propBinding, listEditor, observers)};
+        }
     }
 
     public static class PropertyEditorItemFactory implements FormItemFactory {

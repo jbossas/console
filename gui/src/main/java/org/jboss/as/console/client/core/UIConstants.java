@@ -35,6 +35,7 @@ public interface UIConstants extends Constants {
     String common_error_unknownError();
     String common_error_failure();
 
+    String common_label_addItem();
     String common_label_addProperty();
     String common_label_hostManagement();
     String common_label_profileManagement();
@@ -131,6 +132,14 @@ public interface UIConstants extends Constants {
     String subsys_logging_removeHandler();
     String subsys_logging_autoFlush();
     String subsys_logging_encoding();
+    String subsys_logging_file();
+    String subsys_logging_fileHandlers();
+    String subsys_logging_periodic();
+    String subsys_logging_periodicRotatingFileHandlers();
+    String subsys_logging_size();
+    String subsys_logging_sizeRotatingFileHandlers();
+    String subsys_logging_async();
+    String subsys_logging_asyncHandlers();
     String subsys_logging_filter();
     String subsys_logging_formatter();
     String subsys_logging_append();
@@ -151,6 +160,13 @@ public interface UIConstants extends Constants {
     String subsys_logging_module();
     String subsys_logging_handlerProperties();
     String subsys_logging_newHandlerProperty();
+    String subsys_logging_useParentHandlers();
+    String subsys_logging_category();
+    String subsys_logging_console();
+    String subsys_logging_consoleHandlers();
+    String subsys_logging_custom();
+    String subsys_logging_customHandlers();
+    String subsys_logging_rootLogger();
 
     String subsys_deploymentscanner_scanners();
     String subsys_deploymentscanner_relativeTo();

@@ -52,8 +52,14 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.CustomHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.FileHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
+import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
+import org.jboss.as.console.client.shared.subsys.logging.model.RootLogger;
+import org.jboss.as.console.client.shared.subsys.logging.model.SizeRotatingFileHandler;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
@@ -113,8 +119,16 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<ThreadPool> ejbThreadPool();
     AutoBean<RemoteService> remoteService();
 
-    AutoBean<LoggingHandler> loggingHandler();
-    AutoBean<LoggerConfig> loggerConfig();
+    // logging subsystem
+    AutoBean<RootLogger> rootLogger();
+    AutoBean<Logger> logger();
+    AutoBean<AsyncHandler> asyncHandler();
+    AutoBean<ConsoleHandler> consoleHanlder();
+    AutoBean<FileHandler> fileHandler();
+    AutoBean<PeriodicRotatingFileHandler> periodicRotatingFileHandler();
+    AutoBean<SizeRotatingFileHandler> sizeRotatingFileHandler();
+    AutoBean<CustomHandler> customHandler();
+    
     AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();
     AutoBean<DeploymentReference> deploymentReference();

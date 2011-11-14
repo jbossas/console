@@ -36,11 +36,11 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -132,7 +132,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     public void onAdd(FormAdapter<T> form) {
         NamedEntity entity = form.getUpdatedEntity();
         String name = entity.getName();
-        ModelNode operation = address.asResource(name);
+        ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(ADD);
         ModelNode attributes = this.entityAdapter.fromEntity(form.getUpdatedEntity());
         for (Property prop : attributes.asPropertyList()) {
@@ -150,17 +150,23 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     public void onCancel() {
         view.setEditingEnabled(false);
     }
-
+    
     @Override
     public void onRemove(FormAdapter<T> form) {
         NamedEntity entity = form.getEditedEntity();
         String name = entity.getName();
-        ModelNode operation = address.asResource(name);
+        ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(REMOVE);
 
         execute(operation, null, "Success: Removed " + name);
     }
 
+    private ModelNode getResourceAddress(String name) {
+        if (address.getNumWildCards() == 0) return address.asResource(Baseadress.get());
+        if (address.getNumWildCards() == 1) return address.asResource(Baseadress.get(), name);
+        throw new IllegalStateException("This bridge doesn't know how to handle @Address with more than one wildcard.");
+    }
+    
     @Override
     public void onSaveDetails(FormAdapter<T> form) {
         view.setEditingEnabled(false);
@@ -168,7 +174,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         NamedEntity entity = form.getEditedEntity();
         String name = entity.getName();
 
-        ModelNode resourceAddress = address.asResource(name);
+        ModelNode resourceAddress = getResourceAddress(name);
 
         Map<String, Object> changedValues = form.getChangedValues();
         if (changedValues.isEmpty()) {
@@ -219,8 +225,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
-        //System.out.println("execute:");
-        //System.out.println(operation.toString());
+        System.out.println("execute:");
+        System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override

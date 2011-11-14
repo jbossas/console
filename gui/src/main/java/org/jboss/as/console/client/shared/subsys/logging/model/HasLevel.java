@@ -16,24 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging;
-
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+package org.jboss.as.console.client.shared.subsys.logging.model;
 
 /**
- * Window to add a Handler or LoggerConfig.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class AddEntityWindow<T> extends LoggingPopupWindow<T> {
-
-    public AddEntityWindow(String title, FormAdapter<T> form, EntityBridge<T> commandAdapter) {
-        super(title, form, commandAdapter);
-    }
-
-    @Override
-    protected void doCommand(FormAdapter<T> form) {
-        bridge.onAdd(form);
-    }
-    
+public interface HasLevel {
+    public String getLevel();
+    public void setLevel(String level);
 }

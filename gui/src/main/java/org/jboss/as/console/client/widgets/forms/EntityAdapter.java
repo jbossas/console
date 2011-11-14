@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import java.math.BigDecimal;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.dmr.client.ModelDescriptionConstants.COMPOSITE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
@@ -26,6 +27,7 @@ import org.jboss.dmr.client.Property;
  * into a strongly typed model that's consumed by GWT.
  *
  * @author Heiko Braun
+ * @author Stan Silvert
  * @date 9/23/11
  */
 public class EntityAdapter<T> {
@@ -49,13 +51,52 @@ public class EntityAdapter<T> {
     }
 
     /**
-     * A ModelNode can be either of type <tt>ModelType.Object</tt> or <tt>ModelType.Property</tt>.
+     * Determine if this is an EntityAdapter for a one of the supported ModelNode 
+     * base classes (String, Long, BigDecimal, etc).
+     * 
+     * @return <code>true</code> if this is a base class EntityAdapter, <code>false</code> otherwise.
+     */
+    public boolean isBaseTypeAdapter() {
+        return isBaseType(this.type);
+    }
+    
+    /**
+     * Is the given class one of the supported ModelNode base classes (String, Long, BigDecimal, etc.)
+     * 
+     * @param clazz The class to be tested.
+     * @return <code>true</code> if the given class is a base class, <code>false</code> otherwise.
+     */
+    public boolean isBaseType(Class<?> clazz) {
+        return (clazz == String.class) ||
+               (clazz == Long.class) ||
+               (clazz == Integer.class) ||
+               (clazz == Boolean.class) ||
+               (clazz == Double.class) ||
+               (clazz == BigDecimal.class) ||
+               (clazz == byte[].class);
+    }
+    
+    private T convertToBaseType(ModelNode dmr) {
+       if (type == String.class) return (T)dmr.asString();
+       if (type == Long.class) return (T)Long.valueOf(dmr.asLong());
+       if (type == Integer.class) return (T)Integer.valueOf(dmr.asInt());
+       if (type == Boolean.class) return (T)Boolean.valueOf(dmr.asBoolean());
+       if (type == Double.class) return (T)Double.valueOf(dmr.asDouble());
+       if (type == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
+       if (type == byte[].class) return (T)dmr.asBytes();
+       
+       throw new IllegalArgumentException("Can not convert. This node is not of a base type. Actual type is " + type.getName());
+    }
+    
+    /**
+     * The ModelNode can be of any type supported by ModelType except BigInteger.
      * Typically it's just the payload of a DMR response (ModelNode.get(RESULT))
      *
      * @param dmr  a ModelNode
      * @return an entity representation of type T
      */
     public T fromDMR(ModelNode dmr) {
+        if (isBaseTypeAdapter()) return convertToBaseType(dmr);
 
         ModelNode actualPayload = null;
         EntityFactory<?> factory = metaData.getFactory(type);
@@ -235,10 +276,8 @@ public class EntityAdapter<T> {
             }
             catch (RuntimeException e)
             {
-
-                System.out.println("Error on property binding: '"+propBinding.toString()+"'");
-                System.out.println(dmr);
-
+              //  System.out.println("Error on property binding: '"+propBinding.toString()+"'");
+              //  System.out.println(dmr);
                 throw e;
             }
 
@@ -266,7 +305,7 @@ public class EntityAdapter<T> {
 
         return entities;
     }
-
+    
     public List<PropertyRecord> fromDMRPropertyList(List<Property> dmr) {
         List<PropertyRecord> entities = new LinkedList<PropertyRecord>();
 
@@ -300,7 +339,7 @@ public class EntityAdapter<T> {
             /**
              * KEYS
              */
-            if(property.isKey()) continue;
+      //      if(property.isKey()) continue;
 
             Object propertyValue = mutator.getValue(entity, property.getJavaName());
 
@@ -326,13 +365,11 @@ public class EntityAdapter<T> {
             if(propertyValue!=null)
             {
                 try {
-
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
-
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
                         operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        throw new RuntimeException("Unsupported list type: "+property.getListType());
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
                     } else {
                         operation.get(splitDetypedName).set(modelType, propertyValue);
                     }
@@ -368,6 +405,30 @@ public class EntityAdapter<T> {
         return type;
     }
 
+    public ModelNode fromBaseTypeList(List<?> baseTypeValues, Class<?> baseType) {
+        ModelNode node = new ModelNode();
+        for (Object obj : baseTypeValues) {
+            if (baseType == String.class) {
+                node.add((String)obj);
+            } else if (baseType == Long.class) {
+                node.add((Long)obj);
+            } else if (baseType == Integer.class) {
+                node.add((Integer)obj);
+            } else if (baseType == Boolean.class) {
+                node.add((Boolean)obj);
+            } else if (baseType == Double.class) {
+                node.add((Double)obj);
+            } else if (baseType == BigDecimal.class) {
+                node.add((BigDecimal)obj);
+            } else if (baseType == byte[].class) {
+                node.add((byte[])obj);
+            } else {
+                throw new IllegalArgumentException("Can not convert. This value is not of a recognized base type. Value =" + obj.toString());
+            }
+        }
+        return node;
+    }
+    
     /**
      * Creates a composite operation to create entities.
      * Basically calls {@link #fromEntity(Object)}
@@ -425,7 +486,6 @@ public class EntityAdapter<T> {
 
         for(PropertyBinding binding : propertyBindings)
         {
-            
             Object value = changeSet.get(binding.getJavaName());
             if(value!=null)
             {
@@ -472,10 +532,15 @@ public class EntityAdapter<T> {
                 {
                     nodeToSetValueUpon.set((Float)value);
                 }
-                else if (binding.getListType() != null
-                        && binding.getListType() == PropertyRecord.class)
+                else if (binding.getListType() != null)
                 {
-                    nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
+                    if (binding.getListType() == PropertyRecord.class) {
+                        nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
+                    }  else if (isBaseType(binding.getListType())) {
+                        nodeToSetValueUpon.set(fromBaseTypeList((List)value, binding.getListType()));
+                    } else {
+                        nodeToSetValueUpon.set(fromEntityList((List)value));
+                    }
                 }
                 else
                 {

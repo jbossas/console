@@ -20,212 +20,104 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggerConfig;
-import org.jboss.as.console.client.shared.subsys.logging.model.LoggingHandler;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
- * Main view class for Loggers and Handlers.  This class assembles the editor for each type and synchronizes
- * UI updates with the data on the back end.
+ * Main view class for the Logging subsystem.  
  * 
  * @author Stan Silvert
- * @date 3/29/11
  */
 public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
 
-    private EntityBridge loggerConfigBridge;
-    private EntityBridge handlerBridge;
+    private DispatchAsync dispatcher;
     
-    private LoggingEditor<LoggerConfig> loggerConfigEditor;
-    private LoggingDetails<LoggerConfig> loggerConfigDetails;
-    private LoggingEntityFormFactory<LoggerConfig> loggerFormFactory;
-    private AssignHandlerChooser<LoggerConfig> loggerConfigHandlerChooser;
-    
-    private LoggingEditor<LoggingHandler> handlerEditor;
-    private LoggingDetails<LoggingHandler> handlerDetails;
-    private DefaultCellTable<LoggingHandler> handlerTable;
-    private LoggingEntityFormFactory<LoggingHandler> handlerFormFactory;
-    private AssignHandlerChooser<LoggingHandler> loggingHandlerHandlerChooser;
-    private LoggingPresenter presenter;
+    private RootLoggerSubview rootLoggerSubview;
+    private LoggerSubview loggerSubview;
+    private ConsoleHandlerSubview consoleHandlerSubview;
+    private FileHandlerSubview fileHandlerSubview;
+    private PeriodicRotatingFileHandlerSubview periodicRotatingFileHandlerSubview;
+    private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
+    private AsyncHandlerSubview asyncHandlerSubview;
+    private CustomHandlerSubview customHandlerSubview;
 
-    @Override
-    public void setPresenter(LoggingPresenter presenter) {
-        this.presenter = presenter;
+    @Inject
+    public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
+        this.dispatcher = dispatcher;
+        
+        HandlerListManager handlerListManager = new HandlerListManager();
+                
+        rootLoggerSubview = new RootLoggerSubview(applicationMetaData, dispatcher);
+        loggerSubview = new LoggerSubview(applicationMetaData, dispatcher);
+        
+        consoleHandlerSubview = new ConsoleHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        fileHandlerSubview = new FileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        periodicRotatingFileHandlerSubview = new PeriodicRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        sizeRotatingFileHandlerSubview = new SizeRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        asyncHandlerSubview = new AsyncHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        customHandlerSubview = new CustomHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
+        
+        handlerListManager.setHandlerConsumers(rootLoggerSubview, loggerSubview, asyncHandlerSubview);
+        handlerListManager.setHandlerProducers(consoleHandlerSubview, 
+                                               fileHandlerSubview, 
+                                               periodicRotatingFileHandlerSubview, 
+                                               sizeRotatingFileHandlerSubview,
+                                               asyncHandlerSubview,
+                                               customHandlerSubview);
     }
-
 
     @Override
     public Widget createWidget() {
-
-        this.loggerConfigBridge = new LoggerConfigBridge(presenter);
-        this.loggerFormFactory = new LoggerConfigFormFactory(LoggerConfig.class, this.loggerConfigBridge);
-
-        this.handlerBridge = new HandlerBridge(presenter);
-        this.handlerTable = makeHandlerTable(); // need this to be constructed here intead of in createWidget()
-        this.handlerFormFactory = new HandlerFormFactory(LoggingHandler.class, this.handlerBridge);
-
-        loggerConfigEditor = makeLoggerConfigEditor();
-        handlerEditor = makeHandlerEditor();
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutPanel.addStyleName("default-tabpanel");
         
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        TabPanel loggerPanel = new TabPanel();
+        loggerPanel.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
+        loggerPanel.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName());
+        loggerPanel.setStyleName("fill-layout-width");
+        loggerPanel.selectTab(0);
         
-        tabLayoutpanel.add(loggerConfigEditor.asWidget(), Console.CONSTANTS.subsys_logging_loggers());
-        tabLayoutpanel.add(handlerEditor.asWidget(), Console.CONSTANTS.subsys_logging_handlers());
-
-        return tabLayoutpanel;
+        
+        TabPanel handlerPanel = new TabPanel();
+        handlerPanel.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console());
+        handlerPanel.add(fileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_file());
+        handlerPanel.add(periodicRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_periodic());
+        handlerPanel.add(sizeRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_size());
+        handlerPanel.add(asyncHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_async());
+        handlerPanel.add(customHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_custom());
+        handlerPanel.setStyleName("fill-layout-width");
+        handlerPanel.selectTab(0);
+        
+        tabLayoutPanel.add(loggerPanel.asWidget(), "Loggers");
+        tabLayoutPanel.add(handlerPanel.asWidget(), "Handlers");
+        
+        LoggingLevelProducer.setLogLevels(dispatcher, rootLoggerSubview,
+                                                      loggerSubview, 
+                                                      consoleHandlerSubview, 
+                                                      fileHandlerSubview, 
+                                                      periodicRotatingFileHandlerSubview, 
+                                                      sizeRotatingFileHandlerSubview,
+                                                      asyncHandlerSubview,
+                                                      customHandlerSubview);
+        
+        return tabLayoutPanel;
     }
     
-    private LoggingEditor<LoggingHandler> makeHandlerEditor() {
-        this.loggingHandlerHandlerChooser = handlerFormFactory.makeAssignHandlerForm();
-        AssignHandlerWindow<LoggingHandler> assignHandlerWindow = new AssignHandlerWindow<LoggingHandler>(Console.CONSTANTS.subsys_logging_addHandler(),
-                                                                                                 this.loggingHandlerHandlerChooser,
-                                                                                                 handlerBridge);
-        UnassignHandlerChooser unassignChooser = handlerFormFactory.makeUnassignHandlerForm();
-        UnassignHandlerWindow<LoggingHandler> unassignHandlerWindow = new UnassignHandlerWindow<LoggingHandler>(Console.CONSTANTS.subsys_logging_removeHandler(),
-                                                                                                 unassignChooser,
-                                                                                                 handlerBridge);
-        handlerDetails = new LoggingDetails<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), 
-                                                            handlerFormFactory.makeEditForm(), 
-                                                            this.handlerBridge,
-                                                            assignHandlerWindow,
-                                                            unassignHandlerWindow);
-        String title = Console.CONSTANTS.common_label_add() + " " + Console.CONSTANTS.subsys_logging_handlers();
-        LoggingPopupWindow<LoggingHandler> window = new AddEntityWindow<LoggingHandler>(title, handlerFormFactory.makeAddEntityForm(), this.handlerBridge);
-        return new LoggingEditor<LoggingHandler>(Console.CONSTANTS.subsys_logging_handlers(), window, handlerTable, handlerDetails);
+    public void initialLoad() {
+        rootLoggerSubview.initialLoad();
+        loggerSubview.initialLoad();
+        consoleHandlerSubview.initialLoad();
+        fileHandlerSubview.initialLoad();
+        periodicRotatingFileHandlerSubview.initialLoad(); 
+        sizeRotatingFileHandlerSubview.initialLoad();
+        asyncHandlerSubview.initialLoad();
+        customHandlerSubview.initialLoad();
     }
     
-    private DefaultCellTable<LoggingHandler> makeHandlerTable() {
-        DefaultCellTable<LoggingHandler> table = new DefaultCellTable<LoggingHandler>(15);
-
-        TextColumn<LoggingHandler> nameColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getName();
-            }
-        };
-        
-        TextColumn<LoggingHandler> handlerTypeColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getType();
-            }
-        };
-        
-        TextColumn<LoggingHandler> levelColumn = new TextColumn<LoggingHandler>() {
-            @Override
-            public String getValue(LoggingHandler record) {
-                return record.getLevel();
-            }
-        };
-
-        table.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
-        table.addColumn(handlerTypeColumn, Console.CONSTANTS.subsys_logging_type());
-        table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        
-        return table;
-    }
-    
-    private LoggingEditor<LoggerConfig> makeLoggerConfigEditor() {
-        this.loggerConfigHandlerChooser = loggerFormFactory.makeAssignHandlerForm();
-        AssignHandlerWindow<LoggerConfig> assignHandlerWindow = new AssignHandlerWindow<LoggerConfig>(Console.CONSTANTS.subsys_logging_addHandler(),
-                                                                                             this.loggerConfigHandlerChooser,
-                                                                                             loggerConfigBridge);
-        UnassignHandlerChooser unassignChooser = loggerFormFactory.makeUnassignHandlerForm();
-        UnassignHandlerWindow<LoggerConfig> unassignHandlerWindow = new UnassignHandlerWindow<LoggerConfig>(Console.CONSTANTS.subsys_logging_removeHandler(),
-                                                                                             unassignChooser,
-                                                                                             loggerConfigBridge);
-        loggerConfigDetails = new LoggingDetails<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), 
-                                                               loggerFormFactory.makeEditForm(), 
-                                                               loggerConfigBridge,
-                                                               assignHandlerWindow,
-                                                               unassignHandlerWindow);
-        String title = Console.CONSTANTS.common_label_add() + " " + Console.CONSTANTS.subsys_logging_loggers();
-        LoggingPopupWindow<LoggerConfig> window = new AddEntityWindow<LoggerConfig>(title, 
-                                                                                    loggerFormFactory.makeAddEntityForm(), 
-                                                                                    loggerConfigBridge);
-        DefaultCellTable<LoggerConfig> table = makeLoggerConfigTable();
-        return new LoggingEditor<LoggerConfig>(Console.CONSTANTS.subsys_logging_loggers(), window, table, loggerConfigDetails);
-    }
-    
-    private DefaultCellTable<LoggerConfig> makeLoggerConfigTable() {
-        DefaultCellTable<LoggerConfig> table = new DefaultCellTable<LoggerConfig>(15);
-        
-        TextColumn<LoggerConfig> nameColumn = new TextColumn<LoggerConfig>() {
-            @Override
-            public String getValue(LoggerConfig record) {
-                return record.getName();
-            }
-        };
-        
-        TextColumn<LoggerConfig> levelColumn = new TextColumn<LoggerConfig>() {
-            @Override
-            public String getValue(LoggerConfig record) {
-                return record.getLevel();
-            }
-        };
-        
-        TextColumn<LoggerConfig> handlersColumn = new TextColumn<LoggerConfig>() {
-            @Override
-            public String getValue(LoggerConfig record) {
-                List<String> handlers = record.getHandlers();
-                StringBuilder builder = new StringBuilder();
-                for (Iterator<String> i = handlers.iterator(); i.hasNext();) {
-                    builder.append(i.next());
-                    if (i.hasNext()) builder.append(", ");
-                }
-                return builder.toString();
-            }
-        };
-        
-        table.addColumn(nameColumn, Console.CONSTANTS.common_label_name());
-        table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        table.addColumn(handlersColumn, Console.CONSTANTS.subsys_logging_handlers());
-        
-        return table;
-    }
-
-    @Override
-    public void updateLoggingInfo(LoggingInfo loggingInfo) {
-
-        List<LoggerConfig> loggers = new ArrayList(loggingInfo.getLoggers().size()+1);
-        loggers.add(loggingInfo.getRootLogger()); // root logger is always first in list
-        loggers.addAll(loggingInfo.getLoggers());
-        LoggerConfig lastLoggerConfigEdited = null;
-        if (loggingInfo.getLoggerConfigEdited() != null) {
-            // Look up by name.
-            lastLoggerConfigEdited = loggingInfo.findLoggerConfig(loggingInfo.getLoggerConfigEdited());
-        }
-        loggerConfigEditor.updateEntityList(loggers, lastLoggerConfigEdited);
-        
-        LoggingHandler lastHandlerEdited = null;
-        if (loggingInfo.getHandlerEdited() != null) {
-            // Look up by name.
-            lastHandlerEdited = loggingInfo.findHandler(loggingInfo.getHandlerEdited());
-        }
-        handlerEditor.updateEntityList(loggingInfo.getHandlers(), lastHandlerEdited);
-        
-        this.loggerConfigHandlerChooser.updateAvailableHandlers(loggingInfo.getHandlerNames());
-        this.loggingHandlerHandlerChooser.updateAvailableHandlers(loggingInfo.getHandlerNames());
-    }
-    
-    @Override
-    public void enableLoggerDetails(boolean isEnabled) {
-        loggerConfigEditor.enableDetails(isEnabled);
-    }
-    
-    @Override
-    public void enableHandlerDetails(boolean isEnabled) {
-        handlerEditor.enableDetails(isEnabled);
-    }
 }
