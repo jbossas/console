@@ -59,8 +59,8 @@ public class SubsystemMetaData {
         groups.put(CORE, new SubsystemGroup(CORE));
         groups.put(CONNECTOR, new SubsystemGroup(CONNECTOR));
         groups.put(MESSAGING, new SubsystemGroup(MESSAGING));
-        groups.put(SECURITY, new SubsystemGroup(SECURITY));
         groups.put(CONTAINER, new SubsystemGroup(CONTAINER));
+        groups.put(SECURITY, new SubsystemGroup(SECURITY));
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OSGI, new SubsystemGroup(OSGI));
         groups.put(OTHER, new SubsystemGroup(OTHER));
@@ -86,10 +86,12 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee",Boolean.TRUE));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Security", "security"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa",Boolean.TRUE));
+
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Subsystem", "security", NameTokens.SecuritySubsystemPresenter));
+        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Domains", "security", NameTokens.SecurityDomainsPresenter));
 
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Runtime", "osgi", NameTokens.OSGiRuntimePresenter));
@@ -99,8 +101,6 @@ public class SubsystemMetaData {
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
-
-        groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Provider", "security",Boolean.TRUE));
     }
 
     public static Map<String, SubsystemGroup> getGroups() {

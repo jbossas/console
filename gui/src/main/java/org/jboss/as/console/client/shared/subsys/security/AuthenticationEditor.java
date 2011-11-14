@@ -18,23 +18,23 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 
 /**
  * @author David Bosschaert
  */
-public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider> {
-    AuthorizationEditor(SecurityDomainsPresenter presenter) {
+public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
+    AuthenticationEditor(SecurityDomainsPresenter presenter) {
         super(presenter);
     }
 
     @Override
     String getStackName() {
-        return "Policies";
+        return "Login Modules";
     }
 
     @Override
-    public void onSaveData() {
-        presenter.saveAuthorization(domainName, attributesProvider.getList(), resourceExists);
+    void onSaveData() {
+        presenter.saveAuthentication(domainName, attributesProvider.getList(), resourceExists);
     }
 }

@@ -32,8 +32,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.security.AuthorizationEditor;
-import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyModule;
+import org.jboss.as.console.client.shared.subsys.security.AuthEditor;
+import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -44,19 +44,19 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
  * @author David Bosschaert
  */
 public class NewAuthorizationPolicyModuleWizard implements PropertyManagement {
-    private final AuthorizationEditor editor;
+    private final AuthEditor editor;
     private final BeanFactory factory = GWT.create(BeanFactory.class);
     private final List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
     private PropertyEditor propEditor;
 
-    public NewAuthorizationPolicyModuleWizard(AuthorizationEditor editor) {
+    public NewAuthorizationPolicyModuleWizard(AuthEditor editor) {
         this.editor = editor;
     }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
-        final Form<AuthorizationPolicyModule> form = new Form<AuthorizationPolicyModule>(AuthorizationPolicyModule.class);
+        final Form<AuthorizationPolicyProvider> form = new Form<AuthorizationPolicyProvider>(AuthorizationPolicyProvider.class);
 
         TextBoxItem code = new TextBoxItem("code", "Code");
         TextBoxItem flag = new TextBoxItem("flag", "Flag");
@@ -67,19 +67,19 @@ public class NewAuthorizationPolicyModuleWizard implements PropertyManagement {
         layout.add(propEditor.asWidget());
 
         DialogueOptions options = new DialogueOptions(
-            new ClickHandler() {
+            "OK", new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     FormValidation validation = form.validate();
                     if (!validation.hasErrors()) {
-                        AuthorizationPolicyModule data = form.getUpdatedEntity();
+                        AuthorizationPolicyProvider data = form.getUpdatedEntity();
                         data.setProperties(properties);
 
                         editor.closeWizard();
                         editor.addPolicy(data);
                     }
                 }
-            }, new ClickHandler() {
+            }, "Cancel", new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     editor.closeWizard();

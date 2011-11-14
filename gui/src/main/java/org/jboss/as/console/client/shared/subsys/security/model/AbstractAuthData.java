@@ -16,25 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.security;
+package org.jboss.as.console.client.shared.subsys.security.model;
 
-import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
+import java.util.List;
+
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 
 /**
  * @author David Bosschaert
  */
-public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider> {
-    AuthorizationEditor(SecurityDomainsPresenter presenter) {
-        super(presenter);
-    }
+public interface AbstractAuthData {
+    String getCode();
+    void setCode(String code);
 
-    @Override
-    String getStackName() {
-        return "Policies";
-    }
+    String getFlag();
+    void setFlag(String flag);
 
-    @Override
-    public void onSaveData() {
-        presenter.saveAuthorization(domainName, attributesProvider.getList(), resourceExists);
-    }
+    List<PropertyRecord> getProperties();
+    void setProperties(List<PropertyRecord> properties);
 }

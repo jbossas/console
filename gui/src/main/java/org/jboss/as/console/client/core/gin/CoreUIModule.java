@@ -54,7 +54,6 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
-
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -97,13 +96,11 @@ import org.jboss.as.console.client.shared.general.PropertiesView;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingView;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
-import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
-import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
@@ -130,8 +127,10 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPr
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimeView;
-import org.jboss.as.console.client.shared.subsys.security.SecurityPresenter;
-import org.jboss.as.console.client.shared.subsys.security.SecurityView;
+import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsView;
+import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemView;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsView;
 import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
@@ -153,6 +152,8 @@ import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
+import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
+import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
@@ -432,10 +433,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 TransactionView.class,
                 TransactionPresenter.MyProxy.class);
 
-        bindPresenter(SecurityPresenter.class,
-                SecurityPresenter.MyView.class,
-                SecurityView.class,
-                SecurityPresenter.MyProxy.class);
+        bindPresenter(SecuritySubsystemPresenter.class,
+                SecuritySubsystemPresenter.MyView.class,
+                SecuritySubsystemView.class,
+                SecuritySubsystemPresenter.MyProxy.class);
+
+        bindPresenter(SecurityDomainsPresenter.class,
+                SecurityDomainsPresenter.MyView.class,
+                SecurityDomainsView.class,
+                SecurityDomainsPresenter.MyProxy.class);
 
         bindPresenter(StandaloneRuntimePresenter.class,
                 StandaloneRuntimePresenter.MyView.class,

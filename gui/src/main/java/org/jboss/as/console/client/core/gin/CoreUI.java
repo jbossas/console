@@ -66,9 +66,9 @@ import org.jboss.as.console.client.shared.general.InterfacePresenter;
 import org.jboss.as.console.client.shared.general.PropertiesPresenter;
 import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
@@ -84,7 +84,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
-import org.jboss.as.console.client.shared.subsys.security.SecurityPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
 import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
@@ -97,7 +98,7 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
-import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
+import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.system.SystemApplicationPresenter;
 
 /**
@@ -227,8 +228,8 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<HostVMMetricPresenter> getServerVMMetricPresenter();
 
     AsyncProvider<TransactionPresenter> getTransactionPresenter();
-    AsyncProvider<SecurityPresenter> getSecurityPresenter();
-    // runtime
+    AsyncProvider<SecuritySubsystemPresenter> getSecuritySubsystemPresenter();
+    AsyncProvider<SecurityDomainsPresenter> getSecurityDomainsPresenter();
 
     AsyncProvider<StandaloneRuntimePresenter> getRuntimePresenter();
     AsyncProvider<DomainRuntimePresenter> getDomainRuntimePresenter();

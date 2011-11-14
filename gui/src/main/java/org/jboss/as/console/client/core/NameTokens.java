@@ -47,7 +47,8 @@ public class NameTokens {
     public static final String OSGiRuntimePresenter = "osgi-runtime";
     public static final String PropertiesPresenter = "properties";
     public static final String ResourceAdapterPresenter ="resource-adapters";
-    public static final String SecurityPresenter = "security";
+    public static final String SecurityDomainsPresenter = "security-domains";
+    public static final String SecuritySubsystemPresenter = "security";
     public static final String SettingsPresenter = "settings";
     public static final String SocketBindingPresenter = "socket-bindings";
     public static final String StandaloneServerPresenter = "standalone-server";
