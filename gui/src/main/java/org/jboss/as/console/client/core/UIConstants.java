@@ -283,6 +283,7 @@ public interface UIConstants extends Constants {
     String subsys_ejb3_timerServiceRelativeTo();
 
     String common_label_serverGroupConfigurations();
+    String common_label_serverGroupDeployments();
 
     String common_label_host();
 }

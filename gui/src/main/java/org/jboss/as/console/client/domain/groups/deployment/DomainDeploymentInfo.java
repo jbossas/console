@@ -52,7 +52,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
         this.serverGroupStore = serverGroupStore;
         this.deploymentStore = deploymentStore;
     }
-
+    
     List<String> getServerGroupNames() {
         return this.serverGroupNames;
     }
