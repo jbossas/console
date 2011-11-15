@@ -35,6 +35,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
     public InterfaceView() {
         this.editor = new InterfaceEditor("Interfaces");
+        this.editor.setDescription("A named network interface, along with required criteria for determining the IP address to associate with that interface.");
     }
 
     @Override
@@ -45,6 +46,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
     @Override
     public void setPresenter(InterfacePresenter presenter) {
         this.presenter = presenter;
+        editor.setPresenter(presenter);
     }
 
     @Override

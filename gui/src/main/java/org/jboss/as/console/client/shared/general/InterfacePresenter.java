@@ -28,6 +28,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -36,13 +37,19 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelNodeUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -59,6 +66,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private RevealStrategy revealStrategy;
     private DefaultWindow window;
     private EntityAdapter<Interface> entityAdapter;
+    private BeanMetaData beanMetaData;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
@@ -88,6 +96,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         address.setEmptyList();
         loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
         entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
+        beanMetaData = metaData.getBeanMetaData(Interface.class);
     }
 
     @Override
@@ -151,6 +160,38 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     }
 
     public void onRemoveInterface(Interface entity) {
+
+    }
+
+    public void onSaveInterface(final String name, Map<String, Object> changeset) {
+
+        System.out.println(changeset);
+
+
+        AddressBinding addressBinding = beanMetaData.getAddress();
+        ModelNode address = addressBinding.asResource(Baseadress.get(), name);
+        ModelNode operation = entityAdapter.fromChangeset(changeset, address);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                System.out.println(response);
+
+                if(ModelNodeUtil.indicatesSuccess(response))
+                {
+                    Console.info("Success: Update interface "+name);
+                }
+                else
+                {
+                    Console.info("Error: Failed to update interface "+name);
+                }
+
+                loadInterfaces();
+            }
+        });
 
     }
 

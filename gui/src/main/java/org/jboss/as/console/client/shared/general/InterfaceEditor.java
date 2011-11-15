@@ -16,7 +16,9 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
+import org.jboss.ballroom.client.widgets.forms.FieldsetRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -38,6 +40,8 @@ public class InterfaceEditor {
     private CellTable<Interface> table;
     private String title;
     private String description = null;
+    private InterfacePresenter presenter;
+
     public InterfaceEditor(String title) {
         this.title = title;
     }
@@ -120,27 +124,49 @@ public class InterfaceEditor {
 
         CheckBoxItem publicAddress = new CheckBoxItem("publicAddress", "Public Address");
         CheckBoxItem siteLocalAddress = new CheckBoxItem("siteLocal", "Site Local Address");
+        CheckBoxItem linkLocalAddress = new CheckBoxItem("linkLocal", "Link Local Address");
 
-        CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
+        ComboBoxItem anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard");
+        anyAddress.setValueMap(new String[] {"Any Address", "Any IP4 Address", "Any IP6 Address"});
+
+        /*CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
         CheckBoxItem anyIP4Address = new CheckBoxItem("anyIP4Address", "Any IP4 Address");
-        CheckBoxItem anyIP6Address = new CheckBoxItem("anyIP6Address", "Any IP4 Address");
+        CheckBoxItem anyIP6Address = new CheckBoxItem("anyIP6Address", "Any IP6 Address");
+        */
 
         CheckBoxItem up = new CheckBoxItem("up", "Up");
         CheckBoxItem virtual = new CheckBoxItem("virtual", "Virtual");
 
-        CheckBoxItem p2p = new CheckBoxItem("P2P", "Point to Point");
+        CheckBoxItem p2p = new CheckBoxItem("pointToPoint", "Point to Point");
         CheckBoxItem multicast = new CheckBoxItem("multicast", "Multicast");
         CheckBoxItem loopback = new CheckBoxItem("loopback", "Loopback");
-        TextBoxItem loopbackAddress = new NonRequiredTextBoxItem("loopbackAddress", "Loopback Address");
+        TextBoxItem loopbackAddress = new NonRequiredTextBoxItem("loopbackAddress", "Loopback Address")
+        {
+            @Override
+            public boolean validate(String value) {
 
-        form.setFields(nameItem, inetAddress, nic, nicMatch, publicAddress, siteLocalAddress, up, virtual);
+                if(value.equals(""))
+                    setUndefined(true);
+
+                return super.validate(value);
+            }
+        };
+
+        form.setFields(nameItem, inetAddress, anyAddress, loopback, loopbackAddress, p2p);
 
         form.setFieldsInGroup(
-                "Advanced",
-                new DisclosureGroupRenderer(),
-                anyAddress, anyIP4Address, anyIP6Address,
-                p2p, multicast, loopback, loopbackAddress
+                "Selection Criteria",
+                new FieldsetRenderer(),
+                up, virtual,
+                publicAddress, siteLocalAddress,
+                linkLocalAddress, multicast
         );
+
+        form.setFieldsInGroup(
+                        "Named Interfaces",
+                        new FieldsetRenderer(),
+                        nic, nicMatch
+                );
 
 
         FormToolStrip<Interface> toolstrip = new FormToolStrip<Interface>(
@@ -148,7 +174,7 @@ public class InterfaceEditor {
                 new FormToolStrip.FormCallback<Interface>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSaveInterface(form.getEditedEntity().getName(), changeset);
                     }
 
                     @Override
@@ -192,5 +218,9 @@ public class InterfaceEditor {
 
         if(!interfaces.isEmpty())
             table.getSelectionModel().setSelected(interfaces.get(0), true);
+    }
+
+    public void setPresenter(InterfacePresenter presenter) {
+        this.presenter = presenter;
     }
 }
