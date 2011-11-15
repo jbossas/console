@@ -19,12 +19,14 @@
 
 package org.jboss.as.console.client.shared.general.model;
 
+import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
  * @date 5/17/11
  */
+@Address("/interface={0}")
 public interface Interface {
 
     String getName();
@@ -46,10 +48,6 @@ public interface Interface {
     String getInetAddress();
     void setInetAddress(String addr);
 
-    @Binding(detypedName = "link-local-address")
-    boolean isLinkLocal();
-    void setLinkLocal(boolean b);
-
     @Binding(detypedName = "loopback")
     boolean isLoopback();
     void setLoopback(boolean b);
@@ -70,8 +68,8 @@ public interface Interface {
     void setNicMatch(String addr);
 
     @Binding(detypedName = "point-to-point")
-    boolean isP2P();
-    void setP2P(boolean b);
+    boolean isPointToPoint();
+    void setPointToPoint(boolean b);
 
     @Binding(detypedName = "public-address")
     boolean isPublicAddress();
@@ -80,6 +78,10 @@ public interface Interface {
     @Binding(detypedName = "site-local-address")
     boolean isSiteLocal();
     void setSiteLocal(boolean b);
+
+    @Binding(detypedName = "link-local-address")
+    boolean isLinkLocal();
+    void setLinkLocal(boolean b);
 
     @Binding(expr = true, detypedName = "subnet-match")
     String getSubnetMatch();
@@ -90,4 +92,12 @@ public interface Interface {
 
     boolean isVirtual();
     void setVirtual(boolean b);
+
+
+    // transient
+
+    @Binding(skip = true)
+    String getAddressWildcard();
+    void setAddressWildcard(String selector);
+
 }
