@@ -38,6 +38,7 @@ public class BindingDeclaration implements Binding  {
 
     private String beanClassName;
     private boolean supportExpr;
+    private boolean writeUndefined;
 
     /**
      * 
@@ -140,5 +141,14 @@ public class BindingDeclaration implements Binding  {
     @Override
     public Class<? extends Annotation> annotationType() {
         throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public boolean writeUndefined() {
+        return writeUndefined;
+    }
+
+    public void setWriteUndefined(boolean writeUndefined) {
+        this.writeUndefined = writeUndefined;
     }
 }

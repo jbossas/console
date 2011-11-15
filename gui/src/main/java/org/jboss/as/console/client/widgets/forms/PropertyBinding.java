@@ -35,6 +35,7 @@ public class PropertyBinding {
     private String javaTypeName;
     private Class<?> listType;
     private boolean supportExpression;
+    private boolean writeUndefined;
 
     private EntityAdapter entityAdapterForList;
     private boolean isKey = false;
@@ -47,6 +48,7 @@ public class PropertyBinding {
     private String tabName;
     private int order;
 
+
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey, boolean expr) {
         this.detypedName = detypedName;
         this.javaName = javaName;
@@ -57,6 +59,7 @@ public class PropertyBinding {
 
     public PropertyBinding(String javaName, String detypedName, String javaTypeName,
                            Class<?> listType, ApplicationMetaData propMetaData, boolean isKey, boolean expr,
+                           boolean writeUndefined,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, 
                            String subgroup, String tabName, int order) {
@@ -100,6 +103,10 @@ public class PropertyBinding {
 
     public boolean isKey() {
         return isKey;
+    }
+
+    public boolean isWriteUndefined() {
+        return writeUndefined;
     }
 
     public Object getDefaultValue() {

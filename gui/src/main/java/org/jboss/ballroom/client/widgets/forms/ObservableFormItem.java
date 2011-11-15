@@ -120,7 +120,7 @@ public class ObservableFormItem extends FormItem {
         wrapped.setModified(modified);
     }
 
-    void setUndefined(boolean undefined) {
+    protected void setUndefined(boolean undefined) {
         wrapped.setUndefined(undefined);
     }
 

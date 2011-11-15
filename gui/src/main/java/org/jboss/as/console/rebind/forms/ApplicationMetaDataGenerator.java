@@ -210,7 +210,7 @@ public class ApplicationMetaDataGenerator extends Generator{
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
                                                                       "\", \"" + bindDecl.getJavaTypeName() + 
                                                                       "\"," + listTypeVar + ", this, " + bindDecl.key()
-                                                                        + ", " + bindDecl.expr() +
+                                                                        + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
@@ -400,7 +400,8 @@ public class ApplicationMetaDataGenerator extends Generator{
         boolean skip = false;
         boolean key = false;
         boolean expr = false;
-        
+        boolean writeUndefined = false;
+
         if(bindingDeclaration!=null)
         {
             if(bindingDeclaration.detypedName()!= null && !bindingDeclaration.detypedName().equals(""))
@@ -412,12 +413,14 @@ public class ApplicationMetaDataGenerator extends Generator{
             skip = bindingDeclaration.skip();
             key = bindingDeclaration.key();
             expr = bindingDeclaration.expr();
+            writeUndefined = bindingDeclaration.writeUndefined();
         }
 
         BindingDeclaration decl = new BindingDeclaration(detypedName, javaName, listType, skip, beanTypeClass.getName());
         decl.setJavaTypeName(method.getReturnType().getName());
         decl.setKey(key);
         decl.setSupportExpr(expr);
+        decl.setWriteUndefined(writeUndefined);
 
         return decl;
     }
