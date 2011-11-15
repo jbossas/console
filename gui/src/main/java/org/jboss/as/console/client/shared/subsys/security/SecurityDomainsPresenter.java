@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
@@ -45,8 +46,11 @@ import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLo
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 /**
  * @author David Bosschaert
@@ -57,6 +61,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     private final DispatchAsync dispatcher;
     private final BeanFactory factory;
     private final RevealStrategy revealStrategy;
+    private final EntityAdapter<SecurityDomain> entityAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SecurityDomainsPresenter)
@@ -73,12 +78,14 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     @Inject
     public SecurityDomainsPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-        DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy) {
+        DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy,
+        ApplicationMetaData appMetaData) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
+        this.entityAdapter = new EntityAdapter<SecurityDomain>(SecurityDomain.class, appMetaData);
     }
 
     @Override
@@ -100,15 +107,9 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     public void updateDomainSelection(final SecurityDomain domain) {
         // load sub-elements which are not automatically loaded by the framework
-
-        loadAuth(domain, "authorization", "policy-modules", AuthorizationPolicyProvider.class);
-        loadAuth(domain, "authentication", "login-modules", AuthenticationLoginModule.class);
-    }
-
-    private <T extends AbstractAuthData> void loadAuth(final SecurityDomain domain, String type, final String attrName, final Class<T> cls) {
         ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
         operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domain.getName());
-        operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+        operation.get(ModelDescriptionConstants.RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -116,26 +117,41 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
-                List<T> modules = new ArrayList<T>();
-                boolean resourceExists = model.hasDefined(attrName);
-                if (resourceExists) {
-                    for (ModelNode node : model.get(attrName).asList()) {
-                        T pm = factory.create(cls).as();
-
-                        pm.setCode(node.get("code").asString());
-                        pm.setFlag(node.get("flag").asString());
-
-                        modules.add(pm);
-                    }
-                }
-
-                if (AuthorizationPolicyProvider.class.equals(cls)) {
-                    getView().setAuthorizationPolicyProviders(domain.getName(), (List<AuthorizationPolicyProvider>) modules, resourceExists);
-                } else if (AuthenticationLoginModule.class.equals(cls)) {
-                    getView().setAuthenticationLoginModules(domain.getName(), (List<AuthenticationLoginModule>) modules, resourceExists);
-                }
+                loadAuth(model, domain, "authorization", "policy-modules", AuthorizationPolicyProvider.class);
+                loadAuth(model, domain, "authentication", "login-modules", AuthenticationLoginModule.class);
             }
         });
+    }
+
+    private <T extends AbstractAuthData> void loadAuth(ModelNode model, SecurityDomain domain, String type, String attrName, Class<T> cls) {
+        List<T> modules = new ArrayList<T>();
+        boolean resourceExists = false;
+        if (model.hasDefined(type)) {
+            ModelNode subModel = model.get(type, "classic");
+            resourceExists = subModel.hasDefined(attrName);
+
+            if (resourceExists) {
+                for (ModelNode node : subModel.get(attrName).asList()) {
+                    T pm = factory.create(cls).as();
+
+                    pm.setCode(node.get("code").asString());
+                    pm.setFlag(node.get("flag").asString());
+
+                    if (node.hasDefined("module-options")) {
+                        List<Property> pl = node.require("module-options").asPropertyList();
+                        pm.setProperties(entityAdapter.fromDMRPropertyList(pl));
+                    }
+
+                    modules.add(pm);
+                }
+            }
+        }
+
+        if (AuthorizationPolicyProvider.class.equals(cls)) {
+            getView().setAuthorizationPolicyProviders(domain.getName(), (List<AuthorizationPolicyProvider>) modules, resourceExists);
+        } else if (AuthenticationLoginModule.class.equals(cls)) {
+            getView().setAuthenticationLoginModules(domain.getName(), (List<AuthenticationLoginModule>) modules, resourceExists);
+        }
     }
 
     public void saveAuthorization(String domainName, List<AuthorizationPolicyProvider> list, boolean resourceExists) {
@@ -158,6 +174,11 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
             ModelNode n = new ModelNode();
             n.get("code").set(pm.getCode());
             n.get("flag").set(pm.getFlag());
+
+            List<PropertyRecord> props = pm.getProperties();
+            if (props != null)
+                n.get("module-options").set(entityAdapter.fromEntityPropertyList(props));
+
             valueList.add(n);
         }
 
