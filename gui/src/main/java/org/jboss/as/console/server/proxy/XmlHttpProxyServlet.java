@@ -490,10 +490,6 @@ public class XmlHttpProxyServlet extends HttpServlet
         }
         catch (Exception iox)
         {
-            iox.printStackTrace();
-            getLogger().severe("XmlHttpProxyServlet: caught " + iox);
-
-
             if(iox instanceof XmlHttpProxy.AuthenticationException)
             {
                 XmlHttpProxy.AuthenticationException authEx = (XmlHttpProxy.AuthenticationException)iox;
@@ -502,6 +498,9 @@ public class XmlHttpProxyServlet extends HttpServlet
             }
             else
             {
+                iox.printStackTrace();
+                getLogger().severe("XmlHttpProxyServlet: caught " + iox);
+
                 res.setStatus(500);
             }
             /*try {
