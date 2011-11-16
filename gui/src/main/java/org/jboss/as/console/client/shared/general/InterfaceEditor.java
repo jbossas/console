@@ -147,21 +147,25 @@ public class InterfaceEditor {
         CheckBoxItem loopback = new CheckBoxItem("loopback", "Loopback");
         TextBoxItem loopbackAddress = new TextBoxItem("loopbackAddress", "Loopback Address", false);
 
-        form.setFields(nameItem, inetAddress, anyAddress, loopback, loopbackAddress, p2p);
+        form.setFields(nameItem, inetAddress, anyAddress);
 
-        form.setFieldsInGroup(
-                "Selection Criteria",
-                new FieldsetRenderer(),
-                up, virtual,
-                publicAddress, siteLocalAddress,
-                linkLocalAddress, multicast
-        );
+        form.setFieldsInGroup("Loopback Device", new FieldsetRenderer(), loopback, loopbackAddress);
 
         form.setFieldsInGroup(
                         "Named Interfaces",
                         new FieldsetRenderer(),
                         nic, nicMatch
                 );
+
+        form.setFieldsInGroup(
+                "Other Criteria",
+                new DisclosureGroupRenderer(),
+                up, virtual,
+                publicAddress, siteLocalAddress,
+                linkLocalAddress, multicast, p2p
+        );
+
+
 
 
         FormToolStrip<Interface> toolstrip = new FormToolStrip<Interface>(

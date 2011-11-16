@@ -37,13 +37,15 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
-import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.general.validation.AddressValidation;
+import org.jboss.as.console.client.shared.general.validation.NicValidation;
+import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
@@ -166,7 +168,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
 
-        ValidationResult validation = new InterfaceValidation().validate(entity, changeset);
+        ValidationResult validation = new NicValidation().validate(entity, changeset);
         if(validation.isValid())
         {
             Feedback.confirm("Very good", validation.asMessageString(), new Feedback.ConfirmationHandler()

@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.general;
+package org.jboss.as.console.client.shared.general.validation;
 
 import java.util.LinkedList;
 import java.util.List;

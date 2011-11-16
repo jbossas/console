@@ -1,10 +1,13 @@
-package org.jboss.as.console.client.shared.general;
+package org.jboss.as.console.client.shared.general.validation;
 
-import org.jboss.as.console.client.shared.general.model.Interface;
 
-public class DecisionTree {
+import java.util.LinkedList;
+import java.util.List;
 
-    private Interface entity;
+public class DecisionTree<T> {
+
+    private T entity;
+    private List<String> decisionLog = new LinkedList<String>();
 
     public class BinTree {
 
@@ -27,12 +30,24 @@ public class DecisionTree {
 
     BinTree rootNode = null;
 
-    public interface Decision {
-        boolean evaluate(Interface entity);
+    public interface Decision<T> {
+        boolean evaluate(T entity);
     }
 
-    public DecisionTree(Interface entity) {
+    public DecisionTree(T entity) {
         this.entity = entity;
+    }
+
+    public List<String> getDecisionLog() {
+        return decisionLog;
+    }
+
+    public String dumpDecisionLog() {
+        StringBuilder sb = new StringBuilder();
+        for(String s : decisionLog)
+            sb.append(s).append("\n");
+        return sb.toString();
+
     }
 
     /* CREATE ROOT NODE */
@@ -171,10 +186,7 @@ public class DecisionTree {
 
     public void queryBinTree() {
         queryBinTree(rootNode);
-
         finalOutcome = getLastNode().decision.evaluate(entity);
-
-        //System.out.println("Done");
     }
 
     private void queryBinTree(BinTree currentNode) {
@@ -221,7 +233,7 @@ public class DecisionTree {
 
         boolean success = currentNode.decision.evaluate(entity);
 
-        System.out.println(currentNode.questOrAns + " "+success);
+        decisionLog.add(currentNode.questOrAns + " => " + success);
 
         if (success)
             queryBinTree(currentNode.yesBranch);
