@@ -1,7 +1,5 @@
 package org.jboss.as.console.client.shared.general.validation;
 
-import org.jboss.as.console.client.shared.general.model.Interface;
-
 import java.util.Map;
 
 /**
@@ -10,4 +8,5 @@ import java.util.Map;
  */
 public interface ValidationStep<T> {
     ValidationResult validate(T entity, Map<String, Object> changedValues);
+    boolean doesApplyTo(T entity, Map<String, Object> changedValues);
 }

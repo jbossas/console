@@ -149,13 +149,13 @@ public class InterfaceEditor {
 
         form.setFields(nameItem, inetAddress, anyAddress);
 
-        form.setFieldsInGroup("Loopback Device", new FieldsetRenderer(), loopback, loopbackAddress);
-
         form.setFieldsInGroup(
                         "Named Interfaces",
                         new FieldsetRenderer(),
                         nic, nicMatch
                 );
+
+        form.setFieldsInGroup("Loopback Device", new FieldsetRenderer(), loopback, loopbackAddress);
 
         form.setFieldsInGroup(
                 "Other Criteria",

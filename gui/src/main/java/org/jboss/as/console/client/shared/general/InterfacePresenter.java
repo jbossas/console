@@ -37,8 +37,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
-import org.jboss.as.console.client.shared.general.validation.AddressValidation;
-import org.jboss.as.console.client.shared.general.validation.NicValidation;
+import org.jboss.as.console.client.shared.general.validation.CompositeDecision;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -168,7 +167,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
 
-        ValidationResult validation = new NicValidation().validate(entity, changeset);
+        CompositeDecision decisionTree = new CompositeDecision();
+        ValidationResult validation = decisionTree.validate(entity, changeset);
         if(validation.isValid())
         {
             Feedback.confirm("Very good", validation.asMessageString(), new Feedback.ConfirmationHandler()
@@ -181,7 +181,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             //doPersistChanges(entity.getName(), changeset);
         }
         else {
-            Feedback.alert("Invalid Interface Constraints", validation.asMessageString());
+            Feedback.alert("Invalid Interface Constraints", validation.asMessageString() + "\n"+decisionTree.getDetailMessages());
         }
 
         loadInterfaces();

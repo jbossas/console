@@ -11,15 +11,15 @@ import java.util.Set;
  * @author Heiko Braun
  * @date 11/16/11
  */
-public abstract class AbstractValidationStep<T> implements ValidationStep<T> {
+abstract class AbstractValidationStep<T> implements ValidationStep<T> {
 
-    static DecisionTree.Decision SUCCESS = new DecisionTree.Decision<Interface>() {
+    static Decision SUCCESS = new Decision<Interface>() {
         @Override
         public boolean evaluate(Interface entity) {
             return true;
         }
     };
-    static DecisionTree.Decision FAILURE = new DecisionTree.Decision<Interface>() {
+    static Decision FAILURE = new Decision<Interface>() {
         @Override
         public boolean evaluate(Interface entity) {
             return false;

@@ -4,6 +4,11 @@ package org.jboss.as.console.client.shared.general.validation;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A simple binary decision tree.
+ *
+ * @param <T> the data to run decisions on.
+ */
 public class DecisionTree<T> {
 
     private T entity;
@@ -29,10 +34,6 @@ public class DecisionTree<T> {
     }
 
     BinTree rootNode = null;
-
-    public interface Decision<T> {
-        boolean evaluate(T entity);
-    }
 
     public DecisionTree(T entity) {
         this.entity = entity;
