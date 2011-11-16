@@ -121,7 +121,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
                 return result.isValid();
             }
         });
-        tree.no(13, 17, "No criteria specified!", FAILURE);
+        tree.no(13, 17, "No interface criteria specified!", FAILURE);
 
         tree.yes(16, 18, "Other criteria is valid.", SUCCESS);
         tree.no(16, 19, "Invalid other criteria!", FAILURE);

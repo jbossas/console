@@ -17,7 +17,6 @@ import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.FieldsetRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -132,7 +131,8 @@ public class InterfaceEditor {
                 isRequired = false;
             }
         };
-        anyAddress.setValueMap(new String[] {"", "Any Address", "Any IP4 Address", "Any IP6 Address"});
+
+        anyAddress.setValueMap(new String[]{"", "Any Address", "Any IP4", "Any IP6"});
 
         /*CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
         CheckBoxItem anyIP4Address = new CheckBoxItem("anyIP4Address", "Any IP4 Address");
@@ -159,14 +159,11 @@ public class InterfaceEditor {
 
         form.setFieldsInGroup(
                 "Other Criteria",
-                new DisclosureGroupRenderer(),
+                new FieldsetRenderer(),
                 up, virtual,
                 publicAddress, siteLocalAddress,
                 linkLocalAddress, multicast, p2p
         );
-
-
-
 
         FormToolStrip<Interface> toolstrip = new FormToolStrip<Interface>(
                 form,

@@ -159,3 +159,15 @@
     -moz-transition: opacity .15s ease-in-out .05s;
     transition: opacity .15s ease-in-out .05s;
 }
+
+.form-group-label {
+    border-bottom: 1px solid #E0E0E0;
+    color: #A4A4A4;
+    font-size: 14px !important;
+    font-weight: bold;
+    height: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    padding-top: 20px;
+    width: 100%;
+}

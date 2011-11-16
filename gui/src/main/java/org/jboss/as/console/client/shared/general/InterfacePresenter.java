@@ -172,14 +172,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ValidationResult validation = decisionTree.validate(entity, changeset);
         if(validation.isValid())
         {
-            Feedback.confirm("Very good", validation.asMessageString(), new Feedback.ConfirmationHandler()
-            {
-                @Override
-                public void onConfirmation(boolean isConfirmed) {
-
-                }
-            });
-            //doPersistChanges(entity.getName(), changeset);
+            Console.info(validation.asMessageString());
+            doPersistChanges(entity.getName(), changeset);
         }
         else {
 
@@ -194,7 +188,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
         }
 
-        loadInterfaces();
     }
 
     private void doPersistChanges(final String name, Map<String,Object> changeset)
