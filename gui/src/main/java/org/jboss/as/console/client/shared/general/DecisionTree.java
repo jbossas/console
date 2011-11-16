@@ -6,7 +6,7 @@ public class DecisionTree {
 
     private Interface entity;
 
-    private class BinTree {
+    public class BinTree {
 
         private int     nodeID;
         private String  questOrAns = null;
@@ -18,6 +18,10 @@ public class DecisionTree {
             nodeID     = newNodeID;
             questOrAns = newQuestAns;
             this.decision = decision;
+        }
+
+        public String getQuestOrAns() {
+            return questOrAns;
         }
     }
 
@@ -159,14 +163,24 @@ public class DecisionTree {
     /*                                               */
     /* --------------------------------------------- */
 
+    private boolean finalOutcome = false;
+
+    public boolean getFinalOutcome() {
+        return finalOutcome;
+    }
+
     public void queryBinTree() {
         queryBinTree(rootNode);
-        System.out.println("Done");
+
+        finalOutcome = getLastNode().decision.evaluate(entity);
+
+        //System.out.println("Done");
     }
 
     private void queryBinTree(BinTree currentNode) {
 
         // Test for leaf node (answer) and missing branches
+        lastNode = currentNode;
 
         if (currentNode.yesBranch==null) {
             if (currentNode.noBranch==null)
@@ -196,11 +210,19 @@ public class DecisionTree {
 
     }
 
+
+    private BinTree lastNode = null;
+
+    public BinTree getLastNode() {
+        return lastNode;
+    }
+
     private void askQuestion(BinTree currentNode) {
 
         boolean success = currentNode.decision.evaluate(entity);
 
         System.out.println(currentNode.questOrAns + " "+success);
+
         if (success)
             queryBinTree(currentNode.yesBranch);
         else

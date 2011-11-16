@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.general;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -9,24 +9,28 @@ import java.util.Set;
  */
 public class ValidationResult {
 
-    private HashMap<String, String> messages = new HashMap<String, String>();
+    private List<String> messages = new LinkedList<String> ();
+    private boolean success;
 
-    void addMessage(String javaName, String message) {
-        messages.put(javaName, message);
+    public ValidationResult(boolean success) {
+        this.success = success;
+    }
+
+    void addMessage(String message) {
+        messages.add(message);
     }
 
     public boolean isValid() {
-        return messages.isEmpty();
+        return success;
     }
 
     public String asMessageString() {
 
-        Set<String> keys = messages.keySet();
+
         StringBuilder builder = new StringBuilder();
-        for(String key : keys)
+        for(String msg : messages)
         {
-            builder.append(key).append(":");
-            builder.append(messages.get(key));
+            builder.append(msg);
         }
 
         return builder.toString();

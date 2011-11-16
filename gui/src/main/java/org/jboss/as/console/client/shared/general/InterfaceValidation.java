@@ -28,10 +28,6 @@ public class InterfaceValidation {
     ValidationResult validate(Interface entity, final Map<String, Object> changedValues) {
 
         final Map<String, Object> changeset = clearChangeset(changedValues);
-        System.out.println("Before : "+changedValues);
-        System.out.println("After : "+changeset);
-
-        ValidationResult result = new ValidationResult();
 
         //   inet address, address wildcard, loopback, point to point
 
@@ -71,7 +67,7 @@ public class InterfaceValidation {
                 return !changeset.isEmpty();
             }
         });
-        tree.no(3, 7, "Failure : neither inet address nor wildcard set!", FAILURE);
+        tree.no(3, 7, "Failure : Neither inet address nor wildcard set!", FAILURE);
 
 
         tree.yes(6, 8, "Error: when address wildcard is set, no other values are possible.", FAILURE);
@@ -80,8 +76,12 @@ public class InterfaceValidation {
         tree.outputBinTree();
         tree.queryBinTree();
 
-        //System.out.println(success ? "*** FALURE ***" : "*** SUCCESS ***");
+        System.out.println(tree.getFinalOutcome() ?  "*** SUCCESS ***" : "*** FALURE ***");
 
+        // create result
+
+        ValidationResult result = new ValidationResult(tree.getFinalOutcome());
+        result.addMessage(tree.getLastNode().getQuestOrAns());
         return result;
     }
 

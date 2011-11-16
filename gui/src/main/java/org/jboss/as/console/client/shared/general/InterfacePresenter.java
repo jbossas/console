@@ -169,6 +169,13 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ValidationResult validation = new InterfaceValidation().validate(entity, changeset);
         if(validation.isValid())
         {
+            Feedback.confirm("Very good", validation.asMessageString(), new Feedback.ConfirmationHandler()
+            {
+                @Override
+                public void onConfirmation(boolean isConfirmed) {
+
+                }
+            });
             //doPersistChanges(entity.getName(), changeset);
         }
         else {

@@ -41,6 +41,7 @@ public class InterfaceEditor {
     private String title;
     private String description = null;
     private InterfacePresenter presenter;
+    private Form<Interface> form;
 
     public InterfaceEditor(String title) {
         this.title = title;
@@ -56,7 +57,7 @@ public class InterfaceEditor {
         FakeTabPanel titleBar = new FakeTabPanel(title);
         layout.add(titleBar);
 
-        final Form<Interface> form = new Form<Interface>(Interface.class);
+        form = new Form<Interface>(Interface.class);
 
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
@@ -207,6 +208,10 @@ public class InterfaceEditor {
     }
 
     public void setInterfaces(List<Interface> interfaces) {
+
+        // TODO: fix synthetic values, i.e address wildcard
+        form.clearValues();
+
         table.setRowCount(interfaces.size(), true);
         table.setRowData(interfaces);
 
