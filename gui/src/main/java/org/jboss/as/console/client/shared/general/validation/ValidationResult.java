@@ -26,7 +26,6 @@ public class ValidationResult {
 
     public String asMessageString() {
 
-
         StringBuilder builder = new StringBuilder();
         for(String msg : messages)
         {

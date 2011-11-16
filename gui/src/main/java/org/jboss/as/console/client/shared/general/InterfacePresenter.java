@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -181,7 +182,16 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             //doPersistChanges(entity.getName(), changeset);
         }
         else {
-            Feedback.alert("Invalid Interface Constraints", validation.asMessageString() + "\n"+decisionTree.getDetailMessages());
+
+            SafeHtmlBuilder html = new SafeHtmlBuilder();
+            html.appendHtmlConstant("<h3>");
+            html.appendEscaped(validation.asMessageString());
+            html.appendHtmlConstant("</h3>");
+
+            for(String detail : decisionTree.getDetailMessages())
+                html.appendEscaped(detail).appendHtmlConstant("<br/>");
+
+            Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
         }
 
         loadInterfaces();

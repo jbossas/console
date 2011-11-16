@@ -65,8 +65,8 @@ class AddressValidation extends AbstractValidationStep<Interface> {
             }
         });
 
-        tree.yes(2, 4, "Error: When Inet address is set, no other values are possible.", FAILURE);
-        tree.no(2, 5, "Success: Inet address", SUCCESS);
+        tree.yes(2, 4, "When Inet address is set, no other values are possible.", FAILURE);
+        tree.no(2, 5, "Valid Inet address", SUCCESS);
 
 
         // ADDRESS WILDCARD
@@ -77,11 +77,11 @@ class AddressValidation extends AbstractValidationStep<Interface> {
                 return !changeset.isEmpty();
             }
         });
-        tree.no(3, 7, "Failure : Neither Inet address nor wildcard set!", FAILURE);
+        tree.no(3, 7, "Neither Inet address nor wildcard set!", FAILURE);
 
 
-        tree.yes(6, 8, "Error: When address wildcard is set, no other values are possible.", FAILURE);
-        tree.no(6, 9, "Success: Address Wildcard", SUCCESS);
+        tree.yes(6, 8, "When address wildcard is set, no other values are possible.", FAILURE);
+        tree.no(6, 9, "Valid Address Wildcard", SUCCESS);
 
         return tree;
     }
