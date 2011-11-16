@@ -53,7 +53,7 @@ public class StandaloneDeploymentInfo implements DeploymentViewRefresher {
   }
 
   @Override
-  public void refreshView() {
+  public void refreshView(final DeploymentRecord... targets) {
     // load deployments
     deploymentStore.loadDeploymentContent(new SimpleCallback<List<DeploymentRecord>>() {
 

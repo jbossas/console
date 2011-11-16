@@ -21,7 +21,6 @@ package org.jboss.as.console.client.shared.model;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.ApplicationProperties;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -31,7 +30,6 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -45,13 +43,11 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private ApplicationProperties bootstrap;
     private boolean isStandalone ;
     @Inject
     public DeploymentStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationProperties bootstrap) {
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.bootstrap = bootstrap;
         this.isStandalone = bootstrap.getProperty(ApplicationProperties.STANDALONE).equals("true");
     }
 
@@ -103,64 +99,47 @@ public class DeploymentStoreImpl implements DeploymentStore {
     }
 
     @Override
-    public void loadDeployments(
-            final List<ServerGroupRecord> serverGroups,
-            final AsyncCallback<List<DeploymentRecord>> callback) {
+    public void loadServerGroupDeployments(final AsyncCallback<List<DeploymentRecord>> callback) {
 
-        // /server-group=main-server-group:read-children-names(child-type=deployment)
-
-        // TODO: replace with composite operation
+        // /server-group=*/deployment=*/:read-resource
         final List<DeploymentRecord> deployments = new ArrayList<DeploymentRecord>();
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add("server-group", "*");
+        operation.get(ADDRESS).add("deployment", "*");
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
 
-        final Iterator<ServerGroupRecord> iterator = serverGroups.iterator();
-        while (iterator.hasNext()) {
-            final ServerGroupRecord group = iterator.next();
-
-            ModelNode operation = new ModelNode();
-            operation.get(ADDRESS).add("server-group", group.getGroupName());
-            operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-            operation.get(CHILD_TYPE).set("deployment");
-
-            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                if (!response.get("result").isDefined()) {
+                    callback.onFailure(new Exception("Unexpected dmr result=" + response.toString()));
                 }
-
-                @Override
-                public void onSuccess(DMRResponse result) {
-                    ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-                    if (response.get("result").isDefined()) {
-                        List<ModelNode> payload = response.get("result").asList();
-
-                        for (ModelNode item : payload) {
-                            Property property = item.asProperty();
-                            ModelNode handler = property.getValue().asObject();
-                            String name = property.getName();
-
-                            try {
-                                DeploymentRecord rec = factory.deployment().as();
-                                rec.setName(name);
-                                rec.setServerGroup(group.getGroupName());
-                                rec.setRuntimeName(handler.get("runtime-name").asString());
-                                rec.setEnabled(handler.get("enabled").asBoolean());
-                                deployments.add(rec);
-                            } catch (IllegalArgumentException e) {
-                                Log.error("Failed to parse data source representation", e);
-                            }
-                        }
-                    }
-
-                    // exit if all server group are parsed
-                    if (!iterator.hasNext()) {
-                        callback.onSuccess(deployments);
+                
+                List<ModelNode> payload = response.get("result").asList();
+                for (ModelNode deployment : payload) {
+                    String serverGroup = deployment.get("address").asList().get(0).get("server-group").asString();
+                    ModelNode resultNode = deployment.get("result");
+                    try {
+                        DeploymentRecord rec = factory.deployment().as();
+                        rec.setName(resultNode.get("name").asString());
+                        rec.setServerGroup(serverGroup);
+                        rec.setRuntimeName(resultNode.get("runtime-name").asString());
+                        rec.setEnabled(resultNode.get("enabled").asBoolean());
+                        deployments.add(rec);
+                    } catch (IllegalArgumentException e) {
+                        Log.error("Failed to parse data source representation", e);
                     }
                 }
-            });
-        }
-
+                
+                callback.onSuccess(deployments);
+            }
+        });
     }
 
     @Override

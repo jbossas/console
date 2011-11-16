@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.deployment;
 
 import java.util.List;
+import org.jboss.as.console.client.shared.model.DeploymentRecord;
 
 /**
  * Defines a class that is capable of refreshing a deployment view.
@@ -28,5 +29,9 @@ import java.util.List;
  */
 public interface DeploymentViewRefresher {
     public List<String> getAllDeploymentNames();
-    public void refreshView();
+    
+    /**
+     * @param targets The DeploymentRecords modified, if any, that caused a need for refresh.
+     */
+    public void refreshView(DeploymentRecord... targets);
 }

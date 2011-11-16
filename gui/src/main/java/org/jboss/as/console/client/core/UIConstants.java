@@ -59,6 +59,7 @@ public interface UIConstants extends Constants {
     String common_label_path();
     String common_label_serverGroups();
     String common_label_deployments();
+    String common_label_deploymentContent();
     String common_label_manageDeployments();
     String common_label_edit();
     String common_label_save();

@@ -76,7 +76,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
         void setPresenter(DeploymentsPresenter presenter);
 
-        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo);
+        void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets);
     }
 
     @Inject
@@ -103,7 +103,6 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
-
         domainDeploymentInfo.refreshView();
     }
 
@@ -118,14 +117,14 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
             @Override
             public void onSuccess(DMRResponse response) {
-                domainDeploymentInfo.refreshView();
+                domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(DeploymentsPresenter.this, deployment);
             }
 
             @Override
             public void onFailure(Throwable t) {
                 super.onFailure(t);
-                domainDeploymentInfo.refreshView();
+                domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
             }
         });
@@ -138,14 +137,14 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
             @Override
             public void onSuccess(DMRResponse response) {
-                domainDeploymentInfo.refreshView();
+                domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.REMOVE_FROM_GROUP.displaySuccessMessage(DeploymentsPresenter.this, deployment);
             }
 
             @Override
             public void onFailure(Throwable t) {
                 super.onFailure(t);
-                domainDeploymentInfo.refreshView();
+                domainDeploymentInfo.refreshView(deployment);
                 DeploymentCommand.REMOVE_FROM_GROUP.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
             }
         });
