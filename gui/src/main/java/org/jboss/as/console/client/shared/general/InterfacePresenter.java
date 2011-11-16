@@ -220,7 +220,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
                 }
                 else
                 {
-                    Console.error("Error: Failed to update interface " + entity.getName());
+                    Console.error("Error: Failed to update interface " + entity.getName(),
+                            response.get("failure-description").asString());
                 }
 
                 loadInterfaces();
