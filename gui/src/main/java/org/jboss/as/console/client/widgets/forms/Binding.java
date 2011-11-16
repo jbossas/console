@@ -67,5 +67,5 @@ public @interface Binding {
      * Should it be written as ModelType.UNDEFINED ?
      * If false this property will be ignored when writing changesets.
      */
-    boolean writeUndefined() default false;
+    boolean writeUndefined() default true;
 }

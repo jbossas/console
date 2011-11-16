@@ -499,11 +499,12 @@ public class EntityAdapter<T> {
 
                 Class type = value.getClass();
 
-                if(FormItem.UNDEFINED.class == type) {
+                if(FormItem.VALUE_SEMANTICS.class == type) {
 
                     // skip undefined form item values (FormItem.UNDEFINED.Value)
                     // or persist as UNDEFINED
-                    if(binding.isWriteUndefined())
+                    if(value.equals(FormItem.VALUE_SEMANTICS.UNDEFINED)
+                            && binding.isWriteUndefined())
                     {
                         nodeToSetValueUpon.set(ModelType.UNDEFINED);
                     }

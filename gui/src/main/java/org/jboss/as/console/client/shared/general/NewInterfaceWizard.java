@@ -35,9 +35,9 @@ public class NewInterfaceWizard {
 
         TextBoxItem nameItem = new TextBoxItem("name", "Name");
 
-        TextBoxItem inetAddress = new NonRequiredTextBoxItem("inetAddress", "InetAddress");
-        TextBoxItem nic = new NonRequiredTextBoxItem("nic", "Nic");
-        TextBoxItem nicMatch = new NonRequiredTextBoxItem("nicMatch", "Nic Match");
+        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "InetAddress", false);
+        TextBoxItem nic = new TextBoxItem("nic", "Nic", false);
+        TextBoxItem nicMatch = new TextBoxItem("nicMatch", "Nic Match", false);
 
         CheckBoxItem publicAddress = new CheckBoxItem("publicAddress", "Public Address");
         CheckBoxItem siteLocalAddress = new CheckBoxItem("siteLocal", "Site Local Address");

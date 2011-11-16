@@ -118,16 +118,20 @@ public class InterfaceEditor {
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "InetAddress");
-        TextBoxItem nic = new NonRequiredTextBoxItem("nic", "Nic");
-        TextBoxItem nicMatch = new NonRequiredTextBoxItem("nicMatch", "Nic Match");
+        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "InetAddress", false);
+        TextBoxItem nic = new TextBoxItem("nic", "Nic", false);
+        TextBoxItem nicMatch = new TextBoxItem("nicMatch", "Nic Match", false);
 
         CheckBoxItem publicAddress = new CheckBoxItem("publicAddress", "Public Address");
         CheckBoxItem siteLocalAddress = new CheckBoxItem("siteLocal", "Site Local Address");
         CheckBoxItem linkLocalAddress = new CheckBoxItem("linkLocal", "Link Local Address");
 
-        ComboBoxItem anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard");
-        anyAddress.setValueMap(new String[] {"Any Address", "Any IP4 Address", "Any IP6 Address"});
+        ComboBoxItem anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard") {
+            {
+                isRequired = false;
+            }
+        };
+        anyAddress.setValueMap(new String[] {"", "Any Address", "Any IP4 Address", "Any IP6 Address"});
 
         /*CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
         CheckBoxItem anyIP4Address = new CheckBoxItem("anyIP4Address", "Any IP4 Address");
@@ -140,17 +144,7 @@ public class InterfaceEditor {
         CheckBoxItem p2p = new CheckBoxItem("pointToPoint", "Point to Point");
         CheckBoxItem multicast = new CheckBoxItem("multicast", "Multicast");
         CheckBoxItem loopback = new CheckBoxItem("loopback", "Loopback");
-        TextBoxItem loopbackAddress = new NonRequiredTextBoxItem("loopbackAddress", "Loopback Address")
-        {
-            @Override
-            public boolean validate(String value) {
-
-                if(value.equals(""))
-                    setUndefined(true);
-
-                return super.validate(value);
-            }
-        };
+        TextBoxItem loopbackAddress = new TextBoxItem("loopbackAddress", "Loopback Address", false);
 
         form.setFields(nameItem, inetAddress, anyAddress, loopback, loopbackAddress, p2p);
 
@@ -174,7 +168,7 @@ public class InterfaceEditor {
                 new FormToolStrip.FormCallback<Interface>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveInterface(form.getEditedEntity().getName(), changeset);
+                        presenter.onSaveInterface(form.getUpdatedEntity(), changeset);
                     }
 
                     @Override

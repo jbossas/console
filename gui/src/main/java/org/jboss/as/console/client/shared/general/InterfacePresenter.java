@@ -45,6 +45,7 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
 
@@ -163,11 +164,22 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     }
 
-    public void onSaveInterface(final String name, Map<String, Object> changeset) {
+    public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
 
-        System.out.println(changeset);
+        ValidationResult validation = new InterfaceValidation().validate(entity, changeset);
+        if(validation.isValid())
+        {
+            //doPersistChanges(entity.getName(), changeset);
+        }
+        else {
+            Feedback.alert("Invalid Interface Constraints", validation.asMessageString());
+        }
 
+        loadInterfaces();
+    }
 
+    private void doPersistChanges(final String name, Map<String,Object> changeset)
+    {
         AddressBinding addressBinding = beanMetaData.getAddress();
         ModelNode address = addressBinding.asResource(Baseadress.get(), name);
         ModelNode operation = entityAdapter.fromChangeset(changeset, address);
@@ -192,7 +204,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
                 loadInterfaces();
             }
         });
-
     }
 
 }
