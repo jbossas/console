@@ -46,6 +46,7 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
@@ -172,8 +173,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ValidationResult validation = decisionTree.validate(entity, changeset);
         if(validation.isValid())
         {
-            Console.info(validation.asMessageString());
-            doPersistChanges(entity.getName(), changeset);
+            //Console.info(validation.asMessageString());
+            doPersistChanges(entity, changeset);
         }
         else {
 
@@ -190,10 +191,19 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     }
 
-    private void doPersistChanges(final String name, Map<String,Object> changeset)
+    // TODO: https://issues.jboss.org/browse/AS7-2670
+    private void doPersistChanges(final Interface entity, Map<String,Object> changeset)
     {
+        // artificial values need to be merged manually
+        String wildcard = entity.getAddressWildcard();
+
+        changeset.put("anyAddress", wildcard.equals(Interface.ANY_ADDRESS) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
+        changeset.put("anyIP4Address", wildcard.equals(Interface.ANY_IP4) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
+        changeset.put("anyIP6Address", wildcard.equals(Interface.ANY_IP6) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
+
+
         AddressBinding addressBinding = beanMetaData.getAddress();
-        ModelNode address = addressBinding.asResource(Baseadress.get(), name);
+        ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
         ModelNode operation = entityAdapter.fromChangeset(changeset, address);
 
         System.out.println(operation);
@@ -206,11 +216,11 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
-                    Console.info("Success: Update interface "+name);
+                    Console.info("Success: Update interface "+entity.getName());
                 }
                 else
                 {
-                    Console.info("Error: Failed to update interface "+name);
+                    Console.error("Error: Failed to update interface " + entity.getName());
                 }
 
                 loadInterfaces();
@@ -218,4 +228,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         });
     }
 
+    public static boolean isSet(String value)
+    {
+        return value!=null && !value.isEmpty();
+    }
 }

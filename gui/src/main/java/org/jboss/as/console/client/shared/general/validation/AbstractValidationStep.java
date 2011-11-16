@@ -31,7 +31,7 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
 
         DecisionTree<T> tree = buildDecisionTree(entity, changedValues);
 
-        tree.outputBinTree();
+        //tree.outputBinTree();
         tree.queryBinTree();
         System.out.println(tree.dumpDecisionLog());
 
@@ -44,7 +44,7 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
 
     protected abstract DecisionTree<T> buildDecisionTree(T entity, Map<String,Object> changedValues);
 
-    protected static boolean isSet(String value)
+    public static boolean isSet(String value)
     {
         return value!=null && !value.isEmpty();
     }

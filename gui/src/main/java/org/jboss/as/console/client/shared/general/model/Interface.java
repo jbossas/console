@@ -29,6 +29,10 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 @Address("/interface={0}")
 public interface Interface {
 
+    static String ANY_ADDRESS = "Any Address";
+    static String ANY_IP4 = "Any IP4";
+    static String ANY_IP6 = "Any IP6";
+
     String getName();
     void setName(String name);
 
@@ -36,11 +40,11 @@ public interface Interface {
     boolean isAnyAddress();
     void setAnyAddress(boolean b);
 
-    @Binding(detypedName = "any-ipv4-address")
+    @Binding(detypedName = "any-ipv6-address")
     boolean isAnyIP6Address();
     void setAnyIP6Address(boolean b);
 
-    @Binding(detypedName = "any-ipv6-address")
+    @Binding(detypedName = "any-ipv4-address")
     boolean isAnyIP4Address();
     void setAnyIP4Address(boolean b);
 

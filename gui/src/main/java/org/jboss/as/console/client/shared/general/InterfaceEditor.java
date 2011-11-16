@@ -17,6 +17,7 @@ import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.FieldsetRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -41,6 +42,7 @@ public class InterfaceEditor {
     private String description = null;
     private InterfacePresenter presenter;
     private Form<Interface> form;
+    private ComboBoxItem anyAddress;
 
     public InterfaceEditor(String title) {
         this.title = title;
@@ -126,13 +128,13 @@ public class InterfaceEditor {
         CheckBoxItem siteLocalAddress = new CheckBoxItem("siteLocal", "Site Local Address");
         CheckBoxItem linkLocalAddress = new CheckBoxItem("linkLocal", "Link Local Address");
 
-        ComboBoxItem anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard") {
+        anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard") {
             {
                 isRequired = false;
             }
         };
 
-        anyAddress.setValueMap(new String[]{"", "Any Address", "Any IP4", "Any IP6"});
+        anyAddress.setValueMap(new String[]{"", Interface.ANY_ADDRESS, Interface.ANY_IP4, Interface.ANY_IP6});
 
         /*CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
         CheckBoxItem anyIP4Address = new CheckBoxItem("anyIP4Address", "Any IP4 Address");
@@ -159,7 +161,7 @@ public class InterfaceEditor {
 
         form.setFieldsInGroup(
                 "Other Criteria",
-                new FieldsetRenderer(),
+                new DisclosureGroupRenderer(),
                 up, virtual,
                 publicAddress, siteLocalAddress,
                 linkLocalAddress, multicast, p2p
@@ -210,7 +212,7 @@ public class InterfaceEditor {
 
     public void setInterfaces(List<Interface> interfaces) {
 
-        // TODO: fix synthetic values, i.e address wildcard
+        anyAddress.clearSelection();
         form.clearValues();
 
         table.setRowCount(interfaces.size(), true);
