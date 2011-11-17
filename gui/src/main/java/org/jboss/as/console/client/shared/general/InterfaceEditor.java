@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.general;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -26,6 +28,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -182,7 +185,32 @@ public class InterfaceEditor {
                 });
 
         toolstrip.providesDeleteOp(false);
+        toolstrip.setPreValidation(new FormToolStrip.PreValidation() {
+            @Override
+            public boolean isValid() {
+                ValidationResult validation = presenter.validateInterfaceConstraints(
+                        form.getUpdatedEntity(),
+                        form.getChangedValues()
+                );
 
+
+                if(!validation.isValid())
+                {
+                    SafeHtmlBuilder html = new SafeHtmlBuilder();
+                    html.appendHtmlConstant("<h3>");
+                    html.appendEscaped(validation.asMessageString());
+                    html.appendHtmlConstant("</h3>");
+
+                    //for(String detail : decisionTree.getDetailMessages())
+                    //    html.appendEscaped(detail).appendHtmlConstant("<br/>");
+
+                    Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
+                }
+                return validation.isValid();
+
+
+            }
+        });
         form.bind(table);
         form.setEnabled(false);
 

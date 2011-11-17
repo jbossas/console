@@ -32,6 +32,13 @@ public class FormToolStrip<T> {
 
     private ToolButton cancelBtn = null;
 
+    private PreValidation preValidation = null;
+
+    public interface PreValidation {
+        boolean isValid();
+    }
+
+
     public FormToolStrip(Form<T> form, FormCallback<T> callback) {
         this.form = form;
         this.callback = callback;
@@ -41,6 +48,10 @@ public class FormToolStrip<T> {
         this.form = form;
         this.callback = callback;
         this.deleteOpName = deleteOpName;
+    }
+
+    public void setPreValidation(PreValidation preValidation) {
+        this.preValidation = preValidation;
     }
 
     public void providesDeleteOp(boolean b) {
@@ -68,12 +79,15 @@ public class FormToolStrip<T> {
 
                     if(!form.validate().hasErrors())
                     {
-                        cancelBtn.setVisible(false);
-                        editBtn.setText(Console.CONSTANTS.common_label_edit());
-                        form.setEnabled(false);
-                        Map<String, Object> changedValues = form.getChangedValues();
-                        if(!changedValues.isEmpty())
-                            callback.onSave(changedValues);
+                        if(preValidation!=null && preValidation.isValid())
+                        {
+                            cancelBtn.setVisible(false);
+                            editBtn.setText(Console.CONSTANTS.common_label_edit());
+                            form.setEnabled(false);
+                            Map<String, Object> changedValues = form.getChangedValues();
+                            if(!changedValues.isEmpty())
+                                callback.onSave(changedValues);
+                        }
                     }
                 }
 

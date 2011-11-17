@@ -19,8 +19,9 @@
 
 package org.jboss.as.console.client.shared.general;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -39,6 +40,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.general.validation.CompositeDecision;
+import org.jboss.as.console.client.shared.general.validation.DecisionTree;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -48,10 +50,10 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -167,9 +169,41 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     }
 
-    public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
+    public ValidationResult validateInterfaceConstraints(final Interface entity, Map<String, Object> changeset)
+    {
+        AutoBean<Interface> autoBean = AutoBeanUtils.getAutoBean(entity);
+        Map<String, Object> properties = AutoBeanUtils.getAllProperties(autoBean);
+
+        final List<String> decisions = new LinkedList<String>();
+
+        DecisionTree.DecisionLog log = new DecisionTree.DecisionLog() {
+            int index = 0;
+            @Override
+            public void log(String message) {
+                index++;
+                decisions.add("["+index+"] " + message);
+            }
+        };
 
         CompositeDecision decisionTree = new CompositeDecision();
+        decisionTree.setLog(log);
+        ValidationResult validation = decisionTree.validate(properties);
+        validation.addMessage(decisionTree.getDetailMessages().toString());
+
+        // dump log
+        StringBuilder sb = new StringBuilder();
+        for(String s : decisions)
+            sb.append(s).append("\n");
+        System.out.println(sb.toString());
+
+        return validation;
+    }
+
+    public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
+
+        doPersistChanges(entity, changeset);
+
+        /*CompositeDecision decisionTree = new CompositeDecision();
         ValidationResult validation = decisionTree.validate(entity, changeset);
         if(validation.isValid())
         {
@@ -187,7 +221,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
                 html.appendEscaped(detail).appendHtmlConstant("<br/>");
 
             Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
-        }
+        }  */
 
     }
 
@@ -206,13 +240,13 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
         ModelNode operation = entityAdapter.fromChangeset(changeset, address);
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
-                System.out.println(response);
+                //System.out.println(response);
 
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
