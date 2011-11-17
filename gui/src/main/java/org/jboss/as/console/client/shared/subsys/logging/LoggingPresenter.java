@@ -45,6 +45,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     }
 
     public interface MyView extends View {
+        void initialLoad();
     }
 
     @Inject
@@ -64,7 +65,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     @Override
     protected void onReset() {
         super.onReset();
-        ((LoggingView)getView()).initialLoad();
+        getView().initialLoad();
     }
 
     @Override

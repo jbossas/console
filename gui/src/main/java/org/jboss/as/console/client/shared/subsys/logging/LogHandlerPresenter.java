@@ -28,6 +28,7 @@ public class LogHandlerPresenter extends Presenter<LogHandlerPresenter.MyView, L
 
     public interface MyView extends View {
         void setPresenter(LogHandlerPresenter presenter);
+        void initialLoad();
     }
 
     @Inject
@@ -50,6 +51,7 @@ public class LogHandlerPresenter extends Presenter<LogHandlerPresenter.MyView, L
     @Override
     protected void onReset() {
         super.onReset();
+        getView().initialLoad();
     }
 
     @Override
