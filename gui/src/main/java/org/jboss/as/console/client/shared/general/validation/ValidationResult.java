@@ -25,14 +25,7 @@ public class ValidationResult {
         return success;
     }
 
-    public String asMessageString() {
-
-        StringBuilder builder = new StringBuilder();
-        for(String msg : messages)
-        {
-            builder.append(msg);
-        }
-
-        return builder.toString();
+    public List<String> getMessages() {
+        return messages;
     }
 }

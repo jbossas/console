@@ -35,6 +35,13 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
     }
 
     @Override
+    public ValidationResult validate(Interface entity, Map<String, Object> changedValues) {
+        ValidationResult result = super.validate(entity, changedValues);
+        result.getMessages().addAll(detailMessages);
+        return result;
+    }
+
+    @Override
     public boolean doesApplyTo(Interface entity, Map<String, Object> changedValues) {
         return true;
     }
@@ -67,7 +74,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
             @Override
             public boolean evaluate(Interface entity) {
                 ValidationResult result = addressValidation.validate(entity, changedValues);
-                detailMessages.add(result.asMessageString());
+                detailMessages.addAll(result.getMessages());
                 return result.isValid();
             }
         });
@@ -87,7 +94,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
             @Override
             public boolean evaluate(Interface entity) {
                 ValidationResult result = nicValidation.validate(entity, changedValues);
-                detailMessages.add(result.asMessageString());
+                detailMessages.addAll(result.getMessages());
                 return result.isValid();
             }
         });
@@ -108,7 +115,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
             @Override
             public boolean evaluate(Interface entity) {
                 ValidationResult result = loopbackValidation.validate(entity, changedValues);
-                detailMessages.add(result.asMessageString());
+                detailMessages.addAll(result.getMessages());
                 return result.isValid();
             }
         });
@@ -129,7 +136,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
             @Override
             public boolean evaluate(Interface entity) {
                 ValidationResult result = otherValidation.validate(entity, changedValues);
-                detailMessages.add(result.asMessageString());
+                detailMessages.addAll(result.getMessages());
                 return result.isValid();
             }
         });

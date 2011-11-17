@@ -197,12 +197,15 @@ public class InterfaceEditor {
                 if(!validation.isValid())
                 {
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    //html.appendHtmlConstant("<h3>");
-                    html.appendEscaped(validation.asMessageString());
-                    //html.appendHtmlConstant("</h3>");
+                    int i=0;
+                    for(String detail : validation.getMessages())
+                    {
+                        if(i==0) html.appendHtmlConstant("<h3>");
+                        html.appendEscaped(detail).appendHtmlConstant("<br/>");
+                        if(i==0) html.appendHtmlConstant("</h3>");
 
-                    //for(String detail : decisionTree.getDetailMessages())
-                    //    html.appendEscaped(detail).appendHtmlConstant("<br/>");
+                        i++;
+                    }
 
                     Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
                 }

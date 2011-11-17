@@ -174,7 +174,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     public ValidationResult validateInterfaceConstraints(final Interface entity, Map<String, Object> changeset)
     {
 
-        long s0 = System.currentTimeMillis();
+        //long s0 = System.currentTimeMillis();
 
         AutoBean<Interface> autoBean = AutoBeanUtils.getAutoBean(entity);
         Map<String, Object> properties = AutoBeanUtils.getAllProperties(autoBean);
@@ -201,7 +201,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             sb.append(s).append(" \n");
         System.out.println(sb.toString());
 
-        System.out.println("** Exec time: "+(System.currentTimeMillis()-s0)+" ms **");
+        //System.out.println("** Exec time: "+(System.currentTimeMillis()-s0)+" ms **");
         return validation;
     }
 

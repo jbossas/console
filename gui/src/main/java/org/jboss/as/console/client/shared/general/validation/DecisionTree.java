@@ -194,7 +194,7 @@ public class DecisionTree<T> {
             if (currentNode.noBranch==null)
             {
                 // reached a leaf
-                System.out.println(currentNode.questOrAns);
+                System.out.println(":: " +currentNode.questOrAns);
             }
             else
             {
