@@ -26,17 +26,22 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
         }
     };
 
+    private DecisionTree.DecisionLog decisionLog = null;
+
+    public void setLog(DecisionTree.DecisionLog decisionLog) {
+        this.decisionLog = decisionLog;
+    }
+
     @Override
     public ValidationResult validate(T entity, Map<String, Object> changedValues) {
 
         DecisionTree<T> tree = buildDecisionTree(entity, changedValues);
+        tree.setDecisionLog(decisionLog);
 
         //tree.outputBinTree();
         tree.queryBinTree();
-        System.out.println(tree.dumpDecisionLog());
 
         // create result
-
         ValidationResult result = new ValidationResult(tree.getFinalOutcome());
         result.addMessage(tree.getLastNode().getQuestOrAns());
         return result;

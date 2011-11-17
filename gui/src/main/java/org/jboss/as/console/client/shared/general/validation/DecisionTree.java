@@ -1,9 +1,6 @@
 package org.jboss.as.console.client.shared.general.validation;
 
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * A simple binary decision tree.
  *
@@ -12,7 +9,6 @@ import java.util.List;
 public class DecisionTree<T> {
 
     private T entity;
-    private List<String> decisionLog = new LinkedList<String>();
 
     public class BinTree {
 
@@ -35,20 +31,19 @@ public class DecisionTree<T> {
 
     BinTree rootNode = null;
 
+    private DecisionLog decisionLog = null;
+
+    public interface DecisionLog {
+        void append(String message);
+    }
+
     public DecisionTree(T entity) {
+
         this.entity = entity;
     }
 
-    public List<String> getDecisionLog() {
-        return decisionLog;
-    }
-
-    public String dumpDecisionLog() {
-        StringBuilder sb = new StringBuilder();
-        for(String s : decisionLog)
-            sb.append(s).append("\n");
-        return sb.toString();
-
+    public void setDecisionLog(DecisionLog decisionLog) {
+        this.decisionLog = decisionLog;
     }
 
     /* CREATE ROOT NODE */
@@ -234,7 +229,8 @@ public class DecisionTree<T> {
 
         boolean success = currentNode.decision.evaluate(entity);
 
-        decisionLog.add(currentNode.questOrAns + " => " + success);
+        if(decisionLog!=null)
+            decisionLog.append(currentNode.questOrAns + " => " + success);
 
         if (success)
             queryBinTree(currentNode.yesBranch);

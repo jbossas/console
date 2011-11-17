@@ -16,7 +16,7 @@ public class ValidationResult {
         this.success = success;
     }
 
-    void addMessage(String message) {
+    public void addMessage(String message) {
         messages.add(message);
     }
 

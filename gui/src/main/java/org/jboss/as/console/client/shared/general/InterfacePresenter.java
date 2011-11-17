@@ -179,7 +179,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         DecisionTree.DecisionLog log = new DecisionTree.DecisionLog() {
             int index = 0;
             @Override
-            public void log(String message) {
+            public void append(String message) {
                 index++;
                 decisions.add("["+index+"] " + message);
             }
@@ -187,7 +187,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
         CompositeDecision decisionTree = new CompositeDecision();
         decisionTree.setLog(log);
-        ValidationResult validation = decisionTree.validate(properties);
+
+        ValidationResult validation = decisionTree.validate(entity, changeset);
         validation.addMessage(decisionTree.getDetailMessages().toString());
 
         // dump log

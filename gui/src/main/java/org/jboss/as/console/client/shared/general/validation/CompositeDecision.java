@@ -26,6 +26,15 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
     }
 
     @Override
+    public void setLog(DecisionTree.DecisionLog log) {
+        super.setLog(log);
+        addressValidation.setLog(log);
+        nicValidation.setLog(log);
+        loopbackValidation.setLog(log);
+        otherValidation.setLog(log);
+    }
+
+    @Override
     public boolean doesApplyTo(Interface entity, Map<String, Object> changedValues) {
         return true;
     }
@@ -34,7 +43,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
     protected DecisionTree<Interface> buildDecisionTree(final Interface entity, final Map<String, Object> changedValues) {
 
         DecisionTree<Interface> tree = new DecisionTree<Interface>(entity);
-        tree.createRoot(1, "Attempt to modify interface values?", new Decision<Interface>() {
+        tree.createRoot(1, "Any changes at all?", new Decision<Interface>() {
             @Override
             public boolean evaluate(Interface entity) {
                 return !changedValues.isEmpty();
@@ -128,4 +137,5 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
 
         return tree;
     }
+
 }
