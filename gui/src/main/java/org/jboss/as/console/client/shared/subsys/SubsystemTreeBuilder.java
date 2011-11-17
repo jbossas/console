@@ -111,7 +111,7 @@ public class SubsystemTreeBuilder {
                             //TreeItem logging = new DefaultTreeItem("Logging");
 
                             final LHSNavTreeItem loggers  = new LHSNavTreeItem("Loggers", NameTokens.Logger);
-                            final LHSNavTreeItem handlers = new LHSNavTreeItem("Log Handlers", NameTokens.LogHandler);
+                            final LHSNavTreeItem handlers = new LHSNavTreeItem("Log Handlers", NameTokens.Logger+";page=handler");
 
                             //logging.addItem(loggers);
                             //logging.addItem(handlers);

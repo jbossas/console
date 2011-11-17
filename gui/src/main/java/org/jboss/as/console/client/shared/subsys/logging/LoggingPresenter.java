@@ -25,8 +25,10 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 
 
@@ -46,6 +48,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
 
     public interface MyView extends View {
         void initialLoad();
+        void setPage(int page);
     }
 
     @Inject
@@ -55,6 +58,21 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
         super(eventBus, view, proxy);
 
         this.revealStrategy = revealStrategy;
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+
+        String page= request.getParameter("page", null);
+
+        if("handler".equals(page))
+        {
+            getView().setPage(1);
+        }
+        else
+        {
+            getView().setPage(0);
+        }
     }
 
     @Override

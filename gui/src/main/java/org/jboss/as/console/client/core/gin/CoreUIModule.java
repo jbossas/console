@@ -28,7 +28,6 @@ import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
-
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -118,8 +117,6 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
-import org.jboss.as.console.client.shared.subsys.logging.HandlerView;
-import org.jboss.as.console.client.shared.subsys.logging.LogHandlerPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
@@ -130,8 +127,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPr
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiSubsystemView;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimeView;
-import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsView;
 import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
+import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsView;
 import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemPresenter;
 import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemView;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
@@ -361,11 +358,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 LoggingPresenter.MyView.class,
                 LoggingView.class,
                 LoggingPresenter.MyProxy.class);
-
-        bindPresenter(LogHandlerPresenter.class,
-                LogHandlerPresenter.MyView.class,
-                HandlerView.class,
-                LogHandlerPresenter.MyProxy.class);
 
         bind(HandlerListManager.class).in(Singleton.class);
 

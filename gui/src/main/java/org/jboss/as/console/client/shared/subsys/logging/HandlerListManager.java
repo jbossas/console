@@ -52,14 +52,14 @@ public class HandlerListManager {
      */
     public void handlerListUpdated() {
         List<String> aggregatedHandlerList = new ArrayList<String>();
-        
+
         for (HandlerProducer producer : producers) {
             List<NamedEntity> handlers = producer.getHandlers();
             for (NamedEntity handler : handlers) {
                 aggregatedHandlerList.add(handler.getName());
             }
         }
-        
+
         for (HandlerConsumer consumer : consumers) {
             consumer.handlersUpdated(aggregatedHandlerList);
         }

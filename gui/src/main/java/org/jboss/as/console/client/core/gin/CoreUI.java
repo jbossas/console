@@ -26,7 +26,6 @@ import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.ApplicationProperties;
@@ -80,7 +79,6 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
-import org.jboss.as.console.client.shared.subsys.logging.LogHandlerPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
@@ -198,7 +196,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<MessagingPresenter> getMessagingPresenter();
 
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
-    AsyncProvider<LogHandlerPresenter> getLogHandlerPresenter();
     HandlerListManager getHandlerListManager();
 
     AsyncProvider<ScannerPresenter> getScannerPresenter();
