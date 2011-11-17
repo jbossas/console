@@ -10,6 +10,7 @@ import java.util.List;
 public class ValidationResult {
 
     private List<String> messages = new LinkedList<String> ();
+
     private boolean success;
 
     public ValidationResult(boolean success) {

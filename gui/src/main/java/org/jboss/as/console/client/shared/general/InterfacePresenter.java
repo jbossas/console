@@ -53,9 +53,11 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -189,12 +191,13 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         decisionTree.setLog(log);
 
         ValidationResult validation = decisionTree.validate(entity, changeset);
-        validation.addMessage(decisionTree.getDetailMessages().toString());
+        for(String detail : decisionTree.getDetailMessages())
+            validation.addMessage(detail);
 
         // dump log
         StringBuilder sb = new StringBuilder();
         for(String s : decisions)
-            sb.append(s).append("\n");
+            sb.append(s).append(" \n");
         System.out.println(sb.toString());
 
         return validation;
@@ -226,7 +229,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2670
     private void doPersistChanges(final Interface entity, Map<String,Object> changeset)
     {
         // artificial values need to be merged manually
@@ -236,10 +238,27 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         changeset.put("anyIP4Address", wildcard.equals(Interface.ANY_IP4) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
         changeset.put("anyIP6Address", wildcard.equals(Interface.ANY_IP6) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
 
+        // TODO: https://issues.jboss.org/browse/AS7-2670
+        Map<String,Object> workAround = new HashMap<String,Object>(changeset);
+        Set<String> keys = changeset.keySet();
+        for(String key : keys)
+        {
+            Object value = changeset.get(key);
+            if(value instanceof String)
+            {
+                // empty string into UNDEFINED
+                workAround.put(key, ((String)value).isEmpty() ? FormItem.VALUE_SEMANTICS.UNDEFINED : value);
+            }
+            else if(value instanceof Boolean)
+            {
+                // boolean false into UNDEFINED
+                workAround.put(key, ((Boolean)value) ? value : FormItem.VALUE_SEMANTICS.UNDEFINED );
+            }
+        }
 
         AddressBinding addressBinding = beanMetaData.getAddress();
         ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
-        ModelNode operation = entityAdapter.fromChangeset(changeset, address);
+        ModelNode operation = entityAdapter.fromChangeset(workAround, address);
 
         //System.out.println(operation);
 

@@ -197,9 +197,9 @@ public class InterfaceEditor {
                 if(!validation.isValid())
                 {
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    html.appendHtmlConstant("<h3>");
+                    //html.appendHtmlConstant("<h3>");
                     html.appendEscaped(validation.asMessageString());
-                    html.appendHtmlConstant("</h3>");
+                    //html.appendHtmlConstant("</h3>");
 
                     //for(String detail : decisionTree.getDetailMessages())
                     //    html.appendEscaped(detail).appendHtmlConstant("<br/>");

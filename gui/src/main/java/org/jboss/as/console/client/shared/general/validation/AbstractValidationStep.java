@@ -66,4 +66,30 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
         }
         return clean;
     }
+
+    protected static boolean isEmpty(Map<String, Object> changedValues) {
+
+        boolean empty = changedValues.isEmpty();
+
+        if(!empty)
+        {
+            // treat any boolean=false as empty too
+            // it will written as undefined
+            boolean conflictingBoolean = false;
+            Set<String> keys = changedValues.keySet();
+            for(String key : keys)
+            {
+                Object value = changedValues.get(key);
+                if("true".equals(value.toString())) // TODO: expensive, improve
+                {
+                    conflictingBoolean = true;
+                    break;
+                }
+            }
+
+            empty = !conflictingBoolean;
+        }
+
+        return empty;
+    }
 }

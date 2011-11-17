@@ -42,6 +42,9 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
     @Override
     protected DecisionTree<Interface> buildDecisionTree(final Interface entity, final Map<String, Object> changedValues) {
 
+
+        System.out.println(">> "+changedValues);
+
         DecisionTree<Interface> tree = new DecisionTree<Interface>(entity);
         tree.createRoot(1, "Any changes at all?", new Decision<Interface>() {
             @Override

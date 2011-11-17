@@ -74,7 +74,7 @@ class AddressValidation extends AbstractValidationStep<Interface> {
             @Override
             public boolean evaluate(Interface entity) {
                 changeset.remove(ADDRESS_WILDCARD);
-                return !changeset.isEmpty();
+                return !isEmpty(changeset);
             }
         });
         tree.no(3, 7, "Neither Inet address nor wildcard set!", FAILURE);
