@@ -40,7 +40,7 @@ public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, Logging
     private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.LoggingPresenter)
+    @NameToken(NameTokens.Logger)
     public interface MyProxy extends Proxy<LoggingPresenter>, Place {
     }
 

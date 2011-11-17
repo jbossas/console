@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
@@ -68,8 +69,9 @@ public class SubsystemTreeBuilder {
 
                         final String key = groupItem.getPresenter();
 
+                        // messaging  -----------------------------------
 
-                        if(key.equals("messaging")) {
+                        if("messaging".equals(key)) {
                             // See  https://issues.jboss.org/browse/AS7-1857
                             // there can be multiple messaging server instances
 
@@ -77,7 +79,7 @@ public class SubsystemTreeBuilder {
                                     new AsyncCallback<List<String>>() {
                                         @Override
                                         public void onFailure(Throwable caught) {
-                                            Console.error("Failed to load hornet server names", caught.getMessage());
+                                            Console.error("Failed to load messaging server names", caught.getMessage());
                                         }
 
                                         @Override
@@ -101,13 +103,27 @@ public class SubsystemTreeBuilder {
                             continue;
                         }
 
+                        // logging  -----------------------------------
 
+                        else if("logging".equals(key))
+                        {
+
+                            final LHSNavTreeItem loggers  = new LHSNavTreeItem("Loggers", NameTokens.Logger);
+                            final LHSNavTreeItem handlers = new LHSNavTreeItem("Log Handlers", NameTokens.LogHandler);
+
+                            groupTreeItem.addItem(loggers);
+                            groupTreeItem.addItem(handlers);
+
+                            subsysTree.addItem(groupTreeItem);
+
+                            continue;
+                        }
 
                         String token = parentPlace + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
 
-                        if(key.equals("datasources"))
+                        if("datasources".equals(key))
                         {
                             Timer t = new Timer() {
                                 @Override
