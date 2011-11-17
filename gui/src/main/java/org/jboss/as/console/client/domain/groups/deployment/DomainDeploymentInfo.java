@@ -52,7 +52,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
         this.serverGroupStore = serverGroupStore;
         this.deploymentStore = deploymentStore;
     }
-
+    
     List<String> getServerGroupNames() {
         return this.serverGroupNames;
     }
@@ -98,7 +98,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
     }
 
     @Override
-    public void refreshView() {
+    public void refreshView(final DeploymentRecord... targets) {
         serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
 
             @Override
@@ -113,7 +113,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
                 DomainDeploymentInfo.this.serverGroupNames = groupNames;
 
                 // load deployments
-                deploymentStore.loadDeployments(serverGroups, new SimpleCallback<List<DeploymentRecord>>() {
+                deploymentStore.loadServerGroupDeployments(new SimpleCallback<List<DeploymentRecord>>() {
 
                     @Override
                     public void onSuccess(List<DeploymentRecord> result) {
@@ -137,7 +137,7 @@ public class DomainDeploymentInfo implements DeploymentViewRefresher {
                             @Override
                             public void onSuccess(List<DeploymentRecord> result) {
                                 DomainDeploymentInfo.this.domainDeployments = result;
-                                DomainDeploymentInfo.this.presenter.getView().updateDeploymentInfo(DomainDeploymentInfo.this);
+                                DomainDeploymentInfo.this.presenter.getView().updateDeploymentInfo(DomainDeploymentInfo.this, targets);
                             }
                         });
                     }

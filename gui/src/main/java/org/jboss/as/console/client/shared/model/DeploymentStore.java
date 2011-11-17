@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.List;
  * @date 1/31/11
  */
 public interface DeploymentStore {
-    void loadDeployments(List<ServerGroupRecord> serverGroups, AsyncCallback<List<DeploymentRecord>> callback);
+    void loadServerGroupDeployments(AsyncCallback<List<DeploymentRecord>> callback);
     void loadDeploymentContent(AsyncCallback<List<DeploymentRecord>> callback);
     void addToServerGroups(String[] serverGroups, boolean enable, DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);
     void removeContent(DeploymentRecord deploymentRecord, AsyncCallback<DMRResponse> callback);

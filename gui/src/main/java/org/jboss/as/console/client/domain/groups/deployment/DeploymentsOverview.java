@@ -27,18 +27,20 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -46,10 +48,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Heiko Braun
@@ -59,11 +59,20 @@ import java.util.Map.Entry;
 public class DeploymentsOverview extends SuspendableViewImpl implements DeploymentsPresenter.MyView {
 
     private DeploymentsPresenter presenter;
+    
     private ListDataProvider<DeploymentRecord> domainDeploymentProvider = new ListDataProvider<DeploymentRecord>();
-    private TabPanel tabLayoutpanel;
-    private List<String> serverGroupNames;
-    private Map<String, Widget> serverGroupTabsAdded = new HashMap<String, Widget>();
-    private Map<String, ListDataProvider<DeploymentRecord>> serverGroupDeploymentProviders = new HashMap<String, ListDataProvider<DeploymentRecord>>();
+    private ListDataProvider<ServerGroupRecord> serverGroupDeploymentProvider = new ListDataProvider<ServerGroupRecord>();
+    private ListDataProvider<DeploymentRecord> serverGroupDeploymentsDataProvider = new ListDataProvider<DeploymentRecord>();
+
+    private DefaultCellTable<ServerGroupRecord> serverGroupTable;
+    private SingleSelectionModel<ServerGroupRecord> serverGroupTableSelectionModel;
+    
+    private DefaultCellTable<DeploymentRecord> serverGroupDeploymentTable;
+    
+    private Map<String, List<DeploymentRecord>> serverGroupDeployments;
+    
+    private ContentGroupLabel selectedServerGroupLabel = new ContentGroupLabel("");
+    
 
     @Override
     public void setPresenter(DeploymentsPresenter presenter) {
@@ -72,11 +81,18 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
     @Override
     public Widget createWidget() {
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutPanel.addStyleName("default-tabpanel");
+        
+        tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent());
+        tabLayoutPanel.add(makeServerGroupDeploymentsPanel(), Console.CONSTANTS.common_label_serverGroupDeployments());
+        
+        return tabLayoutPanel;
+    }
+    
+    private Widget makeDeploymentsPanel() {
         LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_manageDeployments());
-        layout.add(titleBar);
-
+        
         final ToolStrip toolStrip = new ToolStrip();
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
@@ -99,53 +115,163 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         List<Column> columns = makeNameAndRuntimeColumns();
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
-
-
-        panel.add(new ContentHeaderLabel("Domain Deployments"));
-
-        Widget contentTable = makeDeploymentTable("Content Repository", domainDeploymentProvider, columns, columnHeaders);
-
-        panel.add(new ContentGroupLabel("Content Repository"));
-        panel.add(contentTable);
-
-        tabLayoutpanel = new TabPanel();
-        tabLayoutpanel.addStyleName("default-tabpanel");
-
-        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_serverGroups()));
-        panel.add(tabLayoutpanel);
-
+        
+        ContentGroupLabel repositoryLabel = new ContentGroupLabel(Console.CONSTANTS.common_label_contentRepository());
+        
+        Widget domainDeploymentTable = makeDeploymentTable(repositoryLabel, domainDeploymentProvider, columns, columnHeaders);
+        panel.add(domainDeploymentTable);
+        
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
-
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 26, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 26, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
-
+        
+        layout.setWidgetTopHeight(toolStrip, 0, Style.Unit.PX, 26, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 26, Style.Unit.PX, 100, Style.Unit.PCT);
+        
         return layout;
+    }
+    
+    private Widget makeServerGroupDeploymentsPanel() {
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("rhs-content-panel");
+        
+        panel.add(new ContentHeaderLabel(Console.CONSTANTS.common_label_serverGroups()));
+        panel.add(makeServerGroupTable());
+        panel.add(this.selectedServerGroupLabel);
+        panel.add(this.makeServerGroupDeploymentsTable());
+        
+        wireTablesTogether();
+        
+        ScrollPanel scroll = new ScrollPanel(panel);
+        return scroll;
+    }
+    
+    private void wireTablesTogether() {
+        final SingleSelectionModel<ServerGroupRecord> selectionModel = this.serverGroupTableSelectionModel;
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ServerGroupRecord selectedServerGroup = selectionModel.getSelectedObject();
+                refreshServerGroupDeploymentsTable(selectedServerGroup);
+            }
+        });
+    }
+    
+    private void refreshServerGroupDeploymentsTable(ServerGroupRecord selectedServerGroup) {
+        List<DeploymentRecord> deployments = serverGroupDeployments.get(selectedServerGroup.getGroupName());
+        serverGroupDeploymentsDataProvider.setList(deployments);
+        this.selectedServerGroupLabel.setHTML(Console.MESSAGES.deploymentsFor(selectedServerGroup.getGroupName()));
+    }
+    
+    private Widget makeServerGroupTable() {
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
+        vpanel.getElement().setAttribute("style", "padding-top:5px;");
+        
+        serverGroupTable = new DefaultCellTable<ServerGroupRecord>(5);
+        this.serverGroupDeploymentProvider.addDataDisplay(serverGroupTable);
+        this.serverGroupTableSelectionModel = new SingleSelectionModel<ServerGroupRecord>();
+        serverGroupTable.setSelectionModel(serverGroupTableSelectionModel);
+        
+        Column nameColumn = new TextColumn<ServerGroupRecord>() {
+            @Override
+            public String getValue(ServerGroupRecord serverGroup) {
+                return serverGroup.getGroupName();
+            }
+        };
+        
+        Column profileColumn = new TextColumn<ServerGroupRecord>() {
+            @Override
+            public String getValue(ServerGroupRecord serverGroup) {
+                return serverGroup.getProfileName();
+            }
+        };
+        
+        serverGroupTable.addColumn(nameColumn, Console.CONSTANTS.common_label_serverGroup());
+        serverGroupTable.addColumn(profileColumn, Console.CONSTANTS.common_label_profile());
+        
+        vpanel.add(serverGroupTable);
+        
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(serverGroupTable);
+        vpanel.add(pager);
+        
+        return vpanel;
+    }
+    
+    private Widget makeServerGroupDeploymentsTable() {
+        VerticalPanel vpanel = new VerticalPanel();
+        vpanel.setStyleName("fill-layout-width");
+        vpanel.getElement().setAttribute("style", "padding-top:5px;");
+        
+        String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
+                                                  Console.CONSTANTS.common_label_runtimeName(), 
+                                                  Console.CONSTANTS.common_label_enabled(), 
+                                                  Console.CONSTANTS.common_label_enOrDisable(), 
+                                                  Console.CONSTANTS.common_label_remove()};
+       List<Column> columns = makeNameAndRuntimeColumns();
+       columns.add(makeEnabledColumn());
+       columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
+       columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
+       
+       vpanel.add(makeDeploymentTable(this.selectedServerGroupLabel, serverGroupDeploymentsDataProvider, columns, columnHeaders));
+       
+       return vpanel;
     }
 
     @Override
-    public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo) {
-        serverGroupNames = domainDeploymentInfo.getServerGroupNames();
-
-        createAndRemoveTabs();
-
+    public void updateDeploymentInfo(DomainDeploymentInfo domainDeploymentInfo, DeploymentRecord... targets) {
+        List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
+        
+        ServerGroupRecord serverGroupTarget = findSingleTarget(serverGroups, targets);
+        
+        this.serverGroupDeploymentProvider.setList(serverGroups);
+        
         // Set the backing data for domain tables
         domainDeploymentProvider.setList(domainDeploymentInfo.getDomainDeployments());
-
-        // Set the backing data for server group tables
-        for (Entry<String, List<DeploymentRecord>> entry : domainDeploymentInfo.getServerGroupDeployments().entrySet()) {
-            this.serverGroupDeploymentProviders.get(entry.getKey()).setList(entry.getValue());
+        
+        this.serverGroupDeployments = domainDeploymentInfo.getServerGroupDeployments();
+ 
+        setServerGroupTableSelection(serverGroupTarget);
+    }
+    
+    private void setServerGroupTableSelection(ServerGroupRecord serverGroupTarget) {
+        if (this.serverGroupTable.isEmpty()) return;
+        
+        List<ServerGroupRecord> serverGroups = this.presenter.getServerGroups();
+        ServerGroupRecord previouslySelectedServerGroup = findPreviouslySelectedGroup();
+        if (previouslySelectedServerGroup == null) {
+            serverGroupTableSelectionModel.setSelected(serverGroups.get(0), true);
+        } else if (serverGroupTarget != null) {
+            serverGroupTableSelectionModel.setSelected(serverGroupTarget, true);
+        } else {
+            serverGroupTableSelectionModel.setSelected(previouslySelectedServerGroup, true);
         }
-
-        //  if (!deploymentRecords.isEmpty()) {
-        //    deploymentTable.getSelectionModel().setSelected(deploymentRecords.get(0), true);
-        //  }
+    }
+    
+    private ServerGroupRecord findPreviouslySelectedGroup() {
+        ServerGroupRecord previouslySelected = serverGroupTableSelectionModel.getSelectedObject();
+        if (previouslySelected == null) return null;
+        for (ServerGroupRecord serverGroup : this.presenter.getServerGroups()) {
+            if (serverGroup.getGroupName().equals(previouslySelected.getGroupName())) return serverGroup;
+        }
+        
+        return null; // group not found. deleted?
+    }
+    
+    // find the server group, if any, that was last the serverGroupTarget of a remove or enable/disable on one of its deployments
+    private ServerGroupRecord findSingleTarget(List<ServerGroupRecord> serverGroups, DeploymentRecord... targets) {
+        if (targets.length != 1) return null;
+        DeploymentRecord singleTarget = targets[0];
+        
+        for (ServerGroupRecord serverGroup : serverGroups) {
+            if (singleTarget.getServerGroup().equals(serverGroup.getGroupName())) return serverGroup;
+        }
+        
+        return null;
     }
 
     private Widget makeDeploymentTable(
-            String headerLabel,
+            ContentGroupLabel tableLabel,
             ListDataProvider<DeploymentRecord> dataProvider,
             List<Column> columns,
             String[] columnHeaders) {
@@ -153,21 +279,21 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
         vpanel.getElement().setAttribute("style", "padding-top:5px;");
-        // -----------
 
-        //vpanel.add(new ContentHeaderLabel(headerLabel));
-
-        DefaultCellTable<DeploymentRecord> deploymentTable = new DefaultCellTable<DeploymentRecord>(5);
-        dataProvider.addDataDisplay(deploymentTable);
+        vpanel.add(tableLabel);
+        this.serverGroupDeploymentTable = new DefaultCellTable<DeploymentRecord>(10);
+        this.serverGroupDeploymentTable.setSelectionModel(new SingleSelectionModel());
+        
+        dataProvider.addDataDisplay(serverGroupDeploymentTable);
 
         for (int i = 0; i < columnHeaders.length; i++) {
-            deploymentTable.addColumn(columns.get(i), columnHeaders[i]);
+            serverGroupDeploymentTable.addColumn(columns.get(i), columnHeaders[i]);
         }
 
-        vpanel.add(deploymentTable);
+        vpanel.add(serverGroupDeploymentTable);
         
         DefaultPager pager = new DefaultPager();
-        pager.setDisplay(deploymentTable);
+        pager.setDisplay(serverGroupDeploymentTable);
         
         vpanel.add(pager);
 
@@ -216,53 +342,4 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         };
     }
 
-    private void createAndRemoveTabs() {
-        // add new server groups
-        for (String serverGroupName : serverGroupNames) {
-            if (this.serverGroupTabsAdded.containsKey(serverGroupName)) {
-                continue;
-            }
-
-            VerticalPanel vPanel = new VerticalPanel();
-            vPanel.setStyleName("fill-layout-width");
-
-            this.tabLayoutpanel.add(vPanel, serverGroupName);
-            this.serverGroupTabsAdded.put(serverGroupName, vPanel);
-            ListDataProvider<DeploymentRecord> dataProvider = new ListDataProvider<DeploymentRecord>();
-            this.serverGroupDeploymentProviders.put(serverGroupName, dataProvider);
-
-            String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(), 
-                                                  Console.CONSTANTS.common_label_runtimeName(), 
-                                                  Console.CONSTANTS.common_label_enabled(), 
-                                                  Console.CONSTANTS.common_label_enOrDisable(), 
-                                                  Console.CONSTANTS.common_label_remove()};
-            List<Column> columns = makeNameAndRuntimeColumns();
-            columns.add(makeEnabledColumn());
-            columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
-            columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
-            //columns.addAll(ActionColumnFactory.makeActionColumns(presenter, this.serverGroupDeploymentProviders.get(serverGroupName), DeploymentCommand.ENABLE_DISABLE, DeploymentCommand.REMOVE_FROM_GROUP));
-            vPanel.add(makeDeploymentTable(serverGroupName + " Deployments", dataProvider, columns, columnHeaders));
-
-        }
-
-        // find server groups to remove
-        List<String> removals = new ArrayList<String>(); // avoid ConcurrentModificationException
-        for (Map.Entry<String, Widget> entry : this.serverGroupTabsAdded.entrySet()) {
-            String serverGroupName = entry.getKey();
-            if (!serverGroupNames.contains(serverGroupName)) {
-                removals.add(serverGroupName);
-            }
-        }
-
-        // remove deleted server groups
-        for (String serverGroupName : removals) {
-            Widget widget = this.serverGroupTabsAdded.remove(serverGroupName);
-            this.tabLayoutpanel.remove(widget);
-            this.serverGroupDeploymentProviders.remove(serverGroupName);
-        }
-
-
-        if(tabLayoutpanel.getTabBar().getSelectedTab()<0)
-            tabLayoutpanel.getTabBar().selectTab(0);
-    }
 }

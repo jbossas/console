@@ -86,8 +86,8 @@ public class ServerGroupSelector {
     
     private DefaultWindow makeWindow(DeploymentRecord deployment, ListDataProvider<ServerGroupSelection> dataProvider) {
         DefaultWindow window = new DefaultWindow(Console.MESSAGES.selectServerGroups());
-        window.setWidth(480);
-        window.setHeight(360);
+        window.setWidth(520);
+        window.setHeight(380);
         window.setGlassEnabled(true);
         
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
