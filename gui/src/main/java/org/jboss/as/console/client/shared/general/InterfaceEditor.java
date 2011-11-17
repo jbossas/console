@@ -14,7 +14,9 @@ import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ContentDescription;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.forms.GroupTitleItem;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -152,13 +154,12 @@ public class InterfaceEditor {
         CheckBoxItem loopback = new CheckBoxItem("loopback", "Loopback");
         TextBoxItem loopbackAddress = new TextBoxItem("loopbackAddress", "Loopback Address", false);
 
-        form.setFields(nameItem, inetAddress, anyAddress);
 
-        form.setFieldsInGroup(
-                        "Named Interfaces",
-                        new FieldsetRenderer(),
-                        nic, nicMatch
-                );
+        form.setFields(
+                nameItem, BlankItem.INSTANCE,
+                inetAddress, anyAddress,
+                nic, nicMatch);
+
 
         form.setFieldsInGroup("Loopback Device", new FieldsetRenderer(), loopback, loopbackAddress);
 

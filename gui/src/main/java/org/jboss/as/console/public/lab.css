@@ -171,3 +171,13 @@
     padding-top: 20px;
     width: 100%;
 }
+
+.group-item-title {
+    color:#C0C0C0;
+}
+
+.default-fieldset {
+    margin-top:8px!important;
+    margin-botom:8px!important;
+    border:none!important;
+}
