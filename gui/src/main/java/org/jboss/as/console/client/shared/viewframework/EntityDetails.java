@@ -18,23 +18,16 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.forms.FormValidation;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.EnumSet;
+import java.util.Map;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.
@@ -45,12 +38,13 @@ public class EntityDetails<T> implements EditListener {
 
     private String entitiesName;
     private FormAdapter<T> form;
-    private ToolButton editBtn;
-    private ToolButton cancelBtn;
-    private ToolButton removeBtn;
     private EntityToDmrBridge bridge;
-    private EnumSet<FrameworkButton> hideButtons;
+    //private EnumSet<FrameworkButton> hideButtons;
     private AddressBinding address;
+
+    public interface ToolStripFactory {
+        FormToolStrip create();
+    }
 
     /**
      * Create a new EntityDetails.
@@ -72,7 +66,7 @@ public class EntityDetails<T> implements EditListener {
         this.form = form;
         this.bridge = bridge;
         this.address = address;
-        this.hideButtons = hideButtons;
+       // this.hideButtons = hideButtons;
     }
 
     /**
@@ -88,70 +82,24 @@ public class EntityDetails<T> implements EditListener {
         layout.setStyleName("fill-layout-width");
 
         // ----------------------------
-        final Command saveCommand = new Command() {
-            @Override
-            public void execute() {
-                FormValidation validation = form.validate();
-                if (!validation.hasErrors()) {
-                    bridge.onSaveDetails(form);
-                }
-            }
-        };
 
-        final Command cancelCommand = new Command() {
+        final ToolStripFactory toolStripFactory = new ToolStripFactory() {
             @Override
-            public void execute() {
-                bridge.onCancel();
-            }
-        };
-
-        final Command removeCommand = new Command() {
-            @Override
-            public void execute() {
-                if (bridge.getEntityList().isEmpty()) return;
-
-                Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
-                        Console.MESSAGES.removeFromConfirm(bridge.getName(form.getEditedEntity()), entitiesName),
-                        new Feedback.ConfirmationHandler() {
+            public FormToolStrip create() {
+                return new FormToolStrip<T>(
+                        form,
+                        new FormToolStrip.FormCallback<T>() {
+                            @Override
+                            public void onSave(Map<String, Object> changeset) {
+                                bridge.onSaveDetails(form);
+                            }
 
                             @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    bridge.onRemove(form);
-                                }
+                            public void onDelete(T entity) {
+                                bridge.onRemove(form);
                             }
-                        });
-            }
-        };
-
-        ClickHandler editHandler = new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (bridge.getEntityList().isEmpty()) return;
-
-                if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
-                    bridge.onEdit();
-                } else {
-                    saveCommand.execute();
-                }
-            }
-        };
-
-        ClickHandler cancelHandler = new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                form.cancel();
-                cancelCommand.execute();
-            }
-        };
-
-        ClickHandler removeHandler = new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                removeCommand.execute();
+                        }
+                );
             }
         };
 
@@ -159,13 +107,13 @@ public class EntityDetails<T> implements EditListener {
         if(tabbedLayout)
         {
             // assign click handler
-            TabbedFormLayoutPanel tabbedPanel = (TabbedFormLayoutPanel)form;
-            tabbedPanel.setCommands(saveCommand, cancelCommand, removeCommand);
+            TabbedFormLayoutPanel formTabs = (TabbedFormLayoutPanel)form;
+            formTabs.setToolStripFactory(toolStripFactory);
         }
         else
         {
             // toolstrip
-            createToolStrip(layout, editHandler, cancelHandler, removeHandler);
+            layout.add(toolStripFactory.create().asWidget());
 
             // help panel
             if (address != null) {
@@ -185,35 +133,6 @@ public class EntityDetails<T> implements EditListener {
         return layout;
     }
 
-    private void createToolStrip(VerticalPanel layout, ClickHandler editHandler, ClickHandler cancelHandler, ClickHandler removeHandler) {
-        ToolStrip detailToolStrip = new ToolStrip();
-
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        editBtn.addClickHandler(editHandler);
-
-        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
-        cancelBtn.addClickHandler(cancelHandler);
-
-        removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove());
-        removeBtn.addClickHandler(removeHandler);
-
-        // ----------------------------
-
-        if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) {
-            detailToolStrip.addToolButton(editBtn);
-        }
-        if (!hideButtons.contains(FrameworkButton.CANCEL)) {
-            detailToolStrip.addToolButton(cancelBtn);
-        }
-        if (!hideButtons.contains(FrameworkButton.REMOVE)) {
-            detailToolStrip.addToolButton(removeBtn);
-        }
-
-        // ----------------------------
-
-        layout.add(detailToolStrip);
-    }
-
     /**
      * Bind a table to the details section.
      * @param entityTable The table to be bound.
@@ -228,15 +147,6 @@ public class EntityDetails<T> implements EditListener {
      */
     public void setEditingEnabled(boolean isEnabled) {
         form.setEnabled(isEnabled);
-
-        if(cancelBtn!=null)cancelBtn.setVisible(isEnabled);
-        if(removeBtn!=null)removeBtn.setVisible(!isEnabled);
-
-        if (isEnabled && editBtn!=null) {
-            editBtn.setText(Console.CONSTANTS.common_label_save());
-        } else if(!isEnabled && editBtn!=null){
-            editBtn.setText(Console.CONSTANTS.common_label_edit());
-        }
     }
 
     /**

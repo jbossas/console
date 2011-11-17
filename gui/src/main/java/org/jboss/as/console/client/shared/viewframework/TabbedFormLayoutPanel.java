@@ -19,15 +19,7 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.TabPanel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
@@ -38,6 +30,13 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Makes a Form with items automatically separated onto tabs.
@@ -57,9 +56,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
     private List<String> formItemNames = new ArrayList<String>();
     private TabPanel tabPanel;
 
-    private Command saveCommand;
-    private Command removeCommand;
-    private Command cancelCommand;
+    private EntityDetails.ToolStripFactory toolStripFactory;
 
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
         // super(25, Style.Unit.PX);
@@ -82,23 +79,12 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             layout.setStyleName("fill-layout-width");
 
             FormAdapter<T> form = forms.get(key);
-            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
-                    form,
-                    new FormToolStrip.FormCallback<T>() {
-                        @Override
-                        public void onSave(Map<String, Object> changeset) {
-                            saveCommand.execute();
-                        }
 
-                        @Override
-                        public void onDelete(T entity) {
-                            removeCommand.execute();
-                        }
-                    }
-            );
-
+            FormToolStrip toolStrip = toolStripFactory.create();
             layout.add(toolStrip.asWidget());
+
             // todo: help panel
+
             layout.add(form);
 
             tabPanel.add(layout, key);
@@ -232,9 +218,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
         tabPanel.add(widget, title);
     }
 
-    public void setCommands(Command saveCommand, Command cancelCommand, Command removeCommand) {
-        this.saveCommand = saveCommand;
-        this.cancelCommand = cancelCommand;
-        this.removeCommand= removeCommand;
+    public void setToolStripFactory(EntityDetails.ToolStripFactory factory) {
+        this.toolStripFactory = factory;
     }
 }
