@@ -21,7 +21,6 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -49,10 +48,8 @@ public class HandlerView extends SuspendableViewImpl implements LogHandlerPresen
 
 
     @Inject
-    public HandlerView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
+    public HandlerView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher, HandlerListManager handlerListManager) {
         this.dispatcher = dispatcher;
-        
-        HandlerListManager handlerListManager = new HandlerListManager();
 
         consoleHandlerSubview = new ConsoleHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         fileHandlerSubview = new FileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
@@ -61,13 +58,13 @@ public class HandlerView extends SuspendableViewImpl implements LogHandlerPresen
         asyncHandlerSubview = new AsyncHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         customHandlerSubview = new CustomHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
         
-        //TODO: handlerListManager.setHandlerConsumers(rootLoggerSubview, loggerSubview, asyncHandlerSubview);
-        handlerListManager.setHandlerProducers(consoleHandlerSubview, 
-                                               fileHandlerSubview, 
-                                               periodicRotatingFileHandlerSubview, 
-                                               sizeRotatingFileHandlerSubview,
-                                               asyncHandlerSubview,
-                                               customHandlerSubview);
+        handlerListManager.addHandlerConsumers(asyncHandlerSubview);
+        handlerListManager.addHandlerProducers(consoleHandlerSubview,
+                fileHandlerSubview,
+                periodicRotatingFileHandlerSubview,
+                sizeRotatingFileHandlerSubview,
+                asyncHandlerSubview,
+                customHandlerSubview);
     }
 
     @Override

@@ -117,6 +117,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerView;
 import org.jboss.as.console.client.shared.subsys.logging.LogHandlerPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
@@ -361,10 +362,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 LoggingView.class,
                 LoggingPresenter.MyProxy.class);
 
-         bindPresenter(LogHandlerPresenter.class,
+        bindPresenter(LogHandlerPresenter.class,
                 LogHandlerPresenter.MyView.class,
                 HandlerView.class,
                 LogHandlerPresenter.MyProxy.class);
+
+        bind(HandlerListManager.class).in(Singleton.class);
 
         bindPresenter(ScannerPresenter.class,
                 ScannerPresenter.MyView.class,

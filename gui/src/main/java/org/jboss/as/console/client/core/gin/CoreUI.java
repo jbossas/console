@@ -79,6 +79,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LogHandlerPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
@@ -194,10 +195,12 @@ public interface CoreUI extends Ginjector {
     DriverRegistry getDriverRegistry();
 
     AsyncProvider<EJB3Presenter> getEJB3Presenter();
-
     AsyncProvider<MessagingPresenter> getMessagingPresenter();
+
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
     AsyncProvider<LogHandlerPresenter> getLogHandlerPresenter();
+    HandlerListManager getHandlerListManager();
+
     AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiConfigurationPresenter> getOSGiConfigurationPresenter();
     AsyncProvider<OSGiRuntimePresenter> getOSGiRuntimePresenter();

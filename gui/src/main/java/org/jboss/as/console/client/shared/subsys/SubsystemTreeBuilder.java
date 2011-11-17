@@ -108,8 +108,13 @@ public class SubsystemTreeBuilder {
                         else if("logging".equals(key))
                         {
 
+                            //TreeItem logging = new DefaultTreeItem("Logging");
+
                             final LHSNavTreeItem loggers  = new LHSNavTreeItem("Loggers", NameTokens.Logger);
                             final LHSNavTreeItem handlers = new LHSNavTreeItem("Log Handlers", NameTokens.LogHandler);
+
+                            //logging.addItem(loggers);
+                            //logging.addItem(handlers);
 
                             groupTreeItem.addItem(loggers);
                             groupTreeItem.addItem(handlers);

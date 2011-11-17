@@ -25,21 +25,24 @@ import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 /**
  * This class manages the aggregated list of handlers.  The list of handlers is provided
  * to the user when he wants to add a handler to a logger or add a subhandler to an async handler.
- * 
+ * <p/>
+ * <b>Caution</b>: Used as Singleton via IOC, see {@link org.jboss.as.console.client.core.gin.CoreUIModule}
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class HandlerListManager {
    
-    private HandlerConsumer[] consumers;
+    private List<HandlerConsumer> consumers = new ArrayList<HandlerConsumer>();
+    private List<HandlerProducer> producers = new ArrayList<HandlerProducer>();
     
-    private HandlerProducer[] producers;
-    
-    public void setHandlerConsumers(HandlerConsumer... consumers) {
-        this.consumers = consumers;
+    public void addHandlerConsumers(HandlerConsumer... consumers) {
+        for(HandlerConsumer c : consumers)
+            this.consumers.add(c);
     }
     
-    public void setHandlerProducers(HandlerProducer... producers) {
-        this.producers = producers;
+    public void addHandlerProducers(HandlerProducer... producers) {
+        for(HandlerProducer p : producers)
+            this.producers.add(p);
     }
     
     /**

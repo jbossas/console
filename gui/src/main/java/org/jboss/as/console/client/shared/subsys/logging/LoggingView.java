@@ -21,9 +21,7 @@ package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -38,40 +36,17 @@ import javax.inject.Inject;
 public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
 
     private DispatchAsync dispatcher;
-    
     private RootLoggerSubview rootLoggerSubview;
     private LoggerSubview loggerSubview;
 
-    /*private ConsoleHandlerSubview consoleHandlerSubview;
-    private FileHandlerSubview fileHandlerSubview;
-    private PeriodicRotatingFileHandlerSubview periodicRotatingFileHandlerSubview;
-    private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
-    private AsyncHandlerSubview asyncHandlerSubview;
-    private CustomHandlerSubview customHandlerSubview;*/
-
     @Inject
-    public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
+    public LoggingView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher, HandlerListManager handlerListManager) {
         this.dispatcher = dispatcher;
-        
-        HandlerListManager handlerListManager = new HandlerListManager();
-                
+
         rootLoggerSubview = new RootLoggerSubview(applicationMetaData, dispatcher);
         loggerSubview = new LoggerSubview(applicationMetaData, dispatcher);
-        
-        /*consoleHandlerSubview = new ConsoleHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
-        fileHandlerSubview = new FileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
-        periodicRotatingFileHandlerSubview = new PeriodicRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
-        sizeRotatingFileHandlerSubview = new SizeRotatingFileHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
-        asyncHandlerSubview = new AsyncHandlerSubview(applicationMetaData, dispatcher, handlerListManager);
-        customHandlerSubview = new CustomHandlerSubview(applicationMetaData, dispatcher, handlerListManager);*/
-        
-        handlerListManager.setHandlerConsumers(rootLoggerSubview, loggerSubview);
-        /*handlerListManager.setHandlerProducers(consoleHandlerSubview,
-                                               fileHandlerSubview, 
-                                               periodicRotatingFileHandlerSubview, 
-                                               sizeRotatingFileHandlerSubview,
-                                               asyncHandlerSubview,
-                                               customHandlerSubview);*/
+
+        handlerListManager.addHandlerConsumers(rootLoggerSubview, loggerSubview);
     }
 
     @Override
