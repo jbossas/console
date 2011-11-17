@@ -50,12 +50,14 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
  * @author Stan Silvert
  */
 public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView, FormItemObserver {
-    protected EntityEditor<T> entityEditor;
-    protected EntityDetails<T> entityDetails;
+
     protected Class<?> beanType;
     protected EnumSet<FrameworkButton> hideButtons;
     protected FormMetaData formMetaData;
     protected AddressBinding address;
+
+    protected EntityEditor<T> entityEditor;
+    protected EntityDetails<T> entityDetails;
 
     private String description = null;
 
@@ -123,9 +125,9 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
         LayoutPanel layout = new LayoutPanel();
 
+        // Top Most Tab
         FakeTabPanel titleBar = new FakeTabPanel(getEntityDisplayName());
         layout.add(titleBar);
-
 
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
@@ -234,12 +236,16 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The details form.
      */
     protected FormAdapter<T> makeEditEntityDetailsForm() {
+
+        FormAdapter<T> formAdapter = null;
+
         if (getFormMetaData().hasTabs()) {
-            TabbedFormLayoutPanel tabPanel = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
-            return tabPanel;
+            formAdapter = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
         } else {
-            return makeSimpleForm();
+            formAdapter = makeSimpleForm();
         }
+
+        return formAdapter;
     }
     
     private FormAdapter<T> makeSimpleForm() {

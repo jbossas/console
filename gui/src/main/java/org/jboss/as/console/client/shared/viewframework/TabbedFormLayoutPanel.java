@@ -19,13 +19,19 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.TabPanel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -35,13 +41,13 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 
 /**
  * Makes a Form with items automatically separated onto tabs.
- * 
+ *
  * Note that this class doesn't yet support grouped FormItems.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class TabbedFormLayoutPanel<T> extends TabPanel implements FormAdapter<T> {
-    
+public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
+
     private Class<?> beanType;
     private FormMetaData formMetaData;
     private FormItemObserver[] observers;
@@ -49,39 +55,80 @@ public class TabbedFormLayoutPanel<T> extends TabPanel implements FormAdapter<T>
     private List<EditListener> listeners = new ArrayList<EditListener>();
     private FormAdapter<T> lastFormAdded;
     private List<String> formItemNames = new ArrayList<String>();
-    
+    private TabPanel tabPanel;
+
+    private Command saveCommand;
+    private Command removeCommand;
+    private Command cancelCommand;
+
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
-       // super(25, Style.Unit.PX);
-        
+        // super(25, Style.Unit.PX);
+
         this.beanType = beanType;
         this.formMetaData = formMetaData;
         this.observers = observers;
+        this.tabPanel = new TabPanel();
+        this.tabPanel.setStyleName("default-tabpanel");
         this.forms = makeForms();
-        setStyleName("fill-layout-width");
-        this.selectTab(0);
     }
-    
+
+    public Widget asWidget() {
+
+        // populate tabs
+        Set<String> keys = forms.keySet();
+        for(String key : keys) {
+
+            VerticalPanel layout = new VerticalPanel();
+            layout.setStyleName("fill-layout-width");
+
+            FormAdapter<T> form = forms.get(key);
+            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+                    form,
+                    new FormToolStrip.FormCallback<T>() {
+                        @Override
+                        public void onSave(Map<String, Object> changeset) {
+                            saveCommand.execute();
+                        }
+
+                        @Override
+                        public void onDelete(T entity) {
+                            removeCommand.execute();
+                        }
+                    }
+            );
+
+            layout.add(toolStrip.asWidget());
+            // todo: help panel
+            layout.add(form);
+
+            tabPanel.add(layout, key);
+        }
+
+        tabPanel.selectTab(0);
+
+        return tabPanel;
+    }
+
     private Map<String, FormAdapter<T>> makeForms() {
         Map<String, FormAdapter<T>> formsMap = new LinkedHashMap<String, FormAdapter<T>>();
         for (Map.Entry<String, List<PropertyBinding>> entry : formMetaData.getTabbedAttributes().entrySet()) {
             FormAdapter<T> form = makeForm(entry.getValue());
             formsMap.put(entry.getKey(), form);
-            add(form.asWidget(), entry.getKey()); // add form as a tab
             formItemNames.addAll(form.getFormItemNames());
             this.lastFormAdded = form;
         }
         return formsMap;
     }
-    
+
     private FormAdapter<T> makeForm(List<PropertyBinding> bindings) {
         Form<T> form = new Form(beanType);
-        
+
         if (bindings.size() < 5) {
             form.setNumColumns(1);
         } else {
             form.setNumColumns(2);
         }
-        
+
         FormItem[][] items = new FormItem[bindings.size()][];
         int i=0;
         for (PropertyBinding propBinding : bindings) {
@@ -92,16 +139,16 @@ public class TabbedFormLayoutPanel<T> extends TabPanel implements FormAdapter<T>
 
         return form;
     }
-    
+
     @Override
     public void edit(T bean) {
         for (FormAdapter<T> form : forms.values()) {
             form.edit(bean);
         }
-        
+
         notifyListeners(bean);
     }
-    
+
     protected void notifyListeners(T bean) {
         for (EditListener listener : listeners) {
             listener.editingBean(bean);
@@ -179,6 +226,15 @@ public class TabbedFormLayoutPanel<T> extends TabPanel implements FormAdapter<T>
         }
         return formValidation;
     }
-    
-    
+
+
+    public void add(Widget widget, String title) {
+        tabPanel.add(widget, title);
+    }
+
+    public void setCommands(Command saveCommand, Command cancelCommand, Command removeCommand) {
+        this.saveCommand = saveCommand;
+        this.cancelCommand = cancelCommand;
+        this.removeCommand= removeCommand;
+    }
 }

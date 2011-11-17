@@ -38,6 +38,7 @@ import java.util.Map;
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
+@Deprecated
 public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
     
     private String triggerProperty;

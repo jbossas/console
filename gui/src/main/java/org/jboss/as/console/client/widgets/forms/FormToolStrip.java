@@ -3,14 +3,10 @@ package org.jboss.as.console.client.widgets.forms;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.KeyCodeEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -25,7 +21,7 @@ import java.util.Map;
  */
 public class FormToolStrip<T> {
 
-    private Form<T> form = null;
+    private FormAdapter<T> form = null;
     private FormCallback<T> callback;
     private String deleteOpName = null;
     private boolean providesDeleteOp = true;
@@ -40,7 +36,7 @@ public class FormToolStrip<T> {
     }
 
 
-    public FormToolStrip(Form<T> form, FormCallback<T> callback) {
+    public FormToolStrip(FormAdapter<T> form, FormCallback<T> callback) {
         this.form = form;
         this.callback = callback;
     }

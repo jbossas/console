@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -63,10 +64,10 @@ public class EntityDetails<T> implements EditListener {
     }
 
     public EntityDetails(String entitiesName,
-            FormAdapter form,
-            EntityToDmrBridge bridge,
-            AddressBinding address,
-            EnumSet<FrameworkButton> hideButtons) {
+                         FormAdapter form,
+                         EntityToDmrBridge bridge,
+                         AddressBinding address,
+                         EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
         this.bridge = bridge;
@@ -79,45 +80,34 @@ public class EntityDetails<T> implements EditListener {
      * @return The Widget.
      */
     public Widget asWidget() {
-        VerticalPanel detailPanel = new VerticalPanel();
-        detailPanel.setStyleName("fill-layout-width");
 
-        ToolStrip detailToolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
+        // dirty but works
+        boolean tabbedLayout = (form instanceof TabbedFormLayoutPanel);
 
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
+
+        // ----------------------------
+        final Command saveCommand = new Command() {
             @Override
-            public void onClick(ClickEvent event) {
-                if (bridge.getEntityList().isEmpty()) return;
-
-                if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
-                    bridge.onEdit();
-                } else {
-                    FormValidation validation = form.validate();
-                    if (!validation.hasErrors()) {
-                        bridge.onSaveDetails(form);
-                    }
+            public void execute() {
+                FormValidation validation = form.validate();
+                if (!validation.hasErrors()) {
+                    bridge.onSaveDetails(form);
                 }
             }
         };
-        editBtn.addClickHandler(editHandler);
 
-        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
-        ClickHandler cancelHandler = new ClickHandler() {
-
+        final Command cancelCommand = new Command() {
             @Override
-            public void onClick(ClickEvent event) {
-                form.cancel();
+            public void execute() {
                 bridge.onCancel();
             }
         };
-        cancelBtn.addClickHandler(cancelHandler);
 
-        removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove());
-        ClickHandler removeHandler = new ClickHandler() {
-
+        final Command removeCommand = new Command() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void execute() {
                 if (bridge.getEntityList().isEmpty()) return;
 
                 Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
@@ -133,8 +123,81 @@ public class EntityDetails<T> implements EditListener {
                         });
             }
         };
+
+        ClickHandler editHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                if (bridge.getEntityList().isEmpty()) return;
+
+                if (editBtn.getText().equals(Console.CONSTANTS.common_label_edit())) {
+                    bridge.onEdit();
+                } else {
+                    saveCommand.execute();
+                }
+            }
+        };
+
+        ClickHandler cancelHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                form.cancel();
+                cancelCommand.execute();
+            }
+        };
+
+        ClickHandler removeHandler = new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                removeCommand.execute();
+            }
+        };
+
+        // ----------------------------
+        if(tabbedLayout)
+        {
+            // assign click handler
+            TabbedFormLayoutPanel tabbedPanel = (TabbedFormLayoutPanel)form;
+            tabbedPanel.setCommands(saveCommand, cancelCommand, removeCommand);
+        }
+        else
+        {
+            // toolstrip
+            createToolStrip(layout, editHandler, cancelHandler, removeHandler);
+
+            // help panel
+            if (address != null) {
+                layout.add(HelpWidgetFactory.makeHelpWidget(address, form));
+            }
+        }
+
+        layout.add(form.asWidget());
+
+        // ----------------------------
+
+        form.addEditListener(this);
+        setEditingEnabled(false);  // initially don't allow edit
+
+        // ----------------------------
+
+        return layout;
+    }
+
+    private void createToolStrip(VerticalPanel layout, ClickHandler editHandler, ClickHandler cancelHandler, ClickHandler removeHandler) {
+        ToolStrip detailToolStrip = new ToolStrip();
+
+        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
+        editBtn.addClickHandler(editHandler);
+
+        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel());
+        cancelBtn.addClickHandler(cancelHandler);
+
+        removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove());
         removeBtn.addClickHandler(removeHandler);
 
+        // ----------------------------
 
         if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) {
             detailToolStrip.addToolButton(editBtn);
@@ -146,18 +209,9 @@ public class EntityDetails<T> implements EditListener {
             detailToolStrip.addToolButton(removeBtn);
         }
 
-        detailPanel.add(detailToolStrip);
+        // ----------------------------
 
-        if (address != null) {
-            detailPanel.add(HelpWidgetFactory.makeHelpWidget(address, form));
-        }
-
-        detailPanel.add(form.asWidget());
-        form.addEditListener(this);
-
-        setEditingEnabled(false);  // initially don't allow edit
-
-        return detailPanel;
+        layout.add(detailToolStrip);
     }
 
     /**
@@ -174,12 +228,13 @@ public class EntityDetails<T> implements EditListener {
      */
     public void setEditingEnabled(boolean isEnabled) {
         form.setEnabled(isEnabled);
-        cancelBtn.setVisible(isEnabled);
-        removeBtn.setVisible(!isEnabled);
 
-        if (isEnabled) {
+        if(cancelBtn!=null)cancelBtn.setVisible(isEnabled);
+        if(removeBtn!=null)removeBtn.setVisible(!isEnabled);
+
+        if (isEnabled && editBtn!=null) {
             editBtn.setText(Console.CONSTANTS.common_label_save());
-        } else {
+        } else if(!isEnabled && editBtn!=null){
             editBtn.setText(Console.CONSTANTS.common_label_edit());
         }
     }

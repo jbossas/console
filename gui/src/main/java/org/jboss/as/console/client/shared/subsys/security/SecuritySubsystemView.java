@@ -46,7 +46,13 @@ public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
     @Inject
     public SecuritySubsystemView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(SecuritySubsystem.class, propertyMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
-        bridge = new SingleEntityToDmrBridgeImpl<SecuritySubsystem>(propertyMetaData, SecuritySubsystem.class, this, dispatcher);
+
+        bridge = new SingleEntityToDmrBridgeImpl<SecuritySubsystem>(
+                propertyMetaData,
+                SecuritySubsystem.class,
+                this,
+                dispatcher
+        );
     }
 
     @Override
