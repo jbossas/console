@@ -45,7 +45,7 @@ public class InterfaceEditor {
     private CellTable<Interface> table;
     private String title;
     private String description = null;
-    private InterfacePresenter presenter;
+    private InterfaceManagement presenter;
     private Form<Interface> form;
     private ComboBoxItem anyAddress;
 
@@ -153,10 +153,9 @@ public class InterfaceEditor {
         form.setFields(
                 nameItem, BlankItem.INSTANCE,
                 inetAddress, anyAddress,
-                nic, nicMatch);
+                nic, nicMatch,
+                loopback, loopbackAddress);
 
-
-        form.setFieldsInGroup("Loopback Device", new FieldsetRenderer(), loopback, loopbackAddress);
 
         form.setFieldsInGroup(
                 "Other Criteria",
@@ -231,9 +230,15 @@ public class InterfaceEditor {
         panel.add(toolstrip.asWidget());
         panel.add(helpPanel.asWidget());
         panel.add(errorMessages);
-
-
         panel.add(form.asWidget());
+
+        // clear messages upon cancel
+        toolstrip.getCancelButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                errorMessages.setHTML("");
+            }
+        });
 
 
         ScrollPanel scroll = new ScrollPanel(panel);
@@ -258,7 +263,7 @@ public class InterfaceEditor {
             table.getSelectionModel().setSelected(interfaces.get(0), true);
     }
 
-    public void setPresenter(InterfacePresenter presenter) {
+    public void setPresenter(InterfaceManagement presenter) {
         this.presenter = presenter;
     }
 }

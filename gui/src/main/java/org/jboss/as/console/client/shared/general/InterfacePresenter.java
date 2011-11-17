@@ -19,8 +19,6 @@
 
 package org.jboss.as.console.client.shared.general;
 
-import com.google.gwt.autobean.shared.AutoBean;
-import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -30,42 +28,27 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
-import org.jboss.as.console.client.shared.general.validation.CompositeDecision;
-import org.jboss.as.console.client.shared.general.validation.DecisionTree;
-import org.jboss.as.console.client.shared.general.validation.ValidationResult;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelNodeUtil;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
  * @date 5/17/11
  */
-public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy> {
+public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy>
+    implements InterfaceManagement.Callback {
 
     private final PlaceManager placeManager;
     private BeanFactory factory;
@@ -76,6 +59,8 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     private EntityAdapter<Interface> entityAdapter;
     private BeanMetaData beanMetaData;
 
+    private InterfaceManagement delegate;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.InterfacePresenter)
     public interface MyProxy extends Proxy<InterfacePresenter>, Place {
@@ -84,6 +69,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
     public interface MyView extends View {
         void setPresenter(InterfacePresenter presenter);
         void setInterfaces(List<Interface> interfaces);
+        void setDelegate(InterfaceManagement delegate);
     }
 
     @Inject
@@ -105,12 +91,16 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
         entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
         beanMetaData = metaData.getBeanMetaData(Interface.class);
+
+        this.delegate = new InterfaceManagementImpl(dispatcher, entityAdapter, beanMetaData);
+        this.delegate.setCallback(this);
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getView().setDelegate(this.delegate);
     }
 
 
@@ -120,7 +110,14 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         loadInterfaces();
     }
 
-    private void loadInterfaces() {
+    @Override
+    public ModelNode getBaseAddress() {
+        ModelNode modelNode = new ModelNode();
+        modelNode.setEmptyList();
+        return modelNode;
+    }
+
+    public void loadInterfaces() {
 
         loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
             @Override
@@ -136,194 +133,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         revealStrategy.revealInParent(this);
     }
 
-    public void launchNewInterfaceDialogue() {
-        window = new DefaultWindow("New Interface Declaration");
-        window.setWidth(480);
-        window.setHeight(360);
-
-        window.setWidget(
-                new NewInterfaceWizard(this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
-    }
-
-    public void createNewInterface(final Interface entity) {
-
-        window.hide();
-
-        // artificial values need to be merged manually
-        String wildcard = entity.getAddressWildcard();
-
-        entity.setAnyAddress(wildcard.equals(Interface.ANY_ADDRESS));
-        entity.setAnyIP4Address(wildcard.equals(Interface.ANY_IP4));
-        entity.setAnyIP6Address(wildcard.equals(Interface.ANY_IP6));
-
-         // TODO: https://issues.jboss.org/browse/AS7-2670
-
-        // Workaround: Create the operation manually
-        //ModelNode operation = entityAdapter.fromEntity(entity);
-
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("interface", entity.getName());
-        operation.get(OP).set(ADD);
-        //operation.get(NAME).set(entity.getName());
-
-        if(isSet(entity.getInetAddress()))
-            operation.get("inet-address").set(entity.getInetAddress());
-        else if(entity.isAnyAddress())
-            operation.get("any-address").set(true);
-        else if(entity.isAnyIP4Address())
-            operation.get("any-ip4-address").set(true);
-        else if(entity.isAnyIP6Address())
-            operation.get("any-ip6-address").set(true);
-
-        //System.out.println(operation);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
-                if(ModelNodeUtil.indicatesSuccess(response))
-                {
-                    Console.info("Success: Create interface "+entity.getName());
-                }
-                else
-                {
-                    Console.error("Error: Failed to create interface " + entity.getName(),
-                            response.get("failure-description").asString());
-                }
-
-                loadInterfaces();
-            }
-        });
-    }
-
     public void closeDialoge() {
         window.hide();
-    }
-
-    public void onRemoveInterface(final Interface entity) {
-
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).add("interface", entity.getName());
-        operation.get(OP).set(REMOVE);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
-                if(ModelNodeUtil.indicatesSuccess(response))
-                {
-                    Console.info("Success: Removed interface "+entity.getName());
-                }
-                else
-                {
-                    Console.error("Error: Failed to remove interface " + entity.getName(),
-                            response.get("failure-description").asString());
-                }
-
-                loadInterfaces();
-            }
-        });
-    }
-
-    public ValidationResult validateInterfaceConstraints(final Interface entity, Map<String, Object> changeset)
-    {
-
-        //long s0 = System.currentTimeMillis();
-
-        AutoBean<Interface> autoBean = AutoBeanUtils.getAutoBean(entity);
-        Map<String, Object> properties = AutoBeanUtils.getAllProperties(autoBean);
-
-        final List<String> decisions = new LinkedList<String>();
-
-        DecisionTree.DecisionLog log = new DecisionTree.DecisionLog() {
-            int index = 0;
-            @Override
-            public void append(String message) {
-                index++;
-                decisions.add("["+index+"] " + message);
-            }
-        };
-
-        CompositeDecision decisionTree = new CompositeDecision();
-        decisionTree.setLog(log);
-
-        ValidationResult validation = decisionTree.validate(entity, changeset);
-
-        // dump log
-        StringBuilder sb = new StringBuilder();
-        for(String s : decisions)
-            sb.append(s).append(" \n");
-        System.out.println(sb.toString());
-
-        //System.out.println("** Exec time: "+(System.currentTimeMillis()-s0)+" ms **");
-        return validation;
-    }
-
-    public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
-
-        doPersistChanges(entity, changeset);
-    }
-
-    private void doPersistChanges(final Interface entity, Map<String,Object> changeset)
-    {
-        // artificial values need to be merged manually
-        String wildcard = entity.getAddressWildcard();
-
-        changeset.put("anyAddress", wildcard.equals(Interface.ANY_ADDRESS) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
-        changeset.put("anyIP4Address", wildcard.equals(Interface.ANY_IP4) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
-        changeset.put("anyIP6Address", wildcard.equals(Interface.ANY_IP6) ? true : FormItem.VALUE_SEMANTICS.UNDEFINED);
-
-        // TODO: https://issues.jboss.org/browse/AS7-2670
-        Map<String,Object> workAround = new HashMap<String,Object>(changeset);
-        Set<String> keys = changeset.keySet();
-        for(String key : keys)
-        {
-            Object value = changeset.get(key);
-            if(value instanceof String)
-            {
-                // empty string into UNDEFINED
-                workAround.put(key, ((String)value).isEmpty() ? FormItem.VALUE_SEMANTICS.UNDEFINED : value);
-            }
-            else if(value instanceof Boolean)
-            {
-                // boolean false into UNDEFINED
-                workAround.put(key, ((Boolean)value) ? value : FormItem.VALUE_SEMANTICS.UNDEFINED );
-            }
-        }
-
-        AddressBinding addressBinding = beanMetaData.getAddress();
-        ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
-        ModelNode operation = entityAdapter.fromChangeset(workAround, address);
-
-        // System.out.println(operation);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
-                //System.out.println(response);
-
-                if(ModelNodeUtil.indicatesSuccess(response))
-                {
-                    Console.info("Success: Update interface "+entity.getName());
-                }
-                else
-                {
-                    Console.error("Error: Failed to update interface " + entity.getName(),
-                            response.get("failure-description").asString());
-                }
-
-                loadInterfaces();
-            }
-        });
-    }
-
-    public static boolean isSet(String value)
-    {
-        return value!=null && !value.isEmpty();
     }
 }

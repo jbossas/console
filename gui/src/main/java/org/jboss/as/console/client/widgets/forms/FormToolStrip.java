@@ -2,6 +2,7 @@ package org.jboss.as.console.client.widgets.forms;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -152,5 +153,9 @@ public class FormToolStrip<T> {
     public interface FormCallback<T> {
         void onSave(Map<String, Object> changeset);
         void onDelete(T entity);
+    }
+
+    public HasClickHandlers getCancelButton() {
+        return cancelBtn;
     }
 }

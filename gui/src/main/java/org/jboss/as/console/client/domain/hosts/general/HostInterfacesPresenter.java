@@ -31,6 +31,8 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.shared.general.InterfaceManagement;
+import org.jboss.as.console.client.shared.general.InterfaceManagementImpl;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
@@ -38,17 +40,20 @@ import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
  * @date 5/18/11
  */
 public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.MyView, HostInterfacesPresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener{
+    implements HostSelectionEvent.HostSelectionListener, InterfaceManagement.Callback {
 
     private final PlaceManager placeManager;
     private LoadInterfacesCmd loadInterfacesCmd;
@@ -56,6 +61,7 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     private BeanFactory factory;
     private CurrentHostSelection currentHost;
     private ApplicationMetaData metaData;
+    private InterfaceManagement delegate;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostInterfacesPresenter)
@@ -65,6 +71,8 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     public interface MyView extends View {
         void setPresenter(HostInterfacesPresenter presenter);
         void setInterfaces(List<Interface> interfaces);
+
+        void setDelegate(InterfaceManagement delegate);
     }
 
     @Inject
@@ -80,6 +88,15 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
         this.factory = factory;
         this.currentHost = currentHost;
         this.metaData = metaData;
+
+        EntityAdapter<Interface> entityAdapter = new EntityAdapter<Interface>(Interface.class, metaData);
+
+        this.delegate = new InterfaceManagementImpl(
+                dispatcher,
+                entityAdapter,
+                metaData.getBeanMetaData(Interface.class));
+        this.delegate.setCallback(this);
+
     }
 
     @Override
@@ -92,7 +109,9 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getView().setDelegate(this.delegate);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+
     }
 
 
@@ -102,7 +121,15 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
         loadInterfaces();
     }
 
-    private void loadInterfaces() {
+    @Override
+    public ModelNode getBaseAddress() {
+        ModelNode address = new ModelNode();
+        address.setEmptyList();
+        address.add("host", currentHost.getName());
+        return address;
+    }
+
+    public void loadInterfaces() {
 
         if(!currentHost.isSet())
             throw new RuntimeException("Host selection not set!");

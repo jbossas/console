@@ -46,7 +46,11 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
     @Override
     public void setPresenter(InterfacePresenter presenter) {
         this.presenter = presenter;
-        editor.setPresenter(presenter);
+    }
+
+    @Override
+    public void setDelegate(InterfaceManagement delegate) {
+        editor.setPresenter(delegate);
     }
 
     @Override

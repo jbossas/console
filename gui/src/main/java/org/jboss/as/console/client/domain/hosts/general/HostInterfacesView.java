@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.InterfaceEditor;
+import org.jboss.as.console.client.shared.general.InterfaceManagement;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -56,6 +57,11 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
     @Override
     public void setPresenter(HostInterfacesPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void setDelegate(InterfaceManagement delegate) {
+        editor.setPresenter(delegate);
     }
 
     @Override
