@@ -179,7 +179,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         else if(entity.isAnyIP6Address())
             operation.get("any-ip6-address").set(true);
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

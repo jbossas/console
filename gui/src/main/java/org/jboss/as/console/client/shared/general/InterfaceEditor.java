@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -179,6 +180,9 @@ public class InterfaceEditor {
                     }
                 });
 
+        final HTML errorMessages = new HTML();
+        errorMessages.setStyleName("error-panel");
+
         toolstrip.providesDeleteOp(false);
         toolstrip.setPreValidation(new FormToolStrip.PreValidation() {
             @Override
@@ -189,20 +193,23 @@ public class InterfaceEditor {
                 );
 
 
+                errorMessages.setHTML("");
+
                 if(!validation.isValid())
                 {
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
                     int i=0;
                     for(String detail : validation.getMessages())
                     {
-                        if(i==0) html.appendHtmlConstant("<h3>");
+                        if(i==0) html.appendHtmlConstant("<b>");
                         html.appendEscaped(detail).appendHtmlConstant("<br/>");
-                        if(i==0) html.appendHtmlConstant("</h3>");
+                        if(i==0) html.appendHtmlConstant("</b>");
 
                         i++;
                     }
 
-                    Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
+                    //Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
+                    errorMessages.setHTML(html.toSafeHtml());
                 }
                 return validation.isValid();
 
@@ -223,6 +230,9 @@ public class InterfaceEditor {
 
         panel.add(toolstrip.asWidget());
         panel.add(helpPanel.asWidget());
+        panel.add(errorMessages);
+
+
         panel.add(form.asWidget());
 
 

@@ -184,6 +184,7 @@
 
 .error-panel {
     margin-left:15px;
+    margin-bottom:10px;
     padding-left: 20px;
     background-image: url(images/info/icn_info_red.png) ;
     background-repeat: no-repeat; float:left;
