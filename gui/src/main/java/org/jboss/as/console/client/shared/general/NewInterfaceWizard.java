@@ -2,17 +2,26 @@ package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -21,6 +30,7 @@ import org.jboss.dmr.client.ModelNode;
 public class NewInterfaceWizard {
 
     private InterfacePresenter presenter;
+    private HTML errorMessages = new HTML();
 
     public NewInterfaceWizard(InterfacePresenter presenter) {
         this.presenter = presenter;
@@ -31,18 +41,22 @@ public class NewInterfaceWizard {
         layout.setStyleName("window-content");
 
         final Form<Interface> form = new Form(Interface.class);
-
+        errorMessages.setStyleName("error-panel");
 
         TextBoxItem nameItem = new TextBoxItem("name", "Name");
 
-        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "InetAddress", false);
-        TextBoxItem nic = new TextBoxItem("nic", "Nic", false);
-        TextBoxItem nicMatch = new TextBoxItem("nicMatch", "Nic Match", false);
+        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "Inet Address", false);
 
-        CheckBoxItem publicAddress = new CheckBoxItem("publicAddress", "Public Address");
-        CheckBoxItem siteLocalAddress = new CheckBoxItem("siteLocal", "Site Local Address");
+        final ComboBoxItem anyAddress = new ComboBoxItem("addressWildcard", "Address Wildcard") {
+            {
+                isRequired = false;
+            }
+        };
 
-        form.setFields(nameItem, inetAddress, nic, nicMatch, publicAddress, siteLocalAddress);
+        anyAddress.setDefaultToFirstOption(true);
+        anyAddress.setValueMap(new String[]{"", Interface.ANY_ADDRESS, Interface.ANY_IP4, Interface.ANY_IP6});
+
+        form.setFields(nameItem, inetAddress, anyAddress);
 
         DialogueOptions options = new DialogueOptions(
 
@@ -55,7 +69,36 @@ public class NewInterfaceWizard {
                         if(!validation.hasErrors())
                         {
                             Interface entity = form.getUpdatedEntity();
-                            presenter.createNewInterface(entity);
+
+                            // otherwise the validation rejects it as unmodified
+                            Map<String,Object> changedValues = form.getChangedValues();
+                            changedValues.put("name", entity.getName());
+                            changedValues.put("inetAddress", entity.getInetAddress());
+                            changedValues.put("addressWildcard", entity.getAddressWildcard());
+
+                            errorMessages.setHTML("");
+
+                            ValidationResult result = presenter.validateInterfaceConstraints(entity, changedValues);
+
+                            if(result.isValid())
+                            {
+                                presenter.createNewInterface(entity);
+                            }
+                            else
+                            {
+                                SafeHtmlBuilder html = new SafeHtmlBuilder();
+                                int i=0;
+                                for(String detail : result.getMessages())
+                                {
+                                    if(i==0) html.appendHtmlConstant("<b>");
+                                    html.appendEscaped(detail).appendHtmlConstant("<br/>");
+                                    if(i==0) html.appendHtmlConstant("</b>");
+
+                                    i++;
+                                }
+
+                                errorMessages.setHTML(html.toSafeHtml());
+                            }
                         }
                     }
                 },
@@ -87,6 +130,8 @@ public class NewInterfaceWizard {
         layout.add(helpPanel.asWidget());
 
         layout.add(formWidget);
+
+        layout.add(errorMessages);
 
         return new WindowContentBuilder(layout, options).build();
     }

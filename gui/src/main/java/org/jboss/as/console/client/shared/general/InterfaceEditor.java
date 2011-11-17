@@ -16,7 +16,6 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.as.console.client.widgets.forms.GroupTitleItem;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -70,7 +69,7 @@ public class InterfaceEditor {
 
             @Override
             public void onClick(ClickEvent event) {
-                //presenter.launchNewInterfaceDialogue();
+                presenter.launchNewInterfaceDialogue();
             }
         }));
 
@@ -79,7 +78,7 @@ public class InterfaceEditor {
             @Override
             public void onClick(ClickEvent event) {
 
-                /*final Interface editedEntity = form.getEditedEntity();
+                final Interface editedEntity = form.getEditedEntity();
                 Feedback.confirm("Remove Interface Declaration",
                         "Really remove interface " + editedEntity.getName() + "?",
                         new Feedback.ConfirmationHandler() {
@@ -89,8 +88,6 @@ public class InterfaceEditor {
                                     presenter.onRemoveInterface(editedEntity);
                             }
                         });
-
-                presenter.onRemoveInterface(form.getEditedEntity());*/
             }
         }));
 
@@ -139,12 +136,9 @@ public class InterfaceEditor {
             }
         };
 
+        anyAddress.setDefaultToFirstOption(true);
         anyAddress.setValueMap(new String[]{"", Interface.ANY_ADDRESS, Interface.ANY_IP4, Interface.ANY_IP6});
-
-        /*CheckBoxItem anyAddress = new CheckBoxItem("anyAddress", "Any Address");
-        CheckBoxItem anyIP4Address = new CheckBoxItem("anyIP4Address", "Any IP4 Address");
-        CheckBoxItem anyIP6Address = new CheckBoxItem("anyIP6Address", "Any IP6 Address");
-        */
+        anyAddress.setValue("");
 
         CheckBoxItem up = new CheckBoxItem("up", "Up");
         CheckBoxItem virtual = new CheckBoxItem("virtual", "Virtual");

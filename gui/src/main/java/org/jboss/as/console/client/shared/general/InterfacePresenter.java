@@ -149,16 +149,53 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         window.center();
     }
 
-    public void createNewInterface(Interface entity) {
-        ModelNode operation = entityAdapter.fromEntity(entity);
+    public void createNewInterface(final Interface entity) {
+
+        window.hide();
+
+        // artificial values need to be merged manually
+        String wildcard = entity.getAddressWildcard();
+
+        entity.setAnyAddress(wildcard.equals(Interface.ANY_ADDRESS));
+        entity.setAnyIP4Address(wildcard.equals(Interface.ANY_IP4));
+        entity.setAnyIP6Address(wildcard.equals(Interface.ANY_IP6));
+
+         // TODO: https://issues.jboss.org/browse/AS7-2670
+
+        // Workaround: Create the operation manually
+        //ModelNode operation = entityAdapter.fromEntity(entity);
+
+        ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("interface", entity.getName());
         operation.get(OP).set(ADD);
+        //operation.get(NAME).set(entity.getName());
+
+        if(isSet(entity.getInetAddress()))
+            operation.get("inet-address").set(entity.getInetAddress());
+        else if(entity.isAnyAddress())
+            operation.get("any-address").set(true);
+        else if(entity.isAnyIP4Address())
+            operation.get("any-ip4-address").set(true);
+        else if(entity.isAnyIP6Address())
+            operation.get("any-ip6-address").set(true);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
-                System.out.println(result);
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(response))
+                {
+                    Console.info("Success: Create interface "+entity.getName());
+                }
+                else
+                {
+                    Console.error("Error: Failed to create interface " + entity.getName(),
+                            response.get("failure-description").asString());
+                }
+
+                loadInterfaces();
             }
         });
     }
@@ -167,8 +204,29 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         window.hide();
     }
 
-    public void onRemoveInterface(Interface entity) {
+    public void onRemoveInterface(final Interface entity) {
 
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add("interface", entity.getName());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                if(ModelNodeUtil.indicatesSuccess(response))
+                {
+                    Console.info("Success: Removed interface "+entity.getName());
+                }
+                else
+                {
+                    Console.error("Error: Failed to remove interface " + entity.getName(),
+                            response.get("failure-description").asString());
+                }
+
+                loadInterfaces();
+            }
+        });
     }
 
     public ValidationResult validateInterfaceConstraints(final Interface entity, Map<String, Object> changeset)
@@ -241,7 +299,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
         ModelNode operation = entityAdapter.fromChangeset(workAround, address);
 
-       // System.out.println(operation);
+        // System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
