@@ -80,7 +80,8 @@ public class FormToolStrip<T> {
 
                     if(!form.validate().hasErrors())
                     {
-                        if(preValidation!=null && preValidation.isValid())
+                        boolean preValidationIsSuccess = preValidation != null && preValidation.isValid();
+                        if(preValidation==null || preValidationIsSuccess)
                         {
                             cancelBtn.setVisible(false);
                             editBtn.setText(Console.CONSTANTS.common_label_edit());
