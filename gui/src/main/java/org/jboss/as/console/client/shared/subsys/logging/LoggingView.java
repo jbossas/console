@@ -108,6 +108,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
 
         LoggingLevelProducer.setLogLevels(
                 dispatcher, rootLoggerSubview,
+                consoleHandlerSubview,
                 loggerSubview,
                 fileHandlerSubview,
                 periodicRotatingFileHandlerSubview,
