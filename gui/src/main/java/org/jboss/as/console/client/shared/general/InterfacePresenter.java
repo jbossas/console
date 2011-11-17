@@ -173,6 +173,9 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
 
     public ValidationResult validateInterfaceConstraints(final Interface entity, Map<String, Object> changeset)
     {
+
+        long s0 = System.currentTimeMillis();
+
         AutoBean<Interface> autoBean = AutoBeanUtils.getAutoBean(entity);
         Map<String, Object> properties = AutoBeanUtils.getAllProperties(autoBean);
 
@@ -191,8 +194,6 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         decisionTree.setLog(log);
 
         ValidationResult validation = decisionTree.validate(entity, changeset);
-        for(String detail : decisionTree.getDetailMessages())
-            validation.addMessage(detail);
 
         // dump log
         StringBuilder sb = new StringBuilder();
@@ -200,33 +201,13 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
             sb.append(s).append(" \n");
         System.out.println(sb.toString());
 
+        System.out.println("** Exec time: "+(System.currentTimeMillis()-s0)+" ms **");
         return validation;
     }
 
     public void onSaveInterface(final Interface entity, Map<String, Object> changeset) {
 
         doPersistChanges(entity, changeset);
-
-        /*CompositeDecision decisionTree = new CompositeDecision();
-        ValidationResult validation = decisionTree.validate(entity, changeset);
-        if(validation.isValid())
-        {
-            //Console.info(validation.asMessageString());
-            doPersistChanges(entity, changeset);
-        }
-        else {
-
-            SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<h3>");
-            html.appendEscaped(validation.asMessageString());
-            html.appendHtmlConstant("</h3>");
-
-            for(String detail : decisionTree.getDetailMessages())
-                html.appendEscaped(detail).appendHtmlConstant("<br/>");
-
-            Feedback.alert("Invalid Interface Constraints", html.toSafeHtml());
-        }  */
-
     }
 
     private void doPersistChanges(final Interface entity, Map<String,Object> changeset)
@@ -260,7 +241,7 @@ public class InterfacePresenter extends Presenter<InterfacePresenter.MyView, Int
         ModelNode address = addressBinding.asResource(Baseadress.get(), entity.getName());
         ModelNode operation = entityAdapter.fromChangeset(workAround, address);
 
-        //System.out.println(operation);
+       // System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

@@ -50,11 +50,12 @@ class NicValidation extends AbstractValidationStep<Interface> {
                 return isSet(entity.getNic());
             }
         });
-        tree.yes(1, 2, "Attempt to modify other values?", new Decision<Interface>() {
+        tree.yes(1, 2, "Anything conflicts with Nic name?", new Decision<Interface>() {
             @Override
             public boolean evaluate(Interface entity) {
-                changeset.remove(NIC);
-                return !changeset.isEmpty();
+                Map<String,Object> properties = asProperties(entity);
+                properties.remove(NIC);
+                return !isEmpty(properties);
             }
         });
         tree.no(1, 3, "Is Nic Match set?", new Decision<Interface>() {
@@ -68,11 +69,12 @@ class NicValidation extends AbstractValidationStep<Interface> {
         tree.yes(2, 5, "When Nic is set, no other values are allowed!", FAILURE);
 
 
-        tree.yes(3, 6, "Attempt to modify other values?", new Decision<Interface>() {
+        tree.yes(3, 6, "Anything conflicts with Nic Match?", new Decision<Interface>() {
             @Override
             public boolean evaluate(Interface entity) {
-                changeset.remove(NIC_MATCH);
-                return !changeset.isEmpty();
+                 Map<String,Object> properties = asProperties(entity);
+                properties.remove(NIC_MATCH);
+                return !isEmpty(properties);
             }
         });
         tree.no(3, 7, "Failure: Neither Nic nor Nic Match set", FAILURE);

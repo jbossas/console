@@ -51,11 +51,12 @@ class AddressValidation extends AbstractValidationStep<Interface> {
                 return isSet(entity.getInetAddress());
             }
         });
-        tree.yes(1, 2, "Attempt to modify other values?", new Decision<Interface>() {
+        tree.yes(1, 2, "Anything conflicts with Inet Address?", new Decision<Interface>() {
             @Override
             public boolean evaluate(Interface entity) {
-                changeset.remove(INET_ADDRESS);
-                return !changeset.isEmpty();
+                Map<String,Object> properties = asProperties(entity);
+                properties.remove(INET_ADDRESS);
+                return !isEmpty(properties);
             }
         });
         tree.no(1, 3, "Is address wildcard set?", new Decision<Interface>() {
@@ -70,11 +71,12 @@ class AddressValidation extends AbstractValidationStep<Interface> {
 
 
         // ADDRESS WILDCARD
-        tree.yes(3, 6, "Attempt to modify other values?", new Decision<Interface>() {
+        tree.yes(3, 6, "Anything conflicts with address wildcard?", new Decision<Interface>() {
             @Override
             public boolean evaluate(Interface entity) {
-                changeset.remove(ADDRESS_WILDCARD);
-                return !isEmpty(changeset);
+                Map<String,Object> properties = asProperties(entity);
+                properties.remove(ADDRESS_WILDCARD);
+                return !isEmpty(properties);
             }
         });
         tree.no(3, 7, "Neither Inet address nor wildcard set!", FAILURE);

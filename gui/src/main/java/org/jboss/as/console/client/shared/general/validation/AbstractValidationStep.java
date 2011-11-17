@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.general.validation;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 
@@ -67,7 +69,17 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
         return clean;
     }
 
+    protected Map<String,Object> asProperties(T entity) {
+        AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(entity);
+        if(null==autoBean)
+            throw new RuntimeException("Not an auto bean: "+entity.getClass());
+
+        return AutoBeanUtils.getAllProperties(autoBean);
+    }
+
     protected static boolean isEmpty(Map<String, Object> changedValues) {
+
+        changedValues.remove("name"); // default
 
         boolean empty = changedValues.isEmpty();
 
@@ -75,19 +87,32 @@ abstract class AbstractValidationStep<T> implements ValidationStep<T> {
         {
             // treat any boolean=false as empty too
             // it will written as undefined
-            boolean conflictingBoolean = false;
+            boolean conflictingItem = false;
             Set<String> keys = changedValues.keySet();
             for(String key : keys)
             {
                 Object value = changedValues.get(key);
-                if("true".equals(value.toString())) // TODO: expensive, improve
+                if(value instanceof Boolean)
                 {
-                    conflictingBoolean = true;
-                    break;
+                    conflictingItem  = (Boolean)value; // any boolean=true values are considered changes
+                    if(conflictingItem)
+                    {
+                        //System.out.println(key + " is conflicting");
+                        break;
+                    }
+                }
+                else if(value instanceof String)
+                {
+                    conflictingItem  = !((String) value).isEmpty(); // any non empty values are considered changes
+                    if(conflictingItem)
+                    {
+                        //System.out.println(key + " is conflicting");
+                        break;
+                    }
                 }
             }
 
-            empty = !conflictingBoolean;
+            empty = !conflictingItem;
         }
 
         return empty;

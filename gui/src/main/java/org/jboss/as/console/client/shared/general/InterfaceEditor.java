@@ -123,7 +123,7 @@ public class InterfaceEditor {
         form.setNumColumns(2);
 
         TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "InetAddress", false);
+        TextBoxItem inetAddress = new TextBoxItem("inetAddress", "Inet Address", false);
         TextBoxItem nic = new TextBoxItem("nic", "Nic", false);
         TextBoxItem nicMatch = new TextBoxItem("nicMatch", "Nic Match", false);
 
