@@ -38,7 +38,7 @@ public class NameTokens {
     public static final String CacheContainerPresenter = "infinispan";
     public static final String JMSPresenter = "jms";
     public static final String JndiPresenter = "naming";
-    public static final String Logger = "logger";
+    public static final String Logger = "logging";
     public static final String LogHandler = "log-handler";
     public static final String ScannerPresenter = "deployment-scanner";
     public static final String MessagingPresenter = "messaging";
