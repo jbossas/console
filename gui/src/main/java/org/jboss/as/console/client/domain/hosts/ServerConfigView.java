@@ -188,11 +188,9 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             @Override
             public ModelNode getAddress() {
 
-
-
                 ModelNode address = new ModelNode();
                 address.add("host", presenter.getSelectedHost());
-                address.add("server-config", "TODO");  // TODO
+                address.add("server-config", "*");
                 address.add("jvm", "*");
                 return address;
             }
@@ -205,7 +203,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         propertyEditor.setAllowEditProps(false);
 
         portsView = new PortsView();
-        bottomLayout.add(portsView.asWidget(), "Ports");
+        //bottomLayout.add(portsView.asWidget(), "Ports");
 
         // ------------
 
