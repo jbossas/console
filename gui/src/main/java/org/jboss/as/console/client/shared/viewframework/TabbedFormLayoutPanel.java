@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -54,6 +56,8 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
     private Map<String, FormAdapter<T>> forms;
     private List<EditListener> listeners = new ArrayList<EditListener>();
     private FormAdapter<T> lastFormAdded;
+    private Map<String,FormToolStrip> tools = new HashMap<String, FormToolStrip>();
+
     private List<String> formItemNames = new ArrayList<String>();
     private TabPanel tabPanel;
 
@@ -95,6 +99,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
                         }
                     }
             );
+            tools.put(key, toolStrip);
 
             // belongs to top level tools
             toolStrip.providesDeleteOp(false);
@@ -110,6 +115,13 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             tabPanel.add(layout, key);
         }
 
+
+        tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler() {
+            @Override
+            public void onBeforeSelection(BeforeSelectionEvent event) {
+                cancel();
+            }
+        });
         tabPanel.selectTab(0);
 
         return tabPanel;
@@ -175,8 +187,9 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
     @Override
     public void cancel() {
-        for (FormAdapter<T> form : forms.values()) {
-            form.cancel();
+        Set<String> keys = forms.keySet();
+        for (String key : keys) {
+            tools.get(key).doCancel();
         }
     }
 

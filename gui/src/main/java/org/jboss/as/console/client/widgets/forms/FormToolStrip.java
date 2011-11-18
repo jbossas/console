@@ -28,6 +28,7 @@ public class FormToolStrip<T> {
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
     private ToolButton cancelBtn = null;
+    private ToolButton editBtn;
 
     private PreValidation preValidation = null;
 
@@ -58,7 +59,7 @@ public class FormToolStrip<T> {
     public Widget asWidget() {
 
         ToolStrip toolStrip = new ToolStrip();
-        final ToolButton editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
+        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
         ClickHandler editHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -131,10 +132,7 @@ public class FormToolStrip<T> {
         final ClickHandler cancelHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                form.cancel();
-                editBtn.setText(Console.CONSTANTS.common_label_edit());
-                form.setEnabled(false);
-                cancelBtn.setVisible(false);
+               doCancel();
             }
         };
 
@@ -156,5 +154,12 @@ public class FormToolStrip<T> {
 
     public HasClickHandlers getCancelButton() {
         return cancelBtn;
+    }
+
+    public void doCancel() {
+        form.cancel();
+        editBtn.setText(Console.CONSTANTS.common_label_edit());
+        form.setEnabled(false);
+        cancelBtn.setVisible(false);
     }
 }
