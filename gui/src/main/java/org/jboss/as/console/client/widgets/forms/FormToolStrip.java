@@ -63,8 +63,7 @@ public class FormToolStrip<T> {
             @Override
             public void onClick(ClickEvent event) {
 
-                if(null == form.getEditedEntity())
-                    return;
+                if(null == form.getEditedEntity()) return;
 
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                 {
@@ -103,6 +102,8 @@ public class FormToolStrip<T> {
             ClickHandler clickHandler = new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
+
+                    if(null == form.getEditedEntity()) return;
 
                     String action = deleteOpName != null ? deleteOpName : Console.CONSTANTS.common_label_delete();
 
