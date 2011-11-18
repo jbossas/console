@@ -126,7 +126,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
     private FormAdapter<T> makeForm(List<PropertyBinding> bindings) {
         Form<T> form = new Form(beanType);
 
-        if (bindings.size() < 5) {
+        if (bindings.size() < 3) {
             form.setNumColumns(1);
         } else {
             form.setNumColumns(2);
@@ -243,5 +243,14 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
     public void setHelpAddress(AddressBinding address) {
         this.address = address;
+    }
+
+    @Override
+    public void clearValues() {
+        Set<String> keys = forms.keySet();
+        for (String key : keys) {
+            FormAdapter form = forms.get(key);
+            form.clearValues();
+        }
     }
 }

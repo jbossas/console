@@ -104,7 +104,6 @@ public class EntityEditor<T> {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout"); // FF hack
-
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
 

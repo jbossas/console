@@ -170,4 +170,9 @@ public class FormDeckPanel<T> extends NamedDeckPanel implements FormAdapter<T> {
     public FormValidation validate() {
         return getVisibleForm().validate();
     }
+
+    @Override
+    public void clearValues() {
+        throw new RuntimeException("Not implemented");
+    }
 }
