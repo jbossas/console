@@ -62,11 +62,6 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     }
 
     @Override
-    public FormMetaData getEntityAttributes() {
-        return attributes;
-    }
-
-    @Override
     public void loadEntities(String nameEditedOrAdded) {
         ModelNode operation = address.asResource(Baseadress.get());
         operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
@@ -97,7 +92,7 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     }
 
     @Override
-    public void onAdd(FormAdapter<T> form) {
+    public void onAdd(T entity) {
         throw new UnsupportedOperationException();
     }
 
@@ -112,11 +107,11 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     }
 
     @Override
-    public void onSaveDetails(FormAdapter<T> form) {
+    public void onSaveDetails(T entity, Map<String, Object> changedValues) {
         view.setEditingEnabled(false);
 
         ModelNode resourceAddress = address.asResource(Baseadress.get());
-        Map<String, Object> changedValues = form.getChangedValues();
+
         if (changedValues.isEmpty())
             return;
 
@@ -134,16 +129,6 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
                 loadEntities(null);
             }
         });
-    }
-
-    @Override
-    public void onSaveDetails(T entity, Map<String, Object> changeset) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void onRemove(FormAdapter<T> form) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -72,7 +72,8 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
             }
 
             @Override
-            public void onSaveDetails(final FormAdapter<SecurityDomain> form) {
+            public void onSaveDetails(SecurityDomain entity, Map<String, Object> changeset) {
+
 //                String name = form.getEditedEntity().getName();
 //                final DefaultWindow window = new DefaultWindow("Security Domain " + name);
 //                window.setWidth(320);
@@ -90,15 +91,10 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
 //                window.center();
 //            }
 //
-//            private void doSave(FormAdapter<SecurityDomain> form) {
-                super.onSaveDetails(form);
+
+                super.onSaveDetails(entity, changeset);
                 authenticationEditor.onSave();
                 authorizationEditor.onSave();
-            }
-
-            @Override
-            public void onSaveDetails(SecurityDomain entity, Map<String, Object> changeset) {
-                throw new RuntimeException("Not implemented");
             }
         };
     }

@@ -65,6 +65,10 @@ public class EntityDetails<T> implements EditListener {
        // this.hideButtons = hideButtons;
     }
 
+    public EntityToDmrBridge getBridge() {
+        return bridge;
+    }
+
     /**
      * Get the EntityDetails as a Widget.
      * @return The Widget.
@@ -95,15 +99,18 @@ public class EntityDetails<T> implements EditListener {
                     new FormToolStrip.FormCallback<T>() {
                         @Override
                         public void onSave(Map<String, Object> changeset) {
-                            bridge.onSaveDetails(form);
+                            bridge.onSaveDetails(form.getEditedEntity(), changeset);
                         }
 
                         @Override
                         public void onDelete(T entity) {
-                            bridge.onRemove(form);
+                            bridge.onRemove(entity);
                         }
                     }
             );
+
+            toolStrip.providesDeleteOp(false);  // belongs to the top
+
             layout.add(toolStrip.asWidget());
 
             // help panel

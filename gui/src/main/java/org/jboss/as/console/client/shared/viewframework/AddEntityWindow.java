@@ -34,7 +34,7 @@ public class AddEntityWindow<T> extends EntityPopupWindow<T> {
 
     @Override
     protected void doCommand(FormAdapter<T> form) {
-        bridge.onAdd(form);
+        bridge.onAdd(form.getUpdatedEntity());
     }
     
 }

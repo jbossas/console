@@ -97,11 +97,6 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     @Override
-    public FormMetaData getEntityAttributes() {
-        return this.formMetaData;
-    }
-
-    @Override
     public T findEntity(String name) {
         for (T entity : getEntityList()) {
             NamedEntity namedEntity = entity;
@@ -120,7 +115,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public String getName(T entity) {
-        return ((NamedEntity) entity).getName();
+        return entity.getName();
     }
 
     @Override
@@ -129,12 +124,11 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     @Override
-    public void onAdd(FormAdapter<T> form) {
-        NamedEntity entity = form.getUpdatedEntity();
+    public void onAdd(T entity) {
         String name = entity.getName();
         ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(ADD);
-        ModelNode attributes = this.entityAdapter.fromEntity(form.getUpdatedEntity());
+        ModelNode attributes = this.entityAdapter.fromEntity(entity);
         for (Property prop : attributes.asPropertyList()) {
             operation.get(prop.getName()).set(prop.getValue());
         }
@@ -149,11 +143,6 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     @Override
     public void onCancel() {
         view.setEditingEnabled(false);
-    }
-    
-    @Override
-    public void onRemove(FormAdapter<T> form) {
-        onRemove(form.getEditedEntity());
     }
 
     @Override
@@ -170,11 +159,6 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         if (address.getNumWildCards() == 0) return address.asResource(Baseadress.get());
         if (address.getNumWildCards() == 1) return address.asResource(Baseadress.get(), name);
         throw new IllegalStateException("This bridge doesn't know how to handle @Address with more than one wildcard.");
-    }
-    
-    @Override
-    public void onSaveDetails(FormAdapter<T> form) {
-        onSaveDetails(form.getEditedEntity(), form.getChangedValues());
     }
 
     @Override

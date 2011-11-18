@@ -214,17 +214,26 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * @return The EntityEditor
      */
     protected EntityEditor<T> makeEntityEditor() {
-        entityDetails = new EntityDetails<T>(getEntityDisplayName(),
-                                                               makeEditEntityDetailsForm(),
-                                                               getEntityBridge(),
-                                                               address,
-                                                               hideButtons);
+
+        entityDetails = new EntityDetails<T>(
+                getEntityDisplayName(),
+                makeEditEntityDetailsForm(),
+                getEntityBridge(),
+                address,
+                hideButtons
+        );
+
         String title = Console.CONSTANTS.common_label_add() + " " + getEntityDisplayName();
-        EntityPopupWindow<T> window = new AddEntityWindow<T>(title,
-                                                             makeAddEntityForm(),
-                                                             getAddress(),
-                                                             getEntityBridge());
+
+        EntityPopupWindow<T> window = new AddEntityWindow<T>(
+                title,
+                makeAddEntityForm(),
+                getAddress(),
+                getEntityBridge()
+        );
+
         DefaultCellTable<T> table = makeEntityTable();
+
         return new EntityEditor<T>(getEntityDisplayName(), window, table, entityDetails, hideButtons);
     }
 

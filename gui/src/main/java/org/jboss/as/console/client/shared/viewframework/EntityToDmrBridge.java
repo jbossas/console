@@ -21,22 +21,13 @@ package org.jboss.as.console.client.shared.viewframework;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-
 /**
- * Implementors of this class know how to perform CRUD and other
+ * Implementers of this class know how to perform CRUD and other
  * operations on the given type T.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface EntityToDmrBridge<T> {
-
-    /**
-     * Get the FormMetaData associated with the type.
-     * @return The FormMetaData
-     */
-    public FormMetaData getEntityAttributes();
 
     /**
      * Query the server for the full entity list.  If successful, this method should call
@@ -53,7 +44,7 @@ public interface EntityToDmrBridge<T> {
     public String getNameOfLastEdited();
 
     /**
-     * Get the list of all entities as of the last time refreshView() was called.
+     * Get the list of all entities as of the last time loadEntities() was called.
      * @return The entity list.
      */
     public List<T> getEntityList();
@@ -68,34 +59,21 @@ public interface EntityToDmrBridge<T> {
     /**
      * Add the entity from the add form.
      */
-    public void onAdd(FormAdapter<T> form);
-
-    /**
-     * Prepare for editing.
-     */
-    public void onEdit();
-
-    /**
-     * Cancel an edit
-     */
-    public void onCancel();
+    public void onAdd(T entity);
 
     /**
      * Save the edited form.
      *
-     * @param form  The form.
+     * @param entity the edited entity.
+     * @param changeset the changed values
      */
-    public void onSaveDetails(FormAdapter<T> form);
-
     public void onSaveDetails(T entity, Map<String, Object> changeset);
 
     /**
      * Remove the entity in the form.
      *
-     * @param form The form.
+     * @param entity the entity to be removed
      */
-    public void onRemove(FormAdapter<T> form);
-
     public void onRemove(T entity);
 
     /**
@@ -114,5 +92,21 @@ public interface EntityToDmrBridge<T> {
      * @return A new instance of the entity.
      */
     public T newEntity();
+
+
+    // ------
+    // IMO these don't belong here
+
+    /**
+     * Prepare for editing.
+     */
+    @Deprecated
+    public void onEdit();
+
+    /**
+     * Cancel an edit
+     */
+    @Deprecated
+    public void onCancel();
 
 }
