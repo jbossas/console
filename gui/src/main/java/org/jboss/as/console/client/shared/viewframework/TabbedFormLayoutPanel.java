@@ -115,30 +115,37 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             tabPanel.add(layout, key);
         }
 
-
-        tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler() {
+        // cancel when switching forms
+        tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
             @Override
-            public void onBeforeSelection(BeforeSelectionEvent event) {
+            public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
                 cancel();
             }
         });
+
         tabPanel.selectTab(0);
 
         return tabPanel;
     }
 
     private Map<String, FormAdapter<T>> makeForms() {
+
         Map<String, FormAdapter<T>> formsMap = new LinkedHashMap<String, FormAdapter<T>>();
-        for (Map.Entry<String, List<PropertyBinding>> entry : formMetaData.getTabbedAttributes().entrySet()) {
+
+        for (Map.Entry<String, List<PropertyBinding>> entry : formMetaData.getTabbedAttributes().entrySet())
+        {
             FormAdapter<T> form = makeForm(entry.getValue());
             formsMap.put(entry.getKey(), form);
+
             formItemNames.addAll(form.getFormItemNames());
             this.lastFormAdded = form;
         }
+
         return formsMap;
     }
 
     private FormAdapter<T> makeForm(List<PropertyBinding> bindings) {
+
         Form<T> form = new Form(beanType);
 
         if (bindings.size() < 3) {
