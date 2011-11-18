@@ -137,7 +137,17 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     }
 
     @Override
+    public void onSaveDetails(T entity, Map<String, Object> changeset) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public void onRemove(FormAdapter<T> form) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onRemove(T entity) {
         throw new UnsupportedOperationException();
     }
 

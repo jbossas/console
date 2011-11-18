@@ -54,6 +54,7 @@ public class FormToolStrip<T> {
     public void providesDeleteOp(boolean b) {
         this.providesDeleteOp = b;
     }
+
     public Widget asWidget() {
 
         ToolStrip toolStrip = new ToolStrip();

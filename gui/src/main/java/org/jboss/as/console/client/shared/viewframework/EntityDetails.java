@@ -109,6 +109,8 @@ public class EntityDetails<T> implements EditListener {
             // assign click handler
             TabbedFormLayoutPanel formTabs = (TabbedFormLayoutPanel)form;
             formTabs.setToolStripFactory(toolStripFactory);
+
+            formTabs.setBridge(bridge);
         }
         else
         {

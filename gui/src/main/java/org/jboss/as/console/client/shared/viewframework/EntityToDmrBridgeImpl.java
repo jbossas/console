@@ -153,7 +153,12 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     
     @Override
     public void onRemove(FormAdapter<T> form) {
-        NamedEntity entity = form.getEditedEntity();
+        onRemove(form.getEditedEntity());
+    }
+
+    @Override
+    public void onRemove(T entity) {
+
         String name = entity.getName();
         ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(REMOVE);
@@ -169,14 +174,17 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     
     @Override
     public void onSaveDetails(FormAdapter<T> form) {
+        onSaveDetails(form.getEditedEntity(), form.getChangedValues());
+    }
+
+    @Override
+    public void onSaveDetails(T entity, Map<String, Object> changedValues) {
         view.setEditingEnabled(false);
 
-        NamedEntity entity = form.getEditedEntity();
         String name = entity.getName();
 
         ModelNode resourceAddress = getResourceAddress(name);
 
-        Map<String, Object> changedValues = form.getChangedValues();
         if (changedValues.isEmpty()) {
             return;
         }

@@ -57,6 +57,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
     private TabPanel tabPanel;
 
     private EntityDetails.ToolStripFactory toolStripFactory;
+    private EntityToDmrBridge bridge;
 
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
         // super(25, Style.Unit.PX);
@@ -78,9 +79,23 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             VerticalPanel layout = new VerticalPanel();
             layout.setStyleName("fill-layout-width");
 
-            FormAdapter<T> form = forms.get(key);
+            final FormAdapter<T> form = forms.get(key);
 
-            FormToolStrip toolStrip = toolStripFactory.create();
+            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+                    form,
+                    new FormToolStrip.FormCallback<T>() {
+                        @Override
+                        public void onSave(Map<String, Object> changeset) {
+                            bridge.onSaveDetails(form.getEditedEntity(), form.getChangedValues());
+                        }
+
+                        @Override
+                        public void onDelete(T entity) {
+                            bridge.onRemove(entity);
+                        }
+                    }
+            );
+
             layout.add(toolStrip.asWidget());
 
             // todo: help panel
@@ -196,7 +211,9 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
     @Override
     public void setEnabled(boolean isEnabled) {
-        for (FormAdapter form : forms.values()) {
+        Set<String> keys = forms.keySet();
+        for (String key : keys) {
+            FormAdapter form = forms.get(key);
             form.setEnabled(isEnabled);
         }
     }
@@ -220,5 +237,9 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
     public void setToolStripFactory(EntityDetails.ToolStripFactory factory) {
         this.toolStripFactory = factory;
+    }
+
+    public void setBridge(EntityToDmrBridge bridge) {
+        this.bridge = bridge;
     }
 }

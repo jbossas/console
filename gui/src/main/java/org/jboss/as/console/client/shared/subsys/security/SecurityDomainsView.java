@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.security;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -93,6 +94,11 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
                 super.onSaveDetails(form);
                 authenticationEditor.onSave();
                 authorizationEditor.onSave();
+            }
+
+            @Override
+            public void onSaveDetails(SecurityDomain entity, Map<String, Object> changeset) {
+                throw new RuntimeException("Not implemented");
             }
         };
     }

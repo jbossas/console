@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -86,12 +87,16 @@ public interface EntityToDmrBridge<T> {
      */
     public void onSaveDetails(FormAdapter<T> form);
 
+    public void onSaveDetails(T entity, Map<String, Object> changeset);
+
     /**
      * Remove the entity in the form.
      *
      * @param form The form.
      */
     public void onRemove(FormAdapter<T> form);
+
+    public void onRemove(T entity);
 
     /**
      * Get the name of the given entity.  We need this because
