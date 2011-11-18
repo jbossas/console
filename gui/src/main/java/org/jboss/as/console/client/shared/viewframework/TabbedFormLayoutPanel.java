@@ -22,6 +22,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -56,11 +57,10 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
     private List<String> formItemNames = new ArrayList<String>();
     private TabPanel tabPanel;
 
-    private EntityDetails.ToolStripFactory toolStripFactory;
     private EntityToDmrBridge bridge;
+    private AddressBinding address;
 
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
-        // super(25, Style.Unit.PX);
 
         this.beanType = beanType;
         this.formMetaData = formMetaData;
@@ -81,7 +81,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
             final FormAdapter<T> form = forms.get(key);
 
-            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+            final FormToolStrip<T> toolStrip = new FormToolStrip<T>(
                     form,
                     new FormToolStrip.FormCallback<T>() {
                         @Override
@@ -98,7 +98,9 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
             layout.add(toolStrip.asWidget());
 
-            // todo: help panel
+            if (address != null) {
+                layout.add(HelpWidgetFactory.makeHelpWidget(address, form));
+            }
 
             layout.add(form);
 
@@ -235,11 +237,11 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
         tabPanel.add(widget, title);
     }
 
-    public void setToolStripFactory(EntityDetails.ToolStripFactory factory) {
-        this.toolStripFactory = factory;
-    }
-
     public void setBridge(EntityToDmrBridge bridge) {
         this.bridge = bridge;
+    }
+
+    public void setHelpAddress(AddressBinding address) {
+        this.address = address;
     }
 }

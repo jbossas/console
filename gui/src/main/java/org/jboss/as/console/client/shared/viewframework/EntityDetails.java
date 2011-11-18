@@ -42,10 +42,6 @@ public class EntityDetails<T> implements EditListener {
     //private EnumSet<FrameworkButton> hideButtons;
     private AddressBinding address;
 
-    public interface ToolStripFactory {
-        FormToolStrip create();
-    }
-
     /**
      * Create a new EntityDetails.
      *
@@ -81,41 +77,34 @@ public class EntityDetails<T> implements EditListener {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        // ----------------------------
-
-        final ToolStripFactory toolStripFactory = new ToolStripFactory() {
-            @Override
-            public FormToolStrip create() {
-                return new FormToolStrip<T>(
-                        form,
-                        new FormToolStrip.FormCallback<T>() {
-                            @Override
-                            public void onSave(Map<String, Object> changeset) {
-                                bridge.onSaveDetails(form);
-                            }
-
-                            @Override
-                            public void onDelete(T entity) {
-                                bridge.onRemove(form);
-                            }
-                        }
-                );
-            }
-        };
 
         // ----------------------------
         if(tabbedLayout)
         {
             // assign click handler
             TabbedFormLayoutPanel formTabs = (TabbedFormLayoutPanel)form;
-            formTabs.setToolStripFactory(toolStripFactory);
-
             formTabs.setBridge(bridge);
+            formTabs.setHelpAddress(address);
+
         }
         else
         {
             // toolstrip
-            layout.add(toolStripFactory.create().asWidget());
+            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+                    form,
+                    new FormToolStrip.FormCallback<T>() {
+                        @Override
+                        public void onSave(Map<String, Object> changeset) {
+                            bridge.onSaveDetails(form);
+                        }
+
+                        @Override
+                        public void onDelete(T entity) {
+                            bridge.onRemove(form);
+                        }
+                    }
+            );
+            layout.add(toolStrip.asWidget());
 
             // help panel
             if (address != null) {
