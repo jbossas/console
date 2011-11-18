@@ -50,7 +50,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     }
     
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return bridge;
     }
 

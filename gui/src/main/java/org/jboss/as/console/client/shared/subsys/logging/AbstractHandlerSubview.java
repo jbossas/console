@@ -61,7 +61,7 @@ public abstract class AbstractHandlerSubview<T extends NamedEntity> extends Abst
     }
     
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.loggerBridge;
     }
 

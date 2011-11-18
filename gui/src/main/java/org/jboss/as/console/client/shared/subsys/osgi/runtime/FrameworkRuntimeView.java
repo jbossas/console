@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -42,7 +43,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 /**
  * @author David Bosschaert
  */
-public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
+public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework>
+    implements FrameworkPresenter {
     private SingleEntityToDmrBridgeImpl<OSGiFramework> bridge;
 
     public FrameworkRuntimeView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
@@ -69,16 +71,16 @@ public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework> {
 
     @Override
     protected EntityEditor<OSGiFramework> makeEntityEditor() {
-        EntityDetails<OSGiFramework> details = new EntityDetails<OSGiFramework>(getEntityDisplayName(),
-                                                             makeEditEntityDetailsForm(),
-                                                             getEntityBridge(),
-                                                             getAddress(),
-                                                             hideButtons);
-        return new EntityEditor<OSGiFramework>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
+        EntityDetails<OSGiFramework> details = new EntityDetails<OSGiFramework>(
+                this, getEntityDisplayName(),
+                makeEditEntityDetailsForm(),
+                getAddress(),
+                hideButtons);
+        return new EntityEditor<OSGiFramework>(this, getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
 
     @Override
-    protected EntityToDmrBridge<OSGiFramework> getEntityBridge() {
+    public EntityToDmrBridge<OSGiFramework> getEntityBridge() {
         return bridge;
     }
 

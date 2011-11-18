@@ -68,7 +68,7 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
     }
     
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.loggerBridge;
     }
 

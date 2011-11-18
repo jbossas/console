@@ -19,21 +19,17 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -42,6 +38,8 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.EnumSet;
+
 
 /**
  * An abstract view class with a full EntityEditor.  This class assembles the editor and reacts to
@@ -49,7 +47,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
  *
  * @author Stan Silvert
  */
-public abstract class AbstractEntityView<T> extends SuspendableViewImpl implements FrameworkView, FormItemObserver {
+public abstract class AbstractEntityView<T> extends SuspendableViewImpl
+        implements FrameworkView, FrameworkPresenter, FormItemObserver {
 
     protected Class<?> beanType;
     protected EnumSet<FrameworkButton> hideButtons;
@@ -92,7 +91,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
      * Get the EntityToDmrBridge for the Entity.
      * @return The bridge.
      */
-    protected abstract EntityToDmrBridge<T> getEntityBridge();
+    public abstract EntityToDmrBridge<T> getEntityBridge();
 
     /**
      * Create the table with the desired columns for the Entity.
@@ -216,9 +215,9 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
     protected EntityEditor<T> makeEntityEditor() {
 
         entityDetails = new EntityDetails<T>(
+                this,
                 getEntityDisplayName(),
                 makeEditEntityDetailsForm(),
-                getEntityBridge(),
                 address,
                 hideButtons
         );
@@ -234,7 +233,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl implemen
 
         DefaultCellTable<T> table = makeEntityTable();
 
-        return new EntityEditor<T>(getEntityDisplayName(), window, table, entityDetails, hideButtons);
+        return new EntityEditor<T>(this, getEntityDisplayName(), window, table, entityDetails, hideButtons);
     }
 
     /**

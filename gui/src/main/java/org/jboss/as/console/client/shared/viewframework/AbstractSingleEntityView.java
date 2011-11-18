@@ -39,7 +39,7 @@ public abstract class AbstractSingleEntityView<T> extends AbstractEntityView<T> 
     }
 
     @Override
-    protected EntityToDmrBridge<T> getEntityBridge() {
+    public EntityToDmrBridge<T> getEntityBridge() {
         return bridge;
     }
 

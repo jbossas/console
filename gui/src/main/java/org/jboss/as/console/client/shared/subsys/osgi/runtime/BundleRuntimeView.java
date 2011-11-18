@@ -104,7 +104,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     }
 
     @Override
-    protected EntityToDmrBridge<OSGiBundle> getEntityBridge() {
+    public EntityToDmrBridge<OSGiBundle> getEntityBridge() {
         return bridge;
     }
 

@@ -57,7 +57,7 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
     }
 
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.threadPoolBridge;
     }
 

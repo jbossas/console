@@ -126,7 +126,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
     }
 
     @Override
-    protected EntityToDmrBridge<SecurityDomain> getEntityBridge() {
+    public EntityToDmrBridge<SecurityDomain> getEntityBridge() {
         return bridge;
     }
 

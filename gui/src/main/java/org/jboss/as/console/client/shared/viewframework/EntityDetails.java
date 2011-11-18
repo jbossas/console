@@ -45,22 +45,22 @@ public class EntityDetails<T> implements EditListener {
     /**
      * Create a new EntityDetails.
      *
+     * @param presenter the presenter that will be called for various actions.
      * @param entitiesName The heading for the details form
      * @param form The form containing all AttributesMetadata that can be displayed or edited.
-     * @param bridge The EntityToDmrBridge that will be called for various actions.
      */
-    public EntityDetails(String entitiesName, FormAdapter form, EntityToDmrBridge bridge, AddressBinding address) {
-        this(entitiesName, form, bridge, address, EnumSet.noneOf(FrameworkButton.class));
+    public EntityDetails(FrameworkPresenter presenter,String entitiesName, FormAdapter form, AddressBinding address) {
+        this(presenter, entitiesName, form, address, EnumSet.noneOf(FrameworkButton.class));
     }
 
-    public EntityDetails(String entitiesName,
+    public EntityDetails(FrameworkPresenter presenter,
+                         String entitiesName,
                          FormAdapter form,
-                         EntityToDmrBridge bridge,
                          AddressBinding address,
                          EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
-        this.bridge = bridge;
+        this.bridge = presenter.getEntityBridge();
         this.address = address;
        // this.hideButtons = hideButtons;
     }

@@ -19,16 +19,12 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -37,6 +33,10 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * The editor that allows CRUD operations on an Entity.  This includes an Entity table, add button, and
@@ -57,6 +57,7 @@ public class EntityEditor<T> {
     private String description = null;
 
     private boolean includeTools = true;
+    private FrameworkPresenter presenter;
 
     /**
      * Create a new Entity.
@@ -66,8 +67,8 @@ public class EntityEditor<T> {
      * @param table The table that holds the entities.
      * @param details  The EntityDetails that manages CRUD for the selected entity.
      */
-    public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, EntityDetails<T> details) {
-        this(entitiesName, window, table, details, EnumSet.noneOf(FrameworkButton.class));
+    public EntityEditor(FrameworkPresenter presenter, String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table, EntityDetails<T> details) {
+        this(presenter, entitiesName, window, table, details, EnumSet.noneOf(FrameworkButton.class));
     }
 
     /**
@@ -78,8 +79,10 @@ public class EntityEditor<T> {
      * @param table The table that holds the entities.
      * @param details  The EntityDetails that manages CRUD for the selected entity.
      */
-    public EntityEditor(String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table,
+    public EntityEditor(FrameworkPresenter presenter, String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table,
                         EntityDetails<T> details, EnumSet<FrameworkButton> hideButtons) {
+
+        this.presenter = presenter;
         this.entitiesName = entitiesName;
         this.window = window;
         this.table = table;
@@ -104,6 +107,7 @@ public class EntityEditor<T> {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout"); // FF hack
+
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
 
@@ -142,13 +146,37 @@ public class EntityEditor<T> {
         final ToolStrip toolStrip = new ToolStrip();
 
         if (!hideButtons.contains(FrameworkButton.ADD)) {
-            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    window.setNewBean();
-                    window.show();
-                }
-            }));
+            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(),
+                    new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            window.setNewBean();
+                            window.show();
+                        }
+                    }));
+        }
+
+        if (!hideButtons.contains(FrameworkButton.REMOVE)) {
+            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(),
+                    new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+
+                            Feedback.confirm(
+                                    "Remove Item",
+                                    "Really remove this item?",
+                                    new Feedback.ConfirmationHandler() {
+                                        @Override
+                                        public void onConfirmation(boolean isConfirmed) {
+                                            if (isConfirmed) {
+                                                presenter.getEntityBridge().onRemove(
+                                                        ((SingleSelectionModel)table.getSelectionModel()).getSelectedObject()
+                                                );
+                                            }
+                                        }
+                                    });
+                        }
+                    }));
         }
 
         return toolStrip;

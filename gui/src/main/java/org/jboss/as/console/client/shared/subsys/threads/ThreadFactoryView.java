@@ -64,7 +64,7 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
     }
 
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.threadPoolBridge;
     }
 

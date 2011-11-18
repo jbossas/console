@@ -62,7 +62,7 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     }
 
     @Override
-    protected EntityToDmrBridge<ThreadPool> getEntityBridge() {
+    public EntityToDmrBridge<ThreadPool> getEntityBridge() {
         return bridge;
     }
 

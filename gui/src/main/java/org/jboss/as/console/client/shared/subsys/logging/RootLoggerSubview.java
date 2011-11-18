@@ -68,7 +68,7 @@ public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger> implem
     }
     
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.rootLoggerBridge;
     }
 

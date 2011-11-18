@@ -50,7 +50,7 @@ public class ScannerView extends AbstractEntityView<DeploymentScanner> implement
     }
     
     @Override
-    protected EntityToDmrBridge getEntityBridge() {
+    public EntityToDmrBridge getEntityBridge() {
         return this.scannerBridge;
     }
 

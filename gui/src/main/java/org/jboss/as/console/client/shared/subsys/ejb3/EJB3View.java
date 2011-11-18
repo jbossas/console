@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -50,7 +51,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 /**
  * @author David Bosschaert
  */
-public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3Presenter.MyView {
+public class EJB3View extends AbstractEntityView<EJB3Subsystem>
+        implements EJB3Presenter.MyView, FrameworkPresenter {
     private final EntityToDmrBridge<EJB3Subsystem> bridge;
     private final BeanPoolsView beanPoolsView;
     private final ServicesView servicesView;
@@ -100,16 +102,17 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem> implements EJB3P
 
     @Override
     protected EntityEditor<EJB3Subsystem> makeEntityEditor() {
-        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(getEntityDisplayName(),
+        EntityDetails<EJB3Subsystem> details = new EntityDetails<EJB3Subsystem>(
+                this,
+                getEntityDisplayName(),
                 makeEditEntityDetailsForm(),
-                getEntityBridge(),
                 getAddress(),
                 hideButtons);
-        return new EntityEditor<EJB3Subsystem>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
+        return new EntityEditor<EJB3Subsystem>(this, getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
 
     @Override
-    protected EntityToDmrBridge<EJB3Subsystem> getEntityBridge() {
+    public EntityToDmrBridge<EJB3Subsystem> getEntityBridge() {
         return bridge;
     }
 

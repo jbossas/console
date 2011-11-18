@@ -96,6 +96,9 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
                     }
             );
 
+            // belongs to top level tools
+            toolStrip.providesDeleteOp(false);
+
             layout.add(toolStrip.asWidget());
 
             if (address != null) {

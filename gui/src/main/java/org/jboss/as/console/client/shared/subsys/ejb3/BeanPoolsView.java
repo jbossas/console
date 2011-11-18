@@ -85,7 +85,7 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     }
 
     @Override
-    protected EntityToDmrBridge<StrictMaxBeanPool> getEntityBridge() {
+    public EntityToDmrBridge<StrictMaxBeanPool> getEntityBridge() {
         return bridge;
     }
 

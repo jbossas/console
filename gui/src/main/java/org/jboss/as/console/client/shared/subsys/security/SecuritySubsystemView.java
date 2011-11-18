@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
@@ -40,7 +41,8 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 /**
  * @author David Bosschaert
  */
-public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem> implements SecuritySubsystemPresenter.MyView {
+public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
+        implements SecuritySubsystemPresenter.MyView, FrameworkPresenter {
     private final SingleEntityToDmrBridgeImpl<SecuritySubsystem> bridge;
 
     @Inject
@@ -68,15 +70,15 @@ public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
 
     @Override
     protected EntityEditor<SecuritySubsystem> makeEntityEditor() {
-        EntityDetails<SecuritySubsystem> details = new EntityDetails<SecuritySubsystem>(getEntityDisplayName(),
-                                                                                        makeEditEntityDetailsForm(),
-                                                                                        getEntityBridge(),
-                                                                                        getAddress(),
-                                                                                        hideButtons);
-        return new EntityEditor<SecuritySubsystem>(getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
+        EntityDetails<SecuritySubsystem> details = new EntityDetails<SecuritySubsystem>(
+                this, getEntityDisplayName(),
+                makeEditEntityDetailsForm(),
+                getAddress(),
+                hideButtons);
+        return new EntityEditor<SecuritySubsystem>(this, getEntityDisplayName(), null, makeEntityTable(), details, hideButtons);
     }
     @Override
-    protected EntityToDmrBridge<SecuritySubsystem> getEntityBridge() {
+    public EntityToDmrBridge<SecuritySubsystem> getEntityBridge() {
         return bridge;
     }
 
