@@ -469,7 +469,7 @@ public class EntityAdapter<T> {
      * @param address the entity address
      * @return composite operation
      */
-    public ModelNode fromChangeset(Map<String, Object> changeSet, ModelNode address)
+    public ModelNode fromChangeset(Map<String, Object> changeSet, ModelNode address, ModelNode... extraSteps)
     {
 
         ModelNode protoType = new ModelNode();
@@ -556,6 +556,10 @@ public class EntityAdapter<T> {
 
                 steps.add(step);
             }
+        }
+        
+        for (ModelNode extraStep : extraSteps) {
+            steps.add(extraStep);
         }
 
         operation.get(STEPS).set(steps);
