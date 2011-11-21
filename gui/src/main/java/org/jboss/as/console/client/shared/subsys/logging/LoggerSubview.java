@@ -17,56 +17,48 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging;
-import com.google.gwt.user.cellview.client.TextColumn;
-import java.util.List;
-import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 
+import com.google.gwt.user.cellview.client.TextColumn;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
+import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
+import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main view class for Loggers.
- * 
+ *
  * @author Stan Silvert
  */
 public class LoggerSubview extends AbstractLoggingSubview<Logger> implements FrameworkView, LogLevelConsumer, HandlerConsumer {
 
     private EntityToDmrBridge loggerBridge;
-    
-    private ListEditorFormItem handlerListEditor;
-    
+
+    private EmbeddedHandlerView handlerView;
+
     public LoggerSubview(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
         super(Logger.class, applicationMetaData);
         loggerBridge = new EntityToDmrBridgeImpl<Logger>(applicationMetaData, Logger.class, this, dispatcher);
     }
 
     @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        super.itemAction(action, item);
-        
-        if (item.getPropertyBinding().getJavaName().equals("handlers") && (action == Action.CREATED)) {
-            handlerListEditor = (ListEditorFormItem)item.getWrapped();
-            handlerListEditor.setValueColumnHeader(Console.CONSTANTS.subsys_logging_handler());
-        }
-    }
-    
-    @Override
     public void handlersUpdated(List<String> handlerList) {
-        handlerListEditor.setAvailableChoices(handlerList);
+        this.handlerView.getListView().setAvailableChoices(handlerList);
     }
-    
+
     @Override
     public EntityToDmrBridge getEntityBridge() {
         return this.loggerBridge;
@@ -81,9 +73,9 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
     protected FormAdapter<Logger> makeAddEntityForm() {
         Form<Logger> form = new Form(Logger.class);
         form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
-                       levelItemForAdd,
-                       formMetaData.findAttribute("useParentHandlers").getFormItemForAdd());
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                levelItemForAdd,
+                formMetaData.findAttribute("useParentHandlers").getFormItemForAdd());
         return form;
     }
 
@@ -100,8 +92,28 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger> implements Fra
             }
         };
         table.addColumn(levelColumn, Console.CONSTANTS.subsys_logging_logLevel());
-        
+
         return table;
+    }
+
+    @Override
+    protected List<SingleEntityView<Logger>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        List<SingleEntityView<Logger>> additionalTabs =
+                new ArrayList<SingleEntityView<Logger>>();
+
+        this.handlerView = new EmbeddedHandlerView(new FrameworkPresenter() {
+            @Override
+            public EntityToDmrBridge getEntityBridge() {
+                return LoggerSubview.this.getEntityBridge();
+            }
+        });
+        additionalTabs.add(handlerView);
+
+        return additionalTabs;
     }
 
 }

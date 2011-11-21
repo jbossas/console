@@ -151,11 +151,14 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
 
         for (Map.Entry<String, List<PropertyBinding>> entry : formMetaData.getTabbedAttributes().entrySet())
         {
-            FormAdapter<T> form = makeForm(entry.getValue());
-            formsMap.put(entry.getKey(), form);
+            if(!"CUSTOM".equals(entry.getKey()))  // handled manually
+            {
+                FormAdapter<T> form = makeForm(entry.getValue());
+                formsMap.put(entry.getKey(), form);
 
-            formItemNames.addAll(form.getFormItemNames());
-            this.lastFormAdded = form;
+                formItemNames.addAll(form.getFormItemNames());
+                this.lastFormAdded = form;
+            }
         }
 
         return formsMap;

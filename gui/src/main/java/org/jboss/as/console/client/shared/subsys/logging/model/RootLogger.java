@@ -30,7 +30,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=logging/root-logger=ROOT")
-public interface RootLogger extends NamedEntity {
+public interface RootLogger extends NamedEntity, HasHandlers {
     @Override
     @Binding(detypedName="name", key=true)
     @FormItem(defaultValue="",
@@ -63,7 +63,7 @@ public interface RootLogger extends NamedEntity {
              required=false,
              formItemTypeForEdit="STRING_LIST_EDITOR",
              formItemTypeForAdd="STRING_LIST_EDITOR",
-             tabName="subsys_logging_handlers")
+             tabName="CUSTOM")
     public List<String> getHandlers();
     public void setHandlers(List<String> handlers);
 }

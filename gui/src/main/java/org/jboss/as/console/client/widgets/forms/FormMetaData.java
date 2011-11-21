@@ -70,15 +70,15 @@ public class FormMetaData {
                subgroupData.add(binding);
            }
 
-            if(!CUSTOM_TAB.equals(binding.getTabName())) // items in CUSTOM_TAB will be skipped and need to be provided manually
-            {
-                List<PropertyBinding> tabData = tabbedAttributes.get(binding.getTabName());
-                if (tabData == null) {
-                    tabData = new ArrayList<PropertyBinding>();
-                    tabbedAttributes.put(binding.getTabName(), tabData);
-                }
-                tabData.add(binding);
+            List<PropertyBinding> tabData = tabbedAttributes.get(binding.getTabName());
+            if (tabData == null) {
+                tabData = new ArrayList<PropertyBinding>();
+                tabbedAttributes.put(binding.getTabName(), tabData);
             }
+
+            if(!CUSTOM_TAB.equals(binding.getTabName())) // items in CUSTOM_TAB will be skipped and need to be provided manually
+                tabData.add(binding);
+
            
            if (binding.getDetypedName().contains("/")) isFlattened = true;
         }
