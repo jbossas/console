@@ -236,7 +236,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
     @Override
     public void setPorts(String socketBinding, Server server, List<SocketBinding> sockets) {
-        portsView.setPorts(server.getSocketBinding(), server, sockets);
+        //portsView.setPorts(server.getSocketBinding(), server, sockets);
     }
 
     @Override
