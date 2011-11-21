@@ -35,6 +35,7 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
 
     private EntityToDmrBridge bridge;
     private AddressBinding address;
-    private List<SingleEntityView<T>> additionalViews;
+    private List<SingleEntityView<T>> additionalViews = Collections.EMPTY_LIST;
 
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
 
