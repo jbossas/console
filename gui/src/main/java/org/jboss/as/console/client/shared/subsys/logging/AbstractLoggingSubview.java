@@ -34,7 +34,8 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
  * 
  * @author Stan Silvert
  */
-public abstract class AbstractLoggingSubview<T> extends AbstractEntityView<T> implements FrameworkView, LogLevelConsumer {
+public abstract class AbstractLoggingSubview<T>
+        extends AbstractEntityView<T> implements FrameworkView, LogLevelConsumer {
 
     protected ComboBoxItem levelItemForEdit;
     protected FormItem[] levelItemForAdd;

@@ -39,7 +39,8 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * 
  * @author Stan Silvert
  */
-public abstract class AbstractHandlerSubview<T extends NamedEntity> extends AbstractLoggingSubview implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public abstract class AbstractHandlerSubview<T extends NamedEntity>
+        extends AbstractLoggingSubview<T> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
     private EntityToDmrBridge<T> loggerBridge;
     private HandlerListManager handlerListManager;

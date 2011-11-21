@@ -30,7 +30,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=logging/async-handler={0}")
-public interface AsyncHandler extends NamedEntity, HasLevel {
+public interface AsyncHandler extends NamedEntity, HasLevel, HasHandlers {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -84,7 +84,7 @@ public interface AsyncHandler extends NamedEntity, HasLevel {
              required=false,
              formItemTypeForEdit="STRING_LIST_EDITOR",
              formItemTypeForAdd="STRING_LIST_EDITOR",
-             tabName="subsys_logging_subhandlers")
+             tabName="CUSTOM")
     public List<String> getHandlers();
     public void setHandlers(List<String> handlers);
 }

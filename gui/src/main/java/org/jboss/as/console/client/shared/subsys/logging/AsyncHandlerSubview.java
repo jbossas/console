@@ -17,34 +17,39 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging;
-import java.util.ArrayList;
-import java.util.List;
-import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
+import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Subview for Async Handlers.
  * 
  * @author Stan Silvert
  */
-public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler> implements FrameworkView, 
-                                                                                         LogLevelConsumer, 
-                                                                                         HandlerProducer, 
-                                                                                         HandlerConsumer {
+public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler>
+        implements FrameworkView,
+        LogLevelConsumer,
+        HandlerProducer,
+        HandlerConsumer {
 
-    private ListEditorFormItem handlerListEditor;
-    
+    private EmbeddedHandlerView handlerView;
+
     public AsyncHandlerSubview(ApplicationMetaData applicationMetaData, 
                                  DispatchAsync dispatcher, 
                                  HandlerListManager handlerListManager) {
@@ -53,9 +58,7 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler> im
 
     @Override
     public void handlersUpdated(List<String> handlerList) {
-        if (handlerListEditor != null) {
-            handlerListEditor.setAvailableChoices(myAvailableHandlers(handlerList));
-        }
+        handlerView.getListView().setAvailableChoices(handlerList);
     }
     
     // don't allow an async handler to be assigned to another async handler
@@ -72,12 +75,7 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler> im
         super.itemAction(action, item);
         
         if (action != Action.CREATED) return;
-        
-        if (item.getPropertyBinding().getJavaName().equals("handlers")) {
-            handlerListEditor = (ListEditorFormItem)item.getWrapped();
-            handlerListEditor.setValueColumnHeader(Console.CONSTANTS.subsys_logging_handler());
-        }
-        
+
         if (item.getPropertyBinding().getJavaName().equals("overflowAction")) {
             ComboBoxItem targetItem = (ComboBoxItem) item.getWrapped();
             targetItem.setValueMap(new String[] {"BLOCK", "DISCARD"});
@@ -98,5 +96,25 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler> im
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_logging_asyncHandlers();
+    }
+
+     @Override
+    protected List<SingleEntityView<AsyncHandler>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        List<SingleEntityView<AsyncHandler>> additionalTabs =
+                new ArrayList<SingleEntityView<AsyncHandler>>(1);
+
+        this.handlerView = new EmbeddedHandlerView(new FrameworkPresenter() {
+            @Override
+            public EntityToDmrBridge getEntityBridge() {
+                return AsyncHandlerSubview.this.getEntityBridge();
+            }
+        });
+        additionalTabs.add(handlerView);
+
+        return additionalTabs;
     }
 }

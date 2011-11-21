@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.subsys.logging.model;
 
 import java.util.List;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -31,7 +32,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=logging/custom-handler={0}")
-public interface CustomHandler extends NamedEntity, HasLevel {
+public interface CustomHandler extends NamedEntity, HasLevel, HasProperties {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -106,7 +107,7 @@ public interface CustomHandler extends NamedEntity, HasLevel {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="common_label_properties")
+            tabName="CUSTOM")
    List<PropertyRecord> getProperties();
    void setProperties(List<PropertyRecord> properties);
 }

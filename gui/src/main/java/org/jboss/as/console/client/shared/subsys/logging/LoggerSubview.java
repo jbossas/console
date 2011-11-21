@@ -43,7 +43,8 @@ import java.util.List;
  *
  * @author Stan Silvert
  */
-public class LoggerSubview extends AbstractLoggingSubview<Logger> implements FrameworkView, LogLevelConsumer, HandlerConsumer {
+public class LoggerSubview extends AbstractLoggingSubview<Logger>
+        implements FrameworkView, LogLevelConsumer, HandlerConsumer {
 
     private EntityToDmrBridge loggerBridge;
 

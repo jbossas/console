@@ -17,42 +17,75 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.logging;
-import org.jboss.as.console.client.shared.subsys.logging.model.CustomHandler;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
+import org.jboss.as.console.client.shared.subsys.logging.model.CustomHandler;
+import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subview for Custom Handlers.
- * 
+ *
  * @author Stan Silvert
  */
-public class CustomHandlerSubview extends AbstractHandlerSubview<CustomHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public class CustomHandlerSubview extends AbstractHandlerSubview<CustomHandler>
+        implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    public CustomHandlerSubview(ApplicationMetaData applicationMetaData, 
-                                 DispatchAsync dispatcher, 
-                                 HandlerListManager handlerListManager) {
+    private EmbeddedPropertyView handlerView;
+
+    public CustomHandlerSubview(ApplicationMetaData applicationMetaData,
+                                DispatchAsync dispatcher,
+                                HandlerListManager handlerListManager) {
         super(CustomHandler.class, applicationMetaData, dispatcher, handlerListManager);
     }
-    
+
     @Override
     protected FormAdapter<CustomHandler> makeAddEntityForm() {
         Form<CustomHandler> form = new Form(type);
         form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(), 
-                       levelItemForAdd,
-                       formMetaData.findAttribute("module").getFormItemForAdd(),
-                       formMetaData.findAttribute("className").getFormItemForAdd());
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                levelItemForAdd,
+                formMetaData.findAttribute("module").getFormItemForAdd(),
+                formMetaData.findAttribute("className").getFormItemForAdd());
         return form;
     }
-    
+
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_logging_customHandlers();
+    }
+
+
+   @Override
+    protected List<SingleEntityView<CustomHandler>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        List<SingleEntityView<CustomHandler>> additionalTabs =
+                new ArrayList<SingleEntityView<CustomHandler>>(1);
+
+        this.handlerView = new EmbeddedPropertyView(new FrameworkPresenter() {
+            @Override
+            public EntityToDmrBridge getEntityBridge() {
+                return CustomHandlerSubview.this.getEntityBridge();
+            }
+        });
+        additionalTabs.add(handlerView);
+
+        return additionalTabs;
+
     }
 }
