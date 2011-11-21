@@ -20,9 +20,8 @@ package org.jboss.as.console.client.shared.subsys.threads;
 
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.properties.PropertyManagement;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
@@ -41,7 +40,10 @@ import java.util.List;
  */
 public class BoundedQueueThreadPoolView
         extends AbstractThreadPoolView<BoundedQueueThreadPool>
-        implements FrameworkView, PropertyManagement {
+        implements FrameworkView {
+
+    private FrameworkPresenter presenter;
+    private EmbeddedPropertyView propertyView;
 
     public BoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
@@ -70,35 +72,14 @@ public class BoundedQueueThreadPoolView
             FormMetaData formMetaData,
             FrameworkPresenter presenter) {
 
-        List<SingleEntityView<BoundedQueueThreadPool>> additionalTabs = new ArrayList<SingleEntityView<BoundedQueueThreadPool>>();
+        this.presenter = presenter;
 
-        additionalTabs.add(new PoolProperties(this));
+        List<SingleEntityView<BoundedQueueThreadPool>> additionalTabs = new ArrayList<SingleEntityView<BoundedQueueThreadPool>>();
+        propertyView = new EmbeddedPropertyView(presenter);
+        additionalTabs.add(propertyView);
 
         return additionalTabs;
     }
 
-    @Override
-    public void onCreateProperty(String reference, PropertyRecord prop) {
 
-    }
-
-    @Override
-    public void onDeleteProperty(String reference, PropertyRecord prop) {
-
-    }
-
-    @Override
-    public void onChangeProperty(String reference, PropertyRecord prop) {
-
-    }
-
-    @Override
-    public void launchNewPropertyDialoge(String reference) {
-
-    }
-
-    @Override
-    public void closePropertyDialoge() {
-
-    }
 }

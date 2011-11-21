@@ -188,6 +188,10 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
             form.edit(bean);
         }
 
+        for (SingleEntityView<T> subView : additionalViews) {
+            subView.updatedEntity(bean);
+        }
+
         notifyListeners(bean);
     }
 
