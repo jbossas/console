@@ -88,7 +88,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
 
     @Override
     protected void revealInParent() {
-        revealStrategy.revealInParent(this);
+        revealStrategy.revealInRuntimeParent(this);
     }
 
     void startBundle(OSGiBundle bundle) {
