@@ -20,10 +20,17 @@ package org.jboss.as.console.client.shared.subsys.threads;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
+import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main view class for Scheduled Thread Pools
@@ -31,6 +38,9 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  * @author Stan Silvert
  */
 public class ScheduledThreadPoolView extends AbstractThreadPoolView<ScheduledThreadPool> implements FrameworkView {
+
+    private FrameworkPresenter presenter;
+    private EmbeddedPropertyView propertyView;
 
     public ScheduledThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ScheduledThreadPool.class, propertyMetaData, dispatcher);
@@ -46,8 +56,24 @@ public class ScheduledThreadPoolView extends AbstractThreadPoolView<ScheduledThr
         Form<ScheduledThreadPool> form = new Form(ScheduledThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
+                formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
+                formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
         return form;
     }
+
+    @Override
+    protected List<SingleEntityView<ScheduledThreadPool>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        this.presenter = presenter;
+
+        List<SingleEntityView<ScheduledThreadPool>> additionalTabs = new ArrayList<SingleEntityView<ScheduledThreadPool>>();
+        propertyView = new EmbeddedPropertyView(presenter);
+        additionalTabs.add(propertyView);
+
+        return additionalTabs;
+    }
+
 }

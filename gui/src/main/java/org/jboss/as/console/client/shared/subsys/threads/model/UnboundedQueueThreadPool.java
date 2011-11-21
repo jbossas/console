@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.subsys.threads.model;
 
 import java.util.List;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
@@ -30,7 +31,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=threads/unbounded-queue-thread-pool={0}")
-public interface UnboundedQueueThreadPool extends ThreadPool {
+public interface UnboundedQueueThreadPool extends ThreadPool, HasProperties {
     
     @Override
     @Binding(detypedName="name", key=true)
@@ -101,7 +102,7 @@ public interface UnboundedQueueThreadPool extends ThreadPool {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="common_label_properties")
+            tabName="CUSTOM")
    List<PropertyRecord> getProperties();
    void setProperties(List<PropertyRecord> properties);
 }
