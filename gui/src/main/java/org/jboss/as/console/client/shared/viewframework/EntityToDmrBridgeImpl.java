@@ -41,7 +41,6 @@ import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -169,7 +168,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
         ModelNode resourceAddress = getResourceAddress(name);
 
-        if (changedValues.isEmpty()) {
+        if (changedValues.isEmpty() && (extraSteps.length == 0)) {
             return;
         }
 

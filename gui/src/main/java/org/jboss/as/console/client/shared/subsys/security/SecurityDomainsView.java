@@ -39,6 +39,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
@@ -72,7 +73,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
             }
 
             @Override
-            public void onSaveDetails(SecurityDomain entity, Map<String, Object> changeset) {
+            public void onSaveDetails(SecurityDomain entity, Map<String, Object> changeset, ModelNode... extraSteps) {
 
 //                String name = form.getEditedEntity().getName();
 //                final DefaultWindow window = new DefaultWindow("Security Domain " + name);

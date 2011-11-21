@@ -10,6 +10,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -558,9 +559,7 @@ public class EntityAdapter<T> {
             }
         }
         
-        for (ModelNode extraStep : extraSteps) {
-            steps.add(extraStep);
-        }
+        steps.addAll(Arrays.asList(extraSteps));
 
         operation.get(STEPS).set(steps);
         return operation;
