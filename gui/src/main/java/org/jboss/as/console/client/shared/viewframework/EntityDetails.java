@@ -33,8 +33,9 @@ import java.util.Map;
  * Displays form and buttons that allow editing of attributes of the Entity.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
+ * @author Heiko Braun
  */
-public class EntityDetails<T> implements EditListener {
+public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
 
     private String entitiesName;
     private FormAdapter<T> form;
@@ -131,13 +132,11 @@ public class EntityDetails<T> implements EditListener {
         return layout;
     }
 
-    /**
-     * Bind a table to the details section.
-     * @param entityTable The table to be bound.
-     */
+    /*
+    @Deprecated
     public void bind(CellTable<T> entityTable) {
         form.bind(entityTable);
-    }
+    }*/
 
     /**
      * Set the state of the form and buttons if editing details is enabled.
@@ -154,5 +153,15 @@ public class EntityDetails<T> implements EditListener {
      */
     @Override
     public void editingBean(Object bean) {
+    }
+
+    @Override
+    public void updatedEntity(T entity) {
+        form.edit(entity);
+    }
+
+    @Override
+    public String getTitle() {
+        return entitiesName + " Details";
     }
 }

@@ -166,7 +166,7 @@ public interface BoundedQueueThreadPool extends ThreadPool {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="common_label_properties")
+            tabName="CUSTOM")
    List<PropertyRecord> getProperties();
    void setProperties(List<PropertyRecord> properties);
 }

@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.ContentDescription;
@@ -43,8 +44,9 @@ import java.util.List;
  * EntityDetails editor.
  *
  * @author Stan Silvert
+ * @author Heiko Braun
  */
-public class EntityEditor<T> {
+public class EntityEditor<T> implements EntityListView<T> {
     private String entitiesName;
     private EntityPopupWindow<T> window;
     private ListDataProvider<T> dataProvider;
@@ -79,8 +81,13 @@ public class EntityEditor<T> {
      * @param table The table that holds the entities.
      * @param details  The EntityDetails that manages CRUD for the selected entity.
      */
-    public EntityEditor(FrameworkPresenter presenter, String entitiesName, EntityPopupWindow<T> window, DefaultCellTable<T> table,
-                        EntityDetails<T> details, EnumSet<FrameworkButton> hideButtons) {
+    public EntityEditor(
+            FrameworkPresenter presenter,
+            String entitiesName,
+            EntityPopupWindow<T> window,
+            DefaultCellTable<T> table,
+            EntityDetails<T> details,
+            EnumSet<FrameworkButton> hideButtons) {
 
         this.presenter = presenter;
         this.entitiesName = entitiesName;
@@ -122,7 +129,18 @@ public class EntityEditor<T> {
         if(description!=null)
             panel.add(new ContentDescription(description));
 
-        table.setSelectionModel(new SingleSelectionModel<T>());
+        final SingleSelectionModel<T> selectionModel = new SingleSelectionModel<T>();
+        table.setSelectionModel(selectionModel);
+
+        // update the detail upon change
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                T selectedEntity = selectionModel.getSelectedObject();
+                details.updatedEntity(selectedEntity);
+            }
+        });
+
         dataProvider = new ListDataProvider<T>();
         dataProvider.addDataDisplay(table);
 
@@ -133,7 +151,7 @@ public class EntityEditor<T> {
         if (table.isVisible())
             panel.add(pager);
 
-        details.bind(table);
+
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         panel.add(details.asWidget());
 
@@ -182,10 +200,12 @@ public class EntityEditor<T> {
         return toolStrip;
     }
 
+    @Override
     public ListDataProvider<T> getDataProvider() {
         return dataProvider;
     }
 
+    @Override
     public void updateEntityList(List<T> entityList, T lastEdited) {
         // cannot do dataProvider.setList(entityList) as this breaks any sorting
         List<T> list = dataProvider.getList();

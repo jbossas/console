@@ -19,20 +19,29 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 
-
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main view class for Bounded Queue Thread Pools
  *
  * @author Stan Silvert
  */
-public class BoundedQueueThreadPoolView extends AbstractThreadPoolView<BoundedQueueThreadPool> implements FrameworkView {
+public class BoundedQueueThreadPoolView
+        extends AbstractThreadPoolView<BoundedQueueThreadPool>
+        implements FrameworkView, PropertyManagement {
 
     public BoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
@@ -53,5 +62,43 @@ public class BoundedQueueThreadPoolView extends AbstractThreadPoolView<BoundedQu
                        formMetaData.findAttribute("queueLengthCount").getFormItemForAdd(),
                        formMetaData.findAttribute("queueLengthPerCPU").getFormItemForAdd());
         return form;
+    }
+
+    @Override
+    protected List<SingleEntityView<BoundedQueueThreadPool>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        List<SingleEntityView<BoundedQueueThreadPool>> additionalTabs = new ArrayList<SingleEntityView<BoundedQueueThreadPool>>();
+
+        additionalTabs.add(new PoolProperties(this));
+
+        return additionalTabs;
+    }
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+
     }
 }

@@ -34,6 +34,7 @@ import org.jboss.as.console.client.Console;
  */
 public class FormMetaData {
     public static final String DEFAULT_TAB = Console.CONSTANTS.common_label_attributes();
+    public static final String CUSTOM_TAB = "CUSTOM";
     
     private Comparator<PropertyBinding> orderComparator = new Comparator<PropertyBinding>() {
         @Override
@@ -57,6 +58,7 @@ public class FormMetaData {
         
         for (PropertyBinding binding : propertyMetaData) {
            String subgroup = binding.getSubgroup();
+
            if ("".equals(subgroup)) {
                baseAttributes.add(binding);
            } else {
@@ -67,13 +69,16 @@ public class FormMetaData {
                }
                subgroupData.add(binding);
            }
-           
-           List<PropertyBinding> tabData = tabbedAttributes.get(binding.getTabName());
-           if (tabData == null) {
-               tabData = new ArrayList<PropertyBinding>();
-               tabbedAttributes.put(binding.getTabName(), tabData);
-           }
-           tabData.add(binding);
+
+            if(!CUSTOM_TAB.equals(binding.getTabName())) // items in CUSTOM_TAB will be skipped and need to be provided manually
+            {
+                List<PropertyBinding> tabData = tabbedAttributes.get(binding.getTabName());
+                if (tabData == null) {
+                    tabData = new ArrayList<PropertyBinding>();
+                    tabbedAttributes.put(binding.getTabName(), tabData);
+                }
+                tabData.add(binding);
+            }
            
            if (binding.getDetypedName().contains("/")) isFlattened = true;
         }

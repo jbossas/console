@@ -38,7 +38,9 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 
 /**
@@ -46,6 +48,7 @@ import java.util.EnumSet;
  * FrameworkView callbacks.
  *
  * @author Stan Silvert
+ * @author Heiko Braun
  */
 public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         implements FrameworkView, FrameworkPresenter, FormItemObserver {
@@ -248,14 +251,37 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         FormAdapter<T> formAdapter = null;
 
         if (getFormMetaData().hasTabs()) {
-            formAdapter = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
+
+            TabbedFormLayoutPanel tabbedPanel = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
+            tabbedPanel.setAdditionalViews(
+                    provideAdditionalTabs(beanType, getFormMetaData(), this)
+            );
+
+            formAdapter = tabbedPanel;
+
         } else {
             formAdapter = makeSimpleForm();
         }
 
         return formAdapter;
     }
-    
+
+    /**
+     * In case a tabbed form layout is used, implementations
+     * can provide additional custom tabs by overriding this method.
+     *
+     * @param beanType
+     * @param formMetaData
+     * @param presenter
+     */
+    protected List<SingleEntityView<T>> provideAdditionalTabs(
+            Class<?> beanType, FormMetaData formMetaData,
+            FrameworkPresenter presenter)
+    {
+        // nada by default
+        return Collections.EMPTY_LIST;
+    }
+
     private FormAdapter<T> makeSimpleForm() {
         Form<T> form = new Form(beanType);
         form.setNumColumns(2);

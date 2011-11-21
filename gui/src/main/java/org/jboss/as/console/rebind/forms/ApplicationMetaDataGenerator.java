@@ -204,7 +204,12 @@ public class ApplicationMetaDataGenerator extends Generator{
                                 sourceWriter.println("Class<?> " + listTypeVar + " = " + bindDecl.listType() + ".class;");
                             }
                             String tabNameVar = "tabName_" + varSuffix;
-                            sourceWriter.println("String " + tabNameVar + " = Console.CONSTANTS." + formDecl.tabName() + "();");
+
+                            if(!"CUSTOM".equals(formDecl.tabName()))
+                                sourceWriter.println("String " + tabNameVar + " = Console.CONSTANTS." + formDecl.tabName() + "();");
+                            else
+                                sourceWriter.println("String " + tabNameVar + " = \"CUSTOM\";");
+
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +

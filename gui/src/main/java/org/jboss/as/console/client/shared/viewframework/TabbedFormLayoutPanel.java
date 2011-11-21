@@ -47,8 +47,9 @@ import java.util.Set;
  * Note that this class doesn't yet support grouped FormItems.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
+ * @author Heiko Braun
  */
-public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
+public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityView<T> {
 
     private Class<?> beanType;
     private FormMetaData formMetaData;
@@ -63,6 +64,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
     private EntityToDmrBridge bridge;
     private AddressBinding address;
+    private List<SingleEntityView<T>> additionalViews;
 
     public TabbedFormLayoutPanel(Class<?> beanType, FormMetaData formMetaData, FormItemObserver... observers) {
 
@@ -85,6 +87,7 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
             final FormAdapter<T> form = forms.get(key);
 
+            // toolstrip
             final FormToolStrip<T> toolStrip = new FormToolStrip<T>(
                     form,
                     new FormToolStrip.FormCallback<T>() {
@@ -106,12 +109,14 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
 
             layout.add(toolStrip.asWidget());
 
+            // help widget
             if (address != null) {
                 layout.add(HelpWidgetFactory.makeHelpWidget(address, form));
             }
 
             layout.add(form);
 
+            // add to tab panel
             tabPanel.add(layout, key);
         }
 
@@ -123,9 +128,21 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             }
         });
 
+        // additional views
+        for(SingleEntityView tabView : additionalViews)
+            tabPanel.add(tabView.asWidget(), tabView.getTitle());
+
+
         tabPanel.selectTab(0);
 
         return tabPanel;
+    }
+
+    @Override
+    public void updatedEntity(T entity) {
+        for (FormAdapter<T> form : forms.values()) {
+            form.edit(entity);
+        }
     }
 
     private Map<String, FormAdapter<T>> makeForms() {
@@ -275,5 +292,16 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T> {
             FormAdapter form = forms.get(key);
             form.clearValues();
         }
+    }
+
+    @Override
+    public String getTitle() {
+        // no title for composite
+        return null;
+    }
+
+    public void setAdditionalViews(List<SingleEntityView<T>> additionalViews) {
+        this.additionalViews = additionalViews;
+
     }
 }

@@ -18,15 +18,13 @@
  */
 package org.jboss.ballroom.client.widgets.forms;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.jboss.as.console.client.Console;
 
 /**
  * FormItem that wraps a ListEditor table.
@@ -34,8 +32,7 @@ import org.jboss.as.console.client.Console;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class ListEditorFormItem extends FormItem<List<String>> implements ListManagement<String> {
-    private static BeanFactory factory = GWT.create(BeanFactory.class);
-    
+
     protected ListEditor listEditor;
     protected List<String> value = Collections.EMPTY_LIST;
     
@@ -50,7 +47,7 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
      * 
      * @param name The name of the FormItem.
      * @param title The label that will be displayed with the editor.
-     * @param addDialogTitle The title shown when the Add button is pressed.
+     * @param title The title shown when the Add button is pressed.
      * @param rows The max number of rows in the PropertyEditor.
      * @param limitChoices If <code>true</code> choices for new items will be limited to values provided
      *                     in the setAvailableChoices() method.  If <code>false</code> the user may add any String value
