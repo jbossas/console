@@ -1,10 +1,10 @@
 package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
@@ -47,12 +47,13 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
+        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
 
         statusTree.addItem(datasources);
         statusTree.addItem(jmsQueues);
         statusTree.addItem(web);
         statusTree.addItem(tx);
-
+        statusTree.addItem(osgi);
 
         DisclosurePanel serverPanel  = new DisclosureStackPanel("Status").asWidget();
         serverPanel.setContent(statusTree);
