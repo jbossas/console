@@ -147,7 +147,7 @@ public abstract class AuthEditor <T extends AbstractAuthData> implements Propert
         vpanel.add(new ContentGroupLabel("Properties"));
         vpanel.add(propertyEditor.asWidget());
         propertyEditor.setAllowEditProps(false);
-        setEditingEnabled(false);
+
 
         return vpanel;
     }
@@ -201,7 +201,7 @@ public abstract class AuthEditor <T extends AbstractAuthData> implements Propert
     }
 
     public void setEditingEnabled(boolean isEnabled) {
-        addModule.setVisible(isEnabled);
+
     }
 
     public void onCancel() {
