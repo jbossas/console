@@ -48,7 +48,7 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
     
     public AbstractThreadPoolView(Class<?> beanType, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(beanType, propertyMetaData);
-        this.threadPoolBridge = new EntityToDmrBridgeImpl(propertyMetaData, beanType, this, dispatcher);
+        this.threadPoolBridge = new ThreadsEntityToDmrBridge(propertyMetaData, beanType, this, dispatcher);
     }
 
     @Override

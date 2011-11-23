@@ -41,7 +41,6 @@ import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -155,25 +154,25 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         execute(operation, null, "Success: Removed " + name);
     }
 
-    private ModelNode getResourceAddress(String name) {
+    protected ModelNode getResourceAddress(String name) {
         if (address.getNumWildCards() == 0) return address.asResource(Baseadress.get());
         if (address.getNumWildCards() == 1) return address.asResource(Baseadress.get(), name);
         throw new IllegalStateException("This bridge doesn't know how to handle @Address with more than one wildcard.");
     }
 
     @Override
-    public void onSaveDetails(T entity, Map<String, Object> changedValues) {
+    public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
         view.setEditingEnabled(false);
 
         String name = entity.getName();
 
         ModelNode resourceAddress = getResourceAddress(name);
 
-        if (changedValues.isEmpty()) {
+        if (changedValues.isEmpty() && (extraSteps.length == 0)) {
             return;
         }
 
-        ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress);
+        ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
 
         execute(batch, name, "Success: Updated " + name);
     }

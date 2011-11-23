@@ -107,7 +107,7 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
     }
 
     @Override
-    public void onSaveDetails(T entity, Map<String, Object> changedValues) {
+    public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
         view.setEditingEnabled(false);
 
         ModelNode resourceAddress = address.asResource(Baseadress.get());
@@ -115,7 +115,7 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
         if (changedValues.isEmpty())
             return;
 
-        ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress);
+        ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
         dispatcher.execute(new DMRAction(batch), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {

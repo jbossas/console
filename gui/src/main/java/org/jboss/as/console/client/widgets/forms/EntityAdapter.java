@@ -10,6 +10,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -469,7 +470,7 @@ public class EntityAdapter<T> {
      * @param address the entity address
      * @return composite operation
      */
-    public ModelNode fromChangeset(Map<String, Object> changeSet, ModelNode address)
+    public ModelNode fromChangeset(Map<String, Object> changeSet, ModelNode address, ModelNode... extraSteps)
     {
 
         ModelNode protoType = new ModelNode();
@@ -557,6 +558,8 @@ public class EntityAdapter<T> {
                 steps.add(step);
             }
         }
+        
+        steps.addAll(Arrays.asList(extraSteps));
 
         operation.get(STEPS).set(steps);
         return operation;

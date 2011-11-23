@@ -19,7 +19,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -64,8 +63,10 @@ public class HelpSystem {
 
         for(PropertyBinding binding : bindings)
         {
-            if(formItemNames.contains(binding.getJavaName()))
-                fieldNames.add(binding.getDetypedName());
+            if(formItemNames.contains(binding.getJavaName())) {
+                String[] detypedPath = binding.getDetypedName().split("/");
+                fieldNames.add(detypedPath[0]);
+            }
         }
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {

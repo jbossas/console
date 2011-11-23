@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.viewframework;
 
 import java.util.List;
 import java.util.Map;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * Implementers of this class know how to perform CRUD and other
@@ -66,8 +67,9 @@ public interface EntityToDmrBridge<T> {
      *
      * @param entity the edited entity.
      * @param changeset the changed values
+     * @param extraSteps Extra "step" operations to be added when saving.
      */
-    public void onSaveDetails(T entity, Map<String, Object> changeset);
+    public void onSaveDetails(T entity, Map<String, Object> changeset, ModelNode... extraSteps);
 
     /**
      * Remove the entity in the form.
