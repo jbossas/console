@@ -65,13 +65,6 @@ public class DatasourceTable {
             }
         };
 
-        TextColumn<DataSource> poolColumn = new TextColumn<DataSource>() {
-            @Override
-            public String getValue(DataSource record) {
-                return record.getPoolName();
-            }
-        };
-
         Column<DataSource, ImageResource> statusColumn =
                 new Column<DataSource, ImageResource>(new ImageResourceCell()) {
                     @Override
@@ -91,7 +84,6 @@ public class DatasourceTable {
 
         dataSourceTable.addColumn(nameColumn, "Name");
         dataSourceTable.addColumn(jndiNameColumn, "JNDI");
-        dataSourceTable.addColumn(poolColumn, "Pool");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
         layout.add(dataSourceTable);

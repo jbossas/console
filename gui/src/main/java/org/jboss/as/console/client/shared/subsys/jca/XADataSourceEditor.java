@@ -154,13 +154,6 @@ public class XADataSourceEditor implements PropertyManagement {
             }
         };
 
-        TextColumn<DataSource> poolColumn = new TextColumn<DataSource>() {
-            @Override
-            public String getValue(DataSource record) {
-                return record.getPoolName();
-            }
-        };
-
         Column<DataSource, ImageResource> statusColumn =
                 new Column<DataSource, ImageResource>(new ImageResourceCell()) {
                     @Override
@@ -180,7 +173,6 @@ public class XADataSourceEditor implements PropertyManagement {
 
         dataSourceTable.addColumn(nameColumn, "Name");
         dataSourceTable.addColumn(jndiNameColumn, "JNDI");
-        dataSourceTable.addColumn(poolColumn, "Pool");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
         vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_dataSource_registered()));

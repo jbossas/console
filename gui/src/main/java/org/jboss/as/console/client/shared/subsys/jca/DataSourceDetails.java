@@ -30,6 +30,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -128,8 +129,8 @@ public class DataSourceDetails {
         TextBoxItem userItem = new TextBoxItem("username", "Username");
         PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
 
-        StatusItem jtaItem = new StatusItem("jta", "Use JTA?");
-        StatusItem ccmItem = new StatusItem("ccm", "Use CCM?");
+        CheckBoxItem jtaItem = new CheckBoxItem("jta", "Use JTA?");
+        CheckBoxItem ccmItem = new CheckBoxItem("ccm", "Use CCM?");
 
         form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, jtaItem,  ccmItem);
         form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem, urlItem);
