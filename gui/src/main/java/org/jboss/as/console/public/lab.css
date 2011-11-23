@@ -3,7 +3,6 @@
     margin-top: 10px;
 }
 
-
 .celltable-button {
 
     background-color: #ffffff;
@@ -31,30 +30,6 @@
     color: #4A5D75;
     font-size:12px!important;
     padding-right:2px;
-}
-
-
-
-.stack-section-header {
-    background-color: #F8F8F8;
-    border-top: 1px solid #A7ABB4;
-    border-bottom: 1px solid #A7ABB4;
-    color: #606060;
-    cursor: pointer;
-    font-family: Arial,Verdana,sans-serif;
-    padding-bottom: 2px;
-    padding-left: 10px;
-    padding-top: 2px;
-    width: 100%;
-}
-
-.stack-section {
-    border-top: none!important;
-    margin: 0;
-    padding-bottom: 15px;
-    padding-left: 0;
-    padding-right: 0;
-    width: 100%;
 }
 
 .table-picker {
@@ -96,96 +71,4 @@
     -moz-binding:url(/app/ellipsis-xbl.xml#ellipsis)!important;
     -o-text-overflow:ellipsis!important;
     text-overflow:ellipsis!important;
-}
-
-.combobox-item-odd {
-    background-color: #FAFAFA;
-    color:#000000!important;
-}
-
-.lhs-tree-item:hover {
-    background-color:#e5e5e5;
-    -webkit-transition: background-color .1s ease-in-out;
-    -moz-transition: background-color .1s ease-in-out;
-    transition: background-color .1s ease-in-out;
-}
-
-.cellTableHoveredRow {
-    background-color:#e5e5e5;
-    -webkit-transition: background-color .1s ease-in-out;
-    -moz-transition: background-color .1s ease-in-out;
-    transition: background-color .1s ease-in-out;
-    cursor: pointer;
-}
-
-.header-link:hover {
-    text-decoration: none;
-    background-color:#e5e5e5;
-    -webkit-transition: background-color .1s ease-in-out;
-    -moz-transition: background-color .1s ease-in-out;
-    transition: background-color .1s ease-in-out;
-}
-
-.toolstrip-button {
-    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
-    border: 1px solid #888888;
-    border-radius: 2px 2px 2px 2px;
-    color: #606060 !important;
-    cursor: pointer;
-    float: left;
-    font-size: 10px;
-    margin: 0 6px;
-    outline: medium none;
-    padding: 2px 10px;
-    text-decoration: none;
-    white-space: nowrap;
-
-    -webkit-transition: background-color .1s ease-in-out;
-    -moz-transition: background-color .1s ease-in-out;
-    transition: background-color .1s ease-in-out;
-}
-
-.help-panel-open {
-
-    background-color: #fdfcce;
-    border:1px solid #cccccc;
-
-     -moz-border-radius: 3px;
-    border-radius: 3px;
-
-    opacity: 1.0!important;
-
-    -webkit-transition: opacity .15s ease-in-out .05s;
-    -moz-transition: opacity .15s ease-in-out .05s;
-    transition: opacity .15s ease-in-out .05s;
-}
-
-.form-group-label {
-    border-bottom: 1px solid #E0E0E0;
-    color: #A4A4A4;
-    font-size: 14px !important;
-    font-weight: bold;
-    height: 20px;
-    margin-bottom: 10px;
-    padding-bottom: 0;
-    padding-top: 20px;
-    width: 100%;
-}
-
-.group-item-title {
-    color:#C0C0C0;
-}
-
-.default-fieldset {
-    margin-top:8px!important;
-    margin-botom:8px!important;
-    border:none!important;
-}
-
-.error-panel {
-    margin-left:15px;
-    margin-bottom:10px;
-    padding-left: 20px;
-    background-image: url(images/info/icn_info_red.png) ;
-    background-repeat: no-repeat; float:left;
 }

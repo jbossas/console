@@ -92,7 +92,11 @@ body {
 }
 
 .header-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background-color:#e5e5e5;
+    -webkit-transition: background-color .1s ease-in-out;
+    -moz-transition: background-color .1s ease-in-out;
+    transition: background-color .1s ease-in-out;
 }
 
 .header-link-selected {
