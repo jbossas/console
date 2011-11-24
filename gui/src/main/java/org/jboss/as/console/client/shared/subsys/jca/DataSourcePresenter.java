@@ -162,12 +162,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
                 window.setWidth(480);
                 window.setHeight(360);
-                window.addCloseHandler(new CloseHandler<PopupPanel>() {
-                    @Override
-                    public void onClose(CloseEvent<PopupPanel> event) {
-
-                    }
-                });
 
                 window.setWidget(
                         new NewDatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
