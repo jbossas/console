@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.shared.properties;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -41,14 +40,12 @@ import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
-import org.jboss.ballroom.client.widgets.tables.MenuColumn;
-import org.jboss.ballroom.client.widgets.tables.NamedCommand;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author Heiko Braun
+ * @author David Bosschaert
  * @date 4/20/11
  */
 public class PropertyEditor {
@@ -64,6 +61,7 @@ public class PropertyEditor {
     private int numRows = 5;
     private boolean enabled = true;
     private boolean allowEditProps = true;
+    private boolean hideButtons = false;
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
@@ -85,6 +83,15 @@ public class PropertyEditor {
         this.numRows = rows;
     }
 
+    /**
+     * This constructor creates a read-only instance
+     */
+    public PropertyEditor() {
+        this.presenter = new ReadOnlyPropertyManagement();
+        this.simpleView = true;
+        this.hideButtons = true;
+    }
+
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
         panel.addStyleName("fill-layout-width");
@@ -94,20 +101,21 @@ public class PropertyEditor {
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
-        ToolStrip propTools = new ToolStrip();
+        if (!hideButtons) {
+            ToolStrip propTools = new ToolStrip();
 
-        addProp = new ToolButton(Console.CONSTANTS.common_label_add());
+            addProp = new ToolButton(Console.CONSTANTS.common_label_add());
 
-        addProp.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if(PropertyEditor.this.enabled)
-                    presenter.launchNewPropertyDialoge(reference);
-            }
-        });
-        propTools.addToolButtonRight(addProp);
-
-        panel.add(propTools);
+            addProp.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    if(PropertyEditor.this.enabled)
+                        presenter.launchNewPropertyDialoge(reference);
+                }
+            });
+            propTools.addToolButtonRight(addProp);
+            panel.add(propTools);
+        }
 
         ColumnSortEvent.ListHandler<PropertyRecord> sortHandler =
                 new ColumnSortEvent.ListHandler<PropertyRecord>(propertyProvider.getList());
@@ -175,32 +183,32 @@ public class PropertyEditor {
         };
 
 
-        NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
-            @Override
-            public void execute(int rownum) {
-
-                if (!PropertyEditor.this.enabled) return;
-                final PropertyRecord property = propertyProvider.getList().get(rownum);
-
-                if(simpleView)
-                {
-                    presenter.onDeleteProperty(reference, property);
-                }
-                else
-                {
-                    Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
-                            new Feedback.ConfirmationHandler() {
-                                @Override
-                                public void onConfirmation(boolean isConfirmed) {
-                                    if(isConfirmed)
-                                        presenter.onDeleteProperty(reference, property);
-                                }
-                            });
-                }
-            }
-        };
-
-
+        // NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
+        //     @Override
+        //     public void execute(int rownum) {
+        //
+        //         if (!PropertyEditor.this.enabled) return;
+        //         final PropertyRecord property = propertyProvider.getList().get(rownum);
+        //
+        //         if(simpleView)
+        //         {
+        //             presenter.onDeleteProperty(reference, property);
+        //         }
+        //         else
+        //         {
+        //             Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
+        //                     new Feedback.ConfirmationHandler() {
+        //                         @Override
+        //                         public void onConfirmation(boolean isConfirmed) {
+        //                             if(isConfirmed)
+        //                                 presenter.onDeleteProperty(reference, property);
+        //                         }
+        //                     });
+        //         }
+        //     }
+        // };
+        //
+        //
         //MenuColumn menuCol = new MenuColumn("...", removeCmd);
         Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
                 new ButtonCell<PropertyRecord>("Remove", new ActionCell.Delegate<PropertyRecord>() {
@@ -223,7 +231,8 @@ public class PropertyEditor {
         if(!simpleView)
             propertyTable.addColumn(bootColumn, "Boot-Time?");
 
-        propertyTable.addColumn(removeCol, Console.CONSTANTS.common_label_option());
+        if(!hideButtons)
+            propertyTable.addColumn(removeCol, Console.CONSTANTS.common_label_option());
 
 
         propertyTable.setColumnWidth(keyColumn, 30, Style.Unit.PCT);
@@ -232,7 +241,8 @@ public class PropertyEditor {
         if(!simpleView)
             propertyTable.setColumnWidth(bootColumn, 20, Style.Unit.PCT);
 
-        propertyTable.setColumnWidth(removeCol, 20, Style.Unit.PCT);
+        if(!hideButtons)
+            propertyTable.setColumnWidth(removeCol, 20, Style.Unit.PCT);
 
         propertyTable.addColumnSortHandler(sortHandler);
         propertyTable.getColumnSortList().push(keyColumn);
@@ -280,12 +290,12 @@ public class PropertyEditor {
         propertyTable.setEnabled(enabled && allowEditProps);
         addProp.setEnabled(enabled);
     }
-    
+
     /**
      * If set to false, editor will only allow add and delete, but not
      * in-place editing.
-     * 
-     * @param allowEditProps 
+     *
+     * @param allowEditProps
      */
     public void setAllowEditProps(boolean allowEditProps) {
 
@@ -303,5 +313,27 @@ public class PropertyEditor {
 
         propertyProvider.setList(new ArrayList<PropertyRecord>());
         setEnabled(false);
+    }
+
+    private static class ReadOnlyPropertyManagement implements PropertyManagement {
+        @Override
+        public void onCreateProperty(String reference, PropertyRecord prop) {
+        }
+
+        @Override
+        public void onDeleteProperty(String reference, PropertyRecord prop) {
+        }
+
+        @Override
+        public void onChangeProperty(String reference, PropertyRecord prop) {
+        }
+
+        @Override
+        public void launchNewPropertyDialoge(String reference) {
+        }
+
+        @Override
+        public void closePropertyDialoge() {
+        }
     }
 }

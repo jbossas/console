@@ -207,10 +207,10 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 }
             }
         });
-        List<HasCell<OSGiBundle,OSGiBundle>> hasCells = new ArrayList<HasCell<OSGiBundle,OSGiBundle>>();
-        hasCells.add(new BundleColumn(startCell));
-        hasCells.add(new BundleColumn(stopCell));
-        BundleColumn myColumn = new BundleColumn(new CompositeCell(hasCells));
+        List<HasCell<OSGiBundle,OSGiBundle>> buttonCells = new ArrayList<HasCell<OSGiBundle,OSGiBundle>>();
+        buttonCells.add(new BundleColumn(startCell));
+        buttonCells.add(new BundleColumn(stopCell));
+        BundleColumn myColumn = new BundleColumn(new CompositeCell(buttonCells));
 
         bundleTable.addColumn(myColumn, Console.CONSTANTS.common_label_action());
 
