@@ -31,6 +31,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -56,6 +57,9 @@ import org.jboss.dmr.client.Property;
  * @author David Bosschaert
  */
 public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy> {
+    static final String AUTHENTICATION_IDENTIFIER = "authentication";
+    static final String AUTHORIZATION_IDENTIFIER = "authorization";
+
     public static final String SECURITY_SUBSYSTEM = "security";
 
     private final DispatchAsync dispatcher;
@@ -74,6 +78,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
         void setAuthorizationPolicyProviders(String domainName, List<AuthorizationPolicyProvider> providers, boolean resourceExists);
 
         void loadSecurityDomain(String domainName);
+        void setAuthFlagValues(String type, List<String> values);
     }
 
     @Inject
@@ -103,6 +108,45 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+
+        Console.schedule(new Command() {
+            @Override
+            public void execute() {
+                loadAuthFlagValues();
+            }
+        });
+    }
+
+    private void loadAuthFlagValues() {
+        loadAuthFlagValues(AUTHORIZATION_IDENTIFIER, "policy-modules");
+        loadAuthFlagValues(AUTHENTICATION_IDENTIFIER, "login-modules");
+    }
+
+    private void loadAuthFlagValues(final String type, final String attrName) {
+        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
+        operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", "*");
+        operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
+                if (res.size() == 0)
+                    return;
+
+                ModelNode attrDesc = res.get(0).get(ModelDescriptionConstants.RESULT,
+                        ModelDescriptionConstants.ATTRIBUTES, attrName,
+                        ModelDescriptionConstants.VALUE_TYPE, "flag");
+
+                List<String> values = new ArrayList<String>();
+                for (ModelNode option : attrDesc.get(ModelDescriptionConstants.ALLOWED).asList()) {
+                    values.add(option.asString());
+                }
+
+                getView().setAuthFlagValues(type, values);
+            }
+        });
     }
 
     public void updateDomainSelection(final SecurityDomain domain) {
@@ -117,8 +161,8 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                 ModelNode response = ModelNode.fromBase64(result.getResponseText());
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
-                loadAuth(model, domain, "authorization", "policy-modules", AuthorizationPolicyProvider.class);
-                loadAuth(model, domain, "authentication", "login-modules", AuthenticationLoginModule.class);
+                loadAuth(model, domain, AUTHORIZATION_IDENTIFIER, "policy-modules", AuthorizationPolicyProvider.class);
+                loadAuth(model, domain, AUTHENTICATION_IDENTIFIER, "login-modules", AuthenticationLoginModule.class);
             }
         });
     }
@@ -155,11 +199,11 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     }
 
     public void saveAuthorization(String domainName, List<AuthorizationPolicyProvider> list, boolean resourceExists) {
-        saveAuth(domainName, list, "authorization", "policy-modules", resourceExists);
+        saveAuth(domainName, list, AUTHORIZATION_IDENTIFIER, "policy-modules", resourceExists);
     }
 
     public void saveAuthentication(String domainName, List<AuthenticationLoginModule> list, boolean resourceExists) {
-        saveAuth(domainName, list, "authentication", "login-modules", resourceExists);
+        saveAuth(domainName, list, AUTHENTICATION_IDENTIFIER, "login-modules", resourceExists);
     }
 
     public <T extends AbstractAuthData> void saveAuth(final String domainName, List<T> list, String type, String attrName, boolean resourceExists) {

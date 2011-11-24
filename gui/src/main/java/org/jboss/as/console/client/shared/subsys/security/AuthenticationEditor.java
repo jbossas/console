@@ -25,7 +25,17 @@ import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLo
  */
 public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
     AuthenticationEditor(SecurityDomainsPresenter presenter) {
-        super(presenter);
+        super(presenter, AuthenticationLoginModule.class);
+    }
+
+    @Override
+    String getEntityName() {
+        return "Authentication";
+    }
+
+    @Override
+    String getStackElementName() {
+        return getEntityName() + " Login Module";
     }
 
     @Override
@@ -34,7 +44,7 @@ public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
     }
 
     @Override
-    void onSaveData() {
+    void saveData() {
         presenter.saveAuthentication(domainName, attributesProvider.getList(), resourceExists);
     }
 }
