@@ -8,7 +8,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -19,6 +18,7 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -58,14 +58,21 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
         toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewSessionWizard();
             }
         }));
 
         toolstrip.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                Feedback.confirm("Remove Mail Session", "Really remove this mail session?",
+                        new Feedback.ConfirmationHandler(){
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                    presenter.onDelete(form.getEditedEntity());
+                            }
+                        });
             }
         }));
 
@@ -104,7 +111,7 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
                 form, new FormToolStrip.FormCallback<MailSession>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+                presenter.onSave(form.getEditedEntity(), changeset);
             }
 
             @Override
@@ -112,6 +119,7 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
 
             }
         });
+        formToolStrip.providesDeleteOp(false);
 
         Widget panel = new MultipleToOneLayout<MailSession>()
                 .setTitle("Mail")

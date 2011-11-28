@@ -114,8 +114,6 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
     public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
 
-        System.out.println(changeset);
-
         ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

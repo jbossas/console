@@ -17,15 +17,18 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -42,6 +45,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     private DispatchAsync dispatcher;
     private EntityAdapter<MailSession> adapter;
     private BeanMetaData beanMetaData;
+    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MailPresenter)
@@ -85,7 +89,18 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         loadMailSessions();
     }
 
+    public void launchNewSessionWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.setWidget(
+                new NewMailSessionWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
     private void loadMailSessions() {
 
         ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
@@ -118,6 +133,89 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
     @Override
     protected void revealInParent() {
-       revealStrategy.revealInParent(this);
+        revealStrategy.revealInParent(this);
+    }
+
+    public void closeDialoge() {
+        window.hide();
+    }
+
+
+    public void onCreateSession(final MailSession entity) {
+
+        closeDialoge();
+
+        ModelNode address = beanMetaData.getAddress().asResource(Baseadress.get(), entity.getJndiName());
+
+        ModelNode operation = adapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address.get(ADDRESS));
+        operation.get(OP).set(ADD);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to create mail session");
+                }
+                else
+                {
+                    Console.info("Success: Added mail session "+entity.getJndiName());
+                }
+
+                loadMailSessions();
+            }
+        });
+    }
+
+    public void onDelete(final MailSession entity) {
+        ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get(), entity.getJndiName());
+        operation.get(OP).set(REMOVE);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to remove mail session");
+                }
+                else
+                {
+                    Console.info("Success: Removed mail session "+entity.getJndiName());
+                }
+
+                loadMailSessions();
+            }
+        });
+    }
+
+    public void onSave(final MailSession editedEntity, Map<String, Object> changeset) {
+        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to update mail session subsystem");
+                }
+                else
+                {
+                    Console.info("Success: Update mail session "+editedEntity.getJndiName());
+                }
+
+                loadMailSessions();
+            }
+        });
     }
 }
