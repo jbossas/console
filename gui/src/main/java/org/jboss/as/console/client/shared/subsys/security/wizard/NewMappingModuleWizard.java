@@ -18,36 +18,30 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.wizard;
 
-import java.util.List;
-
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
-import org.jboss.as.console.client.shared.subsys.security.AuthEditor;
-import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
+import org.jboss.as.console.client.shared.subsys.security.MappingEditor;
+import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 /**
  * @author David Bosschaert
  */
-public class NewAuthPolicyModuleWizard <T extends AbstractAuthData> extends GenericSecurityDomainWizard<T>
-                                                                    implements PropertyManagement, Wizard<T> {
-    private final List<String> flagChoices;
-
-    public NewAuthPolicyModuleWizard(AuthEditor<T> editor, Class<T> cls, List<String> flagChoices) {
-        super(editor, cls);
-        this.flagChoices = flagChoices;
+public class NewMappingModuleWizard extends GenericSecurityDomainWizard<MappingModule>
+                                    implements PropertyManagement, Wizard<MappingModule> {
+    public NewMappingModuleWizard(MappingEditor editor) {
+        super(editor, MappingModule.class);
     }
 
     @Override
     FormItem<?>[] getCustomFields() {
-        ListBoxItem flag = new ListBoxItem("flag", "Flag");
-        flag.setChoices(flagChoices, flagChoices.get(0));
-        return new FormItem [] {flag};
+        TextBoxItem type = new TextBoxItem("type", "Type");
+        return new FormItem [] {type};
     }
 
     @Override
-    void copyCustomFields(T original, T edited) {
-        original.setFlag(edited.getFlag());
+    void copyCustomFields(MappingModule original, MappingModule edited) {
+        original.setType(edited.getType());
     }
 }

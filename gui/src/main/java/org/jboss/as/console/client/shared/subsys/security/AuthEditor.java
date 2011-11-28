@@ -18,202 +18,52 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.IdentityColumn;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.properties.PropertyEditor;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
-import org.jboss.as.console.client.widgets.tables.ButtonCell;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author David Bosschaert
  */
-public abstract class AuthEditor <T extends AbstractAuthData> {
-    final Class<T> entityClass;
-    final SecurityDomainsPresenter presenter;
-
-    DefaultCellTable<T> attributesTable;
-    ListDataProvider<T> attributesProvider;
-    String domainName;
-    boolean resourceExists;
-    ToolButton addModule;
-    List<T> backup;
+public abstract class AuthEditor <T extends AbstractAuthData> extends AbstractDomainDetailEditor<T> {
     List<String> flagValues;
-    DefaultWindow window;
 
     AuthEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
-        this.presenter = presenter;
-        this.entityClass = entityClass;
+        super(presenter, entityClass);
     }
 
-    abstract String getEntityName();
-    abstract String getStackElementName();
-    abstract String getStackName();
-    abstract void saveData();
-
-    Widget asWidget() {
-        VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
-
-        attributesTable = new DefaultCellTable<T>(4);
-        attributesTable.getElement().setAttribute("style", "margin-top:5px;");
-        attributesProvider = new ListDataProvider<T>();
-        attributesProvider.addDataDisplay(attributesTable);
-
-        ToolStrip tableTools = new ToolStrip();
-        tableTools.addToolWidget(new HTML("&nbsp;&nbsp;" + getStackName()));
-        addModule = new ToolButton(Console.CONSTANTS.common_label_add());
-        addModule.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                openWizard(null);
-            }
-        });
-        tableTools.addToolButtonRight(addModule);
-        vpanel.add(tableTools);
-
-        Column<T, String> codeColumn = new Column<T, String>(new TextCell()) {
-            @Override
-            public String getValue(T record) {
-                return record.getCode();
-            }
-        };
-        attributesTable.addColumn(codeColumn, "Code");
-
+    @Override
+    void addCustomColumns(DefaultCellTable<T> table) {
         Column<T, String> flagColumn = new Column<T, String>(new TextCell()) {
             @Override
             public String getValue(T record) {
                 return record.getFlag();
             }
         };
-        attributesTable.addColumn(flagColumn, "Flag");
-
-        ButtonCell<T> editCell = new ButtonCell<T>(Console.CONSTANTS.common_label_edit(), new ActionCell.Delegate<T>() {
-            @Override
-            public void execute(T object) {
-                openWizard(object);
-            }
-        });
-        ButtonCell<T> removeCell = new ButtonCell<T>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<T>() {
-            @Override
-            public void execute(final T object) {
-                Feedback.confirm(getEntityName(), "Remove this entry: " + object.getCode() + "-" + object.getFlag() + "?",
-                    new Feedback.ConfirmationHandler() {
-                        @Override
-                        public void onConfirmation(boolean isConfirmed) {
-                            if (isConfirmed) {
-                                attributesProvider.getList().remove(object);
-                                saveData();
-                            }
-                        }
-                    });
-            }
-        });
-
-        List<HasCell<T, T>> actionCells = new ArrayList<HasCell<T,T>>();
-        actionCells.add(new IdentityColumn<T>(editCell));
-        actionCells.add(new IdentityColumn<T>(removeCell));
-        IdentityColumn<T> actionColumn = new IdentityColumn<T>(new CompositeCell(actionCells));
-        attributesTable.addColumn(actionColumn, "");
-
-        vpanel.add(attributesTable);
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(attributesTable);
-        vpanel.add(pager);
-
-        final PropertyEditor propertyEditor = new PropertyEditor();
-
-        final SingleSelectionModel<T> ssm = new SingleSelectionModel<T>();
-        ssm.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                T policy = ssm.getSelectedObject();
-                List<PropertyRecord> props = policy.getProperties();
-                if (props == null)
-                    props = new ArrayList<PropertyRecord>();
-                propertyEditor.setProperties("", props);
-            }
-        });
-        attributesTable.setSelectionModel(ssm);
-
-        vpanel.add(new ContentGroupLabel("Properties"));
-        vpanel.add(propertyEditor.asWidget());
-        propertyEditor.setAllowEditProps(false);
-
-        addModule.setVisible(false); // it will be made visible once the flag value list is populated
-        return vpanel;
-    }
-
-    void setData(String domainName, List<T> newList, boolean resourceExists) {
-        this.domainName = domainName;
-        this.resourceExists = resourceExists;
-
-        List<T> list = attributesProvider.getList();
-        list.clear();
-        list.addAll(newList);
+        table.addColumn(flagColumn, "Flag");
     }
 
     public void setFlagValues(List<String> values) {
         flagValues = values;
-        addModule.setVisible(true);
     }
 
-    private void openWizard(T editedObject) {
-        NewAuthPolicyModuleWizard<T> wizard = new NewAuthPolicyModuleWizard<T>(this, entityClass, flagValues);
-
-        window = new DefaultWindow(
-            (editedObject == null ? Console.CONSTANTS.common_label_add() : Console.CONSTANTS.common_label_edit()) + " " +
-            getStackElementName());
-        window.setWidth(480);
-        window.setHeight(360);
-        window.setWidget(wizard.asWidget());
-        if (editedObject != null)
-            wizard.edit(editedObject);
-
-        window.setGlassEnabled(true);
-        window.center();
-    }
-
-    public void closeWizard() {
-        if (window != null)
-            window.hide();
-    }
-
-    public void addPolicy(T policy) {
-        attributesProvider.getList().add(policy);
-        save(policy);
-    }
-
-    public void save(T policy) {
-        saveData();
-
-        // This sometimes selects the right row but not always - is there a more consistent way?
-        attributesTable.getSelectionModel().setSelected(policy, true);
+    @Override
+    Wizard<T> getWizard() {
+        if (flagValues == null) {
+            // This sucks a bit, but these values are set asynchronously so there is a very small chance that they aren't
+            // there yet. It would be better to automatically wait but is it worth the complexity?
+            Feedback.alert(getEntityName(),
+                new SafeHtmlBuilder().appendHtmlConstant("Allowed flag values not yet available, please try again later.").toSafeHtml());
+            return null;
+        }
+        // should really wait until flagValues are set.
+        return new NewAuthPolicyModuleWizard<T>(this, entityClass, flagValues);
     }
 }
