@@ -189,7 +189,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to remove mail session");
+                    Console.error("Failed to remove mail session", response.get("failure-description").asString());
                 }
                 else
                 {
