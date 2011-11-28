@@ -45,6 +45,8 @@ public abstract class AbstractSingleEntityView<T> extends AbstractEntityView<T> 
 
     @Override
     protected DefaultCellTable<T> makeEntityTable() {
+
+        // TODO: cleanup. Creating the table should not be necessary ...
         DefaultCellTable<T> table = new DefaultCellTable<T>(5);
         table.setVisible(false);
         return table;

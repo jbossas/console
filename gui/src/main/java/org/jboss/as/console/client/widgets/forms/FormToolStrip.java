@@ -64,7 +64,11 @@ public class FormToolStrip<T> {
             @Override
             public void onClick(ClickEvent event) {
 
-                if(null == form.getEditedEntity()) return;
+                if(null == form.getEditedEntity())
+                {
+                    System.out.println("Nothing to edit. Entity is null!");
+                    return;
+                }
 
                 if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
                 {

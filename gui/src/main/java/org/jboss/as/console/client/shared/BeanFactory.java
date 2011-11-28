@@ -52,6 +52,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.CustomHandler;
@@ -175,6 +176,11 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<SecurityDomain> securityDomain();
     AutoBean<AuthenticationLoginModule> authenticationLoginModule();
     AutoBean<AuthorizationPolicyProvider> authorizationPolicyModule();
+
     AutoBean<MappingModule> mappingModule();
     AutoBean<GenericSecurityDomainData> genericSecurityDomainData();
+
+
+    AutoBean<JpaSubsystem> jpaSubystem();
+
 }

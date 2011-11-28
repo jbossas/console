@@ -1338,4 +1338,8 @@ public class ModelNode implements Cloneable {
             throw new UnsupportedOperationException();
         }
     }
+
+    public boolean isFailure() {
+        return hasDefined("outcome") && !get("outcome").asString().equals("success");
+    }
 }
