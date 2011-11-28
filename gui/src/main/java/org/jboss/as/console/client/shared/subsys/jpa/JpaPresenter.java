@@ -137,6 +137,8 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
                     JpaSubsystem jpaSubsystem = adapter.fromDMR(response);
                     getView().updateFrom(jpaSubsystem);
                 }
+
+                loadSubsystem();
             }
         });
     }
