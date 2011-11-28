@@ -2,6 +2,7 @@ package org.jboss.as.console.client.shared.viewframework.builder;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -21,9 +22,16 @@ import java.util.List;
 public class MultipleToOneLayout<T> {
 
     private LayoutPanel layout = null;
-    private String title = "";
+
+    private String title = "TITLE";
+    private String headline = "HEADLINE";
+    private String description = "DESCRIPTION";
+
     private Widget toolStrip = null;
+
     private NamedTable master;
+    private Widget masterTools;
+
     private NamedWidget detail;
     private List<NamedWidget> details = new ArrayList<NamedWidget>();
 
@@ -33,11 +41,28 @@ public class MultipleToOneLayout<T> {
         return this;
     }
 
-    public MultipleToOneLayout setTools(Widget toolstrip)
+    public MultipleToOneLayout setTopLevelTools(Widget toolstrip)
     {
         this.toolStrip = toolstrip;
         return this;
     }
+
+    public MultipleToOneLayout setMasterTools(Widget toolstrip)
+    {
+        this.masterTools = toolstrip;
+        return this;
+    }
+
+    public MultipleToOneLayout setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public MultipleToOneLayout setHeadline(String headline) {
+        this.headline = headline;
+        return this;
+    }
+
 
     public MultipleToOneLayout setMaster(String title, CellTable<T> table)
     {
@@ -94,9 +119,13 @@ public class MultipleToOneLayout<T> {
             layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 
+        panel.add(new ContentHeaderLabel(headline));
+        panel.add(new HTML(description));
+
         if(master !=null)
         {
             panel.add(new ContentHeaderLabel(master.title));
+            if(masterTools!=null) panel.add(masterTools);
             panel.add(master.widget);
         }
 

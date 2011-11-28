@@ -22,14 +22,19 @@ import java.util.List;
 public class OneToOneLayout<T> {
 
     private LayoutPanel layout = null;
+
     private String title = "TITLE";
-    private Widget toolStrip = null;
-    private NamedWidget master;
-    private NamedWidget detail;
-    private List<NamedWidget> details = new ArrayList<NamedWidget>();
-    private String description = "DESCRIPTION";
-    private Widget masterTools = null;
     private String headline = "HEADLINE";
+    private String description = "DESCRIPTION";
+
+    private Widget toolStrip = null;
+
+    private NamedWidget master;
+    private Widget masterTools = null;
+
+    private NamedWidget detail;
+
+    private List<NamedWidget> details = new ArrayList<NamedWidget>();
 
     public OneToOneLayout setTitle(String title)
     {
@@ -73,6 +78,11 @@ public class OneToOneLayout<T> {
 
     public OneToOneLayout setDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public OneToOneLayout setHeadline(String headline) {
+        this.headline = headline;
         return this;
     }
 
@@ -147,8 +157,5 @@ public class OneToOneLayout<T> {
         return layout;
     }
 
-    public OneToOneLayout setHeadline(String headline) {
-        this.headline = headline;
-        return this;
-    }
+
 }
