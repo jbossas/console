@@ -95,7 +95,6 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                                     presenter.onDelete(editedEntity);
                             }
                         });
-                presenter.onDelete(editedEntity);
             }
         }));
 
