@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.jpa;
+package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -17,7 +17,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
+import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -33,43 +34,41 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+
     private RevealStrategy revealStrategy;
     private ApplicationMetaData metaData;
     private DispatchAsync dispatcher;
-    private EntityAdapter<JpaSubsystem> adapter;
+    private EntityAdapter<EESubsystem> adapter;
     private BeanMetaData beanMetaData;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.JpaPresenter)
-    public interface MyProxy extends Proxy<JpaPresenter>, Place {
+    @NameToken(NameTokens.EEPresenter)
+    public interface MyProxy extends Proxy<EEPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(JpaPresenter presenter);
-        void updateFrom(JpaSubsystem jpaSubsystem);
+        void setPresenter(EEPresenter presenter);
+        void updateFrom(EESubsystem eeSubsystem);
     }
 
     @Inject
-    public JpaPresenter(
+    public EEPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager,
-            DispatchAsync dispatcher,
+            PlaceManager placeManager, DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            ApplicationMetaData metaData) {
+            ApplicationMetaData metaData
+    ) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.revealStrategy = revealStrategy;
         this.metaData = metaData;
         this.dispatcher = dispatcher;
-
-        this.beanMetaData = metaData.getBeanMetaData(JpaSubsystem.class);
-
-        this.adapter = new EntityAdapter<JpaSubsystem>(
-                JpaSubsystem.class, metaData);
+        this.beanMetaData = metaData.getBeanMetaData(EESubsystem.class);
+        this.adapter = new EntityAdapter<EESubsystem>(EESubsystem.class, metaData);
     }
 
     @Override
@@ -82,7 +81,6 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-
         loadSubsystem();
     }
 
@@ -98,12 +96,12 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JPA subsystem");
+                    Console.error("Failed to load EE subsystem");
                 }
                 else
                 {
-                    JpaSubsystem jpaSubsystem = adapter.fromDMR(response.get(RESULT).asObject());
-                    getView().updateFrom(jpaSubsystem);
+                    EESubsystem eeSubsystem = adapter.fromDMR(response.get(RESULT).asObject());
+                    getView().updateFrom(eeSubsystem);
                 }
             }
         });
@@ -114,9 +112,7 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         revealStrategy.revealInParent(this);
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2816
-    public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
-
+     public void onSave(final EESubsystem editedEntity, Map<String, Object> changeset) {
         ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -126,11 +122,11 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update JPA subsystem", response.get("failure-description").asString());
+                    Console.error("Failed to update EE subsystem");
                 }
                 else
                 {
-                    Console.info("Success: Update JPA subsystem");
+                    Console.info("Success: Update EE subsystem");
                 }
 
                 loadSubsystem();

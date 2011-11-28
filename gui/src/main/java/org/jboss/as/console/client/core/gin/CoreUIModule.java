@@ -104,6 +104,8 @@ import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
+import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb3.EESubsystemView;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
@@ -481,6 +483,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JMXPresenter.MyView.class,
                 JMXSubsystemView.class,
                 JMXPresenter.MyProxy.class);
+
+        bindPresenter(EEPresenter.class,
+                EEPresenter.MyView.class,
+                EESubsystemView.class,
+                EEPresenter.MyProxy.class);
     }
 
 }

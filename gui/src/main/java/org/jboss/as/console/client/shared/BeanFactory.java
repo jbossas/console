@@ -41,6 +41,7 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
@@ -187,4 +188,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JpaSubsystem> jpaSubystem();
     AutoBean<MailSession> mailSession();
     AutoBean<JMXSubsystem> jmxSubsystem();
+    AutoBean<EESubsystem> eeSubsystem();
+
 }

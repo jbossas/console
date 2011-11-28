@@ -65,6 +65,7 @@ public class NameTokens {
     public static final String JpaPresenter = "jpa";
     public static final String MailPresenter = "mail";
     public static final String JMXPresenter = "jmx";
+    public static final String EEPresenter = "ee";
 
     public static String getMainLayout() {
         return mainLayout;

@@ -70,6 +70,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
+import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -243,4 +244,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JpaPresenter> getJpaPresenter();
     AsyncProvider<MailPresenter> getMailPresenter();
     AsyncProvider<JMXPresenter> getJMXPresenter();
+    AsyncProvider<EEPresenter> getEEPresenter();
 }

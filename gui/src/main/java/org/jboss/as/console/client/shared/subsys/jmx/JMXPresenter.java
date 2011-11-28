@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 
 /**
  * @author Heiko Braun
@@ -43,7 +44,6 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
     private DispatchAsync dispatcher;
     private EntityAdapter<JMXSubsystem> adapter;
     private BeanMetaData beanMetaData;
-    private DefaultWindow window;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JMXPresenter)
@@ -98,11 +98,11 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JMX subsystem");
+                    Console.error("Failed to load JMX subsystem", response.get("failure-description").asString());
                 }
                 else
                 {
-                    JMXSubsystem jmxSubsystem = adapter.fromDMR(response);
+                    JMXSubsystem jmxSubsystem = adapter.fromDMR(response.get(RESULT).asObject());
                     getView().updateFrom(jmxSubsystem);
                 }
             }
