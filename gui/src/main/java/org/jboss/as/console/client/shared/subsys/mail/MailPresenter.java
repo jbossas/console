@@ -101,6 +101,8 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         window.setGlassEnabled(true);
         window.center();
     }
+
+    // TODO: https://issues.jboss.org/browse/AS7-2814
     private void loadMailSessions() {
 
         ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
@@ -121,7 +123,9 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
                     List<MailSession> sessions = new ArrayList<MailSession>(items.size());
                     for(Property item : items)
                     {
-                        sessions.add(adapter.fromDMR(item.getValue()));
+                        ModelNode model = item.getValue();
+                        MailSession mailSession = adapter.fromDMR(model);
+                        sessions.add(mailSession);
                     }
 
                     getView().updateFrom(sessions);
