@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.model;
 
-
 /**
  * @author David Bosschaert
  */

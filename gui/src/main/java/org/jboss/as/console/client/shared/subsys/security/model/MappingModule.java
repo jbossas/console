@@ -22,7 +22,7 @@ package org.jboss.as.console.client.shared.subsys.security.model;
 /**
  * @author David Bosschaert
  */
-public interface AbstractAuthData extends GenericSecurityDomainData {
-    String getFlag();
-    void setFlag(String flag);
+public interface MappingModule extends GenericSecurityDomainData {
+    String getType();
+    void setType(String code);
 }

@@ -73,6 +73,8 @@ import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiFramework;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
+import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
+import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
@@ -129,7 +131,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<PeriodicRotatingFileHandler> periodicRotatingFileHandler();
     AutoBean<SizeRotatingFileHandler> sizeRotatingFileHandler();
     AutoBean<CustomHandler> customHandler();
-    
+
     AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();
     AutoBean<DeploymentReference> deploymentReference();
@@ -173,4 +175,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<SecurityDomain> securityDomain();
     AutoBean<AuthenticationLoginModule> authenticationLoginModule();
     AutoBean<AuthorizationPolicyProvider> authorizationPolicyModule();
+    AutoBean<MappingModule> mappingModule();
+    AutoBean<GenericSecurityDomainData> genericSecurityDomainData();
 }
