@@ -12,23 +12,25 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -43,6 +45,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
     private DispatchAsync dispatcher;
     private EntityAdapter<EESubsystem> adapter;
     private BeanMetaData beanMetaData;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.EEPresenter)
@@ -59,7 +62,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            ApplicationMetaData metaData
+            ApplicationMetaData metaData, BeanFactory factory
     ) {
         super(eventBus, view, proxy);
 
@@ -69,6 +72,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         this.dispatcher = dispatcher;
         this.beanMetaData = metaData.getBeanMetaData(EESubsystem.class);
         this.adapter = new EntityAdapter<EESubsystem>(EESubsystem.class, metaData);
+        this.factory = factory;
     }
 
     @Override
@@ -88,6 +92,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
         ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -96,11 +101,29 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load EE subsystem");
+                    Console.error("Failed to load EE subsystem", response.get("failed-description").asString());
                 }
                 else
                 {
-                    EESubsystem eeSubsystem = adapter.fromDMR(response.get(RESULT).asObject());
+                    ModelNode payload = response.get(RESULT).asObject();
+                    EESubsystem eeSubsystem = adapter.fromDMR(payload);
+
+                    if(payload.hasDefined("global-modules"))
+                    {
+                        List<ModelNode> modelNodes = payload.get("global-modules").asList();
+                        List<Module> modules = new ArrayList<Module>(modelNodes.size());
+                        for(ModelNode model : modelNodes)
+                        {
+                            Module module = factory.eeModuleRef().as();
+                            module.setName(model.get("name").asString());
+                            module.setSlot(model.get("slot").asString());
+
+                            modules.add(module);
+                        }
+
+                        eeSubsystem.setModules(modules);
+
+                    }
                     getView().updateFrom(eeSubsystem);
                 }
             }
@@ -112,7 +135,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         revealStrategy.revealInParent(this);
     }
 
-     public void onSave(final EESubsystem editedEntity, Map<String, Object> changeset) {
+    public void onSave(final EESubsystem editedEntity, Map<String, Object> changeset) {
         ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {

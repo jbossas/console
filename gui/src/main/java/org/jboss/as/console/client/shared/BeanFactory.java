@@ -43,6 +43,7 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.Deploym
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
@@ -189,5 +190,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<MailSession> mailSession();
     AutoBean<JMXSubsystem> jmxSubsystem();
     AutoBean<EESubsystem> eeSubsystem();
+    AutoBean<Module> eeModuleRef();
 
 }
