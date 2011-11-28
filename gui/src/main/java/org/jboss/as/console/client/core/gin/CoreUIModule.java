@@ -116,6 +116,8 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.jmx.JMXPresenter;
+import org.jboss.as.console.client.shared.subsys.jmx.JMXSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
 import org.jboss.as.console.client.shared.subsys.jpa.JpaView;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
@@ -470,10 +472,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JpaView.class,
                 JpaPresenter.MyProxy.class);
 
-         bindPresenter(MailPresenter.class,
+        bindPresenter(MailPresenter.class,
                 MailPresenter.MyView.class,
                 MailSessionView.class,
                 MailPresenter.MyProxy.class);
+
+        bindPresenter(JMXPresenter.class,
+                JMXPresenter.MyView.class,
+                JMXSubsystemView.class,
+                JMXPresenter.MyProxy.class);
     }
 
 }

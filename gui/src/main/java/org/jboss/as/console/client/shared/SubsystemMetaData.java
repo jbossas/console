@@ -70,6 +70,7 @@ public class SubsystemMetaData {
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapter", "resource-adapters"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Mail", "mail"));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet/HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
@@ -82,6 +83,7 @@ public class SubsystemMetaData {
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Deployment Scanners", "deployment-scanner"));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", NameTokens.BoundedQueueThreadPoolPresenter));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("JMX", "jmx"));
 
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
@@ -89,7 +91,6 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa"));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Mail", "mail"));
 
         groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Subsystem", "security", NameTokens.SecuritySubsystemPresenter));
         groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Domains", "security", NameTokens.SecurityDomainsPresenter));
@@ -99,7 +100,6 @@ public class SubsystemMetaData {
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Infinispan", NameTokens.CacheContainerPresenter, Boolean.TRUE));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("JMX", "jmx",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
     }
 

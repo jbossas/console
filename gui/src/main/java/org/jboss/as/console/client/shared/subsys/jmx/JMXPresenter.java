@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.jpa;
+package org.jboss.as.console.client.shared.subsys.jmx;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -17,10 +17,12 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -32,43 +34,43 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERA
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+
     private RevealStrategy revealStrategy;
     private ApplicationMetaData metaData;
     private DispatchAsync dispatcher;
-    private EntityAdapter<JpaSubsystem> adapter;
+    private EntityAdapter<JMXSubsystem> adapter;
     private BeanMetaData beanMetaData;
+    private DefaultWindow window;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.JpaPresenter)
-    public interface MyProxy extends Proxy<JpaPresenter>, Place {
+    @NameToken(NameTokens.JMXPresenter)
+    public interface MyProxy extends Proxy<JMXPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(JpaPresenter presenter);
-        void updateFrom(JpaSubsystem jpaSubsystem);
+        void setPresenter(JMXPresenter presenter);
+        void updateFrom(JMXSubsystem jpaSubsystem);
     }
 
     @Inject
-    public JpaPresenter(
+    public JMXPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
             ApplicationMetaData metaData) {
+
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.revealStrategy = revealStrategy;
         this.metaData = metaData;
         this.dispatcher = dispatcher;
-
-        this.beanMetaData = metaData.getBeanMetaData(JpaSubsystem.class);
-
-        this.adapter = new EntityAdapter<JpaSubsystem>(
-                JpaSubsystem.class, metaData);
+        this.beanMetaData = metaData.getBeanMetaData(JMXSubsystem.class);
+        this.adapter = new EntityAdapter<JMXSubsystem>(JMXSubsystem.class, metaData);
     }
 
     @Override
@@ -81,7 +83,6 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-
         loadSubsystem();
     }
 
@@ -97,12 +98,12 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JPA subsystem");
+                    Console.error("Failed to load JMX subsystem");
                 }
                 else
                 {
-                    JpaSubsystem jpaSubsystem = adapter.fromDMR(response);
-                    getView().updateFrom(jpaSubsystem);
+                    JMXSubsystem jmxSubsystem = adapter.fromDMR(response);
+                    getView().updateFrom(jmxSubsystem);
                 }
             }
         });
@@ -113,11 +114,10 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         revealStrategy.revealInParent(this);
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2816
-    public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
-
+    public void onSave(final JMXSubsystem editedEntity, Map<String, Object> changeset) {
         ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
 
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -125,11 +125,11 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update JPA subsystem");
+                    Console.error("Failed to update JMX subsystem");
                 }
                 else
                 {
-                    Console.info("Success: Update JPA subsystem");
+                    Console.info("Success: Update JMX subsystem");
                 }
 
                 loadSubsystem();

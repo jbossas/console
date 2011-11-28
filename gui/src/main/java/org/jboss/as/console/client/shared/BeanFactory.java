@@ -52,6 +52,8 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.shared.subsys.jmx.JMXPresenter;
+import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.ConsoleHandler;
@@ -183,6 +185,6 @@ public interface BeanFactory extends AutoBeanFactory {
 
 
     AutoBean<JpaSubsystem> jpaSubystem();
-    AutoBean<MailSession> maiilSession();
-
+    AutoBean<MailSession> mailSession();
+    AutoBean<JMXSubsystem> jmxSubsystem();
 }

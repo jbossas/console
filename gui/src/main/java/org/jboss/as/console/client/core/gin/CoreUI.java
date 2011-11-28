@@ -78,6 +78,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.jmx.JMXPresenter;
 import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
@@ -241,4 +242,5 @@ public interface CoreUI extends Ginjector {
 
     AsyncProvider<JpaPresenter> getJpaPresenter();
     AsyncProvider<MailPresenter> getMailPresenter();
+    AsyncProvider<JMXPresenter> getJMXPresenter();
 }
