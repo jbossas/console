@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.jpa;
+package org.jboss.as.console.client.shared.subsys.mail;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -22,8 +22,10 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -31,27 +33,28 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
+
     private RevealStrategy revealStrategy;
     private ApplicationMetaData metaData;
     private DispatchAsync dispatcher;
-    private EntityAdapter<JpaSubsystem> adapter;
+    private EntityAdapter<MailSession> adapter;
     private BeanMetaData beanMetaData;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.JpaPresenter)
-    public interface MyProxy extends Proxy<JpaPresenter>, Place {
+    @NameToken(NameTokens.MailPresenter)
+    public interface MyProxy extends Proxy<MailPresenter>, Place {
     }
 
     public interface MyView extends View {
-        void setPresenter(JpaPresenter presenter);
-        void updateFrom(JpaSubsystem jpaSubsystem);
+        void setPresenter(MailPresenter presenter);
+        void updateFrom(List<MailSession> list);
     }
 
     @Inject
-    public JpaPresenter(
+    public MailPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             DispatchAsync dispatcher,
@@ -60,14 +63,13 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+
         this.revealStrategy = revealStrategy;
         this.metaData = metaData;
         this.dispatcher = dispatcher;
+        this.beanMetaData = metaData.getBeanMetaData(MailSession.class);
+        this.adapter = new EntityAdapter<MailSession>(MailSession.class, metaData);
 
-        this.beanMetaData = metaData.getBeanMetaData(JpaSubsystem.class);
-
-        this.adapter = new EntityAdapter<JpaSubsystem>(
-                JpaSubsystem.class, metaData);
     }
 
     @Override
@@ -80,14 +82,14 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-
-        loadSubsystem();
+        loadMailSessions();
     }
 
-    private void loadSubsystem() {
 
-        ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get());
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
+    private void loadMailSessions() {
+
+        ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -96,47 +98,26 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JPA subsystem");
+                    Console.error("Failed to load Mail sessions");
                 }
                 else
                 {
-                    JpaSubsystem jpaSubsystem = adapter.fromDMR(response);
-                    getView().updateFrom(jpaSubsystem);
+                    List<Property> items = response.get(RESULT).asPropertyList();
+                    List<MailSession> sessions = new ArrayList<MailSession>(items.size());
+                    for(Property item : items)
+                    {
+                        sessions.add(adapter.fromDMR(item.getValue()));
+                    }
+
+                    getView().updateFrom(sessions);
                 }
+
             }
         });
     }
 
     @Override
     protected void revealInParent() {
-        revealStrategy.revealInParent(this);
-    }
-
-    public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
-
-        System.out.println(changeset);
-
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
-
-                if(response.isFailure())
-                {
-                    Console.error("Failed to update JPA subsystem");
-                }
-                else
-                {
-                    Console.info("Success: Update JPA subsystem");
-
-                    JpaSubsystem jpaSubsystem = adapter.fromDMR(response);
-                    getView().updateFrom(jpaSubsystem);
-                }
-
-                loadSubsystem();
-            }
-        });
+       revealStrategy.revealInParent(this);
     }
 }

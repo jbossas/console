@@ -34,6 +34,7 @@ public class MultipleToOneLayout<T> {
 
     private NamedWidget detail;
     private List<NamedWidget> details = new ArrayList<NamedWidget>();
+    private Widget detailTools;
 
     public MultipleToOneLayout setTitle(String title)
     {
@@ -124,7 +125,7 @@ public class MultipleToOneLayout<T> {
 
         if(master !=null)
         {
-            panel.add(new ContentHeaderLabel(master.title));
+            panel.add(new ContentGroupLabel(master.title));
             if(masterTools!=null) panel.add(masterTools);
             panel.add(master.widget);
         }
@@ -134,6 +135,7 @@ public class MultipleToOneLayout<T> {
         if(detail!=null)
         {
             panel.add(new ContentGroupLabel(detail.title));
+            if(detailTools!=null) panel.add(detailTools);
             panel.add(detail.widget);
         }
         else if(details.size()>0)
@@ -156,4 +158,8 @@ public class MultipleToOneLayout<T> {
         return layout;
     }
 
+    public MultipleToOneLayout setDetailTools(Widget widget) {
+        this.detailTools = widget;
+        return this;
+    }
 }

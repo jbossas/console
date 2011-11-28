@@ -121,6 +121,9 @@ import org.jboss.as.console.client.shared.subsys.jpa.JpaView;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
+import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
+import org.jboss.as.console.client.shared.subsys.mail.MailSession;
+import org.jboss.as.console.client.shared.subsys.mail.MailSessionView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
@@ -466,6 +469,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JpaPresenter.MyView.class,
                 JpaView.class,
                 JpaPresenter.MyProxy.class);
+
+         bindPresenter(MailPresenter.class,
+                MailPresenter.MyView.class,
+                MailSessionView.class,
+                MailPresenter.MyProxy.class);
     }
 
 }

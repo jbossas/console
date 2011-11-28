@@ -61,6 +61,7 @@ import org.jboss.as.console.client.shared.subsys.logging.model.Logger;
 import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
 import org.jboss.as.console.client.shared.subsys.logging.model.RootLogger;
 import org.jboss.as.console.client.shared.subsys.logging.model.SizeRotatingFileHandler;
+import org.jboss.as.console.client.shared.subsys.mail.MailSession;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
@@ -182,5 +183,6 @@ public interface BeanFactory extends AutoBeanFactory {
 
 
     AutoBean<JpaSubsystem> jpaSubystem();
+    AutoBean<MailSession> maiilSession();
 
 }
