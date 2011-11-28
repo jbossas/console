@@ -116,6 +116,8 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
+import org.jboss.as.console.client.shared.subsys.jpa.JpaView;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
@@ -459,6 +461,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 TXMetricPresenter.MyView.class,
                 TXMetricViewImpl.class,
                 TXMetricPresenter.MyProxy.class);
+
+        bindPresenter(JpaPresenter.class,
+                JpaPresenter.MyView.class,
+                JpaView.class,
+                JpaPresenter.MyProxy.class);
     }
 
 }
