@@ -20,10 +20,10 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
-import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
@@ -46,6 +46,9 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
     private EntityAdapter<EESubsystem> adapter;
     private BeanMetaData beanMetaData;
     private BeanFactory factory;
+    private DefaultWindow window;
+    private EESubsystem currentEntity;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.EEPresenter)
@@ -88,6 +91,74 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         loadSubsystem();
     }
 
+    public void onAddModule(String moduleName) {
+        closeDialoge();
+
+        boolean isAlreadyAssigned = false;
+        List<Module> modules = currentEntity.getModules() !=null ?
+                currentEntity.getModules() : new ArrayList<Module>(1);
+
+        for(Module m : modules)
+        {
+            if(m.getName().equals(moduleName))
+            {
+                isAlreadyAssigned = true;
+                break;
+            }
+        }
+
+        if(!isAlreadyAssigned)
+        {
+            Module newModule = factory.eeModuleRef().as();
+            newModule.setName(moduleName);
+            newModule.setSlot("main");
+
+            modules.add(newModule);
+
+            currentEntity.setModules(modules);
+
+            onPersistModules(currentEntity);
+        }
+    }
+
+    private void onPersistModules(EESubsystem updatedEntity) {
+
+        ModelNode operation = beanMetaData.getAddress().asResource();
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("global-modules");
+
+        List<ModelNode> modules = new ArrayList<ModelNode>();
+        for(Module m : updatedEntity.getModules())
+        {
+            ModelNode moduleRef = new ModelNode();
+            moduleRef.get("name").set(m.getName());
+            moduleRef.get("slot").set(m.getSlot());
+
+            modules.add(moduleRef);
+        }
+
+        operation.get(VALUE).set(modules);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to update modules subsystem");
+                }
+                else
+                {
+                    Console.info("Success: Update modules ");
+                }
+
+                loadSubsystem();
+            }
+        });
+
+    }
+
     private void loadSubsystem() {
 
         ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get());
@@ -124,11 +195,56 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
                         eeSubsystem.setModules(modules);
 
                     }
+
+                    EEPresenter.this.currentEntity = eeSubsystem;
                     getView().updateFrom(eeSubsystem);
                 }
             }
         });
     }
+
+    public void launchNewModuleDialogue() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(CHILD_TYPE).set("extension");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to load extensions");
+                }
+                else
+                {
+                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+                    List<String> names = new ArrayList<String>(modelNodes.size());
+                    for(ModelNode model : modelNodes)
+                        names.add(model.asString());
+
+                    launchDialogue(names);
+                }
+
+            }
+        });
+    }
+
+    private void launchDialogue(List<String> names) {
+        window = new DefaultWindow("Add Module");
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewModuleWizard(this, names).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
 
     @Override
     protected void revealInParent() {
@@ -155,5 +271,25 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
                 loadSubsystem();
             }
         });
+    }
+
+    public void closeDialoge() {
+        window.hide();
+    }
+
+    public void onRemoveModule(EESubsystem editedEntity, Module module) {
+
+        List<Module> modules = new ArrayList<Module>();
+
+        for(Module m : editedEntity.getModules())
+        {
+            if(!m.getName().equals(module.getName()))
+            {
+                modules.add(m);
+            }
+        }
+
+        currentEntity.setModules(modules);
+        onPersistModules(currentEntity);
     }
 }

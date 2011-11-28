@@ -20,6 +20,7 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -74,7 +75,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         // -----
         // module list
 
-        DefaultCellTable<Module> modules = new DefaultCellTable<Module>(5);
+        final DefaultCellTable<Module> modules = new DefaultCellTable<Module>(5);
         dataProvider = new ListDataProvider<Module>();
         dataProvider.addDataDisplay(modules);
         modules.setSelectionModel(new SingleSelectionModel());
@@ -100,7 +101,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         moduleTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-
+                presenter.launchNewModuleDialogue();
             }
         }));
 
@@ -108,6 +109,17 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
             @Override
             public void onClick(ClickEvent event) {
 
+                Feedback.confirm("Remove Module", "Really remove module?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                {
+                                    Module module = ((SingleSelectionModel<Module>) modules.getSelectionModel()).getSelectedObject();
+                                    presenter.onRemoveModule(form.getEditedEntity(), module);
+                                }
+                            }
+                        });
             }
         }));
 
