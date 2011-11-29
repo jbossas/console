@@ -86,7 +86,7 @@ public class JcaBaseEditor {
         Widget panel = new OneToOneLayout()
                 .setPlain(true)
                 .setTitle("JCA")
-                .setHeadline("JCA Subsystem")
+                .setHeadline("JCA Common Config")
                 .setDescription("The Java EE Connector Architecture (JCA) subsystem providing general configuration for resource adapters.")
                 .setMaster("", new HTML())
                 .addDetail("Archive Validation", archivePanel)

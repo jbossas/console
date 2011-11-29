@@ -12,6 +12,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresenter.MyView {
 
     private JcaPresenter presenter;
+    private JcaBootstrapEditor boostrapEditor;
     private JcaBaseEditor baseEditor;
 
     @Override
@@ -27,10 +28,11 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 
+        boostrapEditor = new JcaBootstrapEditor();
         baseEditor = new JcaBaseEditor();
 
-        tabLayoutpanel.add(baseEditor.asWidget(), "Common JCA Config");
-        //tabLayoutpanel.add(xaDataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSourcesXA());
+        tabLayoutpanel.add(boostrapEditor.asWidget(), "Boostrap Contexts");
+        tabLayoutpanel.add(baseEditor.asWidget(), "Common Config");
 
         tabLayoutpanel.selectTab(0);
 

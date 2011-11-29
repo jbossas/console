@@ -67,6 +67,7 @@ public class NameTokens {
     public static final String JMXPresenter = "jmx";
     public static final String EEPresenter = "ee";
     public static final String JcaPresenter = "jca";
+    public static final String JcaWorkManager  = "jca-workmanager";
 
     public static String getMainLayout() {
         return mainLayout;

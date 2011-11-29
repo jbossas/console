@@ -35,6 +35,7 @@ public class MultipleToOneLayout {
     private NamedWidget detail;
     private List<NamedWidget> details = new ArrayList<NamedWidget>();
     private Widget detailTools;
+    private boolean isPlain;
 
     public MultipleToOneLayout setTitle(String title)
     {
@@ -81,7 +82,7 @@ public class MultipleToOneLayout {
 
     public MultipleToOneLayout addDetail(String title, Widget detail)
     {
-        if(detail!=null)
+        if(this.detail!=null)
             throw new IllegalStateException("Can either have single OR multiple details, but not both");
         details.add(new NamedWidget(title, detail));
         return this;
@@ -94,8 +95,11 @@ public class MultipleToOneLayout {
 
         layout  = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel(title);
-        layout.add(titleBar);
+        FakeTabPanel titleBar = null;
+        if(!isPlain) {
+            titleBar = new FakeTabPanel(title);
+            layout.add(titleBar);
+        }
 
         if(this.toolStrip !=null)
         {
@@ -108,16 +112,18 @@ public class MultipleToOneLayout {
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
 
+        int offset = isPlain ? 0 : 28;
+
         if(toolStrip!=null)
         {
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-            layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-            layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+            if(!isPlain)layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(toolStrip, offset, Style.Unit.PX, 30, Style.Unit.PX);
+            layout.setWidgetTopHeight(scroll, offset+30, Style.Unit.PX, 100, Style.Unit.PCT);
         }
         else
         {
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-            layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+             if(!isPlain)layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(scroll, offset, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 
         panel.add(new ContentHeaderLabel(headline));
@@ -125,7 +131,9 @@ public class MultipleToOneLayout {
 
         if(master !=null)
         {
-            panel.add(new ContentGroupLabel(master.title));
+            if(master.title!=null && !master.title.isEmpty())
+                panel.add(new ContentGroupLabel(master.title));
+
             if(masterTools!=null) panel.add(masterTools);
             panel.add(master.widget);
         }
@@ -134,7 +142,9 @@ public class MultipleToOneLayout {
 
         if(detail!=null)
         {
-            panel.add(new ContentGroupLabel(detail.title));
+            if(detail.title!=null && !detail.title.isEmpty())
+                panel.add(new ContentGroupLabel(detail.title));
+
             if(detailTools!=null) panel.add(detailTools);
             panel.add(detail.widget);
         }
@@ -142,6 +152,7 @@ public class MultipleToOneLayout {
         {
             TabPanel tabs = new TabPanel();
             tabs.setStyleName("default-tabpanel");
+            tabs.getElement().setAttribute("style", "margin-top:15px;");
 
             for(NamedWidget item : details)
             {
@@ -160,6 +171,11 @@ public class MultipleToOneLayout {
 
     public MultipleToOneLayout setDetailTools(Widget widget) {
         this.detailTools = widget;
+        return this;
+    }
+
+    public MultipleToOneLayout setPlain(boolean b) {
+        this.isPlain = b;
         return this;
     }
 }
