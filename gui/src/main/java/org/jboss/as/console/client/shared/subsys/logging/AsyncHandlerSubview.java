@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Subview for Async Handlers.
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler>
         implements FrameworkView,

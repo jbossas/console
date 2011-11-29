@@ -28,7 +28,7 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 /**
  * Main view class for Loggers.
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public abstract class AbstractFileHandlerSubview<T> extends AbstractHandlerSubview implements FrameworkView, LogLevelConsumer, HandlerProducer {
 

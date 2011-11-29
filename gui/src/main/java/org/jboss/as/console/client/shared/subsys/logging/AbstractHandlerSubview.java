@@ -37,7 +37,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 /**
  * Main view class for Loggers.
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public abstract class AbstractHandlerSubview<T extends NamedEntity>
         extends AbstractLoggingSubview<T> implements FrameworkView, LogLevelConsumer, HandlerProducer {

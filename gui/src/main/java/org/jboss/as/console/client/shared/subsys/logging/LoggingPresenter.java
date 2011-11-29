@@ -34,7 +34,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 
 /**
  * The Presenter for Logging
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  * @date 10/27/2011
  */
 public class LoggingPresenter extends Presenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {

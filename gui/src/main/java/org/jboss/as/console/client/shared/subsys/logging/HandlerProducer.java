@@ -22,8 +22,9 @@ import java.util.List;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 
 /**
+ * This is implemented by handler subviews.
  *
- * @author ssilvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface HandlerProducer {
 
