@@ -35,6 +35,13 @@ public class OneToOneLayout {
     private NamedWidget detail;
 
     private List<NamedWidget> details = new ArrayList<NamedWidget>();
+    private boolean isPlain = false;
+
+    public OneToOneLayout setPlain(boolean isPlain)
+    {
+        this.isPlain = isPlain;
+        return this;
+    }
 
     public OneToOneLayout setTitle(String title)
     {
@@ -94,8 +101,11 @@ public class OneToOneLayout {
         layout  = new LayoutPanel();
         layout.setStyleName("fill-layout");
 
-        FakeTabPanel titleBar = new FakeTabPanel(title);
-        layout.add(titleBar);
+        FakeTabPanel titleBar = null;
+        if(!isPlain) {
+            titleBar = new FakeTabPanel(title);
+            layout.add(titleBar);
+        }
 
         if(this.toolStrip !=null)
         {
@@ -108,16 +118,19 @@ public class OneToOneLayout {
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
 
+        // titlebar offset, if exists
+        int offset = isPlain ? 0 : 28;
+
         if(toolStrip!=null)
         {
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-            layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-            layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(toolStrip, offset, Style.Unit.PX, 30, Style.Unit.PX);
+            layout.setWidgetTopHeight(scroll, offset+30, Style.Unit.PX, 100, Style.Unit.PCT);
         }
         else
         {
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-            layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(scroll, offset, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 
 
@@ -126,7 +139,9 @@ public class OneToOneLayout {
 
         if(master!=null)
         {
-            panel.add(new ContentGroupLabel(master.title));
+            if(master.title!=null && !master.title.isEmpty())
+                panel.add(new ContentGroupLabel(master.title));
+
             if(masterTools!=null) panel.add(masterTools);
             panel.add(master.widget);
         }
@@ -135,7 +150,8 @@ public class OneToOneLayout {
 
         if(detail!=null)
         {
-            panel.add(new ContentGroupLabel(detail.title));
+            if(detail.title!=null && !detail.title.isEmpty())
+                panel.add(new ContentGroupLabel(detail.title));
             panel.add(detail.widget);
             detail.widget.getElement().addClassName("fill-layout-width");
         }
