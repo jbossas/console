@@ -147,6 +147,9 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 T policy = ssm.getSelectedObject();
+                if (policy == null)
+                    return;
+
                 List<PropertyRecord> props = policy.getProperties();
                 if (props == null)
                     props = new ArrayList<PropertyRecord>();
@@ -206,8 +209,9 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     public void save(T policy) {
         saveData();
 
-        // This sometimes selects the right row but not always - is there a more consistent way?
+        // This combination seems to consistently update the details view
         attributesTable.getSelectionModel().setSelected(policy, true);
+        SelectionChangeEvent.fire(attributesTable.getSelectionModel());
     }
 
     public interface Wizard<T> {
