@@ -59,10 +59,13 @@ import org.jboss.dmr.client.Property;
  * @author David Bosschaert
  */
 public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy> {
-    static final String AUDIT_IDENTIFIER = "audit";
-    static final String AUTHENTICATION_IDENTIFIER = "authentication";
-    static final String AUTHORIZATION_IDENTIFIER = "authorization";
-    static final String MAPPING_IDENTIFIER = "mapping";
+    private static final String CLASSIC = "classic";
+    private static final String SECURITY_DOMAIN = "security-domain";
+
+    public static final String AUDIT_IDENTIFIER = "audit";
+    public static final String AUTHENTICATION_IDENTIFIER = "authentication";
+    public static final String AUTHORIZATION_IDENTIFIER = "authorization";
+    public static final String MAPPING_IDENTIFIER = "mapping";
 
     public static final String SECURITY_SUBSYSTEM = "security";
 
@@ -130,8 +133,8 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     private void loadAuthFlagValues(final String type, final String attrName) {
         ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", "*");
-        operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, "*");
+        operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -158,7 +161,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     public void updateDomainSelection(final SecurityDomain domain) {
         // load sub-elements which are not automatically loaded by the framework
         ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
-        operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domain.getName());
+        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domain.getName());
         operation.get(ModelDescriptionConstants.RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -168,7 +171,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
                 loadGeneric(model, domain, AUTHORIZATION_IDENTIFIER, "policy-modules", AuthorizationPolicyProvider.class,
-                    new CustomLoadFieldHandler<AuthorizationPolicyProvider>() {
+                    new CustomLoadHandler<AuthorizationPolicyProvider>() {
                         @Override
                         public void readFromModel(ModelNode n, AuthorizationPolicyProvider object) {
                             object.setFlag(n.get("flag").asString());
@@ -181,7 +184,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                     });
 
                 loadGeneric(model, domain, AUTHENTICATION_IDENTIFIER, "login-modules", AuthenticationLoginModule.class,
-                    new CustomLoadFieldHandler<AuthenticationLoginModule>() {
+                    new CustomLoadHandler<AuthenticationLoginModule>() {
                         @Override
                         public void readFromModel(ModelNode n, AuthenticationLoginModule object) {
                             object.setFlag(n.get("flag").asString());
@@ -194,7 +197,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                     });
 
                 loadGeneric(model, domain, MAPPING_IDENTIFIER, "mapping-modules", MappingModule.class,
-                    new CustomLoadFieldHandler<MappingModule>() {
+                    new CustomLoadHandler<MappingModule>() {
                         @Override
                         public void readFromModel(ModelNode n, MappingModule object) {
                             object.setType(n.get("type").asString());
@@ -207,7 +210,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                     });
 
                  loadGeneric(model, domain, AUDIT_IDENTIFIER, "provider-modules", GenericSecurityDomainData.class,
-                     new CustomLoadFieldHandler<GenericSecurityDomainData>() {
+                     new CustomLoadHandler<GenericSecurityDomainData>() {
                         @Override
                         public void readFromModel(ModelNode n, GenericSecurityDomainData object) {
                         }
@@ -222,11 +225,11 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     }
 
     private <T extends GenericSecurityDomainData> void loadGeneric(ModelNode model, SecurityDomain domain, String type, String attrName, Class<T> cls,
-            CustomLoadFieldHandler<T> customHandler) {
+            CustomLoadHandler<T> customHandler) {
         List<T> modules = new ArrayList<T>();
         boolean resourceExists = false;
         if (model.hasDefined(type)) {
-            ModelNode subModel = model.get(type, "classic");
+            ModelNode subModel = model.get(type, CLASSIC);
             resourceExists = subModel.hasDefined(attrName);
 
             if (resourceExists) {
@@ -249,7 +252,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
         customHandler.setInView(modules, resourceExists);
     }
 
-    private static class CustomAuthSaveFieldhandler<P extends AbstractAuthData> extends CustomSaveFieldHandler<P>{
+    private static class CustomAuthSaveFieldhandler<P extends AbstractAuthData> extends CustomSaveHandler<P>{
         @Override
         public void setInModel(ModelNode n, P object) {
             n.get("flag").set(object.getFlag());
@@ -268,7 +271,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     public void saveMapping(String domainName, List<MappingModule> list, boolean resourceExists) {
         saveGeneric(domainName, list, MAPPING_IDENTIFIER, "mapping-modules", resourceExists,
-            new CustomSaveFieldHandler<MappingModule>() {
+            new CustomSaveHandler<MappingModule>() {
                 @Override
                 public void setInModel(ModelNode n, MappingModule object) {
                     n.get("type").set(object.getType());
@@ -278,11 +281,11 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     public void saveAudit(String domainName, List<GenericSecurityDomainData> list, boolean resourceExists) {
         saveGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules", resourceExists,
-            new CustomSaveFieldHandler<GenericSecurityDomainData>());
+            new CustomSaveHandler<GenericSecurityDomainData>());
     }
 
     public <T extends GenericSecurityDomainData> void saveGeneric(final String domainName, List<T> list, String type, String attrName, boolean resourceExists,
-            CustomSaveFieldHandler<T> customHandler) {
+            CustomSaveHandler<T> customHandler) {
         if (list.size() == 0)
             return;
 
@@ -307,15 +310,15 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
         if (resourceExists) {
             operation = createOperation(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION);
-            operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domainName);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
             operation.get(ModelDescriptionConstants.NAME).set(attrName);
 
             operation.get("value").set(valueList);
         } else {
             operation = createOperation(ModelDescriptionConstants.ADD);
-            operation.get(ModelDescriptionConstants.ADDRESS).add("security-domain", domainName);
-            operation.get(ModelDescriptionConstants.ADDRESS).add(type, "classic");
+            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
             operation.get(attrName).set(valueList);
         }
 
@@ -328,6 +331,25 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
             }));
     }
 
+
+    public void getDescription(String type, final DescriptionCallBack callback) {
+        ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
+        operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, "*");
+        operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                List<ModelNode> resList = response.get(ModelDescriptionConstants.RESULT).asList();
+                if (resList.size() == 0)
+                    return;
+
+                callback.setDescription(resList.get(0).get(ModelDescriptionConstants.RESULT));
+            }
+        });
+    }
+
     private ModelNode createOperation(String operator) {
         ModelNode operation = new ModelNode();
         operation.get(ModelDescriptionConstants.OP).set(operator);
@@ -336,12 +358,16 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
         return operation;
     }
 
-    private interface CustomLoadFieldHandler<P> {
+    private interface CustomLoadHandler<P> {
         void readFromModel(ModelNode n, P object);
         void setInView(List<P> modules, boolean resourceExists);
     }
 
-    private static class CustomSaveFieldHandler<P> {
+    private static class CustomSaveHandler<P> {
         void setInModel(ModelNode n, P object) {}
+    }
+
+    public interface DescriptionCallBack {
+        public void setDescription(ModelNode desc);
     }
 }

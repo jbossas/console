@@ -184,7 +184,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
             (editedObject == null ? Console.CONSTANTS.common_label_add() : Console.CONSTANTS.common_label_edit()) + " " +
             getStackElementName());
         window.setWidth(480);
-        window.setHeight(360);
+        window.setHeight(400);
         window.setWidget(wizard.asWidget());
         if (editedObject != null)
             wizard.edit(editedObject);

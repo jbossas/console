@@ -46,7 +46,8 @@ public class AuditEditor extends AbstractDomainDetailEditor<GenericSecurityDomai
 
     @Override
     Wizard<GenericSecurityDomainData> getWizard() {
-        return new GenericSecurityDomainWizard<GenericSecurityDomainData>(this, GenericSecurityDomainData.class);
+        return new GenericSecurityDomainWizard<GenericSecurityDomainData>(this, GenericSecurityDomainData.class,
+            presenter, SecurityDomainsPresenter.AUDIT_IDENTIFIER, "provider-modules");
     }
 
     @Override
