@@ -18,7 +18,11 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
+import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author David Bosschaert
@@ -46,5 +50,19 @@ public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
     @Override
     void saveData() {
         presenter.saveAuthentication(domainName, attributesProvider.getList(), resourceExists);
+    }
+
+    @Override
+    Wizard<AuthenticationLoginModule> getWizard() {
+        if (flagValues == null) {
+            // This sucks a bit, but these values are set asynchronously so there is a very small chance that they aren't
+            // there yet. It would be better to automatically wait but is it worth the complexity?
+            Feedback.alert(getEntityName(),
+                new SafeHtmlBuilder().appendHtmlConstant("Allowed flag values not yet available, please try again later.").toSafeHtml());
+            return null;
+        }
+        // should really wait until flagValues are set.
+        return new NewAuthPolicyModuleWizard<AuthenticationLoginModule>(this, entityClass, flagValues,
+            presenter, SecurityDomainsPresenter.AUTHENTICATION_IDENTIFIER, "login-modules");
     }
 }

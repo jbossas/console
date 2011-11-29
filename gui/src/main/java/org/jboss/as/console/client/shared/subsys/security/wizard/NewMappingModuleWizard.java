@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.security.wizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
 import org.jboss.as.console.client.shared.subsys.security.MappingEditor;
+import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
 import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -30,8 +31,9 @@ import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
  */
 public class NewMappingModuleWizard extends GenericSecurityDomainWizard<MappingModule>
                                     implements PropertyManagement, Wizard<MappingModule> {
-    public NewMappingModuleWizard(MappingEditor editor) {
-        super(editor, MappingModule.class);
+    public NewMappingModuleWizard(MappingEditor editor, SecurityDomainsPresenter presenter) {
+        super(editor, MappingModule.class, presenter, SecurityDomainsPresenter.MAPPING_IDENTIFIER,
+            "mapping-modules", "type");
     }
 
     @Override

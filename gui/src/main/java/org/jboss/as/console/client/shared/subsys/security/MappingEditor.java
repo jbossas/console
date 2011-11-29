@@ -67,6 +67,6 @@ public class MappingEditor extends AbstractDomainDetailEditor<MappingModule> {
 
     @Override
     Wizard<MappingModule> getWizard() {
-        return new NewMappingModuleWizard(this);
+        return new NewMappingModuleWizard(this, presenter);
     }
 }
