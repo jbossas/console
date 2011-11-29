@@ -33,7 +33,7 @@ import javax.inject.Inject;
 /**
  * Main view class for the Logging subsystem.  
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
 

@@ -21,8 +21,9 @@ package org.jboss.as.console.client.shared.subsys.logging;
 import java.util.List;
 
 /**
+ * Implementors maintain a list of handlers and are notified when the handlers are updated.
  *
- * @author ssilvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface HandlerConsumer {
 

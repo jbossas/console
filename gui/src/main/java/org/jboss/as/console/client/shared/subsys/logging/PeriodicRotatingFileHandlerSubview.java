@@ -28,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 /**
  * Subview for PeriodicRotatingFileHandler.
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class PeriodicRotatingFileHandlerSubview extends AbstractFileHandlerSubview<PeriodicRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 

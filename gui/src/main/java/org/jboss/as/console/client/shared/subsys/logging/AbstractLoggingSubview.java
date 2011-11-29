@@ -32,7 +32,7 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 /**
  * Abstract base class for sub-views.  This class knows how to set the log levels in the drop-downs.
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public abstract class AbstractLoggingSubview<T>
         extends AbstractEntityView<T> implements FrameworkView, LogLevelConsumer {
