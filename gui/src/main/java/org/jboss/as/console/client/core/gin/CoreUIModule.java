@@ -112,6 +112,8 @@ import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresen
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
+import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.JcaSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
@@ -488,6 +490,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 EEPresenter.MyView.class,
                 EESubsystemView.class,
                 EEPresenter.MyProxy.class);
+
+         bindPresenter(JcaPresenter.class,
+                JcaPresenter.MyView.class,
+                JcaSubsystemView.class,
+                JcaPresenter.MyProxy.class);
     }
 
 }

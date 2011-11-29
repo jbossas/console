@@ -121,7 +121,7 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
         });
         formToolStrip.providesDeleteOp(false);
 
-        Widget panel = new MultipleToOneLayout<MailSession>()
+        Widget panel = new MultipleToOneLayout()
                 .setTitle("Mail")
                 .setHeadline("Mail Sessions")
                 .setDescription("The mail session configuration.")

@@ -19,7 +19,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class OneToOneLayout<T> {
+public class OneToOneLayout {
 
     private LayoutPanel layout = null;
 
@@ -62,7 +62,7 @@ public class OneToOneLayout<T> {
 
     public OneToOneLayout setDetail(String title, Widget detail)
     {
-        if(!details.isEmpty())
+        if(!this.details.isEmpty())
             throw new IllegalStateException("Can either have single OR multiple details, but not both");
         this.detail = new NamedWidget(title, detail);
         return this;
@@ -70,7 +70,7 @@ public class OneToOneLayout<T> {
 
     public OneToOneLayout addDetail(String title, Widget detail)
     {
-        if(detail!=null)
+        if(this.detail!=null)
             throw new IllegalStateException("Can either have single OR multiple details, but not both");
         details.add(new NamedWidget(title, detail));
         return this;
@@ -92,6 +92,7 @@ public class OneToOneLayout<T> {
             throw new IllegalStateException("no master set");
 
         layout  = new LayoutPanel();
+        layout.setStyleName("fill-layout");
 
         FakeTabPanel titleBar = new FakeTabPanel(title);
         layout.add(titleBar);
@@ -136,6 +137,7 @@ public class OneToOneLayout<T> {
         {
             panel.add(new ContentGroupLabel(detail.title));
             panel.add(detail.widget);
+            detail.widget.getElement().addClassName("fill-layout-width");
         }
         else if(details.size()>0)
         {
@@ -145,8 +147,10 @@ public class OneToOneLayout<T> {
             for(NamedWidget item : details)
             {
                 tabs.add(item.widget, item.title);
+                item.widget.getElement().addClassName("fill-layout-width");
             }
 
+            panel.add(new ContentGroupLabel("Details"));
             panel.add(tabs);
 
             if(!details.isEmpty())

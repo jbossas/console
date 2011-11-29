@@ -65,7 +65,7 @@ public class JMXSubsystemView extends DisposableViewImpl implements JMXPresenter
                 .setForm(form)
                 .setHelp(helpPanel).build();
 
-        Widget panel = new OneToOneLayout<JMXSubsystem>()
+        Widget panel = new OneToOneLayout()
                 .setTitle("JMX")
                 .setHeadline("JMX Subsystem")
                 .setDescription("The configuration of the JMX subsystem.")

@@ -19,7 +19,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class MultipleToOneLayout<T> {
+public class MultipleToOneLayout {
 
     private LayoutPanel layout = null;
 
@@ -65,7 +65,7 @@ public class MultipleToOneLayout<T> {
     }
 
 
-    public MultipleToOneLayout setMaster(String title, CellTable<T> table)
+    public MultipleToOneLayout setMaster(String title, CellTable table)
     {
         this.master = new NamedTable(title, table);
         return this;

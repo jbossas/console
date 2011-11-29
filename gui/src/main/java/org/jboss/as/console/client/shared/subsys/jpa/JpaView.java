@@ -59,7 +59,7 @@ public class JpaView extends DisposableViewImpl implements JpaPresenter.MyView {
                 .setForm(form)
                 .setHelp(helpPanel).build();
 
-        Widget panel = new OneToOneLayout<JpaSubsystem>()
+        Widget panel = new OneToOneLayout()
                 .setTitle("JPA")
                 .setHeadline("JPA Subsystem")
                 .setDescription("The configuration of the JPA subsystem.")

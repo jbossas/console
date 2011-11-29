@@ -49,8 +49,12 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
+import org.jboss.as.console.client.shared.subsys.jca.JcaBeanValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
@@ -191,5 +195,10 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JMXSubsystem> jmxSubsystem();
     AutoBean<EESubsystem> eeSubsystem();
     AutoBean<Module> eeModuleRef();
+
+    AutoBean<JcaArchiveValidation> JcaArchiveValidation();
+    AutoBean<JcaBootstrapContext> JcaBootstrapContext();
+    AutoBean<JcaBeanValidation> JcaBeanValidation();
+    AutoBean<JcaWorkmanager> JcaWorkmanager();
 
 }

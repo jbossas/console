@@ -131,7 +131,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
 
         // ----
 
-        Widget panel = new OneToOneLayout<EESubsystem>()
+        Widget panel = new OneToOneLayout()
                 .setTitle("EE")
                 .setHeadline("EE Subsystem")
                 .setDescription("The configuration of the EE subsystem.")
