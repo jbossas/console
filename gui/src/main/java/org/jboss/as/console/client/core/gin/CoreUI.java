@@ -76,6 +76,7 @@ import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresen
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
@@ -248,4 +249,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<EEPresenter> getEEPresenter();
 
     AsyncProvider<JcaPresenter> getJcaPresenter();
+    AsyncProvider<WorkmanagerPresenter> getWorkmanagerPresenter();
 }

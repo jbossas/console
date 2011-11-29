@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.shared.viewframework.builder;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -25,7 +27,7 @@ public class MultipleToOneLayout {
 
     private String title = "TITLE";
     private String headline = "HEADLINE";
-    private String description = "DESCRIPTION";
+    private SafeHtml description = null;
 
     private Widget toolStrip = null;
 
@@ -55,7 +57,13 @@ public class MultipleToOneLayout {
         return this;
     }
 
+    @Deprecated
     public MultipleToOneLayout setDescription(String description) {
+        this.description = new SafeHtmlBuilder().appendEscaped(description).toSafeHtml();
+        return this;
+    }
+
+    public MultipleToOneLayout setDescription(SafeHtml description) {
         this.description = description;
         return this;
     }

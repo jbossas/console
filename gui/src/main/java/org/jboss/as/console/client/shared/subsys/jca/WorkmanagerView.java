@@ -2,18 +2,13 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -22,12 +17,18 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
  * @author Heiko Braun
  * @date 11/29/11
  */
-public class JcaBootstrapEditor {
+public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerPresenter.MyView {
 
     private ListDataProvider<JcaWorkmanager> dataProvider;
+    private WorkmanagerPresenter presenter;
 
-    Widget asWidget() {
+    @Override
+    public void setPresenter(WorkmanagerPresenter presenter) {
+        this.presenter = presenter;
+    }
 
+    @Override
+    public Widget createWidget() {
         DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
         dataProvider = new ListDataProvider<JcaWorkmanager>();
         dataProvider.addDataDisplay(table);
@@ -46,39 +47,25 @@ public class JcaBootstrapEditor {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               // TODO
+                // TODO
             }
         }));
 
         topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               // TODO
+                // TODO
             }
         }));
 
-
-        Form<JcaBootstrapContext> form = new Form<JcaBootstrapContext>(JcaBootstrapContext.class);
-
-        TextItem contextName = new TextItem("name", "Name");
-        ComboBoxItem workmanager = new ComboBoxItem("workmanger", "Workmanager");
-
-        form.setFields(contextName, workmanager);
-        form.setNumColumns(2);
-
-
-        SafeHtmlBuilder description = new SafeHtmlBuilder();
-        description.appendEscaped("Bootstrap context for resource adapters. Each context does reference a workmanager. ");
-        description.appendHtmlConstant("<a href='#jca-workmanager'>(Configure new WorkManager)</a>");
-
         Widget panel = new MultipleToOneLayout()
-                .setPlain(true)
-                .setTitle("Boostrap")
-                .setHeadline("JCA Boostrap Contexts")
-                .setDescription(description.toSafeHtml())
-                .setMaster("Configured Contexts", table)
+                .setTitle("Workmanager")
+                .setHeadline("Workmanager Configuration")
+                .setDescription("Work manager for resource adapters.")
+                .setMaster("Configured Workmanager", table)
                 .setTopLevelTools(topLevelTools.asWidget())
-                .setDetail("Bootstrap Context", form.asWidget())
+                .addDetail("Long Running Threads", new HTML())
+                .addDetail("Short Running Threads", new HTML())
                 .build();
 
         return panel;
