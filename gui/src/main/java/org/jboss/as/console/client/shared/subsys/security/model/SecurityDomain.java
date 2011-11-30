@@ -30,7 +30,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 public interface SecurityDomain extends NamedEntity {
     @Override
     @Binding(detypedName="name", key=true)
-    @FormItem(label="Name",
+    @FormItem(localLabel="common_label_name",
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
@@ -40,7 +40,7 @@ public interface SecurityDomain extends NamedEntity {
     void setName(String name);
 
     @Binding(detypedName="cache-type")
-    @FormItem(label="Cache Type",
+    @FormItem(localLabel="subsys_security_cacheType",
               required=false,
               tabName="common_label_attributes")
     String getCacheType();

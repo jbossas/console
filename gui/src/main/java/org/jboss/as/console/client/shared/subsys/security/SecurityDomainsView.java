@@ -25,6 +25,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
@@ -125,7 +126,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
 
     @Override
     protected String getEntityDisplayName() {
-        return "Security Domains";
+        return Console.CONSTANTS.subsys_security_domains();
     }
 
     @Override

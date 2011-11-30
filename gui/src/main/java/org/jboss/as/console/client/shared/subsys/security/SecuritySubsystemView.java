@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -96,6 +97,6 @@ public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
 
     @Override
     protected String getEntityDisplayName() {
-        return "Security Subsystem";
+        return Console.CONSTANTS.subsys_security();
     }
 }

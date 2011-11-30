@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
 import org.jboss.as.console.client.shared.subsys.security.wizard.GenericSecurityDomainWizard;
 
@@ -31,17 +32,17 @@ public class AuditEditor extends AbstractDomainDetailEditor<GenericSecurityDomai
 
     @Override
     String getEntityName() {
-        return "Audit";
+        return Console.CONSTANTS.subsys_security_audit();
     }
 
     @Override
     String getStackElementName() {
-        return getEntityName() + " Provider Module";
+        return Console.CONSTANTS.subsys_security_auditProviderModule();
     }
 
     @Override
     String getStackName() {
-        return "Provider Modules";
+        return Console.CONSTANTS.subsys_security_providerModules();
     }
 
     @Override

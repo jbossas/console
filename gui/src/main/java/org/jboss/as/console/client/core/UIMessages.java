@@ -32,7 +32,7 @@ public interface UIMessages extends Messages {
     String deleteServerConfig();
 
     String deleteServerConfigConfirm(String name);
-    
+
     String deploymentsFor(String serverGroup);
 
     String common_validation_portOffsetUndefined(String errMessage);
@@ -106,6 +106,8 @@ public interface UIMessages extends Messages {
 
     String subsys_messaging(String providerName);
 
+    String temporarilyUnavailable();
+
     String deleteTitle(String name);
     String deleteConfirm(String name);
 
@@ -126,7 +128,7 @@ public interface UIMessages extends Messages {
     String modificationFailed(String name);
 
     String serversRunningOnHost(String hostName);
-    
+
     String selectServerGroups();
     String selectServerGroupsFor(String deploymentRuntimeName);
     String alreadyAssignedToAllGroups(String deploymentRuntimeName);

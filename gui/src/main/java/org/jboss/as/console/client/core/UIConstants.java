@@ -117,7 +117,7 @@ public interface UIConstants extends Constants {
     String common_label_changeActivation();
     String common_label_success();
     String common_label_reset();
-    
+
     String common_label_selectedGroups();
 
     String subsys_jca_dataSources();
@@ -282,6 +282,26 @@ public interface UIConstants extends Constants {
     String subsys_ejb3_timerService();
     String subsys_ejb3_timerServicePath();
     String subsys_ejb3_timerServiceRelativeTo();
+
+    String subsys_security();
+    String subsys_security_domains();
+    String subsys_security_deepCopySubjects();
+    String subsys_security_cacheType();
+    String subsys_security_audit();
+    String subsys_security_auditProviderModule();
+    String subsys_security_providerModules();
+    String subsys_security_codeField();
+    String subsys_security_flagField();
+    String subsys_security_typeField();
+    String subsys_security_authentication();
+    String subsys_security_authenticationLoginModule();
+    String subsys_security_loginModules();
+    String subsys_security_authorization();
+    String subsys_security_authorizationPolicy();
+    String subsys_security_policies();
+    String subsys_security_mapping();
+    String subsys_security_mappingModule();
+    String subsys_security_modules();
 
     String common_label_serverGroupConfigurations();
     String common_label_serverGroupDeployments();

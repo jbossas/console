@@ -80,7 +80,7 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
         layout.setStyleName("window-content");
         form = new Form<T>(entityClass);
 
-        TextBoxItem code = new TextBoxItem("code", "Code");
+        TextBoxItem code = new TextBoxItem("code", Console.CONSTANTS.subsys_security_codeField());
         FormItem<?>[] customFields = getCustomFields();
         form.setFields(new FormItem [] {code}, customFields);
 
@@ -91,7 +91,7 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
         layout.add(propEditor.asWidget());
 
         DialogueOptions options = new DialogueOptions(
-            "OK", new ClickHandler() {
+            Console.CONSTANTS.common_label_save(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     FormValidation validation = form.validate();
@@ -115,7 +115,7 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
                         editor.closeWizard();
                     }
                 }
-            }, "Cancel", new ClickHandler() {
+            }, Console.CONSTANTS.common_label_cancel(), new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     editor.closeWizard();

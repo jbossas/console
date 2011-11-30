@@ -28,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
 @Address("/subsystem=security")
 public interface SecuritySubsystem {
     @Binding(detypedName="deep-copy-subject-mode")
-    @FormItem(label="Deep Copy Subjects",
+    @FormItem(localLabel="subsys_security_deepCopySubjects",
               required=false,
               formItemTypeForAdd="CHECK_BOX",
               formItemTypeForEdit="CHECK_BOX",
