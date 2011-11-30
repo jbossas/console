@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -19,11 +20,13 @@ public class JcaBaseEditor {
 
     Form<JcaArchiveValidation> archiveForm;
     Form<JcaBeanValidation> validationForm;
+    Form<JcaConnectionManager> ccmForm;
 
     Widget asWidget() {
 
         archiveForm = new Form<JcaArchiveValidation>(JcaArchiveValidation.class);
         archiveForm.setNumColumns(2);
+        archiveForm.setEnabled(false);
 
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Is Enabled?");
         CheckBoxItem failWarn = new CheckBoxItem("failOnWarn", "Fail on Warn?");
@@ -56,6 +59,7 @@ public class JcaBaseEditor {
 
         validationForm = new Form<JcaBeanValidation>(JcaBeanValidation.class);
         validationForm.setNumColumns(2);
+        validationForm.setEnabled(false);
 
         CheckBoxItem validationEnabled = new CheckBoxItem("enabled", "Is Enabled?");
 
@@ -82,6 +86,38 @@ public class JcaBaseEditor {
         validationPanel.add(validationForm.asWidget());
 
         // ----
+        // ----
+
+
+        ccmForm = new Form<JcaConnectionManager>(JcaConnectionManager.class);
+        ccmForm.setNumColumns(2);
+        ccmForm.setEnabled(false);
+
+        CheckBoxItem errorEnabled = new CheckBoxItem("error", "Error Log Enabled?");
+        CheckBoxItem debugEnabled = new CheckBoxItem("debug", "Debug Log Enabled?");
+
+        ccmForm.setFields(errorEnabled, debugEnabled);
+
+        FormToolStrip<JcaConnectionManager> ccmTools = new FormToolStrip<JcaConnectionManager>(
+                ccmForm,
+                new FormToolStrip.FormCallback<JcaConnectionManager>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+
+                    }
+
+                    @Override
+                    public void onDelete(JcaConnectionManager entity) {
+
+                    }
+                }
+        );
+        ccmTools.providesDeleteOp(false);
+
+        VerticalPanel ccmPanel = new VerticalPanel();
+        ccmPanel.add(ccmTools.asWidget());
+        ccmPanel.add(ccmForm.asWidget());
+
 
         Widget panel = new OneToOneLayout()
                 .setPlain(true)
@@ -89,11 +125,24 @@ public class JcaBaseEditor {
                 .setHeadline("JCA Common Config")
                 .setDescription("The Java EE Connector Architecture (JCA) subsystem providing general configuration for resource adapters.")
                 .setMaster("", new HTML())
+                .addDetail("Connection Manager", ccmPanel)
                 .addDetail("Archive Validation", archivePanel)
                 .addDetail("Bean Validaton", validationPanel)
                 .build();
 
         return panel;
 
+    }
+
+    public void setBeanSettings(JcaBeanValidation jcaBeanValidation) {
+        validationForm.edit(jcaBeanValidation);
+    }
+
+    public void setArchiveSettings(JcaArchiveValidation jcaArchiveValidation) {
+        archiveForm.edit(jcaArchiveValidation);
+    }
+
+    public void setCCMSettings(JcaConnectionManager jcaConnectionManager) {
+        ccmForm.edit(jcaConnectionManager);
     }
 }

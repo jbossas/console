@@ -4,6 +4,8 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 
 import java.util.List;
@@ -51,5 +53,20 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
     @Override
     public void setWorkManagers(List<JcaWorkmanager> managers) {
         workmanagerEditor.setManagers(managers);
+    }
+
+    @Override
+    public void setBeanSettings(JcaBeanValidation jcaBeanValidation) {
+        baseEditor.setBeanSettings(jcaBeanValidation);
+    }
+
+    @Override
+    public void setArchiveSettings(JcaArchiveValidation jcaArchiveValidation) {
+        baseEditor.setArchiveSettings(jcaArchiveValidation);
+    }
+
+    @Override
+    public void setCCMSettings(JcaConnectionManager jcaConnectionManager) {
+        baseEditor.setCCMSettings(jcaConnectionManager);
     }
 }

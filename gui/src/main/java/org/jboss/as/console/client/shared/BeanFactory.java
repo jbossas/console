@@ -54,6 +54,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -200,5 +201,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JcaBootstrapContext> JcaBootstrapContext();
     AutoBean<JcaBeanValidation> JcaBeanValidation();
     AutoBean<JcaWorkmanager> JcaWorkmanager();
+    AutoBean<JcaConnectionManager> JcaConnectionManager();
 
 }
