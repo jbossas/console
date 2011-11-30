@@ -12,6 +12,8 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -23,7 +25,9 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
  * @author Heiko Braun
  * @date 11/29/11
  */
-public class WorkmanagerPresenter extends Presenter<WorkmanagerPresenter.MyView, WorkmanagerPresenter.MyProxy> {
+public class WorkmanagerPresenter
+        extends Presenter<WorkmanagerPresenter.MyView, WorkmanagerPresenter.MyProxy>
+        implements PropertyManagement {
 
     private final PlaceManager placeManager;
 
@@ -82,5 +86,30 @@ public class WorkmanagerPresenter extends Presenter<WorkmanagerPresenter.MyView,
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

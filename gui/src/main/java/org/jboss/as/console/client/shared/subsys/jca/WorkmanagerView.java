@@ -1,17 +1,11 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
-import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * @author Heiko Braun
@@ -21,6 +15,8 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
 
     private ListDataProvider<JcaWorkmanager> dataProvider;
     private WorkmanagerPresenter presenter;
+    private ThreadPoolEditor shortRunning;
+    private ThreadPoolEditor longRunning;
 
     @Override
     public void setPresenter(WorkmanagerPresenter presenter) {
@@ -29,45 +25,24 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
 
     @Override
     public Widget createWidget() {
-        DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
-        dataProvider = new ListDataProvider<JcaWorkmanager>();
-        dataProvider.addDataDisplay(table);
 
-        TextColumn<JcaWorkmanager> name = new TextColumn<JcaWorkmanager>() {
-            @Override
-            public String getValue(JcaWorkmanager record) {
-                return record.getName();
-            }
-        };
-
-        table.addColumn(name, "Name");
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
 
 
-        ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        }));
+        shortRunning = new ThreadPoolEditor(presenter);
+        longRunning = new ThreadPoolEditor(presenter);
 
-        topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO
-            }
-        }));
+        tabLayoutpanel.add(shortRunning.asWidget(), "Short Running Threads");
+        tabLayoutpanel.add(longRunning.asWidget(), "Long Running Threads");
 
-        Widget panel = new MultipleToOneLayout()
-                .setTitle("Workmanager")
-                .setHeadline("Workmanager Configuration")
-                .setDescription("Work manager for resource adapters.")
-                .setMaster("Configured Workmanager", table)
-                .setTopLevelTools(topLevelTools.asWidget())
-                .addDetail("Long Running Threads", new HTML())
-                .addDetail("Short Running Threads", new HTML())
-                .build();
 
-        return panel;
+        tabLayoutpanel.selectTab(0);
+
+        // ----
+
+
+
+        return tabLayoutpanel;
     }
 }

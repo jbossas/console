@@ -124,23 +124,6 @@ public class SubsystemTreeBuilder {
                             continue;
                         }
 
-                        // jca -----------------------------------
-                        else if("jca".equals(key))
-                        {
-
-                            //TreeItem logging = new DefaultTreeItem("Logging");
-
-                            final LHSNavTreeItem jca  = new LHSNavTreeItem("JCA", NameTokens.JcaPresenter);
-                            final LHSNavTreeItem workmanager = new LHSNavTreeItem("JCA Workmanager", NameTokens.JcaWorkManager);
-
-                            groupTreeItem.addItem(jca);
-                            groupTreeItem.addItem(workmanager);
-
-                            subsysTree.addItem(groupTreeItem);
-
-                            continue;
-                        }
-
 
                         String token = parentPlace + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
