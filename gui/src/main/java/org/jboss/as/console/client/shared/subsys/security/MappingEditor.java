@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.security;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewMappingModuleWizard;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -42,22 +43,22 @@ public class MappingEditor extends AbstractDomainDetailEditor<MappingModule> {
                 return record.getType();
             }
         };
-        table.addColumn(typeColumn, "Type");
+        table.addColumn(typeColumn, Console.CONSTANTS.subsys_security_flagField());
     }
 
     @Override
     String getEntityName() {
-        return "Mapping";
+        return Console.CONSTANTS.subsys_security_mapping();
     }
 
     @Override
     String getStackElementName() {
-        return getEntityName() + " Module";
+        return Console.CONSTANTS.subsys_security_mappingModule();
     }
 
     @Override
     String getStackName() {
-        return "Modules";
+        return Console.CONSTANTS.subsys_security_modules();
     }
 
     @Override

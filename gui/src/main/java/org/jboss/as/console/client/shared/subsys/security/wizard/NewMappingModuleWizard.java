@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.wizard;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
 import org.jboss.as.console.client.shared.subsys.security.MappingEditor;
@@ -38,7 +39,7 @@ public class NewMappingModuleWizard extends GenericSecurityDomainWizard<MappingM
 
     @Override
     FormItem<?>[] getCustomFields() {
-        TextBoxItem type = new TextBoxItem("type", "Type");
+        TextBoxItem type = new TextBoxItem("type", Console.CONSTANTS.subsys_security_typeField());
         return new FormItem [] {type};
     }
 

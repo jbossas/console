@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.subsys.security.wizard;
 
 import java.util.List;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
 import org.jboss.as.console.client.shared.subsys.security.AuthEditor;
@@ -43,7 +44,7 @@ public class NewAuthPolicyModuleWizard <T extends AbstractAuthData> extends Gene
 
     @Override
     FormItem<?>[] getCustomFields() {
-        ListBoxItem flag = new ListBoxItem("flag", "Flag");
+        ListBoxItem flag = new ListBoxItem("flag", Console.CONSTANTS.subsys_security_flagField());
         flag.setChoices(flagChoices, flagChoices.get(0));
         return new FormItem [] {flag};
     }
