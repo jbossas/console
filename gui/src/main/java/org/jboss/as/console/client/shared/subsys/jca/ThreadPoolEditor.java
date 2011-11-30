@@ -3,7 +3,6 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -31,6 +30,7 @@ public class ThreadPoolEditor {
     PropertyEditor propertyEditor;
 
     private WorkmanagerPresenter presenter;
+    private String contextName;
 
     public ThreadPoolEditor(WorkmanagerPresenter presenter) {
         this.presenter = presenter;
@@ -103,7 +103,6 @@ public class ThreadPoolEditor {
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("Thread Pool")
-                .setHeadline("Workmanager Thread Pool Configuration")
                 .setDescription("A thread pool executor with a bounded queue used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
                 .setTopLevelTools(topLevelTools.asWidget())
@@ -113,5 +112,9 @@ public class ThreadPoolEditor {
                 .build();
 
         return panel;
+    }
+
+    public void setContextName(String contextName) {
+        this.contextName = contextName;
     }
 }

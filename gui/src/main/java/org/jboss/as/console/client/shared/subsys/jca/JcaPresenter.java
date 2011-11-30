@@ -18,12 +18,17 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
+import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -43,7 +48,12 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private BeanFactory factory;
     private DefaultWindow window;
 
-    private EntityAdapter<JcaArchiveValidation> archiveAdapter;
+    private EntityAdapter<JcaWorkmanager> workManagerAdapter;
+    private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JcaPresenter)
@@ -52,6 +62,8 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     public interface MyView extends View {
         void setPresenter(JcaPresenter presenter);
+
+        void setWorkManagers(List<JcaWorkmanager> managers);
     }
 
     @Inject
@@ -69,8 +81,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         this.metaData = metaData;
         this.dispatcher = dispatcher;
 
-        this.beanMetaData = metaData.getBeanMetaData(JcaArchiveValidation.class);
-        this.archiveAdapter = new EntityAdapter<JcaArchiveValidation>(JcaArchiveValidation.class, metaData);
+        this.beanMetaData = metaData.getBeanMetaData(JcaWorkmanager.class);
+        this.workManagerAdapter = new EntityAdapter<JcaWorkmanager>(JcaWorkmanager.class, metaData);
+        this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
 
         this.factory = factory;
     }
@@ -85,6 +98,67 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
+        loadData();
+    }
+
+     private void loadData() {
+
+        loadWorkManager();
+    }
+
+    private void loadWorkManager() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(CHILD_TYPE).set("workmanager");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                List<Property> children = response.get(RESULT).asPropertyList();
+                List<JcaWorkmanager> managers = new ArrayList<JcaWorkmanager>(children.size());
+
+                for(Property child : children)
+                {
+                    ModelNode value = child.getValue();
+                    System.out.println(value);
+
+                    JcaWorkmanager entity = workManagerAdapter.fromDMR(value);
+
+                    if(value.hasDefined("long-running-threads"))
+                    {
+                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("long-running-threads").asPropertyList());
+                        entity.setLongRunning(pools);
+                    }
+
+                     if(value.hasDefined("short-running-threads"))
+                    {
+                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("short-running-threads").asPropertyList());
+                        entity.setShortRunning(pools);
+                    }
+
+                    managers.add(entity);
+
+                }
+
+                getView().setWorkManagers(managers);
+            }
+        });
+    }
+
+    private List<BoundedQueueThreadPool> parseThreadPool(List<Property> values) {
+        List<BoundedQueueThreadPool> result = new ArrayList<BoundedQueueThreadPool>();
+
+        for(Property value : values)
+        {
+            result.add(poolAdapter.fromDMR(value.getValue()));
+        }
+
+        return result;
     }
 
     @Override

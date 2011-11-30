@@ -45,4 +45,10 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
 
         return tabLayoutpanel;
     }
+
+    @Override
+    public void setWorkManagerName(String workManagerName) {
+        shortRunning.setContextName(workManagerName);
+        longRunning.setContextName(workManagerName);
+    }
 }

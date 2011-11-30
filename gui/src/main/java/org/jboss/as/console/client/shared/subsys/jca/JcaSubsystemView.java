@@ -4,6 +4,9 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -14,7 +17,7 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
     private JcaPresenter presenter;
     private JcaBootstrapEditor boostrapEditor;
     private JcaBaseEditor baseEditor;
-    private WorkmanagerEditor workmanagerEditor;
+    private WorkmanagerListView workmanagerEditor;
 
     @Override
     public void setPresenter(JcaPresenter presenter) {
@@ -28,7 +31,7 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        workmanagerEditor = new WorkmanagerEditor();
+        workmanagerEditor = new WorkmanagerListView(presenter);
         boostrapEditor = new JcaBootstrapEditor();
         baseEditor = new JcaBaseEditor();
 
@@ -43,5 +46,10 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
 
 
         return tabLayoutpanel;
+    }
+
+    @Override
+    public void setWorkManagers(List<JcaWorkmanager> managers) {
+        workmanagerEditor.setManagers(managers);
     }
 }
