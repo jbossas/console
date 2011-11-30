@@ -63,6 +63,7 @@ public class SubsystemMetaData {
         groups.put(SECURITY, new SubsystemGroup(SECURITY));
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OSGI, new SubsystemGroup(OSGI));
+        groups.put(INFINISPAN, new SubsystemGroup(INFINISPAN));
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
@@ -98,7 +99,7 @@ public class SubsystemMetaData {
 
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
 
-        groups.get(OTHER).getItems().add(new SubsystemGroupItem("Infinispan", NameTokens.CacheContainerPresenter, Boolean.TRUE));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.CacheContainerPresenter));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));

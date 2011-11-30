@@ -189,6 +189,7 @@ public interface UIConstants extends Constants {
     String subsys_infinispan_aquireTimeout();
     String subsys_infinispan_concurrencyLevel();
     String subsys_infinispan_evictionStrategy();
+    String subsys_infinispan_transport();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

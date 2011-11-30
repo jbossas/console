@@ -116,10 +116,12 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
             return;
 
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
+//        System.out.println("executing:" );
+//        System.out.println(batch);
         dispatcher.execute(new DMRAction(batch), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
-                Console.info("Success: updated Timer Service");
+                Console.info("Update successful");
                 loadEntities(null);
             }
 

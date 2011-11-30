@@ -174,8 +174,11 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<RuntimeMetric> runtime();
     AutoBean<OSMetric> osmetric();
 
+    // Infinispan subsystem
     AutoBean<CacheContainer> cacheContainer();
+    AutoBean<DefaultCacheContainer> defaultCacheContainer();
 
+    // Thread subsystem
     AutoBean<ThreadFactory> threadFactory();
     AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool();
     AutoBean<UnboundedQueueThreadPool> unboundedQueueThreadPool();
