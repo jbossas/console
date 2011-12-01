@@ -18,16 +18,16 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import com.google.gwt.user.cellview.client.CellTable;
+import java.util.EnumSet;
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-
-import java.util.EnumSet;
-import java.util.Map;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.
@@ -40,7 +40,7 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
     private String entitiesName;
     private FormAdapter<T> form;
     private EntityToDmrBridge bridge;
-    //private EnumSet<FrameworkButton> hideButtons;
+    private EnumSet<FrameworkButton> hideButtons;
     private AddressBinding address;
 
     /**
@@ -63,7 +63,7 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
         this.form = form;
         this.bridge = presenter.getEntityBridge();
         this.address = address;
-       // this.hideButtons = hideButtons;
+        this.hideButtons = hideButtons;
     }
 
     public EntityToDmrBridge getBridge() {
@@ -94,25 +94,27 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
         }
         else
         {
-            // toolstrip
-            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
-                    form,
-                    new FormToolStrip.FormCallback<T>() {
-                        @Override
-                        public void onSave(Map<String, Object> changeset) {
-                            bridge.onSaveDetails(form.getEditedEntity(), changeset);
+            if (!hideButtons.contains(FrameworkButton.EDIT_SAVE)) {
+                // toolstrip
+                FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+                        form,
+                        new FormToolStrip.FormCallback<T>() {
+                            @Override
+                            public void onSave(Map<String, Object> changeset) {
+                                bridge.onSaveDetails(form.getEditedEntity(), changeset);
+                            }
+
+                            @Override
+                            public void onDelete(T entity) {
+                                bridge.onRemove(entity);
+                            }
                         }
+                );
 
-                        @Override
-                        public void onDelete(T entity) {
-                            bridge.onRemove(entity);
-                        }
-                    }
-            );
+                toolStrip.providesDeleteOp(false);  // belongs to the top
 
-            toolStrip.providesDeleteOp(false);  // belongs to the top
-
-            layout.add(toolStrip.asWidget());
+                layout.add(toolStrip.asWidget());
+            }
 
             // help panel
             if (address != null) {
@@ -131,12 +133,6 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
 
         return layout;
     }
-
-    /*
-    @Deprecated
-    public void bind(CellTable<T> entityTable) {
-        form.bind(entityTable);
-    }*/
 
     /**
      * Set the state of the form and buttons if editing details is enabled.
