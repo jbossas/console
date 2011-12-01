@@ -37,12 +37,7 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
         tabLayoutpanel.add(shortRunning.asWidget(), "Short Running Threads");
         tabLayoutpanel.add(longRunning.asWidget(), "Long Running Threads");
 
-
         tabLayoutpanel.selectTab(0);
-
-        // ----
-
-
 
         return tabLayoutpanel;
     }
@@ -55,6 +50,7 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
 
     @Override
     public void setWorkManager(JcaWorkmanager manager) {
+
         shortRunning.setPools(manager.getShortRunning());
         longRunning.setPools(manager.getLongRunning());
     }

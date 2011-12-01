@@ -194,6 +194,7 @@ public class ThreadPoolEditor {
 
 
     public void setPools(List<BoundedQueueThreadPool> pools) {
+
         dataProvider.setList(pools);
 
         if(!pools.isEmpty())

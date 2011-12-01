@@ -129,13 +129,15 @@ public class WorkmanagerPresenter
         loadWorkManager.execute(new SimpleCallback<List<JcaWorkmanager>>() {
             @Override
             public void onSuccess(List<JcaWorkmanager> result) {
+
                 for(JcaWorkmanager manager : result)
                 {
                     if(manager.getName().equals(workManagerName))
+                    {
                         getView().setWorkManager(manager);
-                    break;
+                        break;
+                    }
                 }
-
             }
         });
     }
