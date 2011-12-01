@@ -97,7 +97,11 @@ public class ThreadPoolEditor {
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
                                     SingleSelectionModel<BoundedQueueThreadPool> selectionModel = (SingleSelectionModel<BoundedQueueThreadPool>) table.getSelectionModel();
-                                    presenter.onRemovePoolConfig(contextName, selectionModel.getSelectedObject());
+                                    presenter.onRemovePoolConfig(
+                                            contextName,
+                                            shortRunning,
+                                            selectionModel.getSelectedObject()
+                                    );
                                 }
                             }
                         });

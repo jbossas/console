@@ -1,9 +1,6 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -29,8 +26,8 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -38,7 +35,7 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 
 /**
@@ -50,16 +47,12 @@ public class WorkmanagerPresenter
         implements PropertyManagement {
 
     private PlaceManager placeManager;
-
     private RevealStrategy revealStrategy;
-    private ApplicationMetaData metaData;
     private DispatchAsync dispatcher;
 
-    private BeanMetaData beanMetaData;
     private BeanFactory factory;
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
-    private EntityAdapter<JcaWorkmanager> adapter;
     private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
     private String workManagerName;
 
@@ -103,13 +96,11 @@ public class WorkmanagerPresenter
         this.placeManager = placeManager;
 
         this.revealStrategy = revealStrategy;
-        this.metaData = metaData;
         this.dispatcher = dispatcher;
 
         this.factory = factory;
         this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
 
-        this.adapter = new EntityAdapter<JcaWorkmanager>(EntityAdapter.class, metaData);
         this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
     }
 
@@ -260,11 +251,79 @@ public class WorkmanagerPresenter
         });
     }
 
-    public void onRemovePoolConfig(String contextName, BoundedQueueThreadPool entity) {
+    public void onRemovePoolConfig(
+            String managerName,
+            boolean isShortRunning, BoundedQueueThreadPool entity) {
 
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("workmanager", managerName);
+
+        if(isShortRunning)
+            operation.get(ADDRESS).add("short-running-threads", entity.getName());
+        else
+            operation.get(ADDRESS).add("long-running-threads", entity.getName());
+
+        operation.get(OP).set(REMOVE);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to remove pool config", response.getFailureDescription());
+                else
+                    Console.info("Success: Removed  pool config");
+
+                loadWorkManager();
+            }
+        });
     }
 
     public void launchNewPoolDialoge(String contextName, boolean shortRunning) {
+        window = new ModalWindowLayout()
+                .setTitle("New Pool Configuration")
+                .setWidget(new NewPoolWizard(this, shortRunning).asWidget())
+                .build();
+    }
 
+    public void createNewPool(BoundedQueueThreadPool pool, boolean shortRunning) {
+
+        closeDialoge();
+
+        ModelNode operation = poolAdapter.fromEntity(pool);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("workmanager", workManagerName);
+        operation.get(OP).set(ADD);
+
+        if(shortRunning)
+            operation.get(ADDRESS).add("short-running-threads", pool.getName());
+        else
+            operation.get(ADDRESS).add("long-running-threads", pool.getName());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to create pool config", response.getFailureDescription());
+                else
+                    Console.info("Success: Created pool config");
+
+                loadWorkManager();
+            }
+        });
+    }
+
+    public void closeDialoge() {
+        window.hide();
     }
 }
