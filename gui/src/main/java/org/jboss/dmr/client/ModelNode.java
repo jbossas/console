@@ -48,7 +48,7 @@ public class ModelNode implements Cloneable {
 
     private boolean protect = false;
     private ModelValue value = ModelValue.UNDEFINED;
-    
+
     public ModelNode() {
     }
 
@@ -1341,5 +1341,10 @@ public class ModelNode implements Cloneable {
 
     public boolean isFailure() {
         return hasDefined("outcome") && !get("outcome").asString().equals("success");
+    }
+
+    public String getFailureDescription() {
+        String desc = hasDefined("failure-description") ? get("failure-description").asString() : "No failure-description provided";
+        return desc;
     }
 }

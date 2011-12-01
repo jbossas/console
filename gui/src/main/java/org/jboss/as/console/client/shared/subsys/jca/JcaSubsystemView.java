@@ -30,23 +30,18 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
     @Override
     public Widget createWidget() {
 
-
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         workmanagerEditor = new WorkmanagerListView(presenter);
         boostrapEditor = new JcaBootstrapEditor();
-        baseEditor = new JcaBaseEditor();
+        baseEditor = new JcaBaseEditor(presenter);
 
         tabLayoutpanel.add(baseEditor.asWidget(), "Common Config");
-        tabLayoutpanel.add(boostrapEditor.asWidget(), "Boostrap Contexts");
+        tabLayoutpanel.add(boostrapEditor.asWidget(), "Bootstrap Contexts");
         tabLayoutpanel.add(workmanagerEditor.asWidget(), "Work Manager");
 
         tabLayoutpanel.selectTab(0);
-
-        // ----
-
-
 
         return tabLayoutpanel;
     }

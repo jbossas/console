@@ -9,6 +9,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -31,6 +32,7 @@ import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -56,10 +58,6 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private EntityAdapter<JcaConnectionManager> ccmAdapter;
 
     private LoadWorkmanagerCmd loadWorkManager;
-
-    public PlaceManager getPlaceManager() {
-        return placeManager;
-    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JcaPresenter)
@@ -220,4 +218,75 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
+
+    public void onSaveArchiveSettings(Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jca");
+        address.get(ADDRESS).add("archive-validation", "archive-validation");
+        ModelNode operation = archiveAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update JCA settings", response.getFailureDescription());
+                else
+                    Console.info("Success: Update JCA settings");
+
+                loadJcaSubsystem();
+            }
+        });
+    }
+
+    public void onSaveBeanSettings(Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jca");
+        address.get(ADDRESS).add("bean-validation", "bean-validation");
+        ModelNode operation = beanAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update JCA settings", response.getFailureDescription());
+                else
+                    Console.info("Success: Update JCA settings");
+
+                loadJcaSubsystem();
+            }
+        });
+    }
+
+    public void onSaveCCMSettings(Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jca");
+        address.get(ADDRESS).add("cached-connection-manager", "cached-connection-manager");
+        ModelNode operation = ccmAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update JCA settings", response.getFailureDescription());
+                else
+                    Console.info("Success: Update JCA settings");
+
+                loadJcaSubsystem();
+            }
+        });
+    }
+
 }

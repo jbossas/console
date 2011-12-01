@@ -18,9 +18,15 @@ import java.util.Map;
  */
 public class JcaBaseEditor {
 
-    Form<JcaArchiveValidation> archiveForm;
-    Form<JcaBeanValidation> validationForm;
-    Form<JcaConnectionManager> ccmForm;
+    private Form<JcaArchiveValidation> archiveForm;
+    private Form<JcaBeanValidation> validationForm;
+    private Form<JcaConnectionManager> ccmForm;
+
+    private JcaPresenter presenter;
+
+    public JcaBaseEditor(JcaPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
 
@@ -39,7 +45,7 @@ public class JcaBaseEditor {
                 new FormToolStrip.FormCallback<JcaArchiveValidation>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSaveArchiveSettings(changeset);
                     }
 
                     @Override
@@ -70,7 +76,7 @@ public class JcaBaseEditor {
                 new FormToolStrip.FormCallback<JcaBeanValidation>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSaveBeanSettings(changeset);
                     }
 
                     @Override
@@ -103,7 +109,7 @@ public class JcaBaseEditor {
                 new FormToolStrip.FormCallback<JcaConnectionManager>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSaveCCMSettings(changeset);
                     }
 
                     @Override
