@@ -16,6 +16,7 @@ import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class WorkmanagerListView {
 
     Widget asWidget() {
 
-        DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
+        final DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
         dataProvider = new ListDataProvider<JcaWorkmanager>();
         dataProvider.addDataDisplay(table);
         table.setSelectionModel(new SingleSelectionModel<JcaWorkmanager>());
@@ -85,14 +86,28 @@ public class WorkmanagerListView {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO
+                presenter.launchNewManagerDialogue();
             }
         }));
 
         topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO
+
+                Feedback.confirm(
+                        "Remove Work Manager",
+                        "Really remove this work manager?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                {
+                                    SingleSelectionModel<JcaWorkmanager> selectionModel = (SingleSelectionModel<JcaWorkmanager>) table.getSelectionModel();
+                                    presenter.onDeleteManager(selectionModel.getSelectedObject());
+                                }
+                            }
+                        });
+
             }
         }));
 

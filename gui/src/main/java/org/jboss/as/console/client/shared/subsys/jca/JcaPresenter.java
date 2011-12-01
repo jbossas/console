@@ -55,11 +55,14 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private EntityAdapter<JcaBeanValidation> beanAdapter;
     private EntityAdapter<JcaArchiveValidation> archiveAdapter;
     private EntityAdapter<JcaConnectionManager> ccmAdapter;
+    private EntityAdapter<JcaWorkmanager> managerAdapter;
 
     private LoadWorkmanagerCmd loadWorkManager;
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
     private List<JcaWorkmanager> managers;
+
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JcaPresenter)
@@ -93,6 +96,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         this.beanMetaData = metaData.getBeanMetaData(JcaWorkmanager.class);
         this.boostrapAdapter = new EntityAdapter<JcaBootstrapContext>(JcaBootstrapContext.class, metaData);
 
+        this.managerAdapter= new EntityAdapter<JcaWorkmanager>(JcaWorkmanager.class, metaData);
         this.beanAdapter = new EntityAdapter<JcaBeanValidation>(JcaBeanValidation.class, metaData);
         this.archiveAdapter = new EntityAdapter<JcaArchiveValidation>(JcaArchiveValidation.class, metaData);
         this.ccmAdapter = new EntityAdapter<JcaConnectionManager>(JcaConnectionManager.class, metaData);
@@ -336,7 +340,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info("Success: Update JCA settings");
 
-               loadWorkManager();
+                loadWorkManager();
             }
         });
     }
@@ -376,4 +380,62 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         window.hide();
     }
 
+    public void launchNewManagerDialogue() {
+        window = new ModalWindowLayout()
+                .setTitle("New Work Manager Context")
+                .setWidget(new NewManagerWizard(this).asWidget())
+                .build();
+    }
+
+    public void onDeleteManager(final JcaWorkmanager entity) {
+        if(entity.getName().equals("default"))
+        {
+            Console.error("The default work manager cannot be deleted!");
+            return;
+        }
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("workmanager", entity.getName());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to remove work manager", response.getFailureDescription());
+                else
+                    Console.info("Success: Removed work manager "+entity.getName());
+
+                loadWorkManager();
+            }
+        });
+    }
+
+    public void createNewManager(final JcaWorkmanager entity) {
+        closeDialoge();
+
+        ModelNode operation = managerAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("workmanager", entity.getName());
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to add work manager", response.getFailureDescription());
+                else
+                    Console.info("Success: Created work manager");
+
+                loadWorkManager();
+            }
+        });
+    }
 }

@@ -15,6 +15,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -72,11 +73,18 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
                         List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("long-running-threads").asPropertyList());
                         entity.setLongRunning(pools);
                     }
+                    else {
+                        entity.setLongRunning(Collections.EMPTY_LIST);
+                    }
 
                     if(value.hasDefined("short-running-threads"))
                     {
                         List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("short-running-threads").asPropertyList());
                         entity.setShortRunning(pools);
+                    }
+                    else
+                    {
+                        entity.setShortRunning(Collections.EMPTY_LIST);
                     }
 
                     managers.add(entity);
