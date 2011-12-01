@@ -22,7 +22,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -50,7 +50,6 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     private BeanMetaData beanMetaData;
     private BeanFactory factory;
-    private DefaultWindow window;
 
     private EntityAdapter<JcaBootstrapContext> boostrapAdapter;
     private EntityAdapter<JcaBeanValidation> beanAdapter;
@@ -58,7 +57,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private EntityAdapter<JcaConnectionManager> ccmAdapter;
 
     private LoadWorkmanagerCmd loadWorkManager;
-
+    private DefaultWindow window;
+    private DefaultWindow propertyWindow;
+    private List<JcaWorkmanager> managers;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JcaPresenter)
@@ -178,7 +179,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             @Override
             public void onSuccess(List<JcaWorkmanager> result) {
                 getView().setWorkManagers(result);
-
+                JcaPresenter.this.managers = result;
                 loadBootstrapContexts();
             }
         });
@@ -335,13 +336,44 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info("Success: Update JCA settings");
 
-                loadJcaSubsystem();
+               loadWorkManager();
             }
         });
     }
 
     public void launchNewContextDialogue() {
+        window = new ModalWindowLayout()
+                .setTitle("New Bootstrap Context")
+                .setWidget(new NewContextWizard(this, managers).asWidget())
+                .build();
+    }
 
+    public void createNewContext(final JcaBootstrapContext entity) {
+        closeDialoge();
+
+        ModelNode operation = boostrapAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("bootstrap-context", entity.getName());
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to add bootstrap context", response.getFailureDescription());
+                else
+                    Console.info("Success: Created bootstrap context");
+
+                loadWorkManager();
+            }
+        });
+    }
+
+    public void closeDialoge() {
+        window.hide();
     }
 
 }
