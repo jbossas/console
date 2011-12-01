@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.viewframework.builder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 
 /**
@@ -11,9 +12,9 @@ import org.jboss.ballroom.client.widgets.forms.Form;
  */
 public class FormLayout {
 
-
     private Form form;
     private FormHelpPanel help;
+    private FormToolStrip tools;
 
     public FormLayout setForm(Form form) {
         this.form = form;
@@ -26,10 +27,13 @@ public class FormLayout {
         return this;
     }
 
-    public Widget build() {
+    public FormLayout setSetTools(FormToolStrip tools) {
 
-        if(null==help)
-            throw new IllegalStateException("help not set");
+        this.tools = tools;
+        return this;
+    }
+
+    public Widget build() {
 
         if(null==form)
             throw new IllegalStateException("form not set");
@@ -37,7 +41,8 @@ public class FormLayout {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        layout.add(help.asWidget());
+        if(tools!=null)layout.add(tools.asWidget());
+        if(help!=null)layout.add(help.asWidget());
         layout.add(form.asWidget());
 
         return layout;

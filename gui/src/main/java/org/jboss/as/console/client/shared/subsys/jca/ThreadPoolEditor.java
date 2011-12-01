@@ -9,9 +9,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
-import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -22,6 +23,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -114,6 +116,50 @@ public class ThreadPoolEditor {
         attributesForm.bind(table);
         sizingForm.bind(table);
 
+        FormToolStrip<BoundedQueueThreadPool> sizingTools = new FormToolStrip<BoundedQueueThreadPool>(
+                sizingForm,
+                new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+
+                    }
+
+                    @Override
+                    public void onDelete(BoundedQueueThreadPool entity) {
+
+                    }
+                }
+        );
+        sizingTools.providesDeleteOp(false);
+
+        FormToolStrip<BoundedQueueThreadPool> attributesTools = new FormToolStrip<BoundedQueueThreadPool>(
+                attributesForm,
+                new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+
+                    }
+
+                    @Override
+                    public void onDelete(BoundedQueueThreadPool entity) {
+
+                    }
+                }
+        );
+        attributesTools.providesDeleteOp(false);
+
+        Widget attributesPanel = new FormLayout()
+                .setForm(attributesForm)
+                .setSetTools(attributesTools)
+                .build();
+
+
+        Widget sizingPanel = new FormLayout()
+                .setForm(sizingForm)
+                .setSetTools(sizingTools)
+                .build();
+
+
         // ---
 
         propertyEditor = new PropertyEditor(presenter);
@@ -133,8 +179,8 @@ public class ThreadPoolEditor {
                 .setDescription("A thread pool executor with a bounded queue used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
                 .setTopLevelTools(topLevelTools.asWidget())
-                .addDetail("Attributes", attributesForm.asWidget())
-                .addDetail("Sizing", sizingForm.asWidget())
+                .addDetail("Attributes", attributesPanel)
+                .addDetail("Sizing", sizingPanel)
                 .addDetail("Properties", propertyEditor.asWidget())
                 .build();
 
@@ -154,4 +200,5 @@ public class ThreadPoolEditor {
             table.getSelectionModel().setSelected(pools.get(0), true);
 
     }
+
 }

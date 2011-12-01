@@ -486,8 +486,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
         ModelNode operation = address.asResource(baseadress.getAdress(), dataSourceName);
         operation.get(OP).set("test-connection-in-pool");
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
             @Override
@@ -607,7 +605,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse response) {
                 ModelNode result = ModelNode.fromBase64(response.getResponseText());
-                System.out.println(result);
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });

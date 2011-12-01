@@ -18,6 +18,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
@@ -49,8 +50,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private BeanFactory factory;
     private DefaultWindow window;
 
-    private EntityAdapter<JcaWorkmanager> workManagerAdapter;
-    private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
+    private EntityAdapter<JcaBootstrapContext> boostrapAdapter;
     private EntityAdapter<JcaBeanValidation> beanAdapter;
     private EntityAdapter<JcaArchiveValidation> archiveAdapter;
     private EntityAdapter<JcaConnectionManager> ccmAdapter;
@@ -72,6 +72,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         void setBeanSettings(JcaBeanValidation jcaBeanValidation);
         void setArchiveSettings(JcaArchiveValidation jcaArchiveValidation);
         void setCCMSettings(JcaConnectionManager jcaConnectionManager);
+        void setBootstrapContexts(List<JcaBootstrapContext> contexts);
     }
 
     @Inject
@@ -90,8 +91,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         this.dispatcher = dispatcher;
 
         this.beanMetaData = metaData.getBeanMetaData(JcaWorkmanager.class);
-        this.workManagerAdapter = new EntityAdapter<JcaWorkmanager>(JcaWorkmanager.class, metaData);
-        this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
+        this.boostrapAdapter = new EntityAdapter<JcaBootstrapContext>(JcaBootstrapContext.class, metaData);
 
         this.beanAdapter = new EntityAdapter<JcaBeanValidation>(JcaBeanValidation.class, metaData);
         this.archiveAdapter = new EntityAdapter<JcaArchiveValidation>(JcaArchiveValidation.class, metaData);
@@ -157,9 +157,15 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
                 List<Property> steps = response.get(RESULT).asPropertyList();
 
-                JcaArchiveValidation jcaArchiveValidation = archiveAdapter.fromDMR(steps.get(0).getValue());
-                JcaBeanValidation jcaBeanValidation = beanAdapter.fromDMR(steps.get(1).getValue());
-                JcaConnectionManager jcaConnectionManager = ccmAdapter.fromDMR(steps.get(2).getValue());
+                JcaArchiveValidation jcaArchiveValidation = archiveAdapter.fromDMR(
+                        steps.get(0).getValue().get(RESULT).asObject()
+                );
+                JcaBeanValidation jcaBeanValidation = beanAdapter.fromDMR(
+                        steps.get(1).getValue().get(RESULT).asObject()
+                );
+                JcaConnectionManager jcaConnectionManager = ccmAdapter.fromDMR(
+                        steps.get(2).getValue().get(RESULT).asObject()
+                );
 
                 getView().setArchiveSettings(jcaArchiveValidation);
                 getView().setBeanSettings(jcaBeanValidation);
@@ -173,11 +179,42 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             @Override
             public void onSuccess(List<JcaWorkmanager> result) {
                 getView().setWorkManagers(result);
+
+                loadBootstrapContexts();
             }
         });
     }
 
+    private void loadBootstrapContexts() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(CHILD_TYPE).set("bootstrap-context");
+        operation.get(RECURSIVE).set(true);
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                List<Property> children = response.get(RESULT).asPropertyList();
+                List<JcaBootstrapContext> contexts = new ArrayList<JcaBootstrapContext>(children.size());
+
+                for(Property child : children)
+                {
+                    ModelNode value = child.getValue();
+                    JcaBootstrapContext entity = boostrapAdapter.fromDMR(value);
+                    contexts.add(entity);
+
+                }
+
+                getView().setBootstrapContexts(contexts);
+
+            }
+        });
+
+    }
 
     @Override
     protected void revealInParent() {

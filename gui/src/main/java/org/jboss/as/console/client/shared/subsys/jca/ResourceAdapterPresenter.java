@@ -317,7 +317,6 @@ public class ResourceAdapterPresenter
         }
         operation.get(STEPS).set(steps);
 
-        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
