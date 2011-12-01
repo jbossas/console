@@ -350,12 +350,6 @@ public class ServerGroupPresenter
         propertyWindow = new DefaultWindow("New System Property");
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
-        propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-
-            }
-        });
 
         propertyWindow.setWidget(
                 new NewPropertyWizard(this, group).asWidget()

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -225,7 +226,22 @@ public class ThreadPoolEditor {
                 .addDetail("Properties", propertyEditor.asWidget())
                 .build();
 
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                BoundedQueueThreadPool pool = ((SingleSelectionModel<BoundedQueueThreadPool>) table.getSelectionModel()).getSelectedObject();
+
+                String ref = createReferenceToken(pool);
+                propertyEditor.setProperties(ref, pool.getProperties());
+            }
+        });
         return panel;
+    }
+
+    private String createReferenceToken(BoundedQueueThreadPool pool) {
+        String type = shortRunning ? "short-running-threads":"long-running-threads";
+        return contextName+"/"+type+"/"+pool.getName();
     }
 
     public void setContextName(String contextName) {

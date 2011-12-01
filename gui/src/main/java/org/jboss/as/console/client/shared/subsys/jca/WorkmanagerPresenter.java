@@ -1,6 +1,9 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -17,11 +20,13 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
+import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -33,7 +38,7 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
 
 
 /**
@@ -53,6 +58,7 @@ public class WorkmanagerPresenter
     private BeanMetaData beanMetaData;
     private BeanFactory factory;
     private DefaultWindow window;
+    private DefaultWindow propertyWindow;
     private EntityAdapter<JcaWorkmanager> adapter;
     private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
     private String workManagerName;
@@ -153,29 +159,73 @@ public class WorkmanagerPresenter
         revealStrategy.revealInParent(this);
     }
 
-    @Override
-    public void onCreateProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onDeleteProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onChangeProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void launchNewPropertyDialoge(String reference) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     public void closePropertyDialoge() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        propertyWindow.hide();
+    }
+
+    public void launchNewPropertyDialoge(String reference) {
+
+        propertyWindow = new DefaultWindow("New Pool Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    public void onCreateProperty(final String poolName, final PropertyRecord prop)
+    {
+        if(propertyWindow!=null && propertyWindow.isShowing())
+        {
+            propertyWindow.hide();
+        }
+
+        String[] tokens = poolName.split("/");
+
+        ModelNode address = new ModelNode();
+        address.set(Baseadress.get());
+        address.add("subsystem", "jca");
+        address.add("workmanager", tokens[0]);
+        address.add(tokens[1], tokens[2]);
+        address.add("properties", prop.getKey());
+
+        CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadWorkManager();
+            }
+        });
+    }
+
+    public void onDeleteProperty(final String poolName, final PropertyRecord prop)
+    {
+        String[] tokens = poolName.split("/");
+
+        ModelNode address = new ModelNode();
+        address.set(Baseadress.get());
+        address.add("subsystem", "jca");
+        address.add("workmanager", tokens[0]);
+        address.add(tokens[1], tokens[2]);
+        address.add("properties", prop.getKey());
+
+        DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher,factory,address);
+
+        cmd.execute(prop, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadWorkManager();
+            }
+        });
+    }
+
+    @Override
+    public void onChangeProperty(String groupName, PropertyRecord prop) {
+        // do nothing
     }
 
     public void onSavePoolConfig(
@@ -194,8 +244,6 @@ public class WorkmanagerPresenter
             address.get(ADDRESS).add("long-running-threads", poolName);
 
         ModelNode operation = poolAdapter.fromChangeset(changeset, address);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

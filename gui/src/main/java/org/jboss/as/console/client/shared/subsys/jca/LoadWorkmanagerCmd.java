@@ -101,7 +101,11 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
 
         for(Property value : values)
         {
-            result.add(poolAdapter.fromDMR(value.getValue()));
+            BoundedQueueThreadPool pool = poolAdapter.fromDMR(value.getValue());
+            if(null==pool.getProperties())
+                pool.setProperties(Collections.EMPTY_LIST);
+
+            result.add(pool);
         }
 
         return result;
