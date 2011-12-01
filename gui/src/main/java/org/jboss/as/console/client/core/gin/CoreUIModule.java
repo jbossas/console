@@ -28,6 +28,7 @@ import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
@@ -110,6 +111,8 @@ import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
+import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
+import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DatasourceView;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
@@ -130,7 +133,6 @@ import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
-import org.jboss.as.console.client.shared.subsys.mail.MailSession;
 import org.jboss.as.console.client.shared.subsys.mail.MailSessionView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
@@ -477,6 +479,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JpaPresenter.MyView.class,
                 JpaView.class,
                 JpaPresenter.MyProxy.class);
+
+        bindPresenter(JacOrbPresenter.class,
+                JacOrbPresenter.MyView.class,
+                JacOrbView.class,
+                JacOrbPresenter.MyProxy.class);
 
         bindPresenter(MailPresenter.class,
                 MailPresenter.MyView.class,
