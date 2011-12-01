@@ -7,6 +7,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 11/29/11
@@ -29,7 +31,6 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-
         shortRunning = new ThreadPoolEditor(presenter);
         longRunning = new ThreadPoolEditor(presenter);
 
@@ -50,5 +51,11 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
     public void setWorkManagerName(String workManagerName) {
         shortRunning.setContextName(workManagerName);
         longRunning.setContextName(workManagerName);
+    }
+
+    @Override
+    public void setWorkManager(JcaWorkmanager manager) {
+        shortRunning.setPools(manager.getShortRunning());
+        longRunning.setPools(manager.getLongRunning());
     }
 }

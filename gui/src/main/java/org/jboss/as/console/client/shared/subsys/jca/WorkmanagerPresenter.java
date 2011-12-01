@@ -22,11 +22,14 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -51,6 +54,8 @@ public class WorkmanagerPresenter
     private EntityAdapter<JcaArchiveValidation> adapter;
     private String workManagerName;
 
+    private LoadWorkmanagerCmd loadWorkManager;
+
     public PlaceManager getPlaceManager() {
         return this.placeManager;
     }
@@ -73,6 +78,7 @@ public class WorkmanagerPresenter
     public interface MyView extends View {
         void setPresenter(WorkmanagerPresenter presenter);
         void setWorkManagerName(String workManagerName);
+        void setWorkManager(JcaWorkmanager manager);
     }
 
     @Inject
@@ -91,10 +97,8 @@ public class WorkmanagerPresenter
         this.metaData = metaData;
         this.dispatcher = dispatcher;
 
-        this.beanMetaData = metaData.getBeanMetaData(JcaArchiveValidation.class);
-        this.adapter = new EntityAdapter<JcaArchiveValidation>(JcaArchiveValidation.class, metaData);
-
         this.factory = factory;
+        this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
     }
 
     @Override
@@ -122,18 +126,16 @@ public class WorkmanagerPresenter
     }
 
     private void loadWorkManager() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "jca");
-        operation.get(CHILD_TYPE).set("workmanager");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadWorkManager.execute(new SimpleCallback<List<JcaWorkmanager>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+            public void onSuccess(List<JcaWorkmanager> result) {
+                for(JcaWorkmanager manager : result)
+                {
+                    if(manager.getName().equals(workManagerName))
+                        getView().setWorkManager(manager);
+                    break;
+                }
 
-                System.out.println(response);
             }
         });
     }

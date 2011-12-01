@@ -9,7 +9,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -56,6 +55,8 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private EntityAdapter<JcaArchiveValidation> archiveAdapter;
     private EntityAdapter<JcaConnectionManager> ccmAdapter;
 
+    private LoadWorkmanagerCmd loadWorkManager;
+
     public PlaceManager getPlaceManager() {
         return placeManager;
     }
@@ -97,6 +98,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         this.ccmAdapter = new EntityAdapter<JcaConnectionManager>(JcaConnectionManager.class, metaData);
 
         this.factory = factory;
+        this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
     }
 
     @Override
@@ -167,58 +169,15 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     }
 
     private void loadWorkManager() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "jca");
-        operation.get(CHILD_TYPE).set("workmanager");
-        operation.get(RECURSIVE).set(true);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadWorkManager.execute(new SimpleCallback<List<JcaWorkmanager>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-                List<Property> children = response.get(RESULT).asPropertyList();
-                List<JcaWorkmanager> managers = new ArrayList<JcaWorkmanager>(children.size());
-
-                for(Property child : children)
-                {
-                    ModelNode value = child.getValue();
-
-                    JcaWorkmanager entity = workManagerAdapter.fromDMR(value);
-
-                    if(value.hasDefined("long-running-threads"))
-                    {
-                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("long-running-threads").asPropertyList());
-                        entity.setLongRunning(pools);
-                    }
-
-                    if(value.hasDefined("short-running-threads"))
-                    {
-                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("short-running-threads").asPropertyList());
-                        entity.setShortRunning(pools);
-                    }
-
-                    managers.add(entity);
-
-                }
-
-                getView().setWorkManagers(managers);
+            public void onSuccess(List<JcaWorkmanager> result) {
+                getView().setWorkManagers(result);
             }
         });
     }
 
-    private List<BoundedQueueThreadPool> parseThreadPool(List<Property> values) {
-        List<BoundedQueueThreadPool> result = new ArrayList<BoundedQueueThreadPool>();
 
-        for(Property value : values)
-        {
-            result.add(poolAdapter.fromDMR(value.getValue()));
-        }
-
-        return result;
-    }
 
     @Override
     protected void revealInParent() {

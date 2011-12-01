@@ -61,7 +61,7 @@ public class WorkmanagerListView {
         };
 
         Column<JcaWorkmanager, JcaWorkmanager> option = new Column<JcaWorkmanager, JcaWorkmanager>(
-                new ButtonCell<JcaWorkmanager>("Edit >", new ActionCell.Delegate<JcaWorkmanager>() {
+                new ButtonCell<JcaWorkmanager>("Edit &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
                     @Override
                     public void execute(JcaWorkmanager selection) {
                         presenter.getPlaceManager().revealPlace(
@@ -99,7 +99,7 @@ public class WorkmanagerListView {
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("Workmanager")
-                .setHeadline("Workmanager Configuration")
+                .setHeadline("Workmanager Overview")
                 .setDescription("Work manager for resource adapters.")
                 .setMaster("Configured Workmanager", table)
                 .setTopLevelTools(topLevelTools.asWidget())

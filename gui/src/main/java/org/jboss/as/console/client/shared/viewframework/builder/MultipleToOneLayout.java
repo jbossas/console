@@ -41,6 +41,14 @@ public class MultipleToOneLayout {
     private Widget detailTools;
     private boolean isPlain;
 
+    private Widget headlineWidget = null;
+
+    public MultipleToOneLayout setHeadlineWidget(Widget widget)
+    {
+        this.headlineWidget = widget;
+        return this;
+    }
+
     public MultipleToOneLayout setTitle(String title)
     {
         this.title = title;
@@ -136,7 +144,15 @@ public class MultipleToOneLayout {
             layout.setWidgetTopHeight(scroll, offset, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 
-        panel.add(new ContentHeaderLabel(headline));
+        if(null==headlineWidget)
+        {
+            panel.add(new ContentHeaderLabel(headline));
+        }
+        else
+        {
+            panel.add(headlineWidget);
+        }
+
         panel.add(new HTML(description));
 
         if(master !=null)

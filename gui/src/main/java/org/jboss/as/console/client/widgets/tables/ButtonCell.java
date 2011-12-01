@@ -20,7 +20,7 @@ public class ButtonCell<T> extends ActionCell<T> {
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
         SafeHtml html = new SafeHtmlBuilder().appendHtmlConstant("<button class='celltable-button' type=\"button\" tabindex=\"-1\">")
-                .appendEscaped(title)
+                .appendHtmlConstant(title)
                 .appendHtmlConstant("</button>")
                 .toSafeHtml();
 

@@ -3,6 +3,9 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -18,38 +21,51 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
+import java.util.List;
+
+
 /**
  * @author Heiko Braun
  * @date 11/30/11
  */
 public class ThreadPoolEditor {
 
-    ListDataProvider<JcaWorkmanager> dataProvider;
-    Form<BoundedQueueThreadPool> sizingForm;
-    Form<BoundedQueueThreadPool> attributesForm;
-    PropertyEditor propertyEditor;
+    private DefaultCellTable<BoundedQueueThreadPool> table;
+    private ListDataProvider<BoundedQueueThreadPool> dataProvider;
+    private Form<BoundedQueueThreadPool> sizingForm;
+    private Form<BoundedQueueThreadPool> attributesForm;
+    private PropertyEditor propertyEditor;
 
     private WorkmanagerPresenter presenter;
     private String contextName;
+    private Label headline;
 
     public ThreadPoolEditor(WorkmanagerPresenter presenter) {
         this.presenter = presenter;
     }
 
     Widget asWidget() {
-        DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
-        dataProvider = new ListDataProvider<JcaWorkmanager>();
+        table = new DefaultCellTable<BoundedQueueThreadPool>(10);
+
+        dataProvider = new ListDataProvider<BoundedQueueThreadPool>();
         dataProvider.addDataDisplay(table);
 
-        TextColumn<JcaWorkmanager> name = new TextColumn<JcaWorkmanager>() {
+        TextColumn<BoundedQueueThreadPool> name = new TextColumn<BoundedQueueThreadPool>() {
             @Override
-            public String getValue(JcaWorkmanager record) {
+            public String getValue(BoundedQueueThreadPool record) {
                 return record.getName();
             }
         };
 
+        TextColumn<BoundedQueueThreadPool> size = new TextColumn<BoundedQueueThreadPool>() {
+            @Override
+            public String getValue(BoundedQueueThreadPool record) {
+                return String.valueOf(record.getMaxThreadsCount());
+            }
+        };
+
         table.addColumn(name, "Thread Pool");
-        table.addColumn(name, "Max Threads");
+        table.addColumn(size, "Max Threads");
 
         ToolStrip topLevelTools = new ToolStrip();
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
@@ -95,13 +111,24 @@ public class ThreadPoolEditor {
 
         sizingForm.setFields(nameItem, maxThreads, maxThreadsPerCPU, queueLength, queueLengthPerCPU);
 
+        attributesForm.bind(table);
+        sizingForm.bind(table);
+
         // ---
 
         propertyEditor = new PropertyEditor(presenter);
 
+        headline = new Label("HEADLINE");
+        headline.setStyleName("content-header-label");
+
+        VerticalPanel header = new VerticalPanel();
+        header.add(new HTML("<a href='javascript:history.go(-1)'>&larr; Back to Overview</a>"));
+        header.add(headline);
+
         // ---
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
+                .setHeadlineWidget(header)
                 .setTitle("Thread Pool")
                 .setDescription("A thread pool executor with a bounded queue used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
@@ -116,5 +143,15 @@ public class ThreadPoolEditor {
 
     public void setContextName(String contextName) {
         this.contextName = contextName;
+        this.headline.setText("Workmanager: " +contextName);
+    }
+
+
+    public void setPools(List<BoundedQueueThreadPool> pools) {
+        dataProvider.setList(pools);
+
+        if(!pools.isEmpty())
+            table.getSelectionModel().setSelected(pools.get(0), true);
+
     }
 }
