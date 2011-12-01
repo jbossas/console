@@ -2,10 +2,8 @@ package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -19,6 +17,7 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,16 @@ public class JcaBootstrapEditor {
     private ListDataProvider<JcaBootstrapContext> dataProvider;
     private DefaultCellTable<JcaBootstrapContext> table ;
     private ComboBoxItem workmanager;
+    private JcaPresenter presenter;
+
+    public JcaBootstrapEditor(JcaPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
+
+        final Form<JcaBootstrapContext> form = new Form<JcaBootstrapContext>(JcaBootstrapContext.class);
+        form.setEnabled(false);
 
         table = new DefaultCellTable<JcaBootstrapContext>(10);
         dataProvider = new ListDataProvider<JcaBootstrapContext>();
@@ -54,20 +61,28 @@ public class JcaBootstrapEditor {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               // TODO
+                presenter.launchNewContextDialogue();
             }
         }));
 
         topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-               // TODO
+
+                Feedback.confirm(
+                        "Remove Context",
+                        "Really remove this context?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                    presenter.onDeleteBootstrapContext(form.getEditedEntity());
+                            }
+                        });
+
             }
         }));
 
-
-        Form<JcaBootstrapContext> form = new Form<JcaBootstrapContext>(JcaBootstrapContext.class);
-        form.setEnabled(false);
 
         TextItem contextName = new TextItem("name", "Name");
         workmanager = new ComboBoxItem("workmanager", "Work Manager");
@@ -85,7 +100,7 @@ public class JcaBootstrapEditor {
                 new FormToolStrip.FormCallback<JcaBootstrapContext>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSaveBootstrapContext(form.getEditedEntity(), changeset);
                     }
 
                     @Override

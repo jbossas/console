@@ -59,6 +59,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     private LoadWorkmanagerCmd loadWorkManager;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.JcaPresenter)
     public interface MyProxy extends Proxy<JcaPresenter>, Place {
@@ -287,6 +288,60 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 loadJcaSubsystem();
             }
         });
+    }
+
+    public void onSaveBootstrapContext(final JcaBootstrapContext entity, Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jca");
+        address.get(ADDRESS).add("bootstrap-context", entity.getName());
+        ModelNode operation = boostrapAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update JCA settings", response.getFailureDescription());
+                else
+                    Console.info("Success: Update JCA settings");
+
+                loadJcaSubsystem();
+            }
+        });
+    }
+
+    public void onDeleteBootstrapContext(final JcaBootstrapContext entity) {
+        if(entity.getName().equals("default"))
+        {
+            Console.error("The default context cannot be deleted!");
+            return;
+        }
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jca");
+        operation.get(ADDRESS).add("bootstrap-context", entity.getName());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update JCA settings", response.getFailureDescription());
+                else
+                    Console.info("Success: Update JCA settings");
+
+                loadJcaSubsystem();
+            }
+        });
+    }
+
+    public void launchNewContextDialogue() {
+
     }
 
 }

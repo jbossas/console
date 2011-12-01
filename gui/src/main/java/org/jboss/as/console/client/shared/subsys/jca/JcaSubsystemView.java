@@ -34,7 +34,7 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         workmanagerEditor = new WorkmanagerListView(presenter);
-        boostrapEditor = new JcaBootstrapEditor();
+        boostrapEditor = new JcaBootstrapEditor(presenter);
         baseEditor = new JcaBaseEditor(presenter);
 
         tabLayoutpanel.add(baseEditor.asWidget(), "Common Config");
