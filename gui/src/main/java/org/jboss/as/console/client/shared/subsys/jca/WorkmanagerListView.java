@@ -13,6 +13,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tables.ButtonCell;
+import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -62,7 +63,7 @@ public class WorkmanagerListView {
         };
 
         Column<JcaWorkmanager, JcaWorkmanager> option = new Column<JcaWorkmanager, JcaWorkmanager>(
-                new ButtonCell<JcaWorkmanager>("Edit &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
+                new TextLinkCell<JcaWorkmanager>("Configure &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
                     @Override
                     public void execute(JcaWorkmanager selection) {
                         presenter.getPlaceManager().revealPlace(
