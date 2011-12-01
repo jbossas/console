@@ -63,7 +63,7 @@ public class WorkmanagerListView {
         };
 
         Column<JcaWorkmanager, JcaWorkmanager> option = new Column<JcaWorkmanager, JcaWorkmanager>(
-                new TextLinkCell<JcaWorkmanager>("Configure &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
+                new TextLinkCell<JcaWorkmanager>("View &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
                     @Override
                     public void execute(JcaWorkmanager selection) {
                         presenter.getPlaceManager().revealPlace(

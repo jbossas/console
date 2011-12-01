@@ -8,7 +8,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -21,6 +24,7 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 import java.util.Map;
@@ -42,8 +46,11 @@ public class ThreadPoolEditor {
     private String contextName;
     private Label headline;
 
-    public ThreadPoolEditor(WorkmanagerPresenter presenter) {
+    private boolean shortRunning = false;
+
+    public ThreadPoolEditor(WorkmanagerPresenter presenter, boolean isShortRunning) {
         this.presenter = presenter;
+        this.shortRunning = shortRunning;
     }
 
     Widget asWidget() {
@@ -73,14 +80,26 @@ public class ThreadPoolEditor {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO
+                presenter.launchNewPoolDialoge(contextName, shortRunning);
             }
         }));
 
         topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO
+
+                Feedback.confirm(
+                        "Remove Pool Configuration",
+                        "Really remove this pool configuration?",
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    SingleSelectionModel<BoundedQueueThreadPool> selectionModel = (SingleSelectionModel<BoundedQueueThreadPool>) table.getSelectionModel();
+                                    presenter.onRemovePoolConfig(contextName, selectionModel.getSelectedObject());
+                                }
+                            }
+                        });
             }
         }));
 
@@ -91,11 +110,23 @@ public class ThreadPoolEditor {
         attributesForm.setEnabled(false);
         TextItem nameItem = new TextItem("name", "Name");
 
-        NumberBoxItem keepAliveTimeout = new NumberBoxItem("KeepaliveTimeout", "Keep Alive Timeout (ms)");
         CheckBoxItem blocking = new CheckBoxItem ("blocking", "Is Blocking?");
         CheckBoxItem allowCore = new CheckBoxItem ("AllowCoreTimeout", "Allow Core Timeout?");
-        TextBoxItem threadFactory = new TextBoxItem("threadFactory", "Thread Factory");
-        TextBoxItem handoff = new TextBoxItem("handoffExecutor", "Handoff Executor");
+        NumberBoxItem keepAliveTimeout = new NumberBoxItem("KeepaliveTimeout", "Keep Alive Timeout (ms)") {
+            {
+                isRequired = false;
+            }
+        };
+        TextBoxItem threadFactory = new TextBoxItem("threadFactory", "Thread Factory") {
+            {
+                isRequired = false;
+            }
+        };
+        TextBoxItem handoff = new TextBoxItem("handoffExecutor", "Handoff Executor") {
+            {
+                isRequired = false;
+            }
+        };
 
         attributesForm.setFields(nameItem, keepAliveTimeout, blocking, allowCore, threadFactory, handoff);
 
@@ -137,7 +168,12 @@ public class ThreadPoolEditor {
                 new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSavePoolConfig(
+                                contextName,
+                                shortRunning,
+                                attributesForm.getEditedEntity().getName(),
+                                changeset
+                        );
                     }
 
                     @Override

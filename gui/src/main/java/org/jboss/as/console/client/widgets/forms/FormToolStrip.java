@@ -66,7 +66,7 @@ public class FormToolStrip<T> {
 
                 if(null == form.getEditedEntity())
                 {
-                    System.out.println("Nothing to edit. Entity is null!");
+                    Console.warning("Empty form!");
                     return;
                 }
 
@@ -90,6 +90,8 @@ public class FormToolStrip<T> {
                             Map<String, Object> changedValues = form.getChangedValues();
                             if(!changedValues.isEmpty())
                                 callback.onSave(changedValues);
+                            else
+                                Console.warning("Empty changeset!");
                         }
                     }
                 }

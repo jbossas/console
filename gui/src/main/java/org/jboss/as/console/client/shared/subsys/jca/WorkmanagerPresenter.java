@@ -23,6 +23,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
+import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -30,6 +31,7 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -51,7 +53,8 @@ public class WorkmanagerPresenter
     private BeanMetaData beanMetaData;
     private BeanFactory factory;
     private DefaultWindow window;
-    private EntityAdapter<JcaArchiveValidation> adapter;
+    private EntityAdapter<JcaWorkmanager> adapter;
+    private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
     private String workManagerName;
 
     private LoadWorkmanagerCmd loadWorkManager;
@@ -99,6 +102,9 @@ public class WorkmanagerPresenter
 
         this.factory = factory;
         this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
+
+        this.adapter = new EntityAdapter<JcaWorkmanager>(EntityAdapter.class, metaData);
+        this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
     }
 
     @Override
@@ -170,5 +176,47 @@ public class WorkmanagerPresenter
     @Override
     public void closePropertyDialoge() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void onSavePoolConfig(
+            String managerName,
+            boolean isShortRunning, String poolName,
+            Map<String, Object> changeset)
+    {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jca");
+        address.get(ADDRESS).add("workmanager", managerName);
+
+        if(isShortRunning)
+            address.get(ADDRESS).add("short-running-threads", poolName);
+        else
+            address.get(ADDRESS).add("long-running-threads", poolName);
+
+        ModelNode operation = poolAdapter.fromChangeset(changeset, address);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                if(response.isFailure())
+                    Console.error("Failed to update pool config", response.getFailureDescription());
+                else
+                    Console.info("Success: Update pool config");
+
+                loadWorkManager();
+            }
+        });
+    }
+
+    public void onRemovePoolConfig(String contextName, BoundedQueueThreadPool entity) {
+
+    }
+
+    public void launchNewPoolDialoge(String contextName, boolean shortRunning) {
+
     }
 }
