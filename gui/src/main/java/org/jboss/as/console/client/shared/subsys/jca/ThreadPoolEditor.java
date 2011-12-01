@@ -50,7 +50,7 @@ public class ThreadPoolEditor {
 
     public ThreadPoolEditor(WorkmanagerPresenter presenter, boolean isShortRunning) {
         this.presenter = presenter;
-        this.shortRunning = shortRunning;
+        this.shortRunning = isShortRunning;
     }
 
     Widget asWidget() {
@@ -108,11 +108,11 @@ public class ThreadPoolEditor {
         attributesForm = new Form<BoundedQueueThreadPool>(BoundedQueueThreadPool.class);
         attributesForm.setNumColumns(2);
         attributesForm.setEnabled(false);
-        TextItem nameItem = new TextItem("name", "Name");
 
+        TextItem nameItem = new TextItem("name", "Name");
         CheckBoxItem blocking = new CheckBoxItem ("blocking", "Is Blocking?");
-        CheckBoxItem allowCore = new CheckBoxItem ("AllowCoreTimeout", "Allow Core Timeout?");
-        NumberBoxItem keepAliveTimeout = new NumberBoxItem("KeepaliveTimeout", "Keep Alive Timeout (ms)") {
+        CheckBoxItem allowCore = new CheckBoxItem ("allowCoreTimeout", "Allow Core Timeout?");
+        NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTimeout", "Keep Alive Timeout (ms)") {
             {
                 isRequired = false;
             }
@@ -152,7 +152,12 @@ public class ThreadPoolEditor {
                 new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-
+                        presenter.onSavePoolConfig(
+                                contextName,
+                                shortRunning,
+                                attributesForm.getEditedEntity().getName(),
+                                changeset
+                        );
                     }
 
                     @Override
