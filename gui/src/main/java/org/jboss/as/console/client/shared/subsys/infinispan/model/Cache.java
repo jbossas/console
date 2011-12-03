@@ -38,6 +38,33 @@ public interface Cache extends NamedEntity {
     @Override
     public void setName(String name);
     
+    @Binding(detypedName="controller-mode")
+    @FormItem(defaultValue="LAZY",
+            label="Controller Mode",
+            required=false,
+            formItemTypeForEdit="COMBO_BOX",
+            formItemTypeForAdd="COMBO_BOX") // VALUES = "EAGER", "LAZY"
+    public String getControllerMode();
+    public void setControllerMode(String controllerMode);
+    
+    @Binding(detypedName="batching")
+    @FormItem(defaultValue="false",
+            label="Batching",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public Boolean isBatching();
+    public void setBatching(Boolean isBatching);
+    
+    @Binding(detypedName="indexing")
+    @FormItem(defaultValue="NONE",
+            label="Indexing",
+            required=false,
+            formItemTypeForEdit="COMBO_BOX",
+            formItemTypeForAdd="COMBO_BOX") // VALUES = "NONE", "LOCAL", "ALL"
+    public String getIndexing();
+    public void setIndexing(String indexing);
+    
     // Locking attributes
     @Binding(detypedName="isolation")
     @FormItem(defaultValue="REPEATABLE_READ",
@@ -45,7 +72,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="ISOLATION_TYPES",
             formItemTypeForAdd="ISOLATION_TYPES",
-            subgroup="Locking")
+            tabName="subsys_infinispan_locking")
     public String getIsolation();
     public void setIsolation(String isolation);
     
@@ -55,8 +82,8 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            subgroup="Locking")
-    public Boolean getStriping();
+            tabName="subsys_infinispan_locking")
+    public Boolean isStriping();
     public void setStriping(Boolean striping);
     
     @Binding(detypedName="acquire-timeout")
@@ -65,7 +92,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            subgroup="Locking")
+            tabName="subsys_infinispan_locking")
     public Long getAcquireTimeout();
     public void setAcquireTimeout(Long aquireTimeout);
     
@@ -75,7 +102,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            subgroup="Locking")
+            tabName="subsys_infinispan_locking")
     public Integer getConcurrencyLevel();
     public void setConcurrencyLevel(Integer concurrencyLevel);
     
@@ -87,17 +114,17 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="EVICTION_STRATEGY_TYPES",
             formItemTypeForAdd="EVICTION_STRATEGY_TYPES",
-            subgroup="Eviction")
+            tabName="subsys_infinispan_eviction")
     public String getEvictionStrategy();
     public void setEvictionStrategy(String evictionStrategy);
     
     @Binding(detypedName="max-entries")
     @FormItem(defaultValue="10000",
-            label="Eviction Strategy",
+            label="Max Entries",
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            subgroup="Eviction")
+            tabName="subsys_infinispan_eviction")
     public Integer getMaxEntries();
     public void setMaxEntries(Integer maxEntries);
     
@@ -109,7 +136,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            subgroup="Expiration")
+            tabName="subsys_infinispan_expiration")
     public Long getMaxIdle();
     public void setMaxIdle(Long maxIdle);
     
@@ -119,7 +146,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            subgroup="Expiration")
+            tabName="subsys_infinispan_expiration")
     public Long getLifespan();
     public void setLifespan(Long lifespan);
     
@@ -129,7 +156,7 @@ public interface Cache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            subgroup="Expiration")
+            tabName="subsys_infinispan_expiration")
     public Long getInterval();
     public void setInterval(Long interval);
     

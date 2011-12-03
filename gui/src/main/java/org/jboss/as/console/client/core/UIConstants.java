@@ -191,6 +191,10 @@ public interface UIConstants extends Constants {
     String subsys_infinispan_evictionStrategy();
     String subsys_infinispan_transport();
     String subsys_infinispan_stateTransfer();
+    String subsys_infinispan_locking();
+    String subsys_infinispan_eviction();
+    String subsys_infinispan_expiration();
+    String subsys_infinispan_localCache();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

@@ -74,10 +74,12 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresen
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.DriverRegistry;
@@ -208,7 +210,11 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiConfigurationPresenter> getOSGiConfigurationPresenter();
     AsyncProvider<OSGiRuntimePresenter> getOSGiRuntimePresenter();
+    
+    // Infinispan
     AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
+    AsyncProvider<LocalCachePresenter> getLocalCachePresenter();
+    
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 
     AsyncProvider<ThreadsPresenter> getBoundedQueueThreadPoolPresenter();
@@ -251,4 +257,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<EEPresenter> getEEPresenter();
 
     AsyncProvider<JcaPresenter> getJcaPresenter();
+    AsyncProvider<WorkmanagerPresenter> getWorkmanagerPresenter();
 }

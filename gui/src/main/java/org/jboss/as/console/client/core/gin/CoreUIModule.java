@@ -119,6 +119,8 @@ import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
+import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerPresenter;
+import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -394,10 +396,15 @@ public class CoreUIModule extends AbstractPresenterModule {
                 OSGiRuntimeView.class,
                 OSGiRuntimePresenter.MyProxy.class);
 
+        // Infinispan
         bindPresenter(CacheContainerPresenter.class,
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,
                 CacheContainerPresenter.MyProxy.class);
+        bindPresenter(LocalCachePresenter.class,
+                LocalCachePresenter.MyView.class,
+                LocalCacheView.class,
+                LocalCachePresenter.MyProxy.class);
 
         bindPresenter(SocketBindingPresenter.class,
                 SocketBindingPresenter.MyView.class,
@@ -503,6 +510,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JcaSubsystemView.class,
                 JcaPresenter.MyProxy.class);
 
+        bindPresenter(WorkmanagerPresenter.class,
+                WorkmanagerPresenter.MyView.class,
+                WorkmanagerView.class,
+                WorkmanagerPresenter.MyProxy.class);
     }
 
 }
