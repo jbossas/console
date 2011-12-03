@@ -16,23 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.viewframework;
+package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
+import org.jboss.as.console.client.shared.viewframework.EnabledEntity;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Data Model interface for Entities with a name attribute.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface NamedEntity {
-    @Binding(detypedName="name", key=true)
-    @FormItem(defaultValue="",
-              label="Name",
-              required=true,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT_BOX") 
-    public String getName();
-    public void setName(String name);
+public interface StateTransfer extends EnabledEntity {
+    @Binding(detypedName="default-cache-container")
+    @FormItem(defaultValue="60000",
+              label="Timeout",
+              required=false,
+              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="NUMBER_BOX",
+              tabName="subsys_infinispan_stateTransfer")
+    public Long getTimeout();
+    public void setTimeout(Long timeout);
+    
+    @Binding(detypedName="default-cache-container")
+    @FormItem(defaultValue="60000",
+              label="Flush Timeout",
+              required=false,
+              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="NUMBER_BOX",
+              tabName="subsys_infinispan_stateTransfer")
+    public Long getFlushTimeout();
+    public void setFlushTimeout(Long flushTimeout);
 }

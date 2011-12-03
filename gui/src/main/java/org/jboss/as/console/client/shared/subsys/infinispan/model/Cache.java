@@ -27,8 +27,16 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public interface Cache extends NamedEntity {
-    // top level attributes
-    // just getName/setName for now
+    @Override
+    @Binding(detypedName="name", key=true)
+    @FormItem(defaultValue="",
+              label="Name",
+              required=true,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT_BOX") 
+    public String getName();
+    @Override
+    public void setName(String name);
     
     // Locking attributes
     @Binding(detypedName="isolation")
