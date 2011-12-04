@@ -162,7 +162,7 @@ public enum FormItemType {
     }
 
     public static class ComboBoxItemFactory implements FormItemFactory {
-        private String[] values = new String[0];
+        private String[] values = null;
 
         public ComboBoxItemFactory() {}
 
@@ -174,7 +174,13 @@ public enum FormItemType {
         public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
             ComboBoxItem comboBoxItem = new ComboBoxItem(propBinding.getJavaName(), propBinding.getLabel());
             comboBoxItem.setRequired(propBinding.isRequired());
-            comboBoxItem.setValueMap(values);
+            
+            if (values == null) {
+                comboBoxItem.setValueMap(propBinding.getAcceptedValues());
+            } else {
+                comboBoxItem.setValueMap(values);
+            }
+            
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, comboBoxItem, observers)};
         }
     }

@@ -71,18 +71,6 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler>
     }
 
     @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        super.itemAction(action, item);
-        
-        if (action != Action.CREATED) return;
-
-        if (item.getPropertyBinding().getJavaName().equals("overflowAction")) {
-            ComboBoxItem targetItem = (ComboBoxItem) item.getWrapped();
-            targetItem.setValueMap(new String[] {"BLOCK", "DISCARD"});
-        }
-    }
-    
-    @Override
     protected FormAdapter<AsyncHandler> makeAddEntityForm() {
         Form<AsyncHandler> form = new Form(type);
         form.setNumColumns(1);

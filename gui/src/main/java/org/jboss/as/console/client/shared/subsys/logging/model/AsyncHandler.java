@@ -73,10 +73,12 @@ public interface AsyncHandler extends NamedEntity, HasLevel, HasHandlers {
               localLabel="subsys_logging_overflowAction",
               required=true,
               formItemTypeForEdit="COMBO_BOX",
-              formItemTypeForAdd="COMBO_BOX")
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"BLOCK", "DISCARD"})
     public String getOverflowAction();
     public void setOverflowAction(String overflowAction);
                
+    @Override
     @Binding(detypedName="subhandlers", 
              listType="java.lang.String")
     @FormItem(defaultValue="",
@@ -86,5 +88,6 @@ public interface AsyncHandler extends NamedEntity, HasLevel, HasHandlers {
              formItemTypeForAdd="STRING_LIST_EDITOR",
              tabName="CUSTOM")
     public List<String> getHandlers();
+    @Override
     public void setHandlers(List<String> handlers);
 }

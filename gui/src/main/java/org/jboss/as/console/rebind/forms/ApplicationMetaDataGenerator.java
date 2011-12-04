@@ -153,6 +153,7 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("public " + className + "() { ");
         sourceWriter.indent();
         sourceWriter.println("super();");
+        sourceWriter.println("String[] acceptedValues = null;");
 
         try {
             Class<?> beanFactoryClass = getClass().getClassLoader().loadClass(BEAN_FACTORY_NAME);
@@ -210,6 +211,7 @@ public class ApplicationMetaDataGenerator extends Generator{
                             else
                                 sourceWriter.println("String " + tabNameVar + " = \"CUSTOM\";");
 
+                            sourceWriter.println("acceptedValues = " + makeStringArrayString(formDecl.acceptedValues()) + ";");
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
@@ -219,7 +221,7 @@ public class ApplicationMetaDataGenerator extends Generator{
                                                                       ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
-                                                                      "\", " + tabNameVar + ", " + formDecl.order() + ")");
+                                                                      "\", " + tabNameVar + ", " + formDecl.order() + ", acceptedValues)");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -282,6 +284,23 @@ public class ApplicationMetaDataGenerator extends Generator{
 
         sourceWriter.outdent();
         sourceWriter.println("}");
+    }
+    
+    private String makeStringArrayString(String[] array) {
+        StringBuilder builder = new StringBuilder("new String[]{");
+        
+        for (int i=0; i < array.length; i++) {
+            builder.append("\"");
+            builder.append(array[i]);
+            builder.append("\"");
+            if (i != (array.length - 1)) {
+                builder.append(",");
+            }
+        }
+        
+        builder.append("}");
+        
+        return builder.toString();
     }
     
     public static class PropBindingDeclarations {
@@ -369,6 +388,7 @@ public class ApplicationMetaDataGenerator extends Generator{
         String subgroup = "";
         String tabName = "common_label_attributes";
         int order = 100;
+        String[] acceptedValues = new String[0];
 
         if(formItemDeclaration!=null)
         {
@@ -381,11 +401,12 @@ public class ApplicationMetaDataGenerator extends Generator{
             subgroup = formItemDeclaration.subgroup();
             tabName = formItemDeclaration.tabName();
             order = formItemDeclaration.order();
+            acceptedValues = formItemDeclaration.acceptedValues();
         }
 
         FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
                                                          formItemTypeForEdit, formItemTypeForAdd, 
-                                                         subgroup, tabName, order);
+                                                         subgroup, tabName, order, acceptedValues);
         return decl;
     }
     

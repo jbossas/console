@@ -45,4 +45,5 @@ public @interface FormItem {
     String subgroup() default "";
     String tabName() default "common_label_attributes";
     int order() default 100;
+    String[] acceptedValues() default {};
 }
