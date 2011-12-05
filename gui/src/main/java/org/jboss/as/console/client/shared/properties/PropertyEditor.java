@@ -306,6 +306,13 @@ public class PropertyEditor {
         propertyTable.setEnabled(enabled && allowEditProps);
     }
 
+    public void setHideButtons(boolean hideButtons) {
+        if(null!=propertyTable)
+            throw new IllegalStateException("You need to call this method before asWidget() is called.");
+
+        this.hideButtons = hideButtons;
+    }
+
     public void clearValues() {
 
         if(null==propertyTable)
