@@ -25,6 +25,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -53,7 +54,7 @@ public class WorkmanagerPresenter
     private BeanFactory factory;
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
-    private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
+    private EntityAdapter<WorkmanagerPool> poolAdapter;
     private String workManagerName;
 
     private LoadWorkmanagerCmd loadWorkManager;
@@ -101,7 +102,7 @@ public class WorkmanagerPresenter
         this.factory = factory;
         this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
 
-        this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
+        this.poolAdapter = new EntityAdapter<WorkmanagerPool>(WorkmanagerPool.class, metaData);
     }
 
     @Override
@@ -291,7 +292,7 @@ public class WorkmanagerPresenter
                 .build();
     }
 
-    public void createNewPool(BoundedQueueThreadPool pool, boolean shortRunning) {
+    public void createNewPool(WorkmanagerPool pool, boolean shortRunning) {
 
         closeDialoge();
 

@@ -15,10 +15,8 @@ import java.util.List;
  */
 public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerPresenter.MyView {
 
-    private ListDataProvider<JcaWorkmanager> dataProvider;
     private WorkmanagerPresenter presenter;
-    private ThreadPoolEditor shortRunning;
-    private ThreadPoolEditor longRunning;
+    private ThreadPoolEditor poolEditor;
 
     @Override
     public void setPresenter(WorkmanagerPresenter presenter) {
@@ -31,11 +29,9 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        shortRunning = new ThreadPoolEditor(presenter, true);
-        longRunning = new ThreadPoolEditor(presenter, false);
+        poolEditor = new ThreadPoolEditor(presenter, true);
 
-        tabLayoutpanel.add(shortRunning.asWidget(), "Short Running Threads");
-        tabLayoutpanel.add(longRunning.asWidget(), "Long Running Threads");
+        tabLayoutpanel.add(poolEditor.asWidget(), "Thread Pools");
 
         tabLayoutpanel.selectTab(0);
 
@@ -44,14 +40,11 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
 
     @Override
     public void setWorkManagerName(String workManagerName) {
-        shortRunning.setContextName(workManagerName);
-        longRunning.setContextName(workManagerName);
+        poolEditor.setContextName(workManagerName);
     }
 
     @Override
     public void setWorkManager(JcaWorkmanager manager) {
-
-        shortRunning.setPools(manager.getShortRunning());
-        longRunning.setPools(manager.getLongRunning());
+        poolEditor.setWorkManager(manager);
     }
 }

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -33,7 +33,7 @@ public class NewPoolWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        final Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
+        final Form<WorkmanagerPool> form = new Form(WorkmanagerPool.class);
 
         TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
 
@@ -55,7 +55,7 @@ public class NewPoolWizard {
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        BoundedQueueThreadPool pool = form.getUpdatedEntity();
+                        WorkmanagerPool pool = form.getUpdatedEntity();
 
                         FormValidation validation = form.validate();
                         if(validation.hasErrors())

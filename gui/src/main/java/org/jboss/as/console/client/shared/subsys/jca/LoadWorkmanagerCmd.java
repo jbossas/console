@@ -8,7 +8,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
@@ -31,7 +31,7 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
 
     private DispatchAsync dispatcher;
     private EntityAdapter<JcaWorkmanager> adapter;
-    private EntityAdapter<BoundedQueueThreadPool> poolAdapter;
+    private EntityAdapter<WorkmanagerPool> poolAdapter;
 
     public LoadWorkmanagerCmd(
             DispatchAsync dispatcher,
@@ -39,7 +39,7 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
 
         this.dispatcher = dispatcher;
         this.adapter= new EntityAdapter<JcaWorkmanager>(JcaWorkmanager.class, metaData);
-        this.poolAdapter = new EntityAdapter<BoundedQueueThreadPool>(BoundedQueueThreadPool.class, metaData);
+        this.poolAdapter = new EntityAdapter<WorkmanagerPool>(WorkmanagerPool.class, metaData);
 
     }
 
@@ -70,7 +70,7 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
 
                     if(value.hasDefined("long-running-threads"))
                     {
-                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("long-running-threads").asPropertyList());
+                        List<WorkmanagerPool> pools = parseThreadPool(value.get("long-running-threads").asPropertyList(), false);
                         entity.setLongRunning(pools);
                     }
                     else {
@@ -79,7 +79,7 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
 
                     if(value.hasDefined("short-running-threads"))
                     {
-                        List<BoundedQueueThreadPool> pools = parseThreadPool(value.get("short-running-threads").asPropertyList());
+                        List<WorkmanagerPool> pools = parseThreadPool(value.get("short-running-threads").asPropertyList(), true);
                         entity.setShortRunning(pools);
                     }
                     else
@@ -96,15 +96,16 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
         });
     }
 
-    private List<BoundedQueueThreadPool> parseThreadPool(List<Property> values) {
-        List<BoundedQueueThreadPool> result = new ArrayList<BoundedQueueThreadPool>();
+    private List<WorkmanagerPool> parseThreadPool(List<Property> values, boolean shortRunning) {
+        List<WorkmanagerPool> result = new ArrayList<WorkmanagerPool>();
 
         for(Property value : values)
         {
-            BoundedQueueThreadPool pool = poolAdapter.fromDMR(value.getValue());
+            WorkmanagerPool pool = poolAdapter.fromDMR(value.getValue());
             if(null==pool.getProperties())
                 pool.setProperties(Collections.EMPTY_LIST);
 
+            pool.setShortRunning(shortRunning);
             result.add(pool);
         }
 

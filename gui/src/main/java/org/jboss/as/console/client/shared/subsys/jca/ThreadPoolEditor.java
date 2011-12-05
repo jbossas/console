@@ -9,11 +9,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -27,6 +26,7 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +37,10 @@ import java.util.Map;
  */
 public class ThreadPoolEditor {
 
-    private DefaultCellTable<BoundedQueueThreadPool> table;
-    private ListDataProvider<BoundedQueueThreadPool> dataProvider;
-    private Form<BoundedQueueThreadPool> sizingForm;
-    private Form<BoundedQueueThreadPool> attributesForm;
+    private DefaultCellTable<WorkmanagerPool> table;
+    private ListDataProvider<WorkmanagerPool> dataProvider;
+    private Form<WorkmanagerPool> sizingForm;
+    private Form<WorkmanagerPool> attributesForm;
     private PropertyEditor propertyEditor;
 
     private WorkmanagerPresenter presenter;
@@ -48,6 +48,7 @@ public class ThreadPoolEditor {
     private Label headline;
 
     private boolean shortRunning = false;
+    private JcaWorkmanager currentManager;
 
     public ThreadPoolEditor(WorkmanagerPresenter presenter, boolean isShortRunning) {
         this.presenter = presenter;
@@ -55,26 +56,37 @@ public class ThreadPoolEditor {
     }
 
     Widget asWidget() {
-        table = new DefaultCellTable<BoundedQueueThreadPool>(10);
+        table = new DefaultCellTable<WorkmanagerPool>(10);
 
-        dataProvider = new ListDataProvider<BoundedQueueThreadPool>();
+        dataProvider = new ListDataProvider<WorkmanagerPool>();
         dataProvider.addDataDisplay(table);
 
-        TextColumn<BoundedQueueThreadPool> name = new TextColumn<BoundedQueueThreadPool>() {
+        TextColumn<WorkmanagerPool> name = new TextColumn<WorkmanagerPool>() {
             @Override
-            public String getValue(BoundedQueueThreadPool record) {
+            public String getValue(WorkmanagerPool record) {
                 return record.getName();
             }
         };
 
-        TextColumn<BoundedQueueThreadPool> size = new TextColumn<BoundedQueueThreadPool>() {
+        TextColumn<WorkmanagerPool> type = new TextColumn<WorkmanagerPool>() {
             @Override
-            public String getValue(BoundedQueueThreadPool record) {
-                return String.valueOf(record.getMaxThreadsCount());
+            public String getValue(WorkmanagerPool record) {
+
+                String type = record.isShortRunning() ? "short-running" : "long-runnig";
+                return type;
             }
         };
 
-        table.addColumn(name, "Thread Pool");
+        TextColumn<WorkmanagerPool> size = new TextColumn<WorkmanagerPool>() {
+                   @Override
+                   public String getValue(WorkmanagerPool record) {
+                       return String.valueOf(record.getMaxThreadsCount());
+                   }
+               };
+
+
+        table.addColumn(name, "Name");
+        table.addColumn(type, "Type");
         table.addColumn(size, "Max Threads");
 
         ToolStrip topLevelTools = new ToolStrip();
@@ -96,7 +108,7 @@ public class ThreadPoolEditor {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    SingleSelectionModel<BoundedQueueThreadPool> selectionModel = (SingleSelectionModel<BoundedQueueThreadPool>) table.getSelectionModel();
+                                    SingleSelectionModel<WorkmanagerPool> selectionModel = (SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel();
                                     presenter.onRemovePoolConfig(
                                             contextName,
                                             shortRunning,
@@ -110,7 +122,7 @@ public class ThreadPoolEditor {
 
         // ---
 
-        attributesForm = new Form<BoundedQueueThreadPool>(BoundedQueueThreadPool.class);
+        attributesForm = new Form<WorkmanagerPool>(WorkmanagerPool.class);
         attributesForm.setNumColumns(2);
         attributesForm.setEnabled(false);
 
@@ -138,7 +150,7 @@ public class ThreadPoolEditor {
         // ---
 
 
-        sizingForm = new Form<BoundedQueueThreadPool>(BoundedQueueThreadPool.class);
+        sizingForm = new Form<WorkmanagerPool>(WorkmanagerPool.class);
         sizingForm.setNumColumns(2);
         sizingForm.setEnabled(false);
 
@@ -152,9 +164,9 @@ public class ThreadPoolEditor {
         attributesForm.bind(table);
         sizingForm.bind(table);
 
-        FormToolStrip<BoundedQueueThreadPool> sizingTools = new FormToolStrip<BoundedQueueThreadPool>(
+        FormToolStrip<WorkmanagerPool> sizingTools = new FormToolStrip<WorkmanagerPool>(
                 sizingForm,
-                new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
+                new FormToolStrip.FormCallback<WorkmanagerPool>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
                         presenter.onSavePoolConfig(
@@ -166,16 +178,16 @@ public class ThreadPoolEditor {
                     }
 
                     @Override
-                    public void onDelete(BoundedQueueThreadPool entity) {
+                    public void onDelete(WorkmanagerPool entity) {
 
                     }
                 }
         );
         sizingTools.providesDeleteOp(false);
 
-        FormToolStrip<BoundedQueueThreadPool> attributesTools = new FormToolStrip<BoundedQueueThreadPool>(
+        FormToolStrip<WorkmanagerPool> attributesTools = new FormToolStrip<WorkmanagerPool>(
                 attributesForm,
-                new FormToolStrip.FormCallback<BoundedQueueThreadPool>() {
+                new FormToolStrip.FormCallback<WorkmanagerPool>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
                         presenter.onSavePoolConfig(
@@ -187,7 +199,7 @@ public class ThreadPoolEditor {
                     }
 
                     @Override
-                    public void onDelete(BoundedQueueThreadPool entity) {
+                    public void onDelete(WorkmanagerPool entity) {
 
                     }
                 }
@@ -222,7 +234,7 @@ public class ThreadPoolEditor {
                 .setPlain(true)
                 .setHeadlineWidget(header)
                 .setTitle("Thread Pool")
-                .setDescription("A thread pool executor with a bounded queue used by a JCA workmanager.")
+                .setDescription("A thread pool configurations used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
                 .setTopLevelTools(topLevelTools.asWidget())
                 .addDetail("Attributes", attributesPanel)
@@ -234,7 +246,7 @@ public class ThreadPoolEditor {
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                BoundedQueueThreadPool pool = ((SingleSelectionModel<BoundedQueueThreadPool>) table.getSelectionModel()).getSelectedObject();
+                WorkmanagerPool pool = ((SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel()).getSelectedObject();
 
                 String ref = createReferenceToken(pool);
                 propertyEditor.setProperties(ref, pool.getProperties());
@@ -243,7 +255,7 @@ public class ThreadPoolEditor {
         return panel;
     }
 
-    private String createReferenceToken(BoundedQueueThreadPool pool) {
+    private String createReferenceToken(WorkmanagerPool pool) {
         String type = shortRunning ? "short-running-threads":"long-running-threads";
         return contextName+"/"+type+"/"+pool.getName();
     }
@@ -253,14 +265,18 @@ public class ThreadPoolEditor {
         this.headline.setText("Workmanager: " +contextName);
     }
 
+    public void setWorkManager(JcaWorkmanager manager) {
 
-    public void setPools(List<BoundedQueueThreadPool> pools) {
+        this.currentManager = manager;
+
+        List<WorkmanagerPool> pools = new ArrayList<WorkmanagerPool>(2);
+
+        pools.addAll(manager.getShortRunning());
+        pools.addAll(manager.getLongRunning());
 
         dataProvider.setList(pools);
-
         if(!pools.isEmpty())
             table.getSelectionModel().setSelected(pools.get(0), true);
 
     }
-
 }

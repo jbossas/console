@@ -59,6 +59,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
@@ -200,7 +201,9 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JcaBootstrapContext> JcaBootstrapContext();
     AutoBean<JcaBeanValidation> JcaBeanValidation();
     AutoBean<JcaWorkmanager> JcaWorkmanager();
+    AutoBean<WorkmanagerPool> WorkmanagerPool();
     AutoBean<JcaConnectionManager> JcaConnectionManager();
+
 
     AutoBean<JacOrbSubsystem> jacORBSubsystem();
 }

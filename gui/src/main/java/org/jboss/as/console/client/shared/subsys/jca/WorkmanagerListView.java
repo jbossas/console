@@ -12,7 +12,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
-import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -48,20 +47,6 @@ public class WorkmanagerListView {
             }
         };
 
-        TextColumn<JcaWorkmanager> numShort = new TextColumn<JcaWorkmanager>() {
-            @Override
-            public String getValue(JcaWorkmanager record) {
-                return String.valueOf(record.getShortRunning().size());
-            }
-        };
-
-        TextColumn<JcaWorkmanager> numLong = new TextColumn<JcaWorkmanager>() {
-            @Override
-            public String getValue(JcaWorkmanager record) {
-                return String.valueOf(record.getLongRunning().size());
-            }
-        };
-
         Column<JcaWorkmanager, JcaWorkmanager> option = new Column<JcaWorkmanager, JcaWorkmanager>(
                 new TextLinkCell<JcaWorkmanager>("View &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
                     @Override
@@ -79,8 +64,6 @@ public class WorkmanagerListView {
         };
 
         table.addColumn(name, "Name");
-        table.addColumn(numShort, "Num Short Running");
-        table.addColumn(numLong, "Num Long Running");
         table.addColumn(option, "Option");
 
         ToolStrip topLevelTools = new ToolStrip();

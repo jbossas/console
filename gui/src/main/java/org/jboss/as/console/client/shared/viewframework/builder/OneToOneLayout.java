@@ -36,6 +36,7 @@ public class OneToOneLayout {
 
     private List<NamedWidget> details = new ArrayList<NamedWidget>();
     private boolean isPlain = false;
+    private Widget headlineWidget;
 
     public OneToOneLayout setPlain(boolean isPlain)
     {
@@ -95,9 +96,6 @@ public class OneToOneLayout {
 
     public Widget build() {
 
-        if(null==master)
-            throw new IllegalStateException("no master set");
-
         layout  = new LayoutPanel();
         layout.setStyleName("fill-layout");
 
@@ -134,7 +132,15 @@ public class OneToOneLayout {
         }
 
 
-        panel.add(new ContentHeaderLabel(headline));
+        if(null==headlineWidget)
+        {
+            panel.add(new ContentHeaderLabel(headline));
+        }
+        else
+        {
+            panel.add(headlineWidget);
+        }
+
         panel.add(new HTML(description));
 
         if(master!=null)
@@ -179,4 +185,8 @@ public class OneToOneLayout {
     }
 
 
+    public OneToOneLayout setHeadlineWidget(Widget header) {
+        this.headlineWidget = header;
+        return this;
+    }
 }
