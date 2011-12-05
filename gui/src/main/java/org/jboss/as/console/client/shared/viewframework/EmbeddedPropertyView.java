@@ -1,17 +1,16 @@
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -35,10 +34,6 @@ public class EmbeddedPropertyView<T extends HasProperties, NamedEntity>
     public void updatedEntity(T entity) {
         this.entity = entity;
         this.editor.setProperties("no-ref", entity.getProperties());
-    }
-
-    public PropertyEditor getEmbeddedPropertyEditor() {
-        return editor;
     }
 
     @Override

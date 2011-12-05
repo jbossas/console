@@ -26,7 +26,6 @@ import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.ApplicationProperties;
@@ -74,7 +73,6 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresen
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
-import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
@@ -245,7 +243,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<DomainRuntimePresenter> getDomainRuntimePresenter();
     AsyncProvider<TXMetricPresenter> getTXMetricPresenter();
 
-    AsyncProvider<JacOrbPresenter> getJacOrbPresenter();
     AsyncProvider<JpaPresenter> getJpaPresenter();
     AsyncProvider<MailPresenter> getMailPresenter();
     AsyncProvider<JMXPresenter> getJMXPresenter();

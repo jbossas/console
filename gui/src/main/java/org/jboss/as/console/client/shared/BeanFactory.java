@@ -49,7 +49,6 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
-import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.subsys.jca.JcaBeanValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
@@ -60,6 +59,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.shared.subsys.jmx.JMXPresenter;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.shared.subsys.logging.model.AsyncHandler;
@@ -190,6 +190,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<MappingModule> mappingModule();
     AutoBean<GenericSecurityDomainData> genericSecurityDomainData();
 
+
     AutoBean<JpaSubsystem> jpaSubystem();
     AutoBean<MailSession> mailSession();
     AutoBean<JMXSubsystem> jmxSubsystem();
@@ -202,5 +203,4 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JcaWorkmanager> JcaWorkmanager();
     AutoBean<JcaConnectionManager> JcaConnectionManager();
 
-    AutoBean<JacOrbSubsystem> jacORBSubsystem();
 }
