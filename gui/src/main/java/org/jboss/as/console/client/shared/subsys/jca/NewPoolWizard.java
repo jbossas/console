@@ -38,7 +38,7 @@ public class NewPoolWizard {
 
         final ComboBoxItem type = new ComboBoxItem("type", "Type");
         type.setDefaultToFirstOption(true);
-        type.setValueMap(new String[] {"short-running", "long-running"});
+        type.setValueMap(new String[] {"long-running"});
 
         NumberBoxItem maxThreads = new NumberBoxItem("maxThreadsCount", "Max Threads");
         NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("maxThreadsPerCPU", "Max Threads/CPU");

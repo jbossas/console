@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
@@ -91,7 +92,8 @@ public class ThreadPoolEditor {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewPoolDialoge(contextName);
+
+                presenter.launchNewPoolDialoge(currentManager);
             }
         }));
 
@@ -99,21 +101,30 @@ public class ThreadPoolEditor {
             @Override
             public void onClick(ClickEvent event) {
 
-                Feedback.confirm(
-                        "Remove Pool Configuration",
-                        "Really remove this pool configuration?",
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    SingleSelectionModel<WorkmanagerPool> selectionModel = (SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel();
-                                    presenter.onRemovePoolConfig(
-                                            contextName,
-                                            selectionModel.getSelectedObject()
-                                    );
+                final SingleSelectionModel<WorkmanagerPool> selectionModel = (SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel();
+                final WorkmanagerPool pool = selectionModel.getSelectedObject();
+
+                if(pool.isShortRunning())
+                {
+                    Console.error("Pool cannot be removed", "A short running pool is mandatory!");
+                }
+                else
+                {
+
+                    Feedback.confirm(
+                            "Remove Pool Configuration",
+                            "Really remove this pool configuration?",
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.onRemovePoolConfig(
+                                                contextName, pool
+                                        );
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         }));
 

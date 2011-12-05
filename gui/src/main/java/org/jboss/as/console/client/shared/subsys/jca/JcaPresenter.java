@@ -22,6 +22,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
+import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
@@ -61,7 +62,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
     private List<JcaWorkmanager> managers;
-
+    private EntityAdapter<WorkmanagerPool> poolAdapter;
 
 
     @ProxyCodeSplit
@@ -100,6 +101,8 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         this.beanAdapter = new EntityAdapter<JcaBeanValidation>(JcaBeanValidation.class, metaData);
         this.archiveAdapter = new EntityAdapter<JcaArchiveValidation>(JcaArchiveValidation.class, metaData);
         this.ccmAdapter = new EntityAdapter<JcaConnectionManager>(JcaConnectionManager.class, metaData);
+
+        this.poolAdapter = new EntityAdapter<WorkmanagerPool>(WorkmanagerPool.class, metaData);
 
         this.factory = factory;
         this.loadWorkManager = new LoadWorkmanagerCmd(dispatcher, metaData);
@@ -418,11 +421,50 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     public void createNewManager(final JcaWorkmanager entity) {
         closeDialoge();
 
-        ModelNode operation = managerAdapter.fromEntity(entity);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "jca");
-        operation.get(ADDRESS).add("workmanager", entity.getName());
-        operation.get(OP).set(ADD);
+        if(null==entity.getShortRunning() || entity.getShortRunning().isEmpty())
+        {
+            // provide a default short running thread pool config (mandatory)
+            WorkmanagerPool pool = factory.WorkmanagerPool().as();
+            pool.setShortRunning(true);
+            pool.setName("short-running-pool");
+            pool.setMaxThreadsCount(10);
+            pool.setQueueLengthCount(10);
+            pool.setMaxThreadsPerCPU(20);
+            pool.setQueueLengthPerCPU(20);
+
+            List<WorkmanagerPool> managers = new ArrayList<WorkmanagerPool>(1);
+            managers.add(pool);
+            entity.setShortRunning(managers);
+        }
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        ModelNode workmanagerOp = managerAdapter.fromEntity(entity);
+        workmanagerOp.get(ADDRESS).set(Baseadress.get());
+        workmanagerOp.get(ADDRESS).add("subsystem", "jca");
+        workmanagerOp.get(ADDRESS).add("workmanager", entity.getName());
+        workmanagerOp.get(OP).set(ADD);
+
+        WorkmanagerPool pool = entity.getShortRunning().get(0);
+        ModelNode poolOp = poolAdapter.fromEntity(pool);
+        poolOp.get(ADDRESS).set(Baseadress.get());
+        poolOp.get(ADDRESS).add("subsystem", "jca");
+        poolOp.get(ADDRESS).add("workmanager", entity.getName());
+        poolOp.get(OP).set(ADD);
+
+        if(pool.isShortRunning())
+            poolOp.get(ADDRESS).add("short-running-threads", pool.getName());
+        else
+            poolOp.get(ADDRESS).add("long-running-threads", pool.getName());
+
+
+        List<ModelNode> steps = new ArrayList<ModelNode>(2);
+        steps.add(workmanagerOp);
+        steps.add(poolOp);
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

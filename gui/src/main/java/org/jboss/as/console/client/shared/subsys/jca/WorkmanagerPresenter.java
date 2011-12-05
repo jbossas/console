@@ -283,7 +283,18 @@ public class WorkmanagerPresenter
         });
     }
 
-    public void launchNewPoolDialoge(String contextName) {
+    public void launchNewPoolDialoge(JcaWorkmanager entity) {
+
+        boolean hasShortRunning = entity.getShortRunning().size()>0;
+        boolean hasLongRunning = entity.getLongRunning().size()>0;
+
+        if(hasShortRunning && hasLongRunning)
+        {
+            Console.error("Thread pools already exist",
+                    "Both short-running and long-running thread poll configurations already exist.");
+            return;
+        }
+
         window = new ModalWindowLayout()
                 .setTitle("New Pool Configuration")
                 .setWidget(new NewPoolWizard(this).asWidget())
