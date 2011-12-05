@@ -48,7 +48,9 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.Cache;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.DefaultCacheContainer;
 import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.subsys.jca.JcaBeanValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -177,6 +179,7 @@ public interface BeanFactory extends AutoBeanFactory {
     // Infinispan subsystem
     AutoBean<CacheContainer> cacheContainer();
     AutoBean<DefaultCacheContainer> defaultCacheContainer();
+    AutoBean<Cache> cache();
 
     // Thread subsystem
     AutoBean<ThreadFactory> threadFactory();
