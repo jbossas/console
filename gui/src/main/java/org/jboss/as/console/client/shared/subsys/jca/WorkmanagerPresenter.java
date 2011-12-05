@@ -26,7 +26,6 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
-import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.builder.ModalWindowLayout;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -222,7 +221,7 @@ public class WorkmanagerPresenter
 
     public void onSavePoolConfig(
             String managerName,
-            boolean isShortRunning, String poolName,
+            final WorkmanagerPool entity,
             Map<String, Object> changeset)
     {
         ModelNode address = new ModelNode();
@@ -230,10 +229,10 @@ public class WorkmanagerPresenter
         address.get(ADDRESS).add("subsystem", "jca");
         address.get(ADDRESS).add("workmanager", managerName);
 
-        if(isShortRunning)
-            address.get(ADDRESS).add("short-running-threads", poolName);
+        if(entity.isShortRunning())
+            address.get(ADDRESS).add("short-running-threads", entity.getName());
         else
-            address.get(ADDRESS).add("long-running-threads", poolName);
+            address.get(ADDRESS).add("long-running-threads", entity.getName());
 
         ModelNode operation = poolAdapter.fromChangeset(changeset, address);
 
@@ -253,15 +252,14 @@ public class WorkmanagerPresenter
     }
 
     public void onRemovePoolConfig(
-            String managerName,
-            boolean isShortRunning, BoundedQueueThreadPool entity) {
+            String managerName, WorkmanagerPool entity) {
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jca");
         operation.get(ADDRESS).add("workmanager", managerName);
 
-        if(isShortRunning)
+        if(entity.isShortRunning())
             operation.get(ADDRESS).add("short-running-threads", entity.getName());
         else
             operation.get(ADDRESS).add("long-running-threads", entity.getName());
@@ -285,14 +283,14 @@ public class WorkmanagerPresenter
         });
     }
 
-    public void launchNewPoolDialoge(String contextName, boolean shortRunning) {
+    public void launchNewPoolDialoge(String contextName) {
         window = new ModalWindowLayout()
                 .setTitle("New Pool Configuration")
-                .setWidget(new NewPoolWizard(this, shortRunning).asWidget())
+                .setWidget(new NewPoolWizard(this).asWidget())
                 .build();
     }
 
-    public void createNewPool(WorkmanagerPool pool, boolean shortRunning) {
+    public void createNewPool(WorkmanagerPool pool) {
 
         closeDialoge();
 
@@ -302,7 +300,7 @@ public class WorkmanagerPresenter
         operation.get(ADDRESS).add("workmanager", workManagerName);
         operation.get(OP).set(ADD);
 
-        if(shortRunning)
+        if(pool.isShortRunning())
             operation.get(ADDRESS).add("short-running-threads", pool.getName());
         else
             operation.get(ADDRESS).add("long-running-threads", pool.getName());

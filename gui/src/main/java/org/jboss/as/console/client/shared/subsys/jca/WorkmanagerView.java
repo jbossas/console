@@ -29,7 +29,7 @@ public class WorkmanagerView extends SuspendableViewImpl implements WorkmanagerP
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        poolEditor = new ThreadPoolEditor(presenter, true);
+        poolEditor = new ThreadPoolEditor(presenter);
 
         tabLayoutpanel.add(poolEditor.asWidget(), "Thread Pools");
 

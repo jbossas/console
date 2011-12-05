@@ -47,12 +47,10 @@ public class ThreadPoolEditor {
     private String contextName;
     private Label headline;
 
-    private boolean shortRunning = false;
     private JcaWorkmanager currentManager;
 
-    public ThreadPoolEditor(WorkmanagerPresenter presenter, boolean isShortRunning) {
+    public ThreadPoolEditor(WorkmanagerPresenter presenter) {
         this.presenter = presenter;
-        this.shortRunning = isShortRunning;
     }
 
     Widget asWidget() {
@@ -93,7 +91,7 @@ public class ThreadPoolEditor {
         topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewPoolDialoge(contextName, shortRunning);
+                presenter.launchNewPoolDialoge(contextName);
             }
         }));
 
@@ -111,7 +109,6 @@ public class ThreadPoolEditor {
                                     SingleSelectionModel<WorkmanagerPool> selectionModel = (SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel();
                                     presenter.onRemovePoolConfig(
                                             contextName,
-                                            shortRunning,
                                             selectionModel.getSelectedObject()
                                     );
                                 }
@@ -171,8 +168,7 @@ public class ThreadPoolEditor {
                     public void onSave(Map<String, Object> changeset) {
                         presenter.onSavePoolConfig(
                                 contextName,
-                                shortRunning,
-                                attributesForm.getEditedEntity().getName(),
+                                attributesForm.getEditedEntity(),
                                 changeset
                         );
                     }
@@ -192,8 +188,7 @@ public class ThreadPoolEditor {
                     public void onSave(Map<String, Object> changeset) {
                         presenter.onSavePoolConfig(
                                 contextName,
-                                shortRunning,
-                                attributesForm.getEditedEntity().getName(),
+                                attributesForm.getEditedEntity(),
                                 changeset
                         );
                     }
@@ -234,7 +229,7 @@ public class ThreadPoolEditor {
                 .setPlain(true)
                 .setHeadlineWidget(header)
                 .setTitle("Thread Pool")
-                .setDescription("A thread pool configurations used by a JCA workmanager.")
+                .setDescription("Thread pool configurations used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
                 .setTopLevelTools(topLevelTools.asWidget())
                 .addDetail("Attributes", attributesPanel)
@@ -256,7 +251,7 @@ public class ThreadPoolEditor {
     }
 
     private String createReferenceToken(WorkmanagerPool pool) {
-        String type = shortRunning ? "short-running-threads":"long-running-threads";
+        String type = pool.isShortRunning() ? "short-running-threads":"long-running-threads";
         return contextName+"/"+type+"/"+pool.getName();
     }
 

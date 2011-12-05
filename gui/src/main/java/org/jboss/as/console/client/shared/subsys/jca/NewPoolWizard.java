@@ -8,6 +8,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -22,11 +23,9 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class NewPoolWizard {
     private WorkmanagerPresenter presenter;
-    private boolean isShortRunning;
 
-    public NewPoolWizard(WorkmanagerPresenter presenter, boolean shortRunning) {
+    public NewPoolWizard(WorkmanagerPresenter presenter) {
         this.presenter = presenter;
-        this.isShortRunning = shortRunning;
     }
 
     Widget asWidget() {
@@ -36,6 +35,10 @@ public class NewPoolWizard {
         final Form<WorkmanagerPool> form = new Form(WorkmanagerPool.class);
 
         TextBoxItem nameField = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
+
+        final ComboBoxItem type = new ComboBoxItem("type", "Type");
+        type.setDefaultToFirstOption(true);
+        type.setValueMap(new String[] {"short-running", "long-running"});
 
         NumberBoxItem maxThreads = new NumberBoxItem("maxThreadsCount", "Max Threads");
         NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("maxThreadsPerCPU", "Max Threads/CPU");
@@ -47,7 +50,7 @@ public class NewPoolWizard {
         queueLength.setValue(10);
         queueLengthPerCPU.setValue(20);
 
-        form.setFields(nameField, maxThreads, maxThreadsPerCPU, queueLength, queueLengthPerCPU);
+        form.setFields(nameField, type, maxThreads, maxThreadsPerCPU, queueLength, queueLengthPerCPU);
 
         DialogueOptions options = new DialogueOptions(
 
@@ -56,12 +59,13 @@ public class NewPoolWizard {
                     @Override
                     public void onClick(ClickEvent event) {
                         WorkmanagerPool pool = form.getUpdatedEntity();
+                        pool.setShortRunning(type.getValue().equals("short-running"));
 
                         FormValidation validation = form.validate();
                         if(validation.hasErrors())
                             return;
 
-                        presenter.createNewPool(pool, isShortRunning);
+                        presenter.createNewPool(pool);
 
                     }
                 },
@@ -87,7 +91,8 @@ public class NewPoolWizard {
                         ModelNode address = new ModelNode();
                         address.set(Baseadress.get());
                         address.add("subsystem", "jca");
-                        address.add("bootstrap-context", "*");
+                        address.add("workmanager", "*");
+                        address.add("short-running-threads", "*");
                         return address;
                     }
                 }, form
