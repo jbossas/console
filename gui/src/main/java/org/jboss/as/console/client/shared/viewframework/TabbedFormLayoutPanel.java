@@ -178,21 +178,29 @@ public class TabbedFormLayoutPanel<T> implements FormAdapter<T>, SingleEntityVie
         }
 
         List<PropertyBinding> baseBindings = formMetaData.getBaseAttributes();
-        FormItem[][] items = new FormItem[baseBindings.size()][];
-        int i=0;
-        for (PropertyBinding propBinding : baseBindings) {
-            items[i++] = propBinding.getFormItemForEdit(observers);
+        // FormItem[][] items = new FormItem[baseBindings.size()][];
+        List<FormItem[]> items = new ArrayList<FormItem[]>();
+        // for (PropertyBinding propBinding : baseBindings) {
+        for (PropertyBinding propBinding : bindings) {
+            if (baseBindings.contains(propBinding)) {
+                items.add(propBinding.getFormItemForEdit(observers));
+            }
         }
-        form.setFields(items);
+        form.setFields(items.toArray(new FormItem[items.size()][]));
 
         for (String subgroup : formMetaData.getGroupNames()) {
             List<PropertyBinding> groupBindings = formMetaData.getGroupedAttribtes(subgroup);
-            FormItem[][] groupItems = new FormItem[groupBindings.size()][];
-            int j=0;
-            for (PropertyBinding propBinding : groupBindings) {
-                groupItems[j++] = propBinding.getFormItemForEdit(observers);
+            // FormItem[][] groupItems = new FormItem[groupBindings.size()][];
+            List<FormItem[]> groupItems = new ArrayList<FormItem[]>();
+            // for (PropertyBinding propBinding : groupBindings) {
+            for (PropertyBinding propBinding : bindings) {
+                if (groupBindings.contains(propBinding)) {
+                    groupItems.add(propBinding.getFormItemForEdit(observers));
+                }
             }
-            form.setFieldsInGroup(subgroup, new DisclosureGroupRenderer(), groupItems);
+            if (groupItems.size() > 0) {
+                form.setFieldsInGroup(subgroup, new DisclosureGroupRenderer(), groupItems.toArray(new FormItem[groupItems.size()][]));
+            }
         }
 
         return form;
