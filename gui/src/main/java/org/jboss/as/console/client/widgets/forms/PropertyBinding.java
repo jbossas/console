@@ -47,7 +47,7 @@ public class PropertyBinding {
     private String subgroup;
     private String tabName;
     private int order;
-
+    private String[] acceptedValues;
 
     public PropertyBinding(String javaName, String detypedName, String javaTypeName, boolean isKey, boolean expr) {
         this.detypedName = detypedName;
@@ -62,7 +62,7 @@ public class PropertyBinding {
                            boolean writeUndefined,
                            String defaultValue, String label, boolean isRequired,
                            String formItemTypeForEdit, String formItemTypeForAdd, 
-                           String subgroup, String tabName, int order) {
+                           String subgroup, String tabName, int order, String[] acceptedValues) {
         this(javaName, detypedName, javaTypeName, isKey, expr);
         this.listType = listType;
         if (listType != null) {
@@ -79,6 +79,7 @@ public class PropertyBinding {
         this.subgroup = subgroup;
         this.tabName = tabName;
         this.order = order;
+        this.acceptedValues = acceptedValues;
     }
 
     public String getJavaTypeName() {
@@ -162,6 +163,10 @@ public class PropertyBinding {
 
     public int getOrder() {
         return order;
+    }
+    
+    public String[] getAcceptedValues() {
+        return this.acceptedValues;
     }
 
     public boolean doesSupportExpression() {
