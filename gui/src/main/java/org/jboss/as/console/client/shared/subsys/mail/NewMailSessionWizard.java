@@ -8,6 +8,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -82,8 +83,9 @@ public class NewMailSessionWizard {
                 new FormHelpPanel.AddressCallback() {
                     @Override
                     public ModelNode getAddress() {
-                        ModelNode address = new ModelNode();
-                        address.add("server-group", "*");
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "mail");
+                        address.add("mail-session", "*");
                         return address;
                     }
                 }, form
