@@ -27,6 +27,7 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -194,6 +195,10 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                         eeSubsystem.setModules(modules);
 
+                    }
+                    else
+                    {
+                        eeSubsystem.setModules(Collections.EMPTY_LIST);
                     }
 
                     EEPresenter.this.currentEntity = eeSubsystem;
