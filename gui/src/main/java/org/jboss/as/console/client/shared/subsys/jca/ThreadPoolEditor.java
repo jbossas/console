@@ -50,6 +50,8 @@ public class ThreadPoolEditor {
 
     private JcaWorkmanager currentManager;
 
+    private ToolButton add,remove;
+
     public ThreadPoolEditor(WorkmanagerPresenter presenter) {
         this.presenter = presenter;
     }
@@ -89,27 +91,25 @@ public class ThreadPoolEditor {
         table.addColumn(size, "Max Threads");
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        add = new ToolButton("Add", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 presenter.launchNewPoolDialoge(currentManager);
             }
-        }));
+        });
+        topLevelTools.addToolButtonRight(add);
 
-        topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        remove = new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 final SingleSelectionModel<WorkmanagerPool> selectionModel = (SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel();
                 final WorkmanagerPool pool = selectionModel.getSelectedObject();
 
-                if(pool.isShortRunning())
-                {
+                if (pool.isShortRunning()) {
                     Console.error("Pool cannot be removed", "A short running pool is mandatory!");
-                }
-                else
-                {
+                } else {
 
                     Feedback.confirm(
                             "Remove Pool Configuration",
@@ -126,7 +126,8 @@ public class ThreadPoolEditor {
                             });
                 }
             }
-        }));
+        });
+        topLevelTools.addToolButtonRight(remove);
 
         // ---
 
@@ -274,6 +275,11 @@ public class ThreadPoolEditor {
     public void setWorkManager(JcaWorkmanager manager) {
 
         this.currentManager = manager;
+
+        // don't mess with the default managers
+        boolean enabled = !manager.getName().equals("default");
+        add.setVisible(enabled);
+        remove.setVisible(enabled);
 
         List<WorkmanagerPool> pools = new ArrayList<WorkmanagerPool>(2);
 

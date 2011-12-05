@@ -315,7 +315,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info("Success: Update JCA settings");
 
-                loadJcaSubsystem();
+                loadWorkManager();
             }
         });
     }
