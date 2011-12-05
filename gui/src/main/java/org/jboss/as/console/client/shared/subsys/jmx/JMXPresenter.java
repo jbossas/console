@@ -24,12 +24,13 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -90,6 +91,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
         ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -98,11 +100,21 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JMX subsystem", response.get("failure-description").asString());
+                    Console.error("Failed to load JMX subsystem", response.getFailureDescription());
                 }
                 else
                 {
-                    JMXSubsystem jmxSubsystem = adapter.fromDMR(response.get(RESULT).asObject());
+                    ModelNode payload = response.get(RESULT).asObject();
+                    JMXSubsystem jmxSubsystem = adapter.fromDMR(payload);
+
+                    if(payload.hasDefined("connector"))
+                    {
+                        Property item = payload.get("connector").asPropertyList().get(0);
+                        ModelNode jmxConnector = item.getValue();
+                        jmxSubsystem.setRegistryBinding(jmxConnector.get("registry-binding").asString());
+                        jmxSubsystem.setServerBinding(jmxConnector.get("server-binding").asString());
+                    }
+
                     getView().updateFrom(jmxSubsystem);
                 }
             }
@@ -115,9 +127,42 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
     }
 
     public void onSave(final JMXSubsystem editedEntity, Map<String, Object> changeset) {
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
 
-        System.out.println(operation);
+        List<ModelNode> extraSteps = new ArrayList<ModelNode>(2);
+
+        if(changeset.containsKey("registryBinding"))
+        {
+            ModelNode registry = new ModelNode();
+            registry.get(ADDRESS).set(Baseadress.get());
+            registry.get(ADDRESS).add("subsystem", "jmx");
+            registry.get(ADDRESS).add("connector", "jmx");
+            registry.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            registry.get(NAME).set("registry-binding");
+            registry.get(VALUE).set((String)changeset.get("registryBinding"));
+
+            changeset.remove("registryBinding");
+            extraSteps.add(registry);
+        }
+
+        if(changeset.containsKey("serverBinding"))
+        {
+            ModelNode registry = new ModelNode();
+            registry.get(ADDRESS).set(Baseadress.get());
+            registry.get(ADDRESS).add("subsystem", "jmx");
+            registry.get(ADDRESS).add("connector", "jmx");
+            registry.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            registry.get(NAME).set("server-binding");
+            registry.get(VALUE).set((String)changeset.get("serverBinding"));
+
+            changeset.remove("serverBinding");
+            extraSteps.add(registry);
+        }
+
+        ModelNode operation = adapter.fromChangeset(
+                changeset,
+                beanMetaData.getAddress().asResource(),
+                extraSteps.toArray(new ModelNode[] {}));
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -125,7 +170,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update JMX subsystem");
+                    Console.error("Failed to update JMX subsystem", response.getFailureDescription());
                 }
                 else
                 {
