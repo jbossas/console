@@ -45,7 +45,7 @@ public class LocalCacheView extends AbstractEntityView<Cache> implements LocalCa
     @Inject
     public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(Cache.class, propertyMetaData);
-        bridge = new EntityToDmrBridgeImpl(propertyMetaData, Cache.class, this, dispatcher);
+        bridge = new CacheEntityToDmrBridge(propertyMetaData, Cache.class, this, dispatcher);
     }
     
     @Override
