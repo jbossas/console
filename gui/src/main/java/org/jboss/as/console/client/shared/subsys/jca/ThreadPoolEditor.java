@@ -44,7 +44,7 @@ public class ThreadPoolEditor {
     private Form<WorkmanagerPool> attributesForm;
     private PropertyEditor propertyEditor;
 
-    private WorkmanagerPresenter presenter;
+    private JcaPresenter presenter;
     private String contextName;
     private Label headline;
 
@@ -52,7 +52,7 @@ public class ThreadPoolEditor {
 
     private ToolButton add,remove;
 
-    public ThreadPoolEditor(WorkmanagerPresenter presenter) {
+    public ThreadPoolEditor(JcaPresenter presenter) {
         this.presenter = presenter;
     }
 

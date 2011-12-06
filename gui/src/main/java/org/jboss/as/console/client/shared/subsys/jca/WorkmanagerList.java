@@ -22,19 +22,18 @@ import java.util.List;
 
 /**
  * @author Heiko Braun
- * @date 11/30/11
+ * @date 12/6/11
  */
-public class WorkmanagerListView {
+public class WorkmanagerList {
 
     private JcaPresenter presenter;
     private ListDataProvider<JcaWorkmanager> dataProvider;
 
-    public WorkmanagerListView(JcaPresenter presenter) {
+    public WorkmanagerList(JcaPresenter presenter) {
         this.presenter = presenter;
     }
 
     Widget asWidget() {
-
         final DefaultCellTable<JcaWorkmanager> table = new DefaultCellTable<JcaWorkmanager>(10);
         dataProvider = new ListDataProvider<JcaWorkmanager>();
         dataProvider.addDataDisplay(table);
@@ -52,7 +51,7 @@ public class WorkmanagerListView {
                     @Override
                     public void execute(JcaWorkmanager selection) {
                         presenter.getPlaceManager().revealPlace(
-                                new PlaceRequest(NameTokens.JcaWorkManager).with("name", selection.getName())
+                                new PlaceRequest(NameTokens.JcaPresenter).with("name", selection.getName())
                         );
                     }
                 })
@@ -84,8 +83,7 @@ public class WorkmanagerListView {
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed)
-                                {
+                                if (isConfirmed) {
                                     SingleSelectionModel<JcaWorkmanager> selectionModel = (SingleSelectionModel<JcaWorkmanager>) table.getSelectionModel();
                                     presenter.onDeleteManager(selectionModel.getSelectedObject());
                                 }
@@ -105,9 +103,10 @@ public class WorkmanagerListView {
                 .build();
 
         return panel;
+
     }
 
     public void setManagers(List<JcaWorkmanager> managers) {
-        dataProvider.setList(managers);
+        this.dataProvider.setList(managers);
     }
 }

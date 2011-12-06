@@ -20,7 +20,7 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
     private JcaPresenter presenter;
     private JcaBootstrapEditor boostrapEditor;
     private JcaBaseEditor baseEditor;
-    private WorkmanagerListView workmanagerEditor;
+    private WorkmanagerDetail workmanagerEditor;
 
     @Override
     public void setPresenter(JcaPresenter presenter) {
@@ -33,7 +33,7 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        workmanagerEditor = new WorkmanagerListView(presenter);
+        workmanagerEditor = new WorkmanagerDetail(presenter);
         boostrapEditor = new JcaBootstrapEditor(presenter);
         baseEditor = new JcaBaseEditor(presenter);
 
@@ -70,5 +70,10 @@ public class JcaSubsystemView extends SuspendableViewImpl implements JcaPresente
     @Override
     public void setBootstrapContexts(List<JcaBootstrapContext> contexts) {
         boostrapEditor.setContexts(contexts);
+    }
+
+    @Override
+    public void setSelectedWorkmanager(String selectedWorkmanager) {
+        workmanagerEditor.setSelection(selectedWorkmanager);
     }
 }

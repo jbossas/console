@@ -22,9 +22,10 @@ import org.jboss.dmr.client.ModelNode;
  * @date 12/1/11
  */
 public class NewPoolWizard {
-    private WorkmanagerPresenter presenter;
+    private JcaPresenter presenter;
+    private String managerName;
 
-    public NewPoolWizard(WorkmanagerPresenter presenter) {
+    public NewPoolWizard(JcaPresenter presenter, String managerName) {
         this.presenter = presenter;
     }
 
@@ -65,7 +66,7 @@ public class NewPoolWizard {
                         if(validation.hasErrors())
                             return;
 
-                        presenter.createNewPool(pool);
+                        presenter.createNewPool(managerName, pool);
 
                     }
                 },
