@@ -19,17 +19,6 @@
 
 package org.jboss.as.console.rebind.forms;
 
-import com.google.gwt.core.ext.Generator;
-import com.google.gwt.core.ext.GeneratorContext;
-import com.google.gwt.core.ext.TreeLogger;
-import com.google.gwt.core.ext.UnableToCompleteException;
-import com.google.gwt.core.ext.typeinfo.JClassType;
-import com.google.gwt.core.ext.typeinfo.TypeOracle;
-import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
-import com.google.gwt.user.rebind.SourceWriter;
-import org.jboss.as.console.client.widgets.forms.Address;
-import org.jboss.as.console.client.widgets.forms.Binding;
-
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -38,6 +27,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.gwt.core.ext.Generator;
+import com.google.gwt.core.ext.GeneratorContext;
+import com.google.gwt.core.ext.TreeLogger;
+import com.google.gwt.core.ext.UnableToCompleteException;
+import com.google.gwt.core.ext.typeinfo.JClassType;
+import com.google.gwt.core.ext.typeinfo.TypeOracle;
+import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
+import com.google.gwt.user.rebind.SourceWriter;
+
+import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
@@ -155,6 +156,7 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("super();");
         sourceWriter.println("String label = \"\";");
         sourceWriter.println("Class<?> listType = null;");
+        sourceWriter.println("String subgroup = \"\";");
         sourceWriter.println("String tabName = \"\";");
         sourceWriter.println("String[] acceptedValues = null;");
 
@@ -191,7 +193,7 @@ public class ApplicationMetaDataGenerator extends Generator{
                         {
                             BindingDeclaration bindDecl = binding.getBindingDeclaration();
                             FormItemDeclaration formDecl = binding.getFormItemDeclaration();
-                            
+
                             if(bindDecl.skip()) continue;
 
                             if (formDecl.localLabel().equals("")) {
@@ -204,6 +206,12 @@ public class ApplicationMetaDataGenerator extends Generator{
                                 sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
                             }
 
+                            if (!"".equals(formDecl.subgroup())) {
+                                sourceWriter.println("subgroup = Console.CONSTANTS." + formDecl.subgroup() + "();");
+                            } else {
+                                sourceWriter.println("subgroup = \"\";");
+                            }
+
                             if(!"CUSTOM".equals(formDecl.tabName()))
                                 sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.tabName() + "();");
                             else
@@ -213,13 +221,13 @@ public class ApplicationMetaDataGenerator extends Generator{
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
-                                                                      "\", \"" + bindDecl.getJavaTypeName() + 
+                                                                      "\", \"" + bindDecl.getJavaTypeName() +
                                                                       "\", listType, this, " + bindDecl.key()
                                                                         + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
-                                                                      ", \"" + formDecl.defaultValue() + "\", label, " + 
-                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
-                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
-                                                                      "\", tabName, " + formDecl.order() + ", acceptedValues)");
+                                                                      ", \"" + formDecl.defaultValue() + "\", label, " +
+                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() +
+                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", subgroup, tabName, " +
+                                                                      formDecl.order() + ", acceptedValues)");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
@@ -283,10 +291,10 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.outdent();
         sourceWriter.println("}");
     }
-    
+
     private String makeStringArrayString(String[] array) {
         StringBuilder builder = new StringBuilder("new String[]{");
-        
+
         for (int i=0; i < array.length; i++) {
             builder.append("\"");
             builder.append(array[i]);
@@ -295,12 +303,12 @@ public class ApplicationMetaDataGenerator extends Generator{
                 builder.append(",");
             }
         }
-        
+
         builder.append("}");
-        
+
         return builder.toString();
     }
-    
+
     public static class PropBindingDeclarations {
         private BindingDeclaration bindingDecl;
         private FormItemDeclaration formItemDecl;
@@ -311,7 +319,7 @@ public class ApplicationMetaDataGenerator extends Generator{
         public BindingDeclaration getBindingDeclaration() { return this.bindingDecl; }
         public FormItemDeclaration getFormItemDeclaration() { return this.formItemDecl; }
     }
-    
+
     public static List<PropBindingDeclarations> mapProperties(Class beanTypeClass) {
 
         List<PropBindingDeclarations> bindings = new ArrayList<PropBindingDeclarations>();
@@ -403,11 +411,11 @@ public class ApplicationMetaDataGenerator extends Generator{
         }
 
         FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
-                                                         formItemTypeForEdit, formItemTypeForAdd, 
+                                                         formItemTypeForEdit, formItemTypeForAdd,
                                                          subgroup, tabName, order, acceptedValues);
         return decl;
     }
-    
+
     private static BindingDeclaration createBindingDeclaration(Class beanTypeClass, Method method, String token) {
 
 

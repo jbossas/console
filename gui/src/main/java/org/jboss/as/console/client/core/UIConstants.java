@@ -324,6 +324,7 @@ public interface UIConstants extends Constants {
     String subsys_jacorb_queueMin();
     String subsys_jacorb_queueMax();
     String subsys_jacorb_poolSize();
+    String subsys_jacorb_security();
     String subsys_jacorb_maxThreads();
     String subsys_jacorb_rootContext();
     String subsys_jacorb_exportCorbaloc();
@@ -342,12 +343,15 @@ public interface UIConstants extends Constants {
     String subsys_jacorb_serverRequires();
     String subsys_jacorb_useDomainSocketFactory();
     String subsys_jacorb_useDomainServerSocketFactory();
-    String subsys_jacorb_interoperability();
-    String subsys_jacorb_threadPools();
-    String subsys_jacorb_queues();
-    String subsys_jacorb_network();
-    String subsys_jacorb_protocol();
-    String subsys_jacorb_security();
+    String subsys_jacorb_interoperabilityTab();
+    String subsys_jacorb_threadPoolsTab();
+    String subsys_jacorb_queuesTab();
+    String subsys_jacorb_networkTab();
+    String subsys_jacorb_protocolTab();
+    String subsys_jacorb_securityTab();
+    String subsys_jacorb_encodingSubgroup();
+    String subsys_jacorb_cachingSubgroup();
+    String subsys_jacorb_buffersSubgroup();
 
     String common_label_serverGroupConfigurations();
     String common_label_serverGroupDeployments();
