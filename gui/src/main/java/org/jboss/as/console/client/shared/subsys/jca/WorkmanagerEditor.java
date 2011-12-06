@@ -10,14 +10,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 11/30/11
  */
-public class WorkmanagerDetail {
+public class WorkmanagerEditor {
 
     private JcaPresenter presenter;
     private WorkmanagerList managerList;
     private ThreadPoolEditor threadPools;
     PagedView panel;
 
-    public WorkmanagerDetail(JcaPresenter presenter) {
+    public WorkmanagerEditor(JcaPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -28,7 +28,7 @@ public class WorkmanagerDetail {
         this.managerList = new WorkmanagerList(presenter);
         this.threadPools = new ThreadPoolEditor(presenter);
 
-        panel.addPage("Overview", managerList.asWidget());
+        panel.addPage("&larr; Back to Overview", managerList.asWidget());
         panel.addPage("Thread Pools", threadPools.asWidget());
 
         // default page

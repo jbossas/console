@@ -231,3 +231,26 @@ body {
 
 }
 
+.link-bar {
+    padding-left:8px;
+    padding-right:8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-left: 1px solid #4A5D75;
+    text-decoration: underline;
+    font-size: 12px;
+}
+
+.link-bar-first {
+    border: none!important;
+}
+
+.link-bar-active {
+    text-decoration: none!important;
+    color:#000000!important;
+}
+
+.link-bar-active>a {
+    text-decoration: none!important;
+    color:#000000!important;
+}

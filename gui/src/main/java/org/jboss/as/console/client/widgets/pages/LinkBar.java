@@ -28,17 +28,21 @@ public class LinkBar {
 
     public void addLink(String text, ClickHandler handler) {
 
-        HTML html = new HTML(text);
-        html.addClickHandler(handler);
+        HTML html = new HTML();
+        html.setHTML("<a href='javascript:void(0)'>"+text+"</a>");
 
-        if(numLinks>0)
-            html.addStyleName("link-bar");
-        else if(numLinks==0)
-            if(numLinks>0)
+        html.addClickHandler(handler);
+        html.addStyleName("link-bar");
+
+        if(numLinks==0)
+        {
             html.addStyleName("link-bar-first");
+        }
 
         links.add(html);
         bar.add(html);
+
+        numLinks++;
 
     }
 

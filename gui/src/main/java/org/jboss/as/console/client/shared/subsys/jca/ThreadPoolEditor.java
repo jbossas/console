@@ -232,14 +232,10 @@ public class ThreadPoolEditor {
         headline = new Label("HEADLINE");
         headline.setStyleName("content-header-label");
 
-        VerticalPanel header = new VerticalPanel();
-        header.add(new HTML("<a href='javascript:history.go(-1)'>&larr; Back to Overview</a>"));
-        header.add(headline);
-
         // ---
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadlineWidget(header)
+                .setHeadlineWidget(headline)
                 .setTitle("Thread Pool")
                 .setDescription("Thread pool configurations used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)

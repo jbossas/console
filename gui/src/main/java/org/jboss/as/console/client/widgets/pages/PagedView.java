@@ -39,8 +39,8 @@ public class PagedView {
         layout.add(navigationBar);
         layout.add(deck);
 
-        layout.setWidgetTopHeight(navigationBar, 0, Style.Unit.PX, 20, Style.Unit.PX);
-        layout.setWidgetTopHeight(deck, 20, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(navigationBar, 2, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(deck, 32, Style.Unit.PX, 100, Style.Unit.PCT);
 
         navigationBar.setVisible(navOnFirstPage);
 
