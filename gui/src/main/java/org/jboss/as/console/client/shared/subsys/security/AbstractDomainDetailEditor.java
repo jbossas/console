@@ -43,6 +43,7 @@ import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityD
 import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -68,6 +69,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     List<T> backup;
     DefaultWindow window;
     ContentHeaderLabel headerLabel;
+
+    Wizard<T> wizard;
 
     AbstractDomainDetailEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         this.presenter = presenter;
@@ -176,8 +179,11 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         attributesTable.setSelectionModel(ssm);
 
 
+        wizard = getWizard();
+
         TabPanel bottomTabs = new TabPanel();
         bottomTabs.setStyleName("default-tabpanel");
+        bottomTabs.add(wizard.asWidget(), "Attributes");
         bottomTabs.add(propertyEditor.asWidget(), "Properties");
 
         vpanel.add(new ContentGroupLabel("Details"));
@@ -197,6 +203,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         return layout;
     }
+
+
 
     void addCustomColumns(DefaultCellTable<T> attributesTable) {
         // by default no custom columns are needed

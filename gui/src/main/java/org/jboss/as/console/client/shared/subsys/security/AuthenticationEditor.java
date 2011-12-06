@@ -18,12 +18,12 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
-import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -55,13 +55,13 @@ public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
 
     @Override
     Wizard<AuthenticationLoginModule> getWizard() {
-        if (flagValues == null) {
-            // This sucks a bit, but these values are set asynchronously so there is a very small chance that they aren't
-            // there yet. It would be better to automatically wait but is it worth the complexity?
-            Feedback.alert(getEntityName(),
-                new SafeHtmlBuilder().appendEscaped(Console.MESSAGES.temporarilyUnavailable()).toSafeHtml());
-            return null;
-        }
+
+        List<String> flagValues = new LinkedList<String>();
+        flagValues.add("REQUIRED");
+        flagValues.add("REQUISITE");
+        flagValues.add("SUFFICIENT");
+        flagValues.add("OPTIONAL");
+
         // should really wait until flagValues are set.
         return new NewAuthPolicyModuleWizard<AuthenticationLoginModule>(this, entityClass, flagValues,
             presenter, SecurityDomainsPresenter.AUTHENTICATION_IDENTIFIER, "login-modules");

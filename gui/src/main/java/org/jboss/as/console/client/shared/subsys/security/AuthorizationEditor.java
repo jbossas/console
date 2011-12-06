@@ -25,6 +25,9 @@ import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPol
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author David Bosschaert
  */
@@ -55,13 +58,13 @@ public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider>
 
     @Override
     Wizard<AuthorizationPolicyProvider> getWizard() {
-        if (flagValues == null) {
-            // This sucks a bit, but these values are set asynchronously so there is a very small chance that they aren't
-            // there yet. It would be better to automatically wait but is it worth the complexity?
-            Feedback.alert(getEntityName(),
-                new SafeHtmlBuilder().appendEscaped(Console.MESSAGES.temporarilyUnavailable()).toSafeHtml());
-            return null;
-        }
+
+        List<String> flagValues = new LinkedList<String>();
+        flagValues.add("REQUIRED");
+        flagValues.add("REQUISITE");
+        flagValues.add("SUFFICIENT");
+        flagValues.add("OPTIONAL");
+
         // should really wait until flagValues are set.
         return new NewAuthPolicyModuleWizard<AuthorizationPolicyProvider>(this, entityClass, flagValues,
             presenter, SecurityDomainsPresenter.AUTHORIZATION_IDENTIFIER, "policy-modules");

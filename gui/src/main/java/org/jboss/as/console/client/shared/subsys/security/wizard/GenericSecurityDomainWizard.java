@@ -122,7 +122,8 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
                 }
             });
 
-        return new WindowContentBuilder(layout, options).build();
+        // TODO toolbar
+        return layout;
     }
 
     FormItem<?>[] getCustomFields() {

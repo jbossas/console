@@ -96,6 +96,8 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
         void setAuditModules(String domainName, List<GenericSecurityDomainData> modules, boolean resourceExists);
 
         void loadSecurityDomain(String domainName);
+
+        @Deprecated
         void setAuthFlagValues(String type, List<String> values);
 
         void setSelectedDomain(String selectedDomain);
@@ -151,6 +153,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
         loadAuthFlagValues(AUTHENTICATION_IDENTIFIER, "login-modules");
     }
 
+    @Deprecated
     private void loadAuthFlagValues(final String type, final String attrName) {
         ModelNode operation = createOperation(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, "*");

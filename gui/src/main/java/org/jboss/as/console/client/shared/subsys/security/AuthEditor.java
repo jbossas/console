@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.cell.client.TextCell;
@@ -31,7 +32,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  * @author David Bosschaert
  */
 public abstract class AuthEditor <T extends AbstractAuthData> extends AbstractDomainDetailEditor<T> {
-    List<String> flagValues;
+    List<String> flagValues = Collections.EMPTY_LIST;
 
     AuthEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         super(presenter, entityClass);
@@ -48,6 +49,7 @@ public abstract class AuthEditor <T extends AbstractAuthData> extends AbstractDo
         table.addColumn(flagColumn, Console.CONSTANTS.subsys_security_flagField());
     }
 
+    @Deprecated
     public void setFlagValues(List<String> values) {
         flagValues = values;
     }

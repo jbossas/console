@@ -106,11 +106,11 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         FakeTabPanel titleBar = new FakeTabPanel(getEntityDisplayName());
         layout.add(titleBar);
 
-        Widget domainListWidget = pages.asWidget();
-        layout.add(domainListWidget);
+        Widget pagesWidget = pages.asWidget();
+        layout.add(pagesWidget);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(domainListWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(pagesWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // update pages when selection changes
@@ -143,6 +143,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
     }
 
     @Override
+
     public void setAuthFlagValues(String type, List<String> values) {
         if (SecurityDomainsPresenter.AUTHENTICATION_IDENTIFIER.equals(type)) {
             authenticationEditor.setFlagValues(values);
