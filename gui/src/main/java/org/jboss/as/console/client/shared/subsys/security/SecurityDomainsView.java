@@ -122,10 +122,10 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         entityEditor = makeEntityEditor();
         entityEditor.setDescription(description);
 
-        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        Widget editorWidget = entityEditor.setIncludeTools(true).asWidget();
         panel.add(editorWidget);
 
-        ToolStrip tools = createToolStrip();
+        //ToolStrip tools = createToolStrip();
 
         return scrollPanel;
     }
@@ -230,6 +230,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         {
 
             pages.showPage(1);
+            loadSecurityDomain(selectedDomain);
         }
         else {
             pages.showPage(0);

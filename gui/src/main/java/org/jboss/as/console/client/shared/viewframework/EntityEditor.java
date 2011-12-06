@@ -118,13 +118,6 @@ public class EntityEditor<T> implements EntityListView<T> {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("fill-layout-width");
 
-        if(includeTools)
-        {
-            toolStrip = createTools();
-            if(toolStrip.hasButtons())
-                panel.add(toolStrip);
-        }
-
         panel.add(new ContentHeaderLabel(entitiesName));
         if(description!=null)
             panel.add(new ContentDescription(description));
@@ -143,6 +136,13 @@ public class EntityEditor<T> implements EntityListView<T> {
 
         dataProvider = new ListDataProvider<T>();
         dataProvider.addDataDisplay(table);
+
+        if(includeTools)
+        {
+            toolStrip = createTools();
+            if(toolStrip.hasButtons())
+                panel.add(toolStrip);
+        }
 
         panel.add(table);
 
