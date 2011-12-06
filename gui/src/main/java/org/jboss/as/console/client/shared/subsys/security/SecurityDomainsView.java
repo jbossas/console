@@ -18,14 +18,17 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.List;
-
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
@@ -38,9 +41,15 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.TabbedFormLayoutPanel;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.pages.PagedView;
+import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -56,6 +65,9 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
     private TabbedFormLayoutPanel tabBottomPanel;
     private SecurityDomainsPresenter presenter;
 
+    private PagedView pages;
+    private String selectedDomain;
+
     @Inject
     public SecurityDomainsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(SecurityDomain.class, propertyMetaData);
@@ -64,26 +76,58 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
 
     @Override
     public Widget createWidget() {
-        Widget w = super.createWidget();
+
+        pages = new PagedView();
+
+
+        Widget domainList = createDomainList("");
 
         authenticationEditor = new AuthenticationEditor(presenter);
         authorizationEditor = new AuthorizationEditor(presenter);
         mappingEditor = new MappingEditor(presenter);
         auditEditor = new AuditEditor(presenter);
-        tabBottomPanel.add(authenticationEditor.asWidget(), authenticationEditor.getEntityName());
-        tabBottomPanel.add(authorizationEditor.asWidget(), authorizationEditor.getEntityName());
-        tabBottomPanel.add(mappingEditor.asWidget(), mappingEditor.getEntityName());
-        tabBottomPanel.add(auditEditor.asWidget(), auditEditor.getEntityName());
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                SingleSelectionModel<SecurityDomain> ssm = (SingleSelectionModel<SecurityDomain>) table.getSelectionModel();
-                presenter.updateDomainSelection(ssm.getSelectedObject());
-            }
-        });
+        pages.addPage("&larr; Back to Overview", domainList);
+        pages.addPage(authenticationEditor.getEntityName(), authenticationEditor.asWidget());
+        pages.addPage(authorizationEditor.getEntityName(), authorizationEditor.asWidget());
+        pages.addPage(mappingEditor.getEntityName(), mappingEditor.asWidget());
+        pages.addPage(auditEditor.getEntityName(), auditEditor.asWidget());
 
-        return w;
+        // default page
+        pages.showPage(0);
+
+        // ---
+
+        LayoutPanel layout = new LayoutPanel();
+
+        // Top Most Tab
+        FakeTabPanel titleBar = new FakeTabPanel(getEntityDisplayName());
+        layout.add(titleBar);
+
+        Widget domainListWidget = pages.asWidget();
+        layout.add(domainListWidget);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(domainListWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
+    }
+
+    private Widget createDomainList(String description) {
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("rhs-content-panel");
+
+        ScrollPanel scrollPanel = new ScrollPanel(panel);
+
+        entityEditor = makeEntityEditor();
+        entityEditor.setDescription(description);
+
+        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        panel.add(editorWidget);
+
+        ToolStrip tools = createToolStrip();
+
+        return scrollPanel;
     }
 
     @Override
@@ -110,7 +154,25 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
     protected DefaultCellTable<SecurityDomain> makeEntityTable() {
         table = new DefaultCellTable<SecurityDomain>(5);
 
+        Column<SecurityDomain, SecurityDomain> option = new Column<SecurityDomain, SecurityDomain>(
+                new TextLinkCell<SecurityDomain>("View &rarr;", new ActionCell.Delegate<SecurityDomain>() {
+                    @Override
+                    public void execute(SecurityDomain selection) {
+                        presenter.getPlaceManager().revealPlace(
+                                new PlaceRequest(NameTokens.SecurityDomainsPresenter).with("name", selection.getName())
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public SecurityDomain getValue(SecurityDomain domain) {
+                return domain;
+            }
+        };
+
+
         table.addColumn(new Columns.NameColumn(), Columns.NameColumn.LABEL);
+        table.addColumn(option, "Option");
 
         return table;
     }
@@ -120,7 +182,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         Form<SecurityDomain> form = new Form(SecurityDomain.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("cacheType").getFormItemForAdd());
+                formMetaData.findAttribute("cacheType").getFormItemForAdd());
         return form;
     }
 
@@ -157,5 +219,20 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
     @Override
     public void setAuditModules(String domainName, List<GenericSecurityDomainData> modules, boolean resourceExists) {
         auditEditor.setData(domainName, modules, resourceExists);
+    }
+
+    @Override
+    public void setSelectedDomain(String selectedDomain) {
+
+        this.selectedDomain = selectedDomain;
+
+        if(selectedDomain!=null)
+        {
+
+            pages.showPage(1);
+        }
+        else {
+            pages.showPage(0);
+        }
     }
 }

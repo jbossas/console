@@ -18,36 +18,40 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
 import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -77,15 +81,19 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
     Widget asWidget() {
         VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("fill-layout-width");
+        vpanel.setStyleName("rhs-content-panel");
 
         attributesTable = new DefaultCellTable<T>(4);
         attributesTable.getElement().setAttribute("style", "margin-top:5px;");
         attributesProvider = new ListDataProvider<T>();
         attributesProvider.addDataDisplay(attributesTable);
 
+        vpanel.add(new ContentHeaderLabel("Security Domain: NAME HERE"));
+
+        vpanel.add(new ContentGroupLabel(getStackName()));
+
         ToolStrip tableTools = new ToolStrip();
-        tableTools.addToolWidget(new HTML("&nbsp;&nbsp;" + getStackName()));
+
         addModule = new ToolButton(Console.CONSTANTS.common_label_add());
         addModule.addClickHandler(new ClickHandler() {
             @Override
@@ -95,6 +103,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         });
         tableTools.addToolButtonRight(addModule);
         vpanel.add(tableTools);
+
+        // -------
 
         Column<T, String> codeColumn = new Column<T, String>(new TextCell()) {
             @Override
@@ -136,9 +146,14 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         vpanel.add(attributesTable);
 
+        // -------
+
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(attributesTable);
         vpanel.add(pager);
+
+        // -------
+
 
         final PropertyEditor propertyEditor = new PropertyEditor();
 
@@ -158,11 +173,27 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         });
         attributesTable.setSelectionModel(ssm);
 
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_properties()));
-        vpanel.add(propertyEditor.asWidget());
-        propertyEditor.setAllowEditProps(false);
 
-        return vpanel;
+        TabPanel bottomTabs = new TabPanel();
+        bottomTabs.setStyleName("default-tabpanel");
+        bottomTabs.add(propertyEditor.asWidget(), "Properties");
+
+        vpanel.add(new ContentGroupLabel("Details"));
+
+        vpanel.add(bottomTabs);
+        bottomTabs.selectTab(0);
+
+        //propertyEditor.setAllowEditProps(false);
+
+         // -------
+
+        ScrollPanel scroll = new ScrollPanel(vpanel);
+
+        LayoutPanel layout = new LayoutPanel();
+        layout.add(scroll);
+        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
     }
 
     void addCustomColumns(DefaultCellTable<T> attributesTable) {

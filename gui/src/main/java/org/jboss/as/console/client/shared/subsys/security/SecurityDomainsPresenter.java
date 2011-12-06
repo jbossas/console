@@ -29,6 +29,8 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
 import org.jboss.as.console.client.Console;
@@ -73,6 +75,13 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     private final BeanFactory factory;
     private final RevealStrategy revealStrategy;
     private final EntityAdapter<SecurityDomain> entityAdapter;
+    private PlaceManager placeManager;
+
+    private String selectedDomain;
+
+    public PlaceManager getPlaceManager() {
+        return this.placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SecurityDomainsPresenter)
@@ -88,18 +97,22 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
         void loadSecurityDomain(String domainName);
         void setAuthFlagValues(String type, List<String> values);
+
+        void setSelectedDomain(String selectedDomain);
     }
 
     @Inject
     public SecurityDomainsPresenter(EventBus eventBus, MyView view, MyProxy proxy,
         DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy,
-        ApplicationMetaData appMetaData) {
+        ApplicationMetaData appMetaData, PlaceManager placeManager) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
         this.entityAdapter = new EntityAdapter<SecurityDomain>(SecurityDomain.class, appMetaData);
+
+        this.placeManager = placeManager;
     }
 
     @Override
@@ -112,6 +125,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     protected void onReset() {
         super.onReset();
         getView().initialLoad();
+        getView().setSelectedDomain(selectedDomain);
     }
 
     @Override
@@ -124,6 +138,12 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                 loadAuthFlagValues();
             }
         });
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        selectedDomain = request.getParameter("name", null);
     }
 
     private void loadAuthFlagValues() {
