@@ -153,6 +153,9 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("public " + className + "() { ");
         sourceWriter.indent();
         sourceWriter.println("super();");
+        sourceWriter.println("String label = \"\";");
+        sourceWriter.println("Class<?> listType = null;");
+        sourceWriter.println("String tabName = \"\";");
         sourceWriter.println("String[] acceptedValues = null;");
 
         try {
@@ -191,37 +194,32 @@ public class ApplicationMetaDataGenerator extends Generator{
                             
                             if(bindDecl.skip()) continue;
 
-                            String varSuffix = beanTypeClass.getName().replace(".", "_") + "_" + bindDecl.getJavaName();
-                            String labelVar = "label_" + varSuffix;
                             if (formDecl.localLabel().equals("")) {
-                                sourceWriter.println("String " + labelVar + " = \"" +  formDecl.label() + "\";");
+                                sourceWriter.println("label = \"" +  formDecl.label() + "\";");
                             } else {
-                                sourceWriter.println("String " + labelVar + " = Console.CONSTANTS." + formDecl.localLabel() + "();");
+                                sourceWriter.println("label = Console.CONSTANTS." + formDecl.localLabel() + "();");
                             }
-                            String listTypeVar = "listType_" + varSuffix;
-                            if (bindDecl.listType().equals("")) {
-                                sourceWriter.println("Class<?> " + listTypeVar + " = null;");
-                            } else {
-                                sourceWriter.println("Class<?> " + listTypeVar + " = " + bindDecl.listType() + ".class;");
+
+                            if (!bindDecl.listType().equals("")) {
+                                sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
                             }
-                            String tabNameVar = "tabName_" + varSuffix;
 
                             if(!"CUSTOM".equals(formDecl.tabName()))
-                                sourceWriter.println("String " + tabNameVar + " = Console.CONSTANTS." + formDecl.tabName() + "();");
+                                sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.tabName() + "();");
                             else
-                                sourceWriter.println("String " + tabNameVar + " = \"CUSTOM\";");
+                                sourceWriter.println("tabName = \"CUSTOM\";");
 
                             sourceWriter.println("acceptedValues = " + makeStringArrayString(formDecl.acceptedValues()) + ";");
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
                                                                       "\", \"" + bindDecl.getJavaTypeName() + 
-                                                                      "\"," + listTypeVar + ", this, " + bindDecl.key()
+                                                                      "\", listType, this, " + bindDecl.key()
                                                                         + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
-                                                                      ", \"" + formDecl.defaultValue() + "\", " + labelVar + ", " + 
+                                                                      ", \"" + formDecl.defaultValue() + "\", label, " + 
                                                                       formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() + 
                                                                       "\", \"" + formDecl.formItemTypeForAdd() + "\", \"" + formDecl.subgroup() +
-                                                                      "\", " + tabNameVar + ", " + formDecl.order() + ", acceptedValues)");
+                                                                      "\", tabName, " + formDecl.order() + ", acceptedValues)");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
