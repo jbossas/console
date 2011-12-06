@@ -16,6 +16,7 @@ public class WorkmanagerEditor {
     private WorkmanagerList managerList;
     private ThreadPoolEditor threadPools;
     PagedView panel;
+    private List<JcaWorkmanager> managers;
 
     public WorkmanagerEditor(JcaPresenter presenter) {
         this.presenter = presenter;
@@ -34,10 +35,12 @@ public class WorkmanagerEditor {
         // default page
         panel.showPage(0);
 
+
         return panel.asWidget();
     }
 
     public void setManagers(List<JcaWorkmanager> managers) {
+        this.managers = managers;
         managerList.setManagers(managers);
     }
 
@@ -47,6 +50,19 @@ public class WorkmanagerEditor {
         else
         {
             threadPools.setContextName(selectedWorkmanager);
+
+            if(managers!=null)
+            {
+                for(JcaWorkmanager mangager : managers)
+                {
+                    if(mangager.getName().equals(selectedWorkmanager))
+                    {
+                        threadPools.setWorkManager(mangager);
+                        break;
+                    }
+                }
+            }
+
             panel.showPage(1);
         }
     }

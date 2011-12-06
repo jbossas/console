@@ -99,7 +99,7 @@ public class WorkmanagerList {
                 .setHeadline("Workmanager Overview")
                 .setDescription("Work manager for resource adapters.")
                 .setMaster("Configured Workmanager", table)
-                .setTopLevelTools(topLevelTools.asWidget())
+                .setMasterTools(topLevelTools.asWidget())
                 .build();
 
         return panel;

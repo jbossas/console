@@ -7,6 +7,9 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 12/6/11
@@ -17,6 +20,7 @@ public class PagedView {
     private LinkBar bar;
     private boolean navOnFirstPage = false;
     private Widget navigationBar;
+    private List<PageCallback> callbacks = new LinkedList<PageCallback>();
 
     public PagedView(boolean navOnFirstPage) {
         this.navOnFirstPage = navOnFirstPage;
@@ -36,6 +40,7 @@ public class PagedView {
         layout.setStyleName("fill-layout");
 
         navigationBar = bar.asWidget();
+        navigationBar.getElement().setAttribute("style", "padding-left:10px;");
         layout.add(navigationBar);
         layout.add(deck);
 
@@ -62,6 +67,11 @@ public class PagedView {
 
     public void showPage(int index) {
 
+
+        // notify callbacks
+        for(PageCallback callback : callbacks)
+            callback.onRevealPage(index);
+
         if(!navOnFirstPage && navigationBar!=null)
         {
             // only on subsequent pages
@@ -74,5 +84,13 @@ public class PagedView {
 
         deck.showWidget(index);
         bar.setActive(index);
+    }
+
+    public void addPageCallback(PageCallback callback) {
+        callbacks.add(callback);
+    }
+
+    public interface PageCallback {
+        void onRevealPage(int index);
     }
 }

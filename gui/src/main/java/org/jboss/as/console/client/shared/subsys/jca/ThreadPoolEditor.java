@@ -239,7 +239,7 @@ public class ThreadPoolEditor {
                 .setTitle("Thread Pool")
                 .setDescription("Thread pool configurations used by a JCA workmanager.")
                 .setMaster("Configured Thread Pools", table)
-                .setTopLevelTools(topLevelTools.asWidget())
+                .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", attributesPanel)
                 .addDetail("Sizing", sizingPanel)
                 .addDetail("Properties", propertyEditor.asWidget())
