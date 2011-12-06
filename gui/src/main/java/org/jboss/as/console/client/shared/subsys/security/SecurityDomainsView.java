@@ -25,6 +25,8 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
@@ -109,6 +111,16 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
         layout.setWidgetTopHeight(domainListWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+
+
+        // update pages when selection changes
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                SingleSelectionModel<SecurityDomain> ssm = (SingleSelectionModel<SecurityDomain>) table.getSelectionModel();
+                presenter.updateDomainSelection(ssm.getSelectedObject());
+            }
+        });
 
         return layout;
     }

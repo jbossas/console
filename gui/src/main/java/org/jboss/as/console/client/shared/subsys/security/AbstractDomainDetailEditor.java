@@ -67,6 +67,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     ToolButton addModule;
     List<T> backup;
     DefaultWindow window;
+    ContentHeaderLabel headerLabel;
 
     AbstractDomainDetailEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         this.presenter = presenter;
@@ -88,7 +89,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         attributesProvider = new ListDataProvider<T>();
         attributesProvider.addDataDisplay(attributesTable);
 
-        vpanel.add(new ContentHeaderLabel("Security Domain: NAME HERE"));
+        headerLabel = new ContentHeaderLabel("TITLE HERE");
+        vpanel.add(headerLabel);
 
         vpanel.add(new ContentGroupLabel(getStackName()));
 
@@ -203,6 +205,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     void setData(String domainName, List<T> newList, boolean resourceExists) {
         this.domainName = domainName;
         this.resourceExists = resourceExists;
+
+        this.headerLabel.setText("Security Domain: "+ domainName);
 
         List<T> list = attributesProvider.getList();
         list.clear();
