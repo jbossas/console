@@ -17,9 +17,10 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.core;
+package org.jboss.as.console.client.core.bootstrap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -32,13 +33,13 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/19/11
  */
-public class BootstrapCmd implements AsyncCommand<Boolean>{
+public class ExecutionMode implements AsyncCommand<Boolean>{
 
 
     private BootstrapContext bootstrap;
     private DispatchAsync dispatcher;
 
-    public BootstrapCmd(BootstrapContext bootstrap, DispatchAsync dispatcher) {
+    public ExecutionMode(BootstrapContext bootstrap, DispatchAsync dispatcher) {
         this.bootstrap = bootstrap;
         this.dispatcher = dispatcher;
     }
@@ -66,7 +67,7 @@ public class BootstrapCmd implements AsyncCommand<Boolean>{
                 boolean isServer = response.get(RESULT).asString().equals("Server");
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
-                callback.onSuccess(isServer);
+                callback.onSuccess(Boolean.TRUE);
 
             }
         });

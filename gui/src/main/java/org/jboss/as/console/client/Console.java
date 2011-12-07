@@ -20,7 +20,6 @@
 package org.jboss.as.console.client;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.ajaxloader.client.AjaxLoader;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -28,20 +27,22 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
-import org.jboss.as.console.client.core.BootstrapCmd;
+import org.jboss.as.console.client.core.LoadingPanel;
+import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
+import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
+import org.jboss.as.console.client.core.bootstrap.LoadGoogleViz;
+import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
+import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
 
@@ -76,23 +77,9 @@ public class Console implements EntryPoint {
 
     public void onModuleLoad2() {
 
-        final LayoutPanel loadingPanel = new LayoutPanel();
-        loadingPanel.setStyleName("loading-panel");
-
-        Image loadingImage = new Image("images/loading_lite.gif");
-        Label label = new Label("Loading ...");
-
-        loadingPanel.add(loadingImage);
-        loadingPanel.add(label);
-
-        loadingPanel.setWidgetLeftRight(loadingImage, 5, Style.Unit.PX, 25, Style.Unit.PX);
-        loadingPanel.setWidgetLeftRight(label, 38, Style.Unit.PX, 0, Style.Unit.PX);
-
-        loadingPanel.setWidgetTopHeight(loadingImage, 10, Style.Unit.PX, 25, Style.Unit.PX);
-        loadingPanel.setWidgetTopHeight(label, 15, Style.Unit.PX, 25, Style.Unit.PX);
-
+        // display the loading panel
+        final Widget loadingPanel = new LoadingPanel().asWidget();
         RootLayoutPanel.get().add(loadingPanel);
-
 
         GWT.runAsync(new RunAsyncCallback() {
             public void onFailure(Throwable caught) {
@@ -101,40 +88,22 @@ public class Console implements EntryPoint {
 
             public void onSuccess() {
                 DelayedBindRegistry.bind(MODULES);
-                bootstrap();
 
-                RootLayoutPanel.get().remove(loadingPanel);
+                // ordered bootstrap
+                BootstrapProcess bootstrap = new BootstrapProcess();
 
-                // google vis API
-                VisualizationUtils.loadVisualizationApi(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println("Loaded Google Vizualization API");
-                            }
-                        }, LineChart.PACKAGE
-                );
+                bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
+                bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
+                bootstrap.addHook(new LoadMainApp());
+
+                // viz can be loaded in background ...
+                bootstrap.addHook(new LoadGoogleViz());
+
+                bootstrap.execute();
             }
+
+
         });
-    }
-
-    private void bootstrap() {
-        BootstrapCmd cmd = new BootstrapCmd(MODULES.getBootstrapContext(), MODULES.getDispatchAsync());
-        cmd.execute(new AsyncCallback<Boolean>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Log.error("Bootstrap failed: " + caught.getMessage());
-            }
-
-            @Override
-            public void onSuccess(Boolean isStandalone) {
-                loadMainApp();
-            }
-        });
-    }
-
-    private void loadMainApp() {
-        MODULES.getPlaceManager().revealDefaultPlace();
     }
 
     public static void info(String message) {
@@ -183,5 +152,7 @@ public class Console implements EntryPoint {
         }
         return false;
     }-*/;
+
+
 
 }
