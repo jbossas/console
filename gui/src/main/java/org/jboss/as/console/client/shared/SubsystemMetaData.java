@@ -101,6 +101,9 @@ public class SubsystemMetaData {
 
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.Infinispan, NameTokens.CacheContainerPresenter));
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Local Caches", NameTokens.Infinispan, NameTokens.LocalCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Invalidation Caches", NameTokens.Infinispan, NameTokens.InvalidationCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Replicated Caches", NameTokens.Infinispan, NameTokens.ReplicatedCachePresenter));
+        groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Distributed Caches", NameTokens.Infinispan, NameTokens.DistributedCachePresenter));
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));

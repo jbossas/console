@@ -61,12 +61,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected List<T> entityList = Collections.emptyList();
     protected String nameOfLastEdited;
 
-    protected Comparator entityComparator = new Comparator<NamedEntity>() {
-        @Override
-        public int compare(NamedEntity entity1, NamedEntity entity2) {
-            return entity1.getName().toLowerCase().compareTo(entity2.getName().toLowerCase());
-        }
-    };
+    protected Comparator entityComparator;
 
     public EntityToDmrBridgeImpl(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
                                  DispatchAsync dispatcher) {
@@ -77,6 +72,13 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         this.view = view;
         this.dispatcher = dispatcher;
         this.formMetaData = propertyMetadata.getFormMetaData(type);
+        
+        entityComparator = new Comparator<T>() {
+            @Override
+            public int compare(T entity1, T entity2) {
+                return getName(entity1).toLowerCase().compareTo(getName(entity2).toLowerCase());
+            }
+        };
     }
 
     /**
@@ -98,8 +100,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     @Override
     public T findEntity(String name) {
         for (T entity : getEntityList()) {
-            NamedEntity namedEntity = entity;
-            if (namedEntity.getName().equals(name)) {
+            if (getName(entity).equals(name)) {
                 return entity;
             }
         }
@@ -124,7 +125,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public void onAdd(T entity) {
-        String name = entity.getName();
+        String name = getName(entity);
         ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(ADD);
         ModelNode attributes = this.entityAdapter.fromEntity(entity);
@@ -147,7 +148,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     @Override
     public void onRemove(T entity) {
 
-        String name = entity.getName();
+        String name = getName(entity);
         ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(REMOVE);
 
@@ -164,7 +165,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
         view.setEditingEnabled(false);
 
-        String name = entity.getName();
+        String name = getName(entity);
 
         ModelNode resourceAddress = getResourceAddress(name);
 

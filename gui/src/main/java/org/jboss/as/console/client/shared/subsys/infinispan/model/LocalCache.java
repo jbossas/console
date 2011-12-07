@@ -28,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=infinispan/cache-container={0}/local-cache={1}/")
-public interface Cache extends NamedEntity {
+public interface LocalCache extends NamedEntity {
     @Override
     @Binding(detypedName="local-cache")
     @FormItem(defaultValue="",
@@ -45,7 +45,7 @@ public interface Cache extends NamedEntity {
               label="Cache Container",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT_BOX") 
+              formItemTypeForAdd="COMBO_BOX") 
     public String getCacheContainer();
     public void setCacheContainer(String cacheContainerName);
     

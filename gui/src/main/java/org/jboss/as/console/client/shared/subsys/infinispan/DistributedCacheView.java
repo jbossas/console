@@ -23,32 +23,31 @@ import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
-import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.DistributedCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Main view class for Infinispan LocalCache Containers.
+ * Main view class for Infinispan Distributed Cache.
  * 
  * @author Stan Silvert
  */
-public class LocalCacheView extends AbstractCacheView<LocalCache> implements LocalCachePresenter.MyView {
+public class DistributedCacheView extends AbstractCacheView<DistributedCache> implements DistributedCachePresenter.MyView {
 
     @Inject
-    public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(LocalCache.class, propertyMetaData, dispatcher);
+    public DistributedCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(DistributedCache.class, propertyMetaData, dispatcher);
     }
-    
     
     @Override
     protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_infinispan_localCache();
+        return Console.CONSTANTS.subsys_infinispan_distributedCache();
     }
 
     @Override
-    protected FormAdapter<LocalCache> makeAddEntityForm() {
-        Form<LocalCache> form = new Form(DeploymentScanner.class);
+    protected FormAdapter<DistributedCache> makeAddEntityForm() {
+        Form<DistributedCache> form = new Form(DeploymentScanner.class);
         form.setNumColumns(1);
         form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
         return form;

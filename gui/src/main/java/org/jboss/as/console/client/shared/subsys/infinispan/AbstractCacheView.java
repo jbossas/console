@@ -19,39 +19,62 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
-import javax.inject.Inject;
+import com.google.gwt.user.cellview.client.TextColumn;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
+import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
+import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 /**
  * Main view class for Infinispan LocalCache Containers.
  * 
  * @author Stan Silvert
  */
-public class LocalCacheView extends AbstractCacheView<LocalCache> implements LocalCachePresenter.MyView {
+public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEntityView<T> implements FrameworkView {
 
-    @Inject
-    public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(LocalCache.class, propertyMetaData, dispatcher);
+    private EntityToDmrBridge bridge;
+    
+    public AbstractCacheView(Class<T> type, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(type, propertyMetaData);
+        bridge = new CacheEntityToDmrBridge(propertyMetaData, type, this, dispatcher);
     }
     
-    
     @Override
-    protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_infinispan_localCache();
+    public EntityToDmrBridge getEntityBridge() {
+        return bridge;
     }
 
     @Override
-    protected FormAdapter<LocalCache> makeAddEntityForm() {
-        Form<LocalCache> form = new Form(DeploymentScanner.class);
+    protected FormAdapter<T> makeAddEntityForm() {
+        Form<T> form = new Form(DeploymentScanner.class);
         form.setNumColumns(1);
         form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
         return form;
     }
 
+    @Override
+    protected DefaultCellTable<T> makeEntityTable() {
+        DefaultCellTable<T> table = new DefaultCellTable<T>(4);
+        
+        table.addColumn(new NameColumn(), NameColumn.LABEL);
+        
+        TextColumn<T> cacheContainerColumn = new TextColumn<T>() {
+            @Override
+            public String getValue(T record) {
+                return record.getCacheContainer();
+            }
+        };
+        table.addColumn(cacheContainerColumn, Console.CONSTANTS.subsys_infinispan_cache_container());
+        
+        return table;
+    }
+    
 }
