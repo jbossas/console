@@ -99,6 +99,7 @@ public class DataSourceDetails {
                 presenter.verifyConnection(form.getEditedEntity().getName(), false);
             }
         });
+        disableBtn.ensureDebugId(Console.CONSTANTS.debug_label_enOrDisable_dataSourceDetails());
 
         FormToolStrip<DataSource> toolStrip = new FormToolStrip<DataSource>(
                 form,
@@ -113,6 +114,7 @@ public class DataSourceDetails {
 
                     }
                 });
+        verifyBtn.ensureDebugId(Console.CONSTANTS.debug_label_verify_dataSourceDetails());
 
         toolStrip.providesDeleteOp(false);
         toolStrip.addToolButtonRight(disableBtn);

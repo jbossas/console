@@ -100,14 +100,16 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         modules.addColumn(slot, "Slot");
 
         ToolStrip moduleTools = new ToolStrip();
-        moduleTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewModuleDialogue();
             }
-        }));
-
-        moduleTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_eESubsystemView());
+        moduleTools.addToolButtonRight(addBtn);
+        
+        ToolButton button = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
@@ -125,7 +127,9 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                             }
                         });
             }
-        }));
+        });
+        button.ensureDebugId(Console.CONSTANTS.debug_label_remove_eESubsystemView());
+        moduleTools.addToolButtonRight(button);        
 
         VerticalPanel moduleList = new VerticalPanel();
         moduleList.setStyleName("fill-layout-width");

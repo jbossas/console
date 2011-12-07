@@ -88,15 +88,17 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_newServerGroup(), new ClickHandler() {
+        ToolButton newServerGroupBtn =  new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewGroupDialoge();
             }
-        }));
-
-        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
-        delete.addClickHandler(new ClickHandler(){
+        });
+        newServerGroupBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_serverGroupsView());
+        toolStrip.addToolButtonRight(newServerGroupBtn);
+        
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        deleteBtn.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
                 final ServerGroupRecord serverGroup = getSelectionModel().getSelectedObject();
@@ -113,8 +115,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
             }
         });
 
-
-        toolStrip.addToolButtonRight(delete);
+        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_serverGroupsView());
+        toolStrip.addToolButtonRight(deleteBtn);
 
         layout.add(toolStrip);
 

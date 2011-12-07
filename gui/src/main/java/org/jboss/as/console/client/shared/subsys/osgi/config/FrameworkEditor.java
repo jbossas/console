@@ -108,14 +108,17 @@ public class FrameworkEditor {
 
     private void addCapabilities(Panel layout) {
         ToolStrip toolStrip = new ToolStrip();
-        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
+        ToolButton editBtn = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 OSGiCapability capability =  capabilitiesTable.getSelection();
                 presenter.launchCapabilityWizard(capability);
             }
-        }));
-        toolStrip.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+        });
+        editBtn.ensureDebugId(Console.CONSTANTS.debug_label_edit_frameworkEditor());
+        toolStrip.addToolButton(editBtn);
+        
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final OSGiCapability capability =  capabilitiesTable.getSelection();
@@ -129,13 +132,18 @@ public class FrameworkEditor {
                         }
                     });
             }
-        }));
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        });
+        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_frameworkEditor());
+        toolStrip.addToolButton(deleteBtn);
+        
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchCapabilityWizard(null);
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_frameworkEditor());
+        toolStrip.addToolButton(addBtn);
         layout.add(toolStrip);
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(Console.MESSAGES.subsys_osgi_capabilitiesHelp());

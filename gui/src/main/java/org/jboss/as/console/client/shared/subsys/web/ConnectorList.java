@@ -81,12 +81,14 @@ public class ConnectorList {
                 }
         );
 
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchConnectorDialogue();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_connectorList());
+        toolstrip.addToolButtonRight(addBtn);
 
 
         layout.add(toolstrip.asWidget());

@@ -56,14 +56,16 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
 
         ToolStrip toolstrip = new ToolStrip();
 
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewSessionWizard();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_mailSessionView());
+        toolstrip.addToolButtonRight(addBtn);
 
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Feedback.confirm("Remove Mail Session", "Really remove this mail session?",
@@ -75,7 +77,9 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
                             }
                         });
             }
-        }));
+        });
+        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_mailSessionView());
+        toolstrip.addToolButtonRight(removeBtn);
 
         // ------
 

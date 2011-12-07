@@ -115,6 +115,7 @@ public class PropertyEditor {
                         System.out.println("PropertyEditor is disabled!");
                 }
             });
+            addProp.ensureDebugId(Console.CONSTANTS.debug_label_add_propertyEditor());
             propTools.addToolButtonRight(addProp);
             panel.add(propTools);
         }

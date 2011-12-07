@@ -40,7 +40,7 @@ public class ConfigAdminEditor implements PropertyManagement {
         LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButton(new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
+        ToolButton editBtn = new ToolButton(Console.CONSTANTS.common_label_edit(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final ConfigAdminData model = pidTable.getSelection();
@@ -62,8 +62,11 @@ public class ConfigAdminEditor implements PropertyManagement {
                 dialog.setGlassEnabled(true);
                 dialog.center();
             }
-        }));
-        topLevelTools.addToolButton(new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+        });
+        editBtn.ensureDebugId(Console.CONSTANTS.debug_label_edit_configAdminEditor());
+        topLevelTools.addToolButton(editBtn);
+        
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final ConfigAdminData model = pidTable.getSelection();
@@ -76,13 +79,18 @@ public class ConfigAdminEditor implements PropertyManagement {
                         }
                     });
             }
-        }));
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        });
+        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_configAdminEditor());
+        topLevelTools.addToolButton(deleteBtn);
+        
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewCASPropertyWizard();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_configAdminEditor());
+        topLevelTools.addToolButtonRight(addBtn);
         layout.add(topLevelTools);
 
         VerticalPanel vpanel = new VerticalPanel();

@@ -30,12 +30,14 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
 
         final ToolStrip toolStrip = new ToolStrip();
-            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
+        ToolButton refreshBtn = new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.refresh();
             }
-        }));
+        });
+        refreshBtn.ensureDebugId(Console.CONSTANTS.debug_label_refresh_tXMetricViewImp());
+        toolStrip.addToolButton(refreshBtn);
 
         this.executionMetric = new TXExecutionView();
         this.rollbackMetric = new TXRollbackView();

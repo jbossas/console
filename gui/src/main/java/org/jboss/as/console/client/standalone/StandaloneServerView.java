@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -40,7 +41,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     @Override
     public Widget createWidget() {
 
-        ToolButton reloadBtn = new ToolButton("Reload", new ClickHandler() {
+        ToolButton reloadBtn = new ToolButton(Console.CONSTANTS.common_label_reload(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 Feedback.confirm("Reload server configuration",
@@ -55,6 +56,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
                         });
             }
         });
+        reloadBtn.ensureDebugId(Console.CONSTANTS.debug_label_reload_standaloneServerView());
 
         ToolStrip tools = new ToolStrip();
         tools.addToolButtonRight(reloadBtn);

@@ -72,9 +72,9 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private ListDataProvider<ServerInstance> instanceProvider;
     private ComboBox groupFilter;
     private CellTable<ServerInstance> instanceTable;
-    private ToolButton startBtn;
     private String hostName;
     private ContentHeaderLabel nameLabel;
+	private ToolButton startBtn;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -227,6 +227,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
                         });
             }
         });
+        startBtn.ensureDebugId(Console.CONSTANTS.debug_label_start_serverInstancesView());
         formTools.addToolButtonRight(startBtn);
         form.addEditListener(new EditListener<ServerInstance>(
 

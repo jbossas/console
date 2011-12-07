@@ -93,15 +93,17 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewConfigDialoge();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_serverConfigView());
+        toolStrip.addToolButtonRight(addBtn);
 
-        ToolButton delete = new ToolButton(Console.CONSTANTS.common_label_delete());
-        delete.addClickHandler(new ClickHandler(){
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        deleteBtn.addClickHandler(new ClickHandler(){
             @Override
             public void onClick(ClickEvent clickEvent) {
 
@@ -120,7 +122,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             }
         });
 
-        toolStrip.addToolButtonRight(delete);
+        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_serverConfigView());
+        toolStrip.addToolButtonRight(deleteBtn);
 
         layout.add(toolStrip);
 

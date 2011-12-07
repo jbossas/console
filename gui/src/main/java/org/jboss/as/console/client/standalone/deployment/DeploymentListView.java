@@ -81,13 +81,15 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
 
         final ToolStrip toolStrip = new ToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewDeploymentDialoge();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_deploymentListView());
+        toolStrip.addToolButtonRight(addBtn);
         
         layout.add(toolStrip);
 

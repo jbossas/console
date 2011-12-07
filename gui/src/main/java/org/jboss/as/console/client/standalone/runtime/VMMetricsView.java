@@ -63,6 +63,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         /*pauseBtn = new ToolButton("Stop Monitor");
 
+        //TODO - change all hardcoded text into localized properties
+        pauseBtn = new ToolButton("Stop Monitor");
         ClickHandler clickHandler = new ClickHandler() {
 
             @Override
@@ -81,7 +83,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         pauseBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButton(pauseBtn);      */
-
         topLevelTools.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

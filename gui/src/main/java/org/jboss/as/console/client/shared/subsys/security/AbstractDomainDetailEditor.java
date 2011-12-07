@@ -117,6 +117,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                 openWizard(null);
             }
         });
+        addModule.ensureDebugId(Console.CONSTANTS.debug_label_add_abstractDomainDetailEditor());
         tableTools.addToolButtonRight(addModule);
         tableTools.addToolButtonRight(
                 new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {

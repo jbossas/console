@@ -95,14 +95,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         
         final ToolStrip toolStrip = new ToolStrip();
 
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
+        ToolButton addContentBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewDeploymentDialoge();
             }
-        }));
-
+        });
+        addContentBtn.ensureDebugId(Console.CONSTANTS.debug_label_addContent_deploymentsOverview());
+        toolStrip.addToolButtonRight(addContentBtn);
         layout.add(toolStrip);
 
         VerticalPanel panel = new VerticalPanel();

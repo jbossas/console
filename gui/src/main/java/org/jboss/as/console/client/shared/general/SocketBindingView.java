@@ -76,15 +76,17 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         layout.add(titleBar);
 
         ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewSocketDialogue();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_socketBindingView());
+        toolstrip.addToolButtonRight(addBtn);
 
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final SocketBinding editedEntity = form.getEditedEntity();
@@ -99,7 +101,9 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                             }
                         });
             }
-        }));
+        });
+        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_socketBindingView());
+        toolstrip.addToolButtonRight(removeBtn);
 
         /*
 

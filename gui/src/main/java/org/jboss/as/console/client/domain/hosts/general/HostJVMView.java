@@ -67,14 +67,14 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         ToolStrip toolStrip = new ToolStrip();
 
-        ToolButton add= new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn= new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewJVMDialogue();
             }
         });
-
-        toolStrip.addToolButtonRight(add);
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_hostJVMView());
+        toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip);
 

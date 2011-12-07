@@ -66,15 +66,17 @@ public class InterfaceEditor {
         form = new Form<Interface>(Interface.class);
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewInterfaceDialogue();
             }
-        }));
-
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_interfaceEditor());
+        topLevelTools.addToolButtonRight(addBtn);
+        
+        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -91,7 +93,9 @@ public class InterfaceEditor {
                             }
                         });
             }
-        }));
+        });
+        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_interfaceEditor());
+        topLevelTools.addToolButtonRight(removeBtn);
 
 
         layout.add(topLevelTools);

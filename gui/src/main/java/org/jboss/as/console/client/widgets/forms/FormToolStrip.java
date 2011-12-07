@@ -110,6 +110,7 @@ public class FormToolStrip<T> {
             editBtn.addClickHandler(editHandler);
             toolStrip.addToolButton(editBtn);
         }
+        editBtn.ensureDebugId(Console.CONSTANTS.debug_label_edit_formToolStrip());
 
         for(ToolButton btn : additionalButtons)
             toolStrip.addToolButtonRight(btn);
@@ -139,6 +140,7 @@ public class FormToolStrip<T> {
 
             String title = deleteOpName!=null ? deleteOpName : Console.CONSTANTS.common_label_delete();
             ToolButton deleteBtn = new ToolButton(title);
+            deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_formToolStrip());
             deleteBtn.addClickHandler(clickHandler);
             toolStrip.addToolButtonRight(deleteBtn);
 
@@ -155,6 +157,7 @@ public class FormToolStrip<T> {
         cancelBtn.addClickHandler(cancelHandler);
         toolStrip.addToolWidget(cancelBtn);
 
+        cancelBtn.ensureDebugId(Console.CONSTANTS.debug_label_cancel_formToolStrip());
         cancelBtn.setVisible(false);
         return toolStrip;
     }

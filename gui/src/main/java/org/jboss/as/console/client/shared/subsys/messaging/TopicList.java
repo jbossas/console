@@ -69,13 +69,14 @@ public class TopicList {
                 }
         );
 
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewTopicDialogue();
             }
-        }));
-
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_topicList());
+        toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip.asWidget());
 

@@ -94,12 +94,14 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
     @Override
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
-        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
+        ToolButton refreshBtn = new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 initialLoad(RuntimeBaseAddress.get());
             }
-        }));
+        });
+        refreshBtn.ensureDebugId(Console.CONSTANTS.debug_label_refresh_bundleRuntimeView());
+        toolStrip.addToolButton(refreshBtn);
         return toolStrip;
     }
 

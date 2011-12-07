@@ -79,13 +79,15 @@ public class XADataSourceEditor implements PropertyManagement {
         LayoutPanel layout = new LayoutPanel();
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton commonLabelAddBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewXADatasourceWizard();
             }
-        }));
+        });
+        commonLabelAddBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_xADataSourceEditor());
+        topLevelTools.addToolButtonRight(commonLabelAddBtn);
 
 
         ClickHandler clickHandler = new ClickHandler() {
@@ -110,6 +112,7 @@ public class XADataSourceEditor implements PropertyManagement {
             }
         };
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
+        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_xADataSourceEditor());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 

@@ -164,18 +164,20 @@ public class EntityEditor<T> implements EntityListView<T> {
         final ToolStrip toolStrip = new ToolStrip();
 
         if (!hideButtons.contains(FrameworkButton.ADD)) {
-            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(),
+            ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(),
                     new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
                             window.setNewBean();
                             window.show();
                         }
-                    }));
+                    });
+            addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_entityEditor());        
+            toolStrip.addToolButtonRight(addBtn);
         }
 
         if (!hideButtons.contains(FrameworkButton.REMOVE)) {
-            toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(),
+            ToolButton removeBtn=new ToolButton(Console.CONSTANTS.common_label_remove(),
                     new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
@@ -195,7 +197,9 @@ public class EntityEditor<T> implements EntityListView<T> {
                                         }
                                     });
                         }
-                    }));
+                    });
+            removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_entityEditor());
+            toolStrip.addToolButtonRight(removeBtn);
         }
 
         return toolStrip;

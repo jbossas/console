@@ -78,12 +78,14 @@ public class VirtualServerList {
                 }
         );
 
-        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchVirtualServerDialogue();
             }
-        }));
+        });
+        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_virtualServelList());
+        toolstrip.addToolButtonRight(addBtn);
 
 
         layout.add(toolstrip.asWidget());
