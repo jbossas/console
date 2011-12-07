@@ -25,6 +25,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -75,7 +76,7 @@ public class Console implements EntryPoint {
 
     public void onModuleLoad2() {
 
-        final HorizontalPanel loadingPanel = new HorizontalPanel();
+        final LayoutPanel loadingPanel = new LayoutPanel();
         loadingPanel.setStyleName("loading-panel");
 
         Image loadingImage = new Image("images/loading_lite.gif");
@@ -84,14 +85,18 @@ public class Console implements EntryPoint {
         loadingPanel.add(loadingImage);
         loadingPanel.add(label);
 
-        loadingImage.getElement().getParentElement().setAttribute("style","vertical-align:center;padding:10px");
-        label.getElement().getParentElement().setAttribute("style","font-weight:bold; vertical-align:center;;padding:10px");
+        loadingPanel.setWidgetLeftRight(loadingImage, 5, Style.Unit.PX, 25, Style.Unit.PX);
+        loadingPanel.setWidgetLeftRight(label, 38, Style.Unit.PX, 0, Style.Unit.PX);
+
+        loadingPanel.setWidgetTopHeight(loadingImage, 10, Style.Unit.PX, 25, Style.Unit.PX);
+        loadingPanel.setWidgetTopHeight(label, 15, Style.Unit.PX, 25, Style.Unit.PX);
+
         RootLayoutPanel.get().add(loadingPanel);
 
 
         GWT.runAsync(new RunAsyncCallback() {
             public void onFailure(Throwable caught) {
-                Window.alert("Code download failed");
+                Window.alert("Failed to load application components!");
             }
 
             public void onSuccess() {

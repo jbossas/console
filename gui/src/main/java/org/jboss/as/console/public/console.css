@@ -207,13 +207,15 @@ body {
 }
 
 .loading-panel {
+    position: relative;
     margin-top:200px;
     margin-left:auto;
     margin-right:auto;
     height:50px;
+    width:100px;
     border: 1px solid #A7ABB4;
     background-color: #ffffff;
-     -moz-border-radius: 4px;
+    -moz-border-radius: 4px;
     border-radius: 4px;
 }
 
