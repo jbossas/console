@@ -172,10 +172,12 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                 }
 
                 List<PropertyRecord> props = policy.getProperties();
-                if (props == null)
+                if (props == null)  {
                     props = new ArrayList<PropertyRecord>();
+                    policy.setProperties(props);
+                }
 
-                propertyEditor.setProperties("TODO", props);
+                propertyEditor.setProperties("", policy.getProperties());
 
                 wizard.edit(policy);
 
@@ -310,6 +312,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
+
         propertyWindow = new DefaultWindow("New System Property");
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
