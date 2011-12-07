@@ -127,8 +127,6 @@ import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.ResourceAdapterView;
-import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerPresenter;
-import org.jboss.as.console.client.shared.subsys.jca.WorkmanagerView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
@@ -529,11 +527,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaSubsystemView.class,
                 JcaPresenter.MyProxy.class);
-
-        bindPresenter(WorkmanagerPresenter.class,
-                WorkmanagerPresenter.MyView.class,
-                WorkmanagerView.class,
-                WorkmanagerPresenter.MyProxy.class);
     }
 
 }
