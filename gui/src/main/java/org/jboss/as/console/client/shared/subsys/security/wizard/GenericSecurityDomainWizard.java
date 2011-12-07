@@ -18,28 +18,24 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.wizard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
 import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -49,24 +45,32 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author David Bosschaert
+ * @author Heiko Braun
  */
 public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> implements PropertyManagement, Wizard<T> {
-    private boolean editMode = false;
+
     private final AbstractDomainDetailEditor<T> editor;
     private final Class<T> entityClass;
     private final BeanFactory factory = GWT.create(BeanFactory.class);
     private Form<T> form;
     private final SecurityDomainsPresenter presenter;
     private final List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
-    private PropertyEditor propEditor;
+
     private final String type;
     private final String moduleAttrName;
     private final String [] customAttributeNames;
 
+    private boolean isDialogue = false;
+
     public GenericSecurityDomainWizard(AbstractDomainDetailEditor<T> editor, Class<T> cls, SecurityDomainsPresenter presenter, String type,
-        String moduleAttrName, String ... customAttributeNames) {
+                                       String moduleAttrName, String ... customAttributeNames) {
         this.editor = editor;
         this.entityClass = cls;
         this.presenter = presenter;
@@ -75,55 +79,99 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
         this.customAttributeNames = customAttributeNames;
     }
 
+    public Wizard<T> setIsDialogue(boolean b) {
+        this.isDialogue = b;
+        return this;
+    };
+
     public Widget asWidget() {
+
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("window-content");
+        layout.setStyleName(isDialogue ? "window-content" : "fill-layout");
+
+        // ----
+
         form = new Form<T>(entityClass);
 
         TextBoxItem code = new TextBoxItem("code", Console.CONSTANTS.subsys_security_codeField());
         FormItem<?>[] customFields = getCustomFields();
         form.setFields(new FormItem [] {code}, customFields);
 
-        new AsyncHelpText(layout);
+        final Command saveCmd = new Command() {
+            @Override
+            public void execute() {
+                FormValidation validation = form.validate();
+                if (!validation.hasErrors()) {
+                    if (!isDialogue) {
+                        T original = form.getEditedEntity();
+                        T edited = form.getUpdatedEntity();
+                        original.setCode(edited.getCode());
+                        original.setProperties(properties);
 
-        layout.add(form.asWidget());
-        propEditor = new PropertyEditor(this, true);
-        layout.add(propEditor.asWidget());
+                        copyCustomFields(original, edited);
 
-        DialogueOptions options = new DialogueOptions(
-            Console.CONSTANTS.common_label_save(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    FormValidation validation = form.validate();
-                    if (!validation.hasErrors()) {
-                        if (editMode) {
-                            T original = form.getEditedEntity();
-                            T edited = form.getUpdatedEntity();
-                            original.setCode(edited.getCode());
-                            original.setProperties(properties);
-
-                            copyCustomFields(original, edited);
-
-                            editor.save(original);
-                        } else {
-                            // it's a new policy
-                            T data = form.getUpdatedEntity();
-                            data.setProperties(properties);
-                            editor.addAttribute(data);
-                        }
-
-                        editor.closeWizard();
+                        editor.save(original);
+                    } else {
+                        // it's a new policy
+                        T data = form.getUpdatedEntity();
+                        data.setProperties(properties);
+                        editor.addAttribute(data);
                     }
-                }
-            }, Console.CONSTANTS.common_label_cancel(), new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
+
                     editor.closeWizard();
                 }
-            });
+            }
+        };
 
-        // TODO toolbar
-        return layout;
+        // ----
+        if(!isDialogue)
+        {
+            FormToolStrip<T> toolStrip = new FormToolStrip<T>(
+                    form,
+                    new FormToolStrip.FormCallback<T>() {
+                        @Override
+                        public void onSave(Map<String, Object> changeset) {
+                            saveCmd.execute();
+                        }
+
+                        @Override
+                        public void onDelete(T entity) {
+                            editor.closeWizard();
+                        }
+                    }
+            );
+
+            toolStrip.providesDeleteOp(false);
+            layout.add(toolStrip.asWidget());
+
+            form.setEnabled(false);
+        }
+
+        // ----
+
+        new AsyncHelpText(layout, isDialogue);
+
+        // ----
+
+        layout.add(form.asWidget());
+
+        DialogueOptions options = new DialogueOptions(
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        saveCmd.execute();
+                    }
+                },
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        form.clearValues();
+                        editor.closeWizard();
+                    }
+                });
+
+        Widget container = isDialogue ? new WindowContentBuilder(layout, options).build() : layout;
+        return container;
     }
 
     FormItem<?>[] getCustomFields() {
@@ -134,22 +182,7 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
     }
 
     public void edit(T object) {
-        editMode = true;
         form.edit(object);
-
-        if (object.getProperties() != null) {
-            ArrayList<PropertyRecord> copiedProperties = new ArrayList<PropertyRecord>(object.getProperties().size());
-            for (PropertyRecord pr : object.getProperties()) {
-                PropertyRecord clone = factory.property().as();
-                clone.setKey(pr.getKey());
-                clone.setValue(pr.getValue());
-                copiedProperties.add(clone);
-            }
-
-            properties.clear();
-            properties.addAll(copiedProperties);
-            propEditor.setProperties("", copiedProperties);
-        }
     }
 
     // PropertyManagement methods
@@ -161,7 +194,6 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
         properties.remove(prop);
-        propEditor.setProperties("", properties);
     }
 
     @Override
@@ -176,7 +208,6 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
         proto.setValue(Console.CONSTANTS.common_label_value().toLowerCase());
 
         properties.add(proto);
-        propEditor.setProperties("", properties);
     }
 
     @Override
@@ -185,10 +216,12 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
 
     private class AsyncHelpText implements SecurityDomainsPresenter.DescriptionCallBack {
         private final VerticalPanel layout;
+        private boolean isDialogue;
 
-        private AsyncHelpText(VerticalPanel layout) {
+        private AsyncHelpText(VerticalPanel layout, boolean isDialogue) {
             this.layout = layout;
             presenter.getDescription(type, this);
+            this.isDialogue = isDialogue;
         }
 
         @Override
@@ -203,8 +236,8 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
             attrs.add(0, "code"); // Common field
 
             ModelNode values = desc.get(ModelDescriptionConstants.ATTRIBUTES,
-                                        moduleAttrName,
-                                        ModelDescriptionConstants.VALUE_TYPE);
+                    moduleAttrName,
+                    ModelDescriptionConstants.VALUE_TYPE);
             builder.appendHtmlConstant("<ul>");
 
             for (String s : attrs) {
@@ -223,7 +256,7 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
             builder.appendHtmlConstant("</ul>");
             SafeHtml safeHtml = builder.toSafeHtml();
             StaticHelpPanel helpPanel = new StaticHelpPanel(safeHtml);
-            layout.insert(helpPanel.asWidget(), 0);
+            layout.insert(helpPanel.asWidget(), isDialogue ? 0:1);
         }
     }
 }

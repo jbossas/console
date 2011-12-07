@@ -55,6 +55,7 @@ import java.util.List;
 
 /**
  * @author David Bosschaert
+ * @author Heiko Braun
  */
 public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> implements SecurityDomainsPresenter.MyView {
     private final EntityToDmrBridgeImpl<SecurityDomain> bridge;
@@ -82,7 +83,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         pages = new PagedView();
 
 
-        Widget domainList = createDomainList("");
+        Widget domainList = createDomainList("Abailable security domains. Please select a domain to edit the security policies.");
 
         authenticationEditor = new AuthenticationEditor(presenter);
         authorizationEditor = new AuthorizationEditor(presenter);

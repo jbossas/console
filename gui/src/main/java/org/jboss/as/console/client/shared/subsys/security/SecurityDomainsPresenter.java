@@ -59,6 +59,7 @@ import org.jboss.dmr.client.Property;
 
 /**
  * @author David Bosschaert
+ * @author Heiko Braun
  */
 public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy> {
     private static final String CLASSIC = "classic";
@@ -288,6 +289,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
     }
 
     public void saveAuthentication(String domainName, List<AuthenticationLoginModule> list, boolean resourceExists) {
+
         saveGeneric(domainName, list, AUTHENTICATION_IDENTIFIER, "login-modules", resourceExists,
             new CustomAuthSaveFieldhandler<AuthenticationLoginModule>());
     }
@@ -345,6 +347,7 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
             operation.get(attrName).set(valueList);
         }
 
+        System.out.println("save:" + operation);
         dispatcher.execute(new DMRAction(operation), new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
             attrName, domainName, new Command() {
                 @Override

@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
@@ -27,7 +26,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.IdentityColumn;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -40,10 +38,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
-import org.jboss.as.console.client.widgets.tables.ButtonCell;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -56,6 +52,7 @@ import java.util.List;
 
 /**
  * @author David Bosschaert
+ * @author Heiko Braun
  */
 public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomainData> {
     final Class<T> entityClass;
@@ -107,6 +104,25 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
             }
         });
         tableTools.addToolButtonRight(addModule);
+        tableTools.addToolButtonRight(
+                new ToolButton("Remove", new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+
+                        final T policy = ((SingleSelectionModel<T>) attributesTable.getSelectionModel()).getSelectedObject();
+                        Feedback.confirm(getEntityName(), Console.MESSAGES.deleteConfirm(policy.getCode()),
+                                new Feedback.ConfirmationHandler() {
+                                    @Override
+                                    public void onConfirmation(boolean isConfirmed) {
+                                        if (isConfirmed) {
+                                            attributesProvider.getList().remove(policy);
+                                            saveData();
+                                        }
+                                    }
+                                });
+                    }
+                })
+        );
         vpanel.add(tableTools);
 
         // -------
@@ -121,7 +137,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         addCustomColumns(attributesTable);
 
-        ButtonCell<T> editCell = new ButtonCell<T>(Console.CONSTANTS.common_label_edit(), new ActionCell.Delegate<T>() {
+        /*ButtonCell<T> editCell = new ButtonCell<T>(Console.CONSTANTS.common_label_edit(), new ActionCell.Delegate<T>() {
             @Override
             public void execute(T object) {
                 openWizard(object);
@@ -141,11 +157,11 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                         }
                     });
             }
-        });
+        }); */
 
         List<HasCell<T, T>> actionCells = new ArrayList<HasCell<T,T>>();
-        actionCells.add(new IdentityColumn<T>(editCell));
-        actionCells.add(new IdentityColumn<T>(removeCell));
+        //actionCells.add(new IdentityColumn<T>(editCell));
+        //actionCells.add(new IdentityColumn<T>(removeCell));
         IdentityColumn<T> actionColumn = new IdentityColumn<T>(new CompositeCell(actionCells));
         attributesTable.addColumn(actionColumn, "");
 
@@ -168,12 +184,20 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
             public void onSelectionChange(SelectionChangeEvent event) {
                 T policy = ssm.getSelectedObject();
                 if (policy == null)
+                {
+                    // TDOD: wizard.clear();
+                    propertyEditor.clearValues();
                     return;
+                }
 
                 List<PropertyRecord> props = policy.getProperties();
                 if (props == null)
                     props = new ArrayList<PropertyRecord>();
+
                 propertyEditor.setProperties("", props);
+
+                wizard.edit(policy);
+
             }
         });
         attributesTable.setSelectionModel(ssm);
@@ -184,7 +208,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         TabPanel bottomTabs = new TabPanel();
         bottomTabs.setStyleName("default-tabpanel");
         bottomTabs.add(wizard.asWidget(), "Attributes");
-        bottomTabs.add(propertyEditor.asWidget(), "Properties");
+        bottomTabs.add(propertyEditor.asWidget(), "Module Options");
 
         vpanel.add(new ContentGroupLabel("Details"));
 
@@ -193,7 +217,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         //propertyEditor.setAllowEditProps(false);
 
-         // -------
+        // -------
 
         ScrollPanel scroll = new ScrollPanel(vpanel);
 
@@ -223,17 +247,19 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
     void openWizard(T editedObject) {
         Wizard<T> wizard = getWizard();
+        wizard.setIsDialogue(true);
+
         if (wizard == null)
             return;
 
         window = new DefaultWindow(
-            (editedObject == null ? Console.CONSTANTS.common_label_add() : Console.CONSTANTS.common_label_edit()) + " " +
-            getStackElementName());
+                (editedObject == null ? Console.CONSTANTS.common_label_add() : Console.CONSTANTS.common_label_edit()) + " " +
+                        getStackElementName());
         window.setWidth(480);
         window.setHeight(400);
         window.setWidget(wizard.asWidget());
-        if (editedObject != null)
-            wizard.edit(editedObject);
+
+        if (editedObject != null) wizard.edit(editedObject);
 
         window.setGlassEnabled(true);
         window.center();
@@ -260,5 +286,6 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     public interface Wizard<T> {
         void edit(T object);
         Widget asWidget();
+        Wizard setIsDialogue(boolean b);
     }
 }
