@@ -32,6 +32,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
@@ -57,7 +59,9 @@ import java.util.List;
  * @author David Bosschaert
  * @author Heiko Braun
  */
-public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> implements SecurityDomainsPresenter.MyView {
+public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
+        implements SecurityDomainsPresenter.MyView {
+
     private final EntityToDmrBridgeImpl<SecurityDomain> bridge;
 
     AuthenticationEditor authenticationEditor;
@@ -118,12 +122,17 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                SingleSelectionModel<SecurityDomain> ssm = (SingleSelectionModel<SecurityDomain>) table.getSelectionModel();
-                presenter.updateDomainSelection(ssm.getSelectedObject());
+
+                presenter.updateDomainSelection(getCurrentSelection());
             }
         });
 
         return layout;
+    }
+
+    private SecurityDomain getCurrentSelection() {
+        SingleSelectionModel<SecurityDomain> ssm = (SingleSelectionModel<SecurityDomain>) table.getSelectionModel();
+        return ssm.getSelectedObject();
     }
 
     private Widget createDomainList(String description) {

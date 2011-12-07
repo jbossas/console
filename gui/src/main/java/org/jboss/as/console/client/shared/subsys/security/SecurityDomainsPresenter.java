@@ -18,9 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
@@ -32,7 +29,6 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -57,11 +53,17 @@ import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author David Bosschaert
  * @author Heiko Braun
  */
-public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy> {
+public class SecurityDomainsPresenter
+        extends Presenter<SecurityDomainsPresenter.MyView, SecurityDomainsPresenter.MyProxy>
+    {
+
     private static final String CLASSIC = "classic";
     private static final String SECURITY_DOMAIN = "security-domain";
 
@@ -106,8 +108,8 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     @Inject
     public SecurityDomainsPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-        DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy,
-        ApplicationMetaData appMetaData, PlaceManager placeManager) {
+                                    DispatchAsync dispatcher, BeanFactory factory, RevealStrategy revealStrategy,
+                                    ApplicationMetaData appMetaData, PlaceManager placeManager) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
@@ -195,61 +197,61 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
                 loadGeneric(model, domain, AUTHORIZATION_IDENTIFIER, "policy-modules", AuthorizationPolicyProvider.class,
-                    new CustomLoadHandler<AuthorizationPolicyProvider>() {
-                        @Override
-                        public void readFromModel(ModelNode n, AuthorizationPolicyProvider object) {
-                            object.setFlag(n.get("flag").asString());
-                        }
+                        new CustomLoadHandler<AuthorizationPolicyProvider>() {
+                            @Override
+                            public void readFromModel(ModelNode n, AuthorizationPolicyProvider object) {
+                                object.setFlag(n.get("flag").asString());
+                            }
 
-                        @Override
-                        public void setInView(List<AuthorizationPolicyProvider> modules, boolean resourceExists) {
-                            getView().setAuthorizationPolicyProviders(domain.getName(), modules, resourceExists);
-                        }
-                    });
+                            @Override
+                            public void setInView(List<AuthorizationPolicyProvider> modules, boolean resourceExists) {
+                                getView().setAuthorizationPolicyProviders(domain.getName(), modules, resourceExists);
+                            }
+                        });
 
                 loadGeneric(model, domain, AUTHENTICATION_IDENTIFIER, "login-modules", AuthenticationLoginModule.class,
-                    new CustomLoadHandler<AuthenticationLoginModule>() {
-                        @Override
-                        public void readFromModel(ModelNode n, AuthenticationLoginModule object) {
-                            object.setFlag(n.get("flag").asString());
-                        }
+                        new CustomLoadHandler<AuthenticationLoginModule>() {
+                            @Override
+                            public void readFromModel(ModelNode n, AuthenticationLoginModule object) {
+                                object.setFlag(n.get("flag").asString());
+                            }
 
-                        @Override
-                        public void setInView(List<AuthenticationLoginModule> modules, boolean resourceExists) {
-                            getView().setAuthenticationLoginModules(domain.getName(), modules, resourceExists);
-                        }
-                    });
+                            @Override
+                            public void setInView(List<AuthenticationLoginModule> modules, boolean resourceExists) {
+                                getView().setAuthenticationLoginModules(domain.getName(), modules, resourceExists);
+                            }
+                        });
 
                 loadGeneric(model, domain, MAPPING_IDENTIFIER, "mapping-modules", MappingModule.class,
-                    new CustomLoadHandler<MappingModule>() {
-                        @Override
-                        public void readFromModel(ModelNode n, MappingModule object) {
-                            object.setType(n.get("type").asString());
-                        }
+                        new CustomLoadHandler<MappingModule>() {
+                            @Override
+                            public void readFromModel(ModelNode n, MappingModule object) {
+                                object.setType(n.get("type").asString());
+                            }
 
-                        @Override
-                        public void setInView(List<MappingModule> modules, boolean resourceExists) {
-                            getView().setMappingModules(domain.getName(), modules, resourceExists);
-                        }
-                    });
+                            @Override
+                            public void setInView(List<MappingModule> modules, boolean resourceExists) {
+                                getView().setMappingModules(domain.getName(), modules, resourceExists);
+                            }
+                        });
 
-                 loadGeneric(model, domain, AUDIT_IDENTIFIER, "provider-modules", GenericSecurityDomainData.class,
-                     new CustomLoadHandler<GenericSecurityDomainData>() {
-                        @Override
-                        public void readFromModel(ModelNode n, GenericSecurityDomainData object) {
-                        }
+                loadGeneric(model, domain, AUDIT_IDENTIFIER, "provider-modules", GenericSecurityDomainData.class,
+                        new CustomLoadHandler<GenericSecurityDomainData>() {
+                            @Override
+                            public void readFromModel(ModelNode n, GenericSecurityDomainData object) {
+                            }
 
-                        @Override
-                        public void setInView(List<GenericSecurityDomainData> modules, boolean resourceExists) {
-                            getView().setAuditModules(domain.getName(), modules, resourceExists);
-                        }
-                     });
+                            @Override
+                            public void setInView(List<GenericSecurityDomainData> modules, boolean resourceExists) {
+                                getView().setAuditModules(domain.getName(), modules, resourceExists);
+                            }
+                        });
             }
         });
     }
 
     private <T extends GenericSecurityDomainData> void loadGeneric(ModelNode model, SecurityDomain domain, String type, String attrName, Class<T> cls,
-            CustomLoadHandler<T> customHandler) {
+                                                                   CustomLoadHandler<T> customHandler) {
         List<T> modules = new ArrayList<T>();
         boolean resourceExists = false;
         if (model.hasDefined(type)) {
@@ -285,39 +287,39 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
 
     public void saveAuthorization(String domainName, List<AuthorizationPolicyProvider> list, boolean resourceExists) {
         saveGeneric(domainName, list, AUTHORIZATION_IDENTIFIER, "policy-modules", resourceExists,
-            new CustomAuthSaveFieldhandler<AuthorizationPolicyProvider>());
+                new CustomAuthSaveFieldhandler<AuthorizationPolicyProvider>());
     }
 
     public void saveAuthentication(String domainName, List<AuthenticationLoginModule> list, boolean resourceExists) {
 
         saveGeneric(domainName, list, AUTHENTICATION_IDENTIFIER, "login-modules", resourceExists,
-            new CustomAuthSaveFieldhandler<AuthenticationLoginModule>());
+                new CustomAuthSaveFieldhandler<AuthenticationLoginModule>());
     }
 
     public void saveMapping(String domainName, List<MappingModule> list, boolean resourceExists) {
         saveGeneric(domainName, list, MAPPING_IDENTIFIER, "mapping-modules", resourceExists,
-            new CustomSaveHandler<MappingModule>() {
-                @Override
-                public void setInModel(ModelNode n, MappingModule object) {
-                    n.get("type").set(object.getType());
-                }
-            });
+                new CustomSaveHandler<MappingModule>() {
+                    @Override
+                    public void setInModel(ModelNode n, MappingModule object) {
+                        n.get("type").set(object.getType());
+                    }
+                });
     }
 
     public void saveAudit(String domainName, List<GenericSecurityDomainData> list, boolean resourceExists) {
         saveGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules", resourceExists,
-            new CustomSaveHandler<GenericSecurityDomainData>());
+                new CustomSaveHandler<GenericSecurityDomainData>());
     }
 
+    // TODO: https://issues.jboss.org/browse/AS7-2936
     public <T extends GenericSecurityDomainData> void saveGeneric(final String domainName, List<T> list, String type, String attrName, boolean resourceExists,
-            CustomSaveHandler<T> customHandler) {
-        if (list.size() == 0)
-            return;
+                                                                  CustomSaveHandler<T> customHandler) {
 
         ModelNode operation = null;
 
         ModelNode valueList = new ModelNode();
         valueList.setEmptyList();
+
         for (T pm : list) {
             ModelNode n = new ModelNode();
             n.get("code").set(pm.getCode());
@@ -339,22 +341,31 @@ public class SecurityDomainsPresenter extends Presenter<SecurityDomainsPresenter
             operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
             operation.get(ModelDescriptionConstants.NAME).set(attrName);
 
-            operation.get("value").set(valueList);
+            if(list.size()>0)
+                operation.get("value").set(valueList);
+            else
+                operation.get("value").setEmptyList();
+
         } else {
             operation = createOperation(ModelDescriptionConstants.ADD);
             operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
             operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
-            operation.get(attrName).set(valueList);
+
+             if(list.size()>0)
+                operation.get(attrName).set(valueList);
+            else
+                operation.get(attrName).setEmptyList();
+
         }
 
-        System.out.println("save:" + operation);
-        dispatcher.execute(new DMRAction(operation), new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
-            attrName, domainName, new Command() {
-                @Override
-                public void execute() {
-                    getView().loadSecurityDomain(domainName);
-                }
-            }));
+        dispatcher.execute(new DMRAction(operation),
+                new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
+                        attrName, domainName, new Command() {
+                    @Override
+                    public void execute() {
+                        getView().loadSecurityDomain(domainName);
+                    }
+                }));
     }
 
 

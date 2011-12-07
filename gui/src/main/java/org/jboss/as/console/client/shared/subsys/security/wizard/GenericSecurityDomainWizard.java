@@ -82,7 +82,12 @@ public class GenericSecurityDomainWizard <T extends GenericSecurityDomainData> i
     public Wizard<T> setIsDialogue(boolean b) {
         this.isDialogue = b;
         return this;
-    };
+    }
+
+    @Override
+    public void clearValues() {
+        form.clearValues();
+    }
 
     public Widget asWidget() {
 

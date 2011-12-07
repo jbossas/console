@@ -42,6 +42,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author Heiko Braun
@@ -213,8 +214,19 @@ public class PropertyEditor {
         Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
                 new ButtonCell<PropertyRecord>("Remove", new ActionCell.Delegate<PropertyRecord>() {
                     @Override
-                    public void execute(PropertyRecord o) {
-                        presenter.onDeleteProperty(reference, o);
+                    public void execute(final PropertyRecord o) {
+
+                        Feedback.confirm(
+                                "Remove Property",
+                                "Really remove this property?"
+                                , new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                    presenter.onDeleteProperty(reference, o);
+                            }
+                        });
+
                     }
                 })
         ) {
@@ -288,7 +300,9 @@ public class PropertyEditor {
 
         this.enabled = enabled;
         propertyTable.setEnabled(enabled && allowEditProps);
-        addProp.setEnabled(enabled);
+
+        if(addProp!=null)
+            addProp.setEnabled(enabled);
     }
 
     /**

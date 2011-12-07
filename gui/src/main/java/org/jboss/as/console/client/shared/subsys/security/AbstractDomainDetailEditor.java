@@ -35,7 +35,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -54,7 +56,8 @@ import java.util.List;
  * @author David Bosschaert
  * @author Heiko Braun
  */
-public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomainData> {
+public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomainData>
+        implements PropertyManagement {
     final Class<T> entityClass;
     final SecurityDomainsPresenter presenter;
 
@@ -63,11 +66,13 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     String domainName;
     boolean resourceExists;
     ToolButton addModule;
-    List<T> backup;
+
     DefaultWindow window;
     ContentHeaderLabel headerLabel;
 
     Wizard<T> wizard;
+    PropertyEditor propertyEditor;
+    DefaultWindow propertyWindow;
 
     AbstractDomainDetailEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         this.presenter = presenter;
@@ -81,6 +86,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     abstract void saveData();
 
     Widget asWidget() {
+
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
@@ -109,7 +115,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                     @Override
                     public void onClick(ClickEvent event) {
 
-                        final T policy = ((SingleSelectionModel<T>) attributesTable.getSelectionModel()).getSelectedObject();
+                        final T policy = getCurrentSelection();
                         Feedback.confirm(getEntityName(), Console.MESSAGES.deleteConfirm(policy.getCode()),
                                 new Feedback.ConfirmationHandler() {
                                     @Override
@@ -137,31 +143,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         addCustomColumns(attributesTable);
 
-        /*ButtonCell<T> editCell = new ButtonCell<T>(Console.CONSTANTS.common_label_edit(), new ActionCell.Delegate<T>() {
-            @Override
-            public void execute(T object) {
-                openWizard(object);
-            }
-        });
-        ButtonCell<T> removeCell = new ButtonCell<T>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<T>() {
-            @Override
-            public void execute(final T object) {
-                Feedback.confirm(getEntityName(), Console.MESSAGES.deleteConfirm(object.getCode()),
-                    new Feedback.ConfirmationHandler() {
-                        @Override
-                        public void onConfirmation(boolean isConfirmed) {
-                            if (isConfirmed) {
-                                attributesProvider.getList().remove(object);
-                                saveData();
-                            }
-                        }
-                    });
-            }
-        }); */
-
         List<HasCell<T, T>> actionCells = new ArrayList<HasCell<T,T>>();
-        //actionCells.add(new IdentityColumn<T>(editCell));
-        //actionCells.add(new IdentityColumn<T>(removeCell));
         IdentityColumn<T> actionColumn = new IdentityColumn<T>(new CompositeCell(actionCells));
         attributesTable.addColumn(actionColumn, "");
 
@@ -176,17 +158,16 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         // -------
 
 
-        final PropertyEditor propertyEditor = new PropertyEditor();
+        propertyEditor = new PropertyEditor(this, true);
+        propertyEditor.setHideButtons(false);
 
         final SingleSelectionModel<T> ssm = new SingleSelectionModel<T>();
         ssm.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 T policy = ssm.getSelectedObject();
-                if (policy == null)
+                if (policy == null) // Can this actually happen?
                 {
-                    // TDOD: wizard.clear();
-                    propertyEditor.clearValues();
                     return;
                 }
 
@@ -194,7 +175,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                 if (props == null)
                     props = new ArrayList<PropertyRecord>();
 
-                propertyEditor.setProperties("", props);
+                propertyEditor.setProperties("TODO", props);
 
                 wizard.edit(policy);
 
@@ -215,8 +196,6 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         vpanel.add(bottomTabs);
         bottomTabs.selectTab(0);
 
-        //propertyEditor.setAllowEditProps(false);
-
         // -------
 
         ScrollPanel scroll = new ScrollPanel(vpanel);
@@ -228,6 +207,9 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         return layout;
     }
 
+    private T getCurrentSelection() {
+        return ((SingleSelectionModel<T>) attributesTable.getSelectionModel()).getSelectedObject();
+    }
 
 
     void addCustomColumns(DefaultCellTable<T> attributesTable) {
@@ -243,6 +225,16 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         List<T> list = attributesProvider.getList();
         list.clear();
         list.addAll(newList);
+
+        if(!list.isEmpty())
+        {
+            attributesTable.getSelectionModel().setSelected(list.get(0), true);
+        }
+        else if(wizard!=null) // loading happens before asWidget() is invoked
+        {
+            wizard.clearValues();
+            propertyEditor.clearValues();
+        }
     }
 
     void openWizard(T editedObject) {
@@ -287,5 +279,53 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         void edit(T object);
         Widget asWidget();
         Wizard setIsDialogue(boolean b);
+        void clearValues();
     }
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+
+        closePropertyDialoge();
+
+        T currentSelection = getCurrentSelection();
+
+        if(null == currentSelection.getProperties())
+            currentSelection.setProperties(new ArrayList<PropertyRecord>());
+
+        currentSelection.getProperties().add(prop);
+        save(currentSelection);
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+        T currentSelection = getCurrentSelection();
+        currentSelection.getProperties().remove(prop);
+        save(currentSelection);
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // Not provided
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, "").asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
+
+
 }
