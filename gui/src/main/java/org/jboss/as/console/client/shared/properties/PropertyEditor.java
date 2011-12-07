@@ -112,6 +112,8 @@ public class PropertyEditor {
                 public void onClick(ClickEvent event) {
                     if(PropertyEditor.this.enabled)
                         presenter.launchNewPropertyDialoge(reference);
+                    else
+                        System.out.println("PropertyEditor is disabled!");
                 }
             });
             propTools.addToolButtonRight(addProp);
@@ -301,8 +303,6 @@ public class PropertyEditor {
         this.enabled = enabled;
         propertyTable.setEnabled(enabled && allowEditProps);
 
-        if(addProp!=null)
-            addProp.setEnabled(enabled);
     }
 
     /**
@@ -333,7 +333,6 @@ public class PropertyEditor {
             throw new IllegalStateException("You need to call asWidget() before clearing the values");
 
         propertyProvider.setList(new ArrayList<PropertyRecord>());
-        setEnabled(false);
     }
 
     private static class ReadOnlyPropertyManagement implements PropertyManagement {
