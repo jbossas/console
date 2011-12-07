@@ -1,19 +1,20 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -25,10 +26,11 @@ public class FormToolStrip<T> {
     private FormCallback<T> callback;
     private String deleteOpName = null;
     private boolean providesDeleteOp = true;
+    private boolean providesEditSaveOp = true;
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
     private ToolButton cancelBtn = null;
-    private ToolButton editBtn;
+    private ToolButton editBtn = null;
 
     private PreValidation preValidation = null;
 
@@ -56,50 +58,56 @@ public class FormToolStrip<T> {
         this.providesDeleteOp = b;
     }
 
+    public void providesEditSaveOp(boolean b) {
+        this.providesEditSaveOp = b;
+    }
+
     public Widget asWidget() {
 
         ToolStrip toolStrip = new ToolStrip();
-        editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
-        ClickHandler editHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        if (providesEditSaveOp) {
+            editBtn = new ToolButton(Console.CONSTANTS.common_label_edit());
+            ClickHandler editHandler = new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
 
-                if(null == form.getEditedEntity())
-                {
-                    Console.warning("Empty form!");
-                    return;
-                }
-
-                if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
-                {
-                    editBtn.setText(Console.CONSTANTS.common_label_save());
-                    form.setEnabled(true);
-                    cancelBtn.setVisible(true);
-                }
-                else
-                {
-
-                    if(!form.validate().hasErrors())
+                    if(null == form.getEditedEntity())
                     {
-                        boolean preValidationIsSuccess = preValidation != null && preValidation.isValid();
-                        if(preValidation==null || preValidationIsSuccess)
+                        Console.warning("Empty form!");
+                        return;
+                    }
+
+                    if(editBtn.getText().equals(Console.CONSTANTS.common_label_edit()))
+                    {
+                        editBtn.setText(Console.CONSTANTS.common_label_save());
+                        form.setEnabled(true);
+                        cancelBtn.setVisible(true);
+                    }
+                    else
+                    {
+
+                        if(!form.validate().hasErrors())
                         {
-                            cancelBtn.setVisible(false);
-                            editBtn.setText(Console.CONSTANTS.common_label_edit());
-                            form.setEnabled(false);
-                            Map<String, Object> changedValues = form.getChangedValues();
-                            if(!changedValues.isEmpty())
-                                callback.onSave(changedValues);
-                            else
-                                Console.warning("Empty changeset!");
+                            boolean preValidationIsSuccess = preValidation != null && preValidation.isValid();
+                            if(preValidation==null || preValidationIsSuccess)
+                            {
+                                cancelBtn.setVisible(false);
+                                editBtn.setText(Console.CONSTANTS.common_label_edit());
+                                form.setEnabled(false);
+                                Map<String, Object> changedValues = form.getChangedValues();
+                                if(!changedValues.isEmpty())
+                                    callback.onSave(changedValues);
+                                else
+                                    Console.warning("Empty changeset!");
+                            }
                         }
                     }
-                }
 
-            }
-        };
-        editBtn.addClickHandler(editHandler);
-        toolStrip.addToolButton(editBtn);
+                }
+            };
+            editBtn.addClickHandler(editHandler);
+            toolStrip.addToolButton(editBtn);
+        }
 
         for(ToolButton btn : additionalButtons)
             toolStrip.addToolButtonRight(btn);
@@ -164,7 +172,8 @@ public class FormToolStrip<T> {
 
     public void doCancel() {
         form.cancel();
-        editBtn.setText(Console.CONSTANTS.common_label_edit());
+        if (editBtn != null)
+            editBtn.setText(Console.CONSTANTS.common_label_edit());
         form.setEnabled(false);
         cancelBtn.setVisible(false);
     }

@@ -97,7 +97,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain> impl
 
     @Override
     protected FormAdapter<SecurityDomain> makeEditEntityDetailsForm() {
-        tabBottomPanel = new TabbedFormLayoutPanel(beanType, getFormMetaData(), this);
+        tabBottomPanel = new TabbedFormLayoutPanel(beanType, getFormMetaData(), hideButtons, this);
         return tabBottomPanel;
     }
 
