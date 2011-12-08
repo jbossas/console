@@ -154,11 +154,11 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("public " + className + "() { ");
         sourceWriter.indent();
         sourceWriter.println("super();");
-        sourceWriter.println("String label = \"\";");
+    /*    sourceWriter.println("String label = \"\";");
         sourceWriter.println("Class<?> listType = null;");
         sourceWriter.println("String subgroup = \"\";");
         sourceWriter.println("String tabName = \"\";");
-        sourceWriter.println("String[] acceptedValues = null;");
+        sourceWriter.println("String[] acceptedValues = null;"); */
 
         try {
             Class<?> beanFactoryClass = getClass().getClassLoader().loadClass(BEAN_FACTORY_NAME);
@@ -168,120 +168,17 @@ public class ApplicationMetaDataGenerator extends Generator{
             for(Method method : beanFactoryClass.getDeclaredMethods())
             {
                 Type returnType = method.getGenericReturnType();
-                if(returnType instanceof ParameterizedType){
-                    ParameterizedType type = (ParameterizedType) returnType;
-                    Type[] typeArguments = type.getActualTypeArguments();
-
-                    if(typeArguments[0] instanceof Class)
-                    {
-                        Class beanTypeClass = (Class) typeArguments[0];
-                        sourceWriter.println("registry.put("+beanTypeClass.getName()+".class, new ArrayList<PropertyBinding>());");
-
-
-                        // --------------------------------
-                        // Mutator
-
-                        sourceWriter.println("Mutator mut_"+idx+" = new Mutator<"+beanTypeClass.getName()+">();");
-                        sourceWriter.println("mutators.put("+beanTypeClass.getName()+".class , mut_"+idx+");");
-
-                        // -----------------------------
-                        // PropertyBinding
-
-                        List<PropBindingDeclarations> bindings = mapProperties(beanTypeClass);
-
-                        for(PropBindingDeclarations binding : bindings)
-                        {
-                            BindingDeclaration bindDecl = binding.getBindingDeclaration();
-                            FormItemDeclaration formDecl = binding.getFormItemDeclaration();
-
-                            if(bindDecl.skip()) continue;
-
-                            if (formDecl.localLabel().equals("")) {
-                                sourceWriter.println("label = \"" +  formDecl.label() + "\";");
-                            } else {
-                                sourceWriter.println("label = Console.CONSTANTS." + formDecl.localLabel() + "();");
-                            }
-
-                            if (!bindDecl.listType().equals("")) {
-                                sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
-                            }
-
-                            if (!"".equals(formDecl.subgroup())) {
-                                sourceWriter.println("subgroup = Console.CONSTANTS." + formDecl.subgroup() + "();");
-                            } else {
-                                sourceWriter.println("subgroup = \"\";");
-                            }
-
-                            if(!"CUSTOM".equals(formDecl.tabName()))
-                                sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.tabName() + "();");
-                            else
-                                sourceWriter.println("tabName = \"CUSTOM\";");
-
-                            sourceWriter.println("acceptedValues = " + makeStringArrayString(formDecl.acceptedValues()) + ";");
-                            sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
-                            sourceWriter.indent();
-                            sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
-                                                                      "\", \"" + bindDecl.getJavaTypeName() +
-                                                                      "\", listType, this, " + bindDecl.key()
-                                                                        + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
-                                                                      ", \"" + formDecl.defaultValue() + "\", label, " +
-                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() +
-                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", subgroup, tabName, " +
-                                                                      formDecl.order() + ", acceptedValues)");
-                            sourceWriter.outdent();
-                            sourceWriter.println(");");
-
-
-                            // create and register setters
-                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public void invoke("+bindDecl.getBeanClassName()+" entity, Object value) {\n" +
-                                            "entity.set"+bindDecl.getPropertyName()+"(("+bindDecl.getJavaTypeName()+")value);\n"+
-                                        "}\n"+
-                                    "});\n");
-
-                             // create and register getters
-
-                            String prefix = "get";
-                            if(bindDecl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
-
-                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public Object invoke("+bindDecl.getBeanClassName()+" entity) {\n" +
-                                            "   return entity."+prefix+bindDecl.getPropertyName()+"();\n"+
-                                        "}\n"+
-                                    "});\n");
-
-                        }
-
-                        // -----------------------------
-                        // AddressBinding
-
-                        AddressDeclaration addr = parseAddress(beanTypeClass);
-
-                        sourceWriter.println("AddressBinding addr_"+idx+" = new AddressBinding();");
-                        sourceWriter.println("addressing.put("+beanTypeClass.getName()+".class , addr_"+idx+");");
-
-                        for(String[] token : addr.getAddress()) {
-                            sourceWriter.println("addr_"+idx+".add(\""+token[0]+"\", \""+token[1]+"\");");
-                        }
-
-                        // -----------------------------
-                        // Factory lookup
-                        sourceWriter.println("factories.put("+beanTypeClass.getName()+".class, new EntityFactory<"+beanTypeClass.getName()+">() {\n" +
-                                        "public "+beanTypeClass.getName()+" create() {\n" +
-                                            "return beanFactory."+method.getName()+"().as();\n"+
-                                        "}\n"+
-                                "});\n");
-
-
-                        sourceWriter.println("");
-                        sourceWriter.println("");
-                        sourceWriter.println("// ---- End " +beanTypeClass.getName() +" ----");
-
-                    }
-                }
-
+                if(!(returnType instanceof ParameterizedType)) continue;
+                
+                ParameterizedType type = (ParameterizedType) returnType;
+                Type[] typeArguments = type.getActualTypeArguments();
+                if(!(typeArguments[0] instanceof Class)) continue;
+                
+                Class beanTypeClass = (Class) typeArguments[0];
+                
+                sourceWriter.println(beanTypeClass.getSimpleName() + "_" + idx + "();");
+                
                 idx++;
-
             }
 
         } catch (ClassNotFoundException e) {
@@ -459,7 +356,7 @@ public class ApplicationMetaDataGenerator extends Generator{
 
     private void generateMethods(SourceWriter sourceWriter)
     {
-
+        
         sourceWriter.println("public List<PropertyBinding> getBindingsForType(Class<?> type) { ");
         sourceWriter.indent();
         sourceWriter.println("return registry.get(type);");
@@ -489,6 +386,152 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("return factories.get(type);");
         sourceWriter.outdent();
         sourceWriter.println("}");
+        
+        generateMethodMethods(sourceWriter);
+    }
+    
+    private void generateMethodMethods(SourceWriter sourceWriter) {
+        
+
+        try {
+            Class<?> beanFactoryClass = getClass().getClassLoader().loadClass(BEAN_FACTORY_NAME);
+
+            int idx = 0;
+
+            for(Method method : beanFactoryClass.getDeclaredMethods())
+            {
+                
+                
+                Type returnType = method.getGenericReturnType();
+                if(returnType instanceof ParameterizedType){
+                    ParameterizedType type = (ParameterizedType) returnType;
+                    Type[] typeArguments = type.getActualTypeArguments();
+
+                    if(typeArguments[0] instanceof Class)
+                    {
+                        Class beanTypeClass = (Class) typeArguments[0];
+                        sourceWriter.println("public void " + beanTypeClass.getSimpleName() + "_" + idx + "() {");
+                        sourceWriter.indent();
+                        sourceWriter.println("Class<?> listType = null;");
+                        sourceWriter.println("String label = \"\";");
+                        sourceWriter.println("String subgroup = \"\";");
+                        sourceWriter.println("String tabName = \"\";");
+                        sourceWriter.println("String[] acceptedValues = null;");
+                        sourceWriter.println("");
+                
+                        sourceWriter.println("registry.put("+beanTypeClass.getName()+".class, new ArrayList<PropertyBinding>());");
+
+
+                        // --------------------------------
+                        // Mutator
+
+                        sourceWriter.println("Mutator mut_"+idx+" = new Mutator<"+beanTypeClass.getName()+">();");
+                        sourceWriter.println("mutators.put("+beanTypeClass.getName()+".class , mut_"+idx+");");
+
+                        // -----------------------------
+                        // PropertyBinding
+
+                        List<PropBindingDeclarations> bindings = mapProperties(beanTypeClass);
+
+                        for(PropBindingDeclarations binding : bindings)
+                        {
+                            BindingDeclaration bindDecl = binding.getBindingDeclaration();
+                            FormItemDeclaration formDecl = binding.getFormItemDeclaration();
+
+                            if(bindDecl.skip()) continue;
+
+                            if (formDecl.localLabel().equals("")) {
+                                sourceWriter.println("label = \"" +  formDecl.label() + "\";");
+                            } else {
+                                sourceWriter.println("label = Console.CONSTANTS." + formDecl.localLabel() + "();");
+                            }
+
+                            if (!bindDecl.listType().equals("")) {
+                                sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
+                            }
+
+                            if (!"".equals(formDecl.subgroup())) {
+                                sourceWriter.println("subgroup = Console.CONSTANTS." + formDecl.subgroup() + "();");
+                            } else {
+                                sourceWriter.println("subgroup = \"\";");
+                            }
+
+                            if(!"CUSTOM".equals(formDecl.tabName()))
+                                sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.tabName() + "();");
+                            else
+                                sourceWriter.println("tabName = \"CUSTOM\";");
+
+                            sourceWriter.println("acceptedValues = " + makeStringArrayString(formDecl.acceptedValues()) + ";");
+                            sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
+                            sourceWriter.indent();
+                            sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
+                                                                      "\", \"" + bindDecl.getJavaTypeName() +
+                                                                      "\", listType, this, " + bindDecl.key()
+                                                                        + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
+                                                                      ", \"" + formDecl.defaultValue() + "\", label, " +
+                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() +
+                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", subgroup, tabName, " +
+                                                                      formDecl.order() + ", acceptedValues)");
+                            sourceWriter.outdent();
+                            sourceWriter.println(");");
+
+
+                            // create and register setters
+                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public void invoke("+bindDecl.getBeanClassName()+" entity, Object value) {\n" +
+                                            "entity.set"+bindDecl.getPropertyName()+"(("+bindDecl.getJavaTypeName()+")value);\n"+
+                                        "}\n"+
+                                    "});\n");
+
+                             // create and register getters
+
+                            String prefix = "get";
+                            if(bindDecl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
+
+                            sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
+                                        "public Object invoke("+bindDecl.getBeanClassName()+" entity) {\n" +
+                                            "   return entity."+prefix+bindDecl.getPropertyName()+"();\n"+
+                                        "}\n"+
+                                    "});\n");
+
+                        }
+
+                        // -----------------------------
+                        // AddressBinding
+
+                        AddressDeclaration addr = parseAddress(beanTypeClass);
+
+                        sourceWriter.println("AddressBinding addr_"+idx+" = new AddressBinding();");
+                        sourceWriter.println("addressing.put("+beanTypeClass.getName()+".class , addr_"+idx+");");
+
+                        for(String[] token : addr.getAddress()) {
+                            sourceWriter.println("addr_"+idx+".add(\""+token[0]+"\", \""+token[1]+"\");");
+                        }
+
+                        // -----------------------------
+                        // Factory lookup
+                        sourceWriter.println("factories.put("+beanTypeClass.getName()+".class, new EntityFactory<"+beanTypeClass.getName()+">() {\n" +
+                                        "public "+beanTypeClass.getName()+" create() {\n" +
+                                            "return beanFactory."+method.getName()+"().as();\n"+
+                                        "}\n"+
+                                "});\n");
+
+
+                        sourceWriter.println("// ---- End " +beanTypeClass.getName() +" ----");
+                        
+                        sourceWriter.outdent();
+                        sourceWriter.println("}");
+                        sourceWriter.println("");
+                    }
+                }
+
+                idx++;
+
+            }
+
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Failed to load " + BEAN_FACTORY_NAME);
+        }
     }
 
 }
