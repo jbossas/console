@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
@@ -33,6 +35,8 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 /**
  * Main view class for Infinispan Cache Containers.
@@ -42,11 +46,13 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class CacheContainerView extends AbstractEntityView<CacheContainer> implements CacheContainerPresenter.MyView {
 
     private EntityToDmrBridge bridge;
+    private DefaultCacheContainerWindow defaultCacheContainerWindow;
     
     @Inject
     public CacheContainerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(CacheContainer.class, propertyMetaData);
         bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
+        defaultCacheContainerWindow = new DefaultCacheContainerWindow(propertyMetaData, dispatcher);
     }
     
     @Override
@@ -59,6 +65,21 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
         return Console.CONSTANTS.subsys_infinispan_cache_containers();
     }
 
+    @Override
+    protected ToolStrip createToolStrip() {
+        ToolStrip toolStrip = super.createToolStrip();
+        
+        toolStrip.addToolButtonRight(new ToolButton("Set Default",
+                    new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                           defaultCacheContainerWindow.setChoices(bridge.getEntityList());
+                           defaultCacheContainerWindow.show();
+                        }
+                    }));
+        return toolStrip;
+    }
+    
     @Override
     protected FormAdapter<CacheContainer> makeAddEntityForm() {
         Form<CacheContainer> form = new Form(DeploymentScanner.class);

@@ -179,6 +179,7 @@ public interface UIConstants extends Constants {
 
     String subsys_infinispan_cache_container();
     String subsys_infinispan_cache_containers();
+    String subsys_infinispan_cluster();
     String subsys_infinispan_default_cache();
     String subsys_infinispan_jndiName();
     String subsys_infinispan_listenerExecutor();
@@ -189,6 +190,16 @@ public interface UIConstants extends Constants {
     String subsys_infinispan_aquireTimeout();
     String subsys_infinispan_concurrencyLevel();
     String subsys_infinispan_evictionStrategy();
+    String subsys_infinispan_transport();
+    String subsys_infinispan_stateTransfer();
+    String subsys_infinispan_locking();
+    String subsys_infinispan_eviction();
+    String subsys_infinispan_expiration();
+    String subsys_infinispan_localCache();
+    String subsys_infinispan_invalidationCache();
+    String subsys_infinispan_replicatedCache();
+    String subsys_infinispan_distributedCache();
+    String subsys_infinispan_distributed();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

@@ -18,10 +18,26 @@
  */
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.Binding;
+import org.jboss.as.console.client.widgets.forms.FormItem;
+
 /**
- * Model for a Transport
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public interface Transport  {
+@Address("/subsystem=infinispan")
+public interface DefaultCacheContainer extends NamedEntity {
+    @Override
+    @Binding(detypedName="default-cache-container")
+    @FormItem(defaultValue="",
+              label="Default Cache Container",
+              required=true,
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX")
+    public String getName();
+    @Override
+    public void setName(String name);
+    
 }

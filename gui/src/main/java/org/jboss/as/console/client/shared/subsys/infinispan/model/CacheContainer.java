@@ -43,40 +43,95 @@ public interface CacheContainer extends NamedEntity {
     @Binding(detypedName = "jndi-name")
     @FormItem(localLabel="subsys_infinispan_jndiName",
             required=false,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT")    
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")    
     String getJndiName();
     void setJndiName(String jndiName);
     
     @Binding(detypedName= "default-cache")
     @FormItem(localLabel="subsys_infinispan_default_cache",
             required=true,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT")
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
     String getDefaultCache();
     void setDefaultCache(String defaultCache);
     
     @Binding(detypedName="eviction-executor")
     @FormItem(localLabel="subsys_infinispan_evictionExecutor",
             required=false,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT")
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
     String getEvictionExecutor();
     void setEvictionExecutor(String evictionExecutor);
     
     @Binding(detypedName="replication-queue-executor")
     @FormItem(localLabel="subsys_infinispan_replicationQueueExecutor",
             required=false,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT")
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
     String getReplicationQueueExecutor();
     void setReplicationQueueExecutor(String replicationQueueExecutor);
     
     @Binding(detypedName="listener-executor")
     @FormItem(localLabel="subsys_infinispan_listenerExecutor",
             required=false,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT")
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX")
     String getListenerExecutor();
     void setListenerExecutor(String listenerExecutor);
+    
+    // Transport tab
+    @Binding(detypedName="transport/stack")
+    @FormItem(label="Stack",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_transport")
+    String getStack();
+    void setStack(String stack);
+    
+    @Binding(detypedName="transport/executor")
+    @FormItem(label="Executor",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_transport")
+    String getExecutor();
+    void setExecutor(String executor);
+    
+    @Binding(detypedName="transport/site")
+    @FormItem(label="Site",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_transport")
+    String getSite();
+    void setSite(String site);
+    
+    @Binding(detypedName="transport/lock-timeout")
+    @FormItem(label="Lock Timeout",
+            required=false,
+            formItemTypeForEdit="NUMBER_BOX",
+            formItemTypeForAdd="NUMBER_BOX",
+            tabName="subsys_infinispan_transport")
+    Long getLockTimeout();
+    void setLockTimeout(Long lockTimeout);
+    
+    @Binding(detypedName="transport/rack")
+    @FormItem(label="Rack",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_transport")
+    String getRack();
+    void setRack(String rack);
+    
+    @Binding(detypedName="transport/machine")
+    @FormItem(label="Machine",
+            required=false,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_transport")
+    String getMachine();
+    void setMachine(String machine);
 }

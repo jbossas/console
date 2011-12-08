@@ -50,8 +50,6 @@ public enum FormItemType {
     NUMBER_UNIT_BOX(new UnitBoxItemFactory()),
     UNITS(new UnitsItemFactory()),
     COMBO_BOX(new ComboBoxItemFactory()),
-    ISOLATION_TYPES(new ComboBoxItemFactory(new String[] {"REPEATABLE_READ"})),
-    EVICTION_STRATEGY_TYPES(new ComboBoxItemFactory(new String[] {"NONE", "LRU"})),
     TIME_UNITS(new ComboBoxItemFactory(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"})),
     STRING_LIST_EDITOR(new StringListEditorItemFactory()),
     PROPERTY_EDITOR(new PropertyEditorItemFactory());

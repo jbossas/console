@@ -111,6 +111,14 @@ import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
+import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCacheView;
+import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCacheView;
+import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.LocalCacheView;
+import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCacheView;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -394,10 +402,27 @@ public class CoreUIModule extends AbstractPresenterModule {
                 OSGiRuntimeView.class,
                 OSGiRuntimePresenter.MyProxy.class);
 
+        // Infinispan
         bindPresenter(CacheContainerPresenter.class,
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,
                 CacheContainerPresenter.MyProxy.class);
+        bindPresenter(LocalCachePresenter.class,
+                LocalCachePresenter.MyView.class,
+                LocalCacheView.class,
+                LocalCachePresenter.MyProxy.class);
+        bindPresenter(InvalidationCachePresenter.class,
+                InvalidationCachePresenter.MyView.class,
+                InvalidationCacheView.class,
+                InvalidationCachePresenter.MyProxy.class);
+        bindPresenter(ReplicatedCachePresenter.class,
+                ReplicatedCachePresenter.MyView.class,
+                ReplicatedCacheView.class,
+                ReplicatedCachePresenter.MyProxy.class);
+        bindPresenter(DistributedCachePresenter.class,
+                DistributedCachePresenter.MyView.class,
+                DistributedCacheView.class,
+                DistributedCachePresenter.MyProxy.class);
 
         bindPresenter(SocketBindingPresenter.class,
                 SocketBindingPresenter.MyView.class,
@@ -502,7 +527,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaSubsystemView.class,
                 JcaPresenter.MyProxy.class);
-
     }
 
 }

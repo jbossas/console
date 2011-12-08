@@ -123,7 +123,7 @@ public class SubsystemTreeBuilder {
 
                             continue;
                         }
-
+                        
 
                         String token = parentPlace + key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);

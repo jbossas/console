@@ -48,7 +48,12 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.DistributedCache;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.InvalidationCache;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.DefaultCacheContainer;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.ReplicatedCache;
 import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.subsys.jca.JcaBeanValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
@@ -174,8 +179,15 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<RuntimeMetric> runtime();
     AutoBean<OSMetric> osmetric();
 
+    // Infinispan subsystem
     AutoBean<CacheContainer> cacheContainer();
+    AutoBean<DefaultCacheContainer> defaultCacheContainer();
+    AutoBean<LocalCache> localCache();
+    AutoBean<InvalidationCache> invalidationCache();
+    AutoBean<ReplicatedCache> replicatedCache();
+    AutoBean<DistributedCache> distributedCache();
 
+    // Thread subsystem
     AutoBean<ThreadFactory> threadFactory();
     AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool();
     AutoBean<UnboundedQueueThreadPool> unboundedQueueThreadPool();

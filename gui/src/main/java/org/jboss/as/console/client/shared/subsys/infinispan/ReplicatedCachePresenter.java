@@ -33,24 +33,24 @@ import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 
 
 /**
- * The Presenter for Cache Containers
+ * The Presenter for Replicated Caches
  * 
- * @author Stan Silvert
+ * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class CacheContainerPresenter extends Presenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy> {
+public class ReplicatedCachePresenter extends Presenter<ReplicatedCachePresenter.MyView, ReplicatedCachePresenter.MyProxy> {
 
     private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
-    @NameToken(NameTokens.CacheContainerPresenter)
-    public interface MyProxy extends Proxy<CacheContainerPresenter>, Place {
+    @NameToken(NameTokens.ReplicatedCachePresenter)
+    public interface MyProxy extends Proxy<ReplicatedCachePresenter>, Place {
     }
 
     public interface MyView extends FrameworkView, View {
     }
 
     @Inject
-    public CacheContainerPresenter(
+    public ReplicatedCachePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
