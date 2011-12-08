@@ -36,7 +36,7 @@ public class TXExecutionView implements Sampler {
                 total.setVisible(false),
                 new NumberColumn("Commited").setComparisonColumn(total),
                 new NumberColumn("Aborted").setComparisonColumn(total),
-                new NumberColumn("Timed Out")
+                new NumberColumn("Timed Out").setComparisonColumn(total)
         };
 
         String title = "Transaction Execution";

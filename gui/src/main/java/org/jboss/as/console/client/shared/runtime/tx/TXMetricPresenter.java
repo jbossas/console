@@ -30,6 +30,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -162,6 +163,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);
 
+        final Random random = new Random(System.currentTimeMillis());
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
@@ -171,7 +174,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
                 getView().setTxMetric(new Metric(
                         metrics.getNumTransactions(),
                         metrics.getNumCommittedTransactions(),
-                        metrics.getNumAbortedTransactions()+5,
+                        metrics.getNumAbortedTransactions()+random.nextInt(5),
                         metrics.getNumTimeoutTransactions()
                         ));
 

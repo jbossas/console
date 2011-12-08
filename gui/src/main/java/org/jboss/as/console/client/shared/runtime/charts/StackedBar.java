@@ -39,15 +39,14 @@ public class StackedBar {
         Element innerElement = panel.getElementById(innerId);
         innerElement.addClassName("stacked-bar-actual");
         innerElement.setInnerText(label);
-        //innerElement.setAttribute("style", "width:0%");
 
         return panel;
     }
 
-    public void setRatio(long total, long actual)
+    public void setRatio(double total, double actual)
     {
         Element inner = panel.getElementById(innerId);
-        long percentage = percentage(total, actual);
+        double percentage = percentage(total, actual);
         if(percentage>0)
             inner.setAttribute("style", "width:" + percentage + "%");
         else
@@ -56,12 +55,12 @@ public class StackedBar {
     }
 
 
-    static long percentage(long total, long actual)
+    static double percentage(double total, double actual)
     {
         if(total==0 || actual==0)
             return 0;
 
-        return Long.valueOf(Math.abs((actual/total)*100)).longValue();
+        return (actual/total)*100;
     }
 
 }

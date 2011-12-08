@@ -87,10 +87,6 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         // --------------
 
-        panel.add(new ContentHeaderLabel("Transaction Metrics"));
-
-        // --------------
-
         //HorizontalPanel outcomePanel = new HorizontalPanel();
         //outcomePanel .setStyleName("fill-layout-width");
 

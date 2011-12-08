@@ -47,21 +47,30 @@ public class PlainColumnView implements Sampler {
         grid = new FlexTable();
         grid.getElement().setAttribute("style", "width:400px;");
 
-        grid.setHTML(0, 0, "<h3>"+title+"</h3>");
+
+        // title
+        grid.setHTML(0, 0, "<h3 style='color:#4A5D75'>"+title+"</h3>");
+
+        // header columns
         grid.setHTML(1, 0, "Metric");
         grid.setHTML(1, 1, "Actual");
-
-        // stacked bars: TODO these are optional
         grid.setHTML(1, 2, "");
 
+        grid.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+
+        // actual values
         int row = ROW_OFFSET;
         for(Column c : columns)
         {
-            grid.setHTML(row, 0, "<b style='color:#A7ABB4'>"+c.getLabel() + ":</b>");
+            grid.setHTML(row, 0, "<div class='metric-table-label'>"+c.getLabel() + ":</div>");
             grid.setHTML(row, 1, "");
 
             stacks.add(new StackedBar());
-            grid.setWidget(row, 2, stacks.get(row-ROW_OFFSET).asWidget());
+
+            if(c.getComparisonColumn()!=null)
+                grid.setWidget(row, 2, stacks.get(row-ROW_OFFSET).asWidget());
+            else
+                grid.setText(row, 2, "");
 
             grid.getCellFormatter().setHorizontalAlignment(row, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
@@ -71,12 +80,13 @@ public class PlainColumnView implements Sampler {
             row++;
         }
 
-        grid.getFlexCellFormatter().setColSpan(0, 0, 2);
+        grid.getFlexCellFormatter().setColSpan(0, 0, 3);
         grid.getRowFormatter().setStyleName(0, "metric-table-title");
 
         grid.getCellFormatter().setStyleName(1,0,"metric-table-header");
         grid.getCellFormatter().setStyleName(1,1,"metric-table-header");
         grid.getCellFormatter().setStyleName(1,2,"metric-table-header");
+        grid.getCellFormatter().setWidth(1, 2, "50%");
 
         layout.add(grid);
         return layout;
@@ -85,18 +95,18 @@ public class PlainColumnView implements Sampler {
     @Override
     public void addSample(Metric metric) {
         int row=ROW_OFFSET;
+        Long baseline = Long.valueOf(metric.get(0));
 
         for(Column c : columns)
         {
-            Long baseline = Long.valueOf(metric.get(0));
             int dataIndex = row - ROW_OFFSET;
+            String actualValue = metric.get(dataIndex);
 
-            grid.setText(row, 1, metric.get(dataIndex) +" / "+ baseline);
+            grid.setText(row, 1, actualValue +" / "+ baseline);
 
             if(c.getComparisonColumn()!=null)
             {
-                Long actualValue = Long.valueOf(metric.get(dataIndex));
-                stacks.get(dataIndex).setRatio(baseline,actualValue);
+                stacks.get(dataIndex).setRatio(baseline, Double.valueOf(actualValue));
             }
             row++;
         }

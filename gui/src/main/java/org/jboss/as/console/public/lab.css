@@ -76,11 +76,15 @@
 .metric-table-title {
     height:30px;
     font-size: 14px;
-    text-align: center;
+    text-align: left;
 }
 
 .metric-table-header {
     border-bottom: 1px solid #A7ABB4;
+}
+
+.metric-table-label {
+
 }
 
 .stacked-bar-total {
