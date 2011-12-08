@@ -27,7 +27,7 @@ public class JacOrbView extends AbstractEntityView<JacOrbSubsystem> implements J
 
     @Inject
     public JacOrbView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
-        super(JacOrbSubsystem.class, applicationMetaData, EnumSet.allOf(FrameworkButton.class));
+        super(JacOrbSubsystem.class, applicationMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<JacOrbSubsystem>(applicationMetaData, JacOrbSubsystem.class, this, dispatcher);
     }
 
@@ -52,8 +52,6 @@ public class JacOrbView extends AbstractEntityView<JacOrbSubsystem> implements J
     protected List<SingleEntityView<JacOrbSubsystem>> provideAdditionalTabs(Class<?> beanType, FormMetaData formMetaData,
         FrameworkPresenter presenter) {
         EmbeddedPropertyView<JacOrbSubsystem, JacOrbSubsystem> propertyView = new EmbeddedPropertyView<JacOrbSubsystem, JacOrbSubsystem>(presenter);
-        propertyView.getEmbeddedPropertyEditor().setHideButtons(true); // remove when the JacORB configuration becomes read-write
-
         return Collections.<SingleEntityView<JacOrbSubsystem>>singletonList(propertyView);
     }
 
