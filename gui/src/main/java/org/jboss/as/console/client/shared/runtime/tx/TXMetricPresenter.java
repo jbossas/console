@@ -171,7 +171,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
                 getView().setTxMetric(new Metric(
                         metrics.getNumTransactions(),
                         metrics.getNumCommittedTransactions(),
-                        metrics.getNumAbortedTransactions(),
+                        metrics.getNumAbortedTransactions()+5,
                         metrics.getNumTimeoutTransactions()
                         ));
 

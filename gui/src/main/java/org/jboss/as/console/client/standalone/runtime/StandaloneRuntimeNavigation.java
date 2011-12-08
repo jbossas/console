@@ -2,10 +2,12 @@ package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
@@ -37,8 +39,13 @@ public class StandaloneRuntimeNavigation {
         // ----------------------------------------------------
 
         Tree statusTree = new LHSNavTree("standalone-runtime");
+        TreeItem serverContents = new DefaultTreeItem("Server Status");
+        TreeItem subsysContents = new DefaultTreeItem("Subsystem Metrics");
+        statusTree.addItem(serverContents);
+        statusTree.addItem(subsysContents);
+
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM Status", NameTokens.VirtualMachine);
-        statusTree.addItem(jvmItem);
+        serverContents.addItem(jvmItem);
 
 
         //LHSNavTreeItem metrics = new LHSNavTreeItem("Subsystem Metrics", "metrics");
@@ -49,14 +56,15 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
         LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
 
-        statusTree.addItem(datasources);
-        statusTree.addItem(jmsQueues);
-        statusTree.addItem(web);
-        statusTree.addItem(tx);
-        statusTree.addItem(osgi);
+        subsysContents.addItem(datasources);
+        subsysContents.addItem(jmsQueues);
+        subsysContents.addItem(web);
+        subsysContents.addItem(tx);
+        subsysContents.addItem(osgi);
 
         DisclosurePanel serverPanel  = new DisclosureStackPanel("Status").asWidget();
         serverPanel.setContent(statusTree);
+
 
         stack.add(serverPanel);
 

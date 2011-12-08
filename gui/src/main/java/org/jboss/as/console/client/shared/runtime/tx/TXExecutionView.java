@@ -29,10 +29,13 @@ public class TXExecutionView implements Sampler {
 
     private Widget displayStrategy() {
 
+
+        NumberColumn total = new NumberColumn("Total");
+
         Column[] cols = new Column[] {
-                new NumberColumn("Total"),
-                new NumberColumn("Commited"),
-                new NumberColumn("Aborted"),
+                total.setVisible(false),
+                new NumberColumn("Commited").setComparisonColumn(total),
+                new NumberColumn("Aborted").setComparisonColumn(total),
                 new NumberColumn("Timed Out")
         };
 

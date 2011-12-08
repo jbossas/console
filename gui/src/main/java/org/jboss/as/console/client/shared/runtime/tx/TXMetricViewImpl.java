@@ -91,17 +91,17 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         // --------------
 
-        HorizontalPanel outcomePanel = new HorizontalPanel();
-        outcomePanel .setStyleName("fill-layout-width");
+        //HorizontalPanel outcomePanel = new HorizontalPanel();
+        //outcomePanel .setStyleName("fill-layout-width");
 
         this.executionMetric = new TXExecutionView();
-        outcomePanel .add(executionMetric.asWidget());
+        panel.add(executionMetric.asWidget());
 
         this.rollbackMetric = new TXRollbackView();
-        outcomePanel .add(rollbackMetric.asWidget());
+        Widget w = rollbackMetric.asWidget();
 
-        panel.add(new ContentGroupLabel("Transaction Outcome"));
-        panel.add(outcomePanel);
+        //panel.add(new ContentGroupLabel("Transaction Outcome"));
+        //panel.add(outcomePanel);
 
         return layout;
     }
