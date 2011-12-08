@@ -318,7 +318,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         propertyWindow.setHeight(240);
 
         propertyWindow.setWidget(
-                new NewPropertyWizard(this, "").asWidget()
+                new NewPropertyWizard(this, "", false).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);
