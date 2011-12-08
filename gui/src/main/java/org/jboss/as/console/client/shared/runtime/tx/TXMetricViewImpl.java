@@ -13,6 +13,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -87,8 +88,8 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
 
         // --------------
 
-        //HorizontalPanel outcomePanel = new HorizontalPanel();
-        //outcomePanel .setStyleName("fill-layout-width");
+        panel.add(new ContentHeaderLabel("Transaction subsystem metrics"));
+        panel.add(new ContentDescription("These metrics reflect the current state of the transaction subsystem."));
 
         this.executionMetric = new TXExecutionView();
         panel.add(executionMetric.asWidget());
@@ -96,8 +97,6 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         this.rollbackMetric = new TXRollbackView();
         panel.add(rollbackMetric.asWidget());
 
-        //panel.add(new ContentGroupLabel("Transaction Outcome"));
-        //panel.add(outcomePanel);
 
         return layout;
     }

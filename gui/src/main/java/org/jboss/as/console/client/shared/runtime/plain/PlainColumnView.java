@@ -1,11 +1,8 @@
 package org.jboss.as.console.client.shared.runtime.plain;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -15,6 +12,7 @@ import org.jboss.as.console.client.shared.runtime.charts.StackedBar;
 
 import java.util.LinkedList;
 import java.util.List;
+
 
 /**
  * @author Heiko Braun
@@ -28,6 +26,8 @@ public class PlainColumnView implements Sampler {
     private int ROW_OFFSET = 2;
 
     List<StackedBar> stacks = new LinkedList<StackedBar>();
+    private int width = 360;
+    private Style.Unit unit = Style.Unit.PX;
 
     public PlainColumnView(String title) {
         this.title = title;
@@ -38,6 +38,13 @@ public class PlainColumnView implements Sampler {
         return this;
     }
 
+    public PlainColumnView setWidth(int width, Style.Unit unit) {
+        this.width = width;
+        this.unit = unit;
+        return this;
+    }
+
+
     @Override
     public Widget asWidget() {
 
@@ -45,11 +52,11 @@ public class PlainColumnView implements Sampler {
         layout.setStyleName("fill-layout-width");
 
         grid = new FlexTable();
-        grid.getElement().setAttribute("style", "width:400px;");
+        grid.getElement().setAttribute("style", "width:"+width+unit.getType()+";");
 
 
         // title
-        grid.setHTML(0, 0, "<h3 style='color:#4A5D75'>"+title+"</h3>");
+        grid.setHTML(0, 0, "<div class='metric-table-title'>"+title+"</div>");
 
         // header columns
         grid.setHTML(1, 0, "Metric");

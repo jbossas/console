@@ -74,10 +74,14 @@
 }
 
 .metric-table-title {
+    font-weight:BOLD;
+    color: #A4A4A4;
+    font-size:14px!important;
     height:20px;
-    font-size: 14px;
-    text-align: left;
-    margin-top:10px;
+    width:100%;
+    padding-bottom:0px;
+    margin-bottom:10px;
+    padding-top:20px;
 }
 
 .metric-table-header {

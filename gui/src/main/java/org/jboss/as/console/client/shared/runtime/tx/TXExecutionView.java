@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.tx;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -48,7 +49,8 @@ public class TXExecutionView implements Sampler {
         else
         {
             sampler = new PlainColumnView(title)
-                    .setColumns(cols);
+                    .setColumns(cols)
+                    .setWidth(100, Style.Unit.PCT);
         }
 
         return sampler.asWidget();
