@@ -76,6 +76,9 @@ public class PlainColumnView implements Sampler {
 
             if(!c.isVisible())
                 grid.getRowFormatter().setVisible(row, false);
+            if(c.isBaseline())
+                grid.getRowFormatter().addStyleName(row, "metric-table-baseline");
+
 
             row++;
         }
@@ -102,7 +105,7 @@ public class PlainColumnView implements Sampler {
             int dataIndex = row - ROW_OFFSET;
             String actualValue = metric.get(dataIndex);
 
-            grid.setText(row, 1, actualValue +" / "+ baseline);
+            grid.setText(row, 1, actualValue );
 
             if(c.getComparisonColumn()!=null)
             {

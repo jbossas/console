@@ -94,7 +94,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         panel.add(executionMetric.asWidget());
 
         this.rollbackMetric = new TXRollbackView();
-        Widget w = rollbackMetric.asWidget();
+        panel.add(rollbackMetric.asWidget());
 
         //panel.add(new ContentGroupLabel("Transaction Outcome"));
         //panel.add(outcomePanel);

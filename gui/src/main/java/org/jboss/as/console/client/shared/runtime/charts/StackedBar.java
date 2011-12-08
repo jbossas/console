@@ -60,7 +60,7 @@ public class StackedBar {
         if(total==0 || actual==0)
             return 0;
 
-        return (actual/total)*100;
+        return Math.round((actual/total)*100);
     }
 
 }

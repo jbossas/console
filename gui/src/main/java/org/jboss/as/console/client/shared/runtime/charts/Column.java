@@ -13,6 +13,7 @@ public abstract class Column<T> {
     protected Column comparisonColumn = null;
 
     protected boolean isVisible = true;
+    private boolean isBaseline;
 
     public Column(AbstractDataTable.ColumnType type, String label) {
         this.type = type;
@@ -30,6 +31,15 @@ public abstract class Column<T> {
     public Column setVisible(boolean b) {
         this.isVisible = b;
         return this;
+    }
+
+    public Column setBaseline(boolean b) {
+        this.isBaseline = b;
+        return this;
+    }
+
+    public boolean isBaseline() {
+        return isBaseline;
     }
 
     public String getLabel() {

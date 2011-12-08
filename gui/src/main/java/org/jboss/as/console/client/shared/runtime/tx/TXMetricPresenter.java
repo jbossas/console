@@ -39,7 +39,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 11/3/11
  */
 public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMetricPresenter.MyProxy>
-    implements TXMetricManagement , HostSelectionEvent.HostSelectionListener {
+        implements TXMetricManagement , HostSelectionEvent.HostSelectionListener {
 
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
@@ -141,7 +141,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @Override
     protected void revealInParent() {
-       revealStrategy.revealInRuntimeParent(this);
+        revealStrategy.revealInRuntimeParent(this);
     }
 
 
@@ -163,18 +163,16 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);
 
-        final Random random = new Random(System.currentTimeMillis());
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 TransactionManager metrics = entityAdapter.fromDMR(result.get(RESULT));
 
-                getView().setTxMetric(new Metric(
+                /*getView().setTxMetric(new Metric(
                         metrics.getNumTransactions(),
                         metrics.getNumCommittedTransactions(),
-                        metrics.getNumAbortedTransactions()+random.nextInt(5),
+                        metrics.getNumAbortedTransactions(),
                         metrics.getNumTimeoutTransactions()
                         ));
 
@@ -183,7 +181,32 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
                         metrics.getNumResourceRollback()
                 ));
 
+                        */
+
+                provideRandomMetrics();
+
+
+
             }
         });
+    }
+
+    private void provideRandomMetrics() {
+
+        final Random random = new Random(System.currentTimeMillis());
+
+        int total = 175;
+        int committed = random.nextInt(50);
+
+        getView().setTxMetric(new Metric(
+                total,
+                committed,
+                total-committed,
+                0L));
+
+        getView().setRollbackMetric(new Metric(
+                        (long)random.nextInt(50),
+                        (long)random.nextInt(75)
+                ));
     }
 }

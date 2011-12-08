@@ -74,13 +74,19 @@
 }
 
 .metric-table-title {
-    height:30px;
+    height:20px;
     font-size: 14px;
     text-align: left;
+    margin-top:10px;
 }
 
 .metric-table-header {
+    color: #666;
     border-bottom: 1px solid #A7ABB4;
+}
+
+.metric-table-baseline>div {
+    color:#CCC!important;
 }
 
 .metric-table-label {

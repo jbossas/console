@@ -33,7 +33,7 @@ public class TXExecutionView implements Sampler {
         NumberColumn total = new NumberColumn("Total");
 
         Column[] cols = new Column[] {
-                total.setVisible(false),
+                total.setBaseline(true),
                 new NumberColumn("Commited").setComparisonColumn(total),
                 new NumberColumn("Aborted").setComparisonColumn(total),
                 new NumberColumn("Timed Out").setComparisonColumn(total)
