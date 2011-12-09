@@ -13,6 +13,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
@@ -49,6 +50,8 @@ class DomainRuntimeNavigation {
         innerlayout.add(serverPicker.asWidget());
 
         Tree statusTree = new LHSNavTree("domain-runtime");
+        TreeItem servers = new DefaultTreeItem("Domain Status");
+        statusTree.addItem(servers);
 
         LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), new ClickHandler()
         {
@@ -63,8 +66,8 @@ class DomainRuntimeNavigation {
 
         LHSNavTreeItem jvm = new LHSNavTreeItem("JVM Status", NameTokens.HostVMMetricPresenter);
 
-        statusTree.addItem(serverInstances);
-        statusTree.addItem(jvm);
+        servers.addItem(serverInstances);
+        servers.addItem(jvm);
 
         innerlayout.add(statusTree);
 
@@ -73,7 +76,7 @@ class DomainRuntimeNavigation {
 
         Tree metricTree = new LHSNavTree("domain-runtime");
 
-        TreeItem subsystems = new TreeItem("Subsystems");
+        TreeItem subsystems = new DefaultTreeItem("Subsystem Metrics");
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
@@ -87,6 +90,7 @@ class DomainRuntimeNavigation {
 
         metricTree.addItem(subsystems);
         subsystems.setState(true); // open by default
+        servers.setState(true);
 
         innerlayout.add(metricTree);
 
