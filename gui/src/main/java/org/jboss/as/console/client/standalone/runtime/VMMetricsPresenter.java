@@ -14,7 +14,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
+import org.jboss.as.console.client.shared.jvm.LoadJVMMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
@@ -35,7 +35,7 @@ public class VMMetricsPresenter
 
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
-    private LoadMetricsCmd loadMetricCmd;
+    private LoadJVMMetricsCmd loadMetricCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.VirtualMachine)
@@ -52,7 +52,7 @@ public class VMMetricsPresenter
         super(eventBus, view, proxy);
 
         this.metaData = propertyMetaData;
-        this.loadMetricCmd = new LoadMetricsCmd(dispatcher, factory, new ModelNode(), metaData);
+        this.loadMetricCmd = new LoadJVMMetricsCmd(dispatcher, factory, new ModelNode(), metaData);
     }
 
     @Override

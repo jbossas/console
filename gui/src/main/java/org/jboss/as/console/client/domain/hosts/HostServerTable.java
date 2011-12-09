@@ -50,6 +50,7 @@ public class HostServerTable {
     private HTML currentDisplayedValue;
     int popupWidth = -1;
     private String description = null;
+    private ServerInstance selectedServer;
 
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
@@ -112,8 +113,16 @@ public class HostServerTable {
         hostList.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                Host selectedHost = ((SingleSelectionModel<Host>) hostList.getSelectionModel()).getSelectedObject();
+                Host selectedHost = getSelectedHost();
                 presenter.loadServer(selectedHost);
+            }
+        });
+
+        serverList.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ServerInstance server = getSelectedServer();
+                HostServerTable.this.selectedServer = server;
             }
         });
 
@@ -131,6 +140,8 @@ public class HostServerTable {
         DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                if(selectedServer!=null)
+                    presenter.onServerSelected(getSelectedHost(), getSelectedServer());
                 popup.hide();
             }
         });
@@ -178,6 +189,14 @@ public class HostServerTable {
         img.addClickHandler(clickHandler);
 
         return header;
+    }
+
+    private Host getSelectedHost() {
+        return ((SingleSelectionModel<Host>) hostList.getSelectionModel()).getSelectedObject();
+    }
+
+    private ServerInstance getSelectedServer() {
+        return ((SingleSelectionModel<ServerInstance>) serverList.getSelectionModel()).getSelectedObject();
     }
 
     private void openPanel() {

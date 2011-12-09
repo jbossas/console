@@ -28,7 +28,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 10/7/11
  */
-public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<CompositeVMMetric> {
+public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncCommand<CompositeVMMetric> {
 
     private EntityAdapter<HeapMetric> heapMetricAdapter;
     private EntityAdapter<ThreadMetric> threadMetricAdapter;
@@ -36,7 +36,7 @@ public class LoadMetricsCmd extends AddressableModelCmd implements AsyncCommand<
     private EntityAdapter<OSMetric> osAdapter;
 
 
-    public LoadMetricsCmd(
+    public LoadJVMMetricsCmd(
             DispatchAsync dispatcher,
             BeanFactory factory,
             ModelNode address,

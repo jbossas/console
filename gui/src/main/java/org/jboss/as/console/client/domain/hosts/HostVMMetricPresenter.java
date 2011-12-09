@@ -19,7 +19,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.jvm.LoadMetricsCmd;
+import org.jboss.as.console.client.shared.jvm.LoadJVMMetricsCmd;
 import org.jboss.as.console.client.shared.jvm.model.CompositeVMMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
@@ -127,7 +127,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     }
 
-    private LoadMetricsCmd createLoadMetricCmd(String serverName) {
+    private LoadJVMMetricsCmd createLoadMetricCmd(String serverName) {
 
         if(!hostSelection.isSet())
             throw new RuntimeException("Host selection not set!");
@@ -139,7 +139,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         address.add("host", hostSelection.getName());
         address.add("server", serverName);
 
-        return new LoadMetricsCmd(
+        return new LoadJVMMetricsCmd(
                 dispatcher, factory,
                 address,
                 metaData

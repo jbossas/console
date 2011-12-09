@@ -111,7 +111,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         }
 
-
+        // load host and server data
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
             public void onSuccess(final List<Host> hosts) {
@@ -131,12 +131,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                                 String serverName = server.get(0).getName();
                                 Console.info("Default server selection: "+serverName);
                                 serverSelection.setServer(serverName);
-
-                                getView().setHosts(hosts);
-                                getView().setServer(server);
-
                             }
                         }
+
+                        // update the LHS in all cases
+                        getView().setHosts(hosts);
+                        getView().setServer(server);
+
                     }
                 });
 
@@ -163,6 +164,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onServerSelection(String hostName, String serverName) {
+
+        System.out.println("** Update state "+hostName+"/"+serverName);
+
         serverSelection.setHost(hostName);
         serverSelection.setServer(serverName);
     }

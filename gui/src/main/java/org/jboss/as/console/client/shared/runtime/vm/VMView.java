@@ -25,5 +25,6 @@ public interface VMView extends View {
     void recycle();
     void reset();
 
+    @Deprecated
     void setServer(List<ServerInstance> servers);
 }

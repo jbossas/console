@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 
 /**
  * @author Heiko Braun
@@ -8,4 +9,5 @@ import org.jboss.as.console.client.domain.model.Host;
  */
 public interface HostServerManagement  {
     void loadServer(Host selectedHost);
+    void onServerSelected(Host selectedHost, ServerInstance server);
 }

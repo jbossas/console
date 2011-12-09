@@ -47,7 +47,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private HTML osName;
     private HTML processors;
     private ToolButton pauseBtn;
-    private ServerPicker serverPicker;
 
     protected boolean hasServerPicker = false;
 
@@ -73,13 +72,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         layout.add(titleBar);
 
         ToolStrip topLevelTools = new ToolStrip();
-
-        serverPicker = new ServerPicker(new ServerPicker.SelectionHandler() {
-            @Override
-            public void onSelection(ServerInstance server) {
-                presenter.onServerSelection(server.getName());
-            }
-        });
 
         /*pauseBtn = new ToolButton("Stop Monitor");
 
@@ -108,12 +100,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
                 presenter.refresh();
             }
         }));
-
-        Widget serverPickerWidget = serverPicker.asWidget();
-        serverPickerWidget.getElement().setAttribute("style", "width:200px;padding-right:5px;");
-
-        if(hasServerPicker)
-            topLevelTools.addToolWidgetRight(serverPickerWidget);
 
 
         // -------
@@ -246,6 +232,5 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     @Override
     public void setServer(List<ServerInstance> servers) {
 
-        serverPicker.setServers(servers);
     }
 }

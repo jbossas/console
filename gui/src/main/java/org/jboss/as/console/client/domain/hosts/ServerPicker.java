@@ -4,7 +4,10 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,11 +17,10 @@ import java.util.List;
 public class ServerPicker implements HostServerManagement {
 
     private HostServerTable serverSelection;
+    private LoadServerCmd loadServerCmd;
 
-    private SelectionHandler handler;
-
-    public ServerPicker(SelectionHandler handler) {
-        this.handler = handler;
+    public ServerPicker() {
+        this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
     }
 
     public Widget asWidget() {
@@ -37,7 +39,9 @@ public class ServerPicker implements HostServerManagement {
 
     public void setServers(List<ServerInstance> servers) {
 
-        serverSelection.setServer(servers);
+        //should be done upon request
+        // @see loadServer(hostName)
+        //serverSelection.setServer(servers);
     }
 
     public void setSelected(ServerInstance server, boolean isSelected)
@@ -52,12 +56,26 @@ public class ServerPicker implements HostServerManagement {
         serverSelection.setHosts(hosts);
     }
 
-    public interface SelectionHandler {
-        void onSelection(ServerInstance server);
-    }
-
     @Override
     public void loadServer(Host selectedHost) {
 
+        serverSelection.setServer(Collections.EMPTY_LIST);
+
+        loadServerCmd.execute(selectedHost.getName(), new SimpleCallback<List<ServerInstance>>() {
+            @Override
+            public void onSuccess(List<ServerInstance> result) {
+                serverSelection.setServer(result);
+            }
+        });
+    }
+
+    @Override
+    public void onServerSelected(Host host, ServerInstance server) {
+
+        System.out.println("** Fire " + host.getName()+"/"+server.getName());
+
+        Console.MODULES.getEventBus().fireEvent(
+                new ServerSelectionEvent(host.getName(), server.getName())
+        );
     }
 }

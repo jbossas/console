@@ -45,12 +45,7 @@ class DomainRuntimeNavigation {
         VerticalPanel innerlayout = new VerticalPanel();
         innerlayout.setStyleName("fill-layout-width");
 
-        serverPicker = new ServerPicker(new ServerPicker.SelectionHandler() {
-            @Override
-            public void onSelection(ServerInstance server) {
-
-            }
-        });
+        serverPicker = new ServerPicker();
         innerlayout.add(serverPicker.asWidget());
 
         Tree statusTree = new LHSNavTree("domain-runtime");
