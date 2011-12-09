@@ -140,8 +140,15 @@ public class HostServerTable {
         DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if(selectedServer!=null)
+                if(getSelectedServer()!=null)
+                {
+                    currentDisplayedValue.setHTML(         // TODO: cope with long names
+                            getSelectedHost().getName()+": "
+                                    +getSelectedServer().getName()
+                    );
+
                     presenter.onServerSelected(getSelectedHost(), getSelectedServer());
+                }
                 popup.hide();
             }
         });
