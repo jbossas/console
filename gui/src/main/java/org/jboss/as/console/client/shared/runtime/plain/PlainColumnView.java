@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.MetricHelpPanel;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
@@ -33,6 +34,7 @@ public class PlainColumnView implements Sampler {
     private int width = 100;
     private Style.Unit unit = Style.Unit.PCT;
     private String address = null;
+    private StaticHelpPanel staticHelp;
 
     @Deprecated
     public PlainColumnView(String title) {
@@ -55,8 +57,6 @@ public class PlainColumnView implements Sampler {
         return this;
     }
 
-
-
     @Override
     public Widget asWidget() {
 
@@ -64,13 +64,6 @@ public class PlainColumnView implements Sampler {
         layout.setStyleName("fill-layout-width");
 
         layout.add(new HTML("<div class='metric-table-title'>"+title+"</div>"));
-
-        if(address!=null)
-        {
-            MetricHelpPanel helpPanel = new MetricHelpPanel(address, this.columns);
-            //helpPanel.setAligned(true);
-            layout.add(helpPanel.asWidget());
-        }
 
         grid = new FlexTable();
         grid.getElement().setAttribute("style", "width:"+width+unit.getType()+";");
@@ -80,7 +73,7 @@ public class PlainColumnView implements Sampler {
         grid.setHTML(0, 1, "Actual");
         grid.setHTML(0, 2, "");
 
-        grid.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+        grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
         // actual values
         int row = ROW_OFFSET;
@@ -113,6 +106,18 @@ public class PlainColumnView implements Sampler {
         grid.getCellFormatter().setWidth(0, 2, "50%");
 
         layout.add(grid);
+
+        if(null==staticHelp && address!=null)
+        {
+            MetricHelpPanel helpPanel = new MetricHelpPanel(address, this.columns);
+            //helpPanel.setAligned(true);
+            layout.add(helpPanel.asWidget());
+        }
+        else if(staticHelp!=null)
+        {
+            layout.add(staticHelp.asWidget());
+        }
+
         return layout;
     }
 
@@ -183,5 +188,10 @@ public class PlainColumnView implements Sampler {
     @Override
     public void recycle() {
 
+    }
+
+    public PlainColumnView setStaticHelp(StaticHelpPanel helpPanel) {
+        this.staticHelp = helpPanel;
+        return this;
     }
 }

@@ -1,9 +1,11 @@
 package org.jboss.as.console.client.shared.runtime.vm;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
@@ -22,9 +24,15 @@ public class HeapChartView implements Sampler {
 
     private Sampler sampler;
     private String title;
+    private boolean hasHelp = true;
 
     public HeapChartView(String title) {
         this.title = title;
+    }
+
+    public HeapChartView(String title, boolean hasHelp) {
+        this.title = title;
+        this.hasHelp = hasHelp;
     }
 
     public Widget asWidget() {
@@ -33,12 +41,12 @@ public class HeapChartView implements Sampler {
 
     private Widget displayStrategy() {
 
-        Column maxHeap = new NumberColumn("Max").setBaseline(true);
+        Column maxHeap = new NumberColumn("max","Max").setBaseline(true);
         Column[] heapCols = new Column[] {
                 maxHeap,
-                new NumberColumn("Used").setComparisonColumn(maxHeap),
-                new NumberColumn("Committed"),
-                new NumberColumn("Init"),
+                new NumberColumn("used","Used").setComparisonColumn(maxHeap),
+                new NumberColumn("comitted","Committed"),
+                new NumberColumn("init","Init"),
         };
 
         if(Console.visAPILoaded()) {
@@ -47,12 +55,25 @@ public class HeapChartView implements Sampler {
         }
         else
         {
+
+
             sampler = new PlainColumnView(title)
                     .setColumns(heapCols);
+
+            if(hasHelp) {
+                StringBuilder html = new StringBuilder();
+                html.append("max: The maximum amount of memory in bytes that can be used for memory management.\n");
+                html.append("used: The amount of used memory in mega bytes.\n");
+                html.append("comitted: The amount of memory in bytes that is committed for the Java virtual machine to use.\n");
+                html.append("init:The amount of memory in bytes that the Java virtual machine initially requests from the operating system for memory management.\n");
+
+                ((PlainColumnView)sampler).setStaticHelp(new StaticHelpPanel(html.toString()));
+            }
         }
 
         return sampler.asWidget();
     }
+
 
     @Override
     public void addSample(Metric metric) {

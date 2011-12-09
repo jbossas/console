@@ -2,6 +2,7 @@ package org.jboss.as.console.client.shared.runtime.vm;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
@@ -28,9 +29,11 @@ public class ThreadChartView implements Sampler {
 
     private Widget displayStrategy() {
 
+        Column live = new NumberColumn("thread-count", "Live").setBaseline(true);
+
         Column[] threadCols = new Column[] {
-                new NumberColumn("Live"),
-                new NumberColumn("Daemon")
+                live,
+                new NumberColumn("daemon-thread-count","Daemon").setComparisonColumn(live)
         };
 
         if(Console.visAPILoaded()) {
@@ -39,8 +42,13 @@ public class ThreadChartView implements Sampler {
         }
         else
         {
+            StringBuilder html = new StringBuilder();
+            html.append("thread-count: The current number of live threads including both daemon and non-daemon threads.\n");
+            html.append("daemon-thread-count:The current number of live daemon threads.\n");
+
             sampler = new PlainColumnView(title)
-                    .setColumns(threadCols);
+                    .setColumns(threadCols)
+                    .setStaticHelp(new StaticHelpPanel(html.toString()));
         }
 
         return sampler.asWidget();

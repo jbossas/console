@@ -30,11 +30,9 @@ public class StaticHelpPanel {
     public StaticHelpPanel(String helpText) {
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.appendHtmlConstant("<ul class='help-attribute-descriptions'>");
-        builder.appendHtmlConstant("<li>");
-        builder.appendEscaped(helpText);
-        builder.appendHtmlConstant("</li>");
-        builder.appendHtmlConstant("</ul>");
+        builder.appendHtmlConstant("<div class='help-attribute-descriptions' style='padding-left:10px;'>");
+        builder.appendEscapedLines(helpText);
+        builder.appendHtmlConstant("</div>");
         this.helpText = builder.toSafeHtml();
     }
 

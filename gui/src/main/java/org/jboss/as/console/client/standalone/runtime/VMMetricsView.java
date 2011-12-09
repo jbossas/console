@@ -166,7 +166,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         // --
 
         heapChart = new HeapChartView("Heap Usage (mb)") ;
-        nonHeapChart = new HeapChartView("Non Heap Usage (mb)") ;
+        nonHeapChart = new HeapChartView("Non Heap Usage (mb)", false) ;
 
         vpanel.add(heapChart.asWidget());
         vpanel.add(nonHeapChart.asWidget());
