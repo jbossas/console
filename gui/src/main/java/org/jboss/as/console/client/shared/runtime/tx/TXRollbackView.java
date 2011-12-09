@@ -36,8 +36,8 @@ public class TXRollbackView implements Sampler {
     private Widget displayStrategy() {
 
         Column[] cols = new Column[] {
-                new NumberColumn("Applications"),
-                new NumberColumn("Resources")
+                new NumberColumn("number-of-application-rollbacks","Applications"),
+                new NumberColumn("number-of-resource-rollbacks","Resources")
         };
 
         String title = "Rollback Origin";
@@ -48,7 +48,7 @@ public class TXRollbackView implements Sampler {
         }
         else
         {
-            sampler = new PlainColumnView(title)
+            sampler = new PlainColumnView(title, "/subsystem=transactions")
                     .setColumns(cols)
                     .setWidth(100, Style.Unit.PCT);
         }

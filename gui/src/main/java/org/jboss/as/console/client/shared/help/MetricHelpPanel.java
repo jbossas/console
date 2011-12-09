@@ -31,10 +31,16 @@ public class MetricHelpPanel {
     private AddressBinding address;
     private boolean hasBeenBuild;
     private Column[] columns;
+    private boolean isAligned = false;
 
     public MetricHelpPanel(String address, Column[] columns) {
         this.address = parseAddressDeclaration(address);
         this.columns = columns;
+    }
+
+    public void setAligned(boolean b)
+    {
+        this.isAligned = b;
     }
 
     public Widget asWidget()
@@ -42,13 +48,17 @@ public class MetricHelpPanel {
         ImageResource helpIcon = Icons.INSTANCE.help();
         helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
 
-        helpPanel.addStyleName("help-panel");
+        helpPanel.addStyleName( isAligned ? "help-panel-aligned" : "help-panel");
+
         helpPanel.getHeader().getElement().setAttribute("style", "float:right");
+
+        final String popupStyle = isAligned ? "help-panel-aligned-open" : "help-panel-open";
+
         helpPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
             @Override
             public void onOpen(OpenEvent<DisclosurePanel> event) {
-                event.getTarget().addStyleName("help-panel-open");
+                event.getTarget().addStyleName(popupStyle);
                 buildAttributeHelp();
             }
         });
@@ -56,7 +66,7 @@ public class MetricHelpPanel {
         helpPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
             @Override
             public void onClose(CloseEvent<DisclosurePanel> event) {
-                event.getTarget().removeStyleName("help-panel-open");
+                event.getTarget().removeStyleName(popupStyle);
             }
         });
 

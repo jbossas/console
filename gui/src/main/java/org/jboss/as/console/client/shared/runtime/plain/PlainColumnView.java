@@ -68,6 +68,7 @@ public class PlainColumnView implements Sampler {
         if(address!=null)
         {
             MetricHelpPanel helpPanel = new MetricHelpPanel(address, this.columns);
+            //helpPanel.setAligned(true);
             layout.add(helpPanel.asWidget());
         }
 

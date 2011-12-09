@@ -28,10 +28,16 @@ public class FormHelpPanel {
     private AddressCallback address;
     private FormAdapter form;
     private boolean hasBeenBuild;
+    private boolean isAligned;
 
     public FormHelpPanel(AddressCallback address, FormAdapter form) {
         this.address = address;
         this.form = form;
+    }
+
+    public void setAligned(boolean b)
+    {
+        this.isAligned = b;
     }
 
     public Widget asWidget()
@@ -39,13 +45,16 @@ public class FormHelpPanel {
         ImageResource helpIcon = Icons.INSTANCE.help();
         helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
 
-        helpPanel.addStyleName("help-panel");
+        helpPanel.addStyleName( isAligned ? "help-panel-aligned" : "help-panel");
         helpPanel.getHeader().getElement().setAttribute("style", "float:right");
+
+        final String popupStyle = isAligned ? "help-panel-aligned-open" : "help-panel-open";
+
         helpPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
             @Override
             public void onOpen(OpenEvent<DisclosurePanel> event) {
-                event.getTarget().addStyleName("help-panel-open");
+                event.getTarget().addStyleName(popupStyle);
                 buildAttributeHelp();
             }
         });
@@ -53,7 +62,7 @@ public class FormHelpPanel {
         helpPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
             @Override
             public void onClose(CloseEvent<DisclosurePanel> event) {
-                event.getTarget().removeStyleName("help-panel-open");
+                event.getTarget().removeStyleName(popupStyle);
             }
         });
 

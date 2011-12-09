@@ -44,6 +44,7 @@ public class StandaloneRuntimeNavigation {
         statusTree.addItem(serverContents);
         statusTree.addItem(subsysContents);
 
+
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM Status", NameTokens.VirtualMachine);
         serverContents.addItem(jvmItem);
 
@@ -62,9 +63,13 @@ public class StandaloneRuntimeNavigation {
         subsysContents.addItem(tx);
         subsysContents.addItem(osgi);
 
+
         DisclosurePanel serverPanel  = new DisclosureStackPanel("Status").asWidget();
         serverPanel.setContent(statusTree);
 
+        // open by default
+        serverContents.setState(true);
+        subsysContents.setState(true);
 
         stack.add(serverPanel);
 
