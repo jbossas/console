@@ -17,39 +17,29 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.shared.subsys;
+package org.jboss.as.console.client.shared.state;
 
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
-import org.jboss.dmr.client.ModelNode;
-
-import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * @author Heiko Braun
- * @date 5/25/11
+ * @date 5/17/11
  */
-public class Baseadress {
+@Singleton
+public class CurrentHostSelection {
 
-    private static CurrentProfileSelection profileSelection;
+    private String name;
 
-    @Inject
-    public Baseadress(CurrentProfileSelection profileSelection) {
-        this.profileSelection = profileSelection;
+    public String getName() {
+        return name;
     }
 
-    public static ModelNode get() {
-        return Console.MODULES.getBaseadress().getAdress();
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public ModelNode getAdress() {
-        ModelNode baseAddress = new ModelNode();
-        baseAddress.setEmptyList();
-
-        if(profileSelection.getName()!=null)
-            baseAddress.add("profile", profileSelection.getName());
-
-        return baseAddress;
+    public boolean isSet() {
+        return this.name!=null;
     }
 
 }

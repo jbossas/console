@@ -36,7 +36,7 @@ import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.shared.subsys.messaging.LoadServersCmd;
+import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
@@ -75,7 +75,7 @@ public class SubsystemTreeBuilder {
                             // See  https://issues.jboss.org/browse/AS7-1857
                             // there can be multiple messaging server instances
 
-                            new LoadServersCmd(Console.MODULES.getDispatchAsync()).execute(
+                            new LoadHornetQServersCmd(Console.MODULES.getDispatchAsync()).execute(
                                     new AsyncCallback<List<String>>() {
                                         @Override
                                         public void onFailure(Throwable caught) {

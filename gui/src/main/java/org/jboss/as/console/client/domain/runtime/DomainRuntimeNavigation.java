@@ -10,13 +10,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.hosts.HostSelector;
+import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ class DomainRuntimeNavigation {
     private VerticalPanel stack;
     private VerticalPanel layout;
 
-    private HostSelector hostSelector;
+    private ServerPicker serverPicker;
 
     public Widget asWidget()
     {
@@ -45,8 +45,13 @@ class DomainRuntimeNavigation {
         VerticalPanel innerlayout = new VerticalPanel();
         innerlayout.setStyleName("fill-layout-width");
 
-        hostSelector = new HostSelector();
-        innerlayout.add(hostSelector.asWidget());
+        serverPicker = new ServerPicker(new ServerPicker.SelectionHandler() {
+            @Override
+            public void onSelection(ServerInstance server) {
+
+            }
+        });
+        innerlayout.add(serverPicker.asWidget());
 
         Tree statusTree = new LHSNavTree("domain-runtime");
 
@@ -112,13 +117,12 @@ class DomainRuntimeNavigation {
     }
 
     public void setHosts(List<Host> hosts) {
-        List<String> hostNames = new ArrayList<String>(hosts.size());
-        for(Host h : hosts)
-        {
-            hostNames.add(h.getName());
-        }
+        serverPicker.setHosts(hosts);
 
-        hostSelector.setHosts(hostNames);
+    }
 
+    public void setServer(List<ServerInstance> server) {
+
+        serverPicker.setServers(server);
     }
 }

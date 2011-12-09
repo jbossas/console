@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;

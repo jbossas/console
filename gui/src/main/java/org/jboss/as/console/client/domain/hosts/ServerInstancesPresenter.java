@@ -40,6 +40,7 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;

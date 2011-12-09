@@ -1,33 +1,13 @@
-package org.jboss.as.console.client.widgets.tables;
+package org.jboss.as.console.client.domain.hosts;
 
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -39,54 +19,44 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
+ * A miller column based selection of host/serve combinations
+ *
  * @author Heiko Braun
- * @date 2/24/11
+ * @date 12/9/11
  */
-public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
+public class HostServerTable {
 
     private static final int ESCAPE = 27;
     public final static double GOLDEN_RATIO = 1.618;
-    private ValueRenderer<T> renderer;
+
     private boolean isRightToLeft = false;
+    private HostServerManagement presenter;
 
-
-    interface Template extends SafeHtmlTemplates {
-        @Template("<div class=\"{0}\">{1}</div>")
-        SafeHtml item(String cssClass, String title);
-    }
-
-    private static final Template TEMPLATE = GWT.create(Template.class);
+    private CellList<Host> hostList;
+    private CellList<ServerInstance> serverList;
 
     private PopupPanel popup;
 
     private HorizontalPanel header;
     private HTML currentDisplayedValue;
-
-    private List<ValueChangeHandler<T>> changeHandlers = new ArrayList<ValueChangeHandler<T>>();
     int popupWidth = -1;
-
-    private CellTable<T> cellTable;
     private String description = null;
 
-    public interface ValueRenderer<T> {
-        String render(T selection);
-    };
+    public HostServerTable(HostServerManagement presenter) {
+        this.presenter = presenter;
+    }
 
     public void setRightToLeft(boolean rightToLeft) {
         isRightToLeft = rightToLeft;
-    }
-
-    public TablePicker(final CellTable<T> table, final ValueRenderer<T> renderer) {
-
-        this.cellTable = table;
-        this.renderer = renderer;
     }
 
     public void setPopupWidth(int popupWidth) {
@@ -98,18 +68,6 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
     }
 
     public Widget asWidget() {
-
-        if(null==cellTable.getSelectionModel())
-            cellTable.setSelectionModel(new SingleSelectionModel<T>());
-
-        cellTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                T selection = ((SingleSelectionModel<T>) cellTable.getSelectionModel()).getSelectedObject();
-                String displayValue = renderer.render(selection);
-                currentDisplayedValue.setText(displayValue);
-            }
-        });
 
         final String panelId = "popup_"+ HTMLPanel.createUniqueId();
         popup = new PopupPanel(true, true) {
@@ -130,15 +88,8 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
         };
 
         popup.getElement().setId(panelId);
-
         popup.setStyleName("default-popup");
 
-
-        /*popup.addCloseHandler(new CloseHandler<PopupPanel>() {
-            public void onClose(CloseEvent<PopupPanel> event) {
-
-            }
-        });*/
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
@@ -147,13 +98,54 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
         if(description!=null)
             layout.add(new Label(description));
 
-        layout.add(cellTable);
 
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(cellTable);
-        layout.add(pager);
+        // --------------
+
+        hostList = new CellList<Host>(new HostCell());
+        hostList.setSelectionModel(new SingleSelectionModel<Host>());
+        hostList.addStyleName("fill-layout-width");
+
+        serverList = new CellList<ServerInstance>(new ServerCell());
+        serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
+        serverList.addStyleName("fill-layout-width");
+
+        hostList.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                Host selectedHost = ((SingleSelectionModel<Host>) hostList.getSelectionModel()).getSelectedObject();
+                presenter.loadServer(selectedHost);
+            }
+        });
+
+
+        HorizontalPanel millerPanel = new HorizontalPanel();
+        millerPanel.setStyleName("fill-layout");
+        millerPanel.add(hostList);
+        millerPanel.add(serverList);
+
+        hostList.getElement().getParentElement().setAttribute("width", "50%");
+        serverList.getElement().getParentElement().setAttribute("width", "50%");
+
+        layout.add(millerPanel);
+
+        DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                popup.hide();
+            }
+        });
+        doneBtn.getElement().setAttribute("style","float:right");
+        layout.add(doneBtn);
+
+
+
+        // --------------
+
 
         popup.setWidget(layout);
+
+
+        // --------------
 
         currentDisplayedValue = new HTML("&nbsp;");
         currentDisplayedValue.setStyleName("table-picker-value");
@@ -218,28 +210,60 @@ public class TablePicker<T> { // implements HasValueChangeHandlers<T> {
 
     }
 
-    /*@Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<T> handler) {
-
-        changeHandlers.add(handler);
-
-        return new HandlerRegistration() {
-            @Override
-            public void removeHandler() {
-                changeHandlers.remove(handler);
-            }
-        };
-    }
-
-    @Override
-    public void fireEvent(GwtEvent<?> gwtEvent) {
-        for(ValueChangeHandler<T> handler : changeHandlers)
-            handler.onValueChange((ValueChangeEvent<T>)gwtEvent);
-    }   */
-
     public void clearSelection() {
         currentDisplayedValue.setText("");
     }
 
+    public void setServer(List<ServerInstance> servers) {
+        serverList.setRowData(0, servers);
+    }
+
+    public void setHosts(List<Host> hosts) {
+        hostList.setRowData(0, hosts);
+        // clear when hosts are updated
+        serverList.setRowData(0, Collections.EMPTY_LIST);
+    }
+
+    interface Template extends SafeHtmlTemplates {
+        @Template("<div class='server-selection-host'>{0}</div>")
+        SafeHtml message(String title);
+    }
+
+    interface ServerTemplate extends SafeHtmlTemplates {
+        @Template("<div class='server-selection-server'>{0}</div>")
+        SafeHtml message(String title);
+    }
+
+    // -----
+
+    private static final Template HOST_TEMPLATE = GWT.create(Template.class);
+    private static final ServerTemplate SERVER_TEMPLATE = GWT.create(ServerTemplate.class);
+
+    public class HostCell extends AbstractCell<Host> {
+
+        @Override
+        public void render(
+                Context context,
+                Host host,
+                SafeHtmlBuilder safeHtmlBuilder)
+        {
+            safeHtmlBuilder.append(HOST_TEMPLATE.message(host.getName()));
+        }
+
+    }
+
+    public class ServerCell extends AbstractCell<ServerInstance> {
+
+        @Override
+        public void render(
+                Context context,
+                ServerInstance server,
+                SafeHtmlBuilder safeHtmlBuilder)
+        {
+            safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()));
+        }
+
+    }
 }
+
 

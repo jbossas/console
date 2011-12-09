@@ -34,7 +34,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;

@@ -20,12 +20,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 9/20/11
  */
-public class LoadServersCmd implements AsyncCommand<List<String>> {
+public class LoadHornetQServersCmd implements AsyncCommand<List<String>> {
 
 
     private DispatchAsync dispatcher;
 
-    public LoadServersCmd(DispatchAsync dispatcher) {
+    public LoadHornetQServersCmd(DispatchAsync dispatcher) {
         this.dispatcher = dispatcher;
     }
 

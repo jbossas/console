@@ -1,3 +1,5 @@
+package org.jboss.as.console.client.shared.state;
+
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -17,13 +19,14 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.events;
-
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 
 /**
+ *
+ * @see CurrentServerSelection
+ *
  * @author Heiko Braun
  * @date 2/7/11
  */
@@ -31,11 +34,13 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
 
     public static final Type TYPE = new Type<ServerSelectionListener>();
 
+    private String hostName;
     private String serverName;
 
-    public ServerSelectionEvent(String serverName) {
+    public ServerSelectionEvent(String hostName, String server) {
         super();
-        this.serverName = serverName;
+        this.hostName = hostName;
+        this.serverName = server;
     }
 
     @Override
@@ -45,7 +50,11 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
 
     @Override
     protected void dispatch(ServerSelectionListener listener) {
-        listener.onServerSelection(serverName);
+        listener.onServerSelection(hostName, serverName);
+    }
+
+    public String getHostName() {
+        return hostName;
     }
 
     public String getServerName() {
@@ -53,7 +62,7 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
     }
 
     public interface ServerSelectionListener extends EventHandler {
-        void onServerSelection(String serverName);
+        void onServerSelection(String hostName, String serverName);
     }
 }
 

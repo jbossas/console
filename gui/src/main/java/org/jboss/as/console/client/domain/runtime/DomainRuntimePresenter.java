@@ -19,11 +19,13 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
-import org.jboss.as.console.client.domain.events.ServerSelectionEvent;
-import org.jboss.as.console.client.domain.hosts.CurrentHostSelection;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
@@ -33,11 +35,13 @@ import java.util.List;
  * @date 11/2/11
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
-    implements HostSelectionEvent.HostSelectionListener {
+        implements ServerSelectionEvent.ServerSelectionListener,
+        HostSelectionEvent.HostSelectionListener{
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
     private HostInformationStore hostInfoStore;
+    private CurrentServerSelection serverSelection;
     private CurrentHostSelection hostSelection;
 
     @ProxyCodeSplit
@@ -52,17 +56,19 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public interface MyView extends View {
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
+        void setServer(List<ServerInstance> server);
     }
 
     @Inject
     public DomainRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
-            CurrentHostSelection hostSelection) {
+            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
+        this.serverSelection = serverSelection;
         this.hostSelection = hostSelection;
     }
 
@@ -70,8 +76,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+
+        // register for server election events
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
 
@@ -106,12 +114,32 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
-            public void onSuccess(List<Host> hosts) {
+            public void onSuccess(final List<Host> hosts) {
 
                 if(!hosts.isEmpty())
                     selectDefaultHost(hosts);
 
-                getView().setHosts(hosts);
+
+                hostInfoStore.getServerInstances(serverSelection.getHost(), new SimpleCallback<List<ServerInstance>>() {
+                    @Override
+                    public void onSuccess(List<ServerInstance> server) {
+
+                        if(!serverSelection.hasSetServer())
+                        {
+                            if(!server.isEmpty())
+                            {
+                                String serverName = server.get(0).getName();
+                                Console.info("Default server selection: "+serverName);
+                                serverSelection.setServer(serverName);
+
+                                getView().setHosts(hosts);
+                                getView().setServer(server);
+
+                            }
+                        }
+                    }
+                });
+
             }
         });
 
@@ -119,12 +147,11 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     private void selectDefaultHost(List<Host> hosts) {
 
-        if(!hostSelection.isSet())
+        if(!serverSelection.hasSetHost())
         {
             String name = hosts.get(0).getName();
-            System.out.println("Default host selection: "+name);
-            hostSelection.setName(name);
-            getEventBus().fireEvent(new HostSelectionEvent(name));
+            Console.info("Default host selection: "+name);
+            serverSelection.setHost(name);
         }
 
     }
@@ -132,6 +159,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+    }
+
+    @Override
+    public void onServerSelection(String hostName, String serverName) {
+        serverSelection.setHost(hostName);
+        serverSelection.setServer(serverName);
     }
 
     @Override

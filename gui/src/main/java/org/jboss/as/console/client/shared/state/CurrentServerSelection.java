@@ -17,30 +17,48 @@
  * MA  02110-1301, USA.
  */
 
-package org.jboss.as.console.client.domain.hosts;
+package org.jboss.as.console.client.shared.state;
 
 import javax.inject.Singleton;
 
 /**
+ * @see ServerSelectionEvent
+ *
  * @author Heiko Braun
  * @date 5/17/11
  */
 @Singleton
-public class CurrentHostSelection {
+public class CurrentServerSelection {
 
-    private String name;
+    private String server;
+    private String host;
 
-    public String getName() {
-        return name;
+    public String getServer() {
+        return server;
     }
 
-    public void setName(String name) {
-        //System.out.println("Current host: "+name);
-        this.name = name;
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public boolean isSet() {
-        return this.name!=null;
+        return this.server!=null
+                && this.host!=null;
     }
 
+    public boolean hasSetHost() {
+        return this.host!=null;
+    }
+
+    public boolean hasSetServer() {
+        return this.server!=null;
+    }
 }

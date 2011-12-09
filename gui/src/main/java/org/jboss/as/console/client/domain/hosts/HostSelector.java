@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;

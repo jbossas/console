@@ -6,13 +6,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.events.ServerSelectionEvent;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.List;
 
 /**
+ * A selector for both host and server.
+ *
  * @author Heiko Braun
  * @date 11/2/11
  */
@@ -24,6 +24,7 @@ public class ServerSelector {
 
         HorizontalPanel layout = new HorizontalPanel();
         layout.getElement().setAttribute("style","padding:4px;");
+
         server = new ComboBox();
         server.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
@@ -32,7 +33,7 @@ public class ServerSelector {
                 Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
                     @Override
                     public void execute() {
-                        Console.MODULES.getEventBus().fireEvent(new ServerSelectionEvent(event.getValue()));
+                        //Console.MODULES.getEventBus().fireEvent(new ServerSelectionEvent(event.getValue()));
                     }
                 });
             }
@@ -55,5 +56,9 @@ public class ServerSelector {
         server.clearSelection();
         server.setValues(serverNames);
         server.setItemSelected(0, true);
+    }
+
+    public void setHosts(List<String> hostNames) {
+        //To change body of created methods use File | Settings | File Templates.
     }
 }
