@@ -24,6 +24,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class HostServerTable {
     private HTML currentDisplayedValue;
     int popupWidth = -1;
     private String description = null;
+    private HTML ratio;
 
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
@@ -98,7 +100,8 @@ public class HostServerTable {
         if(description!=null)
             layout.add(new Label(description));
 
-
+        ratio = new HTML("RATIO HERE");
+        layout.add(ratio);
         // --------------
 
         hostList = new CellList<Host>(new HostCell());
@@ -238,13 +241,28 @@ public class HostServerTable {
         currentDisplayedValue.setText("");
     }
 
+    /**
+     * Display the currently active servers for selection
+     * @param servers
+     */
     public void setServer(List<ServerInstance> servers) {
-        serverList.setRowData(0, servers);
+
+        List<ServerInstance> active = new ArrayList<ServerInstance>();
+        for(ServerInstance instance : servers)
+            if(instance.isRunning())
+                active.add(instance);
+
+        ratio.setHTML("<i>Active Server: "+active.size()+" of "+servers.size()+" instances</i>");
+
+        serverList.setRowData(0, active);
         if(!servers.isEmpty())
-            serverList.getSelectionModel().setSelected(servers.get(0), true);
+            serverList.getSelectionModel().setSelected(active.get(0), true);
     }
 
     public void setHosts(List<Host> hosts) {
+
+        ratio.setText("");
+
         hostList.setRowData(0, hosts);
         // clear when hosts are updated
         serverList.setRowData(0, Collections.EMPTY_LIST);

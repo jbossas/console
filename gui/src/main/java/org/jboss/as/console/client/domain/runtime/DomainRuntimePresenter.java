@@ -165,7 +165,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onServerSelection(String hostName, String serverName) {
 
-        System.out.println("** Update state "+hostName+"/"+serverName);
+        //System.out.println("** Update state "+hostName+"/"+serverName);
 
         serverSelection.setHost(hostName);
         serverSelection.setServer(serverName);

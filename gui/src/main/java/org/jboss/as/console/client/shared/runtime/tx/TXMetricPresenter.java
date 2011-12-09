@@ -80,7 +80,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override

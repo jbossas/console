@@ -81,7 +81,7 @@ public class ServerPicker implements HostServerManagement {
     @Override
     public void onServerSelected(Host host, ServerInstance server) {
 
-        System.out.println("** Fire " + host.getName()+"/"+server.getName());
+        //System.out.println("** Fire " + host.getName()+"/"+server.getName());
 
         Console.MODULES.getEventBus().fireEvent(
                 new HostSelectionEvent(host.getName())

@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
@@ -40,13 +40,13 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         this.executionMetric = new TXExecutionView();
         this.rollbackMetric = new TXRollbackView();
 
-        OneToOneLayout layout = new OneToOneLayout()
+        SimpleLayout layout = new SimpleLayout()
                 .setTitle("Transactions")
                 .setHeadline("Transaction Metrics")
                 .setDescription("These metrics reflect the current state of the transaction subsystem.")
                 .setTopLevelTools(toolStrip.asWidget())
-                .addDetail("Executions", executionMetric.asWidget())
-                .addDetail("Rollbacks", rollbackMetric.asWidget());
+                .addContent("Executions", executionMetric.asWidget())
+                .addContent("Rollbacks", rollbackMetric.asWidget());
 
 
         return layout.build();

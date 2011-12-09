@@ -286,6 +286,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     public void updateInstances(String hostName, List<ServerInstance> instances) {
         this.hostName = hostName;
 
+        nameLabel.setText(Console.CONSTANTS.common_label_runtimeStatus()+" (Host: "+hostName+")");
+
         instanceProvider.setList(instances);
         if(!instances.isEmpty())
             instanceTable.getSelectionModel().setSelected(instances.get(0), true);
