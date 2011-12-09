@@ -105,7 +105,14 @@ public class PlainColumnView implements Sampler {
     @Override
     public void addSample(Metric metric) {
         int row=ROW_OFFSET;
-        Long baseline = Long.valueOf(metric.get(0));
+        int baselineIndex = getBaseLineIndex();
+
+        // check if they match
+        if(baselineIndex>metric.numSamples())
+            throw new RuntimeException("Illegal baseline index "+baselineIndex+" on number of samples "+metric.numSamples());
+
+        Long baseline = baselineIndex >= 0 ?
+                Long.valueOf(metric.get(baselineIndex)) : -1;
 
         for(Column c : columns)
         {
@@ -114,13 +121,33 @@ public class PlainColumnView implements Sampler {
 
             grid.setText(row, 1, actualValue );
 
-            if(c.getComparisonColumn()!=null)
+            if(c.getComparisonColumn()!=null && baseline>0)
             {
                 stacks.get(dataIndex).setRatio(baseline, Double.valueOf(actualValue));
+            }
+            else if(c.getComparisonColumn()!=null && baseline<0)
+            {
+                throw new RuntimeException("Comparison column specified, but no baseline set!");
             }
             row++;
         }
 
+    }
+
+    public int getBaseLineIndex() {
+        int i=0;
+        boolean didMatch = false;
+        for(Column c : columns)
+        {
+            if(c.isBaseline())
+            {
+                didMatch=true;
+                break;
+            }
+            i++;
+        }
+
+        return didMatch ? i : -1;
     }
 
     @Override

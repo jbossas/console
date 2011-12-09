@@ -84,7 +84,13 @@ public class VMMetricsPresenter
                 final boolean keepPooling = isVisible() && !shouldPause();
 
                 if (keepPooling)
+                {
                     loadVMStatus();
+                    keepPolling(false); // TODO: this is development only
+                    System.out.println("**** Polling disabled ****");
+
+                }
+
                 else
                     Console.warning("Stop polling for VM metrics.");
 

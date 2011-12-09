@@ -131,9 +131,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // -------------------------
 
-
-        vpanel.add(new ContentGroupLabel("Threads"));
-
         threadPanel = new HorizontalPanel();
         threadPanel.setStyleName("fill-layout-width");
 
@@ -146,8 +143,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         osName.getElement().setAttribute("style", "padding-top:30px");
 
         vpanel.add(threadPanel);
-
-        vpanel.add(new ContentGroupLabel("Heap"));
 
         heapPanel = new HorizontalPanel();
         heapPanel.setStyleName("fill-layout-width");

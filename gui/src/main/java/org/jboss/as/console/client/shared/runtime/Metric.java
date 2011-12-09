@@ -46,4 +46,8 @@ public class Metric {
                 "values=" + values +
                 '}';
     }
+
+    public int numSamples() {
+        return getValues().size();
+    }
 }
