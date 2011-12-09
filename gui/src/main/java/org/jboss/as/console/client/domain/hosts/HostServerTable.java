@@ -50,7 +50,6 @@ public class HostServerTable {
     private HTML currentDisplayedValue;
     int popupWidth = -1;
     private String description = null;
-    private ServerInstance selectedServer;
 
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
@@ -122,7 +121,8 @@ public class HostServerTable {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ServerInstance server = getSelectedServer();
-                HostServerTable.this.selectedServer = server;
+                presenter.onServerSelected(getSelectedHost(), getSelectedServer());
+                updateDisplay();
             }
         });
 
@@ -140,15 +140,6 @@ public class HostServerTable {
         DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if(getSelectedServer()!=null)
-                {
-                    currentDisplayedValue.setHTML(         // TODO: cope with long names
-                            getSelectedHost().getName()+": "
-                                    +getSelectedServer().getName()
-                    );
-
-                    presenter.onServerSelected(getSelectedHost(), getSelectedServer());
-                }
                 popup.hide();
             }
         });
@@ -198,6 +189,13 @@ public class HostServerTable {
         return header;
     }
 
+    private void updateDisplay() {
+        currentDisplayedValue.setHTML(         // TODO: cope with long names
+                getSelectedHost().getName() + ": "
+                        + getSelectedServer().getName()
+        );
+    }
+
     private Host getSelectedHost() {
         return ((SingleSelectionModel<Host>) hostList.getSelectionModel()).getSelectedObject();
     }
@@ -242,12 +240,22 @@ public class HostServerTable {
 
     public void setServer(List<ServerInstance> servers) {
         serverList.setRowData(0, servers);
+        if(!servers.isEmpty())
+            serverList.getSelectionModel().setSelected(servers.get(0), true);
     }
 
     public void setHosts(List<Host> hosts) {
         hostList.setRowData(0, hosts);
         // clear when hosts are updated
         serverList.setRowData(0, Collections.EMPTY_LIST);
+    }
+
+    public void doBootstrap() {
+        if(hostList.getRowCount()>0)
+        {
+            hostList.getSelectionModel().setSelected(hostList.getVisibleItem(0), true);
+            presenter.loadServer(getSelectedHost());
+        }
     }
 
     interface Template extends SafeHtmlTemplates {

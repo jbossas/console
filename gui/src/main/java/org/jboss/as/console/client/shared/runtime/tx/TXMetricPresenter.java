@@ -102,14 +102,10 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(true);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
-
-                System.out.println(result);
 
                 TransactionManager metrics = entityAdapter.fromDMR(result.get(RESULT));
 

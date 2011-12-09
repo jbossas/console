@@ -2,6 +2,7 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -18,6 +19,7 @@ public class ServerPicker implements HostServerManagement {
 
     private HostServerTable serverSelection;
     private LoadServerCmd loadServerCmd;
+    private boolean isBootstrapped = false;
 
     public ServerPicker() {
         this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
@@ -54,6 +56,13 @@ public class ServerPicker implements HostServerManagement {
 
     public void setHosts(List<Host> hosts) {
         serverSelection.setHosts(hosts);
+
+        if(!isBootstrapped)
+        {
+            isBootstrapped = true;
+            serverSelection.doBootstrap();
+        }
+
     }
 
     @Override
@@ -73,6 +82,10 @@ public class ServerPicker implements HostServerManagement {
     public void onServerSelected(Host host, ServerInstance server) {
 
         System.out.println("** Fire " + host.getName()+"/"+server.getName());
+
+        Console.MODULES.getEventBus().fireEvent(
+                new HostSelectionEvent(host.getName())
+        );
 
         Console.MODULES.getEventBus().fireEvent(
                 new ServerSelectionEvent(host.getName(), server.getName())
