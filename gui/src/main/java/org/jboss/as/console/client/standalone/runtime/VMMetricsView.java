@@ -81,7 +81,8 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             }
         });
 
-        pauseBtn = new ToolButton("Stop Monitor");
+        /*pauseBtn = new ToolButton("Stop Monitor");
+
         ClickHandler clickHandler = new ClickHandler() {
 
             @Override
@@ -99,7 +100,14 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         };
 
         pauseBtn.addClickHandler(clickHandler);
-        topLevelTools.addToolButton(pauseBtn);
+        topLevelTools.addToolButton(pauseBtn);      */
+
+        topLevelTools.addToolButton(new ToolButton("Refresh", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                presenter.refresh();
+            }
+        }));
 
         Widget serverPickerWidget = serverPicker.asWidget();
         serverPickerWidget.getElement().setAttribute("style", "width:200px;padding-right:5px;");

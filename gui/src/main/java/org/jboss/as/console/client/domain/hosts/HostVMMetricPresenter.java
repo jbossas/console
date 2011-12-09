@@ -92,12 +92,18 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
         loadServer();
     }
 
+    @Override
+    public void refresh() {
+        if(serverSelection!=null)
+            loadVMStatus(serverSelection);
+    }
+
     private void loadServer() {
 
         if(!hostSelection.isSet())
             throw new RuntimeException("Host selection not set!");
 
-        keepPolling = true;
+        //keepPolling = true;
 
         hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
             @Override
@@ -226,7 +232,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
             getView().reset();
             loadVMStatus(serverName);
-            beginPolling();
+            //beginPolling();
         }
     }
 }

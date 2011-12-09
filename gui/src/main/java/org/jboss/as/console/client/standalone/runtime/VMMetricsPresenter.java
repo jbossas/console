@@ -103,6 +103,11 @@ public class VMMetricsPresenter
         Console.info("Begin polling for virtual machine metrics");
     }
 
+    @Override
+    public void refresh() {
+         loadVMStatus();
+    }
+
     private boolean shouldPause() {
         return !keepPolling;
     }
@@ -135,7 +140,7 @@ public class VMMetricsPresenter
                 getView().setOSMetric(result.getOs());
                 getView().setRuntimeMetric(result.getRuntime());
 
-                beginPolling();
+                //beginPolling();
             }
         });
 

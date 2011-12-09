@@ -7,4 +7,5 @@ package org.jboss.as.console.client.shared.runtime.vm;
 public interface VMMetricsManagement {
     void keepPolling(boolean b);
     void onServerSelection(String serverName);
+    void refresh();
 }
