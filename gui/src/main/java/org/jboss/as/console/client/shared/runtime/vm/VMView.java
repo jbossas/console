@@ -22,9 +22,4 @@ public interface VMView extends View {
     void setThreads(Metric thread);
     void setOSMetric(OSMetric osMetric);
     void setRuntimeMetric(RuntimeMetric runtime);
-    void recycle();
-    void reset();
-
-    @Deprecated
-    void setServer(List<ServerInstance> servers);
 }

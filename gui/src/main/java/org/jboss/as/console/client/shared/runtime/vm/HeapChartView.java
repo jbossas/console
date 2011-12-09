@@ -77,7 +77,17 @@ public class HeapChartView implements Sampler {
 
     @Override
     public void addSample(Metric metric) {
-        sampler.addSample(metric);
+
+        long[] converted = new long[metric.numSamples()];
+        for(int i=0; i<metric.numSamples();i++)
+        {
+            converted[i] = toMB(Long.valueOf(metric.get(i)).longValue());
+        }
+        sampler.addSample(new Metric(converted));
+    }
+
+    private static long toMB(long value) {
+        return (value/1024)/1024;
     }
 
     @Override

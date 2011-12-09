@@ -65,7 +65,6 @@ public class VMMetricsPresenter
     @Override
     protected void onHide() {
         super.onHide();
-        getView().recycle();
     }
 
 
@@ -86,8 +85,8 @@ public class VMMetricsPresenter
                 if (keepPooling)
                 {
                     loadVMStatus();
-                    keepPolling(false); // TODO: this is development only
-                    System.out.println("**** Polling disabled ****");
+
+
 
                 }
 
@@ -118,18 +117,18 @@ public class VMMetricsPresenter
             public void onSuccess(CompositeVMMetric result) {
 
                 getView().setHeap(new Metric(
-                        toMB(result.getHeap().getMax()),
-                        toMB(result.getHeap().getUsed()),
-                        toMB(result.getHeap().getCommitted()),
-                        toMB(result.getHeap().getInit())
+                        result.getHeap().getMax(),
+                        result.getHeap().getUsed(),
+                        result.getHeap().getCommitted(),
+                        result.getHeap().getInit()
 
                 ));
 
                 getView().setNonHeap(new Metric(
-                        toMB(result.getNonHeap().getMax()),
-                        toMB(result.getNonHeap().getUsed()),
-                        toMB(result.getNonHeap().getCommitted()),
-                        toMB(result.getNonHeap().getInit())
+                        result.getNonHeap().getMax(),
+                        result.getNonHeap().getUsed(),
+                        result.getNonHeap().getCommitted(),
+                        result.getNonHeap().getInit()
                 ));
 
                 getView().setThreads(new Metric(
@@ -146,28 +145,8 @@ public class VMMetricsPresenter
 
     }
 
-    private static long toMB(long value) {
-        return (value/1024)/1024;
-    }
-
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
-    }
-
-    public void keepPolling(boolean b) {
-
-        this.keepPolling = b;
-
-        if(keepPolling && pollCmd==null)
-            beginPolling();
-        else if(!keepPolling && pollCmd!=null)
-            pollCmd=null;
-
-    }
-
-    @Override
-    public void onServerSelection(String serverName) {
-        // noop
     }
 }

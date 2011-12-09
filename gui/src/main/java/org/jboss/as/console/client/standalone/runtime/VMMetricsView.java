@@ -13,8 +13,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.hosts.ServerPicker;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -25,8 +23,6 @@ import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -53,14 +49,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     @Override
     public void setPresenter(VMMetricsManagement presenter) {
         this.presenter = presenter;
-    }
-
-
-    @Override
-    public void recycle() {
-        heapChart.recycle();
-        nonHeapChart.recycle();
-        threadChart.recycle();
     }
 
     @Override
@@ -94,7 +82,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         pauseBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButton(pauseBtn);      */
 
-        topLevelTools.addToolButton(new ToolButton("Refresh", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.refresh();
@@ -214,23 +202,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             osName.setHTML("<b style='color:#A7ABB4'>Operating System:</b>   "+osMetric.getName()+" "+osMetric.getVersion());
             processors.setHTML("<b style='color:#A7ABB4'>Number of processors:</b>   "+osMetric.getNumProcessors());
         }
-
-    }
-
-    @Override
-    public void reset() {
-        pauseBtn.setText("Stop Monitor");
-
-        if(heapChart!=null)
-        {
-            heapChart.clearSamples();
-            nonHeapChart.clearSamples();
-            threadChart.clearSamples();
-        }
-    }
-
-    @Override
-    public void setServer(List<ServerInstance> servers) {
 
     }
 }

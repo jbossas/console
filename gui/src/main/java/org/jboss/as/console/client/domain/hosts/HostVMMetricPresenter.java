@@ -7,14 +7,12 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -25,11 +23,9 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
 import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -38,17 +34,16 @@ import java.util.List;
 public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresenter.MyProxy>
         implements VMMetricsManagement, HostSelectionEvent.HostSelectionListener  {
 
-    private CurrentHostSelection hostSelection;
+
     private DispatchAsync dispatcher;
     private ApplicationMetaData metaData;
     private BeanFactory factory;
-
 
     private boolean keepPolling = true;
     private Scheduler.RepeatingCommand pollCmd = null;
     private static final int POLL_INTERVAL = 5000;
     private HostInformationStore hostInfoStore;
-    private String serverSelection = null;
+    CurrentServerSelection serverSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostVMMetricPresenter)
@@ -61,12 +56,13 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Inject
     public HostVMMetricPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, CurrentHostSelection hostSelection,
+            CurrentServerSelection serverSelection,
             DispatchAsync dispatcher, BeanFactory factory,
-            ApplicationMetaData metaData, HostInformationStore hostInfoStore) {
+            ApplicationMetaData metaData, HostInformationStore hostInfoStore
+            ) {
         super(eventBus, view, proxy);
 
-        this.hostSelection = hostSelection;
+        this.serverSelection = serverSelection;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.metaData = metaData;
@@ -76,7 +72,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     public void onHostSelection(String hostName) {
         if(isVisible())
-            loadServer();
+            refresh();
     }
 
     @Override
@@ -88,56 +84,24 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     @Override
     protected void onReset() {
-
-        getView().recycle();
-        loadServer();
+        refresh();
     }
 
     @Override
     public void refresh() {
-        if(serverSelection!=null)
-            loadVMStatus(serverSelection);
+        if(serverSelection.isSet())
+            loadVMStatus(serverSelection.getServer());
     }
 
-    private void loadServer() {
+    private LoadJVMMetricsCmd createLoadMetricCmd() {
 
-        if(!hostSelection.isSet())
-            throw new RuntimeException("Host selection not set!");
+        if(!serverSelection.isSet())
+            throw new RuntimeException("Server selection not set!");
 
-        //keepPolling = true;
-
-        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
-            @Override
-            public void onSuccess(List<ServerInstance> servers) {
-
-                List<ServerInstance> active = new LinkedList<ServerInstance>();
-                for(ServerInstance server : servers)
-                    if(server.isRunning())
-                        active.add(server);
-
-
-                // apply active servers
-                getView().setServer(active);
-
-                if(active.isEmpty())
-                    getView().reset();
-
-            }
-        });
-
-    }
-
-    private LoadJVMMetricsCmd createLoadMetricCmd(String serverName) {
-
-        if(!hostSelection.isSet())
-            throw new RuntimeException("Host selection not set!");
-
-         if(serverName==null)
-            throw new RuntimeException("Current Server not set!");
 
         ModelNode address = new ModelNode();
-        address.add("host", hostSelection.getName());
-        address.add("server", serverName);
+        address.add("host", serverSelection.getHost());
+        address.add("server", serverSelection.getServer());
 
         return new LoadJVMMetricsCmd(
                 dispatcher, factory,
@@ -152,27 +116,26 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     public void loadVMStatus(final String serverName) {
-        createLoadMetricCmd(serverName).execute(new SimpleCallback<CompositeVMMetric>() {
+        createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
 
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("No VM Metrics available", caught.getMessage());
-                keepPolling(false);
+                Console.error("No VM Metrics available for server "+serverName, caught.getMessage());
             }
 
             @Override
             public void onSuccess(CompositeVMMetric result) {
                 getView().setHeap(new Metric(
-                        result.getHeap().getUsed(),
                         result.getHeap().getMax(),
+                        result.getHeap().getUsed(),
                         result.getHeap().getCommitted(),
                         result.getHeap().getInit()
                 ));
 
                 getView().setNonHeap(new Metric(
-                        result.getNonHeap().getUsed(),
                         result.getNonHeap().getMax(),
+                        result.getNonHeap().getUsed(),
                         result.getNonHeap().getCommitted(),
                         result.getNonHeap().getInit()
 
@@ -187,53 +150,5 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
                 );
             }
         });
-    }
-
-    private void beginPolling() {
-
-        pollCmd = new Scheduler.RepeatingCommand() {
-            @Override
-            public boolean execute() {
-
-                final boolean keepPooling = isVisible() && !shouldPause();
-
-                if (keepPooling)
-                    loadVMStatus(serverSelection);
-                else
-                    Console.warning("Stop polling for VM metrics.");
-
-                return keepPooling;
-            }
-        };
-
-        Scheduler.get().scheduleFixedDelay(pollCmd, POLL_INTERVAL);
-
-        Console.info("Begin polling for virtual machine metrics");
-    }
-
-    private boolean shouldPause() {
-        return !keepPolling;
-    }
-
-    public void keepPolling(boolean b) {
-        this.keepPolling = b;
-
-        if(keepPolling && pollCmd==null)
-            beginPolling();
-        else if(!keepPolling && pollCmd!=null)
-            pollCmd=null;
-    }
-
-    public void onServerSelection(String serverName) {
-
-        // TODO: hacky. somehow the events get fired two times ...
-        if(!serverName.equals(this.serverSelection))
-        {
-            this.serverSelection = serverName;
-
-            getView().reset();
-            loadVMStatus(serverName);
-            //beginPolling();
-        }
     }
 }
