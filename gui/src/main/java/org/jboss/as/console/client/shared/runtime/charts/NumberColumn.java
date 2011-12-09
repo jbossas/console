@@ -8,8 +8,14 @@ import com.google.gwt.visualization.client.AbstractDataTable;
  */
 public class NumberColumn extends Column<Integer> {
 
-    public NumberColumn( String label) {
+    @Deprecated
+    public NumberColumn(String label) {
         super(AbstractDataTable.ColumnType.NUMBER, label);
+    }
+
+    public NumberColumn(String detypedName, String label) {
+        super(AbstractDataTable.ColumnType.NUMBER, label);
+        setDeytpedName(detypedName);
     }
 
     @Override

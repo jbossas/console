@@ -2,9 +2,11 @@ package org.jboss.as.console.client.shared.runtime.plain;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.MetricHelpPanel;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
@@ -23,14 +25,23 @@ public class PlainColumnView implements Sampler {
     private Column[] columns = null;
     private FlexTable grid;
     private String title;
-    private int ROW_OFFSET = 2;
+    private int ROW_OFFSET = 1;
 
-    List<StackedBar> stacks = new LinkedList<StackedBar>();
-    private int width = 360;
-    private Style.Unit unit = Style.Unit.PX;
+    private List<StackedBar> stacks = new LinkedList<StackedBar>();
 
+    // default width and height
+    private int width = 100;
+    private Style.Unit unit = Style.Unit.PCT;
+    private String address = null;
+
+    @Deprecated
     public PlainColumnView(String title) {
         this.title = title;
+    }
+
+    public PlainColumnView(String title, String address) {
+        this.title = title;
+        this.address = address;
     }
 
     public PlainColumnView setColumns(Column... columns) {
@@ -45,23 +56,28 @@ public class PlainColumnView implements Sampler {
     }
 
 
+
     @Override
     public Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
+        layout.add(new HTML("<div class='metric-table-title'>"+title+"</div>"));
+
+        if(address!=null)
+        {
+            MetricHelpPanel helpPanel = new MetricHelpPanel(address, this.columns);
+            layout.add(helpPanel.asWidget());
+        }
+
         grid = new FlexTable();
         grid.getElement().setAttribute("style", "width:"+width+unit.getType()+";");
 
-
-        // title
-        grid.setHTML(0, 0, "<div class='metric-table-title'>"+title+"</div>");
-
         // header columns
-        grid.setHTML(1, 0, "Metric");
-        grid.setHTML(1, 1, "Actual");
-        grid.setHTML(1, 2, "");
+        grid.setHTML(0, 0, "Metric");
+        grid.setHTML(0, 1, "Actual");
+        grid.setHTML(0, 2, "");
 
         grid.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
@@ -90,13 +106,10 @@ public class PlainColumnView implements Sampler {
             row++;
         }
 
-        grid.getFlexCellFormatter().setColSpan(0, 0, 3);
-        grid.getRowFormatter().setStyleName(0, "metric-table-title");
-
-        grid.getCellFormatter().setStyleName(1,0,"metric-table-header");
-        grid.getCellFormatter().setStyleName(1,1,"metric-table-header");
-        grid.getCellFormatter().setStyleName(1,2,"metric-table-header");
-        grid.getCellFormatter().setWidth(1, 2, "50%");
+        grid.getCellFormatter().setStyleName(0,0,"metric-table-header");
+        grid.getCellFormatter().setStyleName(0,1,"metric-table-header");
+        grid.getCellFormatter().setStyleName(0,2,"metric-table-header");
+        grid.getCellFormatter().setWidth(0, 2, "50%");
 
         layout.add(grid);
         return layout;

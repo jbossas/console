@@ -31,13 +31,13 @@ public class TXExecutionView implements Sampler {
     private Widget displayStrategy() {
 
 
-        NumberColumn total = new NumberColumn("Total");
+        NumberColumn total = new NumberColumn("number-of-transactions","Total");
 
         Column[] cols = new Column[] {
                 total.setBaseline(true),
-                new NumberColumn("Commited").setComparisonColumn(total),
-                new NumberColumn("Aborted").setComparisonColumn(total),
-                new NumberColumn("Timed Out").setComparisonColumn(total)
+                new NumberColumn("number-of-committed-transactions","Commited").setComparisonColumn(total),
+                new NumberColumn("number-of-aborted-transactions","Aborted").setComparisonColumn(total),
+                new NumberColumn("number-of-timed-out-transactions", "Timed Out").setComparisonColumn(total)
         };
 
         String title = "Transaction Execution";
@@ -48,7 +48,7 @@ public class TXExecutionView implements Sampler {
         }
         else
         {
-            sampler = new PlainColumnView(title)
+            sampler = new PlainColumnView(title, "/subsystem=transactions")
                     .setColumns(cols)
                     .setWidth(100, Style.Unit.PCT);
         }

@@ -9,6 +9,9 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -18,7 +21,6 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.vm.HeapChartView;
 import org.jboss.as.console.client.shared.runtime.vm.ThreadChartView;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -34,8 +36,6 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
     private VMMetricsManagement presenter;
 
-    private HorizontalPanel heapPanel;
-    private HorizontalPanel threadPanel;
     private VerticalPanel osPanel;
 
     private HeapChartView heapChart;
@@ -126,13 +126,12 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         // ------------------------
 
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("fill-layout-width");
         vmName = new ContentHeaderLabel("");
-        vpanel.add(vmName);
+        header.add(vmName);
 
         // -------------------------
-
-        threadPanel = new HorizontalPanel();
-        threadPanel.setStyleName("fill-layout-width");
 
         osName = new HTML();
         processors = new HTML();
@@ -140,27 +139,43 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         osPanel = new VerticalPanel();
         osPanel.add(osName);
         osPanel.add(processors);
-        osName.getElement().setAttribute("style", "padding-top:30px");
 
-        vpanel.add(threadPanel);
+        // cross references
+        HTML jvmConfigLink = new HTML("<a href='javascript:void(0)'>Configure Virtual Machine &rarr;</a>");
+        jvmConfigLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.HostJVMPresenter)
+                );
+            }
+        });
+        if(hasServerPicker)
+            osPanel.add(jvmConfigLink);
 
-        heapPanel = new HorizontalPanel();
-        heapPanel.setStyleName("fill-layout-width");
-        vpanel.add(heapPanel);
+        header.add(osPanel);
+
+        // 50/50
+        osPanel.getElement().getParentElement().setAttribute("style", "width:50%; vertical-align:top");
+        osPanel.getElement().getParentElement().setAttribute("align", "right");
+        vmName.getElement().getParentElement().setAttribute("style", "width:50%; vertical-align:top");
+
+        vpanel.add(header);
+
 
         // --
 
-        heapChart = new HeapChartView("Heap Usage") ;
-        nonHeapChart = new HeapChartView("Non Heap Usage") ;
+        heapChart = new HeapChartView("Heap Usage (mb)") ;
+        nonHeapChart = new HeapChartView("Non Heap Usage (mb)") ;
 
-        heapPanel.add(heapChart.asWidget());
-        heapPanel.add(nonHeapChart.asWidget());
+        vpanel.add(heapChart.asWidget());
+        vpanel.add(nonHeapChart.asWidget());
 
         // --
 
         threadChart = new ThreadChartView("Thread Usage");
-        threadPanel.add(threadChart.asWidget());
-        threadPanel.add(osPanel);
+        vpanel.add(threadChart.asWidget());
+        //threadPanel.add(osPanel);
 
         return layout;
     }

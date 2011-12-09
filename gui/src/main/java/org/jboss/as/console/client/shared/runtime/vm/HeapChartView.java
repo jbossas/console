@@ -33,8 +33,12 @@ public class HeapChartView implements Sampler {
 
     private Widget displayStrategy() {
 
+        Column maxHeap = new NumberColumn("Max").setBaseline(true);
         Column[] heapCols = new Column[] {
-                new NumberColumn("Used")
+                maxHeap,
+                new NumberColumn("Used").setComparisonColumn(maxHeap),
+                new NumberColumn("Committed"),
+                new NumberColumn("Init"),
         };
 
         if(Console.visAPILoaded()) {

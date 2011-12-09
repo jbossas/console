@@ -11,13 +11,21 @@ public abstract class Column<T> {
     protected AbstractDataTable.ColumnType type;
     protected String label;
     protected Column comparisonColumn = null;
-
+    protected String deytpedName;
     protected boolean isVisible = true;
     private boolean isBaseline;
 
     public Column(AbstractDataTable.ColumnType type, String label) {
         this.type = type;
         this.label = label;
+    }
+
+    public String getDeytpedName() {
+        return deytpedName;
+    }
+
+    public void setDeytpedName(String deytpedName) {
+        this.deytpedName = deytpedName;
     }
 
     public AbstractDataTable.ColumnType getType() {

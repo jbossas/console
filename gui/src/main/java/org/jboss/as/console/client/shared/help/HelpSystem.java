@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.help;
 
+import org.jboss.as.console.client.shared.runtime.charts.Column;
+import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
@@ -11,6 +13,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_DESCR
 import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -102,6 +105,54 @@ public class HelpSystem {
             }
         });
     }
+
+    public void getMetricDescriptions(
+               AddressBinding address,
+               Column[] columns,
+               final AsyncCallback<HTML> callback)
+       {
+
+           final List<String> attributeNames = new LinkedList<String>();
+           for(Column c : columns)
+               attributeNames.add(c.getDeytpedName());
+
+           final ModelNode operation = address.asResource();
+           operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+
+           dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+               @Override
+               public void onSuccess(DMRResponse result) {
+                   ModelNode response = ModelNode.fromBase64(result.getResponseText());
+
+                   if (response.get(OUTCOME).asString().equals("success")
+                           && response.hasDefined(RESULT)) {
+
+                       final SafeHtmlBuilder html = new SafeHtmlBuilder();
+                       html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
+
+                       List<ModelNode> modelNodes = response.get(RESULT).asList();
+                       for (ModelNode res : modelNodes) {
+                           matchAttributes(res, attributeNames, html);
+                           matchChildren(res, attributeNames, html);
+                       }
+
+                       html.appendHtmlConstant("</table>");
+                       callback.onSuccess(new HTML(html.toSafeHtml()));
+
+                   } else {
+                       System.out.println(operation);
+                       System.out.println(response);
+                       onFailure(new Exception(""));
+                   }
+               }
+
+               @Override
+               public void onFailure(Throwable caught) {
+                   callback.onFailure(caught);
+               }
+           });
+       }
+
 
     private void matchAttributes(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
         matchSubElement(prototype, fieldNames, html, ATTRIBUTES);

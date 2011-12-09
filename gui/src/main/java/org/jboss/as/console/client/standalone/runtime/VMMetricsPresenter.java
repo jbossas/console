@@ -113,18 +113,18 @@ public class VMMetricsPresenter
             public void onSuccess(CompositeVMMetric result) {
 
                 getView().setHeap(new Metric(
-                        result.getHeap().getUsed(),
-                        result.getHeap().getMax(),
-                        result.getHeap().getCommitted(),
-                        result.getHeap().getInit()
+                        toMB(result.getHeap().getMax()),
+                        toMB(result.getHeap().getUsed()),
+                        toMB(result.getHeap().getCommitted()),
+                        toMB(result.getHeap().getInit())
 
                 ));
 
                 getView().setNonHeap(new Metric(
-                        result.getNonHeap().getUsed(),
-                        result.getNonHeap().getMax(),
-                        result.getNonHeap().getCommitted(),
-                        result.getNonHeap().getInit()
+                        toMB(result.getNonHeap().getMax()),
+                        toMB(result.getNonHeap().getUsed()),
+                        toMB(result.getNonHeap().getCommitted()),
+                        toMB(result.getNonHeap().getInit())
                 ));
 
                 getView().setThreads(new Metric(
@@ -139,6 +139,10 @@ public class VMMetricsPresenter
             }
         });
 
+    }
+
+    private static long toMB(long value) {
+        return (value/1024)/1024;
     }
 
     @Override
