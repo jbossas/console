@@ -86,7 +86,11 @@ public class PlainColumnView implements Sampler {
             stacks.add(new StackedBar());
 
             if(c.getComparisonColumn()!=null)
-                grid.setWidget(row, 2, stacks.get(row-ROW_OFFSET).asWidget());
+            {
+                StackedBar stack = stacks.get(row - ROW_OFFSET);
+                grid.setWidget(row, 2, stack.asWidget());
+                stack.setRatio(0,0);
+            }
             else
                 grid.setText(row, 2, "");
 
