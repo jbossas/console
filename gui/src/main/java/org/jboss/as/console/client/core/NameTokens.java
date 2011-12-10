@@ -30,15 +30,19 @@ public class NameTokens {
     public static final String BoundedQueueThreadPoolPresenter = "threads";
     public static final String DataSourcePresenter = "datasources";
     public static final String DebugToolsPresenter = "debug-tools";
+    public static final String DistributedCachePresenter = "distributed-cache";
     public static final String EJB3Presenter = "ejb3";
     public static final String HostInterfacesPresenter = "host-interfaces";
     public static final String HostJVMPresenter = "host-jvms";
     public static final String HostPropertiesPresenter = "host-properties";
+    public static final String Infinispan = "infinispan";
     public static final String InterfacePresenter = "interfaces";
+    public static final String InvalidationCachePresenter = "invalidation-cache";
     public static final String CacheContainerPresenter = "infinispan";
     public static final String JacOrbPresenter = "jacorb";
     public static final String JMSPresenter = "jms";
     public static final String JndiPresenter = "naming";
+    public static final String LocalCachePresenter = "local-cache";
     public static final String Logger = "logging";
     public static final String LogHandler = "log-handler";
     public static final String ScannerPresenter = "deployment-scanner";
@@ -49,6 +53,7 @@ public class NameTokens {
     public static final String OSGiRuntimePresenter = "osgi-runtime";
     public static final String PropertiesPresenter = "properties";
     public static final String ResourceAdapterPresenter ="resource-adapters";
+    public static final String ReplicatedCachePresenter = "replicated-cache";
     public static final String SecurityDomainsPresenter = "security-domains";
     public static final String SecuritySubsystemPresenter = "security";
     public static final String SettingsPresenter = "settings";
