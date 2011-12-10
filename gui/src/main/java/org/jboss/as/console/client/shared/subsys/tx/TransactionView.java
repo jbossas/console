@@ -87,7 +87,7 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         TextBoxItem path = new TextBoxItem("path", "Path");
         TextBoxItem relativeTo = new TextBoxItem("relativeTo", "Relative To");
         TextBoxItem objectStorePath = new TextBoxItem("objectStorePath", "Object Store Path");
-        TextBoxItem objectStorePathRelativeTo = new TextBoxItem("ObjectStoreRelativeTo", "Object Store Relative To");
+        TextBoxItem objectStorePathRelativeTo = new TextBoxItem("objectStoreRelativeTo", "Object Store Relative To");
 
         CheckBoxItem recoveryListener = new CheckBoxItem("recoveryListener", "Recovery Listener");
         TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
