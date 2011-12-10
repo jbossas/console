@@ -176,7 +176,21 @@ public class PlainColumnView implements Sampler {
 
         for(Column c : columns)
         {
+            int dataIndex = row - ROW_OFFSET;
+
+            // clear the 'Actual' value
             grid.setText(row, 1, "");
+
+            // cleanup stackbar if used
+            if(c.getComparisonColumn()!=null )
+            {
+                stacks.get(dataIndex).setRatio(0,0);
+            }
+            else if(c.getComparisonColumn()!=null )
+            {
+                throw new RuntimeException("Comparison column specified, but no baseline set!");
+            }
+
             row++;
         }
     }

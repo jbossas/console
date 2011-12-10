@@ -53,6 +53,12 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
     }
 
     @Override
+    public void clearSamples() {
+        this.executionMetric.clearSamples();
+        this.rollbackMetric.clearSamples();
+    }
+
+    @Override
     public void setTxMetric(Metric txMetric) {
         this.executionMetric.addSample(txMetric);
     }

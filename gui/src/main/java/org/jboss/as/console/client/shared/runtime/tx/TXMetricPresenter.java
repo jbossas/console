@@ -50,6 +50,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         void setPresenter(TXMetricManagement presenter);
         void setTxMetric(Metric txMetric);
         void setRollbackMetric(Metric rollbackMetric);
+
+        void clearSamples();
     }
 
     @Inject
@@ -70,7 +72,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @Override
     public void onServerSelection(String hostName, String serverName) {
-        System.out.println("selected server: "+ hostName+"/"+serverName);
+
+        getView().clearSamples();
 
         // refresh if needed. Otherwise it will happen onReset()
         if(isVisible()) refresh();
