@@ -53,9 +53,9 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -86,6 +86,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private EntityAdapter<SecurityPattern> securityAdapter;
     private EntityAdapter<AddressingPattern> addressingAdapter;
     private String currentServer = null;
+    private LoadJMSCmd loadJMSCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -137,6 +138,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 AddressingPattern.class,
                 propertyMetaData
         );
+
+        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory);
     }
 
     @Override
@@ -499,8 +502,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         operation.get("max-delivery-attempts").set(address.getMaxDelivery());
         operation.get("redelivery-delay").set(address.getRedeliveryDelay());
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -521,102 +522,19 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     // JMS
     void loadJMSConfig() {
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(RECURSIVE).set(Boolean.TRUE);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        loadJMSCmd.execute(address, new SimpleCallback<AggregatedJMSModel>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-                ModelNode payload = response.get("result").asObject();
-
-                parseFactories(payload);
-                parseQueues(payload);
-                parseTopics(payload);
+            public void onSuccess(AggregatedJMSModel result) {
+                getJMSView().setConnectionFactories(result.getFactories());
+                getJMSView().setQueues(result.getQueues());
+                getJMSView().setTopics(result.getTopics());
             }
         });
-
     }
-
-    private void parseQueues(ModelNode response) {
-
-        List<Property> propList = response.get("jms-queue").asPropertyList();
-        List<Queue> queues = new ArrayList<Queue>(propList.size());
-
-        for(Property prop : propList)
-        {
-            Queue queue = factory.queue().as();
-            queue.setName(prop.getName());
-
-            ModelNode propValue = prop.getValue();
-            String jndi = propValue.get("entries").asList().get(0).asString();
-            queue.setJndiName(jndi);
-
-            if(propValue.hasDefined("durable"))
-                queue.setDurable(propValue.get("durable").asBoolean());
-
-            if(propValue.hasDefined("selector"))
-                queue.setSelector(propValue.get("selector").asString());
-
-            queues.add(queue);
-        }
-
-        getJMSView().setQueues(queues);
-    }
-
-    private void parseTopics(ModelNode response) {
-        List<Property> propList = response.get("jms-topic").asPropertyList();
-        List<JMSEndpoint> topics = new ArrayList<JMSEndpoint>(propList.size());
-
-        for(Property prop : propList)
-        {
-            JMSEndpoint topic = factory.topic().as();
-            topic.setName(prop.getName());
-
-            ModelNode propValue = prop.getValue();
-            String jndi = propValue.get("entries").asList().get(0).asString();
-            topic.setJndiName(jndi);
-
-            topics.add(topic);
-        }
-
-        getJMSView().setTopics(topics);
-
-    }
-
-    private void parseFactories(ModelNode response) {
-        try {
-
-            // factories
-            List<Property> factories = response.get("connection-factory").asPropertyList();
-            List<ConnectionFactory> factoryModels = new ArrayList<ConnectionFactory>(factories.size());
-
-            for(Property factoryProp : factories)
-            {
-                String name = factoryProp.getName();
-
-                ModelNode factoryValue = factoryProp.getValue();
-                String jndi = factoryValue.get("entries").asList().get(0).asString();
-
-                ConnectionFactory factoryModel = factory.connectionFactory().as();
-                factoryModel.setName(name);
-                factoryModel.setJndiName(jndi);
-
-                factoryModels.add(factoryModel);
-            }
-
-
-            getJMSView().setConnectionFactories(factoryModels);
-
-        } catch (Throwable e) {
-            Console.error("Failed to parse response: " + e.getMessage());
-        }
-    }
-
 
     public void onEditQueue() {
         getJMSView().enableEditQueue(true);

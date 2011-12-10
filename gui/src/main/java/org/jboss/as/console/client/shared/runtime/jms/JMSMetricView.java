@@ -6,6 +6,9 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -43,12 +46,17 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
     }
 
     @Override
-    public void setNonDurableMetric(Metric durableMetric) {
-
+    public void setTopics(List<JMSEndpoint> topics) {
+        topicMetrics.setTopics(topics);
     }
 
     @Override
-    public void setDurableMetric(Metric durableMetric) {
+    public void setNonDurableMetric(Metric metric) {
+        topicMetrics.setDurableMetric(metric);
+    }
 
+    @Override
+    public void setDurableMetric(Metric metric) {
+        topicMetrics.setNonDurableMetric(metric);
     }
 }

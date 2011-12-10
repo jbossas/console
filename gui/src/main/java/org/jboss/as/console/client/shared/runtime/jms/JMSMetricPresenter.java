@@ -19,7 +19,10 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.messaging.AggregatedJMSModel;
+import org.jboss.as.console.client.shared.subsys.messaging.LoadJMSCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
@@ -40,6 +43,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     private CurrentServerSelection serverSelection;
     private JMSEndpoint selectedTopic;
     private BeanFactory factory;
+    private LoadJMSCmd loadJMSCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JmsMetricPresenter)
@@ -51,6 +55,8 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         void clearSamples();
         void setNonDurableMetric(Metric durableMetric);
         void setDurableMetric(Metric durableMetric);
+
+        void setTopics(List<JMSEndpoint> topics);
     }
 
     @Inject
@@ -65,6 +71,8 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         this.revealStrategy = revealStrategy;
         this.serverSelection = serverSelection;
         this.factory = factory;
+
+        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory);
     }
 
     public void setSelectedTopic(JMSEndpoint topic) {
@@ -85,7 +93,17 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
     public void refresh() {
 
+        ModelNode address = RuntimeBaseAddress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", "default");
 
+        loadJMSCmd.execute(address, new SimpleCallback<AggregatedJMSModel>() {
+            @Override
+            public void onSuccess(AggregatedJMSModel result) {
+                getView().setTopics(result.getTopics());
+                // TODO: remaining items
+            }
+        });
     }
 
     private void loadTopicMetrics() {
@@ -139,7 +157,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                             result.get("subscription-count").asLong()
                     );
 
-                    getView().setNonDurableMetric(durableMetric);
+                    getView().setNonDurableMetric(nonDurableMetric);
                     getView().setDurableMetric(durableMetric);
                 }
             }

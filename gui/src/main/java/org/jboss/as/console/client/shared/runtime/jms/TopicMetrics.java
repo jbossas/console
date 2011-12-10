@@ -10,6 +10,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
@@ -23,6 +24,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 12/10/11
@@ -32,7 +35,7 @@ public class TopicMetrics {
     
     private JMSMetricPresenter presenter;
     private CellTable<JMSEndpoint> topicTable;
-    private Sampler sampler;
+    private Sampler messageSampler;
 
     public TopicMetrics(JMSMetricPresenter presenter) {
         this.presenter = presenter;
@@ -83,18 +86,17 @@ public class TopicMetrics {
         // ----
 
 
-        NumberColumn messageCount = new NumberColumn("message-count","Message Count");
+        NumberColumn messageCount = new NumberColumn("message-count","Messages in Queue");
 
         Column[] cols = new Column[] {
-                messageCount,
-                new NumberColumn("messages-added","Messages Added"),
-                new NumberColumn("delivering-count","Delivered Messages"),
-                new NumberColumn("subscription-count", "Subscription Count")
+                messageCount.setBaseline(true),
+                new NumberColumn("delivering-count","In delivery").setComparisonColumn(messageCount),
+                new NumberColumn("messages-added","Messages Processed Total")
         };
 
-        // TODO: Add remaining fields
+        // TODO: other samplers
 
-        String title = "Request per Connector";
+        String title = "Number of messages";
 
         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
@@ -108,7 +110,7 @@ public class TopicMetrics {
             }
         };
 
-        sampler = new PlainColumnView(title, addressCallback)
+        messageSampler = new PlainColumnView(title, addressCallback)
                 .setColumns(cols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -122,7 +124,7 @@ public class TopicMetrics {
                 .setHeadline("JMS Topic Metrics")
                 .setDescription("Metrics for JMS topics.")
                 .addContent("Topic Selection", topicTable)
-                .addContent("Topic Metrics", sampler.asWidget());
+                .addContent("Topic Metrics", messageSampler.asWidget());
 
         return layout.build();
     }
@@ -132,6 +134,22 @@ public class TopicMetrics {
     }
 
     public void clearSamples() {
-        sampler.clearSamples();
+        messageSampler.clearSamples();
+    }
+
+    public void setTopics(List<JMSEndpoint> topics) {
+        topicTable.setRowCount(topics.size(), true);
+        topicTable.setRowData(topics);
+
+        if(!topics.isEmpty())
+            topicTable.getSelectionModel().setSelected(topics.get(0), true);
+    }
+
+    public void setDurableMetric(Metric metric) {
+        messageSampler.addSample(metric);
+    }
+
+    public void setNonDurableMetric(Metric metric) {
+        //To change body of created methods use File | Settings | File Templates.
     }
 }
