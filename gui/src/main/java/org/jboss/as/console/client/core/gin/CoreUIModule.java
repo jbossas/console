@@ -1,3 +1,4 @@
+
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -54,6 +55,8 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
@@ -514,7 +517,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 WebMetricView.class,
                 WebMetricPresenter.MyProxy.class);
 
+        bindPresenter(JMSMetricPresenter.class,
+                JMSMetricPresenter.MyView.class,
+                JMSMetricView.class,
+                JMSMetricPresenter.MyProxy.class);
 
     }
 
 }
+
