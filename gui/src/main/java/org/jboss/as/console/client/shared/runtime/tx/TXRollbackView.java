@@ -3,13 +3,17 @@ package org.jboss.as.console.client.shared.runtime.tx;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.runtime.Metric;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.ColumnChartView;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
+import org.jboss.dmr.client.ModelDescriptionConstants;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -48,7 +52,18 @@ public class TXRollbackView implements Sampler {
         }
         else
         {
-            sampler = new PlainColumnView(title, "/subsystem=transactions")
+
+            final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+                @Override
+                public ModelNode getAddress() {
+                    ModelNode address = new ModelNode();
+                    address.get(ModelDescriptionConstants.ADDRESS).set(RuntimeBaseAddress.get());
+                    address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "transactions");
+                    return address;
+                }
+            };
+
+            sampler = new PlainColumnView(title, addressCallback)
                     .setColumns(cols)
                     .setWidth(100, Style.Unit.PCT);
         }

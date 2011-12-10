@@ -1,35 +1,26 @@
 package org.jboss.as.console.client.shared.help;
 
-import org.jboss.as.console.client.shared.runtime.charts.Column;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
-import org.jboss.as.console.client.widgets.forms.BeanMetaData;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.dmr.client.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.dmr.client.ModelDescriptionConstants.CHILDREN;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OUTCOME;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
-
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -106,8 +97,13 @@ public class HelpSystem {
         });
     }
 
+    public interface AddressCallback
+    {
+        ModelNode getAddress();
+    }
+
     public void getMetricDescriptions(
-               AddressBinding address,
+                AddressCallback address,
                Column[] columns,
                final AsyncCallback<HTML> callback)
        {
@@ -116,7 +112,7 @@ public class HelpSystem {
            for(Column c : columns)
                attributeNames.add(c.getDeytpedName());
 
-           final ModelNode operation = address.asResource();
+           final ModelNode operation = address.getAddress();
            operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
 
            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {

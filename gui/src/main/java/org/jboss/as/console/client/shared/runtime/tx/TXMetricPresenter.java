@@ -109,7 +109,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
                 TransactionManager metrics = entityAdapter.fromDMR(result.get(RESULT));
 
-                /*getView().setTxMetric(new Metric(
+                getView().setTxMetric(new Metric(
                         metrics.getNumTransactions(),
                         metrics.getNumCommittedTransactions(),
                         metrics.getNumAbortedTransactions(),
@@ -121,11 +121,8 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
                         metrics.getNumResourceRollback()
                 ));
 
-                        */
 
-                provideRandomMetrics();
-
-
+                //provideRandomMetrics();
 
             }
         });

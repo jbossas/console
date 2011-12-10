@@ -11,13 +11,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
-import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.ballroom.client.widgets.icons.Icons;
-import org.jboss.dmr.client.ModelNode;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Displays descriptions for metric items.
@@ -28,13 +22,13 @@ import java.util.List;
 public class MetricHelpPanel {
 
     private DisclosurePanel helpPanel;
-    private AddressBinding address;
     private boolean hasBeenBuild;
     private Column[] columns;
     private boolean isAligned = false;
+    private HelpSystem.AddressCallback addressCallback;
 
-    public MetricHelpPanel(String address, Column[] columns) {
-        this.address = parseAddressDeclaration(address);
+    public MetricHelpPanel(HelpSystem.AddressCallback address, Column[] columns) {
+        this.addressCallback = address;
         this.columns = columns;
     }
 
@@ -81,7 +75,7 @@ public class MetricHelpPanel {
         {
 
             Console.MODULES.getHelpSystem().getMetricDescriptions(
-                    address, columns, new AsyncCallback<HTML>() {
+                    addressCallback, columns, new AsyncCallback<HTML>() {
                 @Override
                 public void onSuccess(HTML result) {
                     helpPanel.clear();
@@ -104,41 +98,5 @@ public class MetricHelpPanel {
                 }
             });
         }
-    }
-
-    public interface AddressCallback
-    {
-        ModelNode getAddress();
-    }
-
-    private static AddressBinding parseAddressDeclaration(String tokens) {
-        List<String[]> address = parseAddressString(tokens);
-
-        AddressBinding addressBinding = new AddressBinding();
-
-        for(String[] tuple : address)
-        {
-            System.out.println(tuple[0]+"="+tuple[1]);
-            addressBinding.add(tuple[0], tuple[1]);
-        }
-
-        return addressBinding;
-    }
-
-    private static List<String[]> parseAddressString(String value) {
-        List<String[]> address = new LinkedList<String[]>();
-
-        if(value.equals("/")) // default parent value
-            return address;
-
-        String[] split = value.split("/");
-
-        for(int i=0; i<split.length;i++)
-        {
-            String nextToken = split[i];
-            if(!nextToken.isEmpty())
-                address.add(nextToken.split("="));
-        }
-        return address;
     }
 }

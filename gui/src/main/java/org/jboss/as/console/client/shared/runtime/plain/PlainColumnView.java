@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.help.MetricHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -33,7 +34,7 @@ public class PlainColumnView implements Sampler {
     // default width and height
     private int width = 100;
     private Style.Unit unit = Style.Unit.PCT;
-    private String address = null;
+    private HelpSystem.AddressCallback address = null;
     private StaticHelpPanel staticHelp;
 
     @Deprecated
@@ -41,7 +42,7 @@ public class PlainColumnView implements Sampler {
         this.title = title;
     }
 
-    public PlainColumnView(String title, String address) {
+    public PlainColumnView(String title, HelpSystem.AddressCallback address) {
         this.title = title;
         this.address = address;
     }

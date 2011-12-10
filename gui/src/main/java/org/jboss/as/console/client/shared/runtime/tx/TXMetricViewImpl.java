@@ -43,7 +43,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Transactions")
                 .setHeadline("Transaction Metrics")
-                .setDescription("These metrics reflect the current state of the transaction subsystem.")
+                .setDescription("These metrics reflect the current state of the transaction subsystem. If no metrics are shown, you might need to enable statistics for the transaction subsystem.")
                 .setTopLevelTools(toolStrip.asWidget())
                 .addContent("Executions", executionMetric.asWidget())
                 .addContent("Rollbacks", rollbackMetric.asWidget());
