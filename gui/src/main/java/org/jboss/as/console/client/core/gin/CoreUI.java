@@ -78,6 +78,10 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresen
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
+import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
@@ -214,8 +218,14 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiConfigurationPresenter> getOSGiConfigurationPresenter();
     AsyncProvider<OSGiRuntimePresenter> getOSGiRuntimePresenter();
-    AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
+
+    // Infinispan
+    AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
+    AsyncProvider<LocalCachePresenter> getLocalCachePresenter();
+    AsyncProvider<InvalidationCachePresenter> getInvalidationCachePresenter();
+    AsyncProvider<DistributedCachePresenter> getDistributedCachePresenter();
+    AsyncProvider<ReplicatedCachePresenter> getReplicatedCachePresenter();
 
     AsyncProvider<ThreadsPresenter> getBoundedQueueThreadPoolPresenter();
 
