@@ -8,7 +8,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -50,7 +49,6 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         void setPresenter(TXMetricManagement presenter);
         void setTxMetric(Metric txMetric);
         void setRollbackMetric(Metric rollbackMetric);
-
         void clearSamples();
     }
 
@@ -97,7 +95,6 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         revealStrategy.revealInRuntimeParent(this);
     }
 
-
     @Override
     public void refresh() {
 
@@ -131,23 +128,4 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         });
     }
 
-    // TODO: remove at some point
-    private void provideRandomMetrics() {
-
-        final Random random = new Random(System.currentTimeMillis());
-
-        int total = 175;
-        int committed = random.nextInt(50);
-
-        getView().setTxMetric(new Metric(
-                total,
-                committed,
-                total-committed,
-                0L));
-
-        getView().setRollbackMetric(new Metric(
-                        (long)random.nextInt(50),
-                        (long)random.nextInt(75)
-                ));
-    }
 }
