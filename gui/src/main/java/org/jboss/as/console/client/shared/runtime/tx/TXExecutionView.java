@@ -44,7 +44,7 @@ public class TXExecutionView implements Sampler {
                 new NumberColumn("number-of-timed-out-transactions", "Timed Out").setComparisonColumn(total)
         };
 
-        String title = "Transaction Execution";
+        String title = "Success/Failure Ratio";
         if(Console.visAPILoaded()) {
             sampler = new ColumnChartView(320,200, title)
                     .setColumns(cols)

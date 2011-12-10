@@ -78,6 +78,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private List<VirtualServer> virtualServers;
 
     private EntityAdapter<JSPContainerConfiguration> containerAdapter;
+    private LoadConnectorCmd loadConnectorCmd;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -110,6 +111,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         containerAdapter =
                 new EntityAdapter<JSPContainerConfiguration>(JSPContainerConfiguration.class, metaData);
+
+        this.loadConnectorCmd = new LoadConnectorCmd(dispatcher, factory, Baseadress.get());
 
     }
 
@@ -220,47 +223,11 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     private void loadConnectors() {
 
-        // /profile=default/subsystem=web:read-children-resources(child-type=connector, recursive=true)
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "web");
-        operation.get(CHILD_TYPE).set("connector");
-        operation.get(RECURSIVE).set(Boolean.TRUE);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
+        loadConnectorCmd.execute(new SimpleCallback<List<HttpConnector>>() {
             @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-                List<Property> propList = response.get(RESULT).asPropertyList();
-                List<HttpConnector> connectors = new ArrayList<HttpConnector>(propList.size());
-
-                for(Property prop : propList)
-                {
-                    String name = prop.getName();
-                    ModelNode propValue = prop.getValue();
-
-                    HttpConnector connector = factory.httpConnector().as();
-                    connector.setName(name);
-
-                    // TODO: https://issues.jboss.org/browse/AS7-747
-                    if(propValue.hasDefined("enabled"))
-                        connector.setEnabled(propValue.get("enabled").asBoolean());
-                    else
-                        connector.setEnabled(true); // the default value
-
-                    connector.setScheme(propValue.get("scheme").asString());
-                    connector.setSocketBinding(propValue.get("socket-binding").asString());
-                    connector.setProtocol(propValue.get("protocol").asString());
-
-                    connectors.add(connector);
-                }
-
-                setConnectors(connectors);
-                getView().setConnectors(connectors);
-
+            public void onSuccess(List<HttpConnector> result) {
+                setConnectors(result);
+                getView().setConnectors(result);
             }
         });
     }

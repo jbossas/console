@@ -42,6 +42,9 @@ import org.jboss.as.console.client.core.settings.SettingsPresenterWidget;
 import org.jboss.as.console.client.domain.groups.ServerGroupMgmtPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
 import org.jboss.as.console.client.domain.hosts.ServerConfigPresenter;
@@ -68,16 +71,12 @@ import org.jboss.as.console.client.shared.help.HelpSystem;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.JcaPresenter;
@@ -146,6 +145,7 @@ public interface CoreUI extends Ginjector {
 
     ExpressionResolver getExpressionManager();
     Baseadress getBaseadress();
+    RuntimeBaseAddress getRuntimeBaseAddress();
 
     // ----------------------------------------------------------------------
 
@@ -176,6 +176,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ProfileMgmtPresenter> getProfileMgmtPresenter();
     CurrentProfileSelection getCurrentSelectedProfile();
     CurrentHostSelection getCurrentSelectedHost();
+    CurrentServerSelection getCurrentSelectedServer();
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 
@@ -212,14 +213,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<ScannerPresenter> getScannerPresenter();
     AsyncProvider<OSGiConfigurationPresenter> getOSGiConfigurationPresenter();
     AsyncProvider<OSGiRuntimePresenter> getOSGiRuntimePresenter();
-    
-    // Infinispan
     AsyncProvider<CacheContainerPresenter> getCacheContainerPresenter();
-    AsyncProvider<LocalCachePresenter> getLocalCachePresenter();
-    AsyncProvider<InvalidationCachePresenter> getInvalidationCachePresenter();
-    AsyncProvider<DistributedCachePresenter> getDistributedCachePresenter();
-    AsyncProvider<ReplicatedCachePresenter> getReplicatedCachePresenter();
-    
     AsyncProvider<SocketBindingPresenter> getSocketBindingPresenter();
 
     AsyncProvider<ThreadsPresenter> getBoundedQueueThreadPoolPresenter();
@@ -262,4 +256,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<EEPresenter> getEEPresenter();
 
     AsyncProvider<JcaPresenter> getJcaPresenter();
+
+    AsyncProvider<WebMetricPresenter> WebMetricPresenter();
+
 }

@@ -53,6 +53,10 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -101,7 +105,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
@@ -111,14 +115,6 @@ import org.jboss.as.console.client.shared.subsys.ejb3.EJB3Presenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EJB3View;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerPresenter;
 import org.jboss.as.console.client.shared.subsys.infinispan.CacheContainerView;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.DistributedCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.InvalidationCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.LocalCacheView;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCachePresenter;
-import org.jboss.as.console.client.shared.subsys.infinispan.ReplicatedCacheView;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbPresenter;
 import org.jboss.as.console.client.shared.subsys.jacorb.JacOrbView;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
@@ -201,6 +197,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(ExpressionResolver.class).to(DefaultExpressionResolver.class).in(Singleton.class);
         bind(Baseadress.class).in(Singleton.class);
+        bind(RuntimeBaseAddress.class).in(Singleton.class);
 
         // ----------------------------------------------------------------------
 
@@ -313,6 +310,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(CurrentHostSelection.class).in(Singleton.class);
+        bind(CurrentServerSelection.class).in(Singleton.class);
 
         // domain/server-group
         bindPresenter(ServerGroupMgmtPresenter.class,
@@ -402,27 +400,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 OSGiRuntimeView.class,
                 OSGiRuntimePresenter.MyProxy.class);
 
-        // Infinispan
         bindPresenter(CacheContainerPresenter.class,
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,
                 CacheContainerPresenter.MyProxy.class);
-        bindPresenter(LocalCachePresenter.class,
-                LocalCachePresenter.MyView.class,
-                LocalCacheView.class,
-                LocalCachePresenter.MyProxy.class);
-        bindPresenter(InvalidationCachePresenter.class,
-                InvalidationCachePresenter.MyView.class,
-                InvalidationCacheView.class,
-                InvalidationCachePresenter.MyProxy.class);
-        bindPresenter(ReplicatedCachePresenter.class,
-                ReplicatedCachePresenter.MyView.class,
-                ReplicatedCacheView.class,
-                ReplicatedCachePresenter.MyProxy.class);
-        bindPresenter(DistributedCachePresenter.class,
-                DistributedCachePresenter.MyView.class,
-                DistributedCacheView.class,
-                DistributedCachePresenter.MyProxy.class);
 
         bindPresenter(SocketBindingPresenter.class,
                 SocketBindingPresenter.MyView.class,
@@ -527,6 +508,13 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaSubsystemView.class,
                 JcaPresenter.MyProxy.class);
+
+        bindPresenter(WebMetricPresenter.class,
+                WebMetricPresenter.MyView.class,
+                WebMetricView.class,
+                WebMetricPresenter.MyProxy.class);
+
+
     }
 
 }

@@ -44,7 +44,7 @@ public class TXRollbackView implements Sampler {
                 new NumberColumn("number-of-resource-rollbacks","Resources")
         };
 
-        String title = "Rollback Origin";
+        String title = "Failure Origin";
         if(Console.visAPILoaded()) {
             sampler = new ColumnChartView(320,200, title)
                     .setColumns(cols)
