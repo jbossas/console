@@ -108,7 +108,7 @@ public class ResourceAdapterPresenter
         getView().setPresenter(this);
     }
 
-    private void loadResourceAdapter() {
+    private void loadAdapter() {
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_OPERATION);
@@ -136,9 +136,11 @@ public class ResourceAdapterPresenter
                         // for each connection definition create an RA representation (archive+jndi=key)
                         ResourceAdapter ra = factory.resourceAdapter().as();
                         ra.setArchive(raConfig.get("archive").asString());
+                        ra.setTransactionSupport(raConfig.get("transaction-support").asString());
                         ra.setName(ra.getArchive());
 
                         ModelNode connection = conDef.getValue();
+                        ra.setEnabled(connection.get("enabled").asBoolean());
 
                         ra.setJndiName(connection.get("jndi-name").asString());
                         ra.setEnabled(connection.get("enabled").asBoolean());
@@ -178,7 +180,7 @@ public class ResourceAdapterPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        loadResourceAdapter();
+        loadAdapter();
     }
 
     @Override
@@ -197,7 +199,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadResourceAdapter();
+                loadAdapter();
             }
 
             @Override
@@ -208,16 +210,16 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getName()), result.toString());
 
-                loadResourceAdapter();
+                loadAdapter();
             }
         });
 
     }
 
-    public void onSave(final String name, Map<String, Object> changedValues) {
+    public void onSave(final ResourceAdapter ra, Map<String, Object> changedValues) {
 
         AddressBinding address = raMetaData.getAddress();
-        ModelNode addressModel = address.asResource(Baseadress.get(), name);
+        ModelNode addressModel = address.asResource(Baseadress.get(), ra.getName());
         addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
 
@@ -225,13 +227,28 @@ public class ResourceAdapterPresenter
                 ResourceAdapter.class, metaData
         );
 
-        ModelNode operation = adapter.fromChangeset(changedValues, addressModel);
+        //HACK ALERT: separately write connection definition attributes (key = archive+jndi name)
+        List<ModelNode> extraSteps = new ArrayList<ModelNode>();
+
+        if(changedValues.containsKey("enabled")) {
+            ModelNode enabled = createWriteAttributeOp(ra, addressModel, "enabled", (Boolean)changedValues.remove("enabled"));
+            extraSteps.add(enabled);
+        }
+
+
+        ModelNode operation = adapter.fromChangeset(
+                changedValues,
+                addressModel,
+                extraSteps.toArray(new ModelNode[] {})
+        );
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
                 Console.error("Error: Failed to update resource adapter", caught.getMessage());
-                loadResourceAdapter();
+                loadAdapter();
             }
 
             @Override
@@ -240,13 +257,52 @@ public class ResourceAdapterPresenter
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info(Console.MESSAGES.saved("resource adapter " + name));
+                    Console.info(Console.MESSAGES.saved("resource adapter " + ra.getName()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("resource adapter " + name), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("resource adapter " + ra.getName()), response.toString());
 
-                loadResourceAdapter();
+                loadAdapter();
             }
         });
+    }
+
+    private ModelNode createWriteAttributeOp(
+            ResourceAdapter ra,
+            ModelNode addressModel,
+            String attributeName, boolean value) {
+
+        ModelNode op = createBaseOp(ra, addressModel, attributeName);
+        op.get(VALUE).set(value);
+        return op;
+    }
+
+    private ModelNode createWriteAttributeOp(
+            ResourceAdapter ra,
+            ModelNode addressModel,
+            String attributeName, String value) {
+
+        ModelNode op = createBaseOp(ra, addressModel, attributeName);
+        op.get(VALUE).set(value);
+        return op;
+    }
+
+    private ModelNode createWriteAttributeOp(
+            ResourceAdapter ra,
+            ModelNode addressModel,
+            String attributeName, long value) {
+
+        ModelNode op = createBaseOp(ra, addressModel, attributeName);
+        op.get(VALUE).set(value);
+        return op;
+    }
+
+    private ModelNode createBaseOp(ResourceAdapter ra, ModelNode addressModel, String attributeName) {
+        ModelNode op = new ModelNode();
+        op.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        op.get(ADDRESS).set(addressModel.get(ADDRESS));
+        op.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        op.get(NAME).set(attributeName);
+        return op;
     }
 
     public void launchNewAdapterWizard() {
@@ -269,6 +325,8 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
+        ra.setEnabled(false);
+
         ModelNode operation = new ModelNode();
         operation.get(OP).set(COMPOSITE);
         operation.get(ADDRESS).setEmptyList();
@@ -283,6 +341,7 @@ public class ResourceAdapterPresenter
             createParent.get(ADDRESS).add("subsystem","resource-adapters");
             createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
             createParent.get("archive").set(ra.getArchive());
+            createParent.get("transaction-support").set(ra.getArchive());
 
             steps.add(createParent);
         }
@@ -322,7 +381,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadResourceAdapter();
+                loadAdapter();
             }
 
             @Override
@@ -333,7 +392,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getArchive()), result.toString());
 
-                loadResourceAdapter();
+                loadAdapter();
             }
         });
 
@@ -369,7 +428,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadResourceAdapter();
+                loadAdapter();
             }
 
             @Override
@@ -380,7 +439,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.addingFailed("property " + prop.getKey()), result.toString());
 
-                loadResourceAdapter();
+                loadAdapter();
             }
         });
 
@@ -401,7 +460,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadResourceAdapter();
+                loadAdapter();
             }
 
             @Override
@@ -412,7 +471,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.deletionFailed("property " + prop.getKey()), result.toString());
 
-                loadResourceAdapter();
+                loadAdapter();
             }
         });
     }

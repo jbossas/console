@@ -7,6 +7,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -41,7 +42,7 @@ public class AdapterDetails {
                 new FormToolStrip.FormCallback<ResourceAdapter>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSave(form.getEditedEntity().getName(), form.getChangedValues());
+                        presenter.onSave(form.getEditedEntity(), form.getChangedValues());
                     }
 
                     @Override
@@ -59,6 +60,7 @@ public class AdapterDetails {
 
         TextItem nameItem = new TextItem("name", "Name");
         TextItem jndiItem = new TextItem("jndiName", "JNDI");
+        CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
 
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);
@@ -67,7 +69,7 @@ public class AdapterDetails {
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
 
 
-        form.setFields(nameItem, jndiItem);
+        form.setFields(nameItem, jndiItem, enabled);
         form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), txItem, classItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(

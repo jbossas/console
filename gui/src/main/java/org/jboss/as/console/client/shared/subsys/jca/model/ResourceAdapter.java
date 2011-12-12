@@ -42,6 +42,7 @@ public interface ResourceAdapter {
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 
+    @Binding(skip = true)
     void setEnabled(boolean enabled);
     boolean isEnabled();
 }
