@@ -19,11 +19,11 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.AggregatedJMSModel;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadJMSCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
@@ -44,6 +44,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     private JMSEndpoint selectedTopic;
     private BeanFactory factory;
     private LoadJMSCmd loadJMSCmd;
+    private Queue selectedQueue;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JmsMetricPresenter)
@@ -54,9 +55,13 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         void setPresenter(JMSMetricPresenter presenter);
         void clearSamples();
         void setTopics(List<JMSEndpoint> topics);
+        void setQueues(List<Queue> queues);
 
-        void setMessageCountMetric(Metric messages);
-        void setSubscriptionMetric(Metric subscriptions);
+        void setTopicMessageMetric(Metric messages);
+        void setTopcSubscriptionMetric(Metric subscriptions);
+
+        void setQueueConsumerMetrics(Metric metrics);
+        void setQueueMessageMetric(Metric metric);
     }
 
     @Inject
@@ -82,6 +87,13 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
     }
 
+     public void setSelectedQueue(Queue queue) {
+         this.selectedQueue = queue;
+         if(queue!=null)
+             loadQueueMetrics();
+
+    }
+
     @Override
     public void onServerSelection(String hostName, String serverName) {
 
@@ -101,7 +113,57 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
             @Override
             public void onSuccess(AggregatedJMSModel result) {
                 getView().setTopics(result.getTopics());
-                // TODO: remaining items
+                getView().setQueues(result.getQueues());
+            }
+        });
+    }
+
+    private void loadQueueMetrics() {
+          if(null==selectedQueue)
+            throw new RuntimeException("Queue selection is null!");
+
+        getView().clearSamples();
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", "default");
+        operation.get(ADDRESS).add("jms-queue", selectedQueue.getName());
+
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+
+                if(response.isFailure())
+                {
+                    Console.error("Error loading metrics", response.getFailureDescription());
+                }
+                else
+                {
+                    ModelNode result = response.get(RESULT).asObject();
+
+                    long messageCount = result.get("message-count").asLong();
+                    long messagesAdded = result.get("messages-added").asLong();
+                    long delivering = result.get("delivering-count").asLong();
+
+                    Metric messageCountMetric = new Metric(
+                            messageCount,
+                            messagesAdded,
+                            delivering,
+                            result.get("scheduled-count").asLong()
+                    );
+
+                    Metric consumerMetrics = new Metric(
+                        result.get("consumer-count").asLong()
+                    );
+
+                    getView().setQueueConsumerMetrics(consumerMetrics);
+                    getView().setQueueMessageMetric(messageCountMetric);
+                }
             }
         });
     }
@@ -109,7 +171,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     private void loadTopicMetrics() {
 
         if(null==selectedTopic)
-            throw new RuntimeException("topic selection is null!");
+            throw new RuntimeException("Topic selection is null!");
 
         getView().clearSamples();
 
@@ -142,9 +204,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                     Metric messageCountMetric = new Metric(
                             messageCount,
                             messagesAdded,
-                            delivering,
-                            result.get("durable-message-count").asLong(),
-                            result.get("non-durable-message-count").asLong()
+                            delivering
                     );
 
                     Metric subscriptionMetric = new Metric(
@@ -153,8 +213,8 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                             result.get("subscription-count").asLong()
                     );
 
-                    getView().setSubscriptionMetric(subscriptionMetric);
-                    getView().setMessageCountMetric(messageCountMetric);
+                    getView().setTopcSubscriptionMetric(subscriptionMetric);
+                    getView().setTopicMessageMetric(messageCountMetric);
                 }
             }
         });

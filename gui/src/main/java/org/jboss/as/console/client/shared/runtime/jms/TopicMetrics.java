@@ -145,7 +145,7 @@ public class TopicMetrics {
                 new NumberColumn("non-durable-subscription-count","Nun-Durable Subscribers").setComparisonColumn(subscriptionsCols)
         };
 
-        String title3 = "Subscription Types";
+        String title3 = "Subscriptions";
 
         subscriptionSampler = new PlainColumnView(title3, addressCallback)
                 .setColumns(cols3)

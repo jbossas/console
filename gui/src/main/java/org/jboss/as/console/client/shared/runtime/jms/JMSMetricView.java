@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 
 import java.util.List;
 
@@ -53,12 +54,27 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
     }
 
     @Override
-    public void setSubscriptionMetric(Metric subscriptions) {
+    public void setQueues(List<Queue> queues) {
+        queueMetrics.setQueues(queues);
+    }
+
+    @Override
+    public void setQueueConsumerMetrics(Metric metrics) {
+        queueMetrics.setQueueConsumerMetrics(metrics);
+    }
+
+    @Override
+    public void setQueueMessageMetric(Metric metric) {
+        queueMetrics.setQueueMessageMetric(metric);
+    }
+
+    @Override
+    public void setTopcSubscriptionMetric(Metric subscriptions) {
         topicMetrics.setSubscriptionMetric(subscriptions);
     }
 
     @Override
-    public void setMessageCountMetric(Metric metric) {
+    public void setTopicMessageMetric(Metric metric) {
         topicMetrics.setMessageCountMetric(metric);
     }
 }

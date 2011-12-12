@@ -41,6 +41,7 @@ public class QueueMetrics {
     private ListDataProvider<Queue> dataProvider;
     private Sampler sampler;
     private Sampler messageSampler;
+    private Sampler consumerSampler;
 
     public QueueMetrics(JMSMetricPresenter presenter) {
         this.presenter = presenter;
@@ -84,8 +85,8 @@ public class QueueMetrics {
         queueTable.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                Queue topic = getCurrentSelection();
-                presenter.setSelectedTopic(topic);
+                Queue queue = getCurrentSelection();
+                presenter.setSelectedQueue(queue);
 
             }
         });
@@ -135,6 +136,21 @@ public class QueueMetrics {
 
         // ----
 
+
+        NumberColumn consumerCol = new NumberColumn("consumer-count", "Number of Consumer");
+        Column[] cols3 = new Column[] {
+                consumerCol
+        };
+
+        String title3 = "Consumer";
+
+        consumerSampler = new PlainColumnView(title3, addressCallback)
+                .setColumns(cols3)
+                .setWidth(100, Style.Unit.PCT);
+
+        // ----
+
+
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(queueTable);
 
@@ -152,7 +168,8 @@ public class QueueMetrics {
                 .setDescription("Metrics for JMS queues.")
                 .addContent("Queue Selection", tablePanel)
                 .addContent("In flight messages", sampler.asWidget())
-                .addContent("Message Ratio", messageSampler.asWidget());
+                .addContent("Message Ratio", messageSampler.asWidget())
+                .addContent("Consumer", consumerSampler.asWidget());
 
         return layout.build();
     }
@@ -174,7 +191,11 @@ public class QueueMetrics {
             queueTable.getSelectionModel().setSelected(queues.get(0), true);
     }
 
-    public void setMessageCountMetric(Metric metric) {
+    public void setQueueConsumerMetrics(Metric metrics) {
+        consumerSampler.addSample(metrics);
+    }
+
+    public void setQueueMessageMetric(Metric metric) {
         sampler.addSample(metric);
         messageSampler.addSample(metric);
     }
