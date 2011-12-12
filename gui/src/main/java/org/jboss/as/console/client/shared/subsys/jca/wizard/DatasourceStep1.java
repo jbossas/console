@@ -59,7 +59,20 @@ public class DatasourceStep1 {
         final Form<DataSource> form = new Form<DataSource>(DataSource.class);
 
         final TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name");
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
+            @Override
+            public boolean validate(String value) {
+
+                boolean isSet = value!=null && !value.isEmpty();
+                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
+                return isSet&&validPrefix;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
+            }
+        };
         //CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
         //enabled.setValue(Boolean.TRUE);
 
