@@ -7,60 +7,38 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 7/19/11
  */
-public class AdapterConnectionProperties implements PropertyManagement {
+public class AdapterConnectionProperties  {
 
     private ResourceAdapterPresenter presenter;
     private PropertyEditor propertyEditor;
     private ResourceAdapter currentSelection;
+    private PropertyManagement delegate;
 
-    public AdapterConnectionProperties(ResourceAdapterPresenter presenter) {
+    public AdapterConnectionProperties(ResourceAdapterPresenter presenter, PropertyManagement delegate) {
         this.presenter = presenter;
+        this.delegate = delegate;
     }
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        propertyEditor = new PropertyEditor(this, true);
+        propertyEditor = new PropertyEditor(delegate, true);
         layout.add(propertyEditor.asWidget());
         return layout;
-    }
-
-    public void setAdapter(ResourceAdapter selectedRa) {
-        this.currentSelection = selectedRa;
-        propertyEditor.setProperties(selectedRa.getArchive(), selectedRa.getProperties());
     }
 
     public void setEnabled(boolean b) {
         propertyEditor.setEnabled(b);
     }
 
-    @Override
-    public void onCreateProperty(String reference, PropertyRecord prop) {
-        presenter.createProperty(currentSelection, prop);
-    }
-
-    @Override
-    public void onDeleteProperty(String reference, PropertyRecord prop) {
-        presenter.onDeleteProperty(currentSelection, prop);
-    }
-
-    @Override
-    public void onChangeProperty(String reference, PropertyRecord prop) {
-
-    }
-
-    @Override
-    public void launchNewPropertyDialoge(String reference) {
-        presenter.launchNewPropertyDialoge(currentSelection);
-    }
-
-    @Override
-    public void closePropertyDialoge() {
-        presenter.closePropertyDialoge();
+    public void updateFrom(List<PropertyRecord> properties) {
+        propertyEditor.setProperties("", properties);
     }
 }

@@ -43,6 +43,7 @@ import org.jboss.dmr.client.ModelNodeUtil;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class ResourceAdapterPresenter
 
     private EntityAdapter<ConnectionDefinition> connectionAdapter;
     private EntityAdapter<ResourceAdapter> adapter;
+    private EntityAdapter<PropertyRecord> propertyAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -103,6 +105,7 @@ public class ResourceAdapterPresenter
 
         adapter  = new EntityAdapter<ResourceAdapter>(ResourceAdapter.class, metaData);
         connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
+        propertyAdapter = new EntityAdapter<PropertyRecord>(PropertyRecord.class, metaData);
     }
 
     @Override
@@ -149,7 +152,20 @@ public class ResourceAdapterPresenter
                         List<Property> connections = raModel.get("connection-definitions").asPropertyList();
                         for(Property con : connections )
                         {
-                            ConnectionDefinition connectionDefinition = connectionAdapter.fromDMR(con.getValue());
+                            ModelNode connectionModel = con.getValue();
+                            ConnectionDefinition connectionDefinition = connectionAdapter.fromDMR(connectionModel);
+
+
+                            // connection properties
+                            if(connectionModel.hasDefined("config-properties"))
+                            {
+                               // TODO
+                            }
+                            else
+                            {
+                                connectionDefinition.setProperties(Collections.EMPTY_LIST);
+                            }
+
                             resourceAdapter.getConnectionDefinitions().add(connectionDefinition);
 
                         }

@@ -12,6 +12,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -29,7 +31,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 12/12/11
  */
-public class ConnectionList {
+public class ConnectionList implements PropertyManagement {
 
     private ResourceAdapterPresenter presenter;
     private ResourceAdapter currentAdapter;
@@ -130,17 +132,17 @@ public class ConnectionList {
 
         // ---
 
-        connectionProperties = new AdapterConnectionProperties(presenter);
+        connectionProperties = new AdapterConnectionProperties(presenter, this);
 
         // ---
 
-        final SingleSelectionModel<ConnectionDefinition> selectionModel =
-                (SingleSelectionModel<ConnectionDefinition>)table.getSelectionModel();
+        final SingleSelectionModel<ConnectionDefinition> selectionModel = (SingleSelectionModel<ConnectionDefinition>)table.getSelectionModel();
+
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
             public void onSelectionChange(SelectionChangeEvent event) {
-                ConnectionDefinition selectedRa = selectionModel.getSelectedObject();
-
+                ConnectionDefinition selection = selectionModel.getSelectedObject();
+                connectionProperties.updateFrom(selection.getProperties());
             }
         });
 
@@ -200,5 +202,30 @@ public class ConnectionList {
 
         if(!connections.isEmpty())
             table.getSelectionModel().setSelected(connections.get(0), true);
+    }
+
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
