@@ -172,8 +172,23 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         detailsPanel.getForm().bind(table);
         bottomPanel.add(detailsPanel.asWidget(), "Attributes");
 
+        // ---
+
+        AdapterSecurity securityConfig = new AdapterSecurity(presenter);
+        bottomPanel.add(securityConfig.asWidget(), "Security");
+
+        // ---
+
+        AdapterValidation  validationConfig = new AdapterValidation(presenter);
+        bottomPanel.add(validationConfig.asWidget(), "Validation");
+
+
+        // --
+
         configPanel = new AdapterConfigProperties(presenter);
         bottomPanel.add(configPanel.asWidget(), "Properties");
+
+        // ---
 
         final SingleSelectionModel<ResourceAdapter> selectionModel =
                 (SingleSelectionModel<ResourceAdapter>)table.getSelectionModel();

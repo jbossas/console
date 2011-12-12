@@ -68,9 +68,7 @@ public class AdapterDetails {
 
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
 
-
-        form.setFields(nameItem, jndiItem, enabled);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), txItem, classItem);
+        form.setFields(nameItem, jndiItem, enabled, txItem, classItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {

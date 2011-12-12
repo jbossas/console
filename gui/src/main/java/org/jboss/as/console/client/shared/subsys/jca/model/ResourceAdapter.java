@@ -17,10 +17,6 @@ public interface ResourceAdapter {
     String getName();
     void setName(String name);
 
-    @Binding(detypedName = "jndi-name")
-    String getJndiName();
-    void setJndiName(String name);
-
     @Binding(detypedName = "pool-name")
     String getPoolName();
     void setPoolName(String name);
@@ -42,7 +38,33 @@ public interface ResourceAdapter {
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
 
+    // connection definition attributes
+
+    @Binding(detypedName = "jndi-name")
+    String getJndiName();
+    void setJndiName(String name);
+
     @Binding(skip = true)
     void setEnabled(boolean enabled);
     boolean isEnabled();
+
+    @Binding(skip=true, detypedName = "security-domain")
+    String getSecurityDomain();
+    void setSecurityDomain(String domain);
+
+    @Binding(skip = true, detypedName = "security-application")
+    String getApplication();
+    void setApplication(String application);
+
+    @Binding(skip = true, detypedName = "security-domain-and-application")
+    String getDomainAndApplication();
+    void setDomainAndApplication(String archive);
+
+    @Binding(skip = true, detypedName = "background-validation")
+    boolean isBackgroundValidation();
+    void setBackgroundValidation(boolean b);
+
+    @Binding(skip = true, detypedName = "background-validation-millis")
+    long getBackgroundValidationMillis();
+    void setBackgroundValidationMillis(long millis);
 }
