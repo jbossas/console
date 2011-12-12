@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
@@ -23,12 +22,12 @@ import java.util.List;
  */
 public class ConnectionStep2 implements PropertyManagement {
 
-    private NewAdapterWizard parent;
+    private NewConnectionWizard parent;
     private PropertyEditor propEditor;
     private List<PropertyRecord> properties;
     private BeanFactory factory = GWT.create(BeanFactory.class);
 
-    public ConnectionStep2(NewAdapterWizard parent) {
+    public ConnectionStep2(NewConnectionWizard parent) {
         this.parent = parent;
         this.properties = new ArrayList<PropertyRecord>();
     }
@@ -68,7 +67,7 @@ public class ConnectionStep2 implements PropertyManagement {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_ra_step2()+"</h3>"));
+        layout.add(new HTML("<h3>Connection Definiton Step2/2</h3>"));
 
         propEditor = new PropertyEditor(this, true);
 
@@ -78,7 +77,7 @@ public class ConnectionStep2 implements PropertyManagement {
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                //parent.onCompleteStep2(properties);
+                parent.onCompleteStep2(properties);
             }
         };
 

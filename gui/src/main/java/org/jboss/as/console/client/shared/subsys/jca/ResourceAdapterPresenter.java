@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.NewConnectionWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
@@ -117,7 +118,7 @@ public class ResourceAdapterPresenter
             getView().setSelectedAdapter(selectedAdapter);
     }
 
-    private void loadAdapter() {
+    private void loadAdapter(final boolean refreshDetail) {
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -159,6 +160,9 @@ public class ResourceAdapterPresenter
 
                 ResourceAdapterPresenter.this.resourceAdapters = resourceAdapters;
                 getView().setAdapters(resourceAdapters);
+
+                if(refreshDetail && selectedAdapter!=null)
+                    getView().setSelectedAdapter(selectedAdapter);
             }
         });
     }
@@ -166,7 +170,7 @@ public class ResourceAdapterPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        loadAdapter();
+        loadAdapter(false);
     }
 
     @Override
@@ -185,7 +189,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadAdapter();
+                loadAdapter(false);
             }
 
             @Override
@@ -196,7 +200,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getArchive()), result.toString());
 
-                loadAdapter();
+                loadAdapter(false);
             }
         });
 
@@ -279,14 +283,12 @@ public class ResourceAdapterPresenter
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).set(addressModel.get(ADDRESS).asObject());
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadAdapter();
+                loadAdapter(false);
             }
 
             @Override
@@ -297,7 +299,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getArchive()), result.toString());
 
-                loadAdapter();
+                loadAdapter(false);
             }
         });
 
@@ -320,7 +322,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadAdapter();
+                loadAdapter(false);
             }
 
             @Override
@@ -331,7 +333,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.addingFailed("property " + prop.getKey()), result.toString());
 
-                loadAdapter();
+                loadAdapter(false);
             }
         });
 
@@ -352,7 +354,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onFailure(Throwable caught) {
                 super.onFailure(caught);
-                loadAdapter();
+                loadAdapter(false);
             }
 
             @Override
@@ -363,7 +365,7 @@ public class ResourceAdapterPresenter
                 else
                     Console.error(Console.MESSAGES.deletionFailed("property " + prop.getKey()), result.toString());
 
-                loadAdapter();
+                loadAdapter(false);
             }
         });
     }
@@ -525,7 +527,16 @@ public class ResourceAdapterPresenter
     }
 
     public void launchNewConnectionWizard() {
-        //To change body of created methods use File | Settings | File Templates.
+        window = new DefaultWindow(Console.MESSAGES.createTitle("connection definition"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewConnectionWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     public void onDeleteConnection(ConnectionDefinition selection) {
@@ -539,11 +550,32 @@ public class ResourceAdapterPresenter
             @Override
             public void onSuccess(DMRResponse result) {
                 Console.info("Success: Removed connection definition");
-                loadAdapter();
-                getView().setSelectedAdapter(selectedAdapter);
+                loadAdapter(true);
+            }
+        });
+    }
+
+    public void onCreateConnection(ConnectionDefinition connectionDefinition) {
+        closeDialoge();
+
+        ModelNode operation = connectionAdapter.fromEntity(connectionDefinition);
+        operation.get(OP).set(ADD);
+        ModelNode addressModel = connectionMetaData.getAddress().asResource(
+                Baseadress.get(),
+                selectedAdapter,
+                connectionDefinition.getJndiName());
+
+        operation.get(ADDRESS).set(addressModel.get(ADDRESS));
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Add connection definition");
+                loadAdapter(true);
 
             }
         });
+
     }
 
 }

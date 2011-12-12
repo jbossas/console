@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -23,9 +24,9 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class ConnectionStep1 {
 
-    NewAdapterWizard parent;
+    NewConnectionWizard parent;
 
-    public ConnectionStep1(NewAdapterWizard parent) {
+    public ConnectionStep1(NewConnectionWizard parent) {
         this.parent = parent;
     }
 
@@ -34,16 +35,11 @@ public class ConnectionStep1 {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h2>"+ Console.CONSTANTS.subsys_jca_ra_step1()+"</h2>"));
+        layout.add(new HTML("<h2>Connection Definition Step1/2</h2>"));
 
-        final Form<ResourceAdapter> form = new Form(ResourceAdapter.class);
+        final Form<ConnectionDefinition> form = new Form(ConnectionDefinition.class);
 
-        TextBoxItem archiveItem = new TextBoxItem("archive", "Archive");
-
-        // TODO: https://issues.jboss.org/browse/AS7-1346
-        //TextBoxItem nameItem = new TextBoxItem("name", "Name");
-
-         TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
             @Override
             public boolean validate(String value) {
 
@@ -58,11 +54,8 @@ public class ConnectionStep1 {
             }
         };
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
-        ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
-        txItem.setDefaultToFirstOption(true);
-        txItem.setValueMap(new String[]{"NoTransaction", "LocalTransaction", "XATransaction"});
 
-        form.setFields(archiveItem, jndiName, classItem, txItem);
+        form.setFields(jndiName, classItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
@@ -71,6 +64,7 @@ public class ConnectionStep1 {
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "resource-adapters");
                         address.add("resource-adapter", "*");
+                        address.add("connection-definitions", "*");
                         return address;
                     }
                 }, form
@@ -87,8 +81,8 @@ public class ConnectionStep1 {
                     @Override
                     public void onClick(ClickEvent event) {
                         FormValidation validation = form.validate();
-                        //if(!validation.hasErrors())
-                           // parent.onCompleteStep1(form.getUpdatedEntity());
+                        if(!validation.hasErrors())
+                           parent.onCompleteStep1(form.getUpdatedEntity());
                     }
                 },
 
