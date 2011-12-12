@@ -39,8 +39,8 @@ public class TopicMetrics {
     private JMSMetricPresenter presenter;
     private CellTable<JMSEndpoint> topicTable;
     private ListDataProvider<JMSEndpoint> dataProvider;
-    private Sampler sampler;
-    private Sampler messageSampler;
+    private Sampler inflightSampler;
+    private Sampler processedSampler;
     private Sampler subscriptionSampler;
 
     public TopicMetrics(JMSMetricPresenter presenter) {
@@ -52,7 +52,7 @@ public class TopicMetrics {
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                //presenter.setSelectedConnector(getCurrentSelection());
+                presenter.setSelectedTopic(getCurrentSelection());
             }
         }));
 
@@ -114,7 +114,7 @@ public class TopicMetrics {
             }
         };
 
-        sampler = new PlainColumnView(title, addressCallback)
+        inflightSampler = new PlainColumnView(title, addressCallback)
                 .setColumns(cols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -131,7 +131,7 @@ public class TopicMetrics {
 
         String title2 = "Messages Processed";
 
-        messageSampler = new PlainColumnView(title2, addressCallback)
+        processedSampler = new PlainColumnView(title2, addressCallback)
                 .setColumns(cols2)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -170,8 +170,8 @@ public class TopicMetrics {
                 .setHeadline("JMS Topic Metrics")
                 .setDescription("Metrics for JMS topics.")
                 .addContent("Topic Selection", tablePanel)
-                .addContent("In flight messages", sampler.asWidget())
-                .addContent("Message Ratio", messageSampler.asWidget())
+                .addContent("In flight messages", inflightSampler.asWidget())
+                .addContent("Message Ratio", processedSampler.asWidget())
                 .addContent("Subscription Ratio", subscriptionSampler.asWidget());
 
         return layout.build();
@@ -182,8 +182,8 @@ public class TopicMetrics {
     }
 
     public void clearSamples() {
-        sampler.clearSamples();
-        messageSampler.clearSamples();
+        inflightSampler.clearSamples();
+        processedSampler.clearSamples();
 
     }
 
@@ -194,12 +194,15 @@ public class TopicMetrics {
             topicTable.getSelectionModel().setSelected(topics.get(0), true);
     }
 
-    public void setMessageCountMetric(Metric metric) {
-        sampler.addSample(metric);
-        messageSampler.addSample(metric);
+    public void setInflight(Metric topicInflight) {
+        inflightSampler.addSample(topicInflight);
     }
 
-    public void setSubscriptionMetric(Metric subscriptions) {
-        subscriptionSampler.addSample(subscriptions);
+    public void setProcessed(Metric topicProcessed) {
+        processedSampler.addSample(topicProcessed);
+    }
+
+    public void setSubscriptions(Metric topicSubscriptions) {
+        subscriptionSampler.addSample(topicSubscriptions);
     }
 }

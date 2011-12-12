@@ -59,22 +59,32 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
     }
 
     @Override
-    public void setQueueConsumerMetrics(Metric metrics) {
-        queueMetrics.setQueueConsumerMetrics(metrics);
+    public void setQueueInflight(Metric queueInflight) {
+        queueMetrics.setInflight(queueInflight);
     }
 
     @Override
-    public void setQueueMessageMetric(Metric metric) {
-        queueMetrics.setQueueMessageMetric(metric);
+    public void setQueueProcessed(Metric queueProcessed) {
+        queueMetrics.setProcessed(queueProcessed);
     }
 
     @Override
-    public void setTopcSubscriptionMetric(Metric subscriptions) {
-        topicMetrics.setSubscriptionMetric(subscriptions);
+    public void setQueueConsumer(Metric queueConsumer) {
+        queueMetrics.setConsumer(queueConsumer);
     }
 
     @Override
-    public void setTopicMessageMetric(Metric metric) {
-        topicMetrics.setMessageCountMetric(metric);
+    public void setTopicInflight(Metric topicInflight) {
+        topicMetrics.setInflight(topicInflight);
+    }
+
+    @Override
+    public void setTopicProcessed(Metric topicProcessed) {
+        topicMetrics.setProcessed(topicProcessed);
+    }
+
+    @Override
+    public void setTopicSubscriptions(Metric topicSubscriptions) {
+        topicMetrics.setSubscriptions(topicSubscriptions);
     }
 }

@@ -52,7 +52,7 @@ public class QueueMetrics {
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                //presenter.setSelectedConnector(getCurrentSelection());
+                presenter.setSelectedQueue(getCurrentSelection());
             }
         }));
 
@@ -121,11 +121,9 @@ public class QueueMetrics {
 
         // ----
 
-
-        NumberColumn processedCol = new NumberColumn("messages-added", "Messages Added");
         Column[] cols2 = new Column[] {
-                processedCol.setBaseline(true),
-                new NumberColumn("scheduled-count","Messages Scheduled").setComparisonColumn(processedCol)
+                new NumberColumn("messages-added", "Messages Added"),
+                new NumberColumn("scheduled-count","Messages Scheduled")
         };
 
         String title2 = "Messages Processed";
@@ -191,12 +189,15 @@ public class QueueMetrics {
             queueTable.getSelectionModel().setSelected(queues.get(0), true);
     }
 
-    public void setQueueConsumerMetrics(Metric metrics) {
-        consumerSampler.addSample(metrics);
+    public void setInflight(Metric queueInflight) {
+        sampler.addSample(queueInflight);
     }
 
-    public void setQueueMessageMetric(Metric metric) {
-        sampler.addSample(metric);
-        messageSampler.addSample(metric);
+    public void setProcessed(Metric queueProcessed) {
+        messageSampler.addSample(queueProcessed);
+    }
+
+    public void setConsumer(Metric queueConsumer) {
+        consumerSampler.addSample(queueConsumer);
     }
 }

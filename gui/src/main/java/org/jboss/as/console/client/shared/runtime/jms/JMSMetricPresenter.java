@@ -54,14 +54,18 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     public interface MyView extends View {
         void setPresenter(JMSMetricPresenter presenter);
         void clearSamples();
+
         void setTopics(List<JMSEndpoint> topics);
         void setQueues(List<Queue> queues);
 
-        void setTopicMessageMetric(Metric messages);
-        void setTopcSubscriptionMetric(Metric subscriptions);
 
-        void setQueueConsumerMetrics(Metric metrics);
-        void setQueueMessageMetric(Metric metric);
+        void setQueueInflight(Metric queueInflight);
+        void setQueueProcessed(Metric queueProcessed);
+        void setQueueConsumer(Metric queueConsumer);
+
+        void setTopicInflight(Metric topicInflight);
+        void setTopicProcessed(Metric topicProcessed);
+        void setTopicSubscriptions(Metric topicSubscriptions);
     }
 
     @Inject
@@ -150,19 +154,23 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                     long messagesAdded = result.get("messages-added").asLong();
                     long delivering = result.get("delivering-count").asLong();
 
-                    Metric messageCountMetric = new Metric(
+                    Metric queueInflight = new Metric(
                             messageCount,
+                            delivering
+                    );
+
+                    Metric queueProcessed = new Metric(
                             messagesAdded,
-                            delivering,
                             result.get("scheduled-count").asLong()
                     );
 
-                    Metric consumerMetrics = new Metric(
+                    Metric queueConsumer = new Metric(
                         result.get("consumer-count").asLong()
                     );
 
-                    getView().setQueueConsumerMetrics(consumerMetrics);
-                    getView().setQueueMessageMetric(messageCountMetric);
+                    getView().setQueueInflight(queueInflight);
+                    getView().setQueueProcessed(queueProcessed);
+                    getView().setQueueConsumer(queueConsumer);
                 }
             }
         });
@@ -198,23 +206,29 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                     ModelNode result = response.get(RESULT).asObject();
 
                     long messageCount = result.get("message-count").asLong();
-                    long messagesAdded = result.get("messages-added").asLong();
                     long delivering = result.get("delivering-count").asLong();
 
-                    Metric messageCountMetric = new Metric(
+                    Metric topicInflight = new Metric(
                             messageCount,
-                            messagesAdded,
                             delivering
                     );
 
-                    Metric subscriptionMetric = new Metric(
-                        result.get("non-durable-subscription-count").asLong(),
-                            result.get("durable-subscription-count").asLong(),
-                            result.get("subscription-count").asLong()
+                    Metric topicProcessed = new Metric(
+                            result.get("messages-added").asLong(),
+                            result.get("durable-message-count").asLong(),
+                            result.get("non-durable-message-count").asLong()
+
                     );
 
-                    getView().setTopcSubscriptionMetric(subscriptionMetric);
-                    getView().setTopicMessageMetric(messageCountMetric);
+                    Metric topicSubscriptions = new Metric(
+                            result.get("subscription-count").asLong(),
+                            result.get("durable-subscription-count").asLong(),
+                            result.get("non-durable-subscription-count").asLong()
+                    );
+
+                    getView().setTopicInflight(topicInflight);
+                    getView().setTopicProcessed(topicProcessed);
+                    getView().setTopicSubscriptions(topicSubscriptions);
                 }
             }
         });
