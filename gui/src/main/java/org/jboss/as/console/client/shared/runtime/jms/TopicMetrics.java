@@ -5,7 +5,9 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -19,6 +21,7 @@ import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelDescriptionConstants;
@@ -35,7 +38,10 @@ public class TopicMetrics {
     
     private JMSMetricPresenter presenter;
     private CellTable<JMSEndpoint> topicTable;
+    private ListDataProvider<JMSEndpoint> dataProvider;
+    private Sampler sampler;
     private Sampler messageSampler;
+    private Sampler subscriptionSampler;
 
     public TopicMetrics(JMSMetricPresenter presenter) {
         this.presenter = presenter;
@@ -52,8 +58,11 @@ public class TopicMetrics {
 
         // ----
 
-        topicTable = new DefaultCellTable<JMSEndpoint>(10);
+        topicTable = new DefaultCellTable<JMSEndpoint>(5);
         topicTable.setSelectionModel(new SingleSelectionModel<JMSEndpoint>());
+
+        dataProvider = new ListDataProvider<JMSEndpoint>();
+        dataProvider.addDataDisplay(topicTable);
 
         com.google.gwt.user.cellview.client.Column<JMSEndpoint, String> nameColumn = new com.google.gwt.user.cellview.client.Column<JMSEndpoint, String>(new TextCell()) {
             @Override
@@ -81,24 +90,19 @@ public class TopicMetrics {
 
             }
         });
-        topicTable.getElement().setAttribute("style", "margin-top:15px;margin-bottom:15px;");
+        topicTable.getElement().setAttribute("style", "margin-top:15px;margin-bottom:0px;");
 
         // ----
 
-
-        NumberColumn messageCount = new NumberColumn("message-count","Messages in Queue");
-
+        NumberColumn inQueue = new NumberColumn("message-count", "Messages in Queue");
         Column[] cols = new Column[] {
-                messageCount.setBaseline(true),
-                new NumberColumn("delivering-count","In delivery").setComparisonColumn(messageCount),
-                new NumberColumn("messages-added","Messages Processed Total")
+                inQueue.setBaseline(true),
+                new NumberColumn("delivering-count","In delivery").setComparisonColumn(inQueue),
         };
 
-        // TODO: other samplers
+        String title = "In-Flight Messages";
 
-        String title = "Number of messages";
-
-        final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
@@ -110,12 +114,54 @@ public class TopicMetrics {
             }
         };
 
-        messageSampler = new PlainColumnView(title, addressCallback)
+        sampler = new PlainColumnView(title, addressCallback)
                 .setColumns(cols)
                 .setWidth(100, Style.Unit.PCT);
 
 
         // ----
+
+
+        NumberColumn processedCol = new NumberColumn("messages-added", "Messages Processed Total");
+        Column[] cols2 = new Column[] {
+                processedCol.setBaseline(true),
+                new NumberColumn("durable-message-count","Number Durable Messages").setComparisonColumn(processedCol),
+                new NumberColumn("non-durable-message-count","Number Non-Durable Messages").setComparisonColumn(processedCol)
+        };
+
+        String title2 = "Ratio Durable/Non-Durable";
+
+        messageSampler = new PlainColumnView(title2, addressCallback)
+                .setColumns(cols2)
+                .setWidth(100, Style.Unit.PCT);
+
+
+        // ----
+
+        NumberColumn subscriptionsCols = new NumberColumn("subscription-count", "Number of Subscriptions");
+        Column[] cols3 = new Column[] {
+                subscriptionsCols.setBaseline(true),
+                new NumberColumn("durable-subscription-count","Durable Subscribers").setComparisonColumn(subscriptionsCols),
+                new NumberColumn("non-durable-subscription-count","Nun-Durable Subscribers").setComparisonColumn(subscriptionsCols)
+        };
+
+        String title3 = "Subscription Types";
+
+        subscriptionSampler = new PlainColumnView(title3, addressCallback)
+                .setColumns(cols3)
+                .setWidth(100, Style.Unit.PCT);
+
+
+        // ----
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(topicTable);
+
+        VerticalPanel tablePanel = new VerticalPanel();
+        tablePanel.setStyleName("fill-layout-width");
+        tablePanel.add(topicTable);
+        tablePanel.add(pager);
+
 
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Topics")
@@ -123,8 +169,10 @@ public class TopicMetrics {
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("JMS Topic Metrics")
                 .setDescription("Metrics for JMS topics.")
-                .addContent("Topic Selection", topicTable)
-                .addContent("Topic Metrics", messageSampler.asWidget());
+                .addContent("Topic Selection", tablePanel)
+                .addContent("In flight messages", sampler.asWidget())
+                .addContent("Message Ratio", messageSampler.asWidget())
+                .addContent("Subscription Ratio", subscriptionSampler.asWidget());
 
         return layout.build();
     }
@@ -134,22 +182,24 @@ public class TopicMetrics {
     }
 
     public void clearSamples() {
+        sampler.clearSamples();
         messageSampler.clearSamples();
+
     }
 
     public void setTopics(List<JMSEndpoint> topics) {
-        topicTable.setRowCount(topics.size(), true);
-        topicTable.setRowData(topics);
+        dataProvider.setList(topics);
 
         if(!topics.isEmpty())
             topicTable.getSelectionModel().setSelected(topics.get(0), true);
     }
 
-    public void setDurableMetric(Metric metric) {
+    public void setMessageCountMetric(Metric metric) {
+        sampler.addSample(metric);
         messageSampler.addSample(metric);
     }
 
-    public void setNonDurableMetric(Metric metric) {
-        //To change body of created methods use File | Settings | File Templates.
+    public void setSubscriptionMetric(Metric subscriptions) {
+        subscriptionSampler.addSample(subscriptions);
     }
 }

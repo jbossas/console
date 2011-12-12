@@ -53,10 +53,10 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     public interface MyView extends View {
         void setPresenter(JMSMetricPresenter presenter);
         void clearSamples();
-        void setNonDurableMetric(Metric durableMetric);
-        void setDurableMetric(Metric durableMetric);
-
         void setTopics(List<JMSEndpoint> topics);
+
+        void setMessageCountMetric(Metric messages);
+        void setSubscriptionMetric(Metric subscriptions);
     }
 
     @Inject
@@ -139,26 +139,22 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
                     long messagesAdded = result.get("messages-added").asLong();
                     long delivering = result.get("delivering-count").asLong();
 
-                    Metric nonDurableMetric = new Metric(
-                            messageCount,
-                            messagesAdded,
-                            delivering,
-                            result.get("non-durable-message-count").asLong(),
-                            result.get("non-durable-subscription-count").asLong(),
-                            result.get("subscription-count").asLong()
-                    );
-
-                    Metric durableMetric = new Metric(
+                    Metric messageCountMetric = new Metric(
                             messageCount,
                             messagesAdded,
                             delivering,
                             result.get("durable-message-count").asLong(),
+                            result.get("non-durable-message-count").asLong()
+                    );
+
+                    Metric subscriptionMetric = new Metric(
+                        result.get("non-durable-subscription-count").asLong(),
                             result.get("durable-subscription-count").asLong(),
                             result.get("subscription-count").asLong()
                     );
 
-                    getView().setNonDurableMetric(nonDurableMetric);
-                    getView().setDurableMetric(durableMetric);
+                    getView().setSubscriptionMetric(subscriptionMetric);
+                    getView().setMessageCountMetric(messageCountMetric);
                 }
             }
         });

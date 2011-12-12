@@ -51,12 +51,12 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
     }
 
     @Override
-    public void setNonDurableMetric(Metric metric) {
-        topicMetrics.setDurableMetric(metric);
+    public void setSubscriptionMetric(Metric subscriptions) {
+        topicMetrics.setSubscriptionMetric(subscriptions);
     }
 
     @Override
-    public void setDurableMetric(Metric metric) {
-        topicMetrics.setNonDurableMetric(metric);
+    public void setMessageCountMetric(Metric metric) {
+        topicMetrics.setMessageCountMetric(metric);
     }
 }
