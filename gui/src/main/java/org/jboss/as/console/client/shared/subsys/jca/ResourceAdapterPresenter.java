@@ -33,9 +33,9 @@ import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
@@ -80,7 +80,6 @@ public class ResourceAdapterPresenter
     public interface MyView extends View {
         void setPresenter(ResourceAdapterPresenter presenter);
         void setAdapters(List<ResourceAdapter> adapters);
-        void setPoolConfig(String name, PoolConfig poolConfig);
 
         void setSelectedAdapter(String selectedAdapter);
     }
@@ -508,7 +507,7 @@ public class ResourceAdapterPresenter
                 else
                     poolConfig.setPoolStrictMin(false);
 
-                getView().setPoolConfig(ra.getArchive(), poolConfig);
+                //getView().setPoolConfig(ra.getArchive(), poolConfig);
             }
         });
     }

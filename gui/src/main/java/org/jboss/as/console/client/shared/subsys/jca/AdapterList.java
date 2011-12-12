@@ -42,9 +42,6 @@ public class AdapterList {
     private ResourceAdapterPresenter presenter;
     private CellTable<ResourceAdapter> table;
     private ListDataProvider<ResourceAdapter> dataProvider;
-    private AdapterConnectionDetails detailsPanel;
-    private AdapterConnectionProperties configPanel;
-    private PoolConfigurationView poolConfig;
 
     private Form<ResourceAdapter> form;
 
@@ -68,16 +65,16 @@ public class AdapterList {
             @Override
             public void onClick(ClickEvent event) {
 
-                final ResourceAdapter ra = detailsPanel.getCurrentSelection();
+                final ResourceAdapter selection = getCurrentSelection();
 
                 Feedback.confirm(
                         Console.MESSAGES.deleteTitle("resource adapter"),
-                        Console.MESSAGES.deleteConfirm("resource adapter " + ra.getName()),
+                        Console.MESSAGES.deleteConfirm("resource adapter " + selection.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    presenter.onDelete(ra);
+                                    presenter.onDelete(selection);
                                 }
                             }
                         });
@@ -203,7 +200,7 @@ public class AdapterList {
                 .setTitle("Resource Adapter")
                 .setHeadline("Resource Adapter Overview")
                 .setDescription("DESCRIPTION")
-                .setMaster("Configured Resource Adapter", table)
+                .setMaster("Registered Resource Adapter", table)
                 .setMasterTools(topLevelTools.asWidget())
                 .setDetail("Resource Adapter", formpanel);
 
@@ -226,6 +223,6 @@ public class AdapterList {
     }
 
     public void setPoolConfig(String parent, PoolConfig poolConfig) {
-        this.poolConfig.updateFrom(parent, poolConfig);
+
     }
 }

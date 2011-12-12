@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -39,6 +40,7 @@ public class ConnectionList {
     private AdapterConnectionProperties connectionProperties;
     private AdapterSecurity securityConfig;
     private AdapterValidation validationConfig;
+    private HTML headline;
 
     public ConnectionList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -166,10 +168,14 @@ public class ConnectionList {
         // ----
 
 
+        headline = new HTML("HEADLINE");
+        headline.setStyleName("content-header-label");
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setTitle(Console.CONSTANTS.subsys_jca_ra_configurations())
-                .setMaster(Console.CONSTANTS.subsys_jca_ra_registered(), table)
+                .setHeadlineWidget(headline)
+                .setTitle("TITLE")
+                .setMaster("Registered Connection Definitions", table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", connectionDetails.asWidget())
                 .addDetail("Properties", connectionProperties.asWidget())
@@ -186,6 +192,9 @@ public class ConnectionList {
 
     public void setAdapter(ResourceAdapter adapter) {
         this.currentAdapter = adapter;
+
+        headline.setText("Resource Adapter: "+adapter.getName());
+
         List<ConnectionDefinition> connections = adapter.getConnectionDefinitions();
         dataProvider.setList(connections);
 

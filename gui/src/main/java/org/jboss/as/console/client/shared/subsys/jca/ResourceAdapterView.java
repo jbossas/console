@@ -83,9 +83,4 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         adapterList.setAdapters(adapters);
 
     }
-
-    @Override
-    public void setPoolConfig(String parent, PoolConfig poolConfig) {
-        adapterList.setPoolConfig(parent, poolConfig);
-    }
 }
