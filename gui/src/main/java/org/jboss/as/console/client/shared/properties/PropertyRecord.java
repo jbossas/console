@@ -27,6 +27,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  */
 public interface PropertyRecord {
 
+    @Binding(detypedName = "name")
     public String getKey();
     public void setKey(String key);
 

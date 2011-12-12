@@ -160,7 +160,16 @@ public class ResourceAdapterPresenter
                             // connection properties
                             if(connectionModel.hasDefined("config-properties"))
                             {
-                               // TODO
+                                List<Property> model = connectionModel.get("config-properties").asPropertyList();
+                                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(model.size());
+                                for(Property prop : model)
+                                {
+                                    PropertyRecord record = propertyAdapter.fromDMR(prop.getValue());
+                                    record.setKey(prop.getName());
+                                    properties.add(record);
+                                }
+
+                                connectionDefinition.setProperties(properties);
                             }
                             else
                             {
