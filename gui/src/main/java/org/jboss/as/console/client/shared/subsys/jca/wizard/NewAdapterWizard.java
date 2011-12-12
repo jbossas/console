@@ -53,7 +53,7 @@ public class NewAdapterWizard {
         step1Model.setProperties(properties);
 
         // default pool name
-        step1Model.setPoolName(step1Model.getArchive().replace(".", "_")+"-Pool");
+        //step1Model.setPoolName(step1Model.getArchive().replace(".", "_")+"-Pool");
         presenter.onCreateAdapter(step1Model);
     }
 }

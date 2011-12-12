@@ -56,6 +56,7 @@ import org.jboss.as.console.client.shared.subsys.infinispan.model.DefaultCacheCo
 import org.jboss.as.console.client.shared.subsys.infinispan.model.ReplicatedCache;
 import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.subsys.jca.JcaBeanValidation;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
@@ -126,6 +127,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<DataSource> dataSource();
     AutoBean<XADataSource> xaDataSource();
     AutoBean<ResourceAdapter> resourceAdapter();
+    AutoBean<ConnectionDefinition> ConnectionDefinition();
     AutoBean<PoolConfig> poolConfig();
 
     AutoBean<Queue> queue();

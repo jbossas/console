@@ -6,21 +6,22 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,11 +32,13 @@ public class ConnectionList {
 
     private ResourceAdapterPresenter presenter;
     private ResourceAdapter currentAdapter;
-    private DefaultCellTable<ResourceAdapter> table;
-    private ListDataProvider<ResourceAdapter> dataProvider;
+    private DefaultCellTable<ConnectionDefinition> table;
+    private ListDataProvider<ConnectionDefinition> dataProvider;
     private PoolConfigurationView poolConfig;
     private AdapterConnectionDetails connectionDetails;
     private AdapterConnectionProperties connectionProperties;
+    private AdapterSecurity securityConfig;
+    private AdapterValidation validationConfig;
 
     public ConnectionList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -56,66 +59,42 @@ public class ConnectionList {
             @Override
             public void onClick(ClickEvent event) {
 
+                final ConnectionDefinition selection = getCurrentSelection();
 
-
-                /*Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("resource adapter"),
-                        Console.MESSAGES.deleteConfirm("resource adapter "+ra.getName()),
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("connection definition"),
+                        Console.MESSAGES.deleteConfirm("connection definition"+selection.getJndiName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    presenter.onDelete(ra);
+                                    //presenter.onDelete(selection);
                                 }
                             }
-                        }); */
+                        });
             }
         };
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 
-
-        // ----
-
-      /*  VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("rhs-content-panel");
-
-        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_ra_configurations()));
-
-        ScrollPanel scroll = new ScrollPanel(vpanel);
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 26, Style.Unit.PX);
-        layout.setWidgetTopHeight(topLevelTools, 26, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 56, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_ra_registered()));   */
-
         // -------
 
-        table = new DefaultCellTable<ResourceAdapter>(10);
-        dataProvider = new ListDataProvider<ResourceAdapter>();
+        table = new DefaultCellTable<ConnectionDefinition>(10);
+        dataProvider = new ListDataProvider<ConnectionDefinition>();
         dataProvider.addDataDisplay(table);
 
-        TextColumn<ResourceAdapter> nameColumn = new TextColumn<ResourceAdapter>() {
+        TextColumn<ConnectionDefinition> nameColumn = new TextColumn<ConnectionDefinition>() {
             @Override
-            public String getValue(ResourceAdapter record) {
-                return record.getName();
-            }
-        };
-
-        TextColumn<ResourceAdapter> jndiNameColumn = new TextColumn<ResourceAdapter>() {
-            @Override
-            public String getValue(ResourceAdapter record) {
+            public String getValue(ConnectionDefinition record) {
                 return record.getJndiName();
             }
         };
 
-        Column<ResourceAdapter, ImageResource> statusColumn =
-                       new Column<ResourceAdapter, ImageResource>(new ImageResourceCell()) {
+        Column<ConnectionDefinition, ImageResource> statusColumn =
+                       new Column<ConnectionDefinition, ImageResource>(new ImageResourceCell()) {
                            @Override
-                           public ImageResource getValue(ResourceAdapter ra) {
+                           public ImageResource getValue(ConnectionDefinition ra) {
 
                                ImageResource res = null;
 
@@ -129,18 +108,8 @@ public class ConnectionList {
                        };
 
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(jndiNameColumn, "JNDI Name");
+        table.addColumn(nameColumn, "JNDI Name");
         table.addColumn(statusColumn, "Enabled?");
-
-
-
-
-        // -------
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(table);
-
 
 
         // -------
@@ -148,32 +117,27 @@ public class ConnectionList {
 
         connectionDetails = new AdapterConnectionDetails(presenter);
         connectionDetails.getForm().bind(table);
-        //bottomPanel.add(connectionDetails.asWidget(), "Attributes");
 
         // ---
 
-        AdapterSecurity securityConfig = new AdapterSecurity(presenter);
-        //bottomPanel.add(securityConfig.asWidget(), "Security");
+        securityConfig = new AdapterSecurity(presenter);
 
         // ---
 
-        AdapterValidation  validationConfig = new AdapterValidation(presenter);
-        //bottomPanel.add(validationConfig.asWidget(), "Validation");
+        validationConfig = new AdapterValidation(presenter);
 
-
-        // --
+        // ---
 
         connectionProperties = new AdapterConnectionProperties(presenter);
-        //bottomPanel.add(connectionProperties.asWidget(), "Properties");
 
         // ---
 
-        final SingleSelectionModel<ResourceAdapter> selectionModel =
-                (SingleSelectionModel<ResourceAdapter>)table.getSelectionModel();
+        final SingleSelectionModel<ConnectionDefinition> selectionModel =
+                (SingleSelectionModel<ConnectionDefinition>)table.getSelectionModel();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
             public void onSelectionChange(SelectionChangeEvent event) {
-                ResourceAdapter selectedRa = selectionModel.getSelectedObject();
+                ConnectionDefinition selectedRa = selectionModel.getSelectedObject();
 
             }
         });
@@ -181,12 +145,12 @@ public class ConnectionList {
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
             public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
-                presenter.onSavePoolConfig(getCurrentSelection(), changeset);
+                //presenter.onSavePoolConfig(getCurrentSelection(), changeset);
             }
 
             @Override
             public void onResetPoolConfig(String parentName, PoolConfig entity) {
-                presenter.onDeletePoolConfig(getCurrentSelection(), entity);
+                //presenter.onDeletePoolConfig(getCurrentSelection(), entity);
             }
         });
 
@@ -194,13 +158,13 @@ public class ConnectionList {
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                ResourceAdapter selectedObject = getCurrentSelection();
-                presenter.loadPoolConfig(selectedObject);
+                ConnectionDefinition selectedObject = getCurrentSelection();
+                //presenter.loadPoolConfig(selectedObject);
             }
         });
 
+        // ----
 
-        //bottomPanel.add(poolConfig.asWidget(), "Pool");
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
@@ -216,11 +180,16 @@ public class ConnectionList {
         return layout.build();
     }
 
-    private ResourceAdapter getCurrentSelection() {
-        return ((SingleSelectionModel<ResourceAdapter >) table.getSelectionModel()).getSelectedObject();
+    private ConnectionDefinition getCurrentSelection() {
+        return ((SingleSelectionModel<ConnectionDefinition >) table.getSelectionModel()).getSelectedObject();
     }
 
     public void setAdapter(ResourceAdapter adapter) {
         this.currentAdapter = adapter;
+        List<ConnectionDefinition> connections = adapter.getConnectionDefinitions();
+        dataProvider.setList(connections);
+
+        if(!connections.isEmpty())
+            table.getSelectionModel().setSelected(connections.get(0), true);
     }
 }

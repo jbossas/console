@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
@@ -67,17 +68,8 @@ public class ResourceAdapterPresenter
     private BeanMetaData raMetaData;
     private String selectedAdapter;
 
-    public BeanFactory getFactory() {
-        return factory;
-    }
-
-    public void closePropertyDialoge() {
-        propertyWindow.hide();
-    }
-
-    public PlaceManager getPlaceManager() {
-        return placeManager;
-    }
+    private EntityAdapter<ConnectionDefinition> connectionAdapter;
+    private EntityAdapter<ResourceAdapter> adapter;
 
 
     @ProxyCodeSplit
@@ -107,6 +99,9 @@ public class ResourceAdapterPresenter
         this.metaData = propertyMetaData;
 
         this.raMetaData = metaData.getBeanMetaData(ResourceAdapter.class);
+
+        adapter  = new EntityAdapter<ResourceAdapter>(ResourceAdapter.class, metaData);
+        connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
     }
 
     @Override
@@ -125,10 +120,10 @@ public class ResourceAdapterPresenter
     private void loadAdapter() {
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", "*");
+        operation.get(CHILD_TYPE).set("resource-adapter");
         operation.get(RECURSIVE).set(true);
 
 
@@ -137,56 +132,33 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse response) {
                 ModelNode result = ModelNode.fromBase64(response.getResponseText());
 
-                List<ModelNode> children = result.get(RESULT).asList();
+                List<Property> children = result.get(RESULT).asPropertyList();
                 List<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>(children.size());
 
-                for(ModelNode child : children)
+                for(Property child : children)
                 {
-                    ModelNode raConfig = child.get(RESULT);
+                    ModelNode raModel = child.getValue();
+                    //System.out.println(raModel);
+                    ResourceAdapter resourceAdapter = adapter.fromDMR(raModel);
+                    resourceAdapter.setConnectionDefinitions(new ArrayList<ConnectionDefinition>());
 
-                    List<Property> conDefs = raConfig.get("connection-definitions").asPropertyList();
-                    for(Property conDef : conDefs)
+                    // connection definition
+                    if(raModel.hasDefined("connection-definitions"))
                     {
-                        // for each connection definition create an RA representation (archive+jndi=key)
-                        ResourceAdapter ra = factory.resourceAdapter().as();
-                        ra.setArchive(raConfig.get("archive").asString());
-                        ra.setTransactionSupport(raConfig.get("transaction-support").asString());
-                        ra.setName(ra.getArchive());
-
-                        ModelNode connection = conDef.getValue();
-                        ra.setEnabled(connection.get("enabled").asBoolean());
-
-                        ra.setJndiName(connection.get("jndi-name").asString());
-                        ra.setEnabled(connection.get("enabled").asBoolean());
-
-                        ra.setConnectionClass(connection.get("class-name").asString());
-                        ra.setPoolName(connection.get("pool-name").asString());
-
-                        List<PropertyRecord> props = new ArrayList<PropertyRecord>();
-                        if(connection.hasDefined("config-properties"))
+                        List<Property> connections = raModel.get("connection-definitions").asPropertyList();
+                        for(Property con : connections )
                         {
-                            List<Property> properties = connection.get("config-properties").asPropertyList();
-                            for(Property prop : properties)
-                            {
-                                ModelNode propWrapper = prop.getValue();
-                                String value = propWrapper.get("value").asString();
-
-                                PropertyRecord propertyRepresentation = factory.property().as();
-                                propertyRepresentation.setKey(prop.getName());
-                                propertyRepresentation.setValue(value);
-                                props.add(propertyRepresentation);
-                            }
+                            ConnectionDefinition connectionDefinition = connectionAdapter.fromDMR(con.getValue());
+                            resourceAdapter.getConnectionDefinitions().add(connectionDefinition);
 
                         }
-                        ra.setProperties(props);
-
-                        resourceAdapters.add(ra);
                     }
+
+                    resourceAdapters.add(resourceAdapter);
                 }
 
                 ResourceAdapterPresenter.this.resourceAdapters = resourceAdapters;
                 getView().setAdapters(resourceAdapters);
-
             }
         });
     }
@@ -232,7 +204,7 @@ public class ResourceAdapterPresenter
 
     public void onSave(final ResourceAdapter ra, Map<String, Object> changedValues) {
 
-        AddressBinding address = raMetaData.getAddress();
+        /*AddressBinding address = raMetaData.getAddress();
         ModelNode addressModel = address.asResource(Baseadress.get(), ra.getName());
         addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
@@ -278,45 +250,7 @@ public class ResourceAdapterPresenter
                 loadAdapter();
             }
         });
-    }
-
-    private ModelNode createWriteAttributeOp(
-            ResourceAdapter ra,
-            ModelNode addressModel,
-            String attributeName, boolean value) {
-
-        ModelNode op = createBaseOp(ra, addressModel, attributeName);
-        op.get(VALUE).set(value);
-        return op;
-    }
-
-    private ModelNode createWriteAttributeOp(
-            ResourceAdapter ra,
-            ModelNode addressModel,
-            String attributeName, String value) {
-
-        ModelNode op = createBaseOp(ra, addressModel, attributeName);
-        op.get(VALUE).set(value);
-        return op;
-    }
-
-    private ModelNode createWriteAttributeOp(
-            ResourceAdapter ra,
-            ModelNode addressModel,
-            String attributeName, long value) {
-
-        ModelNode op = createBaseOp(ra, addressModel, attributeName);
-        op.get(VALUE).set(value);
-        return op;
-    }
-
-    private ModelNode createBaseOp(ResourceAdapter ra, ModelNode addressModel, String attributeName) {
-        ModelNode op = new ModelNode();
-        op.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        op.get(ADDRESS).set(addressModel.get(ADDRESS));
-        op.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-        op.get(NAME).set(attributeName);
-        return op;
+        */
     }
 
     public void launchNewAdapterWizard() {
@@ -339,58 +273,60 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
-        // disabled by default
-        ra.setEnabled(false);
+        /* ModelNode operation = new ModelNode();
+   operation.get(OP).set(COMPOSITE);
+   operation.get(ADDRESS).setEmptyList();
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(COMPOSITE);
-        operation.get(ADDRESS).setEmptyList();
+   List<ModelNode> steps = new ArrayList<ModelNode>();
 
-        List<ModelNode> steps = new ArrayList<ModelNode>();
+   if(!adapterExists(ra)) {
+       // the top level ra element. this step may fail (if exists already)
+       ModelNode createParent = new ModelNode();
+       createParent.get(OP).set(ADD);
+       createParent.get(ADDRESS).set(Baseadress.get());
+       createParent.get(ADDRESS).add("subsystem","resource-adapters");
+       createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
+       createParent.get("archive").set(ra.getArchive());
+       createParent.get("transaction-support").set(ra.getTransactionSupport());
 
-        if(!adapterExists(ra)) {
-            // the top level ra element. this step may fail (if exists already)
-            ModelNode createParent = new ModelNode();
-            createParent.get(OP).set(ADD);
-            createParent.get(ADDRESS).set(Baseadress.get());
-            createParent.get(ADDRESS).add("subsystem","resource-adapters");
-            createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
-            createParent.get("archive").set(ra.getArchive());
-            createParent.get("transaction-support").set(ra.getTransactionSupport());
+       steps.add(createParent);
+   }
 
-            steps.add(createParent);
-        }
+   // the specific connection definition
+   ModelNode createConnection = new ModelNode();
+   createConnection.get(OP).set(ADD);
+   createConnection.get(ADDRESS).set(Baseadress.get());
+   createConnection.get(ADDRESS).add("subsystem", "resource-adapters");
+   createConnection.get(ADDRESS).add("resource-adapter", ra.getArchive());
+   createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+   createConnection.get("jndi-name").set(ra.getJndiName());
+   createConnection.get("class-name").set(ra.getConnectionClass());
+   createConnection.get("enabled").set(ra.isEnabled());
 
-        // the specific connection definition
-        ModelNode createConnection = new ModelNode();
-        createConnection.get(OP).set(ADD);
-        createConnection.get(ADDRESS).set(Baseadress.get());
-        createConnection.get(ADDRESS).add("subsystem", "resource-adapters");
-        createConnection.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-        createConnection.get("jndi-name").set(ra.getJndiName());
-        createConnection.get("class-name").set(ra.getConnectionClass());
-        createConnection.get("enabled").set(ra.isEnabled());
+   steps.add(createConnection);
 
-        steps.add(createConnection);
+   // connection properties
 
-        // connection properties
+   for(PropertyRecord prop : ra.getProperties())
+   {
+       ModelNode createProp = new ModelNode();
+       createProp.get(OP).set(ADD);
+       createProp.get(ADDRESS).set(Baseadress.get());
+       createProp.get(ADDRESS).add("subsystem","resource-adapters");
+       createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
+       createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+       createProp.get(ADDRESS).add("config-properties", prop.getKey());
+       createProp.get("value").set(prop.getValue());
 
-        for(PropertyRecord prop : ra.getProperties())
-        {
-            ModelNode createProp = new ModelNode();
-            createProp.get(OP).set(ADD);
-            createProp.get(ADDRESS).set(Baseadress.get());
-            createProp.get(ADDRESS).add("subsystem","resource-adapters");
-            createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
-            createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-            createProp.get(ADDRESS).add("config-properties", prop.getKey());
-            createProp.get("value").set(prop.getValue());
+       steps.add(createProp);
 
-            steps.add(createProp);
+   }
+   operation.get(STEPS).set(steps);     */
 
-        }
-        operation.get(STEPS).set(steps);
+        ModelNode operation = adapter.fromEntity(ra);
+        operation.get(ADDRESS).set(raMetaData.getAddress().asResource(Baseadress.get(), ra.getName()));
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -414,19 +350,6 @@ public class ResourceAdapterPresenter
 
     }
 
-    private boolean adapterExists(ResourceAdapter ra) {
-        boolean match = false;
-        for(ResourceAdapter candidate : resourceAdapters)
-        {
-            if(candidate.getArchive().equals(ra.getArchive()))
-            {
-                match = true;
-                break;
-            }
-        }
-        return match;
-    }
-
     public void createProperty(final ResourceAdapter ra, final PropertyRecord prop) {
         closePropertyDialoge();
 
@@ -435,7 +358,7 @@ public class ResourceAdapterPresenter
         createProp.get(ADDRESS).set(Baseadress.get());
         createProp.get(ADDRESS).add("subsystem","resource-adapters");
         createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        //createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
         createProp.get(ADDRESS).add("config-properties", prop.getKey());
         createProp.get("value").set(prop.getValue());
 
@@ -468,7 +391,7 @@ public class ResourceAdapterPresenter
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem","resource-adapters");
         operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        //operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
         operation.get(ADDRESS).add("config-properties", prop.getKey());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -544,7 +467,7 @@ public class ResourceAdapterPresenter
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "resource-adapters");
         operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        //operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
 
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
@@ -596,7 +519,7 @@ public class ResourceAdapterPresenter
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "resource-adapters");
         proto.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        proto.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        //proto.get(ADDRESS).add("connection-definitions", ra.getJndiName());
 
         EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(
                 PoolConfig.class, metaData
@@ -634,6 +557,18 @@ public class ResourceAdapterPresenter
 
         onSavePoolConfig(ra, resetValues);
 
+    }
+
+    public BeanFactory getFactory() {
+        return factory;
+    }
+
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
     }
 
 

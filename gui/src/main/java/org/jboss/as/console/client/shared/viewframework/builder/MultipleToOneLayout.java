@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
 import java.util.ArrayList;
@@ -165,6 +166,10 @@ public class MultipleToOneLayout {
 
             if(masterTools!=null) panel.add(masterTools);
             panel.add(master.widget);
+
+            DefaultPager pager = new DefaultPager();
+            pager.setDisplay(master.widget);
+            panel.add(pager);
         }
 
         // -----

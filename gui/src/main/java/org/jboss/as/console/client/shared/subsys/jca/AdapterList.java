@@ -110,32 +110,9 @@ public class AdapterList {
         TextColumn<ResourceAdapter> nameColumn = new TextColumn<ResourceAdapter>() {
             @Override
             public String getValue(ResourceAdapter record) {
-                return record.getName();
+                return record.getArchive();
             }
         };
-
-        /*TextColumn<ResourceAdapter> jndiNameColumn = new TextColumn<ResourceAdapter>() {
-            @Override
-            public String getValue(ResourceAdapter record) {
-                return record.getJndiName();
-            }
-        };
-
-        Column<ResourceAdapter, ImageResource> statusColumn =
-                new Column<ResourceAdapter, ImageResource>(new ImageResourceCell()) {
-                    @Override
-                    public ImageResource getValue(ResourceAdapter ra) {
-
-                        ImageResource res = null;
-
-                        if(ra.isEnabled())
-                            res = Icons.INSTANCE.statusGreen_small();
-                        else
-                            res = Icons.INSTANCE.statusRed_small();
-
-                        return res;
-                    }
-                };  */
 
         Column<ResourceAdapter, ResourceAdapter> option = new Column<ResourceAdapter, ResourceAdapter>(
                 new TextLinkCell<ResourceAdapter>("View &rarr;", new ActionCell.Delegate<ResourceAdapter>() {
@@ -155,9 +132,6 @@ public class AdapterList {
 
         table.addColumn(nameColumn, "Archive");
         table.addColumn(option, "Option");
-
-
-
 
         // -------
 
