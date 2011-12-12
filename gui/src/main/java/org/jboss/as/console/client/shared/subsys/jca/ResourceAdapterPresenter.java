@@ -75,6 +75,7 @@ public class ResourceAdapterPresenter
     private EntityAdapter<ResourceAdapter> adapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
     public interface MyProxy extends Proxy<ResourceAdapterPresenter>, Place {
@@ -589,6 +590,22 @@ public class ResourceAdapterPresenter
                 Console.info("Success: Add connection definition");
                 loadAdapter(true);
 
+            }
+        });
+
+    }
+
+    public void onSaveConnection(ConnectionDefinition entity, Map<String, Object> changedValues) {
+
+        ModelNode address = connectionMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, entity.getJndiName());
+        ModelNode operation = connectionAdapter.fromChangeset(changedValues, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Update connection definition");
+                loadAdapter(true);
             }
         });
 

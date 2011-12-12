@@ -40,7 +40,7 @@ public class AdapterConnectionDetails {
                 new FormToolStrip.FormCallback<ConnectionDefinition>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        //presenter.onSave(form.getEditedEntity(), form.getChangedValues());
+                        presenter.onSaveConnection(form.getEditedEntity(), form.getChangedValues());
                     }
 
                     @Override
@@ -69,6 +69,7 @@ public class AdapterConnectionDetails {
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "resource-adapters");
                         address.add("resource-adapter", "*");
+                        address.add("connection-definitions", "*");
                         return address;
                     }
                 }, form
