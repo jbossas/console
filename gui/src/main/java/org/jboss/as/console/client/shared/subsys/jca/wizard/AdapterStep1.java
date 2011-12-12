@@ -43,13 +43,26 @@ public class AdapterStep1 {
         // TODO: https://issues.jboss.org/browse/AS7-1346
         //TextBoxItem nameItem = new TextBoxItem("name", "Name");
 
-        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
+         TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
+            @Override
+            public boolean validate(String value) {
+
+                boolean isSet = value!=null && !value.isEmpty();
+                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
+                return isSet&&validPrefix;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
+            }
+        };
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);
         txItem.setValueMap(new String[]{"NoTransaction", "LocalTransaction", "XATransaction"});
 
-        form.setFields(archiveItem, jndiItem, classItem, txItem);
+        form.setFields(archiveItem, jndiName, classItem, txItem);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
