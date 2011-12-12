@@ -21,11 +21,11 @@ import org.jboss.dmr.client.ModelNode;
  * @author Heiko Braun
  * @date 7/20/11
  */
-public class AdapterStep1 {
+public class ConnectionStep1 {
 
     NewAdapterWizard parent;
 
-    public AdapterStep1(NewAdapterWizard parent) {
+    public ConnectionStep1(NewAdapterWizard parent) {
         this.parent = parent;
     }
 
@@ -87,8 +87,8 @@ public class AdapterStep1 {
                     @Override
                     public void onClick(ClickEvent event) {
                         FormValidation validation = form.validate();
-                        if(!validation.hasErrors())
-                            parent.onCompleteStep1(form.getUpdatedEntity());
+                        //if(!validation.hasErrors())
+                           // parent.onCompleteStep1(form.getUpdatedEntity());
                     }
                 },
 

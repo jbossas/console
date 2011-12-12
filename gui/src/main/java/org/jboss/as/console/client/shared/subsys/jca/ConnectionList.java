@@ -53,7 +53,7 @@ public class ConnectionList {
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewAdapterWizard();
+                presenter.launchNewConnectionWizard();
             }
         }));
 
@@ -70,7 +70,7 @@ public class ConnectionList {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed) {
-                                    //presenter.onDelete(selection);
+                                    presenter.onDeleteConnection(selection);
                                 }
                             }
                         });
@@ -193,7 +193,7 @@ public class ConnectionList {
     public void setAdapter(ResourceAdapter adapter) {
         this.currentAdapter = adapter;
 
-        headline.setText("Resource Adapter: "+adapter.getName());
+        headline.setText("Resource Adapter: "+adapter.getArchive());
 
         List<ConnectionDefinition> connections = adapter.getConnectionDefinitions();
         dataProvider.setList(connections);

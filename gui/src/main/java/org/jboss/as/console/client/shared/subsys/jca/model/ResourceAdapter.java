@@ -14,16 +14,12 @@ import java.util.List;
 @Address("/subsystem=resource-adapters/resource-adapter={0}")
 public interface ResourceAdapter {
 
-    @Binding(detypedName= "archive")
-    String getName();
-    void setName(String name);
+    String getArchive();
+    void setArchive(String archive);
 
     @Binding(detypedName = "transaction-support")
     String getTransactionSupport();
     void setTransactionSupport(String txSupport);
-
-    String getArchive();
-    void setArchive(String archive);
 
     @Binding(skip = true)
     List<PropertyRecord> getProperties();

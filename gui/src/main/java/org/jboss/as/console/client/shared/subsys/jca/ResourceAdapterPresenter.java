@@ -66,11 +66,11 @@ public class ResourceAdapterPresenter
     private ApplicationMetaData metaData;
 
     private BeanMetaData raMetaData;
+    private BeanMetaData connectionMetaData;
     private String selectedAdapter;
 
     private EntityAdapter<ConnectionDefinition> connectionAdapter;
     private EntityAdapter<ResourceAdapter> adapter;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -98,6 +98,7 @@ public class ResourceAdapterPresenter
         this.metaData = propertyMetaData;
 
         this.raMetaData = metaData.getBeanMetaData(ResourceAdapter.class);
+        this.connectionMetaData = metaData.getBeanMetaData(ConnectionDefinition.class);
 
         adapter  = new EntityAdapter<ResourceAdapter>(ResourceAdapter.class, metaData);
         connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
@@ -191,9 +192,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.deleted("resource adapter "+ra.getName()));
+                    Console.info(Console.MESSAGES.deleted("resource adapter "+ra.getArchive()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getName()), result.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getArchive()), result.toString());
 
                 loadAdapter();
             }
@@ -272,58 +273,11 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
-        /* ModelNode operation = new ModelNode();
-   operation.get(OP).set(COMPOSITE);
-   operation.get(ADDRESS).setEmptyList();
-
-   List<ModelNode> steps = new ArrayList<ModelNode>();
-
-   if(!adapterExists(ra)) {
-       // the top level ra element. this step may fail (if exists already)
-       ModelNode createParent = new ModelNode();
-       createParent.get(OP).set(ADD);
-       createParent.get(ADDRESS).set(Baseadress.get());
-       createParent.get(ADDRESS).add("subsystem","resource-adapters");
-       createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
-       createParent.get("archive").set(ra.getArchive());
-       createParent.get("transaction-support").set(ra.getTransactionSupport());
-
-       steps.add(createParent);
-   }
-
-   // the specific connection definition
-   ModelNode createConnection = new ModelNode();
-   createConnection.get(OP).set(ADD);
-   createConnection.get(ADDRESS).set(Baseadress.get());
-   createConnection.get(ADDRESS).add("subsystem", "resource-adapters");
-   createConnection.get(ADDRESS).add("resource-adapter", ra.getArchive());
-   createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-   createConnection.get("jndi-name").set(ra.getJndiName());
-   createConnection.get("class-name").set(ra.getConnectionClass());
-   createConnection.get("enabled").set(ra.isEnabled());
-
-   steps.add(createConnection);
-
-   // connection properties
-
-   for(PropertyRecord prop : ra.getProperties())
-   {
-       ModelNode createProp = new ModelNode();
-       createProp.get(OP).set(ADD);
-       createProp.get(ADDRESS).set(Baseadress.get());
-       createProp.get(ADDRESS).add("subsystem","resource-adapters");
-       createProp.get(ADDRESS).add("resource-adapter", ra.getArchive());
-       createProp.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-       createProp.get(ADDRESS).add("config-properties", prop.getKey());
-       createProp.get("value").set(prop.getValue());
-
-       steps.add(createProp);
-
-   }
-   operation.get(STEPS).set(steps);     */
+        ModelNode addressModel = raMetaData.getAddress().asResource(Baseadress.get(), ra.getArchive());
 
         ModelNode operation = adapter.fromEntity(ra);
-        operation.get(ADDRESS).set(raMetaData.getAddress().asResource(Baseadress.get(), ra.getName()));
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(addressModel.get(ADDRESS).asObject());
 
         System.out.println(operation);
 
@@ -570,5 +524,26 @@ public class ResourceAdapterPresenter
         return placeManager;
     }
 
+    public void launchNewConnectionWizard() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void onDeleteConnection(ConnectionDefinition selection) {
+        ModelNode operation = connectionMetaData.getAddress().asResource(
+                Baseadress.get(),
+                selectedAdapter, selection.getJndiName()
+        );
+
+        operation.get(OP).set(REMOVE);
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Removed connection definition");
+                loadAdapter();
+                getView().setSelectedAdapter(selectedAdapter);
+
+            }
+        });
+    }
 
 }

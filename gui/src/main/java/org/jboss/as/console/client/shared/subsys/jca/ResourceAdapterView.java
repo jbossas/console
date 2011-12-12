@@ -66,7 +66,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         else{
             for(ResourceAdapter adapter : adapters)
             {
-                if(adapter.getName().equals(selectedAdapter))
+                if(adapter.getArchive().equals(selectedAdapter))
                 {
                     connectionList.setAdapter(adapter);
                     break;

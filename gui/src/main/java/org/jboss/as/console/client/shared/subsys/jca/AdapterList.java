@@ -69,7 +69,7 @@ public class AdapterList {
 
                 Feedback.confirm(
                         Console.MESSAGES.deleteTitle("resource adapter"),
-                        Console.MESSAGES.deleteConfirm("resource adapter " + selection.getName()),
+                        Console.MESSAGES.deleteConfirm("resource adapter " + selection.getArchive()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -111,12 +111,19 @@ public class AdapterList {
             }
         };
 
+        TextColumn<ResourceAdapter> numberConnections = new TextColumn<ResourceAdapter>() {
+            @Override
+            public String getValue(ResourceAdapter record) {
+                return String.valueOf(record.getConnectionDefinitions().size());
+            }
+        };
+
         Column<ResourceAdapter, ResourceAdapter> option = new Column<ResourceAdapter, ResourceAdapter>(
                 new TextLinkCell<ResourceAdapter>("View &rarr;", new ActionCell.Delegate<ResourceAdapter>() {
                     @Override
                     public void execute(ResourceAdapter selection) {
                         presenter.getPlaceManager().revealPlace(
-                                new PlaceRequest(NameTokens.ResourceAdapterPresenter).with("name", selection.getName())
+                                new PlaceRequest(NameTokens.ResourceAdapterPresenter).with("name", selection.getArchive())
                         );
                     }
                 })
@@ -128,6 +135,7 @@ public class AdapterList {
         };
 
         table.addColumn(nameColumn, "Archive");
+        table.addColumn(numberConnections, "Connection Def.");
         table.addColumn(option, "Option");
 
         // -------
@@ -166,7 +174,7 @@ public class AdapterList {
 
         // ----
 
-        TextItem nameItem = new TextItem("name", "Name");
+        TextItem nameItem = new TextItem("archive", "Archive");
 
         ComboBoxItem txItem = new ComboBoxItem("transactionSupport", "TX");
         txItem.setDefaultToFirstOption(true);

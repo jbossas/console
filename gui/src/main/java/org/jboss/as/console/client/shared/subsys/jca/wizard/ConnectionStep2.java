@@ -21,14 +21,14 @@ import java.util.List;
  * @author Heiko Braun
  * @date 7/20/11
  */
-public class AdapterStep2 implements PropertyManagement {
+public class ConnectionStep2 implements PropertyManagement {
 
     private NewAdapterWizard parent;
     private PropertyEditor propEditor;
     private List<PropertyRecord> properties;
     private BeanFactory factory = GWT.create(BeanFactory.class);
 
-    public AdapterStep2(NewAdapterWizard parent) {
+    public ConnectionStep2(NewAdapterWizard parent) {
         this.parent = parent;
         this.properties = new ArrayList<PropertyRecord>();
     }
@@ -78,7 +78,7 @@ public class AdapterStep2 implements PropertyManagement {
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                parent.onCompleteStep2(properties);
+                //parent.onCompleteStep2(properties);
             }
         };
 
