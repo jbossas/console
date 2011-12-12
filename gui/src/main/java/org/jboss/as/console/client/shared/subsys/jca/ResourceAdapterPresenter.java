@@ -325,6 +325,7 @@ public class ResourceAdapterPresenter
     public void onCreateAdapter(final ResourceAdapter ra) {
         closeDialoge();
 
+        // disabled by default
         ra.setEnabled(false);
 
         ModelNode operation = new ModelNode();
@@ -341,7 +342,7 @@ public class ResourceAdapterPresenter
             createParent.get(ADDRESS).add("subsystem","resource-adapters");
             createParent.get(ADDRESS).add("resource-adapter", ra.getArchive());
             createParent.get("archive").set(ra.getArchive());
-            createParent.get("transaction-support").set(ra.getArchive());
+            createParent.get("transaction-support").set(ra.getTransactionSupport());
 
             steps.add(createParent);
         }
@@ -355,6 +356,7 @@ public class ResourceAdapterPresenter
         createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
         createConnection.get("jndi-name").set(ra.getJndiName());
         createConnection.get("class-name").set(ra.getConnectionClass());
+        createConnection.get("enabled").set(ra.isEnabled());
 
         steps.add(createConnection);
 
