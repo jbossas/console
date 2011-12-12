@@ -21,13 +21,13 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 7/19/11
  */
-public class AdapterDetails {
+public class AdapterConnectionDetails {
 
     private VerticalPanel layout;
     private Form<ResourceAdapter> form;
     private ResourceAdapterPresenter presenter;
 
-    public AdapterDetails(final ResourceAdapterPresenter presenter) {
+    public AdapterConnectionDetails(final ResourceAdapterPresenter presenter) {
 
         this.presenter = presenter;
 

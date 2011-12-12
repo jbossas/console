@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -64,6 +65,7 @@ public class ResourceAdapterPresenter
     private ApplicationMetaData metaData;
 
     private BeanMetaData raMetaData;
+    private String selectedAdapter;
 
     public BeanFactory getFactory() {
         return factory;
@@ -71,6 +73,10 @@ public class ResourceAdapterPresenter
 
     public void closePropertyDialoge() {
         propertyWindow.hide();
+    }
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
     }
 
 
@@ -82,8 +88,9 @@ public class ResourceAdapterPresenter
     public interface MyView extends View {
         void setPresenter(ResourceAdapterPresenter presenter);
         void setAdapters(List<ResourceAdapter> adapters);
-        void setEnabled(boolean b);
         void setPoolConfig(String name, PoolConfig poolConfig);
+
+        void setSelectedAdapter(String selectedAdapter);
     }
 
     @Inject
@@ -106,6 +113,13 @@ public class ResourceAdapterPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        this.selectedAdapter = request.getParameter("name", null);
+        if(selectedAdapter !=null)
+            getView().setSelectedAdapter(selectedAdapter);
     }
 
     private void loadAdapter() {
@@ -351,7 +365,7 @@ public class ResourceAdapterPresenter
         ModelNode createConnection = new ModelNode();
         createConnection.get(OP).set(ADD);
         createConnection.get(ADDRESS).set(Baseadress.get());
-        createConnection.get(ADDRESS).add("subsystem","resource-adapters");
+        createConnection.get(ADDRESS).add("subsystem", "resource-adapters");
         createConnection.get(ADDRESS).add("resource-adapter", ra.getArchive());
         createConnection.get(ADDRESS).add("connection-definitions", ra.getJndiName());
         createConnection.get("jndi-name").set(ra.getJndiName());

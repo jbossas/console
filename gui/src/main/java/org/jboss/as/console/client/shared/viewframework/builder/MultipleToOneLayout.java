@@ -153,7 +153,10 @@ public class MultipleToOneLayout {
             panel.add(headlineWidget);
         }
 
-        panel.add(new HTML(description));
+        if(null==description)
+            panel.add(new HTML("DESCRIPTION"));
+        else
+            panel.add(new HTML(description));
 
         if(master !=null)
         {

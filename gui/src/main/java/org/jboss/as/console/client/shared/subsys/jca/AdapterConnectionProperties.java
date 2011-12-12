@@ -11,13 +11,13 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
  * @author Heiko Braun
  * @date 7/19/11
  */
-public class AdapterConfigProperties implements PropertyManagement {
+public class AdapterConnectionProperties implements PropertyManagement {
 
     private ResourceAdapterPresenter presenter;
     private PropertyEditor propertyEditor;
     private ResourceAdapter currentSelection;
 
-    public AdapterConfigProperties(ResourceAdapterPresenter presenter) {
+    public AdapterConnectionProperties(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
     }
 
