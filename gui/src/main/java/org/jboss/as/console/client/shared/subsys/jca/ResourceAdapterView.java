@@ -1,9 +1,12 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
+import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -15,10 +18,12 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -126,8 +131,26 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
             }
         };
 
+        Column<ResourceAdapter, ImageResource> statusColumn =
+                       new Column<ResourceAdapter, ImageResource>(new ImageResourceCell()) {
+                           @Override
+                           public ImageResource getValue(ResourceAdapter ra) {
+
+                               ImageResource res = null;
+
+                               if(ra.isEnabled())
+                                   res = Icons.INSTANCE.statusGreen_small();
+                               else
+                                   res = Icons.INSTANCE.statusRed_small();
+
+                               return res;
+                           }
+                       };
+
+
         table.addColumn(nameColumn, "Name");
         table.addColumn(jndiNameColumn, "JNDI Name");
+        table.addColumn(statusColumn, "Enabled?");
 
 
         vpanel.add(table);

@@ -203,8 +203,10 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
 
-    public void onCreateNewDatasource(final DataSource datasource) {
+    public void onCreateDatasource(final DataSource datasource) {
         window.hide();
+
+        datasource.setEnabled(false);
 
         dataSourceStore.createDataSource(datasource, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
@@ -307,8 +309,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
 
-    public void onCreateNewXADatasource(final XADataSource updatedEntity) {
+    public void onCreateXADatasource(final XADataSource updatedEntity) {
         window.hide();
+
+        updatedEntity.setEnabled(false);
+
         dataSourceStore.createXADataSource(updatedEntity, new SimpleCallback<ResponseWrapper<Boolean>>() {
             @Override
             public void onSuccess(ResponseWrapper<Boolean> response) {

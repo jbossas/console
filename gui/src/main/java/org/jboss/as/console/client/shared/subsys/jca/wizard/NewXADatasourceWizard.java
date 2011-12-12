@@ -116,7 +116,7 @@ public class NewXADatasourceWizard {
 
         updatedEntity.setPoolName(baseAttributes.getName()+"_Pool");
 
-        presenter.onCreateNewXADatasource(updatedEntity);
+        presenter.onCreateXADatasource(updatedEntity);
     }
 
     public void onConfigureProperties(List<PropertyRecord> properties) {

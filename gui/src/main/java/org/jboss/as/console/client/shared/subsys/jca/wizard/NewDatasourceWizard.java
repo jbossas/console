@@ -108,7 +108,7 @@ public class NewDatasourceWizard {
 
         updatedEntity.setPoolName(baseAttributes.getName()+"_Pool");
 
-        presenter.onCreateNewDatasource(updatedEntity);
+        presenter.onCreateDatasource(updatedEntity);
     }
 
     public List<JDBCDriver> getDrivers() {
