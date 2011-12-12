@@ -368,7 +368,7 @@ public class ServerGroupPresenter
 
         ModelNode address = new ModelNode();
         address.add("server-group", groupName);
-        address.add("system-property", prop.getValue());
+        address.add("system-property", prop.getKey());
 
         CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
         cmd.execute(prop, new SimpleCallback<Boolean>() {
