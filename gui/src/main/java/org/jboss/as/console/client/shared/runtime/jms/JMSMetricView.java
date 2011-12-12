@@ -18,17 +18,19 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
 
     private JMSMetricPresenter presenter;
     private TopicMetrics topicMetrics;
+    private QueueMetrics queueMetrics;
 
     @Override
     public Widget createWidget() {
 
         this.topicMetrics = new TopicMetrics(presenter);
+        this.queueMetrics= new QueueMetrics(presenter);
 
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         tabLayoutpanel.add(topicMetrics.asWidget(), "Topics");
-        tabLayoutpanel.add(new HTML("TODO"), "Queues");
+        tabLayoutpanel.add(queueMetrics.asWidget(), "Queues");
 
         tabLayoutpanel.selectTab(0);
 
