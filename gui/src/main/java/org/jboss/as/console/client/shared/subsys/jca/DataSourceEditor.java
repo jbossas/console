@@ -33,7 +33,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.widgets.forms.FormEditor;
@@ -44,12 +43,9 @@ import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -63,6 +59,8 @@ public class DataSourceEditor {
     private PoolConfigurationView poolConfig;
     private ConnectionProperties connectionProps ;
     private FormEditor<DataSource> securityEditor;
+    private DataSourceValidationEditor validationEditor;
+    private DataSourceConnectionEditor connectionEditor;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -159,6 +157,29 @@ public class DataSourceEditor {
 
         bottomPanel.add(details.asWidget(), "Attributes");
 
+         // -----------------
+
+        final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+                DataSource ds = getCurrentSelection();
+                presenter.onSaveDSDetails(ds.getName(), changeset);
+            }
+
+            @Override
+            public void onDelete(DataSource entity) {
+                // n/a
+            }
+        };
+
+        connectionEditor = new DataSourceConnectionEditor(formCallback);
+        connectionEditor.getForm().bind(dataSourceTable.getCellTable());
+        bottomPanel.add(connectionEditor.asWidget(), "Connection");
+
+        securityEditor = new DataSourceSecurityEditor(formCallback);
+        securityEditor.getForm().bind(dataSourceTable.getCellTable());
+        bottomPanel.add(securityEditor.asWidget(), "Security");
+
         // -----------------
 
         connectionProps = new ConnectionProperties(presenter);
@@ -183,28 +204,9 @@ public class DataSourceEditor {
 
         // ----
 
-        ModelNode helpAddress = new ModelNode();
-        helpAddress.get(ADDRESS).set(Baseadress.get());
-        helpAddress.get(ADDRESS).add("subsystem", "datasources");
-        helpAddress.get(ADDRESS).add("datasource", "*");
-
-        final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
-            @Override
-            public void onSave(Map<String, Object> changeset) {
-                DataSource ds = getCurrentSelection();
-                presenter.onSaveDSDetails(ds.getName(), changeset);
-            }
-
-            @Override
-            public void onDelete(DataSource entity) {
-                // n/a
-            }
-        };
-
-        securityEditor = new DataSourceSecurityEditor(formCallback);
-
-        securityEditor.getForm().bind(dataSourceTable.getCellTable());
-        bottomPanel.add(securityEditor.asWidget(), "Security");
+        validationEditor = new DataSourceValidationEditor(formCallback);
+        validationEditor.getForm().bind(dataSourceTable.getCellTable());
+        bottomPanel.add(validationEditor.asWidget(), "Validation");
 
         bottomPanel.selectTab(0);
 

@@ -125,16 +125,7 @@ public class DataSourceDetails {
         StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
 
-        TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
-
-        TextBoxItem userItem = new TextBoxItem("username", "Username");
-        PasswordBoxItem passwordItem = new PasswordBoxItem("password", "Password");
-
-        CheckBoxItem jtaItem = new CheckBoxItem("jta", "Use JTA?");
-        CheckBoxItem ccmItem = new CheckBoxItem("ccm", "Use CCM?");
-
-        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, urlItem, BlankItem.INSTANCE, jtaItem,  ccmItem);
-
+        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem);
 
         form.setEnabled(false); // currently not editable
 
