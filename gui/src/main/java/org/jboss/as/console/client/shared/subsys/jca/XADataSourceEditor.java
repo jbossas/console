@@ -264,6 +264,11 @@ public class XADataSourceEditor implements PropertyManagement {
             public void onResetPoolConfig(String parentName, PoolConfig entity) {
                 presenter.onDeletePoolConfig(parentName, entity, true);
             }
+
+            @Override
+            public void onDoFlush(String editedName) {
+                presenter.onDoFlush(true, editedName);
+            }
         });
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");

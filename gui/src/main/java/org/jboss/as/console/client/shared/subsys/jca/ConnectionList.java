@@ -18,7 +18,6 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
-import org.jboss.as.console.client.shared.subsys.jca.wizard.NewConnectionWizard;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -246,5 +245,10 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
     @Override
     public void onResetPoolConfig(String parentName, PoolConfig entity) {
         presenter.onDeletePoolConfig(getCurrentSelection(), entity);
+    }
+
+    @Override
+    public void onDoFlush(String editedName) {
+        presenter.onDoFlush(getCurrentSelection());
     }
 }

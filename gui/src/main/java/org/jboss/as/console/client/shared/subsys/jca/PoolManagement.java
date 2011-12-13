@@ -13,4 +13,6 @@ public interface PoolManagement {
     public void onSavePoolConfig(final String parentName, Map<String, Object> changeset);
 
     public void onResetPoolConfig(final String parentName, PoolConfig entity);
+
+    void onDoFlush(String editedName);
 }

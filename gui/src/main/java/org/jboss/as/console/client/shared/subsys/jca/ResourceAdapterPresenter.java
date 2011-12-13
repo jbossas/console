@@ -822,5 +822,25 @@ public class ResourceAdapterPresenter
         });
     }
 
+    public void onDoFlush(ConnectionDefinition entity) {
+
+        ModelNode operation = connectionMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, entity.getJndiName());
+
+        operation.get(OP).set("flush-all-connection-in-pool");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                if(response.isFailure())
+                    Console.error("Failed to flush pool", response.getFailureDescription());
+                else
+                    Console.info("Success: flush pool");
+            }
+        });
+    }
 
 }

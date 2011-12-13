@@ -547,7 +547,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         dataSourceStore.deleteConnectionProperty(reference, prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean success) {
-               if(success)
+                if(success)
                     Console.info("Success: Removed connection property "+prop.getKey());
                 else
                     Console.error("Failed: Removing connection property " + prop.getKey());
@@ -586,4 +586,17 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     public void closePropertyDialoge() {
         propertyWindow.hide();
     }
+
+    public void onDoFlush(boolean isXA, String editedName) {
+        dataSourceStore.doFlush(isXA, editedName, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if(success)
+                    Console.info("Success: Flush pool");
+                else
+                    Console.error("Error: Failed to flush pool");
+            }
+        });
+    }
+
 }

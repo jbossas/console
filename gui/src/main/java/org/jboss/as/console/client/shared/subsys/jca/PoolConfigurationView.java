@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -10,6 +12,7 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -64,7 +67,14 @@ public class PoolConfigurationView {
         // disable "reset" functionality
         toolStrip.providesDeleteOp(false);
 
-
+        toolStrip.addToolButtonRight(
+                new ToolButton("Flush", new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        management.onDoFlush(editedName);
+                    }
+                })
+        );
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
             @Override

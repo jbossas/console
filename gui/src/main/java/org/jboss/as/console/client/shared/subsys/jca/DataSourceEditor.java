@@ -197,6 +197,11 @@ public class DataSourceEditor {
             public void onResetPoolConfig(String parentName, PoolConfig entity) {
                 presenter.onDeletePoolConfig(parentName, entity, false);
             }
+
+            @Override
+            public void onDoFlush(String editedName) {
+                presenter.onDoFlush(false, editedName);
+            }
         });
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");

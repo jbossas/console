@@ -31,10 +31,10 @@ import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.KeyAssignment;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -86,6 +86,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         this.xadsMetaData = metaData.getBeanMetaData(XADataSource.class);
         this.poolMetaData = metaData.getBeanMetaData(PoolConfig.class);
     }
+
 
     @Override
     public void loadDataSources(final AsyncCallback<List<DataSource>> callback) {
@@ -402,6 +403,30 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse result) {
 
                 callback.onSuccess(ModelAdapter.wrapBooleanResponse(result));
+            }
+        });
+    }
+
+    @Override
+    public void doFlush(boolean xa, String name, final AsyncCallback<Boolean> callback) {
+        String parentAddress = xa ? "xa-data-source" : "data-source";
+        AddressBinding address = poolMetaData.getAddress();
+
+        ModelNode operation = address.asResource(baseadress.getAdress(), parentAddress, name);
+        operation.get(OP).set("flush-all-connection-in-pool");
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                callback.onSuccess(!response.isFailure());
             }
         });
     }
