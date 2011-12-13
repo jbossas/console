@@ -114,7 +114,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     protected void onReset() {
         super.onReset();
 
-        loadRegularDataSources();
+        loadDataSources();
         loadXADataSources();
 
         if(!hasBeenRevealed)
@@ -133,7 +133,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         super.onReveal();
     }
 
-    private void loadRegularDataSources() {
+    private void loadDataSources() {
         dataSourceStore.loadDataSources(new SimpleCallback<List<DataSource>>() {
             @Override
             public void onSuccess(List<DataSource> result) {
@@ -214,7 +214,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
                     Console.info(Console.MESSAGES.added("datasource ")+ datasource.getName());
-                    loadRegularDataSources();
+                    loadDataSources();
                 }
                 else
                     Console.error(Console.MESSAGES.addingFailed("datasource " + datasource.getName()), result.getResponse().toString());
@@ -243,7 +243,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     Console.error(Console.MESSAGES.deletionFailed("datasource ") + entity.getName());
                 }
 
-                loadRegularDataSources();
+                loadDataSources();
             }
         });
     }
@@ -259,7 +259,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     Console.error(Console.MESSAGES.modificationFailed("datasource ") + entity.getName(), result.getResponse().toString());
                 }
 
-                loadRegularDataSources();
+                loadDataSources();
             }
         });
     }
@@ -281,7 +281,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     else
                         Console.error(Console.MESSAGES.saveFailed("datasource ") + name, response.getResponse().toString());
 
-                    loadRegularDataSources();
+                    loadDataSources();
                 }
 
             });

@@ -22,8 +22,6 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -35,17 +33,23 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
+import org.jboss.as.console.client.widgets.forms.FormEditor;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -58,6 +62,7 @@ public class DataSourceEditor {
     private DataSourceDetails details;
     private PoolConfigurationView poolConfig;
     private ConnectionProperties connectionProps ;
+    private FormEditor<DataSource> securityEditor;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -174,6 +179,33 @@ public class DataSourceEditor {
         });
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");
+
+
+        // ----
+
+        ModelNode helpAddress = new ModelNode();
+        helpAddress.get(ADDRESS).set(Baseadress.get());
+        helpAddress.get(ADDRESS).add("subsystem", "datasources");
+        helpAddress.get(ADDRESS).add("datasource", "*");
+
+        final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+                DataSource ds = getCurrentSelection();
+                presenter.onSaveDSDetails(ds.getName(), changeset);
+            }
+
+            @Override
+            public void onDelete(DataSource entity) {
+                // n/a
+            }
+        };
+
+        securityEditor = new DataSourceSecurityEditor(formCallback);
+
+        securityEditor.getForm().bind(dataSourceTable.getCellTable());
+        bottomPanel.add(securityEditor.asWidget(), "Security");
+
         bottomPanel.selectTab(0);
 
         // -----------------
@@ -184,6 +216,11 @@ public class DataSourceEditor {
         return layout;
     }
 
+
+    private DataSource getCurrentSelection() {
+        DataSource ds = ((SingleSelectionModel<DataSource>) dataSourceTable.getCellTable().getSelectionModel()).getSelectedObject();
+        return ds;
+    }
 
     public void updateDataSources(List<DataSource> datasources) {
 

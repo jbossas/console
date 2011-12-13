@@ -40,16 +40,32 @@ public interface DataSource {
     boolean isEnabled();
     void setEnabled(boolean isEnabled);
 
+    @Binding(detypedName = "pool-name")
+    String getPoolName();
+    void setPoolName(String name);
+
+    // --
+
+    @Binding(detypedName = "transaction-isolation")
+    String getTransactionIsolation();
+    void setTransactionIsolation(String isolationLevel);
+
+    @Binding(detypedName = "new-connection-sql")
+    String getConnectionSql();
+    void setConnectionSql(String sql);
+
+    // --
+
+    @Binding(detypedName = "security-domain")
+    String getSecurityDomain();
+    void setSecurityDomain(String domain);
+
     @Binding(detypedName = "user-name")
     String getUsername();
     void setUsername(String user);
 
     String getPassword();
     void setPassword(String password);
-
-    @Binding(detypedName = "pool-name")
-    String getPoolName();
-    void setPoolName(String name);
 
     // regular DS attributes below
 
@@ -64,6 +80,48 @@ public interface DataSource {
     @Binding(detypedName = "driver-name")
     String getDriverName();
     void setDriverName(String driver);
+
+    // --
+
+    @Binding(detypedName = "valid-connection-checker-class-name")
+    String getValidConnectionChecker();
+    void setValidConnectionChecker(String name);
+
+    @Binding(detypedName = "check-valid-connection-sql")
+    String getCheckValidSql();
+    void setCheckValidSql(String sql);
+
+    @Binding(detypedName = "background-validation")
+    boolean isBackgroundValidation();
+    void setBackgroundValidation(boolean b);
+
+    @Binding(detypedName = "background-validation-millis")
+    long getBackgroundValidationMillis();
+    void setBackgroundValidationMillis(long millis);
+
+    @Binding(detypedName = "validate-on-match")
+    boolean isValidateOnMatch();
+    void setValidateOnMatch(boolean b);
+
+    @Binding(detypedName = "stale-connection-checker-class-name")
+    String getStaleConnectionChecker();
+    void setStaleConnectionChecker(String name);
+
+    @Binding(detypedName = "exception-sorter-class-name")
+    String getExceptionSorter();
+    void setExceptionSorter(String name);
+
+    // --
+
+    @Binding(detypedName = "prepared-statements-cache-size")
+    long getPrepareStatementCacheSize();
+    void setPrepareStatementCacheSize(long size);
+
+    @Binding(detypedName = "share-prepared-statements")
+    boolean isSharePreparedStatements();
+    void setSharePreparedStatements(boolean b);
+
+    // --
 
     boolean isJta();
     void setJta(boolean b);

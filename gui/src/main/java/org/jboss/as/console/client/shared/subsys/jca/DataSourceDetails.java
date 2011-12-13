@@ -29,6 +29,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
@@ -132,8 +133,7 @@ public class DataSourceDetails {
         CheckBoxItem jtaItem = new CheckBoxItem("jta", "Use JTA?");
         CheckBoxItem ccmItem = new CheckBoxItem("ccm", "Use CCM?");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, jtaItem,  ccmItem);
-        form.setFieldsInGroup("Connection", new DisclosureGroupRenderer(), userItem, passwordItem, urlItem);
+        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, urlItem, BlankItem.INSTANCE, jtaItem,  ccmItem);
 
 
         form.setEnabled(false); // currently not editable
