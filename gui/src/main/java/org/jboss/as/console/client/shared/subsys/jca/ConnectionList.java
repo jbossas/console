@@ -221,7 +221,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("connection definition"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("configuration properties"));
         window.setWidth(480);
         window.setHeight(360);
 

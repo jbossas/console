@@ -76,7 +76,8 @@ public class ResourceAdapterPresenter
     private EntityAdapter<ResourceAdapter> adapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
     private EntityAdapter<PoolConfig> poolAdapter;
-     private EntityAdapter<AdminObject> adminAdapter;
+    private EntityAdapter<AdminObject> adminAdapter;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -193,7 +194,7 @@ public class ResourceAdapterPresenter
                         {
                             ModelNode adminModel = admin.getValue();
                             AdminObject adminObject = adminAdapter.fromDMR(adminModel);
-
+                            adminObject.setName(admin.getName()); // just to make sure
                             List<PropertyRecord> adminConfig = parseConfigProperties(adminModel);
                             adminObject.setProperties(adminConfig);
 
@@ -716,4 +717,38 @@ public class ResourceAdapterPresenter
         });
     }
 
+    public void onCreateAdminProperty(AdminObject entity, PropertyRecord prop) {
+        ModelNode operation = raMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter);
+        operation.get(ADDRESS).add("admin-objects", entity.getName());
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Added config property");
+                loadAdapter(true);
+            }
+        });
+    }
+
+    public void onRemoveAdminProperty(AdminObject entity, PropertyRecord prop) {
+        ModelNode operation = raMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter);
+        operation.get(ADDRESS).add("admin-objects", entity.getName());
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Remove config property");
+                loadAdapter(true);
+            }
+        });
+    }
 }

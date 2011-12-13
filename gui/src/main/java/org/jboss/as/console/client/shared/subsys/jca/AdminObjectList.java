@@ -14,6 +14,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
@@ -49,6 +50,10 @@ public class AdminObjectList implements PropertyManagement {
     private PropertyEditor configProperties;
     private HTML headline;
     private DefaultWindow window;
+
+    public AdminObjectList(ResourceAdapterPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
         ToolStrip topLevelTools = new ToolStrip();
@@ -207,27 +212,37 @@ public class AdminObjectList implements PropertyManagement {
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-
+        closePropertyDialoge();
+        presenter.onCreateAdminProperty(getCurrentSelection(), prop);
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-
+        presenter.onRemoveAdminProperty(getCurrentSelection(), prop);
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-
+        // not possible
     }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("configuration properties"));
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.setWidget(
+                new NewPropertyWizard(this, "").asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     @Override
     public void closePropertyDialoge() {
-
+        window.hide();
     }
 
     public void setAdapter(ResourceAdapter adapter) {

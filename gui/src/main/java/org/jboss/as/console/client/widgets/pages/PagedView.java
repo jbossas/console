@@ -91,6 +91,10 @@ public class PagedView {
         callbacks.add(callback);
     }
 
+    public int getPage() {
+        return deck.getVisibleWidget();
+    }
+
     public interface PageCallback {
         void onRevealPage(int index);
     }

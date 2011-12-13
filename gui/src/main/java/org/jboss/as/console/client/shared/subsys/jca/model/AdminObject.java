@@ -11,6 +11,10 @@ import java.util.List;
  */
 public interface AdminObject {
 
+    @Binding(skip=true)
+    String getName();
+    void setName(String name);
+
     @Binding(detypedName = "jndi-name")
     String getJndiName();
     void setJndiName(String name);

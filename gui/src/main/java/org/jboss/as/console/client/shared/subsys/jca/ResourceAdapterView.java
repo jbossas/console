@@ -41,7 +41,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
         this.adapterList = new AdapterList(presenter);
         this.connectionList = new ConnectionList(presenter);
-        this.adminObjects = new AdminObjectList();
+        this.adminObjects = new AdminObjectList(presenter);
 
         panel.addPage("&larr; Back to Overview", adapterList.asWidget());
         panel.addPage("Connection Definitions", connectionList.asWidget());
@@ -62,6 +62,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     @Override
     public void setSelectedAdapter(String selectedAdapter) {
 
+
         if(null==selectedAdapter)
         {
             panel.showPage(0);
@@ -77,7 +78,9 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
                 }
             }
 
-             panel.showPage(1);
+            // move to first page if still showing overview
+            if(0==panel.getPage())
+                panel.showPage(1);
         }
     }
 
