@@ -3,10 +3,13 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
 
@@ -61,7 +64,7 @@ public class AdapterSecurity {
                 new FormToolStrip.FormCallback<ConnectionDefinition>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveConnectionSecurity(form.getEditedEntity(), changeset);
+                        presenter.onSaveConnection(form.getEditedEntity(), changeset);
                     }
 
                     @Override
@@ -74,6 +77,22 @@ public class AdapterSecurity {
         tools.providesDeleteOp(false);
 
         layout.add(tools.asWidget());
+
+
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "resource-adapters");
+                        address.add("resource-adapter", "*");
+                        address.add("connection-definitions", "*");
+                        return address;
+                    }
+                }, form
+        );
+        layout.add(helpPanel.asWidget());
+
         layout.add(form.asWidget());
         return layout;
     }

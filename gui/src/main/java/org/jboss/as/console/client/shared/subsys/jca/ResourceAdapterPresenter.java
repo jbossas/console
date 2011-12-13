@@ -687,9 +687,4 @@ public class ResourceAdapterPresenter
         });
     }
 
-    public void onSaveConnectionSecurity(ConnectionDefinition entity, Map<String, Object> changeset) {
-        onSaveConnection(entity, changeset);
-    }
-
-
 }
