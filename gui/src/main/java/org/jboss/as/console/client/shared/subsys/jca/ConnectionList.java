@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 12/12/11
  */
-public class ConnectionList implements PropertyManagement {
+public class ConnectionList implements PropertyManagement, PoolManagement {
 
     private ResourceAdapterPresenter presenter;
     private ResourceAdapter currentAdapter;
@@ -47,6 +47,7 @@ public class ConnectionList implements PropertyManagement {
     private AdapterValidation validationConfig;
     private HTML headline;
     private DefaultWindow window;
+
 
     public ConnectionList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -150,29 +151,19 @@ public class ConnectionList implements PropertyManagement {
             }
         });
 
-        poolConfig = new PoolConfigurationView(new PoolManagement() {
-            @Override
-            public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
-                //presenter.onSavePoolConfig(getCurrentSelection(), changeset);
-            }
-
-            @Override
-            public void onResetPoolConfig(String parentName, PoolConfig entity) {
-                //presenter.onDeletePoolConfig(getCurrentSelection(), entity);
-            }
-        });
+        poolConfig = new PoolConfigurationView(this);
 
 
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ConnectionDefinition selectedObject = getCurrentSelection();
-                //presenter.loadPoolConfig(selectedObject);
+                poolConfig.updateFrom(selectedObject.getJndiName(), selectedObject.getPoolConfig());
             }
         });
 
-        // ----
 
+        // ----
 
         headline = new HTML("HEADLINE");
         headline.setStyleName("content-header-label");
@@ -185,6 +176,7 @@ public class ConnectionList implements PropertyManagement {
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", connectionDetails.asWidget())
                 .addDetail("Properties", connectionProperties.asWidget())
+                .addDetail("Pool", poolConfig.asWidget())
                 .addDetail("Security", securityConfig.asWidget())
                 .addDetail("Validation", validationConfig.asWidget());
 
@@ -241,5 +233,15 @@ public class ConnectionList implements PropertyManagement {
     @Override
     public void closePropertyDialoge() {
         window.hide();
+    }
+
+    @Override
+    public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
+        presenter.onSavePoolConfig(getCurrentSelection(), changeset);
+    }
+
+    @Override
+    public void onResetPoolConfig(String parentName, PoolConfig entity) {
+        presenter.onDeletePoolConfig(getCurrentSelection(), entity);
     }
 }

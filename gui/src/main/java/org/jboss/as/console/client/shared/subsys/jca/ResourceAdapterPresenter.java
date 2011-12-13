@@ -37,6 +37,7 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.KeyAssignment;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.ModelNodeUtil;
@@ -73,6 +74,7 @@ public class ResourceAdapterPresenter
     private EntityAdapter<ConnectionDefinition> connectionAdapter;
     private EntityAdapter<ResourceAdapter> adapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
+    private EntityAdapter<PoolConfig> poolAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -105,6 +107,7 @@ public class ResourceAdapterPresenter
         adapter  = new EntityAdapter<ResourceAdapter>(ResourceAdapter.class, metaData);
         connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
         propertyAdapter = new EntityAdapter<PropertyRecord>(PropertyRecord.class, metaData);
+        poolAdapter = new EntityAdapter<PoolConfig>(PoolConfig.class, metaData);
     }
 
     @Override
@@ -157,8 +160,21 @@ public class ResourceAdapterPresenter
                         {
                             ModelNode connectionModel = con.getValue();
                             ConnectionDefinition connectionDefinition = connectionAdapter.fromDMR(connectionModel);
+
+                            // config properties
                             List<PropertyRecord> connectionProps = parseConfigProperties(connectionModel);
                             connectionDefinition.setProperties(connectionProps);
+
+                            // pool
+                            PoolConfig poolConfig = poolAdapter.with(new KeyAssignment() {
+                                @Override
+                                public Object valueForKey(String key) {
+                                    //return connectionModel.get("");
+                                    return "";
+                                }
+                            }).fromDMR(connectionModel);
+                            connectionDefinition.setPoolConfig(poolConfig);
+
                             resourceAdapter.getConnectionDefinitions().add(connectionDefinition);
 
                         }
@@ -445,73 +461,15 @@ public class ResourceAdapterPresenter
         propertyWindow.center();
     }
 
-
-    public void loadPoolConfig(final ResourceAdapter ra) {
-
-
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "resource-adapters");
-        operation.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        //operation.get(ADDRESS).add("connection-definitions", ra.getJndiName());
-
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(INCLUDE_RUNTIME).set(Boolean.TRUE);
-
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Console.error("Failed to load RA pool config", caught.getMessage());
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
-
-                ModelNode payload = response.get(RESULT).asObject();
-
-                PoolConfig poolConfig = factory.poolConfig().as();
-
-                if(payload.hasDefined("max-pool-size"))
-                    poolConfig.setMaxPoolSize(payload.get("max-pool-size").asInt());
-                else
-                    poolConfig.setMaxPoolSize(-1);
-
-                if(payload.hasDefined("min-pool-size"))
-                    poolConfig.setMinPoolSize(payload.get("min-pool-size").asInt());
-                else
-                    poolConfig.setMinPoolSize(-1);
-
-                if(payload.hasDefined("pool-prefill"))
-                    poolConfig.setPoolPrefill(payload.get("pool-prefill").asBoolean());
-                else
-                    poolConfig.setPoolPrefill(false);
-
-                if(payload.hasDefined("pool-use-strict-min"))
-                    poolConfig.setPoolStrictMin(payload.get("pool-use-strict-min").asBoolean());
-                else
-                    poolConfig.setPoolStrictMin(false);
-
-                //getView().setPoolConfig(ra.getArchive(), poolConfig);
-            }
-        });
-    }
-
-    public void onSavePoolConfig(final ResourceAdapter ra, Map<String, Object> changeset) {
+    public void onSavePoolConfig(final ConnectionDefinition connection, Map<String, Object> changeset) {
 
         ModelNode proto = new ModelNode();
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "resource-adapters");
-        proto.get(ADDRESS).add("resource-adapter", ra.getArchive());
-        //proto.get(ADDRESS).add("connection-definitions", ra.getJndiName());
+        proto.get(ADDRESS).add("resource-adapter", selectedAdapter);
+        proto.get(ADDRESS).add("connection-definitions", connection.getJndiName());
 
-        EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(
-                PoolConfig.class, metaData
-        );
-
-        ModelNode operation = adapter.fromChangeset(changeset, proto);
+        ModelNode operation = poolAdapter.fromChangeset(changeset, proto);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -527,14 +485,14 @@ public class ResourceAdapterPresenter
                 if(response.getUnderlying())
                     Console.info(Console.MESSAGES.saved("pool settings"));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ra.getArchive()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ connection.getJndiName()), response.getResponse().toString());
 
-                loadPoolConfig(ra);
+                loadAdapter(true);
             }
         });
     }
 
-    public void onDeletePoolConfig(final ResourceAdapter ra, PoolConfig entity) {
+    public void onDeletePoolConfig(final ConnectionDefinition ra, PoolConfig entity) {
         Map<String, Object> resetValues = new HashMap<String, Object>();
         resetValues.put("minPoolSize", 0);
         resetValues.put("maxPoolSize", 20);

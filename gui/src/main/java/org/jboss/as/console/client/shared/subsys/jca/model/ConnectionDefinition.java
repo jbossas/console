@@ -47,4 +47,8 @@ public interface ConnectionDefinition {
     @Binding(skip = true)
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> props);
+
+    @Binding(skip = true)
+    PoolConfig getPoolConfig();
+    void setPoolConfig(PoolConfig pool);
 }
