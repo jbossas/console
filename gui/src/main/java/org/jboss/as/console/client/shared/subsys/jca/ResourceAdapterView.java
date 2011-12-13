@@ -22,6 +22,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
     private AdapterList adapterList;
     private List<ResourceAdapter> adapters;
     private ConnectionList connectionList;
+    private AdminObjectList adminObjects;
 
     @Override
     public void setPresenter(ResourceAdapterPresenter presenter) {
@@ -40,9 +41,11 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
 
         this.adapterList = new AdapterList(presenter);
         this.connectionList = new ConnectionList(presenter);
+        this.adminObjects = new AdminObjectList();
 
         panel.addPage("&larr; Back to Overview", adapterList.asWidget());
         panel.addPage("Connection Definitions", connectionList.asWidget());
+        panel.addPage("Admin Objects", adminObjects.asWidget()) ;
 
         // default page
         panel.showPage(0);
@@ -69,6 +72,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
                 if(adapter.getArchive().equals(selectedAdapter))
                 {
                     connectionList.setAdapter(adapter);
+                    adminObjects.setAdapter(adapter);
                     break;
                 }
             }

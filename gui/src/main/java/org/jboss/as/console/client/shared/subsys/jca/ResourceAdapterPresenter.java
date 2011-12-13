@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.jca.model.AdminObject;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -75,6 +76,7 @@ public class ResourceAdapterPresenter
     private EntityAdapter<ResourceAdapter> adapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
     private EntityAdapter<PoolConfig> poolAdapter;
+     private EntityAdapter<AdminObject> adminAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -108,6 +110,7 @@ public class ResourceAdapterPresenter
         connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
         propertyAdapter = new EntityAdapter<PropertyRecord>(PropertyRecord.class, metaData);
         poolAdapter = new EntityAdapter<PoolConfig>(PoolConfig.class, metaData);
+        adminAdapter = new EntityAdapter<AdminObject>(AdminObject.class, metaData);
     }
 
     @Override
@@ -119,8 +122,6 @@ public class ResourceAdapterPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         this.selectedAdapter = request.getParameter("name", null);
-        if(selectedAdapter !=null)
-            getView().setSelectedAdapter(selectedAdapter);
     }
 
     private void loadAdapter(final boolean refreshDetail) {
@@ -178,14 +179,42 @@ public class ResourceAdapterPresenter
                             resourceAdapter.getConnectionDefinitions().add(connectionDefinition);
 
                         }
+
                     }
 
+
+                    // admin objects
+                    if(raModel.hasDefined("admin-objects"))
+                    {
+                        List<Property> admins = raModel.get("admin-objects").asPropertyList();
+                        List<AdminObject> adminEntities = new ArrayList<AdminObject>(admins.size());
+
+                        for(Property admin : admins)
+                        {
+                            ModelNode adminModel = admin.getValue();
+                            AdminObject adminObject = adminAdapter.fromDMR(adminModel);
+
+                            List<PropertyRecord> adminConfig = parseConfigProperties(adminModel);
+                            adminObject.setProperties(adminConfig);
+
+                            adminEntities.add(adminObject);
+                        }
+
+                        resourceAdapter.setAdminObjects(adminEntities);
+                    }
+                    else
+                    {
+                        resourceAdapter.setAdminObjects(Collections.EMPTY_LIST);
+                    }
+
+
+                    // append result
                     resourceAdapters.add(resourceAdapter);
                 }
 
                 getView().setAdapters(resourceAdapters);
 
-                if(refreshDetail && selectedAdapter!=null)
+                if(refreshDetail)
                     getView().setSelectedAdapter(selectedAdapter);
             }
         });
@@ -217,7 +246,7 @@ public class ResourceAdapterPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        loadAdapter(false);
+        loadAdapter(true);
     }
 
     @Override

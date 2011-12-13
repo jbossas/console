@@ -28,4 +28,9 @@ public interface ResourceAdapter {
     @Binding(skip = true)
     void setConnectionDefinitions(List<ConnectionDefinition> connections);
     List<ConnectionDefinition> getConnectionDefinitions();
+
+    @Binding(skip=true)
+    List<AdminObject> getAdminObjects();
+    void setAdminObjects(List<AdminObject> admins);
+
 }
