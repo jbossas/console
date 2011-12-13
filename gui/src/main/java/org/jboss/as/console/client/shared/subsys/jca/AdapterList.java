@@ -207,7 +207,7 @@ public class AdapterList implements PropertyManagement {
                 .setPlain(true)
                 .setTitle("Resource Adapter")
                 .setHeadline("Resource Adapter Overview")
-                .setDescription("DESCRIPTION")
+                .setDescription("Resource adapter configurations.")
                 .setMaster("Registered Resource Adapter", table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", formpanel)

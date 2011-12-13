@@ -174,6 +174,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
                 .setPlain(true)
                 .setHeadlineWidget(headline)
                 .setTitle("TITLE")
+                .setDescription("Configuration of the managed connection factories a resource adapter provides.")
                 .setMaster("Registered Connection Definitions", table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", connectionDetails.asWidget())
