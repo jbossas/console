@@ -159,6 +159,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
             public void onSelectionChange(SelectionChangeEvent event) {
                 ConnectionDefinition selectedObject = getCurrentSelection();
                 poolConfig.updateFrom(selectedObject.getJndiName(), selectedObject.getPoolConfig());
+                securityConfig.updateFrom(selectedObject);
             }
         });
 

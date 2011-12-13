@@ -463,6 +463,10 @@ public class ResourceAdapterPresenter
 
     public void onSavePoolConfig(final ConnectionDefinition connection, Map<String, Object> changeset) {
 
+        if(null==selectedAdapter)
+            throw new RuntimeException("selected adapter is null!");
+
+
         ModelNode proto = new ModelNode();
         proto.get(ADDRESS).set(Baseadress.get());
         proto.get(ADDRESS).add("subsystem", "resource-adapters");
@@ -682,5 +686,10 @@ public class ResourceAdapterPresenter
             }
         });
     }
+
+    public void onSaveConnectionSecurity(ConnectionDefinition entity, Map<String, Object> changeset) {
+        onSaveConnection(entity, changeset);
+    }
+
 
 }
