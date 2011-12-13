@@ -67,7 +67,7 @@ public class XADataSourceEditor implements PropertyManagement {
     private XADataSourceDetails details;
     private PropertyEditor propertyEditor;
     private PoolConfigurationView poolConfig;
-    private DataSourceConnectionEditor connectionEditor;
+    private XADataSourceConnection connectionEditor;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -215,7 +215,7 @@ public class XADataSourceEditor implements PropertyManagement {
 
 
 
-        final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
+        final FormToolStrip.FormCallback<XADataSource> formCallback = new FormToolStrip.FormCallback<XADataSource>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
                 DataSource ds = getCurrentSelection();
@@ -223,13 +223,12 @@ public class XADataSourceEditor implements PropertyManagement {
             }
 
             @Override
-            public void onDelete(DataSource entity) {
+            public void onDelete(XADataSource entity) {
                 // n/a
             }
         };
 
-        connectionEditor = new DataSourceConnectionEditor(formCallback);
-        connectionEditor.setXADisplay(true);
+        connectionEditor = new XADataSourceConnection(formCallback);
         connectionEditor.getForm().bind(dataSourceTable);
         bottomPanel.add(connectionEditor.asWidget(), "Connection");
 
@@ -240,7 +239,6 @@ public class XADataSourceEditor implements PropertyManagement {
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
             public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
-                System.out.println(">>"+changeset);
                 presenter.onSavePoolConfig(parentName, changeset, true);
             }
 
@@ -249,7 +247,6 @@ public class XADataSourceEditor implements PropertyManagement {
                 presenter.onDeletePoolConfig(parentName, entity, true);
             }
         });
-        poolConfig.setXADisplay(true);
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");
 

@@ -29,10 +29,6 @@ public class PoolConfigurationView {
         this.management = management;
     }
 
-    public void setXADisplay(boolean b) {
-        this.xaDisplay =b;
-    }
-
     Widget asWidget() {
 
         VerticalPanel panel = new VerticalPanel();
@@ -45,15 +41,8 @@ public class PoolConfigurationView {
         CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Strict Minimum");
         CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Prefill enabled");
 
-        CheckBoxItem rmOverride = new CheckBoxItem("enableRMOverride", "Same RM Override");
-        CheckBoxItem interleave = new CheckBoxItem("enableInterleave", "Interleave");
-        CheckBoxItem padXid = new CheckBoxItem("padXid", "Pad XID");
-        CheckBoxItem wrap = new CheckBoxItem("wrapXaResource", "Wrap XA");
-
         if(!xaDisplay)
             form.setFields(minCon, maxCon, strictMin, prefill);
-        else
-            form.setFields(minCon, maxCon, strictMin, prefill, rmOverride, interleave, padXid, wrap);
 
         form.setEnabled(false);
 
