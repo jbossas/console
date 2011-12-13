@@ -75,7 +75,6 @@ public class ResourceAdapterPresenter
     private EntityAdapter<ResourceAdapter> adapter;
     private EntityAdapter<PropertyRecord> propertyAdapter;
 
-
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
     public interface MyProxy extends Proxy<ResourceAdapterPresenter>, Place {
@@ -584,14 +583,42 @@ public class ResourceAdapterPresenter
     public void onCreateConnection(ConnectionDefinition connectionDefinition) {
         closeDialoge();
 
-        ModelNode operation = connectionAdapter.fromEntity(connectionDefinition);
-        operation.get(OP).set(ADD);
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode createConnectionOp = connectionAdapter.fromEntity(connectionDefinition);
+        createConnectionOp.get(OP).set(ADD);
         ModelNode addressModel = connectionMetaData.getAddress().asResource(
                 Baseadress.get(),
                 selectedAdapter,
                 connectionDefinition.getJndiName());
 
-        operation.get(ADDRESS).set(addressModel.get(ADDRESS));
+        createConnectionOp.get(ADDRESS).set(addressModel.get(ADDRESS));
+
+        steps.add(createConnectionOp);
+        // --
+
+        if(connectionDefinition.getProperties()!=null)
+        {
+
+            ModelNode createPropOp = new ModelNode();
+            createPropOp.get(OP).set(ADD);
+            createPropOp.get(ADDRESS).set(addressModel.get(ADDRESS));
+
+            for(PropertyRecord prop : connectionDefinition.getProperties())
+            {
+                createPropOp.get(ADDRESS).add("config-properties", prop.getKey());
+                createPropOp.get(VALUE).set(prop.getValue());
+            }
+
+            steps.add(createPropOp);
+        }
+
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -617,7 +644,41 @@ public class ResourceAdapterPresenter
                 loadAdapter(true);
             }
         });
+    }
+
+    public void onCreateConnectionProperty(ConnectionDefinition connection, PropertyRecord prop) {
+        ModelNode operation = connectionMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, connection.getJndiName());
+
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Added connection property");
+                loadAdapter(true);
+            }
+        });
 
     }
+
+    public void onDeleteConnectionProperty(ConnectionDefinition connection, PropertyRecord prop) {
+        ModelNode operation = connectionMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, connection.getJndiName());
+
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Remove connection property");
+                loadAdapter(true);
+            }
+        });
+    }
+
 
 }

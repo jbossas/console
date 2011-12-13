@@ -12,16 +12,19 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.NewConnectionWizard;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
@@ -43,6 +46,7 @@ public class ConnectionList implements PropertyManagement {
     private AdapterSecurity securityConfig;
     private AdapterValidation validationConfig;
     private HTML headline;
+    private DefaultWindow window;
 
     public ConnectionList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -96,20 +100,20 @@ public class ConnectionList implements PropertyManagement {
         };
 
         Column<ConnectionDefinition, ImageResource> statusColumn =
-                       new Column<ConnectionDefinition, ImageResource>(new ImageResourceCell()) {
-                           @Override
-                           public ImageResource getValue(ConnectionDefinition ra) {
+                new Column<ConnectionDefinition, ImageResource>(new ImageResourceCell()) {
+                    @Override
+                    public ImageResource getValue(ConnectionDefinition ra) {
 
-                               ImageResource res = null;
+                        ImageResource res = null;
 
-                               if(ra.isEnabled())
-                                   res = Icons.INSTANCE.statusGreen_small();
-                               else
-                                   res = Icons.INSTANCE.statusRed_small();
+                        if(ra.isEnabled())
+                            res = Icons.INSTANCE.statusGreen_small();
+                        else
+                            res = Icons.INSTANCE.statusRed_small();
 
-                               return res;
-                           }
-                       };
+                        return res;
+                    }
+                };
 
 
         table.addColumn(nameColumn, "JNDI Name");
@@ -206,26 +210,36 @@ public class ConnectionList implements PropertyManagement {
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        closePropertyDialoge();
+        presenter.onCreateConnectionProperty(getCurrentSelection(), prop);
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        presenter.onDeleteConnectionProperty(getCurrentSelection(), prop);
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // not possible
     }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        window = new DefaultWindow(Console.MESSAGES.createTitle("connection definition"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewPropertyWizard(this, "").asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
     @Override
     public void closePropertyDialoge() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        window.hide();
     }
 }

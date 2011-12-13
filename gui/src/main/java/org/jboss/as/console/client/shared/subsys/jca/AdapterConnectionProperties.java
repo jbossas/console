@@ -17,7 +17,6 @@ public class AdapterConnectionProperties  {
 
     private ResourceAdapterPresenter presenter;
     private PropertyEditor propertyEditor;
-    private ResourceAdapter currentSelection;
     private PropertyManagement delegate;
 
     public AdapterConnectionProperties(ResourceAdapterPresenter presenter, PropertyManagement delegate) {
