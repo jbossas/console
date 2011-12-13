@@ -71,7 +71,7 @@ public class SubsystemMetaData {
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Datasources", "datasources"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Resource Adapters", "resource-adapters"));
         groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Connector", "connector",Boolean.TRUE));
-        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Mail", "mail"));
+        groups.get(CONNECTOR).getItems().add(new SubsystemGroupItem("Mail", "mail", Boolean.TRUE));
 
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet/HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
