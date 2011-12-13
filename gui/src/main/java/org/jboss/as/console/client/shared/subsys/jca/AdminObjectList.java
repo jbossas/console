@@ -61,7 +61,7 @@ public class AdminObjectList implements PropertyManagement {
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewConnectionWizard();
+                presenter.launchNewAdminWizard();
             }
         }));
 
@@ -72,14 +72,14 @@ public class AdminObjectList implements PropertyManagement {
                 final AdminObject selection = getCurrentSelection();
 
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("connection definition"),
-                        Console.MESSAGES.deleteConfirm("connection definition" + selection.getJndiName()),
+                        Console.MESSAGES.deleteTitle("admin object"),
+                        Console.MESSAGES.deleteConfirm("admin object" + selection.getJndiName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                /*if (isConfirmed) {
-                                    presenter.onDeleteConnection(selection);
-                                } */
+                                if (isConfirmed) {
+                                    presenter.onRemoveAdmin(selection);
+                                }
                             }
                         });
             }
@@ -136,7 +136,7 @@ public class AdminObjectList implements PropertyManagement {
         form.setNumColumns(2);
 
         TextItem jndiItem = new TextItem("jndiName", "JNDI");
-        TextBoxItem classItem = new TextBoxItem("adminClass", "Admin Class");
+        TextBoxItem classItem = new TextBoxItem("adminClass", "Class Name");
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
 
         form.setFields(jndiItem, classItem, enabled);
@@ -148,12 +148,12 @@ public class AdminObjectList implements PropertyManagement {
                 form, new FormToolStrip.FormCallback<AdminObject>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+                presenter.onSaveAdmin(getCurrentSelection(), changeset);
             }
 
             @Override
             public void onDelete(AdminObject entity) {
-
+                   // not possible
             }
         }
         );

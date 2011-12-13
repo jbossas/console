@@ -33,6 +33,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdapterWizard;
+import org.jboss.as.console.client.shared.subsys.jca.wizard.NewAdminWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewConnectionWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -77,7 +78,6 @@ public class ResourceAdapterPresenter
     private EntityAdapter<PropertyRecord> propertyAdapter;
     private EntityAdapter<PoolConfig> poolAdapter;
     private EntityAdapter<AdminObject> adminAdapter;
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -751,4 +751,76 @@ public class ResourceAdapterPresenter
             }
         });
     }
+
+    public void onSaveAdmin(AdminObject entity, Map<String, Object> changeset) {
+        ModelNode addressModel = raMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter);
+        addressModel.get(ADDRESS).add("admin-objects", entity.getName());
+
+        ModelNode operation = adminAdapter.fromChangeset(changeset, addressModel);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Update admin object");
+                loadAdapter(true);
+            }
+        });
+    }
+
+    public void launchNewAdminWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("admin object"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewAdminWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onCreateAdmin(AdminObject entity) {
+
+        closeDialoge();
+
+        if(null==entity.getName())
+            entity.setName(entity.getJndiName());
+
+        ModelNode addressModel = raMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter);
+        addressModel.get(ADDRESS).add("admin-objects", entity.getName());
+
+        ModelNode operation = adminAdapter.fromEntity(entity);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(addressModel.get(ADDRESS).asObject());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Create admin object");
+                loadAdapter(true);
+            }
+        });
+    }
+
+    public void onRemoveAdmin(AdminObject entity) {
+        ModelNode operation = raMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter);
+        operation.get(ADDRESS).add("admin-objects", entity.getName());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Remove admin object");
+                loadAdapter(true);
+            }
+        });
+    }
+
+
 }
