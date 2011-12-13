@@ -629,6 +629,10 @@ public class ResourceAdapterPresenter
     }
 
     public void onDeleteConnectionProperty(ConnectionDefinition connection, PropertyRecord prop) {
+
+        if(null==selectedAdapter)
+            throw new RuntimeException("selected adapter is null!");
+
         ModelNode operation = connectionMetaData.getAddress().asResource(
                 Baseadress.get(), selectedAdapter, connection.getJndiName());
 
