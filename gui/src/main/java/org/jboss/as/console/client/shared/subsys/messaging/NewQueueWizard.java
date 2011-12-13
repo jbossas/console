@@ -53,7 +53,20 @@ public class NewQueueWizard {
 
 
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndi = new TextBoxItem("jndiName", "JNDI");
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
+            @Override
+            public boolean validate(String value) {
+
+                boolean isSet = value!=null && !value.isEmpty();
+                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
+                return isSet&&validPrefix;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
+            }
+        };
 
         CheckBoxItem durable = new CheckBoxItem("durable", "Durable?");
         TextBoxItem selector = new TextBoxItem("selector", "Selector")
@@ -64,7 +77,7 @@ public class NewQueueWizard {
             }
         };
 
-        form.setFields(name, jndi, durable, selector);
+        form.setFields(name, jndiName, durable, selector);
 
 
         final FormHelpPanel helpPanel = new FormHelpPanel(

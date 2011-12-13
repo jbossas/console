@@ -52,9 +52,22 @@ public class NewTopicWizard {
 
 
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndi = new TextBoxItem("jndiName", "JNDI");
+        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
+            @Override
+            public boolean validate(String value) {
 
-        form.setFields(name, jndi);
+                boolean isSet = value!=null && !value.isEmpty();
+                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
+                return isSet&&validPrefix;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
+            }
+        };
+
+        form.setFields(name, jndiName);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
