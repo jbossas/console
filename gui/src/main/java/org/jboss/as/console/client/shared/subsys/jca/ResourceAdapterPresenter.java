@@ -64,7 +64,6 @@ public class ResourceAdapterPresenter
     private DefaultWindow window;
     private DefaultWindow propertyWindow;
 
-    private List<ResourceAdapter> resourceAdapters;
     private ApplicationMetaData metaData;
 
     private BeanMetaData raMetaData;
@@ -142,8 +141,12 @@ public class ResourceAdapterPresenter
                 for(Property child : children)
                 {
                     ModelNode raModel = child.getValue();
-                    //System.out.println(raModel);
+
                     ResourceAdapter resourceAdapter = adapter.fromDMR(raModel);
+
+                    List<PropertyRecord> props = parseConfigProperties(raModel);
+                    resourceAdapter.setProperties(props);
+
                     resourceAdapter.setConnectionDefinitions(new ArrayList<ConnectionDefinition>());
 
                     // connection definition
@@ -154,27 +157,8 @@ public class ResourceAdapterPresenter
                         {
                             ModelNode connectionModel = con.getValue();
                             ConnectionDefinition connectionDefinition = connectionAdapter.fromDMR(connectionModel);
-
-
-                            // connection properties
-                            if(connectionModel.hasDefined("config-properties"))
-                            {
-                                List<Property> model = connectionModel.get("config-properties").asPropertyList();
-                                List<PropertyRecord> properties = new ArrayList<PropertyRecord>(model.size());
-                                for(Property prop : model)
-                                {
-                                    PropertyRecord record = propertyAdapter.fromDMR(prop.getValue());
-                                    record.setKey(prop.getName());
-                                    properties.add(record);
-                                }
-
-                                connectionDefinition.setProperties(properties);
-                            }
-                            else
-                            {
-                                connectionDefinition.setProperties(Collections.EMPTY_LIST);
-                            }
-
+                            List<PropertyRecord> connectionProps = parseConfigProperties(connectionModel);
+                            connectionDefinition.setProperties(connectionProps);
                             resourceAdapter.getConnectionDefinitions().add(connectionDefinition);
 
                         }
@@ -183,13 +167,35 @@ public class ResourceAdapterPresenter
                     resourceAdapters.add(resourceAdapter);
                 }
 
-                ResourceAdapterPresenter.this.resourceAdapters = resourceAdapters;
                 getView().setAdapters(resourceAdapters);
 
                 if(refreshDetail && selectedAdapter!=null)
                     getView().setSelectedAdapter(selectedAdapter);
             }
         });
+    }
+
+    private List<PropertyRecord> parseConfigProperties(ModelNode modelNode) {
+
+        List<PropertyRecord> result = null;
+        // connection properties
+        if(modelNode.hasDefined("config-properties"))
+        {
+            List<Property> model = modelNode.get("config-properties").asPropertyList();
+            result = new ArrayList<PropertyRecord>(model.size());
+            for(Property prop : model)
+            {
+                PropertyRecord record = propertyAdapter.fromDMR(prop.getValue());
+                record.setKey(prop.getName());
+                result.add(record);
+            }
+        }
+        else
+        {
+            result = Collections.EMPTY_LIST;
+        }
+
+        return result;
     }
 
     @Override
@@ -657,7 +663,7 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Added connection property");
+                Console.info("Success: Added config property");
                 loadAdapter(true);
             }
         });
@@ -674,11 +680,45 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Remove connection property");
+                Console.info("Success: Remove config property");
                 loadAdapter(true);
             }
         });
     }
 
+
+    public void onCreateAdapterProperty(ResourceAdapter adapter, PropertyRecord prop) {
+        ModelNode operation = raMetaData.getAddress().asResource(
+                Baseadress.get(), adapter.getArchive());
+
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Added config property");
+                loadAdapter(false);
+            }
+        });
+
+    }
+
+    public void onRemoveAdapterProperty(ResourceAdapter adapter, PropertyRecord prop) {
+        ModelNode operation = raMetaData.getAddress().asResource(
+                Baseadress.get(), adapter.getArchive());
+
+        operation.get(ADDRESS).add("config-properties", prop.getKey());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                Console.info("Success: Remove config property");
+                loadAdapter(false);
+            }
+        });
+    }
 
 }

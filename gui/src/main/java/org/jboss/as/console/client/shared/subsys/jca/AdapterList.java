@@ -9,11 +9,16 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -27,6 +32,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
@@ -37,13 +43,15 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 12/12/11
  */
-public class AdapterList {
+public class AdapterList implements PropertyManagement {
 
     private ResourceAdapterPresenter presenter;
     private CellTable<ResourceAdapter> table;
     private ListDataProvider<ResourceAdapter> dataProvider;
 
     private Form<ResourceAdapter> form;
+    private PropertyEditor propertyEditor;
+    private DefaultWindow window;
 
     public AdapterList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -83,19 +91,6 @@ public class AdapterList {
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
-
-        //
-        //layout.add(topLevelTools);
-
-        // ----
-
-        /*VerticalPanel vpanel = new VerticalPanel();
-        vpanel.setStyleName("rhs-content-panel");
-
-        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_ra_configurations()));
-
-
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_ra_registered()));*/
 
         // -------
 
@@ -137,12 +132,6 @@ public class AdapterList {
         table.addColumn(nameColumn, "Archive");
         table.addColumn(numberConnections, "Connection Def.");
         table.addColumn(option, "Option");
-
-        // -------
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(table);
-
 
 
         // -------
@@ -201,8 +190,19 @@ public class AdapterList {
 
         form.setEnabled(false);
 
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ResourceAdapter ra = getCurrentSelection();
+                propertyEditor.setProperties("", ra.getProperties());
+            }
+        });
+
         // ----
 
+        propertyEditor = new PropertyEditor(this);
+
+        // ----
         MultipleToOneLayout layoutBuilder = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("Resource Adapter")
@@ -210,7 +210,8 @@ public class AdapterList {
                 .setDescription("DESCRIPTION")
                 .setMaster("Registered Resource Adapter", table)
                 .setMasterTools(topLevelTools.asWidget())
-                .setDetail("Resource Adapter", formpanel);
+                .addDetail("Attributes", formpanel)
+                .addDetail("Properties", propertyEditor.asWidget());
 
 
         return layoutBuilder.build();
@@ -230,7 +231,39 @@ public class AdapterList {
 
     }
 
-    public void setPoolConfig(String parent, PoolConfig poolConfig) {
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+        closePropertyDialoge();
 
+        presenter.onCreateAdapterProperty(getCurrentSelection(), prop);
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+        presenter.onRemoveAdapterProperty(getCurrentSelection(), prop);
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+        // not used
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("config properties"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewPropertyWizard(this, "").asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        window.hide();
     }
 }
