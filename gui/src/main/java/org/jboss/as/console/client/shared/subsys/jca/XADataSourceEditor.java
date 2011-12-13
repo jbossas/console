@@ -68,6 +68,8 @@ public class XADataSourceEditor implements PropertyManagement {
     private PropertyEditor propertyEditor;
     private PoolConfigurationView poolConfig;
     private XADataSourceConnection connectionEditor;
+    private DataSourceSecurityEditor securityEditor;
+    private DataSourceValidationEditor validationEditor;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -215,7 +217,7 @@ public class XADataSourceEditor implements PropertyManagement {
 
 
 
-        final FormToolStrip.FormCallback<XADataSource> formCallback = new FormToolStrip.FormCallback<XADataSource>() {
+        final FormToolStrip.FormCallback<XADataSource> xaCallback = new FormToolStrip.FormCallback<XADataSource>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
                 DataSource ds = getCurrentSelection();
@@ -228,10 +230,26 @@ public class XADataSourceEditor implements PropertyManagement {
             }
         };
 
-        connectionEditor = new XADataSourceConnection(formCallback);
+        final FormToolStrip.FormCallback<DataSource> dsCallback = new FormToolStrip.FormCallback<DataSource>() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+                DataSource ds = getCurrentSelection();
+                presenter.onSaveXADetails(ds.getName(), changeset);
+            }
+
+            @Override
+            public void onDelete(DataSource entity) {
+                // n/a
+            }
+        };
+
+        connectionEditor = new XADataSourceConnection(xaCallback);
         connectionEditor.getForm().bind(dataSourceTable);
         bottomPanel.add(connectionEditor.asWidget(), "Connection");
 
+        securityEditor = new DataSourceSecurityEditor(dsCallback);
+        securityEditor.getForm().bind(dataSourceTable);
+        bottomPanel.add(securityEditor.asWidget(), "Security");
 
         bottomPanel.add(propertyEditor.asWidget(), "Properties");
         propertyEditor.setAllowEditProps(false);
@@ -249,6 +267,10 @@ public class XADataSourceEditor implements PropertyManagement {
         });
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");
+
+        validationEditor = new DataSourceValidationEditor(dsCallback);
+        validationEditor.getForm().bind(dataSourceTable);
+        bottomPanel.add(validationEditor.asWidget(), "Validation");
 
         bottomPanel.selectTab(0);
         vpanel.add(new ContentGroupLabel("XA Datasource"));
