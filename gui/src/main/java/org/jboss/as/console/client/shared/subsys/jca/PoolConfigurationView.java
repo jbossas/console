@@ -23,9 +23,14 @@ public class PoolConfigurationView {
     private Form<PoolConfig> form;
     private String editedName = null;
     private PoolManagement management;
+    private boolean xaDisplay = false;
 
     public PoolConfigurationView(PoolManagement management) {
         this.management = management;
+    }
+
+    public void setXADisplay(boolean b) {
+        this.xaDisplay =b;
     }
 
     Widget asWidget() {
@@ -37,10 +42,19 @@ public class PoolConfigurationView {
 
         NumberBoxItem maxCon = new NumberBoxItem("maxPoolSize", "Max Pool Size");
         NumberBoxItem minCon = new NumberBoxItem("minPoolSize", "Min Pool Size");
-        CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Use Strict Min?");
-        CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Pool Prefill?");
+        CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Strict Minimum");
+        CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Prefill enabled");
 
-        form.setFields(minCon, maxCon, strictMin, prefill);
+        CheckBoxItem rmOverride = new CheckBoxItem("enableRMOverride", "Same RM Override");
+        CheckBoxItem interleave = new CheckBoxItem("enableInterleave", "Interleave");
+        CheckBoxItem padXid = new CheckBoxItem("padXid", "Pad XID");
+        CheckBoxItem wrap = new CheckBoxItem("wrapXaResource", "Wrap XA");
+
+        if(!xaDisplay)
+            form.setFields(minCon, maxCon, strictMin, prefill);
+        else
+            form.setFields(minCon, maxCon, strictMin, prefill, rmOverride, interleave, padXid, wrap);
+
         form.setEnabled(false);
 
         FormToolStrip<PoolConfig> toolStrip = new FormToolStrip<PoolConfig>(
@@ -69,7 +83,11 @@ public class PoolConfigurationView {
 
                 ModelNode address = Baseadress.get();
                 address.add("subsystem", "datasources");
-                address.add("data-source", "*");
+
+                if(xaDisplay)
+                    address.add("xa-data-source", "*");
+                else
+                    address.add("data-source", "*");
                 return address;
             }
         }, form);

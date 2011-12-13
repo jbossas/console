@@ -17,6 +17,8 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class DataSourceConnectionEditor extends FormEditor<DataSource>{
 
+    private boolean xaDisplay;
+
     public DataSourceConnectionEditor(FormToolStrip.FormCallback<DataSource> callback) {
 
         super(DataSource.class);
@@ -29,11 +31,15 @@ public class DataSourceConnectionEditor extends FormEditor<DataSource>{
         setHelpAddress(helpAddress);
     }
 
+    public void setXADisplay(boolean b) {
+        this.xaDisplay = b;
+    }
+
     @Override
     public Widget asWidget() {
 
 
-        TextBoxItem connectionSql= new TextBoxItem("ConnectionSql", "New Connection Sql") {
+        TextBoxItem connectionSql= new TextBoxItem("connectionSql", "New Connection Sql") {
             @Override
             public boolean isRequired() {
                 return false;
@@ -45,16 +51,19 @@ public class DataSourceConnectionEditor extends FormEditor<DataSource>{
         CheckBoxItem ccmItem = new CheckBoxItem("ccm", "Use CCM?");
 
         ComboBoxItem tx = new ComboBoxItem("transactionIsolation", "Transaction Isolation");
-        tx.setValueMap(new String[] {
+        tx.setValueMap(new String[]{
                 "TRANSACTION_NONE",
                 "TRANSACTION_READ_UNCOMMITTED",
                 "TRANSACTION_READ_COMMITTED",
                 "TRANSACTION_REPEATABLE_READ",
                 "TRANSACTION_SERIALIZABLE"
-                }
+        }
         );
 
-        getForm().setFields(urlItem, connectionSql, tx, BlankItem.INSTANCE, jtaItem, ccmItem);
+        if(!xaDisplay)
+            getForm().setFields(urlItem, tx, connectionSql, BlankItem.INSTANCE, jtaItem, ccmItem);
+        else
+            getForm().setFields(tx, connectionSql);
 
         return super.asWidget();
     }

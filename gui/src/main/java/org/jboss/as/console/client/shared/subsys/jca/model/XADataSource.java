@@ -52,4 +52,12 @@ public interface XADataSource extends DataSource {
     boolean isWrapXaResource();
     void setWrapXaResource(boolean b);
 
+    @Binding(detypedName = "same-rm-override")
+    boolean isEnableRMOverride();
+    void setEnableRMOverride(boolean b);
+
+    @Binding(detypedName = "interleaving")
+    boolean isEnableInterleave();
+    void setEnableInterleave(boolean b);
+
 }

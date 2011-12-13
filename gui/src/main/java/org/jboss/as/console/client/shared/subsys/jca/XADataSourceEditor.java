@@ -43,6 +43,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -66,6 +67,7 @@ public class XADataSourceEditor implements PropertyManagement {
     private XADataSourceDetails details;
     private PropertyEditor propertyEditor;
     private PoolConfigurationView poolConfig;
+    private DataSourceConnectionEditor connectionEditor;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -208,13 +210,37 @@ public class XADataSourceEditor implements PropertyManagement {
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
 
+
         bottomPanel.add(details.asWidget(), "Attributes");
+
+
+
+        final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+                DataSource ds = getCurrentSelection();
+                presenter.onSaveXADetails(ds.getName(), changeset);
+            }
+
+            @Override
+            public void onDelete(DataSource entity) {
+                // n/a
+            }
+        };
+
+        connectionEditor = new DataSourceConnectionEditor(formCallback);
+        connectionEditor.setXADisplay(true);
+        connectionEditor.getForm().bind(dataSourceTable);
+        bottomPanel.add(connectionEditor.asWidget(), "Connection");
+
+
         bottomPanel.add(propertyEditor.asWidget(), "Properties");
         propertyEditor.setAllowEditProps(false);
 
         poolConfig = new PoolConfigurationView(new PoolManagement() {
             @Override
             public void onSavePoolConfig(String parentName, Map<String, Object> changeset) {
+                System.out.println(">>"+changeset);
                 presenter.onSavePoolConfig(parentName, changeset, true);
             }
 
@@ -223,6 +249,7 @@ public class XADataSourceEditor implements PropertyManagement {
                 presenter.onDeletePoolConfig(parentName, entity, true);
             }
         });
+        poolConfig.setXADisplay(true);
 
         bottomPanel.add(poolConfig.asWidget(), "Pool");
 
@@ -245,6 +272,9 @@ public class XADataSourceEditor implements PropertyManagement {
         details.setEnabled(isEnabled);
     }
 
+    private XADataSource getCurrentSelection() {
+        return ((SingleSelectionModel<XADataSource>)dataSourceTable.getSelectionModel()).getSelectedObject();
+    }
 
     // property management below
 
