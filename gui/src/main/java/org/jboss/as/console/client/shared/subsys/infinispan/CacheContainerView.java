@@ -25,7 +25,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
@@ -82,9 +81,10 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     
     @Override
     protected FormAdapter<CacheContainer> makeAddEntityForm() {
-        Form<CacheContainer> form = new Form(DeploymentScanner.class);
+        Form<CacheContainer> form = new Form(CacheContainer.class);
         form.setNumColumns(1);
         form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
+                      // getFormMetaData().findAttribute("defaultCache").getFormItemForAdd());
         return form;
     }
 

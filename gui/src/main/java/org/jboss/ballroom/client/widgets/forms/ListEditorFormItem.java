@@ -42,6 +42,8 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
     protected NewListItemWizard newListItemWizard;
     protected List<String> availableChoices = Collections.EMPTY_LIST;
     
+    protected boolean limitChoices;
+    
     /**
      * Create a new ListEditorFormItem.
      * 
@@ -55,6 +57,7 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
      */
     public ListEditorFormItem(String name, String title, int rows, boolean limitChoices) {
         super(name, title);
+        this.limitChoices = limitChoices;
         this.listEditor = new ListEditor(this, rows);
         this.newListItemWizard = new NewListItemWizard(this, limitChoices);
     }
@@ -120,6 +123,8 @@ public class ListEditorFormItem extends FormItem<List<String>> implements ListMa
         addItemDialog.setWidget(newListItemWizard.asWidget());
         addItemDialog.setGlassEnabled(true);
         addItemDialog.center();
+        
+        if (!limitChoices) return;
         
         // create list containing only choices not yet in the list
         List<String> choicesSubset = new ArrayList<String>(this.availableChoices.size());

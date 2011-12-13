@@ -49,6 +49,18 @@ public interface LocalCache extends NamedEntity {
     public String getCacheContainer();
     public void setCacheContainer(String cacheContainerName);
     
+    // This one isn't actually a cache attribute.
+    // It is set by the console to display if it is the default cache
+    // for its cache container.
+    @Binding(detypedName="default-for-cache-container")
+    @FormItem(defaultValue="false",
+            label="Default for cache container?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public Boolean isDefault();
+    public void setDefault(Boolean isDefault);
+    
     @Binding(detypedName="controller-mode")
     @FormItem(defaultValue="LAZY",
             label="Controller Mode",

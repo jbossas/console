@@ -52,6 +52,7 @@ class EmbeddedHandlerView<T extends HasHandlers> implements SingleEntityView<T>,
         return listView;
     }
 
+    @Override
     public void updatedEntity(T entity) {
         this.editedEntity = entity;
         this.listView.setValue(entity.getHandlers());

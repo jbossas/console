@@ -56,6 +56,7 @@ public interface RootLogger extends NamedEntity, HasHandlers {
     public void setFilter(String filter);
     */
 
+    @Override
     @Binding(detypedName="handlers", 
              listType="java.lang.String")
     @FormItem(defaultValue="",
@@ -65,5 +66,6 @@ public interface RootLogger extends NamedEntity, HasHandlers {
              formItemTypeForAdd="STRING_LIST_EDITOR",
              tabName="CUSTOM")
     public List<String> getHandlers();
+    @Override
     public void setHandlers(List<String> handlers);
 }

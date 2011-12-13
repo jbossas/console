@@ -50,6 +50,20 @@ public interface InvalidationCache extends LocalCache {
     @Override
     public void setCacheContainer(String cacheContainerName);
     
+    // This one isn't actually a cache attribute.
+    // It is set by the console to display if it is the default cache
+    // for its cache container.
+    @Override
+    @Binding(detypedName="default-for-cache-container")
+    @FormItem(defaultValue="false",
+            label="Default for cache container?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public Boolean isDefault();
+    @Override
+    public void setDefault(Boolean isDefault);
+    
     @Override
     @Binding(detypedName="controller-mode")
     @FormItem(defaultValue="LAZY",

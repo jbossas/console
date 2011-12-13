@@ -51,7 +51,8 @@ public enum FormItemType {
     UNITS(new UnitsItemFactory()),
     COMBO_BOX(new ComboBoxItemFactory()),
     TIME_UNITS(new ComboBoxItemFactory(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"})),
-    STRING_LIST_EDITOR(new StringListEditorItemFactory()),
+    STRING_LIST_EDITOR(new StringListEditorItemFactory(true)), // set of list values is limited
+    UNLIMITED_STRING_LIST_EDITOR(new StringListEditorItemFactory(false)), // set of list values is unlimited
     PROPERTY_EDITOR(new PropertyEditorItemFactory());
 
     private FormItemFactory factory;
@@ -243,17 +244,19 @@ public enum FormItemType {
     
     public static class StringListEditorItemFactory implements FormItemFactory {
         private int rows;
+        private boolean limitChoices;
 
-        public StringListEditorItemFactory() {
-            this(5);
+        public StringListEditorItemFactory(boolean limitChoices) {
+            this(5, limitChoices);
         }
 
         /**
          * @param addDialogTitle The title shown when the Add button is pressed on the ListEditor.
          * @param rows The number of rows in the PropertyEditor.
          */
-        public StringListEditorItemFactory(int rows) {
+        public StringListEditorItemFactory(int rows, boolean limitChoices) {
             this.rows = rows;
+            this.limitChoices = limitChoices;
         }
 
         @Override
@@ -261,7 +264,7 @@ public enum FormItemType {
             ListEditorFormItem listEditor = new ListEditorFormItem(propBinding.getJavaName(),
                                                                    "",
                                                                    rows,
-                                                                   true);
+                                                                   limitChoices);
             listEditor.setRequired(propBinding.isRequired());
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, listEditor, observers)};
         }
