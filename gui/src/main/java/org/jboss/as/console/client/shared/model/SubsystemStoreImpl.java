@@ -71,7 +71,7 @@ public class SubsystemStoreImpl implements SubsystemStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<SubsystemRecord> records = new ArrayList<SubsystemRecord>(payload.size());

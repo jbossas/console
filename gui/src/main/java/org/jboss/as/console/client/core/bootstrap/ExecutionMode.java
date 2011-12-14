@@ -63,7 +63,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean isServer = response.get(RESULT).asString().equals("Server");
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 

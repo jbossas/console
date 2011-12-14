@@ -23,5 +23,6 @@ package org.jboss.as.console.client.shared.dispatch;
  * @author Heiko Braun
  * @date 3/17/11
  */
-public interface Result {
+public interface Result<T> {
+    public T get();
 }

@@ -104,7 +104,7 @@ public class JndiPresenter extends Presenter<JndiPresenter.MyView, JndiPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 ModelNode model = result.get(RESULT);
 
                 CellTree cellTree = null;

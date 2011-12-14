@@ -111,7 +111,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {
@@ -160,7 +160,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {
@@ -185,7 +185,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {
@@ -207,7 +207,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {

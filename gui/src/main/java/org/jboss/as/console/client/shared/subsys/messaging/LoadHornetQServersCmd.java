@@ -41,7 +41,7 @@ public class LoadHornetQServersCmd implements AsyncCommand<List<String>> {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get(RESULT).asList();
                 List<String> serverNames = new ArrayList<String>(payload.size());
                 for(ModelNode model : payload)

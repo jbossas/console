@@ -47,7 +47,7 @@ public class LoadSocketBindingsCmd implements AsyncCommand<List<SocketBinding>> 
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 ModelNode payload = response.get("result").asObject();
 
                 List<ModelNode> socketDescriptions= payload.asList();

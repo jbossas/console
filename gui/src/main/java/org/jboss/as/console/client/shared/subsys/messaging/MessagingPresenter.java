@@ -174,7 +174,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 MessagingProvider provider = providerAdapter.fromDMR(response.get(RESULT));
                 provider.setName(currentServer);
                 getView().setProviderDetails(provider);
@@ -202,7 +202,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<Property> patterns = response.get(RESULT).asPropertyList();
                 List<SecurityPattern> payload = new LinkedList<SecurityPattern>();
@@ -253,7 +253,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<AddressingPattern> addrPatterns = new ArrayList<AddressingPattern>();
                 List<Property> payload = response.get(RESULT).asPropertyList();
@@ -355,7 +355,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.added("security setting"));
@@ -404,7 +404,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("security setting"));
@@ -428,7 +428,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("address setting"));
@@ -506,7 +506,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.added("Address Setting"));
@@ -563,7 +563,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.saved("queue "+name));
@@ -604,7 +604,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.added("Queue "+entity.getName()));
@@ -635,7 +635,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("Queue " + entity.getName()));
@@ -679,7 +679,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.deleted("topic" + entity.getName()));
@@ -714,7 +714,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.saved("topic "+name));
@@ -766,7 +766,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info(Console.MESSAGES.added("topic "+entity.getName()));

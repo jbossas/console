@@ -42,7 +42,7 @@ public class DMRAction implements Action<DMRResponse> {
 
     @Override
     public Object getAddress() {
-        return "http://localhost:9990/domain-api";
+        throw new RuntimeException("Not supported");
     }
 
     @Override

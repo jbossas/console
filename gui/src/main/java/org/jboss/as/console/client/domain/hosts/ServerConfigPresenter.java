@@ -337,7 +337,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 String outcome = response.get(OUTCOME).asString();
 
                 Boolean serverIsRunning = outcome.equals(SUCCESS) ? Boolean.TRUE : Boolean.FALSE;

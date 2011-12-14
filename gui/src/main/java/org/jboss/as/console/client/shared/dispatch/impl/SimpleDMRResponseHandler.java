@@ -51,7 +51,7 @@ public class SimpleDMRResponseHandler implements AsyncCallback<DMRResponse> {
 
     @Override
     public void onSuccess(DMRResponse result) {
-        ModelNode response = ModelNode.fromBase64(result.getResponseText());
+        ModelNode response = result.get();
         boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
         if (success)
             Console.info(Console.CONSTANTS.common_label_success() + " " + operation + " " + entityName + ": " + id);

@@ -69,7 +69,7 @@ public class LoadInterfacesCmd implements AsyncCommand<List<Interface>>{
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<Property> payload = response.get(RESULT).asPropertyList();
 
                 List<Interface> interfaces = new ArrayList<Interface>(payload.size());

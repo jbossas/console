@@ -54,7 +54,7 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<Property> propList = response.get(RESULT).asPropertyList();
                 List<HttpConnector> connectors = new ArrayList<HttpConnector>(propList.size());

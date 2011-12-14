@@ -104,7 +104,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
                 List<DataSource> datasources = dataSourceAdapter.fromDMRList(response.get(RESULT).asList());
                 callback.onSuccess(datasources);
             }
@@ -122,7 +122,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
                 List<XADataSource> datasources = xaDataSourceAdapter.fromDMRList(response.get(RESULT).asList());
                 callback.onSuccess(datasources);
 
@@ -147,7 +147,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
 
                 List<Property> properties = result.get(RESULT).asPropertyList();
                 List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
@@ -186,7 +186,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                ModelNode modelNode = result.get();
                 boolean wasSuccessful = modelNode.get(OUTCOME).asString().equals(SUCCESS);
 
                 callback.onSuccess(new ResponseWrapper<Boolean>(wasSuccessful, modelNode));
@@ -315,7 +315,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode modelNode = ModelNode.fromBase64(result.getResponseText());
+                ModelNode modelNode = result.get();
                 ResponseWrapper<Boolean> response =
                         new ResponseWrapper<Boolean>(
                                 modelNode.get(OUTCOME).asString().equals(SUCCESS), modelNode
@@ -347,7 +347,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 ResponseWrapper<Boolean> wrapper =
                         new ResponseWrapper<Boolean>(response.get("outcome").asString().equals("success"), response);
@@ -357,7 +357,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
     }
 
     private boolean responseIndicatesSuccess(DMRResponse result) {
-        ModelNode response = ModelNode.fromBase64(result.getResponseText());
+        ModelNode response = result.get();
         return response.get(OUTCOME).asString().equals(SUCCESS);
     }
 
@@ -425,7 +425,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
                 callback.onSuccess(!response.isFailure());
             }
         });
@@ -451,7 +451,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 EntityAdapter<PoolConfig> adapter = new EntityAdapter<PoolConfig>(PoolConfig.class, metaData)
                         .with(new KeyAssignment() {
@@ -520,7 +520,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
 
                 ResponseWrapper<Boolean> wrapped = new ResponseWrapper<Boolean>(
                     result.get(OUTCOME).asString().equals("success"),result
@@ -548,7 +548,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
 
                 List<Property> properties = result.get(RESULT).asPropertyList();
                 List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
@@ -584,7 +584,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });
@@ -606,7 +606,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });
@@ -629,7 +629,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });
@@ -651,7 +651,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
                 callback.onSuccess(ModelAdapter.wasSuccess(result));
             }
         });

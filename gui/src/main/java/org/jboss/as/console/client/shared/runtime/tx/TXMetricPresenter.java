@@ -105,7 +105,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
 
                 TransactionManager metrics = entityAdapter.fromDMR(result.get(RESULT));
 

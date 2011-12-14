@@ -66,7 +66,7 @@ public class StandaloneDriverStrategy implements DriverStrategy {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 if(SUCCESS.equals(response.get(OUTCOME).asString())) {
 

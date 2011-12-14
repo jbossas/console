@@ -43,7 +43,7 @@ public class ModelAdapter {
 
     public static ResponseWrapper<Boolean> wrapBooleanResponse(DMRResponse response)
     {
-        ModelNode model = ModelNode.fromBase64(response.getResponseText());
+        ModelNode model = response.get();
         ResponseWrapper<Boolean> wrapper = new ResponseWrapper<Boolean>(
             model.get(OUTCOME).asString().equals(SUCCESS), model
         );

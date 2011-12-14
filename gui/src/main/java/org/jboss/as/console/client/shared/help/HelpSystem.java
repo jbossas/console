@@ -66,7 +66,7 @@ public class HelpSystem {
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 if (response.get(OUTCOME).asString().equals("success")
                         && response.hasDefined(RESULT)) {
@@ -118,7 +118,7 @@ public class HelpSystem {
            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
                @Override
                public void onSuccess(DMRResponse result) {
-                   ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                   ModelNode response = result.get();
 
                    if (response.get(OUTCOME).asString().equals("success")
                            && response.hasDefined(RESULT)) {

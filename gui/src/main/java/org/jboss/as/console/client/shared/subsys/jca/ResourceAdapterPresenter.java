@@ -138,7 +138,7 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse response) {
-                ModelNode result = ModelNode.fromBase64(response.getResponseText());
+                ModelNode result = response.get();
 
                 List<Property> children = result.get(RESULT).asPropertyList();
                 List<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>(children.size());
@@ -271,7 +271,7 @@ public class ResourceAdapterPresenter
 
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
                     Console.info(Console.MESSAGES.deleted("resource adapter "+ra.getArchive()));
                 else
@@ -320,7 +320,7 @@ public class ResourceAdapterPresenter
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
@@ -370,7 +370,7 @@ public class ResourceAdapterPresenter
 
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
                     Console.info(Console.MESSAGES.added("resource adapter " + ra.getArchive()));
                 else
@@ -404,7 +404,7 @@ public class ResourceAdapterPresenter
 
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
                     Console.info(Console.MESSAGES.added("property " + prop.getKey()));
                 else
@@ -436,7 +436,7 @@ public class ResourceAdapterPresenter
 
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
                     Console.info(Console.MESSAGES.deleted("property " + prop.getKey()));
                 else
@@ -834,7 +834,7 @@ public class ResourceAdapterPresenter
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
                 if(response.isFailure())
                     Console.error("Failed to flush pool", response.getFailureDescription());
                 else

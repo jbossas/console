@@ -114,7 +114,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
 
                 if(response.isFailure())
                 {

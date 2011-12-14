@@ -70,7 +70,7 @@ public class ProfileStoreImpl implements ProfileStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());

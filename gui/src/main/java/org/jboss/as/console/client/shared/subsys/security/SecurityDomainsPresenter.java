@@ -165,7 +165,7 @@ public class SecurityDomainsPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
                 if (res.size() == 0)
                     return;
@@ -193,7 +193,7 @@ public class SecurityDomainsPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 ModelNode model = response.get(ModelDescriptionConstants.RESULT);
 
                 loadGeneric(model, domain, AUTHORIZATION_IDENTIFIER, "policy-modules", AuthorizationPolicyProvider.class,
@@ -377,7 +377,7 @@ public class SecurityDomainsPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> resList = response.get(ModelDescriptionConstants.RESULT).asList();
                 if (resList.size() == 0)
                     return;

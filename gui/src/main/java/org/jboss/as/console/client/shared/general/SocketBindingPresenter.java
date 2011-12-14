@@ -126,7 +126,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<String> groups = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
                     Console.info("Success: Updated socket binding "+name);
                 else
@@ -194,7 +194,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
                     Console.info("Success: remove socket binding " + editedEntity.getName());
                 else
@@ -233,7 +233,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
                     Console.info("Success: Created socket binding "+socketBinding.getName());
                 else

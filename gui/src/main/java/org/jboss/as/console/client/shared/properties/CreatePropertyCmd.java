@@ -65,7 +65,7 @@ public class CreatePropertyCmd extends AddressableModelCmd implements AsyncComma
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)

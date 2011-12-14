@@ -161,7 +161,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<Property> payload = response.get(RESULT).asPropertyList();
                 List<Jvm> jvms = new ArrayList<Jvm>(payload.size());
 

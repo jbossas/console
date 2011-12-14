@@ -69,7 +69,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if (response.get("result").isDefined()) {
                     List<ModelNode> payload = response.get("result").asList();
 
@@ -116,7 +116,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if (!response.get("result").isDefined()) {
                     callback.onFailure(new Exception("Unexpected dmr result=" + response.toString()));
                 }

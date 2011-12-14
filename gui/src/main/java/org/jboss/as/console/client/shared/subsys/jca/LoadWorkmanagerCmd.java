@@ -57,7 +57,7 @@ public class LoadWorkmanagerCmd implements AsyncCommand<List<JcaWorkmanager>>{
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<Property> children = response.get(RESULT).asPropertyList();
                 List<JcaWorkmanager> managers = new ArrayList<JcaWorkmanager>(children.size());

@@ -64,7 +64,7 @@ public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncComma
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
 

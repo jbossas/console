@@ -85,7 +85,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<Host> records = new LinkedList<Host>();
@@ -123,7 +123,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<Server> records = new LinkedList<Server>();
@@ -158,7 +158,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> payload = response.get("result").asList();
 
                 List<String> records = new ArrayList<String>(payload.size());
@@ -208,7 +208,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         @Override
                         public void onSuccess(DMRResponse result) {
 
-                            ModelNode statusResponse = ModelNode.fromBase64(result.getResponseText());
+                            ModelNode statusResponse = result.get();
                             ModelNode payload = statusResponse.get("result");
 
                             ServerInstance instance = factory.serverInstance().as();
@@ -241,7 +241,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(response.get("outcome").asString().equals("success"))
                 {
                     callback.onSuccess(Boolean.TRUE);
@@ -270,7 +270,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(response.get("outcome").asString().equals("success"))
                 {
                     callback.onSuccess(Boolean.TRUE);
@@ -319,7 +319,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 System.out.println(response);
                 String outcome = response.get("outcome").asString();
@@ -349,7 +349,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
             }
         });
@@ -371,7 +371,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 String outcome = response.get("outcome").asString();
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
@@ -392,7 +392,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
 
                 List<Property> jvms = result.get(RESULT).asPropertyList();
                 if(!jvms.isEmpty())
@@ -426,7 +426,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 List<Property> properties = result.get(RESULT).asPropertyList();
                 List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
 

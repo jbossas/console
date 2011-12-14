@@ -125,7 +125,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 final ModelNode model = response.get(RESULT);
 
                 providerEntity = factory.osgiSubsystem().as();
@@ -170,7 +170,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 ModelNode model = response.get(RESULT);
 
                 List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
@@ -192,7 +192,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 ModelNode model = response.get(RESULT);
 
                 List<OSGiCapability> capabilities = new ArrayList<OSGiCapability>();
@@ -218,7 +218,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 ModelNode model = response.get(RESULT);
 
                 List<OSGiConfigAdminData> casDataList = new ArrayList<OSGiConfigAdminData>();

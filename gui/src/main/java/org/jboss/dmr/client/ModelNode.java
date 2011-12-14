@@ -45,6 +45,9 @@ import java.util.Set;
 public class ModelNode implements Cloneable {
 
     private static final long serialVersionUID = 2030456323088551487L;
+    private static final String OUTCOME = "outcome";
+    private static final String SUCCESS = "success";
+    private static final String FAILURE_DESCRIPTION = "failure-description";
 
     private boolean protect = false;
     private ModelValue value = ModelValue.UNDEFINED;
@@ -1340,11 +1343,11 @@ public class ModelNode implements Cloneable {
     }
 
     public boolean isFailure() {
-        return hasDefined("outcome") && !get("outcome").asString().equals("success");
+        return hasDefined(OUTCOME) && !get(OUTCOME).asString().equals(SUCCESS);
     }
 
     public String getFailureDescription() {
-        String desc = hasDefined("failure-description") ? get("failure-description").asString() : "No failure-description provided";
+        String desc = hasDefined(FAILURE_DESCRIPTION) ? get(FAILURE_DESCRIPTION).asString() : "No failure-description provided";
         return desc;
     }
 }

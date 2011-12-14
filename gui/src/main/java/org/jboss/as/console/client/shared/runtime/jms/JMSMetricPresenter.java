@@ -140,7 +140,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
 
                 if(response.isFailure())
                 {
@@ -195,7 +195,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
 
                 if(response.isFailure())
                 {

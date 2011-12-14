@@ -43,7 +43,7 @@ public abstract class DmrCallback implements AsyncCallback<DMRResponse> {
 
     @Override
     public void onSuccess(DMRResponse result) {
-        ModelNode response = ModelNode.fromBase64(result.getResponseText());
+        ModelNode response = result.get();
         if (response.get(OUTCOME).asString().equals(SUCCESS)) {
             onDmrSuccess(response);
         } else {

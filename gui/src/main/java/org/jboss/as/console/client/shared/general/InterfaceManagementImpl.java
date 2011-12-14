@@ -109,7 +109,7 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
                     Console.info("Success: Create interface " + entity.getName());
@@ -140,7 +140,7 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
                     Console.info("Success: Removed interface "+entity.getName());
@@ -237,7 +237,7 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
                 //System.out.println(response);
 
                 if(ModelNodeUtil.indicatesSuccess(response))

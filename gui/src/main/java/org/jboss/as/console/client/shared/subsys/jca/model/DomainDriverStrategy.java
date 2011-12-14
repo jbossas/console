@@ -115,7 +115,7 @@ public class DomainDriverStrategy implements DriverStrategy {
 
                             numResponses++;
 
-                            ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                            ModelNode response = result.get();
 
                             if(SUCCESS.equals(response.get(OUTCOME).asString())) {
 

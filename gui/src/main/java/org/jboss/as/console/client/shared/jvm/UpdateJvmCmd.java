@@ -71,7 +71,7 @@ public class UpdateJvmCmd extends AddressableModelCmd implements AsyncCommand<Bo
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)

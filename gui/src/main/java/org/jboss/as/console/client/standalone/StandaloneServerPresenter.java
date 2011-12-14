@@ -91,7 +91,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<Property> propertyList = response.get(RESULT).asPropertyList();
                 StandaloneServer server = factory.standaloneServer().as();
@@ -142,7 +142,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(response.get("outcome").asString().equals("success"))
                 {
                     Console.info("Success: Reload server");

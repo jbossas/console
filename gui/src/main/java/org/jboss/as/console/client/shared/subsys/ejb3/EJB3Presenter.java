@@ -105,7 +105,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 List<ModelNode> res = response.get(ModelDescriptionConstants.RESULT).asList();
                 if (res.size() > 0) {
                     ModelNode attrDesc = res.get(0).get(ModelDescriptionConstants.RESULT,

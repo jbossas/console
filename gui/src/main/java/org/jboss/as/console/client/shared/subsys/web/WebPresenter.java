@@ -150,7 +150,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<Property> propList = response.get(RESULT).asPropertyList();
                 List<VirtualServer> servers = new ArrayList<VirtualServer>(propList.size());
@@ -201,7 +201,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
                 ModelNode jspCfg  = config.get("jsp-configuration").asObject();
@@ -258,7 +258,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Updated connector "+name);
@@ -281,7 +281,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Removed connector " + name);
@@ -337,7 +337,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Created connector " + entity.getName());
@@ -382,7 +382,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Created virtual server " + server.getName());
@@ -434,7 +434,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Updated virtual server "+name);
@@ -462,7 +462,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Success: Delete virtual server " + name);
@@ -505,7 +505,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
                     Console.info("Success: Update JSP container configuration");

@@ -98,7 +98,7 @@ public class DomainEndpointStrategy implements EndpointStrategy {
 
                             numResponses++;
 
-                            ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                            ModelNode response = result.get();
 
                             if(SUCCESS.equals(response.get(OUTCOME).asString())) {
 

@@ -88,7 +88,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
             @Override
             public void onSuccess(DMRResponse result) {
 
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
 
                 List<ModelNode> propertyList= response.get("result").asList();
 
@@ -150,7 +150,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
                 {
                     ModelNode payload = response.get("result").asObject();
@@ -183,7 +183,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
                 {
                     List<ModelNode> payload = response.get("result").asList();
@@ -221,7 +221,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
             }
         });
@@ -246,7 +246,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 String outcome = response.get("outcome").asString();
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
@@ -270,7 +270,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 String outcome = response.get("outcome").asString();
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;
@@ -297,7 +297,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response = result.get();
                 callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
             }
         });
@@ -313,7 +313,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
 
                 List<Property> jvms = result.get(RESULT).asPropertyList();
                 if(!jvms.isEmpty())
@@ -344,7 +344,7 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode result = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode result = dmrResponse.get();
                 List<Property> properties = result.get(RESULT).asPropertyList();
                 List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
 

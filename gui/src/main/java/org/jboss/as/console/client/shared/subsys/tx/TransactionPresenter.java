@@ -94,7 +94,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
                 TransactionManager transactionManager = entityAdapter.fromDMR(response.get(RESULT));
                 getView().setTransactionManager(transactionManager);
             }
@@ -118,7 +118,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
-                ModelNode response = ModelNode.fromBase64(dmrResponse.getResponseText());
+                ModelNode response = dmrResponse.get();
                 boolean success = ModelAdapter.wasSuccess(response);
                 if(success)
                     Console.info("Success: Update transaction manager settings");

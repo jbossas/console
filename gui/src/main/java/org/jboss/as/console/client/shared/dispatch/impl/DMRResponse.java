@@ -21,12 +21,13 @@ package org.jboss.as.console.client.shared.dispatch.impl;
 
 
 import org.jboss.as.console.client.shared.dispatch.Result;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
  * @date 3/17/11
  */
-public class DMRResponse<ModelNode> implements Result {
+public class DMRResponse implements Result<ModelNode> {
     private String responseText;
     private String contentType;
 
@@ -35,7 +36,8 @@ public class DMRResponse<ModelNode> implements Result {
         this.contentType = contentType;
     }
 
-    public String getResponseText() {
-        return responseText;
+    @Override
+    public ModelNode get() {
+        return ModelNode.fromBase64(responseText);
     }
 }

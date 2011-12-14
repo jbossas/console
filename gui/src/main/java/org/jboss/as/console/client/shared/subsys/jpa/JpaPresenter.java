@@ -94,7 +94,7 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {
@@ -122,7 +122,7 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  = ModelNode.fromBase64(result.getResponseText());
+                ModelNode response  = result.get();
 
                 if(response.isFailure())
                 {
