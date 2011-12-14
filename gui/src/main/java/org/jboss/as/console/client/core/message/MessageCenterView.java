@@ -43,6 +43,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -81,7 +82,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             emptyMessage.appendHtmlConstant("</div>");
 
             MessageCell messageCell = new MessageCell();
-            messageList = new CellList<Message>(messageCell);
+            messageList = new DefaultCellList<Message>(messageCell);
             messageList.addStyleName("message-list");
             messageList.setEmptyListWidget(new HTML(emptyMessage.toSafeHtml()));
 

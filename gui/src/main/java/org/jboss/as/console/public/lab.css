@@ -64,7 +64,7 @@
 
 /* overrides */
 
- .combobox-value, .combobox-item {
+.combobox-value, .combobox-item {
     word-wrap:normal;
     white-space:nowrap;
     overflow:hidden!important;
@@ -131,17 +131,6 @@
     transition: opacity .15s ease-in-out .05s;
 }
 
-.message-notification {
-    font-size:10px;
-    white-space: nowrap;
-    text-overflow:ellipsis;
-    cursor:pointer;
-}
-
-.message-list-item-old {
-    opacity: 0.5;
-}
-
 /* celtree customizations */
 
 .cellTreeWidget {
@@ -149,15 +138,15 @@
 }
 
 .cellTreeEmptyMessage {
-  padding-left: 16px;
-  font-style: italic;
+    padding-left: 16px;
+    font-style: italic;
 }
 
 .cellTreeItem {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  cursor: hand;
-  cursor: pointer;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    cursor: hand;
+    cursor: pointer;
 }
 
 .cellTreeItem:hover {
@@ -177,9 +166,9 @@
 }
 
 .cellTreeItemValue {
-  padding-left: 3px;
-  padding-right: 3px;
-  outline: none;
+    padding-left: 3px;
+    padding-right: 3px;
+    outline: none;
 }
 
 .cellTreeOpenItem {
@@ -187,10 +176,10 @@
 }
 
 .cellTreeTopItem {
-  font-weight: bold;
-  color: #4b4a4a;
-  margin-top: 20px;
-  padding: 3px 13px 3px 10px !important;
+    font-weight: bold;
+    color: #4b4a4a;
+    margin-top: 20px;
+    padding: 3px 13px 3px 10px !important;
 }
 
 .cellTreeTopItemImage {
@@ -198,23 +187,67 @@
 }
 
 .cellTreeTopItemImageValue {
-  border-bottom: 1px solid #6f7277;
-  padding-bottom: 1px;
+    border-bottom: 1px solid #6f7277;
+    padding-bottom: 1px;
 }
 
 .cellTreeKeyboardSelectedItem {
-  background-color: #ffc;
-  outline: none;
+    background-color: #ffffff;
+    outline: none;
 }
 
 .cellTreeSelectedItem {
-  background:#d9e4f6;
-  color: white;
-  height: auto;
-  overflow: visible;
+    background:#d9e4f6;
+    color: white;
+    height: auto;
+    overflow: visible;
 }
 
 .cellTreeShowMoreButton {
-  padding-left: 16px;
-  outline: none;
+    padding-left: 16px;
+    outline: none;
+}
+
+/* celllist customizations */
+
+.cellListWidget {
+
+}
+
+.cellListEvenItem {
+    cursor: pointer;
+    zoom: 1;
+}
+
+.cellListOddItem {
+    background-color:#fafafa;
+    cursor: pointer;
+    zoom: 1;
+}
+
+.cellListEvenItem:hover {
+    background-color:#e5e5e5!important;
+    -webkit-transition: background-color .1s ease-in-out;
+    -moz-transition: background-color .1s ease-in-out;
+    transition: background-color .1s ease-in-out;
+    cursor: pointer;
+}
+
+.cellListOddItem:hover {
+    background-color:#e5e5e5!important;
+    -webkit-transition: background-color .1s ease-in-out;
+    -moz-transition: background-color .1s ease-in-out;
+    transition: background-color .1s ease-in-out;
+    cursor: pointer;
+}
+
+.cellListKeyboardSelectedItem {
+    background: #ffffff;
+}
+
+.cellListSelectedItem {
+    background-color: #d9e4f6;
+    color: white;
+    height: auto;
+    overflow: visible;
 }
