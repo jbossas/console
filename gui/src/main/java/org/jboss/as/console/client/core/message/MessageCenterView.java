@@ -19,17 +19,18 @@
 package org.jboss.as.console.client.core.message;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -43,8 +44,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 import java.util.List;
 
@@ -59,6 +60,15 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     final MessageListPopup messagePopup = new MessageListPopup();
     private Message lastSticky = null;
     private DefaultButton notificationCenterBtn;
+
+
+    public interface Resources extends CellList.Resources {
+
+        @ClientBundle.Source("org/jboss/as/console/client/core/message/CellList.css")
+        CellList.Style cellListStyle();
+
+    }
+    private static CellList.Resources RESOURCES = GWT.create(Resources.class);
 
     @Inject
     public MessageCenterView(MessageCenter messageCenter) {
@@ -81,7 +91,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
             MessageCell messageCell = new MessageCell();
             messageList = new CellList<Message>(messageCell);
-            messageList.setStyleName("message-list");
+
+            messageList.addStyleName("message-list");
 
             messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
 
@@ -91,12 +102,25 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 public void onSelectionChange(SelectionChangeEvent event) {
                     Message selected = selectionModel.getSelectedObject();
                     if (selected != null) {
+                        if(selected.isSticky())
+                        {
+                            MessageCenterView.this.lastSticky=null;
+                            messageDisplay.clear();
+                        }
+
                         showDetail(selected);
                     }
                 }
             });
 
             setWidget(messageList);
+
+            addCloseHandler(new CloseHandler<PopupPanel>() {
+                @Override
+                public void onClose(CloseEvent<PopupPanel> event) {
+                    reflectMessageCount();
+                }
+            });
         }
 
         public CellList<Message> getMessageList() {
@@ -105,6 +129,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     }
 
     private void showDetail(final Message msg) {
+
+        msg.setNew(false);
 
         DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetail());
         window.setWidth(480);
@@ -167,7 +193,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
-        notificationCenterBtn = new DefaultButton(Console.CONSTANTS.common_label_messages());
+        notificationCenterBtn = new DefaultButton(Console.CONSTANTS.common_label_messages()+" ("+messageCenter.getNewMessageCount()+")");
         notificationCenterBtn.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
 
         ClickHandler clickHandler = new ClickHandler() {
@@ -220,8 +246,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             logMessage(message);
 
             // update the visible message count
-            int numMessages = messageCenter.getMessages().size();
-            notificationCenterBtn.setText(Console.CONSTANTS.common_label_messages() + " ("+ numMessages +")");
+            reflectMessageCount();
 
             if(message.isSticky())   // sticky messages override each other like this
             {
@@ -244,6 +269,11 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
 
         }
+    }
+
+    private void reflectMessageCount() {
+        int numMessages = messageCenter.getNewMessageCount();
+        notificationCenterBtn.setText(Console.CONSTANTS.common_label_messages() + " ("+ numMessages +")");
     }
 
     private void displayNotification(final Message message) {

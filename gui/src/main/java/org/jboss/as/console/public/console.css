@@ -128,14 +128,18 @@ body {
     white-space: nowrap;
     text-overflow:ellipsis;
     width:100%;
+    background-image: none!important;
+    background-color:#ffffff!important;
 }
 
 .message-list-item:hover, .combobox-item:hover {
-    background-color:#d9e4f6;
+    background-color:#d9e4f6!important;
+    opacity: 1;
 }
 
 .message-list-item-odd, .combobox-item-odd {
-    background-color:#fafafa;
+    background-color:#fafafa!important;
+    opacity: 1;
 }
 
 .InfoBlock,.ConfirmationBlock,.WarnBlock,.ErrorBlock,.FatalBlock {

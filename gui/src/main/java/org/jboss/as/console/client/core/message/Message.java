@@ -35,6 +35,8 @@ public class Message {
     protected Severity severity;
     protected EnumSet<Option> options;
 
+    private boolean isNew = true;
+
     // TODO: Add Debug severity?
     public enum Severity {
         Blank("InfoBlank", "info/icn_info_blank.png"), //
@@ -58,7 +60,7 @@ public class Message {
         public String getIcon() {
             return icon;
         }
-    };
+    }
 
     public enum Option {
         /**
@@ -119,6 +121,22 @@ public class Message {
         this.detailedMessage = detailedMessage;
         this.severity = (severity != null) ? severity : Severity.Info;
         this.options = (options != null) ? options : EnumSet.noneOf(Option.class);
+    }
+
+    public EnumSet<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(EnumSet<Option> options) {
+        this.options = options;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean b) {
+        isNew = b;
     }
 
     public String getConciseMessage() {

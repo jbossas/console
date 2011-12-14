@@ -35,14 +35,23 @@ public class MessageCenter {
     private static final int MAX_MESSAGES = 10;
 
     public void notify(Message message) {
+
         log(message);
-        if (!message.isTransient()) {
+
+        // keep non-transient messsages
+        if (!message.isTransient())
+        {
             this.messages.add(message);
-            if (messages.size() > MAX_MESSAGES) {
+
+            if (messages.size() > MAX_MESSAGES)
+            {
                 messages.removeFirst();
             }
         }
-        for (MessageListener listener : listeners) {
+
+        // notify listeners
+        for (MessageListener listener : listeners)
+        {
             listener.onMessage(message);
         }
     }
@@ -58,6 +67,13 @@ public class MessageCenter {
      */
     public List<Message> getMessages() {
         return messages;
+    }
+
+    public int getNewMessageCount() {
+        int i=0;
+        for(Message m : messages)
+            if(m.isNew()) i++;
+        return i;
     }
 
     public interface MessageListener {

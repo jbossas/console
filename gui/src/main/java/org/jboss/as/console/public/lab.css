@@ -137,3 +137,7 @@
     text-overflow:ellipsis;
     cursor:pointer;
 }
+
+.message-list-item-old {
+    opacity: 0.5;
+}
