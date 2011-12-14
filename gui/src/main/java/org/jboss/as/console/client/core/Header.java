@@ -91,16 +91,17 @@ public class Header implements ValueChangeHandler<String> {
         Widget links = getLinksSection();
 
         LayoutPanel innerLayout = new LayoutPanel();
+        //innerLayout.getElement().setAttribute("style", "padding:0px;margin:0px;border:1px solid red");
         innerLayout.add(logo);
         innerLayout.add(links);
 
         innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PCT);
         innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 50, Style.Unit.PCT);
-        innerLayout.setWidgetTopHeight(links, 0, Style.Unit.PX, 80, Style.Unit.PX);
+        innerLayout.setWidgetBottomHeight(links, 0, Style.Unit.PX, 24, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
 
-        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 80, Style.Unit.PX);
+        outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 58, Style.Unit.PX);
 
         return outerLayout;
     }
@@ -113,7 +114,7 @@ public class Header implements ValueChangeHandler<String> {
         if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
             logo = new Image("images/logo/eap6.png");
         else
-            logo = new Image("images/logo/jbossas7.png");
+            logo = new Image("images/logo/jbossas7_blue.png");
 
         logo.setStyleName("logo");
 
@@ -143,7 +144,7 @@ public class Header implements ValueChangeHandler<String> {
             final String id = "header-" + name;
 
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<div style='position:relative;top:8px'>");
+            html.appendHtmlConstant("<div>");
             html.appendHtmlConstant(section[1]);
             html.appendHtmlConstant("</div>");
             HTML widget = new HTML(html.toSafeHtml());

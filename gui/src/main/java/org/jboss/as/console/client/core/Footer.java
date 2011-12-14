@@ -48,23 +48,10 @@ public class Footer {
 
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
-        //Image userImg = new Image(Icons.INSTANCE.user());
-        //layout.add(userImg);
 
-        //userName.setStyleName("footer-item");
-        //layout.add(userName);
-
-        MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
+        /*MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
         Widget messageCenter = messageCenterView.asWidget();
-        //messageCenter.getElement().setAttribute("style", "border:1px solid green");
-        layout.add(messageCenter);
-
-        //layout.setWidgetLeftWidth(userImg, 5, Style.Unit.PX, 16, Style.Unit.PX);
-        //layout.setWidgetTopHeight(userImg, 6, Style.Unit.PX, 16, Style.Unit.PX);
-
-        //layout.setWidgetLeftWidth(userName, 25, Style.Unit.PX, 100, Style.Unit.PX);
-        //layout.setWidgetTopHeight(userName, 6, Style.Unit.PX, 16, Style.Unit.PX);
-
+        layout.add(messageCenter);*/
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
         version.getElement().setAttribute("style", "color:#000000;font-size:10px; align:left");
@@ -74,8 +61,8 @@ public class Footer {
         layout.setWidgetTopHeight(version, 6, Style.Unit.PX, 16, Style.Unit.PX);
 
 
-        layout.setWidgetRightWidth(messageCenter, 5, Style.Unit.PX, 350, Style.Unit.PX);
-        layout.setWidgetTopHeight(messageCenter, 2, Style.Unit.PX, 28, Style.Unit.PX);
+        //layout.setWidgetRightWidth(messageCenter, 5, Style.Unit.PX, 350, Style.Unit.PX);
+        //layout.setWidgetTopHeight(messageCenter, 2, Style.Unit.PX, 28, Style.Unit.PX);
         return layout;
     }
 }

@@ -1,14 +1,5 @@
 .page-header {
-    background: #F1F1F1;
-
-    background: -moz-linear-gradient(top, #F1F1F1, #ffffff);
-    /* Chrome, Safari:*/
-    background: -webkit-gradient(linear,
-    left top, left bottom, from(#F1F1F1), to(#ffffff));
-    /* MSIE */
-    filter: progid:DXImageTransform.Microsoft.Gradient(
-        StartColorStr='#F1F1F1', EndColorStr='#ffffff', GradientType=0);
-
+    background-color: #3B4D64;
 
     color:white;
 }
@@ -41,9 +32,10 @@ body {
 }
 
 .header-panel {
-    min-height:64px;
-    height:64px;
+    min-height:58px;
+    height:58px;
     width:100%;
+    background-color: #3B4D64;
 }
 .footer-panel {
     min-height:30px;
@@ -74,39 +66,25 @@ body {
 
 .header-links {
     float: right;
-    -moz-box-shadow: 3px 3px 4px #c3c3c3;
-    -webkit-box-shadow: 3px 3px 4px #c3c3c3;
-    box-shadow: 3px 3px 4px #c3c3c3;
-    margin-right:4px;
-    margin-bottom:4px;
-    border-bottom:1px solid #C0C0C0;
 }
 
 .header-link {
+    color:#ffffff;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     text-decoration: none;
-    background-color:#F8F8F8;
-    border-right: 1px solid #A7ABB4!important;
-    border-bottom: 1px solid #A7ABB4!important;
-    min-height:32px;
-    max-height:32px;
-    height:32px;
+    padding-bottom: 6px;
 }
 
 .header-link:hover {
     text-decoration: none;
-    background-color:#e5e5e5;
-    -webkit-transition: background-color .1s ease-in-out;
-    -moz-transition: background-color .1s ease-in-out;
-    transition: background-color .1s ease-in-out;
 }
 
 .header-link-selected {
-    background-color: #4A5D75;
-    background: url(images/blue_bg.png)!important;
-    color: white;
     font-weight: BOLD;
+    background-image: url('images/header/header_arrow_blue.png');
+    background-position:50% 100%;
+    background-repeat: no-repeat;
 }
 
 .header-prod-version {
@@ -114,7 +92,7 @@ body {
   padding-left: 4px;
   font-size: 10pt!important;
   font-weight: BOLD;
-  color: #304e65!important;
+  color: #ffffff!important;
 }
 
 .logo {
