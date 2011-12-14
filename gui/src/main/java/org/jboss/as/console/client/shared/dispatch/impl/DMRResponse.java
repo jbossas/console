@@ -32,6 +32,11 @@ import java.util.List;
  * @date 3/17/11
  */
 public class DMRResponse implements Result<ModelNode> {
+
+    private static final String RESPONSE_HEADERS = "response-headers";
+    private static final String PROCESS_STATE = "process-state";
+    private static final String RELOAD_REQUIRED = "reload-required";
+
     private String responseText;
     private String contentType;
 
@@ -44,25 +49,27 @@ public class DMRResponse implements Result<ModelNode> {
     public ModelNode get() {
         ModelNode response = ModelNode.fromBase64(responseText);
 
-        boolean hasReloadFlag = false;
+        // update the state anytime
+        Console.MODULES.getReloadState().setReloadRequired(
+                parseReloadRequired(response)
+        );
 
-        if(response.hasDefined("response-headers"))
+        return response;
+    }
+
+    private static boolean parseReloadRequired(ModelNode response) {
+        boolean hasReloadFlag = false;
+        if(response.hasDefined(RESPONSE_HEADERS))
         {
-            List<Property> headers = response.get("response-headers").asPropertyList();
+            List<Property> headers = response.get(RESPONSE_HEADERS).asPropertyList();
             for(Property header : headers) {
-                if("process-state".equals(header.getName())) {
-                    if("reload-required".equals(header.getValue().asString())) {
+                if(PROCESS_STATE.equals(header.getName())) {
+                    if(RELOAD_REQUIRED.equals(header.getValue().asString())) {
                         hasReloadFlag=true;
                     }
                 }
             }
-
-
         }
-
-        // update the state anytime
-        Console.MODULES.getReloadState().setReloadRequired(hasReloadFlag);
-
-        return response;
+        return hasReloadFlag;
     }
 }
