@@ -28,6 +28,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.widgets.forms.items.NonRequiredTextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
@@ -58,10 +59,15 @@ public class XADatasourceStep4 {
 
         form = new Form<XADataSource>(XADataSource.class);
 
-        TextBoxItem user = new TextBoxItem("username", "Username");
-        PasswordBoxItem pass = new PasswordBoxItem("password", "Password");
+        TextBoxItem user = new NonRequiredTextBoxItem("username", "Username");
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
+            {
+                setRequired(false);
+            }
+        };
+        TextBoxItem domain = new NonRequiredTextBoxItem("securityDomain", "Security Domain");
 
-        form.setFields(user,pass);
+        form.setFields(user,pass,domain);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {

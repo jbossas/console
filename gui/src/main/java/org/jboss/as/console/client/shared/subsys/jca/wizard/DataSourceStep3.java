@@ -28,6 +28,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.forms.items.NonRequiredTextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ButtonItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -60,9 +61,13 @@ public class DataSourceStep3 {
         form = new Form<DataSource>(DataSource.class);
 
         TextBoxItem connectionUrl = new TextBoxItem("connectionUrl", "Connection URL");
-        TextBoxItem user = new TextBoxItem("username", "Username");
-        PasswordBoxItem pass = new PasswordBoxItem("password", "Password");
-
+        TextBoxItem user = new NonRequiredTextBoxItem("username", "Username");
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
+            {
+                setRequired(false);
+            }
+        };
+        TextBoxItem domain = new NonRequiredTextBoxItem("securityDomain", "Security Domain");
 
         /*
         TODO: Doesn't work atm, because the DS needs to be created first
@@ -74,7 +79,7 @@ public class DataSourceStep3 {
             }
         });*/
 
-        form.setFields(connectionUrl,user,pass);
+        form.setFields(connectionUrl,user,pass, domain);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {

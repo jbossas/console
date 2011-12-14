@@ -208,6 +208,14 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
         datasource.setEnabled(false);
 
+        // TODO find a proper way to deal with this
+        if("".equals(datasource.getUsername()))
+            datasource.setUsername(null);
+        if("".equals(datasource.getPassword()))
+            datasource.setPassword(null);
+        if("".equals(datasource.getSecurityDomain()))
+            datasource.setSecurityDomain(null);
+
         dataSourceStore.createDataSource(datasource, new SimpleCallback<ResponseWrapper<Boolean>>() {
 
             @Override
@@ -313,6 +321,13 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
         window.hide();
 
         updatedEntity.setEnabled(false);
+
+        if("".equals(updatedEntity.getUsername()))
+            updatedEntity.setUsername(null);
+        if("".equals(updatedEntity.getPassword()))
+            updatedEntity.setPassword(null);
+        if("".equals(updatedEntity.getSecurityDomain()))
+            updatedEntity.setSecurityDomain(null);
 
         dataSourceStore.createXADataSource(updatedEntity, new SimpleCallback<ResponseWrapper<Boolean>>() {
             @Override
