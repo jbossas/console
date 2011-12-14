@@ -258,7 +258,7 @@
 .gwt-TabLayoutPanelTab, .gwt-TabLayoutPanelTab-selected {
     position: relative;
     height: 40px;
-    width: auto;
+    min-width:70px;
 }
 
 .gwt-TabLayoutPanelTab .gwt-TabLayoutPanelTabInner,
@@ -324,6 +324,7 @@
 
 .tab-title {
     height:40px;
+    min-width:70px;
     padding-top:13px;
 
     padding-left:5px;
@@ -342,13 +343,13 @@
     width:15px;
     height:40px;
     background-color:#F8F8F8;
-    border-right: 1px solid #A7ABB4;
+    background-color:#ffffff;
 }
 
 .tab-left {
     width:15px;
     height:40px;
-    background-color:#F8F8F8;
+    background-color:#ffffff;
 }
 
 .title-bar-panel {

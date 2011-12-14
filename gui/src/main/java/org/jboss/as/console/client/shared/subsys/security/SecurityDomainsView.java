@@ -32,8 +32,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.properties.PropertyManagement;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthenticationLoginModule;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
@@ -51,7 +49,6 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 
@@ -87,7 +84,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         pages = new PagedView();
 
 
-        Widget domainList = createDomainList("Abailable security domains. Please select a domain to edit the security policies.");
+        Widget domainList = createDomainList("Registered security domains. Please select a domain to edit the security policies.");
 
         authenticationEditor = new AuthenticationEditor(presenter);
         authorizationEditor = new AuthorizationEditor(presenter);
@@ -115,7 +112,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         layout.add(pagesWidget);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(pagesWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(pagesWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // update pages when selection changes

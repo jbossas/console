@@ -37,7 +37,7 @@ public class PagedView {
     public Widget asWidget() {
 
         LayoutPanel layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
+        layout.setStyleName("fill-layout-width");
 
         navigationBar = bar.asWidget();
         navigationBar.getElement().setAttribute("style", "padding-left:10px;");
@@ -46,7 +46,7 @@ public class PagedView {
         layout.add(deck);
 
         layout.setWidgetTopHeight(navigationBar, 2, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(deck, 32, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(deck, 30, Style.Unit.PX, 100, Style.Unit.PCT);
 
         navigationBar.setVisible(navOnFirstPage);
 
