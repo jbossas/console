@@ -251,3 +251,7 @@
     height: auto;
     overflow: visible;
 }
+
+.gwt-TabLayoutPanelTabs {
+  background-color: #A7ABB4;
+}

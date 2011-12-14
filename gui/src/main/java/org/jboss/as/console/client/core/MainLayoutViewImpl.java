@@ -60,7 +60,7 @@ public class MainLayoutViewImpl extends ViewImpl
         panel.getElement().setAttribute("id", "container");
 
         panel.addNorth(headerPanel, 58);
-        panel.addSouth(footerPanel, 30);
+        panel.addSouth(footerPanel, 25);
         panel.add(mainContentPanel);
 
         header = Console.MODULES.getHeader();

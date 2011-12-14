@@ -10,7 +10,7 @@ body {
 
 #container {
     max-width: 860px;
-    background: #ffffff;
+    background: #A7ABB4;
     border-right: 1px solid #C0C0C0;
     border-left: 1px solid #C0C0C0;
     margin-left:auto;
@@ -27,8 +27,9 @@ body {
 
 
 .main-content-panel {
+    background-color: #ffffff;
     border-bottom:1px solid #A7ABB4;
-    margin-top:10px;
+    margin:6px 2px 2px 2px;
 }
 
 .header-panel {
@@ -38,8 +39,8 @@ body {
     background-color: #3B4D64;
 }
 .footer-panel {
-    min-height:30px;
-    height:30px;
+    min-height:25px;
+    height:25px;
     width:100%;
 /*background-image: url(http://127.0.0.1:8888/images/sc/skins/Enterprise/images/ToolStrip/background.png);*/
 

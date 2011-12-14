@@ -54,11 +54,11 @@ public class Footer {
         layout.add(messageCenter);*/
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
-        version.getElement().setAttribute("style", "color:#000000;font-size:10px; align:left");
+        version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
         layout.add(version);
 
         layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
-        layout.setWidgetTopHeight(version, 6, Style.Unit.PX, 16, Style.Unit.PX);
+        layout.setWidgetTopHeight(version, 3, Style.Unit.PX, 16, Style.Unit.PX);
 
 
         //layout.setWidgetRightWidth(messageCenter, 5, Style.Unit.PX, 350, Style.Unit.PX);
