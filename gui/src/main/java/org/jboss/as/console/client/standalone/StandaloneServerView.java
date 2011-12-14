@@ -62,9 +62,9 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         ScrollPanel scrollPanel = new ScrollPanel(panel);
         layout.add(scrollPanel);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scrollPanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(toolStrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scrollPanel, 70, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         form = new Form<StandaloneServer>(StandaloneServer.class);

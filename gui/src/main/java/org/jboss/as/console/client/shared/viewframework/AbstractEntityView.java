@@ -150,13 +150,13 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         {
             layout.add(tools);
 
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-            layout.setWidgetTopHeight(tools, 28, Style.Unit.PX, 30, Style.Unit.PX);
-            layout.setWidgetTopHeight(scrollPanel, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+            layout.setWidgetTopHeight(tools, 40, Style.Unit.PX, 30, Style.Unit.PX);
+            layout.setWidgetTopHeight(scrollPanel, 70, Style.Unit.PX, 100, Style.Unit.PCT);
         }
         else
         {
-            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
             layout.setWidgetTopHeight(scrollPanel, 28, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 

@@ -102,9 +102,9 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
-        layout.setWidgetTopHeight(topLevelTools, 28, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 58, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(topLevelTools, 40, Style.Unit.PX, 30, Style.Unit.PX);
+        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ------------------------
 

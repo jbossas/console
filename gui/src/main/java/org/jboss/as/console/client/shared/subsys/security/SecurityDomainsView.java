@@ -114,7 +114,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         Widget pagesWidget = pages.asWidget();
         layout.add(pagesWidget);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
         layout.setWidgetTopHeight(pagesWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
 

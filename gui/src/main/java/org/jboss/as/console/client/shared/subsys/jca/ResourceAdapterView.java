@@ -53,7 +53,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         Widget panelWidget = panel.asWidget();
         layout.add(panelWidget);
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
         layout.setWidgetTopHeight(panelWidget, 28, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;

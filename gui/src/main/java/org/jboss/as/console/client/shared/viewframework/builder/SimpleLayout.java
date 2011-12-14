@@ -94,13 +94,13 @@ public class SimpleLayout {
 
         if(toolStrip!=null)
         {
-            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
             layout.setWidgetTopHeight(toolStrip, offset, Style.Unit.PX, 30, Style.Unit.PX);
             layout.setWidgetTopHeight(scroll, offset+30, Style.Unit.PX, 100, Style.Unit.PCT);
         }
         else
         {
-            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 28, Style.Unit.PX);
+            if(!isPlain) layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
             layout.setWidgetTopHeight(scroll, offset, Style.Unit.PX, 100, Style.Unit.PCT);
         }
 
