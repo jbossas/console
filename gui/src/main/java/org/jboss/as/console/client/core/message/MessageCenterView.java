@@ -61,15 +61,6 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     private Message lastSticky = null;
     private DefaultButton notificationCenterBtn;
 
-
-    public interface Resources extends CellList.Resources {
-
-        @ClientBundle.Source("org/jboss/as/console/client/core/message/CellList.css")
-        CellList.Style cellListStyle();
-
-    }
-    private static CellList.Resources RESOURCES = GWT.create(Resources.class);
-
     @Inject
     public MessageCenterView(MessageCenter messageCenter) {
         this.messageCenter = messageCenter;
@@ -91,10 +82,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
             MessageCell messageCell = new MessageCell();
             messageList = new CellList<Message>(messageCell);
-
             messageList.addStyleName("message-list");
-
-            messageList.setEmptyListMessage(emptyMessage.toSafeHtml());
+            messageList.setEmptyListWidget(new HTML(emptyMessage.toSafeHtml()));
 
             final SingleSelectionModel<Message> selectionModel = new SingleSelectionModel<Message>();
             messageList.setSelectionModel(selectionModel);
@@ -292,9 +281,6 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         panel.add(new Image(iconSrc));
         panel.add(label);
 
-        // would be nice too have
-        //label.setTooltip(message.detailedMessage);
-
         label.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent clickEvent) {
                 if(message.isSticky()) {
@@ -311,7 +297,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     }
 
-    private void logMessage(Message message) {
+    private static void logMessage(Message message) {
         String logMessage = message.toString();
         switch (message.getSeverity()) {
             case Info:
