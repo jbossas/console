@@ -45,7 +45,7 @@ public class OSGiSubsystemView extends SuspendableViewImpl implements OSGiConfig
         frameworkEditor = new FrameworkEditor(presenter);
         configAdminEditor = new ConfigAdminEditor(presenter);
 
-        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(frameworkEditor.asWidget(), Console.CONSTANTS.subsys_osgi_framework());

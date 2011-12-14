@@ -88,7 +88,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
                 "These setting apply to all beans, unless overridden at the deployment or bean level.");
 
         // overall layout
-        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(createEmbeddableWidget(), "Container");

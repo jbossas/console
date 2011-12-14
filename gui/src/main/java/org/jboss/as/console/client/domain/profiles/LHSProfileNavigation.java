@@ -54,7 +54,8 @@ class LHSProfileNavigation {
         stack.setStyleName("fill-layout-width");
 
         subsystemSection = new SubsystemSection();
-        stack.add(subsystemSection.asWidget());
+        Widget subsysWidget = subsystemSection.asWidget();
+        stack.add(subsysWidget);
 
         // -------- groups
 

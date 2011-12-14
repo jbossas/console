@@ -81,7 +81,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         deck = new DeckPanel();
         deck.setStyleName("fill-layout");
 
-        TabLayoutPanel loggersTabs = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel loggersTabs = new TabLayoutPanel(40, Style.Unit.PX);
         loggersTabs.addStyleName("default-tabpanel");
 
         loggersTabs.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
@@ -89,7 +89,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         loggersTabs.selectTab(0);
 
 
-        TabLayoutPanel handlersTabs = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel handlersTabs = new TabLayoutPanel(40, Style.Unit.PX);
         handlersTabs.addStyleName("default-tabpanel");
 
         handlersTabs.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console());

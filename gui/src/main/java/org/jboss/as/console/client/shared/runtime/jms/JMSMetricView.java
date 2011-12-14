@@ -27,7 +27,7 @@ public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresen
         this.topicMetrics = new TopicMetrics(presenter);
         this.queueMetrics= new QueueMetrics(presenter);
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         tabLayoutpanel.add(topicMetrics.asWidget(), "Topics");

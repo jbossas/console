@@ -46,7 +46,7 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     @Override
     public Widget createWidget() {
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         providerEditor = new MessagingProviderEditor(presenter);

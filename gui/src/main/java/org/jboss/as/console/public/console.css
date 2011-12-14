@@ -29,7 +29,7 @@ body {
 .main-content-panel {
     background-color: #ffffff;
     border-bottom:1px solid #A7ABB4;
-    margin:6px 2px 2px 2px;
+    margin:2px 2px 2px 2px;
 }
 
 .header-panel {
@@ -273,4 +273,3 @@ body {
     -webkit-box-shadow: 0px -0px 7px #c3c3c3;
     box-shadow: 0px -0px 7px #c3c3c3;
 }
-

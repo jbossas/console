@@ -52,7 +52,7 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
 
     @Override
     public Widget createWidget() {
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(25, Style.Unit.PX);
+        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
         
         tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getEntityDisplayName());
