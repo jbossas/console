@@ -109,6 +109,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
@@ -322,6 +323,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(CurrentProfileSelection.class).in(Singleton.class);
         bind(CurrentHostSelection.class).in(Singleton.class);
         bind(CurrentServerSelection.class).in(Singleton.class);
+        bind(ReloadState.class).in(Singleton.class);
 
         // domain/server-group
         bindPresenter(ServerGroupMgmtPresenter.class,

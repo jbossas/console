@@ -91,6 +91,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                 public void onResponseReceived(Request request, Response response) {
 
                     int statusCode = response.getStatusCode();
+
                     if(200== statusCode)
                     {
                         resultCallback.onSuccess(
@@ -103,6 +104,12 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     else if(401 == statusCode || 0 == statusCode)
                     {
                         Log.error("Authentication required. Could not execute "+operation.toString());
+                    }
+                    else if(307 == statusCode)
+                    {
+                        String location = response.getHeader("Location");
+                        Log.error("Redirect '"+location+"'. Could not execute "+operation.toString());
+                        redirect(location);
                     }
                     else
                     {
@@ -158,4 +165,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
         }
     }
 
+    public static native void redirect(String url)/*-{
+        $wnd.location = url;
+    }-*/;
 }

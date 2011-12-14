@@ -57,6 +57,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
     private MessageCenter messageCenter;
     private LayoutPanel messageDisplay;
     final MessageListPopup messagePopup = new MessageListPopup();
+    private Message lastSticky = null;
+    private DefaultButton notificationCenterBtn;
 
     @Inject
     public MessageCenterView(MessageCenter messageCenter) {
@@ -165,8 +167,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
-        final DefaultButton button = new DefaultButton(Console.CONSTANTS.common_label_messages());
-        button.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
+        notificationCenterBtn = new DefaultButton(Console.CONSTANTS.common_label_messages());
+        notificationCenterBtn.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
 
         ClickHandler clickHandler = new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -178,11 +180,9 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
-                        button.getAbsoluteLeft() - (width+10-button.getOffsetWidth()) ,
-                        button.getAbsoluteTop() - (height+18)
+                        notificationCenterBtn.getAbsoluteLeft() - (width+10-notificationCenterBtn.getOffsetWidth()) ,
+                        notificationCenterBtn.getAbsoluteTop() - (height+18)
                 );
-
-
 
                 messagePopup.show();
 
@@ -191,7 +191,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
-        button.addClickHandler(clickHandler);
+        notificationCenterBtn.addClickHandler(clickHandler);
 
         // register listener
         messageCenter.addMessageListener(this);
@@ -199,11 +199,11 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         messageDisplay = new LayoutPanel();
 
         layout.add(messageDisplay);
-        layout.add(button);
+        layout.add(notificationCenterBtn);
 
         layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 250, Style.Unit.PX);
-        layout.setWidgetLeftWidth(button, 250, Style.Unit.PX, 100, Style.Unit.PX);
-        layout.setWidgetTopHeight(button, 2, Style.Unit.PX, 22, Style.Unit.PX);
+        layout.setWidgetLeftWidth(notificationCenterBtn, 250, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetTopHeight(notificationCenterBtn, 2, Style.Unit.PX, 22, Style.Unit.PX);
 
         return layout;
     }
@@ -215,54 +215,73 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         return messages.size();
     }
 
-    private void showDetails(Message message) {
-        // TODO: implement popup window
-        Log.debug("Message detail not implemented yet");
-    }
-
     public void onMessage(final Message message) {
         if (!message.isTransient()) {
             logMessage(message);
 
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.getElement().setAttribute("cellpadding", "6");
+            // update the visible message count
+            int numMessages = messageCenter.getMessages().size();
+            notificationCenterBtn.setText(Console.CONSTANTS.common_label_messages() + " ("+ numMessages +")");
 
-            String actualMessage = message.getConciseMessage().length()>40 ? message.getConciseMessage().substring(0, 40)+" ..." : message.getConciseMessage();
+            if(message.isSticky())   // sticky messages override each other like this
+            {
+                lastSticky=message;
+                displayNotification(message);
+            }
+            else if(null==lastSticky) // regular message don't replace sticky ones
+            {
+                displayNotification(message);
 
-            final Label label = new Label(actualMessage);
-            label.getElement().setAttribute("style", "font-size:10px; white-space: nowrap;text-overflow:ellipsis");
+                Timer hideTimer = new Timer() {
+                    @Override
+                    public void run() {
+                        // hide message
+                        messageDisplay.clear();
+                    }
+                };
 
-            final ImageResource iconSrc = getSeverityIcon(message.severity);
+                hideTimer.schedule(5000);
+            }
 
-            panel.add(new Image(iconSrc));
-            panel.add(label);
-
-            // would be nice too have
-            //label.setTooltip(message.detailedMessage);
-
-            label.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent clickEvent) {
-                    showDetails(message);
-                }
-            });
-
-            messageDisplay.clear();
-            messageDisplay.add(panel);
-
-            Timer hideTimer = new Timer() {
-                @Override
-                public void run() {
-                    // hide message
-                    messageDisplay.clear();
-                }
-            };
-
-            hideTimer.schedule(5000);
         }
     }
 
+    private void displayNotification(final Message message) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.getElement().setAttribute("cellpadding", "6");
+
+        String actualMessage = message.getConciseMessage().length()>40 ?
+                message.getConciseMessage().substring(0, 40)+" ..." :
+                message.getConciseMessage();
+
+        final Label label = new Label(actualMessage);
+        label.setStyleName("message-notification");
+
+        final ImageResource iconSrc = getSeverityIcon(message.severity);
+
+        panel.add(new Image(iconSrc));
+        panel.add(label);
+
+        // would be nice too have
+        //label.setTooltip(message.detailedMessage);
+
+        label.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent clickEvent) {
+                if(message.isSticky()) {
+                    MessageCenterView.this.lastSticky=null;
+                    messageDisplay.clear();
+                }
+
+                showDetail(message);
+            }
+        });
+
+        messageDisplay.clear();
+        messageDisplay.add(panel);
+
+    }
+
     private void logMessage(Message message) {
-        // TODO: Format the message better.
         String logMessage = message.toString();
         switch (message.getSeverity()) {
             case Info:

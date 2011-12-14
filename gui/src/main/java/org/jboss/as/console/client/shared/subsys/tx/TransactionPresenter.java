@@ -119,6 +119,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = dmrResponse.get();
+
                 boolean success = ModelAdapter.wasSuccess(response);
                 if(success)
                     Console.info("Success: Update transaction manager settings");

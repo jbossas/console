@@ -34,11 +34,12 @@ import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
 import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
-import org.jboss.as.console.client.core.bootstrap.LoadGoogleViz;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
+
+import java.util.EnumSet;
 
 /**
  * Main application entry point.
@@ -122,6 +123,14 @@ public class Console implements EntryPoint {
         MODULES.getMessageCenter().notify(
                 new Message(message, Message.Severity.Warning)
         );
+    }
+
+    public static void warning(String message, boolean sticky) {
+        Message msg = sticky ?
+                new Message(message, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky)) :
+                new Message(message, Message.Severity.Warning);
+
+        MODULES.getMessageCenter().notify(msg);
     }
 
     public static void warning(String message, String detail) {

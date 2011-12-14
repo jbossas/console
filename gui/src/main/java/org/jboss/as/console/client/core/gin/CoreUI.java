@@ -73,6 +73,7 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
@@ -182,6 +183,7 @@ public interface CoreUI extends Ginjector {
     CurrentProfileSelection getCurrentSelectedProfile();
     CurrentHostSelection getCurrentSelectedHost();
     CurrentServerSelection getCurrentSelectedServer();
+    ReloadState getReloadState();
 
     AsyncProvider<ServerGroupMgmtPresenter> getServerGroupMgmtPresenter();
 

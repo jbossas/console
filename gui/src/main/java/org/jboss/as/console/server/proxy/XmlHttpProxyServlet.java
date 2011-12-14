@@ -496,6 +496,12 @@ public class XmlHttpProxyServlet extends HttpServlet
                 res.setHeader("WWW-Authenticate", authEx.getAuthHeader());
                 res.setStatus(authEx.getCode());
             }
+            /*else if(iox instanceof RedirectException)
+            {
+                RedirectException redirect = (RedirectException)iox;
+                res.setHeader("Location", redirect.getLocation());
+                res.setStatus(307);
+            } */
             else
             {
                 iox.printStackTrace();

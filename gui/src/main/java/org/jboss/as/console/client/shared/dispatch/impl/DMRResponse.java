@@ -20,8 +20,12 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.Result;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -38,6 +42,27 @@ public class DMRResponse implements Result<ModelNode> {
 
     @Override
     public ModelNode get() {
-        return ModelNode.fromBase64(responseText);
+        ModelNode response = ModelNode.fromBase64(responseText);
+
+        boolean hasReloadFlag = false;
+
+        if(response.hasDefined("response-headers"))
+        {
+            List<Property> headers = response.get("response-headers").asPropertyList();
+            for(Property header : headers) {
+                if("process-state".equals(header.getName())) {
+                    if("reload-required".equals(header.getValue().asString())) {
+                        hasReloadFlag=true;
+                    }
+                }
+            }
+
+
+        }
+
+        // update the state anytime
+        Console.MODULES.getReloadState().setReloadRequired(hasReloadFlag);
+
+        return response;
     }
 }

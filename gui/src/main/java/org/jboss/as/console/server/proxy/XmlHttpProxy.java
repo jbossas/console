@@ -19,9 +19,7 @@
 
 package org.jboss.as.console.server.proxy;
 
-import org.apache.http.impl.io.SocketOutputBuffer;
 
-import javax.security.sasl.AuthenticationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -250,9 +248,19 @@ public class XmlHttpProxy {
         {
             int responseCode = httpclient.getResponseCode();
             if(401== responseCode || 403==responseCode)
+            {
+                // authentication required
                 throw new AuthenticationException(responseCode, httpclient.getHeader("WWW-Authenticate"));
+            }
+            else if(307==responseCode)
+            {
+                // redirect
+                throw new RedirectException(httpclient.getHeader("Location"));
+            }
             else
+            {
                 throw new IOException("Failed to open input stream, status: "+responseCode);
+            }
         }
 
         // read the encoding from the incoming document and default to UTF-8
