@@ -28,7 +28,7 @@ body {
 
 .main-content-panel {
     border-bottom:1px solid #A7ABB4;
-    margin-top:2px;
+    margin-top:10px;
 }
 
 .header-panel {
@@ -74,6 +74,7 @@ body {
     font-size: 13px;
     text-decoration: none;
     padding-bottom: 6px;
+    padding-left:20px;
 }
 
 .header-link:hover {
@@ -83,7 +84,7 @@ body {
 .header-link-selected {
     font-weight: BOLD;
     background-image: url('images/header/header_arrow_blue.png');
-    background-position:50% 100%;
+    background-position:70% 100%;
     background-repeat: no-repeat;
 }
 
@@ -121,11 +122,19 @@ body {
     opacity: 0.6;
 }
 
+.notification-button {
+    font-size:12px;
+    color:#ffffff;
+    cursor:pointer;
+}
+
 .message-notification {
-    font-size:10px;
+    color:#ffffff;
+    font-size:12px;
     white-space: nowrap;
     text-overflow:ellipsis;
     cursor:pointer;
+    padding-top:4px;
 }
 
 .combobox-item:hover {

@@ -35,11 +35,13 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
+import org.jboss.as.console.client.core.message.MessageCenterView;
 
 /**
  * Top level header, gives access to main applications.
@@ -90,14 +92,26 @@ public class Header implements ValueChangeHandler<String> {
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
 
+        LayoutPanel rhs = new LayoutPanel();
+        rhs.setStyleName("fill-layout");
+
+        MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
+        Widget messageCenter = messageCenterView.asWidget();
+        rhs.add(messageCenter);
+        rhs.add(links);
+
+        rhs.setWidgetRightWidth(messageCenter, 10, Style.Unit.PX, 100, Style.Unit.PCT);
+        rhs.setWidgetRightWidth(links, 10, Style.Unit.PX, 100, Style.Unit.PCT);
+        rhs.setWidgetBottomHeight(messageCenter, 30, Style.Unit.PX, 28, Style.Unit.PX);
+        rhs.setWidgetBottomHeight(links, 0, Style.Unit.PX, 24, Style.Unit.PX);
+
         LayoutPanel innerLayout = new LayoutPanel();
-        //innerLayout.getElement().setAttribute("style", "padding:0px;margin:0px;border:1px solid red");
         innerLayout.add(logo);
-        innerLayout.add(links);
+        innerLayout.add(rhs);
 
         innerLayout.setWidgetLeftWidth(logo, 0, Style.Unit.PX, 50, Style.Unit.PCT);
-        innerLayout.setWidgetRightWidth(links, 10, Style.Unit.PX, 50, Style.Unit.PCT);
-        innerLayout.setWidgetBottomHeight(links, 0, Style.Unit.PX, 24, Style.Unit.PX);
+        innerLayout.setWidgetRightWidth(rhs, 10, Style.Unit.PX, 50, Style.Unit.PCT);
+        innerLayout.setWidgetBottomHeight(rhs, 0, Style.Unit.PX, 58, Style.Unit.PX);
 
         outerLayout.add(innerLayout);
 
@@ -187,7 +201,7 @@ public class Header implements ValueChangeHandler<String> {
                 String styleClass = "header-link";
                 String styleAtt = "vertical-align:middle; text-align:center";
 
-                String td =  "<td width='100px' style='"+styleAtt+"' id='" + id +"' class='"+styleClass+"'></td>";
+                String td =  "<td style='"+styleAtt+"' id='" + id +"' class='"+styleClass+"'></td>";
 
                 headerString.appendHtmlConstant(td);
                 //headerString.append(title);

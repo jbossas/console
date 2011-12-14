@@ -19,13 +19,10 @@
 package org.jboss.as.console.client.core.message;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
@@ -35,7 +32,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,7 +40,6 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
@@ -57,10 +52,10 @@ import java.util.List;
 public class MessageCenterView implements MessageCenter.MessageListener {
 
     private MessageCenter messageCenter;
-    private LayoutPanel messageDisplay;
+    private HorizontalPanel messageDisplay;
     final MessageListPopup messagePopup = new MessageListPopup();
     private Message lastSticky = null;
-    private DefaultButton notificationCenterBtn;
+    private Label messageButton;
 
     @Inject
     public MessageCenterView(MessageCenter messageCenter) {
@@ -173,7 +168,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     public Widget asWidget()
     {
-        LayoutPanel layout = new LayoutPanel()
+        /*LayoutPanel layout = new LayoutPanel()
         {
             @Override
             public void onResize() {
@@ -181,10 +176,13 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 MessageListPopup popup = getMessagePopup();
                 if(popup!=null) popup.hide();
             }
-        };
+        };*/
 
-        notificationCenterBtn = new DefaultButton(Console.CONSTANTS.common_label_messages()+" ("+messageCenter.getNewMessageCount()+")");
-        notificationCenterBtn.getElement().setAttribute("style", "width:100%;border-color:#cccccc;margin-right:5px;");
+        HorizontalPanel layout = new HorizontalPanel();
+        layout.getElement().setAttribute("style", "width:430px");
+
+        messageButton = new Label("("+messageCenter.getNewMessageCount()+") "+Console.CONSTANTS.common_label_messages());
+        messageButton.addStyleName("notification-button");
 
         ClickHandler clickHandler = new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -196,8 +194,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 int height = numMessages*35;
 
                 messagePopup.setPopupPosition(
-                        notificationCenterBtn.getAbsoluteLeft() - (width+10-notificationCenterBtn.getOffsetWidth()) ,
-                        notificationCenterBtn.getAbsoluteTop() - (height+18)
+                        messageButton.getAbsoluteLeft() - (width+10- messageButton.getOffsetWidth()) ,
+                        messageButton.getAbsoluteTop() + 18
                 );
 
                 messagePopup.show();
@@ -207,19 +205,21 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             }
         };
 
-        notificationCenterBtn.addClickHandler(clickHandler);
+        messageButton.addClickHandler(clickHandler);
+
+        messageDisplay = new HorizontalPanel();
+
+        layout.add(messageDisplay);
+        layout.add(messageButton);
+
+        messageDisplay.getElement().getParentElement().setAttribute("style", "width:250px");
+        messageDisplay.getElement().getParentElement().setAttribute("align", "right");
+
+        messageButton.getElement().getParentElement().setAttribute("style", "width:60px");
+        messageButton.getElement().getParentElement().setAttribute("align", "right");
 
         // register listener
         messageCenter.addMessageListener(this);
-
-        messageDisplay = new LayoutPanel();
-
-        layout.add(messageDisplay);
-        layout.add(notificationCenterBtn);
-
-        layout.setWidgetLeftWidth(messageDisplay, 0, Style.Unit.PX, 250, Style.Unit.PX);
-        layout.setWidgetLeftWidth(notificationCenterBtn, 250, Style.Unit.PX, 100, Style.Unit.PX);
-        layout.setWidgetTopHeight(notificationCenterBtn, 2, Style.Unit.PX, 22, Style.Unit.PX);
 
         return layout;
     }
@@ -263,32 +263,35 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     private void reflectMessageCount() {
         int numMessages = messageCenter.getNewMessageCount();
-        notificationCenterBtn.setText(Console.CONSTANTS.common_label_messages() + " ("+ numMessages +")");
+        messageButton.setText("("+ numMessages +") " +Console.CONSTANTS.common_label_messages());
     }
 
     private void displayNotification(final Message message) {
+
         HorizontalPanel panel = new HorizontalPanel();
-        panel.getElement().setAttribute("cellpadding", "6");
 
         String actualMessage = message.getConciseMessage().length()>40 ?
                 message.getConciseMessage().substring(0, 40)+" ..." :
                 message.getConciseMessage();
 
-        final Label label = new Label(actualMessage);
+        final Label label = new Label(" "+actualMessage);
         label.setStyleName("message-notification");
 
         final ImageResource iconSrc = getSeverityIcon(message.severity);
 
-        panel.add(new Image(iconSrc));
+        Image icon = new Image(iconSrc);
+        panel.add(icon);
         panel.add(label);
+
+        icon.getElement().getParentElement().setAttribute("style", "padding-right:5px; padding-top:2px");
+
 
         label.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent clickEvent) {
                 if(message.isSticky()) {
                     MessageCenterView.this.lastSticky=null;
-                    messageDisplay.clear();
                 }
-
+                messageDisplay.clear();
                 showDetail(message);
             }
         });
