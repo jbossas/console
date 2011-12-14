@@ -107,6 +107,8 @@ public class EmbeddedListView implements ListManagement<String>, IsWidget {
         addItemDialog.setGlassEnabled(true);
         addItemDialog.center();
 
+        if (!newListItemWizard.isChoiceLimited()) return;
+        
         // create list containing only choices not yet in the list
         List<String> choicesSubset = new ArrayList<String>(this.availableChoices.size());
         choicesSubset.addAll(this.availableChoices);

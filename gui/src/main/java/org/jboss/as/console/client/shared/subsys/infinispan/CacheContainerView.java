@@ -22,6 +22,8 @@ package org.jboss.as.console.client.shared.subsys.infinispan;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -30,7 +32,10 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
+import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -46,6 +51,8 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
 
     private EntityToDmrBridge bridge;
     private DefaultCacheContainerWindow defaultCacheContainerWindow;
+    
+    private EmbeddedAliasesView aliasesView;
     
     @Inject
     public CacheContainerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
@@ -104,6 +111,26 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
         table.addColumn(defaultCacheColumn, Console.CONSTANTS.subsys_infinispan_default_cache());
         
         return table;
+    }
+    
+    @Override
+    protected List<SingleEntityView<CacheContainer>> provideAdditionalTabs(
+            Class<?> beanType,
+            FormMetaData formMetaData,
+            FrameworkPresenter presenter) {
+
+        List<SingleEntityView<CacheContainer>> additionalTabs =
+                new ArrayList<SingleEntityView<CacheContainer>>();
+
+        this.aliasesView = new EmbeddedAliasesView(new FrameworkPresenter() {
+            @Override
+            public EntityToDmrBridge getEntityBridge() {
+                return CacheContainerView.this.getEntityBridge();
+            }
+        });
+        additionalTabs.add(aliasesView);
+
+        return additionalTabs;
     }
     
 }

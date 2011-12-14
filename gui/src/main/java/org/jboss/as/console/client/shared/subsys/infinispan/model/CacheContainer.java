@@ -145,7 +145,7 @@ public interface CacheContainer extends NamedEntity {
              required=false,
              formItemTypeForEdit="UNLIMITED_STRING_LIST_EDITOR",
              formItemTypeForAdd="UNLIMITED_STRING_LIST_EDITOR",
-             tabName="subsys_infinispan_aliases")
+             tabName="CUSTOM")
     public List<String> getAliases();
     public void setAliases(List<String> aliases);
 }
