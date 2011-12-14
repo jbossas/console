@@ -10,6 +10,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -39,20 +40,7 @@ public class ConnectionStep1 {
 
         final Form<ConnectionDefinition> form = new Form(ConnectionDefinition.class);
 
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-
-                boolean isSet = value!=null && !value.isEmpty();
-                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
-                return isSet&&validPrefix;
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
-            }
-        };
+        TextBoxItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
         TextBoxItem classItem = new TextBoxItem("connectionClass", "Connection Class");
 
         form.setFields(jndiName, classItem);

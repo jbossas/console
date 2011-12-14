@@ -29,6 +29,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
@@ -119,7 +120,7 @@ public class XADataSourceDetails {
         panel.add(toolStrip.asWidget());
 
         final TextItem nameItem = new TextItem("name", "Name");
-        TextBoxItem jndiItem = new TextBoxItem("jndiName", "JNDI");
+        TextBoxItem jndiItem = new JndiNameItem("jndiName", "JNDI");
         StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
 

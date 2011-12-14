@@ -9,6 +9,7 @@ import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -34,7 +35,7 @@ public class NewMailSessionWizard {
 
         final Form<MailSession> form = new Form(MailSession.class);
 
-        TextBoxItem jndi = new TextBoxItem("jndiName", "JNDI Name");
+        TextBoxItem jndi = new JndiNameItem("jndiName", "JNDI Name");
         TextBoxItem pop = new TextBoxItem("popServer", "Pop3 Server") {
             {
                 setRequired(false);

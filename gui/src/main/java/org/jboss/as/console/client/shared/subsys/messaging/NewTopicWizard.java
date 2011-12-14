@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -52,20 +53,7 @@ public class NewTopicWizard {
 
 
         TextBoxItem name = new TextBoxItem("name", "Name");
-        TextBoxItem jndiName = new TextBoxItem("jndiName", "JNDI Name") {
-            @Override
-            public boolean validate(String value) {
-
-                boolean isSet = value!=null && !value.isEmpty();
-                boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
-                return isSet&&validPrefix;
-            }
-
-            @Override
-            public String getErrMessage() {
-                return "JNDI name has to start with 'java:/' or 'java:jboss/'";
-            }
-        };
+        TextBoxItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
 
         form.setFields(name, jndiName);
 
