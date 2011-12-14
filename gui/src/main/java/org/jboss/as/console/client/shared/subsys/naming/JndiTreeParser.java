@@ -29,6 +29,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
+import org.jboss.as.console.client.widgets.tree.DefaultCellTree;
+import org.jboss.ballroom.client.widgets.icons.DefaultTreeResources;
 import org.jboss.dmr.client.Property;
 
 /**
@@ -42,7 +44,7 @@ public class JndiTreeParser {
     private Stack<JndiEntry> stack = new Stack<JndiEntry>();
     private JndiEntry root = new JndiEntry("JNDI", "", null);
     private TreeViewModel treeModel = new JndiTreeModel(root);
-    private CellTree cellTree = new CellTree(treeModel, "root");
+    private CellTree cellTree = new DefaultCellTree(treeModel, "root");
     private static Command finishCmd = null;
     private SingleSelectionModel<JndiEntry> selectionModel = new SingleSelectionModel<JndiEntry>();
 
