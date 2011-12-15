@@ -115,7 +115,7 @@ public class XADatasourceStep3 implements PropertyManagement {
 
         DialogueOptions options = new DialogueOptions(
                 "Next &rsaquo;&rsaquo;",submitHandler,
-                "cancel",cancelHandler
+                "Cancel",cancelHandler
         );
 
         return new WindowContentBuilder(layout,options).build();

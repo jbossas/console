@@ -105,7 +105,7 @@ public class XADatasourceStep4 {
 
         DialogueOptions options = new DialogueOptions(
                 "Done",submitHandler,
-                "cancel",cancelHandler
+                "Cancel",cancelHandler
         );
 
         return new WindowContentBuilder(layout,options).build();

@@ -75,7 +75,7 @@ public class ConnectionStep1 {
                 },
 
                 // cancel
-                "cancel",
+                "Cancel",
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
