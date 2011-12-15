@@ -108,6 +108,8 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
             }
         }, form);
 
+        panel.add(helpPanel.asWidget());
+
         panel.add(form.asWidget());
 
         return layout;
