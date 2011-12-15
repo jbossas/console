@@ -70,17 +70,10 @@ public class JMSEditor implements MessagingPresenter.JMSView{
 
         // ---
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.messaging());
-        horzPanel.add(image);
         serverName = new HTML("Replace me");
         serverName.setStyleName("content-header-label");
 
-        horzPanel.add(serverName);
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        panel.add(horzPanel);
+        panel.add(serverName);
 
         // ----
 

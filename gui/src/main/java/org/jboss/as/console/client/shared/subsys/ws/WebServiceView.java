@@ -31,7 +31,9 @@ public class WebServiceView extends DisposableViewImpl implements WebServicePres
     public Widget createWidget() {
         LayoutPanel layout = new RHSContentPanel("Web Services");
 
-        layout.add(new ContentHeaderLabel("Registered Web Service Endpoints"));
+        layout.add(new ContentHeaderLabel("Web Services Provider"));
+
+        layout.add(new ContentGroupLabel("Registered Web Service Endpoints"));
 
         table = new DefaultCellTable<WebServiceEndpoint>(6);
 

@@ -60,7 +60,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         LayoutPanel layout = new RHSContentPanel("Servlet");
 
-        layout.add(new ContentHeaderLabel("Servlet Subsystem Configuration"));
+        layout.add(new ContentHeaderLabel("Servlet/HTTP Configuration"));
 
         // ----
 

@@ -120,14 +120,7 @@ public class DataSourceEditor {
 
         // ---
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.database());
-        horzPanel.add(image);
-        horzPanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_dataSource_configurations()));
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        vpanel.add(horzPanel);
+        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_dataSource_configurations()));
 
         dataSourceTable = new DatasourceTable();
 
