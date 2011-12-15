@@ -95,14 +95,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         nameLabel = new ContentHeaderLabel(Console.CONSTANTS.common_label_runtimeStatus());
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        Image image = new Image(Icons.INSTANCE.serverInstance());
-        horzPanel.add(image);
-        horzPanel.add(nameLabel);
-        image.getElement().getParentElement().setAttribute("width", "25");
-
-        vpanel.add(horzPanel);
+        vpanel.add(nameLabel);
 
         vpanel.add(new ContentDescription("Server instances represent the server runtime state. This includes the virtual machine status, as well as deployments and subsystem specific state (i.e. datasource pool sizes)."));
 
