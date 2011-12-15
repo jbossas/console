@@ -290,7 +290,7 @@
 }
 
 .gwt-TabLayoutPanelTabs {
-    background-color: #A7ABB4;
+    background-color: #BEBEBE;
 }
 
 .gwt-TabLayoutPanelTabInner div {
@@ -354,5 +354,63 @@
 
 .title-bar-panel {
     border: none;
-    background-color: #A7ABB4;
+    background-color: #BEBEBE;
+}
+
+.rhs-content-panel {
+    width:100%;
+    padding:15px;
+    margin-bottom: 100px;
+}
+
+
+/*gwt old skool tab panels*/
+
+.gwt-TabPanel {
+
+}
+
+.gwt-TabBarFirst-wrapper {
+    border-bottom:1px solid #A7ABB4;
+    border-right:1px solid #808080;
+    width:15px;
+}
+
+.gwt-TabBarRest-wrapper {
+    border-bottom:1px solid #A7ABB4;
+}
+.gwt-TabPanelBottom {
+
+}
+.gwt-TabBar {
+
+}
+
+.gwt-TabBarItem-wrapper {
+    background-color:#F8F8F8;
+    border-right: 1px solid #A7ABB4;
+    border-bottom: 1px solid #A7ABB4;
+    border-top: 1px solid #A7ABB4;
+    color: #606060 !important;
+    cursor: pointer;
+    margin-left: 0px;
+    min-width: 50px;
+    padding: 6px 10px;
+    text-align: center;
+}
+
+.gwt-TabBarItem-wrapper:hover {
+
+}
+
+.gwt-TabBarItem-wrapper-selected {
+    background-color:#ffffff;
+    border-right: 1px solid #A7ABB4;
+    border-bottom: 1px solid #A7ABB4;
+    border-top: 1px solid #A7ABB4;
+    color: #404040 !important;
+    border-bottom: none!important;
+    cursor: default;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 12px;
 }
