@@ -261,7 +261,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         // ----------------------------------------------------------
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
-        bottomLayout.getElement().setAttribute("style", "padding-top:20px");
 
         bottomLayout.add(formPanel, "Availability");
 
