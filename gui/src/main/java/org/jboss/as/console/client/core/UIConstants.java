@@ -328,7 +328,6 @@ public interface UIConstants extends Constants {
     String subsys_jacorb_maxManagedBufSize();
     String subsys_jacorb_outbufSize();
     String subsys_jacorb_outbufCacheTimeout();
-    String subsys_jacorb_codebase();
     String subsys_jacorb_transactions();
     String subsys_jacorb_monitoring();
     String subsys_jacorb_queueWait();
@@ -347,22 +346,18 @@ public interface UIConstants extends Constants {
     String subsys_jacorb_indirectionEncodingDisable();
     String subsys_jacorb_strictCheckOnTCCreation();
     String subsys_jacorb_supportSSL();
+    String subsys_jacorb_securityDomain();
     String subsys_jacorb_addComponentViaInterceptor();
     String subsys_jacorb_clientSupports();
     String subsys_jacorb_clientRequires();
     String subsys_jacorb_serverSupports();
     String subsys_jacorb_serverRequires();
-    String subsys_jacorb_useDomainSocketFactory();
-    String subsys_jacorb_useDomainServerSocketFactory();
+    String subsys_jacorb_orbTab();
+    String subsys_jacorb_initializersTab();
+    String subsys_jacorb_poaTab();
+    String subsys_jacorb_namingTab();
     String subsys_jacorb_interoperabilityTab();
-    String subsys_jacorb_threadPoolsTab();
-    String subsys_jacorb_queuesTab();
-    String subsys_jacorb_networkTab();
-    String subsys_jacorb_protocolTab();
     String subsys_jacorb_securityTab();
-    String subsys_jacorb_encodingSubgroup();
-    String subsys_jacorb_cachingSubgroup();
-    String subsys_jacorb_buffersSubgroup();
 
     String common_label_serverGroupConfigurations();
     String common_label_serverGroupDeployments();

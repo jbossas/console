@@ -39,7 +39,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
-              tabName="common_label_attributes")
+              order=10,
+              tabName="subsys_jacorb_orbTab")
     public String getName();
     @Override
     public void setName(String name);
@@ -47,38 +48,40 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="print-version")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_printVersion",
-              tabName="common_label_attributes")
+              order=20,
+              tabName="subsys_jacorb_orbTab")
     public String getPrintVersion();
     public void setPrintVersion(String value);
 
     @Binding(detypedName="use-imr")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_useIMR",
-              tabName="common_label_attributes")
+              order=30,
+              tabName="subsys_jacorb_orbTab")
     public String getUseIMR();
     public void setUseIMR(String value);
 
     @Binding(detypedName="use-bom")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_useBOM",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=40,
+              tabName="subsys_jacorb_orbTab")
     public String getUseBOM();
     public void setUseBOM(String value);
 
     @Binding(detypedName="cache-typecodes")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_cacheTypecodes",
-              subgroup="subsys_jacorb_cachingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=50,
+              tabName="subsys_jacorb_orbTab")
     public String getCacheTypecodes();
     public void setCacheTypecodes(String value);
 
     @Binding(detypedName="cache-poa-names")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_cachePOANames",
-              subgroup="subsys_jacorb_cachingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=60,
+              tabName="subsys_jacorb_orbTab")
     public String getCachePOANames();
     public void setCachePOANames(String value);
 
@@ -87,8 +90,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_GIOPMinorVersion",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=70,
+              tabName="subsys_jacorb_orbTab")
     public int getGiopMinorVersion();
     public void setGiopMinorVersion(int value);
 
@@ -97,7 +100,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_retries",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_networkTab")
+              order=80,
+              tabName="subsys_jacorb_orbTab")
     public int getRetries();
     public void setRetries(int value);
 
@@ -106,7 +110,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_retryInterval",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_networkTab")
+              order=90,
+              tabName="subsys_jacorb_orbTab")
     public int getRetryInterval();
     public void setRetryInterval(int value);
 
@@ -115,7 +120,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_clientTimeout",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_networkTab")
+              order=100,
+              tabName="subsys_jacorb_orbTab")
     public int getClientTimeout();
     public void setClientTimeout(int value);
 
@@ -124,7 +130,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_serverTimeout",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_networkTab")
+              order=110,
+              tabName="subsys_jacorb_orbTab")
     public int getServerTimeout();
     public void setServerTimeout(int value);
 
@@ -133,7 +140,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_maxServerConnections",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_networkTab")
+              order=120,
+              tabName="subsys_jacorb_orbTab")
     public int getMaxServerConnections();
     public void setMaxServerConnections(int value);
 
@@ -142,8 +150,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_maxManagedBufSize",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              subgroup="subsys_jacorb_buffersSubgroup",
-              tabName="subsys_jacorb_networkTab")
+              order=130,
+              tabName="subsys_jacorb_orbTab")
     public int getMaxManagedBufSize();
     public void setMaxManagedBufSize(int value);
 
@@ -152,8 +160,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_outbufSize",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              subgroup="subsys_jacorb_buffersSubgroup",
-              tabName="subsys_jacorb_networkTab")
+              order=140,
+              tabName="subsys_jacorb_orbTab")
     public int getOutbufSize();
     public void setOutbufSize(int value);
 
@@ -162,43 +170,40 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_outbufCacheTimeout",
               formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
               formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
-              subgroup="subsys_jacorb_buffersSubgroup",
-              tabName="subsys_jacorb_networkTab")
+              order=150,
+              tabName="subsys_jacorb_orbTab")
     public int getOutbufCacheTimeout();
     public void setOutbufCacheTimeout(int value);
-
-    @Binding(detypedName="codebase")
-    @FormItem(defaultValue="on",
-    		  localLabel="subsys_jacorb_codebase",
-              tabName="subsys_jacorb_protocolTab")
-    public String getCodebase();
-    public void setCodebase(String value);
 
     @Binding(detypedName="security")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_security",
-              tabName="subsys_jacorb_securityTab")
+              order=160,
+              tabName="subsys_jacorb_initializersTab")
     public String getSecurity();
     public void setSecurity(String value);
 
     @Binding(detypedName="transactions")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_transactions",
-              tabName="subsys_jacorb_protocolTab")
+              order=170,
+              tabName="subsys_jacorb_initializersTab")
     public String getTransactions();
     public void setTransactions(String value);
 
     @Binding(detypedName="monitoring")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_monitoring",
-              tabName="common_label_attributes")
+              order=180,
+              tabName="subsys_jacorb_poaTab")
     public String getMonitoring();
     public void setMonitoring(String value);
 
     @Binding(detypedName="queue-wait")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_queueWait",
-              tabName="subsys_jacorb_queuesTab")
+              order=190,
+              tabName="subsys_jacorb_poaTab")
     public String getQueueWait();
     public void setQueueWait(String value);
 
@@ -207,7 +212,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_queueMin",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_queuesTab")
+              order=200,
+              tabName="subsys_jacorb_poaTab")
     public int getQueueMin();
     public void setQueueMin(int value);
 
@@ -216,7 +222,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_queueMax",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_queuesTab")
+              order=210,
+              tabName="subsys_jacorb_poaTab")
     public int getQueueMax();
     public void setQueueMax(int value);
 
@@ -225,7 +232,8 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_poolSize",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_threadPoolsTab")
+              order=220,
+              tabName="subsys_jacorb_poaTab")
     public int getPoolSize();
     public void setPoolSize(int value);
 
@@ -234,27 +242,31 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     		  localLabel="subsys_jacorb_maxThreads",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
-              tabName="subsys_jacorb_threadPoolsTab")
+              order=230,
+              tabName="subsys_jacorb_poaTab")
     public int getMaxThreads();
     public void setMaxThreads(int value);
 
     @Binding(detypedName="root-context")
     @FormItem(defaultValue="JBoss/Naming/root",
               localLabel="subsys_jacorb_rootContext",
-              tabName="common_label_attributes")
+              order=240,
+              tabName="subsys_jacorb_namingTab")
     public String getRootContext();
     public void setRootContext(String value);
 
     @Binding(detypedName="export-corbaloc")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_exportCorbaloc",
-              tabName="common_label_attributes")
+              order=250,
+              tabName="subsys_jacorb_namingTab")
     public String getExportCorbaloc();
     public void setExportCorbaloc(String value);
 
     @Binding(detypedName="sun")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_sun",
+              order=260,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getSun();
     public void setSun(String value);
@@ -262,6 +274,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="comet")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_comet",
+              order=270,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getComet();
     public void setComet(String value);
@@ -269,6 +282,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="iona")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_iona",
+              order=280,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getIona();
     public void setIona(String value);
@@ -276,45 +290,55 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="chunk-custom-rmi-valuetypes")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_chunkCustomRMIValuetypes",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=290,
+              tabName="subsys_jacorb_interoperabilityTab")
     public String getChunkCustomRMIValueTypes();
     public void setChunkCustomRMIValueTypes(String value);
 
     @Binding(detypedName="lax-boolean-encoding")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_laxBooleanEncoding",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=300,
+              tabName="subsys_jacorb_interoperabilityTab")
     public String getLaxBooleanEncoding();
     public void setLaxBooleanEncoding(String value);
 
     @Binding(detypedName="indirection-encoding-disable")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_indirectionEncodingDisable",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=310,
+              tabName="subsys_jacorb_interoperabilityTab")
     public String getIndirectionEncodingDisable();
     public void setIndirectionEncodingDisable(String value);
 
     @Binding(detypedName="strict-check-on-tc-creation")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_strictCheckOnTCCreation",
-              subgroup="subsys_jacorb_encodingSubgroup",
-              tabName="subsys_jacorb_protocolTab")
+              order=320,
+              tabName="subsys_jacorb_interoperabilityTab")
     public String getStrictCheckOnTCCreation();
     public void setStrictCheckOnTCCreation(String value);
 
     @Binding(detypedName="support-ssl")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_supportSSL",
+              order=330,
               tabName="subsys_jacorb_securityTab")
     public String getSupportSSL();
     public void setSupportSSL(String value);
 
+    @Binding(detypedName="security-domain")
+    @FormItem(localLabel="subsys_jacorb_securityDomain",
+              required=false,
+              order=340,
+              tabName="subsys_jacorb_securityTab")
+    public String getSecurityDomain();
+    public void setSecurityDomain(String value);
+
     @Binding(detypedName="add-component-via-interceptor")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_addComponentViaInterceptor",
+              order=350,
               tabName="subsys_jacorb_securityTab")
     public String getAddComponentViaInterceptor();
     public void setAddComponentViaInterceptor(String value);
@@ -324,6 +348,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_clientSupports",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
+              order=360,
               tabName="subsys_jacorb_securityTab")
     public int getClientSupports();
     public void setClientSupports(int value);
@@ -333,6 +358,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_clientRequires",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
+              order=370,
               tabName="subsys_jacorb_securityTab")
     public int getClientRequires();
     public void setClientRequires(int value);
@@ -342,6 +368,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_serverSupports",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
+              order=380,
               tabName="subsys_jacorb_securityTab")
     public int getServerSupports();
     public void setServerSupports(int value);
@@ -351,23 +378,10 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_serverRequires",
               formItemTypeForAdd="NUMBER_BOX",
               formItemTypeForEdit="NUMBER_BOX",
+              order=390,
               tabName="subsys_jacorb_securityTab")
     public int getServerRequires();
     public void setServerRequires(int value);
-
-    @Binding(detypedName="use-domain-socket-factory")
-    @FormItem(defaultValue="off",
-              localLabel="subsys_jacorb_useDomainSocketFactory",
-              tabName="subsys_jacorb_networkTab")
-    public String getUseDomainSocketFactory();
-    public void setUseDomainSocketFactory(String value);
-
-    @Binding(detypedName="use-domain-server-socket-factory")
-    @FormItem(defaultValue="off",
-              localLabel="subsys_jacorb_useDomainServerSocketFactory",
-              tabName="subsys_jacorb_networkTab")
-    public String getUseDomainServerSocketFactory();
-    public void setUseDomainServerSocketFactory(String value);
 
     @Override
     @Binding(detypedName="properties",
@@ -375,6 +389,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @FormItem(localLabel="common_label_properties",
               formItemTypeForEdit="PROPERTY_EDITOR",
               formItemTypeForAdd="PROPERTY_EDITOR",
+              order=1000,
               tabName="CUSTOM")
     List<PropertyRecord> getProperties();
     void setProperties(List<PropertyRecord> properties);
