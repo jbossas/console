@@ -7,9 +7,11 @@ import java.util.Map;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -29,7 +31,7 @@ public class FormToolStrip<T> {
     private boolean providesEditSaveOp = true;
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
-    private ToolButton cancelBtn = null;
+    private HTML cancelBtn = null;
     private ToolButton editBtn = null;
 
     private PreValidation preValidation = null;
@@ -150,9 +152,10 @@ public class FormToolStrip<T> {
             }
         };
 
-        cancelBtn = new ToolButton(Console.CONSTANTS.common_label_cancel(), cancelHandler);
+        cancelBtn = new InlineLink(Console.CONSTANTS.common_label_cancel());
+        cancelBtn.addClickHandler(cancelHandler);
+        toolStrip.addToolWidget(cancelBtn);
 
-        toolStrip.addToolButton(cancelBtn);
         cancelBtn.setVisible(false);
         return toolStrip;
     }
