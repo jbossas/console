@@ -197,7 +197,7 @@
 }
 
 .cellTreeSelectedItem {
-    background:#d9e4f6;
+    background:#EEF4F9;
     color: white;
     height: auto;
     overflow: visible;
@@ -246,7 +246,7 @@
 }
 
 .cellListSelectedItem {
-    background-color: #d9e4f6;
+    background-color: #EEF4F9;
     color: white;
     height: auto;
     overflow: visible;
@@ -254,6 +254,13 @@
 
 /* regular gwt tabs */
 
+.default-tabpanel {
+
+}
+
+.gwt-TabLayoutPanel{
+
+}
 
 .gwt-TabLayoutPanelTab, .gwt-TabLayoutPanelTab-selected {
     position: relative;
@@ -413,4 +420,61 @@
     cursor: default;
     font-family: Arial,Verdana,sans-serif;
     font-size: 12px;
+}
+
+body, p, td, th, option, input, textarea, select {
+    color: #000000;
+    font: 12px/1.4 "Lucida Sans Unicode","Lucida Grande",sans-serif!important;
+}
+
+
+/*stack sections*/
+
+.section-stack {
+    width:99%;
+    margin:0px;
+    border-left:1px solid #A7ABB4;
+    border-right:1px solid #A7ABB4!important;
+}
+
+
+.stack-section-header {
+    background-color: #F8F8F8;
+    border-top: 1px solid #A7ABB4;
+    border-bottom: 1px solid #A7ABB4;
+    color: #606060;
+    cursor: pointer;
+    font-family: Arial,Verdana,sans-serif;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-top: 2px;
+    width: 100%;
+}
+
+.stack-section-header-selected {
+    color:#000;
+}
+
+.stack-section-header-inline {
+    font-family:Arial,Verdana,sans-serif;
+    text-overflow:ellipsis;
+    background-color:#F8F8F8;
+    padding-left:10px;
+    padding-top:6px;
+    padding-bottom:4px;
+    height:20px;
+    color:#000;
+    font-size:12px;
+    border-top:1px solid #A7ABB4;
+    border-bottom:1px solid #A7ABB4;
+    cursor:pointer;
+}
+
+.stack-section {
+    border-top: none!important;
+    margin: 0;
+    padding-bottom: 15px;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
 }

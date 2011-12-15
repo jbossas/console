@@ -71,12 +71,20 @@ body {
 }
 
 .header-link {
-    color:#ffffff;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 14px!important;
     text-decoration: none;
-    padding-bottom: 6px;
+    padding-bottom: 4px;
     padding-left:20px;
+}
+
+.header-link-label {
+    color:#e5e5e5!important;
+}
+
+.header-link-selected div .header-link-label {
+    font-weight: BOLD;
+    color:#ffffff!important;
 }
 
 .header-link:hover {
@@ -84,16 +92,15 @@ body {
 }
 
 .header-link-selected {
-    font-weight: BOLD;
     background-image: url('images/header/header_arrow_blue.png');
     background-position:70% 100%;
     background-repeat: no-repeat;
 }
 
 .header-prod-version {
-  padding-top:20px;
+  padding-top:18px;
   padding-left: 4px;
-  font-size: 10pt!important;
+  font-size: 13pt!important;
   font-weight: BOLD;
   color: #ffffff!important;
 }
@@ -126,7 +133,8 @@ body {
 
 .notification-button {
     font-size:12px;
-    color:#ffffff;
+    color:#e3a934;
+    font-weight: BOLD;
     cursor:pointer;
 }
 
@@ -140,7 +148,7 @@ body {
 }
 
 .combobox-item:hover {
-    background-color:#d9e4f6!important;
+    background-color:#eef4f9!important;
 }
 
 .combobox-item-odd {

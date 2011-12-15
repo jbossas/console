@@ -158,7 +158,7 @@ public class Header implements ValueChangeHandler<String> {
             final String id = "header-" + name;
 
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<div>");
+            html.appendHtmlConstant("<div class='header-link-label'>");
             html.appendHtmlConstant(section[1]);
             html.appendHtmlConstant("</div>");
             HTML widget = new HTML(html.toSafeHtml());
