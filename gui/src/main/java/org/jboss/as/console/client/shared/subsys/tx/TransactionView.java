@@ -70,8 +70,7 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolstripWidget, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
         panel.add(new ContentHeaderLabel("Transaction Manager Configuration"));
 
@@ -79,6 +78,7 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
 
         panel.add(new ContentGroupLabel("Attributes"));
 
+        panel.add(toolstripWidget);
 
         NumberBoxItem defaultTimeout = new NumberBoxItem("defaultTimeout", "Default Timeout");
         CheckBoxItem enableStatistics = new CheckBoxItem("enableStatistics", "Enable Statistics");
