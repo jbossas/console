@@ -74,7 +74,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
 
             placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.DeploymentListPresenter)
+                    new PlaceRequest(NameTokens.StandaloneServerPresenter)
             );
             hasBeenRevealed = true;
 

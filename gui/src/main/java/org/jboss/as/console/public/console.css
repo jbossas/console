@@ -289,3 +289,17 @@ body {
     border-bottom: 1px solid #d6d6d6;
     padding-left:15px;
 }
+
+.status-panel {
+    border: 1px solid #dcdcdc;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.serverUptoDate{
+
+}
+
+.serverNeedsUpdate {
+
+}

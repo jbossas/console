@@ -30,7 +30,7 @@ public class BootstrapProcess {
             final AsyncCommand nextHook = hooks.get(index);
             index++;
 
-            System.out.println(index+": "+nextHook.getClass().getName());
+            //System.out.println(index+": "+nextHook.getClass().getName());
 
             nextHook.execute(new AsyncCallback<Boolean>() {
                 @Override

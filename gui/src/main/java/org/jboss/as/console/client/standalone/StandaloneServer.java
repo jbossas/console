@@ -9,6 +9,15 @@ public interface StandaloneServer {
     String getName();
     void setName(String name);
 
+    String getReleaseVersion();
+    void setReleaseVersion(String version);
+
+    String getReleaseCodename();
+    void setReleaseCodename(String codename);
+
+    String getServerState();
+    void setServerState(String state);
+
     String getSocketBinding();
     void setSocketBinding(String socketBinding);
 

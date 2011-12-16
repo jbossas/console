@@ -19,6 +19,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.dmr.client.ModelNode;
@@ -38,6 +39,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private ReloadState reloadState;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneServerPresenter)
@@ -46,19 +48,21 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
     public interface MyView extends View {
         void setPresenter(StandaloneServerPresenter presenter);
-
         void updateFrom(StandaloneServer server);
+        void setReloadRequired(boolean reloadRequired);
     }
 
     @Inject
     public StandaloneServerPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, DispatchAsync dispatcher, BeanFactory factory) {
+            PlaceManager placeManager, DispatchAsync dispatcher, BeanFactory factory,
+            ReloadState reloadState) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
+        this.reloadState = reloadState;
     }
 
     @Override
@@ -75,11 +79,11 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
         List<ModelNode> steps = new ArrayList<ModelNode>();
 
-        ModelNode fetchName = new ModelNode();
-        fetchName.get(OP).set(READ_ATTRIBUTE_OPERATION);
-        fetchName.get(ADDRESS).setEmptyList();
-        fetchName.get("name").set("name");
-        steps.add(fetchName);
+        ModelNode serverConfig = new ModelNode();
+        serverConfig.get(OP).set(READ_RESOURCE_OPERATION);
+        serverConfig.get(INCLUDE_RUNTIME).set(true);
+        serverConfig.get(ADDRESS).setEmptyList();
+        steps.add(serverConfig);
 
         //:read-children-resources(child-type=socket-binding-group)
 
@@ -105,8 +109,11 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                     if(step.getName().equals("step-1"))
                     {
                         // name response
-                        String name = stepResult.get(RESULT).asString();
-                        server.setName(name);
+                        ModelNode serverAttributes = stepResult.get(RESULT).asObject();
+                        server.setName(serverAttributes.get("name").asString());
+                        server.setReleaseCodename(serverAttributes.get("release-codename").asString());
+                        server.setReleaseVersion(serverAttributes.get("release-version").asString());
+                        server.setServerState(serverAttributes.get("server-state").asString());
                     }
                     else
                     {
@@ -120,6 +127,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
 
                 getView().updateFrom(server);
+                getView().setReloadRequired(reloadState.isReloadRequired());
 
             }
         });
@@ -141,6 +149,8 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         });
 
         loadConfig();
+
+        getView().setReloadRequired(reloadState.isReloadRequired());
     }
 
     @Override
@@ -165,11 +175,35 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 {
                     Console.error("Error: Failed to reload server");
                 }
+
+                getView().setReloadRequired(reloadState.isReloadRequired());
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 Console.error("Error: Failed to reload server", caught.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Simply query the process state attribute to get to the required headers
+     */
+    public void checkReloadState() {
+
+         // :read-attribute(name=process-type)
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("server-state");
+        operation.get(ADDRESS).setEmptyList();
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+
             }
         });
     }
