@@ -199,14 +199,13 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 numPollAttempts++;
 
                 if(numPollAttempts>5)
-                {
                     keepRunning=false;
-                    numPollAttempts=0;
-                }
                 else
-                {
                     checkReloadState();
-                }
+
+                if(!keepRunning)
+                     numPollAttempts=0;
+
                 return keepRunning;
             }
         }, 500);
