@@ -128,7 +128,7 @@ public class Header implements ValueChangeHandler<String> {
         if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
             logo = new Image("images/logo/eap6.png");
         else
-            logo = new Image("images/logo/jbossas7_blue.png");
+            logo = new Image("images/logo/jbossas7_text.png");
 
         logo.setStyleName("logo");
 
