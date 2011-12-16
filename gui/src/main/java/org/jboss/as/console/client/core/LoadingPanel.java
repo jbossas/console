@@ -19,6 +19,7 @@ public class LoadingPanel {
 
         Image loadingImage = new Image("images/loading_lite.gif");
         Label label = new Label("Loading ...");
+        label.getElement().setAttribute("style", "padding-right:5px;");
 
         loadingPanel.add(loadingImage);
         loadingPanel.add(label);
