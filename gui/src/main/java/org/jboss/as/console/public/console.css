@@ -1,8 +1,3 @@
-.page-header {
-    background-color: #3B4D64;
-
-    color:white;
-}
 
 body {
     background: url("images/org_bg.png") repeat-x scroll 0 0 #F3F3F3;
@@ -39,7 +34,6 @@ body {
     min-height:58px;
     height:58px;
     width:100%;
-    background-color: #3B4D64;
 }
 .footer-panel {
     min-height:25px;
@@ -55,6 +49,11 @@ body {
 .footer-item-right {
     border-left:1px solid #C0C0C0;
     padding-left:10px;
+}
+
+.page-header {
+    background: url("images/header/org_header.png") repeat-x scroll 0 0 #3B4D64;
+    color:white;
 }
 
 .header-logo {
@@ -265,7 +264,6 @@ body {
     font-size: 13px;
     min-width:35px;
     white-space:nowrap;
-    border-left: #A7ABB4;
 }
 
 .link-bar-first {
