@@ -41,6 +41,8 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     private BeanFactory factory;
     private ReloadState reloadState;
 
+    private boolean keepRunning = false;
+
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneServerPresenter)
     public interface MyProxy extends Proxy<StandaloneServerPresenter>, Place {
@@ -176,6 +178,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                     Console.error("Error: Failed to reload server");
                 }
 
+                pollState();
                 getView().setReloadRequired(reloadState.isReloadRequired());
             }
 
@@ -184,6 +187,29 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 Console.error("Error: Failed to reload server", caught.getMessage());
             }
         });
+    }
+
+    int numPollAttempts = 0;
+    private void pollState() {
+
+        Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
+            @Override
+            public boolean execute() {
+
+                numPollAttempts++;
+
+                if(numPollAttempts>5)
+                {
+                    keepRunning=false;
+                    numPollAttempts=0;
+                }
+                else
+                {
+                    checkReloadState();
+                }
+                return keepRunning;
+            }
+        }, 500);
     }
 
     /**
@@ -203,7 +229,10 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
+                if(!reloadState.isReloadRequired())
+                    keepRunning = false;
 
+                getView().setReloadRequired(reloadState.isReloadRequired());
             }
         });
     }
