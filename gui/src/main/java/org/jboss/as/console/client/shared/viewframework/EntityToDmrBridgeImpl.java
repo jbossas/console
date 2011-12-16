@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
 import static org.jboss.dmr.client.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
@@ -52,6 +53,7 @@ import org.jboss.dmr.client.Property;
 public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmrBridge<T> {
 
     protected ApplicationMetaData propertyMetadata;
+    protected BeanMetaData beanMetaData;
     protected AddressBinding address;
     protected Class<?> type;
     protected EntityAdapter<T> entityAdapter;
@@ -66,7 +68,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     public EntityToDmrBridgeImpl(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
                                  DispatchAsync dispatcher) {
         this.propertyMetadata = propertyMetadata;
-        this.address = propertyMetadata.getBeanMetaData(type).getAddress();
+        this.beanMetaData = propertyMetadata.getBeanMetaData(type);
+        this.address = beanMetaData.getAddress();
         this.entityAdapter = new EntityAdapter<T>(type, propertyMetadata);
         this.type = type;
         this.view = view;
@@ -90,7 +93,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     public T newEntity() {
         T entity = (T) propertyMetadata.getFactory(type).create();
         Mutator mutator = propertyMetadata.getMutator(type);
-        for (PropertyBinding prop : propertyMetadata.getBindingsForType(type)) {
+        for (PropertyBinding prop : beanMetaData.getProperties()) {
             mutator.setValue(entity, prop.getJavaName(), prop.getDefaultValue());
         }
 
@@ -173,9 +176,33 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
             return;
         }
 
+        // must write back unchanged flattened values
+        Mutator mutator = propertyMetadata.getMutator(type);
+        for (PropertyBinding prop : beanMetaData.getProperties()) {
+            String javaName = prop.getJavaName();
+            Object value = mutator.getValue(entity, javaName);
+            if (changedValuesContainsFlattenedSibling(prop, changedValues) && 
+                    (value != null) && !changedValues.containsKey(javaName)) {
+                changedValues.put(javaName, value);
+            }
+        }
+        
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
 
         execute(batch, name, "Success: Updated " + name);
+    }
+    
+    private boolean changedValuesContainsFlattenedSibling(PropertyBinding prop, Map<String, Object> changedValues) {
+        if (!prop.isFlattened()) return false;
+        
+        String detypedName = prop.getDetypedName();
+        String attributePath = detypedName.substring(0, detypedName.lastIndexOf("/"));
+        for (String javaName : changedValues.keySet()) {
+            PropertyBinding binding = formMetaData.findAttribute(javaName);
+            if (binding.getDetypedName().startsWith(attributePath)) return true;
+        }
+        
+        return false;
     }
 
     @Override
@@ -217,11 +244,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
-
+        System.out.println("operation=");
+        System.out.println(operation.toString());
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override
             public void onDmrSuccess(ModelNode response) {
+                System.out.println("response=");
+                System.out.println(response.toString());
                 Console.info(successMessage);
                 loadEntities(nameEditedOrAdded);
             }

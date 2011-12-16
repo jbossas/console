@@ -11,6 +11,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPE
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -485,84 +486,104 @@ public class EntityAdapter<T> {
 
         List<PropertyBinding> propertyBindings = metaData.getBeanMetaData(type).getProperties();
 
+        Map<String, ModelNode> flattenedSteps = new HashMap<String, ModelNode>();
         for(PropertyBinding binding : propertyBindings)
         {
             Object value = changeSet.get(binding.getJavaName());
-            if(value!=null)
-            {
-                ModelNode step = protoType.clone();
+            if (value == null) continue;
+            
+            ModelNode step = protoType.clone();
 
-             // account for sub-attribute paths
-                String[] splitDetypedName = binding.getDetypedName().split("/");
-                step.get(NAME).set(splitDetypedName[0]);
-                splitDetypedName[0] = VALUE;
-                ModelNode nodeToSetValueUpon = step.get(splitDetypedName);
+            // account for flattened sub-attribute paths
+            String detypedName = binding.getDetypedName();
+            String[] splitDetypedName = detypedName.split("/");
+            
+            step.get(NAME).set(splitDetypedName[0]);
+            splitDetypedName[0] = VALUE;
+            ModelNode nodeToSetValueUpon = step.get(splitDetypedName);
 
-                Class type = value.getClass();
-
-                if(FormItem.VALUE_SEMANTICS.class == type) {
-
-                    // skip undefined form item values (FormItem.UNDEFINED.Value)
-                    // or persist as UNDEFINED
-                    if(value.equals(FormItem.VALUE_SEMANTICS.UNDEFINED)
-                            && binding.isWriteUndefined())
-                    {
-                        nodeToSetValueUpon.set(ModelType.UNDEFINED);
-                    }
-
+            if (binding.isFlattened()) { // unflatten
+                String attributePath = detypedName.substring(0, detypedName.lastIndexOf("/"));
+                ModelNode savedStep = flattenedSteps.get(attributePath);
+                if (savedStep == null) {
+                    setValue(binding, nodeToSetValueUpon, value);
+                    flattenedSteps.put(attributePath, step);
+                } else {
+                    setValue(binding, savedStep.get(splitDetypedName), value);
                 }
-                else if(String.class == type)
-                {
-
-                    String stringValue = (String) value;
-                    if(stringValue.startsWith("$"))     // TODO: further constraints
-                        nodeToSetValueUpon.setExpression(stringValue);
-                    else
-                        nodeToSetValueUpon.set(stringValue);
-                }
-                else if(Boolean.class == type)
-                {
-                    nodeToSetValueUpon.set((Boolean)value);
-                }
-                else if(Integer.class == type)
-                {
-                    nodeToSetValueUpon.set((Integer)value);
-                }
-                else if(Double.class == type)
-                {
-                    nodeToSetValueUpon.set((Double)value);
-                }
-                else if (Long.class == type)
-                {
-                    nodeToSetValueUpon.set((Long)value);
-                }
-                else if (Float.class == type)
-                {
-                    nodeToSetValueUpon.set((Float)value);
-                }
-                else if (binding.getListType() != null)
-                {
-                    if (binding.getListType() == PropertyRecord.class) {
-                        nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
-                    }  else if (isBaseType(binding.getListType())) {
-                        nodeToSetValueUpon.set(fromBaseTypeList((List)value, binding.getListType()));
-                    } else {
-                        nodeToSetValueUpon.set(fromEntityList((List)value));
-                    }
-                }
-                else
-                {
-                    throw new RuntimeException("Unsupported type: "+type);
-                }
-
+                
+            } else {
+                setValue(binding, nodeToSetValueUpon, value);
                 steps.add(step);
             }
         }
         
+        // add steps for flattened attributes
+        for (ModelNode step : flattenedSteps.values()) steps.add(step);
+        
+        // add extra steps
         steps.addAll(Arrays.asList(extraSteps));
 
         operation.get(STEPS).set(steps);
         return operation;
     }
     
+    private void setValue(PropertyBinding binding, ModelNode nodeToSetValueUpon, Object value) {
+        Class type = value.getClass();
+        
+        if(FormItem.VALUE_SEMANTICS.class == type) {
+
+            // skip undefined form item values (FormItem.UNDEFINED.Value)
+            // or persist as UNDEFINED
+            if(value.equals(FormItem.VALUE_SEMANTICS.UNDEFINED)
+                    && binding.isWriteUndefined())
+            {
+                nodeToSetValueUpon.set(ModelType.UNDEFINED);
+            }
+
+        }
+        else if(String.class == type)
+        {
+
+            String stringValue = (String) value;
+            if(stringValue.startsWith("$"))     // TODO: further constraints
+                nodeToSetValueUpon.setExpression(stringValue);
+            else
+                nodeToSetValueUpon.set(stringValue);
+        }
+        else if(Boolean.class == type)
+        {
+            nodeToSetValueUpon.set((Boolean)value);
+        }
+        else if(Integer.class == type)
+        {
+            nodeToSetValueUpon.set((Integer)value);
+        }
+        else if(Double.class == type)
+        {
+            nodeToSetValueUpon.set((Double)value);
+        }
+        else if (Long.class == type)
+        {
+            nodeToSetValueUpon.set((Long)value);
+        }
+        else if (Float.class == type)
+        {
+            nodeToSetValueUpon.set((Float)value);
+        }
+        else if (binding.getListType() != null)
+        {
+            if (binding.getListType() == PropertyRecord.class) {
+                nodeToSetValueUpon.set(fromEntityPropertyList((List)value));
+            }  else if (isBaseType(binding.getListType())) {
+                nodeToSetValueUpon.set(fromBaseTypeList((List)value, binding.getListType()));
+            } else {
+                nodeToSetValueUpon.set(fromEntityList((List)value));
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported type: "+type);
+        }
+    }
 }

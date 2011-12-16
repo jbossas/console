@@ -56,6 +56,7 @@ public interface UnboundedQueueThreadPool extends ThreadPool, HasProperties {
    
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="60",
+            required=true,
             label="Keepalive Timeout",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX")
@@ -65,7 +66,7 @@ public interface UnboundedQueueThreadPool extends ThreadPool, HasProperties {
    @Binding(detypedName="keepalive-time/unit")
    @FormItem(defaultValue="SECONDS",
             label="Keepalive Timeout Unit",
-            required=false,
+            required=true,
             formItemTypeForEdit="TIME_UNITS",
             formItemTypeForAdd="TIME_UNITS")
    String getKeepaliveTimeoutUnit();

@@ -20,7 +20,6 @@ package org.jboss.as.console.client.shared.subsys.threads;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
-import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
@@ -56,6 +55,8 @@ public class QueuelessThreadPoolView extends AbstractThreadPoolView<QueuelessThr
         Form<QueuelessThreadPool> form = new Form(QueuelessThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeout").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
         return form;

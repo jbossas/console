@@ -22,11 +22,8 @@ package org.jboss.as.console.client.shared.subsys.infinispan;
 import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.InvalidationCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
  * Main view class for Infinispan Invalidation Cache.
@@ -43,14 +40,6 @@ public class InvalidationCacheView extends AbstractCacheView<InvalidationCache> 
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_infinispan_invalidationCache();
-    }
-
-    @Override
-    protected FormAdapter<InvalidationCache> makeAddEntityForm() {
-        Form<InvalidationCache> form = new Form(DeploymentScanner.class);
-        form.setNumColumns(1);
-        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
-        return form;
     }
 
 }

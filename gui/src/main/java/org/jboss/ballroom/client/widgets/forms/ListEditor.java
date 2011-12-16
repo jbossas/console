@@ -185,6 +185,10 @@ public class ListEditor<T extends Comparable> {
         addItem.setEnabled(enabled);
     }
     
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+    
     /**
      * If set to false, editor will only allow add and delete, but not
      * in-place editing.

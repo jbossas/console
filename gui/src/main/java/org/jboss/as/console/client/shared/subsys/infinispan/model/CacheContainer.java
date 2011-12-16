@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.infinispan.model;
 
+import java.util.List;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
@@ -49,9 +50,10 @@ public interface CacheContainer extends NamedEntity {
     void setJndiName(String jndiName);
     
     @Binding(detypedName= "default-cache")
-    @FormItem(localLabel="subsys_infinispan_default_cache",
+    @FormItem(defaultValue="",
+            localLabel="subsys_infinispan_default_cache",
             required=true,
-            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForEdit="TEXT",
             formItemTypeForAdd="TEXT_BOX")
     String getDefaultCache();
     void setDefaultCache(String defaultCache);
@@ -109,8 +111,9 @@ public interface CacheContainer extends NamedEntity {
     void setSite(String site);
     
     @Binding(detypedName="transport/lock-timeout")
-    @FormItem(label="Lock Timeout",
-            required=false,
+    @FormItem(defaultValue = "60000",
+            label="Lock Timeout (ms)",
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_transport")
@@ -134,4 +137,15 @@ public interface CacheContainer extends NamedEntity {
             tabName="subsys_infinispan_transport")
     String getMachine();
     void setMachine(String machine);
+    
+    @Binding(detypedName="alias", 
+             listType="java.lang.String")
+    @FormItem(defaultValue="",
+             label="Aliases",
+             required=false,
+             formItemTypeForEdit="UNLIMITED_STRING_LIST_EDITOR",
+             formItemTypeForAdd="UNLIMITED_STRING_LIST_EDITOR",
+             tabName="CUSTOM")
+    public List<String> getAliases();
+    public void setAliases(List<String> aliases);
 }

@@ -31,7 +31,6 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
@@ -116,11 +115,13 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
             return;
 
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
-//        System.out.println("executing:" );
-//        System.out.println(batch);
+        System.out.println("executing:" );
+        System.out.println(batch);
         dispatcher.execute(new DMRAction(batch), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
+                System.out.println("response:");
+                System.out.println(response.toString());
                 Console.info("Update successful");
                 loadEntities(null);
             }

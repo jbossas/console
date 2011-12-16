@@ -51,6 +51,10 @@ public class NewListItemWizard {
         this.label = label;
     }
     
+    public boolean isChoiceLimited() {
+        return this.limitChoices;
+    }
+    
     public Widget asWidget() {
 
         DockLayoutPanel wrapper = new DockLayoutPanel(Style.Unit.PX);

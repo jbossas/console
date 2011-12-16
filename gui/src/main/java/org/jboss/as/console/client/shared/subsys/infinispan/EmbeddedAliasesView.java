@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.logging;
+package org.jboss.as.console.client.shared.subsys.infinispan;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.logging.model.HasHandlers;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedListView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
@@ -34,13 +34,13 @@ import org.jboss.as.console.client.Console;
  * @author Heiko Braun
  * @date 11/21/11
  */
-class EmbeddedHandlerView<T extends HasHandlers> implements SingleEntityView<T>, ListManagement<String> {
+class EmbeddedAliasesView<T extends CacheContainer> implements SingleEntityView<T>, ListManagement<String> {
 
     private EmbeddedListView listView;
     private T editedEntity;
     private FrameworkPresenter presenter;
 
-    EmbeddedHandlerView(FrameworkPresenter presenter) {
+    EmbeddedAliasesView(FrameworkPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -55,17 +55,17 @@ class EmbeddedHandlerView<T extends HasHandlers> implements SingleEntityView<T>,
     @Override
     public void updatedEntity(T entity) {
         this.editedEntity = entity;
-        this.listView.setValue(entity.getHandlers());
+        this.listView.setValue(entity.getAliases());
     }
 
     @Override
     public String getTitle() {
-        return Console.CONSTANTS.subsys_logging_handlers();
+        return Console.CONSTANTS.subsys_infinispan_aliases();
     }
 
     @Override
     public Widget asWidget() {
-        this.listView = new EmbeddedListView(Console.CONSTANTS.subsys_logging_handlers(), 5, true, this);
+        this.listView = new EmbeddedListView(Console.CONSTANTS.subsys_infinispan_aliases(), 5, false, this);
         this.listView.setValueColumnHeader(Console.CONSTANTS.common_label_name());
         Widget widget = listView.asWidget();
         widget.addStyleName("fill-layout-width");
@@ -78,10 +78,10 @@ class EmbeddedHandlerView<T extends HasHandlers> implements SingleEntityView<T>,
         values.add(item);
 
         T entity = this.editedEntity;
-        entity.setHandlers(values);
+        entity.setAliases(values);
 
         Map<String, Object> changes = new HashMap<String,Object>();
-        changes.put("handlers", values);
+        changes.put("aliases", values);
 
         presenter.getEntityBridge().onSaveDetails(entity, changes);
 
@@ -93,10 +93,10 @@ class EmbeddedHandlerView<T extends HasHandlers> implements SingleEntityView<T>,
         values.remove(item);
 
         T entity = this.editedEntity;
-        entity.setHandlers(values);
+        entity.setAliases(values);
 
         Map<String, Object> changes = new HashMap<String,Object>();
-        changes.put("handlers", values);
+        changes.put("aliases", values);
 
         presenter.getEntityBridge().onSaveDetails(entity, changes);
 

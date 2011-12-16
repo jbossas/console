@@ -20,18 +20,28 @@
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
 import com.google.gwt.user.cellview.client.TextColumn;
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
+import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * Main view class for Infinispan LocalCache Containers.
@@ -40,11 +50,15 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
  */
 public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEntityView<T> implements FrameworkView {
 
-    private EntityToDmrBridge bridge;
+    protected EntityToDmrBridge bridge;
+    protected DispatchAsync dispatcher;
+    
+    protected ComboBoxItem cacheContainerForAdd;
     
     public AbstractCacheView(Class<T> type, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(type, propertyMetaData);
         bridge = new CacheEntityToDmrBridge(propertyMetaData, type, this, dispatcher);
+        this.dispatcher = dispatcher;
     }
     
     @Override
@@ -53,11 +67,49 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
     }
 
     @Override
+    public void itemAction(Action action, ObservableFormItem item) {
+        if (item.getPropertyBinding().getJavaName().equals("cacheContainer") && 
+           (action == Action.CREATED) && (item.getWrapped() instanceof ComboBoxItem)) {
+            cacheContainerForAdd = (ComboBoxItem) item.getWrapped();
+            cacheContainerForAdd.setDefaultToFirstOption(true);
+        }
+    }
+    
+    @Override
     protected FormAdapter<T> makeAddEntityForm() {
-        Form<T> form = new Form(DeploymentScanner.class);
+        Form<T> form = new Form(beanType);
         form.setNumColumns(1);
-        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd());
+        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd(), 
+                       getFormMetaData().findAttribute("cacheContainer").getFormItemForAdd(this));
         return form;
+    }
+
+    @Override
+    public void initialLoad() {
+        updateCacheContainerList();
+        super.initialLoad();
+    }
+
+    protected void updateCacheContainerList() {
+        if (this.cacheContainerForAdd == null) return;
+        
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "infinispan");
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set("cache-container");
+        
+        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
+            @Override
+            public void onDmrSuccess(ModelNode response) {
+                List<String> cacheContainers = new ArrayList<String>();
+                for (ModelNode container : response.get(RESULT).asList()) {
+                    cacheContainers.add(container.asString());
+                }
+                System.out.println("setting value map");
+                AbstractCacheView.this.cacheContainerForAdd.setValueMap(cacheContainers);
+            }
+        });
     }
 
     @Override

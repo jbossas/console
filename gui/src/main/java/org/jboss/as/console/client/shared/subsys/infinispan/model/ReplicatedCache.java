@@ -51,6 +51,20 @@ public interface ReplicatedCache extends InvalidationCache {
     @Override
     public void setCacheContainer(String cacheContainerName);
     
+    // This one isn't actually a cache attribute.
+    // It is set by the console to display if it is the default cache
+    // for its cache container.
+    @Override
+    @Binding(detypedName="default-for-cache-container")
+    @FormItem(defaultValue="false",
+            label="Default for cache container?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public Boolean isDefault();
+    @Override
+    public void setDefault(Boolean isDefault);
+    
     @Override
     @Binding(detypedName="controller-mode")
     @FormItem(defaultValue="LAZY",
@@ -91,7 +105,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="locking/isolation")
     @FormItem(defaultValue="REPEATABLE_READ",
             label="Isolation",
-            required=false,
+            required=true,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "READ_UNCOMMITTED", "READ_COMMITTED", "REPEATABLE_READ", "SERIALIZABLE"},
@@ -104,7 +118,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="locking/striping")
     @FormItem(defaultValue="false",
             label="Striping",
-            required=false,
+            required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_locking")
@@ -116,7 +130,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="locking/acquire-timeout")
     @FormItem(defaultValue="15000",
             label="Acquire Timeout",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_locking")
@@ -128,7 +142,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="locking/concurrency-level")
     @FormItem(defaultValue="1000",
             label="Concurrency Level",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_locking")
@@ -169,7 +183,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="expiration/max-idle")
     @FormItem(defaultValue="-1",
             label="Max Idle",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -181,7 +195,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="expiration/lifespan")
     @FormItem(defaultValue="-1",
             label="Lifespan",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -193,7 +207,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="expiration/interval")
     @FormItem(defaultValue="5000",
             label="Interval",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -254,7 +268,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="state-transfer/enabled")
     @FormItem(defaultValue="true",
             label="Enabled",
-            required=false,
+            required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_stateTransfer")
@@ -264,7 +278,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="state-tranfer/timeout")
     @FormItem(defaultValue="60000",
             label="Timeout",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_stateTransfer")
@@ -274,7 +288,7 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="state-tranfer/flush-timeout")
     @FormItem(defaultValue="60000",
             label="Flush Timeout",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_stateTransfer")

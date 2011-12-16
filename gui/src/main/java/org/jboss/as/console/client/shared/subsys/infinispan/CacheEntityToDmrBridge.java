@@ -19,8 +19,11 @@
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.DmrCallback;
@@ -59,20 +62,31 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
     @Override
     public void loadEntities(String nameEditedOrAdded) {
         this.nameOfLastEdited = nameEditedOrAdded;
-        ModelNode operation = address.asResource(Baseadress.get(), "*", "*");
         
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        ModelNode steps = new ModelNode();
+        steps.get(OP).set(COMPOSITE);
 
-        if (formMetaData.isFlattened()) {
-            operation.get(RECURSIVE).set(true);
-        } else {
-            // Runtime information is only available in the DMR on non-recursive reads
-            operation.get(INCLUDE_RUNTIME).set(true);
-        }
-
-        dispatcher.execute(new DMRAction(operation), new DmrCallback() {
+        // get all the cache info
+        ModelNode readRscOp = address.asResource(Baseadress.get(), "*", "*");
+        readRscOp.get(OP).set(READ_RESOURCE_OPERATION);
+        readRscOp.get(RECURSIVE).set(true);
+        steps.get(STEPS).add(readRscOp);
+        
+        // for each container, find the default cache
+        ModelNode readAttrOp = new ModelNode();
+        readAttrOp.get(ADDRESS).add(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", "*");
+        readAttrOp.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        readAttrOp.get(NAME).set("default-cache");
+        steps.get(STEPS).add(readAttrOp);
+        
+    //    System.out.println("load entities for " + this.type.getName());
+    //    System.out.println(steps.toString());
+        
+        dispatcher.execute(new DMRAction(steps), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
+         //      System.out.println("response=");
+         //      System.out.println(response.toString());
                onLoadEntitiesSuccess(response);
             }
         });
@@ -82,7 +96,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
     @Override
     protected void onLoadEntitiesSuccess(ModelNode response) {
         List<T> entities = new ArrayList<T>();
-        for (ModelNode entity : response.get(RESULT).asList()) {
+        for (ModelNode entity : response.get(RESULT).get("step-1").get(RESULT).asList()) {
             for (Property addressProp : entity.get(ADDRESS).asPropertyList()) {
                 entity.get(RESULT).get(addressProp.getName()).set(addressProp.getValue());
             }
@@ -91,9 +105,44 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         }
         
         entityList = sortEntities(entities);
+        
+        setIsDefaultCacheAttribute(response.get(RESULT).get("step-2"));
+        
         view.refresh();
     }
-
     
+    private void setIsDefaultCacheAttribute(ModelNode response) {
+        Set<String> defaultCaches = new HashSet<String>();
+        for (ModelNode defaultCache : response.get(RESULT).asList()) {
+            String cacheContainer = defaultCache.get(ADDRESS).asList().get(1).get("cache-container").asString();
+            String cache = defaultCache.get(RESULT).asString();
+            defaultCaches.add(cacheContainer + "/" + cache);
+        }
+        
+        for (T entity : entityList) {
+            entity.setDefault(defaultCaches.contains(getName(entity)));
+        }
+    }
+
+    @Override
+    public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
+        Boolean isDefault = (Boolean)changedValues.remove("default");
+        if (isDefault == null) {
+            super.onSaveDetails(entity, changedValues, extraSteps);
+            return;
+        }
+        
+        String cacheContainer = entity.getCacheContainer();
+        ModelNode setDefaultCacheStep = new ModelNode();
+        setDefaultCacheStep.get(ADDRESS).add(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", cacheContainer);
+        setDefaultCacheStep.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        setDefaultCacheStep.get(NAME).set("default-cache");
+        setDefaultCacheStep.get(VALUE).set(entity.getName());
+        
+        List<ModelNode> stepsList = new ArrayList<ModelNode>();
+        stepsList.addAll(Arrays.asList(extraSteps));
+        stepsList.add(setDefaultCacheStep);
+        super.onSaveDetails(entity, changedValues, stepsList.toArray(new ModelNode[stepsList.size()]));
+    }
     
 }

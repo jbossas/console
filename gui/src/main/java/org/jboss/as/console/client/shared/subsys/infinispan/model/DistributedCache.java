@@ -50,6 +50,20 @@ public interface DistributedCache extends InvalidationCache {
     @Override
     public void setCacheContainer(String cacheContainerName);
     
+    // This one isn't actually a cache attribute.
+    // It is set by the console to display if it is the default cache
+    // for its cache container.
+    @Override
+    @Binding(detypedName="default-for-cache-container")
+    @FormItem(defaultValue="false",
+            label="Default for cache container?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX")
+    public Boolean isDefault();
+    @Override
+    public void setDefault(Boolean isDefault);
+    
     @Override
     @Binding(detypedName="controller-mode")
     @FormItem(defaultValue="LAZY",
@@ -90,7 +104,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="locking/isolation")
     @FormItem(defaultValue="REPEATABLE_READ",
             label="Isolation",
-            required=false,
+            required=true,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "READ_UNCOMMITTED", "READ_COMMITTED", "REPEATABLE_READ", "SERIALIZABLE"},
@@ -103,7 +117,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="locking/striping")
     @FormItem(defaultValue="false",
             label="Striping",
-            required=false,
+            required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_locking")
@@ -115,7 +129,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="locking/acquire-timeout")
     @FormItem(defaultValue="15000",
             label="Acquire Timeout",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_locking")
@@ -127,7 +141,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="locking/concurrency-level")
     @FormItem(defaultValue="1000",
             label="Concurrency Level",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_locking")
@@ -141,7 +155,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="eviction/strategy")
     @FormItem(defaultValue="NONE",
             label="Eviction Strategy",
-            required=false,
+            required=true,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "UNORDERED", "FIFO", "LRU", "LIRS"},
@@ -154,7 +168,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="eviction/max-entries")
     @FormItem(defaultValue="10000",
             label="Max Entries",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_eviction")
@@ -168,7 +182,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="expiration/max-idle")
     @FormItem(defaultValue="-1",
             label="Max Idle",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -180,7 +194,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="expiration/lifespan")
     @FormItem(defaultValue="-1",
             label="Lifespan",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -192,7 +206,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="expiration/interval")
     @FormItem(defaultValue="5000",
             label="Interval",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
             tabName="subsys_infinispan_expiration")
@@ -253,7 +267,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="rehashing/enabled")
     @FormItem(defaultValue="true",
             label="Rehashing Enabled",
-            required=false,
+            required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_distributed")
@@ -263,7 +277,7 @@ public interface DistributedCache extends InvalidationCache {
     @Binding(detypedName="rehashing/timeout")
     @FormItem(defaultValue="600000",
             label="Remote Timeout",
-            required=false,
+            required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
             tabName="subsys_infinispan_distributed")
