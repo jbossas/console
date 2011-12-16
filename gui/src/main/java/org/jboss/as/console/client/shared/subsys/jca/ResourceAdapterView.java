@@ -43,7 +43,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         this.connectionList = new ConnectionList(presenter);
         this.adminObjects = new AdminObjectList(presenter);
 
-        panel.addPage("&larr; Back to Overview", adapterList.asWidget());
+        panel.addPage("&larr; Back", adapterList.asWidget());
         panel.addPage("Connection Definitions", connectionList.asWidget());
         panel.addPage("Admin Objects", adminObjects.asWidget()) ;
 

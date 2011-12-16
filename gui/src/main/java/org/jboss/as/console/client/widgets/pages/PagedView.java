@@ -40,7 +40,6 @@ public class PagedView {
         layout.setStyleName("fill-layout-width");
 
         navigationBar = bar.asWidget();
-        navigationBar.getElement().setAttribute("style", "padding-left:10px;");
         navigationBar.addStyleName("paged-view-navigation");
         layout.add(navigationBar);
         layout.add(deck);

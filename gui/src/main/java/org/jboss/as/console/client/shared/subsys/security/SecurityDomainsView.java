@@ -91,7 +91,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         mappingEditor = new MappingEditor(presenter);
         auditEditor = new AuditEditor(presenter);
 
-        pages.addPage("&larr; Back to Overview", domainList);
+        pages.addPage("&larr; Back", domainList);
         pages.addPage(authenticationEditor.getEntityName(), authenticationEditor.asWidget());
         pages.addPage(authorizationEditor.getEntityName(), authorizationEditor.asWidget());
         pages.addPage(mappingEditor.getEntityName(), mappingEditor.asWidget());

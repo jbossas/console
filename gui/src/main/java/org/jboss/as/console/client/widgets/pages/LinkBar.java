@@ -23,6 +23,12 @@ public class LinkBar {
     }
 
     public Widget asWidget() {
+
+        // last element to the right
+        HTML placeHolder = new HTML();
+        this.bar.add(placeHolder);
+        placeHolder.getElement().getParentElement().setAttribute("style", "width:100%");
+
         return bar;
     }
 
@@ -40,6 +46,7 @@ public class LinkBar {
         }
 
         links.add(html);
+
         bar.add(html);
 
         numLinks++;

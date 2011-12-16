@@ -29,7 +29,7 @@ public class WorkmanagerEditor {
         this.managerList = new WorkmanagerList(presenter);
         this.threadPools = new ThreadPoolEditor(presenter);
 
-        panel.addPage("&larr; Back to Overview", managerList.asWidget());
+        panel.addPage("&larr; Back", managerList.asWidget());
         panel.addPage("Thread Pools", threadPools.asWidget());
 
         // default page
