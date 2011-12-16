@@ -79,14 +79,14 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         readAttrOp.get(NAME).set("default-cache");
         steps.get(STEPS).add(readAttrOp);
         
-        System.out.println("load entities for " + this.type.getName());
-        System.out.println(steps.toString());
+    //    System.out.println("load entities for " + this.type.getName());
+    //    System.out.println(steps.toString());
         
         dispatcher.execute(new DMRAction(steps), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
-               System.out.println("response=");
-               System.out.println(response.toString());
+         //      System.out.println("response=");
+         //      System.out.println(response.toString());
                onLoadEntitiesSuccess(response);
             }
         });

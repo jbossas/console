@@ -83,8 +83,8 @@ public class FormMetaData {
             if(!CUSTOM_TAB.equals(binding.getTabName())) // items in CUSTOM_TAB will be skipped and need to be provided manually
                 tabData.add(binding);
 
-
-           if (binding.getDetypedName().contains("/")) isFlattened = true;
+           
+           if (binding.isFlattened()) isFlattened = true;
         }
 
         if (tabbedAttributes.get(DEFAULT_TAB).isEmpty()) tabbedAttributes.remove(DEFAULT_TAB);

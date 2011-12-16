@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
@@ -57,6 +56,8 @@ public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<Unbound
         Form<UnboundedQueueThreadPool> form = new Form(UnboundedQueueThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeout").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
         return form;

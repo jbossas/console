@@ -83,6 +83,7 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
    
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="60",
+            required=true,
             label="Keepalive Timeout",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX")
@@ -92,7 +93,7 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
    @Binding(detypedName="keepalive-time/unit")
    @FormItem(defaultValue="SECONDS",
             label="Keepalive Timeout Unit",
-            required=false,
+            required=true,
             formItemTypeForEdit="TIME_UNITS",
             formItemTypeForAdd="TIME_UNITS")
    String getKeepaliveTimeoutUnit();
@@ -143,6 +144,7 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
    
    @Binding(detypedName="core-threads/count")
    @FormItem(defaultValue="2",
+            required=true,
             label="Core Threads Count",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",
@@ -152,6 +154,7 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
     
    @Binding(detypedName="core-threads/per-cpu")
    @FormItem(defaultValue="1",
+            required=true,
             label="Core Threads Per CPU",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX",

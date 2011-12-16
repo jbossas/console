@@ -56,6 +56,8 @@ public class ScheduledThreadPoolView extends AbstractThreadPoolView<ScheduledThr
         Form<ScheduledThreadPool> form = new Form(ScheduledThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeout").getFormItemForAdd(),
+                formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
         return form;

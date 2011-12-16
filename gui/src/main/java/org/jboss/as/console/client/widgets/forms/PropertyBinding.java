@@ -89,6 +89,10 @@ public class PropertyBinding {
     public String getDetypedName() {
         return detypedName;
     }
+    
+    public boolean isFlattened() {
+        return detypedName.contains("/");
+    }
 
     public void setDetypedName(String detypedName) {
         this.detypedName = detypedName;
