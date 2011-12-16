@@ -64,7 +64,7 @@ public class StandaloneRuntimeNavigation {
         subsysContents.addItem(osgi);
 
 
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Status").asWidget();
+        DisclosurePanel serverPanel  = new DisclosureStackPanel("Status", true).asWidget();
         serverPanel.setContent(statusTree);
 
         // open by default

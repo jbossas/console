@@ -27,7 +27,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import java.util.List;
 
 /**
- * LHS serber group management navigation.
+ * LHS server group management navigation.
  *
  * @author Heiko Braun
  * @date 2/11/11

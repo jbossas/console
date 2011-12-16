@@ -64,7 +64,7 @@ class LHSHostsNavigation {
         hostSelector = new HostSelector();
         innerlayout.add(hostSelector.asWidget());
 
-        DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs()).asWidget();
+        DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs(), true).asWidget();
         hostPanel.setContent(innerlayout);
 
         hostTree = new LHSNavTree("hosts");

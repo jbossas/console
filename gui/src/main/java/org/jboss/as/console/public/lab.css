@@ -451,6 +451,10 @@ body, p, td, th, option, input, textarea, select {
     width: 100%;
 }
 
+.stack-section-first {
+    border-top: none!important;
+}
+
 .stack-section-header-selected {
     color:#000;
 }

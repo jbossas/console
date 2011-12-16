@@ -43,11 +43,13 @@ class SubsystemSection {
 
     public SubsystemSection()  {
 
-        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_subsystems()).asWidget();
+        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_subsystems(), true).asWidget();
+
         subsysTree = new LHSNavTree("profiles");
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
+
 
         // ------------
 

@@ -60,7 +60,7 @@ public class LHSStandaloneNavigation {
 
         subsysTree = new LHSNavTree("profiles");
 
-        DisclosurePanel subsysPanel  = new DisclosureStackPanel("Profile").asWidget();
+        DisclosurePanel subsysPanel  = new DisclosureStackPanel("Profile", true).asWidget();
         subsysPanel.setContent(subsysTree);
         stack.add(subsysPanel);
 
