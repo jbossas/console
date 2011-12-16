@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.standalone;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -18,6 +19,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -126,12 +129,23 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     @Override
     protected void onReset() {
         super.onReset();
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                getEventBus().fireEvent(
+                        new LHSHighlightEvent(null, "Server", "standalone-runtime")
+
+                );
+            }
+        });
+
         loadConfig();
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), ServerMgmtApplicationPresenter.TYPE_MainContent, this);
+        RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 
     public void onReloadServerConfig() {

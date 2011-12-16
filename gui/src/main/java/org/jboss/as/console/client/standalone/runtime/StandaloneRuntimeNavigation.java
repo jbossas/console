@@ -45,7 +45,9 @@ public class StandaloneRuntimeNavigation {
         statusTree.addItem(subsysContents);
 
 
+        LHSNavTreeItem server = new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter);
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM Status", NameTokens.VirtualMachine);
+        serverContents.addItem(server);
         serverContents.addItem(jvmItem);
 
 
