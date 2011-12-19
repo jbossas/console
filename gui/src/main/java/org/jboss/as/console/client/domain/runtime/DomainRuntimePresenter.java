@@ -19,6 +19,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -36,7 +37,8 @@ import java.util.List;
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
         implements ServerSelectionEvent.ServerSelectionListener,
-        HostSelectionEvent.HostSelectionListener{
+        HostSelectionEvent.HostSelectionListener,
+        StaleModelEvent.StaleModelListener{
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -80,6 +82,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         // register for server election events
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(StaleModelEvent.TYPE, this);
     }
 
 
@@ -111,6 +114,11 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         }
 
+        loadHostData();
+
+    }
+
+    private void loadHostData() {
         // load host and server data
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
@@ -129,7 +137,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                             if(!server.isEmpty())
                             {
                                 ServerInstance serverInstance = server.get(0);
-                                Console.info("Default server selection: "+serverInstance.getName());
+                                Console.info("Default server selection: " + serverInstance.getName());
                                 serverSelection.setServer(serverInstance);
                             }
                         }
@@ -143,7 +151,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
             }
         });
-
     }
 
     private void selectDefaultHost(List<Host> hosts) {
@@ -174,5 +181,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onHostSelection(String hostName) {
         hostSelection.setName(hostName);
+    }
+
+    @Override
+    public void onStaleModel(String modelName) {
+        if(StaleModelEvent.SERVER_INSTANCES.equals(modelName))
+        {
+            loadHostData();
+        }
     }
 }

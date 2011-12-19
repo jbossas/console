@@ -57,11 +57,11 @@ public class ServerPicker implements HostServerManagement {
     public void setHosts(List<Host> hosts) {
         serverSelection.setHosts(hosts);
 
-        if(!isBootstrapped)
-        {
-            isBootstrapped = true;
+        //if(!isBootstrapped)
+        //{
+          //  isBootstrapped = true;
             serverSelection.doBootstrap();
-        }
+        //}
 
     }
 

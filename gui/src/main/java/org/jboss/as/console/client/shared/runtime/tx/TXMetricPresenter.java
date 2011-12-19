@@ -25,6 +25,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.Random;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -102,6 +103,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
+            getView().clearSamples();
             return;
         }
 

@@ -33,9 +33,11 @@ public class StaleModelEvent extends GwtEvent<StaleModelEvent.StaleModelListener
 
     public static final String SERVER_GROUPS = "server-groups";
     public static final String SERVER_CONFIGURATIONS = "server-configurations";
+    public static final String SERVER_INSTANCES = "server-instances";
 
     public static final Type TYPE = new Type<StaleModelListener>();
     private String modelName;
+
 
     public StaleModelEvent(String modelName) {
         super();

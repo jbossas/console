@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -89,6 +90,8 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
+            getView().setConnectors(Collections.EMPTY_LIST);
+            getView().clearSamples();
             return;
         }
 

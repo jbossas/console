@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -112,6 +113,9 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
+            getView().setTopics(Collections.EMPTY_LIST);
+            getView().setQueues(Collections.EMPTY_LIST);
+            getView().clearSamples();
             return;
         }
 

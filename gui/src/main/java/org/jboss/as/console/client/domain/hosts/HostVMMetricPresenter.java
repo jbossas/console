@@ -116,6 +116,13 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     public void loadVMStatus(final String serverName) {
+
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            return;
+        }
+
         createLoadMetricCmd().execute(new SimpleCallback<CompositeVMMetric>() {
 
 

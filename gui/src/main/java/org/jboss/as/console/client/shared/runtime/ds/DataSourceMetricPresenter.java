@@ -27,6 +27,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -94,6 +95,9 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
+            getView().setDatasources(Collections.EMPTY_LIST, true);
+            getView().setDatasources(Collections.EMPTY_LIST, false);
+            getView().clearSamples();
             return;
         }
 

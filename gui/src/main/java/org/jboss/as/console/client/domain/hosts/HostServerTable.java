@@ -312,7 +312,8 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()));
+            String state = server.isRunning() ? " (+)":" (-)";
+            safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()+state));
         }
 
     }

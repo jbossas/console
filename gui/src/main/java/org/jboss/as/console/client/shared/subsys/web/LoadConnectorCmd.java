@@ -45,7 +45,6 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
         operation.get(CHILD_TYPE).set("connector");
         operation.get(RECURSIVE).set(Boolean.TRUE);
 
-        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -57,7 +56,6 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                System.out.println(response);
                 List<Property> propList = response.get(RESULT).asPropertyList();
                 List<HttpConnector> connectors = new ArrayList<HttpConnector>(propList.size());
 

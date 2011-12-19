@@ -42,7 +42,8 @@ public class DataSourceMetricView extends SuspendableViewImpl implements DataSou
 
     @Override
     public void clearSamples() {
-
+        dsMetrics.clearSamples();
+        xaMetrics.clearSamples();
     }
 
     @Override
