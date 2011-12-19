@@ -238,13 +238,15 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             // update the visible message count
             reflectMessageCount();
 
-            if(message.isSticky())   // sticky messages override each other like this
+            if(message.isSticky())   // sticky & error messages override each other like this
             {
                 lastSticky=message;
                 displayNotification(message);
             }
-            else if(null==lastSticky) // regular message don't replace sticky ones
+            else if(null==lastSticky || Message.Severity.Error == message.getSeverity()) // regular message don't replace sticky ones
             {
+                lastSticky=null;
+
                 displayNotification(message);
 
                 Timer hideTimer = new Timer() {
