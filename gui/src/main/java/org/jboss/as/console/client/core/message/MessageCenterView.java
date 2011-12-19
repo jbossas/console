@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -41,6 +42,8 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
+import org.jboss.ballroom.client.widgets.InlineLink;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
@@ -98,7 +101,24 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
                 }
             });
 
-            setWidget(messageList);
+            VerticalPanel panel = new VerticalPanel();
+            panel.setStyleName("fill-layout-width");
+
+            panel.add(messageList);
+            InlineLink clearBtn = new InlineLink("Clear");
+            clearBtn.getElement().setAttribute("style", "float:right;padding-right:5px;font-size:10px;");
+
+            clearBtn.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    messageCenter.getMessages().clear();
+                    reflectMessageCount();
+                    messagePopup.hide();
+                }
+            });
+            panel.add(clearBtn);
+
+            setWidget(panel);
 
             addCloseHandler(new CloseHandler<PopupPanel>() {
                 @Override
