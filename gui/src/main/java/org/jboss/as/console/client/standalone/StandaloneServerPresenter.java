@@ -183,11 +183,10 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 }
                 else
                 {
-                    Console.error("Error: Failed to reload server");
+                    Console.error("Error: Failed to reload server", response.getFailureDescription());
                 }
 
                 pollState();
-                getView().setReloadRequired(reloadState.isReloadRequired());
             }
 
             @Override
