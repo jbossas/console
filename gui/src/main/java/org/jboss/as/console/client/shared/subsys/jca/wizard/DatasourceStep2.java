@@ -200,27 +200,27 @@ public class DatasourceStep2 {
 
     private void provisionTable(final CellTable<JDBCDriver> table) {
 
-        LoadingOverlay.on(table, true);
-        wizard.getPresenter().loadDriver(new SimpleCallback<List<JDBCDriver>>() {
+
+        /*wizard.getPresenter().loadDriver(new SimpleCallback<List<JDBCDriver>>() {
             @Override
             public void onSuccess(List<JDBCDriver> drivers) {
 
-                LoadingOverlay.on(table, false);
-
-                table.setRowCount(drivers.size(), true);
-                table.setRowData(drivers);
-
-                // clear selection
-                JDBCDriver selectedDriver = selectionModel.getSelectedObject();
-                if(selectedDriver!=null)
-                    selectionModel.setSelected(selectedDriver, false);
-
-                // new default selection
-                if(drivers.size()>0) {
-                    selectionModel.setSelected(drivers.get(0), true);
-                }
             }
-        });
+        });*/
+
+        List<JDBCDriver> drivers = wizard.getDrivers();
+        table.setRowCount(drivers.size(), true);
+        table.setRowData(drivers);
+
+        // clear selection
+        JDBCDriver selectedDriver = selectionModel.getSelectedObject();
+        if(selectedDriver!=null)
+            selectionModel.setSelected(selectedDriver, false);
+
+        // new default selection
+        if(drivers.size()>0) {
+            selectionModel.setSelected(drivers.get(0), true);
+        }
     }
 
     void edit(DataSource entity)

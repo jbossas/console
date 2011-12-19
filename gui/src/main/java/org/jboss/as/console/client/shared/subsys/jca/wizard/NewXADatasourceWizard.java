@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 
 import java.util.List;
@@ -45,12 +46,18 @@ public class NewXADatasourceWizard {
     private XADataSource driverAttributes = null;
     private List<PropertyRecord> properties;
     private ApplicationProperties bootstrap;
+    private List<JDBCDriver> drivers;
 
     public NewXADatasourceWizard(
             DataSourcePresenter presenter,
-            ApplicationProperties bootstrap) {
+            List<JDBCDriver> drivers, ApplicationProperties bootstrap) {
         this.presenter = presenter;
         this.bootstrap = bootstrap;
+        this.drivers = drivers;
+    }
+
+    public List<JDBCDriver> getDrivers() {
+        return drivers;
     }
 
     public Widget asWidget() {

@@ -44,12 +44,18 @@ public class NewDatasourceWizard {
     private DataSource baseAttributes = null;
     private DataSource driverAttributes = null;
     private ApplicationProperties bootstrap;
+    private List<JDBCDriver> drivers;
 
     public NewDatasourceWizard(
             DataSourcePresenter presenter,
-            ApplicationProperties bootstrap) {
+            List<JDBCDriver> drivers, ApplicationProperties bootstrap) {
         this.presenter = presenter;
         this.bootstrap = bootstrap;
+        this.drivers = drivers;
+    }
+
+    public List<JDBCDriver> getDrivers() {
+        return drivers;
     }
 
     ApplicationProperties getBootstrap() {

@@ -22,6 +22,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
@@ -50,6 +51,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewDatasourceWizard;
 import org.jboss.as.console.client.shared.subsys.jca.wizard.NewXADatasourceWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 import java.util.Map;
@@ -155,17 +157,33 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void launchNewDatasourceWizard() {
 
-        window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
-        window.setWidth(480);
-        window.setHeight(400);
+        driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
+            @Override
+            public void onSuccess(List<JDBCDriver> drivers) {
 
-        window.setWidget(
-                new NewDatasourceWizard(DataSourcePresenter.this, bootstrap).asWidget()
-        );
+                if(drivers.size()>0)
+                {
+                    window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
+                    window.setWidth(480);
+                    window.setHeight(400);
 
-        window.setGlassEnabled(true);
-        window.center();
+                    window.setWidget(
+                            new NewDatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
+                    );
 
+                    window.setGlassEnabled(true);
+                    window.center();
+                }
+                else {
+
+                    SafeHtmlBuilder html = new SafeHtmlBuilder();
+                    html.appendHtmlConstant("<h3>Failed to load JDBC driver</h3>");
+                    html.appendHtmlConstant("Either you did not deploy any JDBC driver or nor is server running. " +
+                            "In order to create a data source you ned to provide JDBC driver deployment.");
+                    Feedback.alert("Missing JDBC Driver", html.toSafeHtml());
+                }
+            }
+        });
     }
 
     public void loadDriver(final AsyncCallback<List<JDBCDriver>> callback) {
@@ -173,7 +191,6 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(List<JDBCDriver> drivers) {
 
-                System.out.println("Num driver: "+drivers.size());
                 callback.onSuccess(drivers);
             }
         });
@@ -181,23 +198,38 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void launchNewXADatasourceWizard() {
 
-
-        window = new DefaultWindow(Console.MESSAGES.createTitle("XA Datasource"));
-        window.setWidth(480);
-        window.setHeight(320);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+        driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
             @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
+            public void onSuccess(List<JDBCDriver> drivers) {
 
+                if(drivers.size()>0)
+                {
+                    window = new DefaultWindow(Console.MESSAGES.createTitle("XA Datasource"));
+                    window.setWidth(480);
+                    window.setHeight(320);
+                    window.addCloseHandler(new CloseHandler<PopupPanel>() {
+                        @Override
+                        public void onClose(CloseEvent<PopupPanel> event) {
+
+                        }
+                    });
+
+                    window.setWidget(
+                            new NewXADatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
+                    );
+
+                    window.setGlassEnabled(true);
+                    window.center();
+                }
+                else {
+                    SafeHtmlBuilder html = new SafeHtmlBuilder();
+                    html.appendHtmlConstant("<h3>Failed to load JDBC driver</h3>");
+                    html.appendHtmlConstant("Either you did not deploy any JDBC driver or nor is server running. " +
+                            "In order to create a data source you need to provide JDBC driver deployment.");
+                    Feedback.alert("Missing JDBC Driver", html.toSafeHtml());
+                }
             }
         });
-
-        window.setWidget(
-                new NewXADatasourceWizard(DataSourcePresenter.this, bootstrap).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
 
     }
 
