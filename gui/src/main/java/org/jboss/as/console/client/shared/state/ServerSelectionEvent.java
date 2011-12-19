@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.state;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 
 
 /**
@@ -35,12 +36,12 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
     public static final Type TYPE = new Type<ServerSelectionListener>();
 
     private String hostName;
-    private String serverName;
+    private ServerInstance server;
 
-    public ServerSelectionEvent(String hostName, String server) {
+    public ServerSelectionEvent(String hostName, ServerInstance server) {
         super();
         this.hostName = hostName;
-        this.serverName = server;
+        this.server = server;
     }
 
     @Override
@@ -50,19 +51,19 @@ public class ServerSelectionEvent extends GwtEvent<ServerSelectionEvent.ServerSe
 
     @Override
     protected void dispatch(ServerSelectionListener listener) {
-        listener.onServerSelection(hostName, serverName);
+        listener.onServerSelection(hostName, server);
     }
 
     public String getHostName() {
         return hostName;
     }
 
-    public String getServerName() {
-        return serverName;
+    public ServerInstance getServer() {
+        return server;
     }
 
     public interface ServerSelectionListener extends EventHandler {
-        void onServerSelection(String hostName, String serverName);
+        void onServerSelection(String hostName, ServerInstance server);
     }
 }
 

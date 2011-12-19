@@ -88,7 +88,7 @@ public class ServerPicker implements HostServerManagement {
         );
 
         Console.MODULES.getEventBus().fireEvent(
-                new ServerSelectionEvent(host.getName(), server.getName())
+                new ServerSelectionEvent(host.getName(), server)
         );
     }
 }

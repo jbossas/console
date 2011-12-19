@@ -19,6 +19,8 @@
 
 package org.jboss.as.console.client.shared.state;
 
+import org.jboss.as.console.client.domain.model.ServerInstance;
+
 import javax.inject.Singleton;
 
 /**
@@ -30,14 +32,14 @@ import javax.inject.Singleton;
 @Singleton
 public class CurrentServerSelection {
 
-    private String server;
+    private ServerInstance server;
     private String host;
 
-    public String getServer() {
+    public ServerInstance getServer() {
         return server;
     }
 
-    public void setServer(String server) {
+    public void setServer(ServerInstance server) {
         this.server = server;
     }
 
@@ -60,5 +62,9 @@ public class CurrentServerSelection {
 
     public boolean hasSetServer() {
         return this.server!=null;
+    }
+
+    public boolean isActive() {
+        return hasSetServer() && server.isRunning();
     }
 }

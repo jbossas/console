@@ -90,7 +90,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     public void refresh() {
         if(serverSelection.isSet())
-            loadVMStatus(serverSelection.getServer());
+            loadVMStatus(serverSelection.getServer().getName());
     }
 
     private LoadJVMMetricsCmd createLoadMetricCmd() {
@@ -101,7 +101,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
         ModelNode address = new ModelNode();
         address.add("host", serverSelection.getHost());
-        address.add("server", serverSelection.getServer());
+        address.add("server", serverSelection.getServer().getName());
 
         return new LoadJVMMetricsCmd(
                 dispatcher, factory,

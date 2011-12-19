@@ -32,7 +32,7 @@ public class RuntimeBaseAddress {
         if(serverSelection.isSet())
         {
             baseAddress.add("host", serverSelection.getHost());
-            baseAddress.add("server", serverSelection.getServer());
+            baseAddress.add("server", serverSelection.getServer().getName());
         }
 
         return baseAddress;

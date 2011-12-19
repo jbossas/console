@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -99,7 +100,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     }
 
     @Override
-    public void onServerSelection(String hostName, String serverName) {
+    public void onServerSelection(String hostName, ServerInstance server) {
 
         getView().clearSamples();
 
@@ -108,6 +109,11 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     }
 
     public void refresh() {
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            return;
+        }
 
         ModelNode address = RuntimeBaseAddress.get();
         address.add("subsystem", "messaging");

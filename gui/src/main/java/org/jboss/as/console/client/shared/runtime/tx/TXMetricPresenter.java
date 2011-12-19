@@ -7,7 +7,9 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -69,7 +71,7 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     }
 
     @Override
-    public void onServerSelection(String hostName, String serverName) {
+    public void onServerSelection(String hostName, ServerInstance server) {
 
         getView().clearSamples();
 
@@ -97,6 +99,11 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
 
     @Override
     public void refresh() {
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            return;
+        }
 
         ModelNode operation = addressBinding.asResource(RuntimeBaseAddress.get());
         operation.get(OP).set(READ_RESOURCE_OPERATION);

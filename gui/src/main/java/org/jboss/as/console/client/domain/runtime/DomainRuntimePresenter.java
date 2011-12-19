@@ -128,9 +128,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                         {
                             if(!server.isEmpty())
                             {
-                                String serverName = server.get(0).getName();
-                                Console.info("Default server selection: "+serverName);
-                                serverSelection.setServer(serverName);
+                                ServerInstance serverInstance = server.get(0);
+                                Console.info("Default server selection: "+serverInstance.getName());
+                                serverSelection.setServer(serverInstance);
                             }
                         }
 
@@ -163,12 +163,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelection(String hostName, String serverName) {
+    public void onServerSelection(String hostName, ServerInstance server) {
 
         //System.out.println("** Update state "+hostName+"/"+serverName);
 
         serverSelection.setHost(hostName);
-        serverSelection.setServer(serverName);
+        serverSelection.setServer(server);
     }
 
     @Override

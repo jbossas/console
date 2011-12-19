@@ -11,6 +11,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -81,7 +82,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     @Override
-    public void onServerSelection(String hostName, String serverName) {
+    public void onServerSelection(String hostName, ServerInstance server) {
 
         getView().clearSamples();
 
@@ -90,6 +91,12 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     private void refresh() {
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            return;
+        }
+
         loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {
             @Override
             public void onSuccess(List<DataSource> result) {
