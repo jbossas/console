@@ -6,6 +6,7 @@ import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.Collections;
@@ -57,11 +58,8 @@ public class ServerPicker implements HostServerManagement {
     public void setHosts(List<Host> hosts) {
         serverSelection.setHosts(hosts);
 
-        //if(!isBootstrapped)
-        //{
-          //  isBootstrapped = true;
-            serverSelection.doBootstrap();
-        //}
+        // TODO: retain selection
+        serverSelection.defaultServerSelection();
 
     }
 

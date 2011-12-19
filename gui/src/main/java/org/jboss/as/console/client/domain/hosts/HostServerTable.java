@@ -21,10 +21,10 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -268,7 +268,7 @@ public class HostServerTable {
         serverList.setRowData(0, Collections.EMPTY_LIST);
     }
 
-    public void doBootstrap() {
+    public void defaultServerSelection() {
         if(hostList.getRowCount()>0)
         {
             hostList.getSelectionModel().setSelected(hostList.getVisibleItem(0), true);
@@ -312,7 +312,7 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            String state = server.isRunning() ? " (+)":" (-)";
+            String state = server.isRunning() ? " (active)":" (-)";
             safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()+state));
         }
 
