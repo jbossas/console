@@ -51,4 +51,9 @@ public class DataSourceMetricView extends SuspendableViewImpl implements DataSou
     public void setDSPoolMetric(Metric poolMetric) {
         dsMetrics.setDSPoolMetric(poolMetric);
     }
+
+    @Override
+    public void setDSCacheMetric(Metric metric) {
+        dsMetrics.setDSCacheMetric(metric);
+    }
 }

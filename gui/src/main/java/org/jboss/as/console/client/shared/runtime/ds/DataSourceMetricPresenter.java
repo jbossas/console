@@ -57,8 +57,8 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
         void setPresenter(DataSourceMetricPresenter presenter);
         void clearSamples();
         void setDatasources(List<DataSource> datasources);
-
         void setDSPoolMetric(Metric poolMetric);
+        void setDSCacheMetric(Metric metric);
     }
 
     @Inject
@@ -160,6 +160,48 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
                     );
 
                     getView().setDSPoolMetric(poolMetric);
+                }
+            }
+        });
+    }
+
+     private void loadDSCacheMetrics() {
+        if(null==selectedDS)
+            throw new RuntimeException("DataSource selection is null!");
+
+        getView().clearSamples();
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("subsystem", "datasources");
+        operation.get(ADDRESS).add("data-source", selectedDS.getName());
+        operation.get(ADDRESS).add("statistics", "jdbc");
+
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                ModelNode response = dmrResponse.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Error loading metrics", response.getFailureDescription());
+                }
+                else
+                {
+                    ModelNode result = response.get(RESULT).asObject();
+
+                    long size = result.get("PreparedStatementCacheCurrentSize").asLong();
+                    long hit = result.get("PreparedStatementCacheHitCount").asLong();
+                    long miss = result.get("PreparedStatementCacheMissCount").asLong();
+
+                    Metric metric = new Metric(
+                            size,hit,miss
+                    );
+
+                    getView().setDSCacheMetric(metric);
                 }
             }
         });

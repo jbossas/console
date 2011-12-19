@@ -19,7 +19,7 @@ import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -35,11 +35,12 @@ import java.util.List;
  */
 public class DataSourceMetrics {
 
-    
+
     private DataSourceMetricPresenter presenter;
     private CellTable<DataSource> table;
     private ListDataProvider<DataSource> dataProvider;
     private Sampler poolSampler;
+    private PlainColumnView cacheSampler;
 
     public DataSourceMetrics(DataSourceMetricPresenter presenter) {
         this.presenter = presenter;
@@ -94,7 +95,7 @@ public class DataSourceMetrics {
 
         String title = "Pool Usage";
 
-         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+        final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
@@ -109,8 +110,6 @@ public class DataSourceMetrics {
             }
         };
 
-
-
         // ----
 
 
@@ -122,8 +121,8 @@ public class DataSourceMetrics {
         };
 
         poolSampler = new PlainColumnView(title, addressCallback)
-                        .setColumns(cols)
-                        .setWidth(100, Style.Unit.PCT);
+                .setColumns(cols)
+                .setWidth(100, Style.Unit.PCT);
 
 
         // ----
@@ -137,14 +136,50 @@ public class DataSourceMetrics {
         tablePanel.add(pager);
 
 
-        SimpleLayout layout = new SimpleLayout()
+        // ----
+
+
+        String title2 = "Pool Usage";
+
+        final HelpSystem.AddressCallback addressCallback2 = new HelpSystem.AddressCallback() {
+            @Override
+            public ModelNode getAddress() {
+                ModelNode address = new ModelNode();
+                address.get(ModelDescriptionConstants.ADDRESS).set(RuntimeBaseAddress.get());
+                address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "datasources");
+                address.get(ModelDescriptionConstants.ADDRESS).add("data-source", getCurrentSelection().getName());
+                address.get(ModelDescriptionConstants.ADDRESS).add("statistics", "jdbc");
+
+                System.out.println(address);
+
+                return address;
+            }
+        };
+
+        // ----
+
+
+        NumberColumn avail2 = new NumberColumn("PreparedStatementCacheCurrentSize", "Current Size");
+        Column[] cols2 = new Column[] {
+                avail2.setBaseline(true),
+                new NumberColumn("PreparedStatementCacheHitCount","Hit Count").setComparisonColumn(avail),
+                new NumberColumn("PreparedStatementCacheMissCount","Miss Used").setComparisonColumn(avail)
+        };
+
+        cacheSampler = new PlainColumnView(title2, addressCallback2)
+                .setColumns(cols2)
+                .setWidth(100, Style.Unit.PCT);
+
+
+        OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Data Sources")
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("Data Source Metrics")
                 .setDescription("Metrics for data sources.")
-                .addContent("DS Selection", tablePanel)
-                .addContent("Pool Usage", poolSampler.asWidget());
+                .setMaster("DS Selection", tablePanel)
+                .addDetail("Pool Usage", poolSampler.asWidget())
+                .addDetail("Prepared Statement Cache", cacheSampler.asWidget());
 
         return layout.build();
     }
@@ -155,6 +190,7 @@ public class DataSourceMetrics {
 
     public void clearSamples() {
         poolSampler.clearSamples();
+        cacheSampler.clearSamples();
 
     }
 
@@ -167,5 +203,9 @@ public class DataSourceMetrics {
 
     public void setDSPoolMetric(Metric poolMetric) {
         poolSampler.addSample(poolMetric);
+    }
+
+    public void setDSCacheMetric(Metric metric) {
+        cacheSampler.addSample(metric);
     }
 }
