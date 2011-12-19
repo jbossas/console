@@ -20,6 +20,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
@@ -179,6 +180,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 if(response.get("outcome").asString().equals("success"))
                 {
                     Console.info("Success: Reload server");
+                    getEventBus().fireEvent(new ReloadEvent());
                 }
                 else
                 {

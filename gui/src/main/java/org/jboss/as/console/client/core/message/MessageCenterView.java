@@ -39,6 +39,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -49,7 +50,7 @@ import java.util.List;
  * @author Greg Hinkle
  * @author Heiko Braun
  */
-public class MessageCenterView implements MessageCenter.MessageListener {
+public class MessageCenterView implements MessageCenter.MessageListener, ReloadEvent.ReloadListener {
 
     private MessageCenter messageCenter;
     private HorizontalPanel messageDisplay;
@@ -89,8 +90,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                     if (selected != null) {
                         if(selected.isSticky())
                         {
-                            MessageCenterView.this.lastSticky=null;
-                            messageDisplay.clear();
+                            clearSticky();
                         }
 
                         showDetail(selected);
@@ -112,6 +112,12 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             return messageList;
         }
     }
+
+    private void clearSticky() {
+        MessageCenterView.this.lastSticky=null;
+        messageDisplay.clear();
+    }
+
 
     private void showDetail(final Message msg) {
 
@@ -220,6 +226,7 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
         // register listener
         messageCenter.addMessageListener(this);
+        Console.MODULES.getEventBus().addHandler(ReloadEvent.TYPE, this);
 
         return layout;
     }
@@ -238,14 +245,16 @@ public class MessageCenterView implements MessageCenter.MessageListener {
             // update the visible message count
             reflectMessageCount();
 
-            if(message.isSticky())   // sticky & error messages override each other like this
+            if(message.isSticky())   // sticky messages override each other like this
             {
                 lastSticky=message;
                 displayNotification(message);
             }
-            else if(null==lastSticky || Message.Severity.Error == message.getSeverity()) // regular message don't replace sticky ones
+            else if(null==lastSticky
+                    || Message.Severity.Error == message.getSeverity()
+                    || Message.Severity.Fatal == message.getSeverity()) // regular message don't replace sticky ones
             {
-                lastSticky=null;
+                clearSticky();
 
                 displayNotification(message);
 
@@ -357,4 +366,8 @@ public class MessageCenterView implements MessageCenter.MessageListener {
         return iconSrc;
     }
 
+    @Override
+    public void onReload() {
+        clearSticky();
+    }
 }
