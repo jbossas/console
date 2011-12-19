@@ -219,9 +219,6 @@ public class DatasourceStep2 {
                 if(drivers.size()>0) {
                     selectionModel.setSelected(drivers.get(0), true);
                 }
-                else {
-
-                }
             }
         });
     }

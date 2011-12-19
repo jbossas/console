@@ -21,30 +21,28 @@ package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.ballroom.client.util.LoadingOverlay;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -58,6 +56,7 @@ public class XADatasourceStep2 {
     private CellTable<JDBCDriver> table;
     private ComboBox groupSelection;
     private boolean isStandalone;
+    private Integer selectedTab;
 
     public XADatasourceStep2(NewXADatasourceWizard wizard) {
         this.wizard = wizard;
@@ -73,35 +72,6 @@ public class XADatasourceStep2 {
         layout.setStyleName("window-content");
 
         layout.add(new HTML("<h3>"+ Console.CONSTANTS.subsys_jca_xadataSource_step2()+"</h3>"));
-
-        if(!isStandalone)
-        {
-            groupSelection = new ComboBox();
-            Set<String> groupNames = new HashSet<String>(wizard.getDrivers().size());
-            for(JDBCDriver driver : wizard.getDrivers())
-                groupNames.add(driver.getGroup());
-            groupSelection.setValues(groupNames);
-            groupSelection.setItemSelected(0, true);
-
-            HorizontalPanel horz = new HorizontalPanel();
-            horz.setStyleName("fill-layout-width");
-            Label label = new HTML("Server Group"+":&nbsp;");
-            label.setStyleName("form-item-title");
-            horz.add(label);
-            Widget selector = groupSelection.asWidget();
-            horz.add(selector);
-
-            label.getElement().getParentElement().setAttribute("align", "right");
-            selector.getElement().getParentElement().setAttribute("width", "100%");
-            layout.add(horz);
-
-            groupSelection.addValueChangeHandler(new ValueChangeHandler<String>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<String> event) {
-                    filterTable(event.getValue(), getTable());
-                }
-            });
-        }
 
 
         // ---
@@ -129,16 +99,30 @@ public class XADatasourceStep2 {
         table.setSelectionModel(selectionModel);
 
         // filter and select first record
-        if(isStandalone)
-            provisionTable(table);
-        else
-            filterTable(groupSelection.getSelectedValue(), table);
-
-        layout.add(table);
+        provisionTable(table);
 
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(table);
-        layout.add(pager);
+
+        VerticalPanel driverPanel = new VerticalPanel();
+        driverPanel.add(table);
+        driverPanel.add(pager);
+
+        // --
+
+        TabPanel tabs = new TabPanel();
+        tabs.setStyleName("default-tabpanel");
+        tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+            @Override
+            public void onSelection(SelectionEvent<Integer> event) {
+                selectedTab = event.getSelectedItem();
+            }
+        });
+
+        tabs.add(driverPanel, "Chose Driver");
+        tabs.selectTab(0);
+
+        layout.add(tabs);
 
         ClickHandler submitHandler = new ClickHandler() {
             @Override
@@ -157,7 +141,8 @@ public class XADatasourceStep2 {
                     wizard.onConfigureDriver(editedEntity);
                 }
                 else {
-                    Window.alert("Please select a driver!");
+                     Console.warning(Console.CONSTANTS.subsys_jca_dataSource_select_driver(),
+                            "If no driver is available you may need to deploy one!");
                 }
             }
         };
@@ -177,52 +162,29 @@ public class XADatasourceStep2 {
         return new WindowContentBuilder(layout,options).build();
     }
 
-    private void provisionTable(CellTable<JDBCDriver> table) {
+    private void provisionTable(final CellTable<JDBCDriver> table) {
 
+        LoadingOverlay.on(table, true);
+        wizard.getPresenter().loadDriver(new SimpleCallback<List<JDBCDriver>>() {
+            @Override
+            public void onSuccess(List<JDBCDriver> drivers) {
 
-        List<JDBCDriver> drivers = wizard.getDrivers();
+                LoadingOverlay.on(table, false);
 
-        table.setRowCount(drivers.size(), true);
-        table.setRowData(drivers);
+                table.setRowCount(drivers.size(), true);
+                table.setRowData(drivers);
 
-        // clear selection
-        JDBCDriver selectedDriver = selectionModel.getSelectedObject();
-        if(selectedDriver!=null)
-            selectionModel.setSelected(selectedDriver, false);
+                // clear selection
+                JDBCDriver selectedDriver = selectionModel.getSelectedObject();
+                if (selectedDriver != null)
+                    selectionModel.setSelected(selectedDriver, false);
 
-        // new default selection
-        if(drivers.size()>0) {
-            selectionModel.setSelected(drivers.get(0), true);
-        }
+                // new default selection
+                if (drivers.size() > 0) {
+                    selectionModel.setSelected(drivers.get(0), true);
+                }
+            }
+        });
     }
 
-    private void filterTable(String group, CellTable<JDBCDriver> table) {
-
-
-        List<JDBCDriver> drivers = wizard.getDrivers();
-        List<JDBCDriver> filtered = new ArrayList<JDBCDriver>();
-        for(JDBCDriver candidate : drivers)
-        {
-            if(group.equals(candidate.getGroup()))
-                filtered.add(candidate);
-        }
-
-        table.setRowCount(filtered.size(), true);
-        table.setRowData(filtered);
-
-
-        // clear selection
-        JDBCDriver selectedDriver = selectionModel.getSelectedObject();
-        if(selectedDriver!=null)
-            selectionModel.setSelected(selectedDriver, false);
-
-        // new default selection
-        if(filtered.size()>0) {
-            selectionModel.setSelected(filtered.get(0), true);
-        }
-    }
-
-    private CellTable<JDBCDriver> getTable() {
-        return table;
-    }
 }
