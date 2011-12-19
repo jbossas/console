@@ -247,16 +247,16 @@ public class HostServerTable {
      */
     public void setServer(List<ServerInstance> servers) {
 
-        List<ServerInstance> active = new ArrayList<ServerInstance>();
+        /*List<ServerInstance> active = new ArrayList<ServerInstance>();
         for(ServerInstance instance : servers)
             if(instance.isRunning())
                 active.add(instance);
 
-        ratio.setHTML("<i>Active Server: "+active.size()+" of "+servers.size()+" instances</i>");
+        ratio.setHTML("<i>Active Server: "+active.size()+" of "+servers.size()+" instances</i>");*/
 
-        serverList.setRowData(0, active);
+        serverList.setRowData(0, servers);
         if(!servers.isEmpty())
-            serverList.getSelectionModel().setSelected(active.get(0), true);
+            serverList.getSelectionModel().setSelected(servers.get(0), true);
     }
 
     public void setHosts(List<Host> hosts) {
