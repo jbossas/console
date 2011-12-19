@@ -151,7 +151,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
             @Override
             public void execute() {
                 getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, "Server", "standalone-runtime")
+                        new LHSHighlightEvent(null, "Configuration", "standalone-runtime")
 
                 );
             }

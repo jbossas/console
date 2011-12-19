@@ -39,13 +39,13 @@ public class StandaloneRuntimeNavigation {
         // ----------------------------------------------------
 
         Tree statusTree = new LHSNavTree("standalone-runtime");
-        TreeItem serverContents = new DefaultTreeItem("Server Status");
+        TreeItem serverContents = new DefaultTreeItem("Server");
         TreeItem subsysContents = new DefaultTreeItem("Subsystem Metrics");
         statusTree.addItem(serverContents);
         statusTree.addItem(subsysContents);
 
 
-        LHSNavTreeItem server = new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter);
+        LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM", NameTokens.VirtualMachine);
         serverContents.addItem(server);
         serverContents.addItem(jvmItem);

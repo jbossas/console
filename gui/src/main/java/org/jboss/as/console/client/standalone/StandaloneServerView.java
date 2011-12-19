@@ -156,7 +156,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Standalone Server")
                 .setHeadlineWidget(headline)
-                .setDescription("")
+                .setDescription("Server configuration status. In some cases the configuration needs to be reloaded in order to become effective.")
                 .addContent("ReloadPanel", reloadPanel)
                 .addContent("Attributes", form.asWidget())
                 .addContent("Extensions", extPanel);
