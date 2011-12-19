@@ -20,10 +20,12 @@
 package org.jboss.as.console.client.shared;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 /**
  * @author Heiko Braun
@@ -139,5 +141,47 @@ public class SubsystemMetaData {
             matchingGroup = groups.get(OTHER);
 
         return matchingGroup;
+    }
+
+    public static String getDefaultSubsystem(String preferred, List<SubsystemRecord> existing)
+    {
+        if(existing.isEmpty())
+            throw new RuntimeException("No subsystem provided!");
+
+        SubsystemRecord chosen = null;
+        for(SubsystemRecord subsys : existing)
+        {
+            if(subsys.getTitle().equals(preferred))
+                chosen = subsys;
+        }
+
+        if(null==chosen)
+            chosen = existing.get(0);
+
+
+        return resolveToken(chosen.getTitle());
+    }
+
+    public static String resolveToken(String name) {
+        String token = null;
+
+        for(String groupName : groups.keySet())
+        {
+            SubsystemGroup group = groups.get(groupName);
+            for(SubsystemGroupItem item : group.getItems())
+            {
+                if(item.getKey().equals(name)
+                        && item.isDisabled() == false)
+                {
+                    token = item.getPresenter();
+                    break;
+                }
+            }
+
+            if(token!=null)
+                break;
+        }
+
+        return token;
     }
 }

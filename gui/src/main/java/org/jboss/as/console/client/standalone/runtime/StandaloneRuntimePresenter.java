@@ -84,7 +84,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
                 @Override
                 public void execute() {
                     getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, "Manage Deployments", "standalone-runtime")
+                            new LHSHighlightEvent(null, "Configuration", "standalone-runtime")
 
                     );
                 }

@@ -36,7 +36,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.domain.profiles.ApplicationHeader;
+import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 
@@ -52,8 +52,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         ServerMgmtApplicationPresenter.ServerManagementProxy> {
 
     private PlaceManager placeManager;
-    private boolean revealDefault = true;
-
     private SubsystemStore subsysStore;
     private boolean hasBeenRevealed;
     private boolean matchCurrent;
@@ -90,7 +88,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        // check if the root presenter itself is requested
+        // is the presenter itself requested, or nested children?
         matchCurrent = NameTokens.serverConfig.equals(request.getNameToken());
     }
 
@@ -106,8 +104,16 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
-                public void onSuccess(List<SubsystemRecord> result) {
-                    getView().updateFrom(result);
+                public void onSuccess(List<SubsystemRecord> existingSubsystems) {
+
+                    getView().updateFrom(existingSubsystems);
+
+                    // chose default view
+                    String defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
+                            NameTokens.DataSourcePresenter, existingSubsystems
+                    );
+
+                    placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem));
                 }
             });
 
