@@ -110,6 +110,7 @@ public class PlainColumnView implements Sampler {
         grid.getCellFormatter().setStyleName(0,2,"metric-table-header");
         grid.getCellFormatter().setWidth(0, 2, "50%");
 
+
         layout.add(grid);
 
         if(null==staticHelp && address!=null)

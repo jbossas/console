@@ -55,6 +55,8 @@ import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
@@ -549,6 +551,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JMSMetricPresenter.MyView.class,
                 JMSMetricView.class,
                 JMSMetricPresenter.MyProxy.class);
+
+         bindPresenter(DataSourceMetricPresenter.class,
+                DataSourceMetricPresenter.MyView.class,
+                DataSourceMetricView.class,
+                DataSourceMetricPresenter.MyProxy.class);
 
     }
 
