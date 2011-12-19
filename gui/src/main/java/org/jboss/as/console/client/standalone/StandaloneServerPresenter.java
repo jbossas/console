@@ -19,6 +19,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
@@ -89,11 +90,11 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
         //:read-children-resources(child-type=socket-binding-group)
 
-        ModelNode fetchSocket = new ModelNode();
-        fetchSocket.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        fetchSocket.get(ADDRESS).setEmptyList();
-        fetchSocket.get(CHILD_TYPE).set("socket-binding-group");
-        steps.add(fetchSocket);
+        ModelNode fetchExtensions = new ModelNode();
+        fetchExtensions.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        fetchExtensions.get(ADDRESS).setEmptyList();
+        fetchExtensions.get(CHILD_TYPE).set("extension");
+        steps.add(fetchExtensions);
 
         operation.get(STEPS).set(steps);
 
@@ -120,9 +121,15 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                     else
                     {
                         // socket-binding response
-                        List<Property> socketProps = stepResult.get(RESULT).asPropertyList();
-                        String socketBindingName = socketProps.get(0).getName();
-                        server.setSocketBinding(socketBindingName);
+                        List<Property> model = stepResult.get(RESULT).asPropertyList();
+                        List<String> extension = new ArrayList<String>(model.size());
+                        for(Property item : model)
+                        {
+                            extension.add(item.getName());
+                        }
+
+                        server.setExtensions(extension);
+
 
                     }
                 }
