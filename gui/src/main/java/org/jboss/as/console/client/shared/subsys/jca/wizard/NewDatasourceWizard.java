@@ -43,15 +43,12 @@ public class NewDatasourceWizard {
 
     private DataSource baseAttributes = null;
     private DataSource driverAttributes = null;
-    private List<JDBCDriver> drivers;
     private ApplicationProperties bootstrap;
 
     public NewDatasourceWizard(
             DataSourcePresenter presenter,
-            List<JDBCDriver> drivers,
             ApplicationProperties bootstrap) {
         this.presenter = presenter;
-        this.drivers = drivers;
         this.bootstrap = bootstrap;
     }
 
@@ -111,7 +108,4 @@ public class NewDatasourceWizard {
         presenter.onCreateDatasource(updatedEntity);
     }
 
-    public List<JDBCDriver> getDrivers() {
-        return drivers;
-    }
 }

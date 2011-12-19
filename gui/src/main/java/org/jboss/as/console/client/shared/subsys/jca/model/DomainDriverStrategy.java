@@ -33,6 +33,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -88,10 +89,14 @@ public class DomainDriverStrategy implements DriverStrategy {
             @Override
             public void onSuccess(List<ServerInstance> result) {
 
-
+                int numSkipped = 0;
                 for(final ServerInstance server : result){
 
-                    if(!server.isRunning()) continue;
+                    if(!server.isRunning())
+                    {
+                        numSkipped++;
+                        continue;
+                    }
 
                     ModelNode operation = new ModelNode();
                     operation.get(OP).set("installed-drivers-list");
@@ -150,6 +155,9 @@ public class DomainDriverStrategy implements DriverStrategy {
                         }
                     });
                 }
+
+                if(numSkipped==result.size())
+                    callback.onSuccess(Collections.EMPTY_LIST);
 
             }
         });

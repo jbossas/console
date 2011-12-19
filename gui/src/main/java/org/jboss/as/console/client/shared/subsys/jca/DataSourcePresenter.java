@@ -155,24 +155,28 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     public void launchNewDatasourceWizard() {
 
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
+        window.setWidth(480);
+        window.setHeight(400);
+
+        window.setWidget(
+                new NewDatasourceWizard(DataSourcePresenter.this, bootstrap).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+
+    }
+
+    public void loadDriver(final AsyncCallback<List<JDBCDriver>> callback) {
         driverRegistry.refreshDrivers(new SimpleCallback<List<JDBCDriver>>() {
             @Override
             public void onSuccess(List<JDBCDriver> drivers) {
 
-                window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
-                window.setWidth(480);
-                window.setHeight(360);
-
-                window.setWidget(
-                        new NewDatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
-                );
-
-                window.setGlassEnabled(true);
-                window.center();
-
+                System.out.println("Num driver: "+drivers.size());
+                callback.onSuccess(drivers);
             }
         });
-
     }
 
     public void launchNewXADatasourceWizard() {
