@@ -16,10 +16,11 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
@@ -42,8 +43,6 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private ReloadState reloadState;
-
-    private boolean keepRunning = false;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneServerPresenter)
@@ -169,7 +168,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     }
 
     public void onReloadServerConfig() {
-       final ModelNode operation = new ModelNode();
+        final ModelNode operation = new ModelNode();
         operation.get(OP).set("reload");
         operation.get(ADDRESS).setEmptyList();
 
@@ -198,34 +197,25 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         });
     }
 
-    int numPollAttempts = 0;
     private void pollState() {
 
-        Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
+        LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
             @Override
-            public boolean execute() {
-
-                numPollAttempts++;
-
-                if(numPollAttempts>5)
-                    keepRunning=false;
-                else
-                    checkReloadState();
-
-                if(!keepRunning)
-                     numPollAttempts=0;
-
-                return keepRunning;
+            public void execute(final AsyncCallback<Boolean> callback) {
+                checkReloadState(callback);
             }
-        }, 500);
+        }, 10);
+
+        // kick of the polling request
+        poll.schedule(500);
     }
 
     /**
      * Simply query the process state attribute to get to the required headers
      */
-    public void checkReloadState() {
+    public void checkReloadState(final AsyncCallback<Boolean> callback) {
 
-         // :read-attribute(name=process-type)
+        // :read-attribute(name=process-type)
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
         operation.get(NAME).set("server-state");
@@ -237,10 +227,11 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-                if(!reloadState.isReloadRequired())
-                    keepRunning = false;
+                boolean keepRunning = reloadState.isReloadRequired();
+                callback.onSuccess(keepRunning);
 
-                getView().setReloadRequired(reloadState.isReloadRequired());
+                if(!keepRunning)
+                    getView().setReloadRequired(reloadState.isReloadRequired());
             }
         });
     }
