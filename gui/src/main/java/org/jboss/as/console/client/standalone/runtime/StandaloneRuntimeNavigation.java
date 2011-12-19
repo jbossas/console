@@ -57,13 +57,11 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
-        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
 
         subsysContents.addItem(datasources);
         subsysContents.addItem(jmsQueues);
         subsysContents.addItem(web);
         subsysContents.addItem(tx);
-        subsysContents.addItem(osgi);
 
 
         DisclosurePanel serverPanel  = new DisclosureStackPanel("Status", true).asWidget();
@@ -84,6 +82,20 @@ public class StandaloneRuntimeNavigation {
         deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
 
         stack.add(deploymentPanel);
+
+
+        // ----
+
+        Tree runtimeOpsTree = new LHSNavTree("standalone-runtime");
+        DisclosurePanel runtimePanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
+        runtimePanel.setContent(runtimeOpsTree);
+
+        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
+        runtimeOpsTree.addItem(osgi);
+
+        stack.add(runtimePanel);
+
+         // ---
 
         layout.add(stack);
 
