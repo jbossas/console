@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -41,6 +42,8 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
@@ -59,7 +62,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private HostInformationStore hostInfoStore;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
-    private boolean hasBeenRevealed = false;
     private CurrentHostSelection hostSelection;
 
     @ProxyCodeSplit
@@ -111,7 +113,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     @Override
     protected void onReveal() {
         super.onReveal();
-        hasBeenRevealed = true;
     }
 
     private void loadHostData() {
@@ -175,50 +176,72 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         }
     }
 
-    public void startServer(final String hostName, final String configName, final boolean startIt) {
-        hostInfoStore.startServer(hostName, configName, startIt, new SimpleCallback<Boolean>() {
+    public void startServer(final String hostName, final String serverName, final boolean startIt) {
+        hostInfoStore.startServer(hostName, serverName, startIt, new SimpleCallback<Boolean>() {
             @Override
-            public void onSuccess(Boolean wasSuccessful) {
-
-                String msg;
-                if(startIt)
-                {
-                    msg = wasSuccessful ?
-                            "Successfully started server "+configName :
-                            "Failed to start server "+configName;
-                }
-                else
-                {
-                    msg = wasSuccessful ?
-                            "Successfully stopped server "+configName :
-                            "Failed to stop server "+configName;
-
-                }
-
-                Message.Severity sev = wasSuccessful ? Message.Severity.Info : Message.Severity.Error;
-                Console.MODULES.getMessageCenter().notify(
-                        new Message(msg, sev)
-                );
+            public void onSuccess(final Boolean wasSuccessful) {
 
                 if(wasSuccessful)
                 {
-                    // if the operation was success we merge the local state changes into the model
-                    // to avoid a polling request (server started async)
-
-                    hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
+                    int limit = startIt ? 10:5;
+                    LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
                         @Override
-                        public void onSuccess(List<ServerInstance> result) {
-                            serverInstances = result;
+                        public void execute(final AsyncCallback<Boolean> callback) {
+                            hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
+                                @Override
+                                public void onSuccess(List<ServerInstance> result) {
+                                    serverInstances = result;
 
-                            // merge local state
-                            for(ServerInstance instance : result)
-                                if(instance.getServer().equals(configName)) instance.setRunning(startIt);
+                                    boolean keepPolling = false;
 
-                            getView().updateInstances(hostName, result);
+                                    for(ServerInstance instance : result) {
+                                        if(instance.getServer().equals(serverName)) {
+
+                                            if(startIt)
+                                                keepPolling = !instance.isRunning();
+                                            else
+                                                keepPolling = instance.isRunning();
+
+                                            break;
+                                        }
+                                    }
+
+                                    // notify scheduler
+                                    callback.onSuccess(keepPolling);
+
+                                    if(!keepPolling) {
+
+                                        /*String msg;
+                                        if(startIt)
+                                        {
+                                            msg = wasSuccessful ?
+                                                    "Successfully started server "+serverName :
+                                                    "Failed to start server "+serverName;
+                                        }
+                                        else
+                                        {
+                                            msg = wasSuccessful ?
+                                                    "Successfully stopped server "+serverName :
+                                                    "Failed to stop server "+serverName;
+
+                                        }
+
+                                        Message.Severity sev = wasSuccessful ? Message.Severity.Info : Message.Severity.Error;
+                                        Console.MODULES.getMessageCenter().notify(
+                                                new Message(msg, sev)
+                                        );  */
+                                        getView().updateInstances(hostName, result);
+
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
+                    }, limit);
 
+                    // kick of the polling request
+                    poll.schedule(500);
+
+                }
 
                 // force reload of server selector (LHS nav)
                 getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
@@ -226,17 +249,4 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             }
         });
     }
-
-    /*public void reloadServer(final String server) {
-        hostInfoStore.reloadServer(selectedHost, server, new SimpleCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                if(result)
-                    Console.info("Success: Reload server configuration " + server);
-                else
-                    Console.error("Error: Failed to reload server configuration " + server);
-            }
-        });
-    } */
-
 }
