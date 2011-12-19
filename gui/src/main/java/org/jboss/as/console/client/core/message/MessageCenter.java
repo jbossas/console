@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * @author Greg Hinkle
+ * @author Heiko Braun
  */
 public class MessageCenter {
 
@@ -38,14 +39,14 @@ public class MessageCenter {
 
         log(message);
 
-        // keep non-transient messsages
+        // keep only non-transient messsages
         if (!message.isTransient())
         {
-            this.messages.add(message);
+            this.messages.addFirst(message);
 
             if (messages.size() > MAX_MESSAGES)
             {
-                messages.removeFirst();
+                messages.removeLast();
             }
         }
 
