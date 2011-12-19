@@ -178,7 +178,6 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 ModelNode response = result.get();
                 if(response.get("outcome").asString().equals("success"))
                 {
-                    Console.info("Success: Reload server");
                     getEventBus().fireEvent(new ReloadEvent());
                 }
                 else
@@ -230,7 +229,10 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 callback.onSuccess(keepRunning);
 
                 if(!keepRunning)
+                {
+                    Console.info("Success: Reload server");
                     getView().setReloadRequired(reloadState.isReloadRequired());
+                }
             }
         });
     }
