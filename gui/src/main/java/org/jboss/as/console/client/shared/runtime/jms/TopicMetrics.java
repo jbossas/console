@@ -19,7 +19,7 @@ import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -163,16 +163,20 @@ public class TopicMetrics {
         tablePanel.add(pager);
 
 
-        SimpleLayout layout = new SimpleLayout()
+        VerticalPanel messagePanel = new VerticalPanel();
+        messagePanel.setStyleName("fill-layout-width");
+        messagePanel.add(inflightSampler.asWidget());
+        messagePanel.add(processedSampler.asWidget());
+
+        OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Topics")
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("JMS Topic Metrics")
                 .setDescription("Metrics for JMS topics.")
-                .addContent("Topic Selection", tablePanel)
-                .addContent("In flight messages", inflightSampler.asWidget())
-                .addContent("Message Ratio", processedSampler.asWidget())
-                .addContent("Subscription Ratio", subscriptionSampler.asWidget());
+                .setMaster("Topic Selection", tablePanel)
+                .addDetail("Messages", messagePanel)
+                .addDetail("Subscriptions", subscriptionSampler.asWidget());
 
         return layout.build();
     }

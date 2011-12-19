@@ -138,11 +138,11 @@ public class DataSourceMetrics {
 
 
         SimpleLayout layout = new SimpleLayout()
-                .setTitle("DataSources")
+                .setTitle("Data Sources")
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
-                .setHeadline("DataSource Metrics")
-                .setDescription("Metrics for datasources.")
+                .setHeadline("Data Source Metrics")
+                .setDescription("Metrics for data sources.")
                 .addContent("DS Selection", tablePanel)
                 .addContent("Pool Usage", poolSampler.asWidget());
 

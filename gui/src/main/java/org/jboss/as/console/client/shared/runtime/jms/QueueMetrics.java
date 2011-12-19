@@ -19,6 +19,7 @@ import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -157,17 +158,20 @@ public class QueueMetrics {
         tablePanel.add(queueTable);
         tablePanel.add(pager);
 
+        VerticalPanel messagePanel = new VerticalPanel();
+        messagePanel.setStyleName("fill-layout-width");
+        messagePanel.add(sampler.asWidget());
+        messagePanel.add(messageSampler.asWidget());
 
-        SimpleLayout layout = new SimpleLayout()
+        OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Queues")
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("JMS Queue Metrics")
                 .setDescription("Metrics for JMS queues.")
-                .addContent("Queue Selection", tablePanel)
-                .addContent("In flight messages", sampler.asWidget())
-                .addContent("Message Ratio", messageSampler.asWidget())
-                .addContent("Consumer", consumerSampler.asWidget());
+                .setMaster("Queue Selection", tablePanel)
+                .addDetail("Messages", messagePanel)
+                .addDetail("Consumer", consumerSampler.asWidget());
 
         return layout.build();
     }

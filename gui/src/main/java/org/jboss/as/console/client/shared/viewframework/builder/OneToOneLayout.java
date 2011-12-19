@@ -173,7 +173,6 @@ public class OneToOneLayout {
                 item.widget.getElement().addClassName("fill-layout-width");
             }
 
-            panel.add(new ContentGroupLabel("Details"));
             panel.add(tabs);
 
             if(!details.isEmpty())

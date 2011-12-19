@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 12/10/11
  */
-public class JMSMetricView extends DisposableViewImpl implements JMSMetricPresenter.MyView{
+public class JMSMetricView extends SuspendableViewImpl implements JMSMetricPresenter.MyView{
 
     private JMSMetricPresenter presenter;
     private TopicMetrics topicMetrics;
