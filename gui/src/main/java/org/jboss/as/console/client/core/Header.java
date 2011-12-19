@@ -35,7 +35,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -71,7 +70,6 @@ public class Header implements ValueChangeHandler<String> {
 
     //private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
-    private LayoutPanel headlineContainer;
     private BootstrapContext bootstrap;
 
     @Inject
@@ -85,9 +83,6 @@ public class Header implements ValueChangeHandler<String> {
 
         LayoutPanel outerLayout = new LayoutPanel();
         outerLayout.addStyleName("page-header");
-
-        headlineContainer = new LayoutPanel();
-        headlineContainer.setStyleName("fill-layout");
 
         Widget logo = getLogoSection();
         Widget links = getLinksSection();
@@ -262,11 +257,6 @@ public class Header implements ValueChangeHandler<String> {
 
     private void toggleSubnavigation(String name) {
 
-    }
-
-    public void setContent(Widget content) {
-        headlineContainer.clear();
-        headlineContainer.add(content);
     }
 
     public DeckPanel createSubnavigation() {

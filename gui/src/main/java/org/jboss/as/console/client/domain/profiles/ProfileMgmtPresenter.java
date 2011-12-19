@@ -56,7 +56,6 @@ public class ProfileMgmtPresenter
         extends Presenter<ProfileMgmtPresenter.MyView, ProfileMgmtPresenter.MyProxy>
         implements ProfileSelectionEvent.ProfileSelectionListener {
 
-    private static final ApplicationHeader PROFILE_HEADER = new ApplicationHeader(Console.CONSTANTS.common_label_profileManagement());
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
     private SubsystemStore subsysStore;
@@ -161,7 +160,6 @@ public class ProfileMgmtPresenter
     protected void onReset() {
         super.onReset();
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
-        Console.MODULES.getHeader().setContent(PROFILE_HEADER);
 
     }
 

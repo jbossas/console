@@ -52,7 +52,6 @@ public class ServerGroupMgmtPresenter
         extends Presenter<ServerGroupMgmtPresenter.MyView, ServerGroupMgmtPresenter.MyProxy>
         implements StaleModelEvent.StaleModelListener{
 
-    private static final ApplicationHeader APPLICATION_HEADER = new ApplicationHeader(Console.CONSTANTS.common_label_groupManagement());
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
@@ -126,7 +125,6 @@ public class ServerGroupMgmtPresenter
         super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
-        Console.MODULES.getHeader().setContent(APPLICATION_HEADER);
     }
 
     @Override

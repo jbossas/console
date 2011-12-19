@@ -56,6 +56,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
     private SubsystemStore subsysStore;
     private boolean hasBeenRevealed;
+    private boolean matchCurrent;
 
     public interface ServerManagementView extends View {
 
@@ -89,12 +90,8 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        // reveal default sub page
-        if(revealDefault && NameTokens.serverConfig.equals(request.getNameToken()))
-        {
-            placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
-            revealDefault = false; // only once
-        }
+        // check if the root presenter itself is requested
+        matchCurrent = NameTokens.serverConfig.equals(request.getNameToken());
     }
 
     @Override
@@ -106,8 +103,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         if(!hasBeenRevealed)
         {
             Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
-            ApplicationHeader header = new ApplicationHeader("Server Configuration");
-            Console.MODULES.getHeader().setContent(header);
 
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
