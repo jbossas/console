@@ -16,16 +16,19 @@ import java.util.List;
 public class DataSourceMetricView extends SuspendableViewImpl implements DataSourceMetricPresenter.MyView {
     private DataSourceMetricPresenter presenter;
     private DataSourceMetrics dsMetrics;
+    private DataSourceMetrics xaMetrics;
 
     @Override
     public Widget createWidget() {
 
-        this.dsMetrics = new DataSourceMetrics(presenter);
+        this.dsMetrics = new DataSourceMetrics(presenter, false);
+        this.xaMetrics = new DataSourceMetrics(presenter, true);
 
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        tabLayoutpanel.add(dsMetrics.asWidget(), "DataSources");
+        tabLayoutpanel.add(dsMetrics.asWidget(), "Data Sources");
+        tabLayoutpanel.add(xaMetrics.asWidget(), "XA Data Sources");
 
         tabLayoutpanel.selectTab(0);
 
@@ -43,17 +46,26 @@ public class DataSourceMetricView extends SuspendableViewImpl implements DataSou
     }
 
     @Override
-    public void setDatasources(List<DataSource> datasources) {
-        dsMetrics.setDataSources(datasources);
+    public void setDatasources(List<DataSource> datasources, boolean isXA) {
+        if(isXA)
+            xaMetrics.setDataSources(datasources);
+        else
+            dsMetrics.setDataSources(datasources);
     }
 
     @Override
-    public void setDSPoolMetric(Metric poolMetric) {
-        dsMetrics.setDSPoolMetric(poolMetric);
+    public void setDSPoolMetric(Metric poolMetric, boolean isXA) {
+        if(isXA)
+            xaMetrics.setDSPoolMetric(poolMetric);
+        else
+            dsMetrics.setDSPoolMetric(poolMetric);
     }
 
     @Override
-    public void setDSCacheMetric(Metric metric) {
-        dsMetrics.setDSCacheMetric(metric);
+    public void setDSCacheMetric(Metric metric, boolean isXA) {
+        if(isXA)
+            xaMetrics.setDSCacheMetric(metric);
+        else
+            dsMetrics.setDSCacheMetric(metric);
     }
 }

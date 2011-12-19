@@ -29,7 +29,6 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 
 /**
  * @author Heiko Braun
@@ -47,6 +46,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     private EntityAdapter<DataSource> dataSourceAdapter;
 
     private LoadDataSourceCmd loadDSCmd;
+    private DataSource selectedXA;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DataSourceMetricPresenter)
@@ -56,9 +56,9 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     public interface MyView extends View {
         void setPresenter(DataSourceMetricPresenter presenter);
         void clearSamples();
-        void setDatasources(List<DataSource> datasources);
-        void setDSPoolMetric(Metric poolMetric);
-        void setDSCacheMetric(Metric metric);
+        void setDatasources(List<DataSource> datasources, boolean isXA);
+        void setDSPoolMetric(Metric poolMetric, boolean isXA);
+        void setDSCacheMetric(Metric metric, boolean isXA);
     }
 
     @Inject
@@ -93,9 +93,16 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
         loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {
             @Override
             public void onSuccess(List<DataSource> result) {
-                getView().setDatasources(result);
+                getView().setDatasources(result, false);
             }
-        });
+        }, false);
+
+        loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {
+            @Override
+            public void onSuccess(List<DataSource> result) {
+                getView().setDatasources(result, true);
+            }
+        }, true);
     }
 
     @Override
@@ -117,22 +124,39 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
         revealStrategy.revealInRuntimeParent(this);
     }
 
-    public void setSelectedDS(DataSource currentSelection) {
-        this.selectedDS = currentSelection;
-        if(selectedDS!=null)
-            loadDSPoolMetrics();
+    public void setSelectedDS(DataSource currentSelection, boolean xa) {
+
+
+        if(xa) {
+            this.selectedXA = currentSelection;
+            if(selectedXA!=null)
+                loadMetrics(true);
+        }
+        else {
+            this.selectedDS = currentSelection;
+            if(selectedDS!=null)
+                loadMetrics(false);
+        }
     }
 
-    private void loadDSPoolMetrics() {
+    private void loadMetrics(boolean isXA) {
+        loadDSPoolMetrics(isXA);
+        loadDSCacheMetrics(isXA);
+    }
+
+    private void loadDSPoolMetrics(final boolean isXA) {
         if(null==selectedDS)
             throw new RuntimeException("DataSource selection is null!");
 
         getView().clearSamples();
 
+        String subresource = isXA ? "xa-data-source": "data-source";
+        String name = isXA ? selectedXA.getName() : selectedDS.getName();
+
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("data-source", selectedDS.getName());
+        operation.get(ADDRESS).add(subresource, name);
         operation.get(ADDRESS).add("statistics", "pool");
 
         operation.get(OP).set(READ_RESOURCE_OPERATION);
@@ -159,22 +183,25 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
                             avail,active,max
                     );
 
-                    getView().setDSPoolMetric(poolMetric);
+                    getView().setDSPoolMetric(poolMetric, isXA);
                 }
             }
         });
     }
 
-     private void loadDSCacheMetrics() {
+    private void loadDSCacheMetrics(final boolean isXA) {
         if(null==selectedDS)
             throw new RuntimeException("DataSource selection is null!");
 
         getView().clearSamples();
 
+        String subresource = isXA ? "xa-data-source": "data-source";
+        String name = isXA ? selectedXA.getName() : selectedDS.getName();
+
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("subsystem", "datasources");
-        operation.get(ADDRESS).add("data-source", selectedDS.getName());
+        operation.get(ADDRESS).add(subresource, name);
         operation.get(ADDRESS).add("statistics", "jdbc");
 
         operation.get(OP).set(READ_RESOURCE_OPERATION);
@@ -201,7 +228,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
                             size,hit,miss
                     );
 
-                    getView().setDSCacheMetric(metric);
+                    getView().setDSCacheMetric(metric, isXA);
                 }
             }
         });

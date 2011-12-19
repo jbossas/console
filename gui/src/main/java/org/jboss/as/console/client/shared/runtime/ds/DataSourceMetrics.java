@@ -41,9 +41,12 @@ public class DataSourceMetrics {
     private ListDataProvider<DataSource> dataProvider;
     private Sampler poolSampler;
     private PlainColumnView cacheSampler;
+    private boolean isXA;
 
-    public DataSourceMetrics(DataSourceMetricPresenter presenter) {
+    public DataSourceMetrics(DataSourceMetricPresenter presenter, boolean isXA) {
         this.presenter = presenter;
+        this.isXA = isXA;
+
     }
 
     Widget asWidget() {
@@ -51,7 +54,8 @@ public class DataSourceMetrics {
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                presenter.setSelectedDS(getCurrentSelection());
+
+                presenter.setSelectedDS(getCurrentSelection(), isXA);
             }
         }));
 
@@ -85,7 +89,7 @@ public class DataSourceMetrics {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 DataSource ds = getCurrentSelection();
-                presenter.setSelectedDS(ds);
+                presenter.setSelectedDS(ds, isXA);
 
             }
         });
@@ -95,13 +99,14 @@ public class DataSourceMetrics {
 
         String title = "Pool Usage";
 
+        final String subaddress = isXA ? "xa-data-source":"data-source";
         final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
                 address.get(ModelDescriptionConstants.ADDRESS).set(RuntimeBaseAddress.get());
                 address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "datasources");
-                address.get(ModelDescriptionConstants.ADDRESS).add("data-source", getCurrentSelection().getName());
+                address.get(ModelDescriptionConstants.ADDRESS).add(subaddress, getCurrentSelection().getName());
                 address.get(ModelDescriptionConstants.ADDRESS).add("statistics", "pool");
 
                 System.out.println(address);
@@ -147,7 +152,7 @@ public class DataSourceMetrics {
                 ModelNode address = new ModelNode();
                 address.get(ModelDescriptionConstants.ADDRESS).set(RuntimeBaseAddress.get());
                 address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "datasources");
-                address.get(ModelDescriptionConstants.ADDRESS).add("data-source", getCurrentSelection().getName());
+                address.get(ModelDescriptionConstants.ADDRESS).add(subaddress, getCurrentSelection().getName());
                 address.get(ModelDescriptionConstants.ADDRESS).add("statistics", "jdbc");
 
                 System.out.println(address);
@@ -172,12 +177,12 @@ public class DataSourceMetrics {
 
 
         OneToOneLayout layout = new OneToOneLayout()
-                .setTitle("Data Sources")
+                .setTitle(isXA? "XA Data Sources":"Data Sources")
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
-                .setHeadline("Data Source Metrics")
+                .setHeadline(isXA ? "XA Data Source Metrics":"Data Source Metrics")
                 .setDescription("Metrics for data sources.")
-                .setMaster("DS Selection", tablePanel)
+                .setMaster("Datasource", tablePanel)
                 .addDetail("Pool Usage", poolSampler.asWidget())
                 .addDetail("Prepared Statement Cache", cacheSampler.asWidget());
 
