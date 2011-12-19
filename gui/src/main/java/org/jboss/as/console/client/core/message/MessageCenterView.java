@@ -270,14 +270,16 @@ public class MessageCenterView implements MessageCenter.MessageListener {
 
     private void displayNotification(final Message message) {
 
+        final String css = getSeverityStyle(message.severity);
         HorizontalPanel panel = new HorizontalPanel();
+        panel.addStyleName("notification-panel");
+        panel.addStyleName(css);
 
         String actualMessage = message.getConciseMessage().length()>40 ?
                 message.getConciseMessage().substring(0, 40)+" ..." :
                 message.getConciseMessage();
 
         final Label label = new Label(" "+actualMessage);
-        label.setStyleName("message-notification");
 
         final ImageResource iconSrc = getSeverityIcon(message.severity);
 
@@ -319,6 +321,23 @@ public class MessageCenterView implements MessageCenter.MessageListener {
                 Log.fatal(logMessage);
                 break;
         }
+    }
+
+    public static String getSeverityStyle(Message.Severity severity) {
+        String css = null;
+        switch (severity) {
+            case Info:
+                css = "InfoBlock";
+                break;
+            case Warning:
+                css = "WarnBlock";
+                break;
+            case Error:
+            case Fatal:
+                css = "ErrorBlock";
+                break;
+        }
+        return css;
     }
 
     public static ImageResource getSeverityIcon(Message.Severity severity) {

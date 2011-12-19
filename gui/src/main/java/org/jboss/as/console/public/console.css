@@ -135,6 +135,7 @@ body {
     color:#e3a934;
     font-weight: BOLD;
     cursor:pointer;
+    white-space: nowrap;
 }
 
 .message-notification {
@@ -152,41 +153,6 @@ body {
 
 .combobox-item-odd {
     background-color:#fafafa!important;
-}
-
-.InfoBlock,.ConfirmationBlock,.WarnBlock,.ErrorBlock,.FatalBlock {
-    border-width: 1px;
-    border-style: solid;
-    color: #000000;
-    padding-left:10px;
-    padding-top:4px;
-
-    -moz-box-shadow: 3px 3px 4px #c3c3c3;
-    -webkit-box-shadow: 3px 3px 4px #c3c3c3;
-    box-shadow: 3px 3px 4px #c3c3c3;
-
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-}
-
-.InfoBlock,.ConfirmationBlock {
-    background-color: #BFF1B5; /* light green */
-    border-color: #00AC3D; /* medium green */
-}
-
-.WarnBlock {
-    background-color: #FFFD99; /* light yellow */
-    border-color: #FF9C15; /* medium orange */
-}
-
-.ErrorBlock {
-    background-color: #FF9999; /* light red */
-    border-color: #EE4444; /* medium red */
-}
-
-.FatalBlock {
-    background-color: #FF6666; /* slightly darker light red */
-    border-color: #EE1111; /* slightly darker medium red */
 }
 
 .host-selector {
@@ -303,4 +269,42 @@ body {
 
 .serverNeedsUpdate {
 
+}
+
+/*notifications*/
+
+.notification-panel {
+    border: 1px solid #3B4D64;
+    -moz-border-radius-bottomleft: 4px;
+    -moz-border-radius-bottomright: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    width:100%;
+    color:#000000;
+}
+
+
+.InfoBlock,.ConfirmationBlock,.WarnBlock,.ErrorBlock,.FatalBlock {
+    color: #000000;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:4px;
+    cursor: pointer;
+}
+
+.InfoBlock,.ConfirmationBlock {
+    background-color: #BFF1B5; /* light green */
+}
+
+.WarnBlock {
+    background-color: #FFFD99; /* light yellow */
+}
+
+.ErrorBlock {
+    background-color: #FF9999; /* light red */
+}
+
+.FatalBlock {
+    background-color: #FF6666; /* slightly darker light red */
+    border-color: #EE1111; /* slightly darker medium red */
 }
