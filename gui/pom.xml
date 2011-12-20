@@ -343,6 +343,7 @@
             <id>eap</id>
             <properties>
                 <console.profile>eap</console.profile>
+                <product.version>6</product.version>
             </properties>
             <build>
                 <plugins>
