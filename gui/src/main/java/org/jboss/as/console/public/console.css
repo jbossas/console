@@ -290,32 +290,6 @@ body {
     color:#000000;
 }
 
-
-.InfoBlock,.ConfirmationBlock,.WarnBlock,.ErrorBlock,.FatalBlock {
-    color: #000000;
-    padding-left:10px;
-    padding-right:10px;
-    padding-top:4px;
-    cursor: pointer;
-}
-
-.InfoBlock,.ConfirmationBlock {
-    background-color: #BFF1B5; /* light green */
-}
-
-.WarnBlock {
-    background-color: #FFFD99; /* light yellow */
-}
-
-.ErrorBlock {
-    background-color: #FF9999; /* light red */
-}
-
-.FatalBlock {
-    background-color: #FF6666; /* slightly darker light red */
-    border-color: #EE1111; /* slightly darker medium red */
-}
-
 .table-picker {
     margin:0;
     padding:0;
