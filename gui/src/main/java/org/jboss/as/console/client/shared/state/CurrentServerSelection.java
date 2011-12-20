@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.state;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 
 import javax.inject.Singleton;
@@ -65,6 +66,7 @@ public class CurrentServerSelection {
     }
 
     public boolean isActive() {
-        return hasSetServer() && server.isRunning();
+        boolean standalone = Console.MODULES.getBootstrapContext().isStandalone();
+        return standalone || (hasSetServer() && server.isRunning());
     }
 }
