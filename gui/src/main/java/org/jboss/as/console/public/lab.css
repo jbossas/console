@@ -122,7 +122,7 @@ body {
 a {
     outline : none;
     text-decoration: none;
-    color:#005E8F!important;
+    color:#4a6882!important;
 }
 
 a:active {
@@ -171,7 +171,7 @@ a:focus {
 }
 
 .lhs-nav-item:hover {
-    background-color:#eef4f9;
+    background-color:#e5e895;
 }
 
 .title-bar {
@@ -229,13 +229,32 @@ a:focus {
 
 .lhs-tree-item:hover {
     background-color:#e5e5e5;
+    background-image: url('images/lhs_arrow_over.png');
+    background-position:center right;
+    background-repeat: no-repeat;
     -webkit-transition: background-color .1s ease-in-out;
     -moz-transition: background-color .1s ease-in-out;
     transition: background-color .1s ease-in-out;
+
+    -webkit-transition: background-image .1s ease-in-out;
+    -moz-transition: background-image .1s ease-in-out;
+    transition: background-image .1s ease-in-out;
 }
 
 .lhs-tree-item-selected {
-    background-color:#eef4f9;
+    color:#ffffff!important;
+    background-color:#64645d;
+    background-image: url('images/rh_lhs_arrow.png');
+    background-position:center right;
+    background-repeat: no-repeat;
+}
+
+.lhs-tree-item-selected:hover {
+    color:#ffffff!important;
+    background-color:#64645d;
+    background-image: url('images/rh_lhs_arrow.png');
+    background-position:center right;
+    background-repeat: no-repeat;
 }
 
 .cell-record {
@@ -274,18 +293,21 @@ a:focus {
 }
 
 .default-button {
-    padding:2px 10px 2px 10px;
+    padding:1px 10px 1px 10px;
     font-size:11px;
-    background:#DDDDDD url(images/sc/skins/Enterprise/images/cssButton/button_stretch.png) repeat-x;
-    color:#000000;
-    border:1px solid #A6ABB4;
+    color: #ffffff!important;
+    text-shadow: #000000 1px 1px 1px;
+    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
+    border: 1px solid #5f6739;
     -moz-border-radius: 2px;
     border-radius: 2px;
     white-space:nowrap;
 }
 
 .default-button:hover {
-    background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
+   text-shadow: #000000 1px 1px 1px;
+    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
+    border: 1px solid #5f6739;
 }
 
 
@@ -443,16 +465,16 @@ a:focus {
 }
 
 .toolstrip-button {
-    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
-    border: 1px solid #888888;
-    border-radius: 2px 2px 2px 2px;
-    color: #606060 !important;
+    color: #ffffff!important;
+    text-shadow: #000000 1px 1px 1px;
+    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
+    border: 1px solid #5f6739;
     cursor: pointer;
     float: left;
     font-size: 10px;
     margin: 0 2px;
     outline: medium none;
-    padding: 2px 10px;
+    padding: 1px 10px;
     text-decoration: none;
     white-space: nowrap;
 
@@ -463,8 +485,10 @@ a:focus {
 
 
 .toolstrip-button:hover {
-    background:#B2D7FF url(images/sc/skins/Enterprise/images/cssButton/button_Over_stretch.png) repeat-x;
-    color:#000!important;
+    color: #ffffff!important;
+    text-shadow: #000000 1px 1px 1px;
+    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
+    border: 1px solid #5f6739;
 }
 
 .row-tools {
@@ -504,8 +528,8 @@ a:focus {
 }
 
 .menu-cell:hover {
-    /* #eef4f9 */
-    background-color:#eef4f9!important;
+    /* #e5e895 */
+    background-color:#e5e895!important;
 }
 
 .vertical-tabpanel-tab {
@@ -692,7 +716,7 @@ a:focus {
 }
 
 .cellTreeSelectedItem {
-    background:#EEF4F9;
+    background:#e5e895;
     color: white;
     height: auto;
     overflow: visible;
@@ -741,7 +765,7 @@ a:focus {
 }
 
 .cellListSelectedItem {
-    background-color: #EEF4F9;
+    background-color: #e5e895;
     color: white;
     height: auto;
     overflow: visible;
@@ -1006,7 +1030,7 @@ a:focus {
 }
 
 .cellTableSelectedRow {
-    background:#eef4f9;
+    background:#e5e895;
 }
 
 /*edit mode*/
@@ -1021,7 +1045,7 @@ a:focus {
 
 .content-header-label {
     font-weight:BOLD;
-    color: #3B4D64;
+    color: #8c1916;
     font-size:16px!important;
     padding-bottom:8px;
 }
