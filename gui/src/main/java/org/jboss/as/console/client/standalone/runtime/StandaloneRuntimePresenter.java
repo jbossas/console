@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.standalone.runtime;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -11,16 +10,15 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 
 import java.util.List;
 
@@ -36,6 +34,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent =
             new GwtEvent.Type<RevealContentHandler<?>>();
+    private SubsystemStore subsysStore;
 
 
     @ProxyCodeSplit
@@ -45,14 +44,18 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
     public interface MyView extends View {
         void setPresenter(StandaloneRuntimePresenter presenter);
+
+        void setSubsystems(List<SubsystemRecord> result);
     }
 
     @Inject
-    public StandaloneRuntimePresenter(EventBus eventBus, MyView view, MyProxy proxy,
-                                      PlaceManager placeManager) {
+    public StandaloneRuntimePresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            PlaceManager placeManager, SubsystemStore subsysStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+        this.subsysStore = subsysStore;
     }
 
     @Override
@@ -68,27 +71,17 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
         Console.MODULES.getHeader().highlight(NameTokens.StandaloneRuntimePresenter);
 
         // first request, select default contents
-        if(!hasBeenRevealed &&
-                NameTokens.StandaloneRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        if(!hasBeenRevealed )
         {
-
-
-            placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.StandaloneServerPresenter)
-            );
-            hasBeenRevealed = true;
-
-
-            //  highlight LHS nav
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
-                public void execute() {
-                    getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, "Configuration", "standalone-runtime")
-
-                    );
+                public void onSuccess(List<SubsystemRecord> result) {
+                    System.out.println(result.size()+" subsystems");
+                    getView().setSubsystems(result);
                 }
             });
+
+            hasBeenRevealed = true;
 
         }
     }

@@ -24,6 +24,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
@@ -45,6 +46,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private HostInformationStore hostInfoStore;
     private CurrentServerSelection serverSelection;
     private CurrentHostSelection hostSelection;
+    private SubsystemStore subsysStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -65,13 +67,15 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public DomainRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
-            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection) {
+            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
+             SubsystemStore subsysStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
         this.serverSelection = serverSelection;
         this.hostSelection = hostSelection;
+        this.subsysStore = subsysStore;
     }
 
     @Override
