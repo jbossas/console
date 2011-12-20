@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.Timer;
@@ -43,8 +44,10 @@ import org.jboss.as.console.client.domain.model.ProfileStore;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -128,17 +131,17 @@ public class ProfileMgmtPresenter
                 }
             });
 
-            if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+            /*if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
             {
                 Timer t = new Timer() {
                     @Override
                     public void run() {
-                        revealDefaultSubsystem();
+                        revealDefaultSubsystem(result);
                     }
                 };
 
                 t.schedule(250);
-            }
+            } */
         }
     }
 
@@ -152,8 +155,31 @@ public class ProfileMgmtPresenter
         }
     }
 
-    private void revealDefaultSubsystem() {
-        placeManager.revealRelativePlace(new PlaceRequest(NameTokens.DataSourcePresenter));
+    private void revealDefaultSubsystem(List<SubsystemRecord> existingSubsystems) {
+
+        final String[] defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
+                NameTokens.DataSourcePresenter, existingSubsystems
+        );
+
+        placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem[1]));
+
+        Timer t = new Timer() {
+            @Override
+            public void run() {
+
+                //link.setSelected(true);
+
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
+                    @Override
+                    public void execute() {
+                        getEventBus().fireEvent(
+                                new LHSHighlightEvent(null, defaultSubsystem[0], "profiles")
+                        );
+                    }
+                });
+            }
+        };
+        t.schedule(500);
     }
 
     @Override
@@ -183,7 +209,7 @@ public class ProfileMgmtPresenter
             @Override
             public void onSuccess(List<SubsystemRecord> result) {
                 getView().setSubsystems(result);
-                revealDefaultSubsystem();
+                revealDefaultSubsystem(result);
             }
         });
     }
