@@ -21,10 +21,8 @@ package org.jboss.as.console.client.shared.subsys;
 
 import java.util.List;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -38,7 +36,6 @@ import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
@@ -62,7 +59,7 @@ public class SubsystemTreeBuilder {
             {
                 for(SubsystemRecord subsys: subsystems)
                 {
-                    if(subsys.getTitle().equals(groupItem.getKey())
+                    if(subsys.getKey().equals(groupItem.getKey())
                             && groupItem.isDisabled()==false)
                     {
                         includedSubsystems++;
@@ -129,28 +126,6 @@ public class SubsystemTreeBuilder {
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
 
-                        if("datasources".equals(key))
-                        {
-                            Timer t = new Timer() {
-                                @Override
-                                public void run() {
-                                    groupTreeItem.setState(true);
-                                    //link.setSelected(true);
-
-                                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
-                                        @Override
-                                        public void execute() {
-                                            Console.MODULES.getEventBus().fireEvent(
-                                                    new LHSHighlightEvent(subsysTree.getTreeId(), link.getText(), "profiles")
-                                            );
-                                        }
-                                    });
-                                }
-                            };
-                            t.schedule(500);
-                        }
-
-                        
                         groupTreeItem.addItem(link);
                     }
                 }

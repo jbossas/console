@@ -19,8 +19,10 @@
 
 package org.jboss.as.console.client.standalone;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -39,6 +41,7 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -109,11 +112,29 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
                     getView().updateFrom(existingSubsystems);
 
                     // chose default view
-                    String defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
+                    final String[] defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
                             NameTokens.DataSourcePresenter, existingSubsystems
                     );
 
-                    placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem));
+                    placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem[1]));
+
+                    Timer t = new Timer() {
+                        @Override
+                        public void run() {
+
+                            //link.setSelected(true);
+
+                            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
+                                @Override
+                                public void execute() {
+                                    getEventBus().fireEvent(
+                                            new LHSHighlightEvent(null, defaultSubsystem[0], "profiles")
+                                    );
+                                }
+                            });
+                        }
+                    };
+                    t.schedule(500);
                 }
             });
 

@@ -143,7 +143,7 @@ public class SubsystemMetaData {
         return matchingGroup;
     }
 
-    public static String getDefaultSubsystem(String preferred, List<SubsystemRecord> existing)
+    public static String[] getDefaultSubsystem(String preferred, List<SubsystemRecord> existing)
     {
         if(existing.isEmpty())
             throw new RuntimeException("No subsystem provided!");
@@ -151,35 +151,36 @@ public class SubsystemMetaData {
         SubsystemRecord chosen = null;
         for(SubsystemRecord subsys : existing)
         {
-            if(subsys.getTitle().equals(preferred))
+            if(subsys.getKey().equals(preferred))
+            {
                 chosen = subsys;
+                break;
+            }
         }
 
         if(null==chosen)
             chosen = existing.get(0);
 
 
-        return resolveToken(chosen.getTitle());
+        return resolveTokens(chosen.getKey());
     }
 
-    public static String resolveToken(String name) {
-        String token = null;
+    public static String[] resolveTokens(String key) {
+        String[] token = new String[2];
 
         for(String groupName : groups.keySet())
         {
             SubsystemGroup group = groups.get(groupName);
             for(SubsystemGroupItem item : group.getItems())
             {
-                if(item.getKey().equals(name)
+                if(item.getKey().equals(key)
                         && item.isDisabled() == false)
                 {
-                    token = item.getPresenter();
+                    token[0] = item.getName();
+                    token[1] = item.getPresenter();
                     break;
                 }
             }
-
-            if(token!=null)
-                break;
         }
 
         return token;

@@ -78,7 +78,7 @@ public class SubsystemStoreImpl implements SubsystemStore {
                 for(int i=0; i<payload.size(); i++)
                 {
                     SubsystemRecord record = factory.subsystem().as();
-                    record.setTitle(payload.get(i).asString());
+                    record.setKey(payload.get(i).asString());
                     records.add(record);
                 }
 

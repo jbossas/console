@@ -25,6 +25,6 @@ package org.jboss.as.console.client.shared.model;
  */
 public interface SubsystemRecord {
 
-    String getTitle();
-    void setTitle(String title);
+    String getKey();
+    void setKey(String title);
 }
