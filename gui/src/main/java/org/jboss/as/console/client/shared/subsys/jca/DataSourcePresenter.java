@@ -179,7 +179,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
                     html.appendHtmlConstant("<h3>Failed to load JDBC driver</h3>");
                     html.appendHtmlConstant("Either you did not deploy any JDBC driver or nor is server running. " +
-                            "In order to create a data source you ned to provide JDBC driver deployment.");
+                            "In order to create a data source you need to provide JDBC driver deployment.");
                     Feedback.alert("Missing JDBC Driver", html.toSafeHtml());
                 }
             }

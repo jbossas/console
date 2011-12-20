@@ -68,28 +68,29 @@ public class StandaloneDriverStrategy implements DriverStrategy {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                if(SUCCESS.equals(response.get(OUTCOME).asString())) {
+                if(!response.isFailure()) {
 
+                    if(response.hasDefined(RESULT)) {
+                        List<ModelNode> payload = response.get(RESULT).asList();
 
-                    List<ModelNode> payload = response.get(RESULT).asList();
+                        for(ModelNode item : payload)
+                        {
 
-                    for(ModelNode item : payload)
-                    {
+                            JDBCDriver driver = factory.jdbcDriver().as();
+                            driver.setDriverClass(item.get("driver-class-name").asString());
+                            driver.setName(item.get("driver-name").asString());
+                            driver.setDeploymentName(item.get("deployment-name").asString());
+                            driver.setMajorVersion(item.get("driver-major-version").asInt());
+                            driver.setMinorVersion(item.get("driver-minor-version").asInt());
 
-                        JDBCDriver driver = factory.jdbcDriver().as();
-                        driver.setDriverClass(item.get("driver-class-name").asString());
-                        driver.setName(item.get("driver-name").asString());
-                        driver.setDeploymentName(item.get("deployment-name").asString());
-                        driver.setMajorVersion(item.get("driver-major-version").asInt());
-                        driver.setMinorVersion(item.get("driver-minor-version").asInt());
+                            if(item.hasDefined("driver-xa-datasource-class-name"))
+                                driver.setXaDataSourceClass(item.get("driver-xa-datasource-class-name").asString());
 
-                        if(item.hasDefined("driver-xa-datasource-class-name"))
-                            driver.setXaDataSourceClass(item.get("driver-xa-datasource-class-name").asString());
+                            addIfNotExists(driver);
 
-                        addIfNotExists(driver);
+                        }
 
                     }
-
                 }
 
                 callback.onSuccess(drivers);
