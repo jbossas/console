@@ -176,16 +176,15 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                if(response.get("outcome").asString().equals("success"))
-                {
-                    getEventBus().fireEvent(new ReloadEvent());
-                }
-                else
+
+                if(response.isFailure())
                 {
                     Console.error("Error: Failed to reload server", response.getFailureDescription());
                 }
-
-                pollState();
+                else
+                {
+                    pollState();
+                }
             }
 
             @Override
@@ -232,6 +231,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                 {
                     Console.info("Success: Reload server");
                     getView().setReloadRequired(reloadState.isReloadRequired());
+                    getEventBus().fireEvent(new ReloadEvent());
                 }
             }
         });

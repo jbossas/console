@@ -211,26 +211,10 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
                                     if(!keepPolling) {
 
-                                        /*String msg;
-                                        if(startIt)
-                                        {
-                                            msg = wasSuccessful ?
-                                                    "Successfully started server "+serverName :
-                                                    "Failed to start server "+serverName;
-                                        }
-                                        else
-                                        {
-                                            msg = wasSuccessful ?
-                                                    "Successfully stopped server "+serverName :
-                                                    "Failed to stop server "+serverName;
-
-                                        }
-
-                                        Message.Severity sev = wasSuccessful ? Message.Severity.Info : Message.Severity.Error;
-                                        Console.MODULES.getMessageCenter().notify(
-                                                new Message(msg, sev)
-                                        );  */
                                         getView().updateInstances(hostName, result);
+
+                                        // force reload of server selector (LHS nav)
+                                        getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
 
                                     }
                                 }
@@ -242,10 +226,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                     poll.schedule(500);
 
                 }
-
-                // force reload of server selector (LHS nav)
-                getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
-
             }
         });
     }
