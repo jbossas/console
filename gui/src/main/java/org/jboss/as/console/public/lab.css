@@ -1,1 +1,6 @@
-
+.cellListSelectedItem {
+    background-color: #EEF4F9;
+    color: #000000;
+    height: auto;
+    overflow: visible;
+}

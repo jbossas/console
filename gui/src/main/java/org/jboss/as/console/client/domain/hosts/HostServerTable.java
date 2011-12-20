@@ -15,14 +15,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
-import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
+import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 
 import java.util.Collections;
@@ -95,7 +96,8 @@ public class HostServerTable {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-        layout.addStyleName("tablepicker-popup");
+        layout.getElement().setAttribute("style", "padding:5px;");
+        //layout.addStyleName("tablepicker-popup");
 
         if(description!=null)
             layout.add(new Label(description));
@@ -104,11 +106,11 @@ public class HostServerTable {
         layout.add(ratio);
         // --------------
 
-        hostList = new CellList<Host>(new HostCell());
+        hostList = new DefaultCellList<Host>(new HostCell());
         hostList.setSelectionModel(new SingleSelectionModel<Host>());
         hostList.addStyleName("fill-layout-width");
 
-        serverList = new CellList<ServerInstance>(new ServerCell());
+        serverList = new DefaultCellList<ServerInstance>(new ServerCell());
         serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
         serverList.addStyleName("fill-layout-width");
 
@@ -130,15 +132,33 @@ public class HostServerTable {
         });
 
 
+        HorizontalPanel millerHeader = new HorizontalPanel();
+        Label host = new Label("Host");
+        millerHeader.add(host);
+        Label server = new Label("Server");
+
+        millerHeader.add(server);
+        millerHeader.getElement().setAttribute("style", "width:100%;border-bottom:1px solid #A7ABB4");
+
+        host.getElement().getParentElement().setAttribute("width", "50%");
+        server.getElement().getParentElement().setAttribute("width", "50%");
+
+
+        layout.add(millerHeader);
+
+        millerHeader.getElement().getParentElement().setAttribute("style", "vertical-align:bottom");
+
         HorizontalPanel millerPanel = new HorizontalPanel();
         millerPanel.setStyleName("fill-layout");
         millerPanel.add(hostList);
         millerPanel.add(serverList);
 
+        hostList.getElement().getParentElement().setAttribute("style", "border-right:1px solid #A7ABB4");
         hostList.getElement().getParentElement().setAttribute("width", "50%");
         serverList.getElement().getParentElement().setAttribute("width", "50%");
 
-        layout.add(millerPanel);
+        ScrollPanel scroll = new ScrollPanel(millerPanel);
+        layout.add(scroll);
 
         DefaultButton doneBtn = new DefaultButton("Done", new ClickHandler() {
             @Override
@@ -312,7 +332,7 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            String state = server.isRunning() ? " (active)":" (-)";
+            String state = server.isRunning() ? " (active)":"";
             safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()+state));
         }
 

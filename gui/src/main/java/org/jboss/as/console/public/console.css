@@ -355,3 +355,13 @@ body {
     margin-bottom: 5px;
     margin-top: 10px;
 }
+
+.server-selection-host {
+    padding: 5px;
+    height:15px;
+}
+
+.server-selection-server {
+    padding: 5px;
+    height:15px;
+}
