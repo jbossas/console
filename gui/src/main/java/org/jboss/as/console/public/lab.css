@@ -171,7 +171,7 @@ a:focus {
 }
 
 .lhs-nav-item:hover {
-    background-color:#e5e895;
+    background-color:#e5e5c1;
 }
 
 .title-bar {
@@ -295,19 +295,21 @@ a:focus {
 .default-button {
     padding:1px 10px 1px 10px;
     font-size:11px;
-    color: #ffffff!important;
-    text-shadow: #000000 1px 1px 1px;
-    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
-    border: 1px solid #5f6739;
+    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
+    border: 1px solid #888888;
+    border-radius: 2px 2px 2px 2px;
+    color: #606060 !important;
     -moz-border-radius: 2px;
     border-radius: 2px;
     white-space:nowrap;
 }
 
 .default-button:hover {
-   text-shadow: #000000 1px 1px 1px;
-    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
-    border: 1px solid #5f6739;
+    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
+    border: 1px solid #888888;
+    border-radius: 2px 2px 2px 2px;
+    color: #000000 !important;
+    text-decoration: underline!important;
 }
 
 
@@ -398,9 +400,9 @@ a:focus {
 
 .default-window-header {
     border-bottom: 1px solid #A7ABB4;
-    background-color:#FFFFFF;
-    background-image: url('images/sc/skins/Enterprise/images/ToolStrip/background.png');
-    color:#4A5D75;
+    background-color:#424242!important;
+    background-image:none!important;
+    color:#ffffff!important;
     height:40px;
 }
 
@@ -408,7 +410,7 @@ a:focus {
     padding: 10px;
     font-size:14px;
     font-weight: BOLD;
-    color:#4A5D75;
+    color:#ffffff!important;
 }
 
 .default-window-content {
@@ -465,10 +467,10 @@ a:focus {
 }
 
 .toolstrip-button {
-    color: #ffffff!important;
-    text-shadow: #000000 1px 1px 1px;
-    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
-    border: 1px solid #5f6739;
+    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
+    border: 1px solid #888888;
+    border-radius: 2px 2px 2px 2px;
+    color: #000000 !important;
     cursor: pointer;
     float: left;
     font-size: 10px;
@@ -485,10 +487,11 @@ a:focus {
 
 
 .toolstrip-button:hover {
-    color: #ffffff!important;
-    text-shadow: #000000 1px 1px 1px;
-    background:#e5e895 url(images/buttons/rh_button_bg.png) repeat-x;
-    border: 1px solid #5f6739;
+    background: url("images/buttons/button_bg.gif") repeat-x scroll 0 0 #DDDDDD;
+    border: 1px solid #888888;
+    border-radius: 2px 2px 2px 2px;
+    color: #000000 !important;
+    text-decoration: underline!important;
 }
 
 .row-tools {
@@ -528,8 +531,8 @@ a:focus {
 }
 
 .menu-cell:hover {
-    /* #e5e895 */
-    background-color:#e5e895!important;
+    /* #e5e5c1 */
+    background-color:#e5e5c1!important;
 }
 
 .vertical-tabpanel-tab {
@@ -716,7 +719,7 @@ a:focus {
 }
 
 .cellTreeSelectedItem {
-    background:#e5e895;
+    background:#e5e5c1;
     color: white;
     height: auto;
     overflow: visible;
@@ -765,7 +768,7 @@ a:focus {
 }
 
 .cellListSelectedItem {
-    background-color: #e5e895;
+    background-color: #e5e5c1;
     color: white;
     height: auto;
     overflow: visible;
@@ -1030,7 +1033,7 @@ a:focus {
 }
 
 .cellTableSelectedRow {
-    background:#e5e895;
+    background:#e5e5c1;
 }
 
 /*edit mode*/
@@ -1069,6 +1072,7 @@ a:focus {
     font-size:10px;
     width:100%;
     background-color:#ffffff;
+
 }
 
 .formItemTableHeader {
@@ -1112,7 +1116,7 @@ a:focus {
 .form-item-title {
     font-size:10px!important;
     padding-right:2px;
-    color:#4A5D75;
+    color:#404040!important;
     font-weight:bold!important;
     white-space:nowrap;
     text-align:right;
