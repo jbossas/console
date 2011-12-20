@@ -103,14 +103,6 @@ body {
     background-repeat: no-repeat;
 }
 
-.header-prod-version {
-  padding-top:18px;
-  padding-left: 4px;
-  font-size: 13pt!important;
-  font-weight: BOLD;
-  color: #ffffff!important;
-}
-
 .logo {
     padding-top:20px;
     padding-left:10px;
