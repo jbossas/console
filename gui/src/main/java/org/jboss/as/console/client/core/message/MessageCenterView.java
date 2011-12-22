@@ -205,7 +205,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         };*/
 
         HorizontalPanel layout = new HorizontalPanel();
-        layout.getElement().setAttribute("style", "width:430px");
+        layout.getElement().setAttribute("style", "width:430px;padding-top:5px;");
 
         messageButton = new Label("("+messageCenter.getNewMessageCount()+") "+Console.CONSTANTS.common_label_messages());
         messageButton.addStyleName("notification-button");
@@ -316,7 +316,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         panel.add(icon);
         panel.add(label);
 
-        icon.getElement().getParentElement().setAttribute("style", "padding-right:5px; padding-top:2px");
+        icon.getElement().getParentElement().setAttribute("style", "padding-right:5px;");
 
 
         label.addClickHandler(new ClickHandler() {
