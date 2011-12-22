@@ -118,6 +118,7 @@ public class Header implements ValueChangeHandler<String> {
     private Widget getLogoSection() {
 
         HorizontalPanel panel = new HorizontalPanel();
+        panel.setStyleName("logo-section");
         Image logo = null;
 
         if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
@@ -133,11 +134,11 @@ public class Header implements ValueChangeHandler<String> {
         panel.add(prodVersion);
 
 
-        logo.getElement().getParentElement().setAttribute("valign", "top");
-        logo.getElement().getParentElement().setAttribute("style", "vertical-align:top;");
+        logo.getElement().getParentElement().setAttribute("valign", "bottom");
+        logo.getElement().getParentElement().setAttribute("style", "vertical-align:bottom;");
 
-        prodVersion.getElement().getParentElement().setAttribute("valign", "top");
-        prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:top;");
+        prodVersion.getElement().getParentElement().setAttribute("valign", "bottom");
+        prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:bottom;padding-bottom:5px;");
         return panel;
     }
 

@@ -80,8 +80,9 @@ body {
     cursor: pointer;
     font-size: 14px!important;
     text-decoration: none;
-    padding-bottom: 4px;
+    padding-bottom: 0px!important;
     padding-left:20px;
+    height: 24px;
 }
 
 .header-link-label {
@@ -273,13 +274,13 @@ body {
 /*notifications*/
 
 .notification-panel {
-    border: 1px solid #3B4D64;
     -moz-border-radius-bottomleft: 4px;
     -moz-border-radius-bottomright: 4px;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-    width:100%;
-    color:#000000;
+    width: 100%;
+    color: black;
+    font-size:10px!important;
 }
 
 .table-picker {
@@ -364,4 +365,13 @@ body {
 .server-selection-server {
     padding: 5px;
     height:15px;
+}
+
+.logo-section {
+    height:58px;
+}
+
+.toolstrip-button-secondary {
+    border-color:#cccccc;
+    color:#666!important;
 }
