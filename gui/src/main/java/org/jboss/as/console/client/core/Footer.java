@@ -20,12 +20,15 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -49,9 +52,18 @@ public class Footer {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
-        /*MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
-        Widget messageCenter = messageCenterView.asWidget();
-        layout.add(messageCenter);*/
+        HTML settings = new HTML("Settings");
+        settings.setStyleName("html-link");
+        settings.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Console.MODULES.getPlaceManager().revealPlace(
+                        new PlaceRequest(NameTokens.SettingsPresenter)
+                );
+            }
+        });
+
+        layout.add(settings);
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
         version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
@@ -60,9 +72,8 @@ public class Footer {
         layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetTopHeight(version, 3, Style.Unit.PX, 16, Style.Unit.PX);
 
-
-        //layout.setWidgetRightWidth(messageCenter, 5, Style.Unit.PX, 350, Style.Unit.PX);
-        //layout.setWidgetTopHeight(messageCenter, 2, Style.Unit.PX, 28, Style.Unit.PX);
+        layout.setWidgetRightWidth(settings, 5, Style.Unit.PX, 50, Style.Unit.PX);
+        layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
         return layout;
     }
 }

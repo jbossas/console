@@ -25,19 +25,18 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.mail.NewMailSessionWizard;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 
 /**
@@ -46,7 +45,7 @@ import org.jboss.ballroom.client.widgets.icons.Icons;
  */
 public class SettingsView extends PopupViewImpl implements SettingsPresenterWidget.MyView{
 
-    private PopupPanel popup;
+    private DefaultWindow window;
     private SettingsPresenterWidget presenter;
     private Form<CommonSettings> form ;
 
@@ -54,59 +53,9 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
     public SettingsView(EventBus eventBus) {
         super(eventBus);
 
-        popup = new PopupPanel() {
-            @Override
-            public void center() {
-                super.center();
-                onCenter();
-            }
-        };
-        popup.setStyleName("default-window");
-        popup.setWidth("640px");
-        popup.setHeight("480px");
-        popup.setGlassEnabled(true);
-        popup.setAutoHideEnabled(true);
+        window = new DefaultWindow(Console.CONSTANTS.common_label_settings());
+        VerticalPanel layout = new VerticalPanel();
 
-        DockLayoutPanel layout = new DockLayoutPanel(Style.Unit.PX);
-
-        HorizontalPanel header = new HorizontalPanel();
-        header.setStyleName("default-window-header");
-        header.getElement().setAttribute("cellpadding", "4");
-
-        HTML titleText = new HTML(Console.CONSTANTS.common_label_settings());
-
-        Image closeIcon = new Image(Icons.INSTANCE.close());
-        closeIcon.setAltText("Close");
-        closeIcon.addClickHandler(new ClickHandler(){
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                presenter.hideView();
-            }
-        });
-
-        header.add(titleText);
-        header.add(closeIcon);
-
-        // it's just a table ...
-        titleText.getElement().getParentElement().setAttribute("width", "100%");
-        closeIcon.getElement().getParentElement().setAttribute("width", "16px");
-
-        //header.setWidgetRightWidth(closeIcon, 5, Style.Unit.PX, 16, Style.Unit.PX);
-        //header.setWidgetRightWidth(titleText, 21, Style.Unit.PX, 95, Style.Unit.PCT);
-
-        layout.addNorth(header, 25);
-
-
-        createContents(layout);
-
-        popup.setWidget(layout);
-    }
-
-    private void onCenter() {
-        form.edit(presenter.getCommonSettings());
-    }
-
-    private void createContents(DockLayoutPanel content) {
         form = new Form<CommonSettings>(CommonSettings.class);
 
         ComboBoxItem localeItem = new ComboBoxItem("locale", "Locale");
@@ -136,14 +85,14 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
                                         // Ignore: it crashes the browser..
 
                                         /*if(isConfirmed){
-                                            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                                @Override
-                                                public void execute() {
-                                                    reload();
-                                                }
-                                            });
+                                           Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                               @Override
+                                               public void execute() {
+                                                   reload();
+                                               }
+                                           });
 
-                                        } */
+                                       } */
                                     }
                                 });
                     }
@@ -159,14 +108,25 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
 
         options.getElement().setAttribute("style", "padding:10px");
 
-        content.addSouth(options, 50);
-        content.add(formWidget);
+        layout.add(form.asWidget());
+
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(new WindowContentBuilder(layout, options).build());
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
+    /*private void onCenter() {
+        form.edit(presenter.getCommonSettings());
+    } */
 
     @Override
     public Widget asWidget() {
-        return popup;
+        form.edit(presenter.getCommonSettings());
+        return window;
     }
 
     @Override
