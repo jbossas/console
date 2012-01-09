@@ -75,6 +75,7 @@ public interface UIConstants extends Constants {
     String common_label_profiles();
     String common_label_properties();
     String common_label_noRecentMessages();
+    String common_label_messageDetailTitle();
     String common_label_messageDetail();
     String common_label_messages();
     String common_label_newServerGroup();

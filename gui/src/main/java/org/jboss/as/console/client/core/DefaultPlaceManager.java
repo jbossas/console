@@ -21,6 +21,7 @@ package org.jboss.as.console.client.core;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -49,9 +50,12 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
     public void revealErrorPlace(String invalidHistoryToken) {
 
         // TODO: beware of XSS
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendEscaped(invalidHistoryToken);
+
 
         messageCenter.notify(
-                new Message("Could not reveal: "+invalidHistoryToken,
+                new Message("Could not reveal: "+builder.toSafeHtml().asString(),
                         Message.Severity.Fatal)
         );
 

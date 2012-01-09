@@ -29,12 +29,12 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class MessageCell extends AbstractCell<Message> {
 
-    interface Template extends SafeHtmlTemplates {
+    /*interface Template extends SafeHtmlTemplates {
         @Template("<div class=\"{0}\">{1}</div>")
         SafeHtml message(String cssClass, String title);
-    }
+    } */
 
-    private static final Template TEMPLATE = GWT.create(Template.class);
+    //private static final Template TEMPLATE = GWT.create(Template.class);
 
 
     @Override
@@ -56,8 +56,14 @@ public class MessageCell extends AbstractCell<Message> {
         safeHtmlBuilder.appendHtmlConstant("<td width=16>");
         safeHtmlBuilder.appendHtmlConstant(prototype.getHTML());
         safeHtmlBuilder.appendHtmlConstant("</td><td width='100%'>");
+        safeHtmlBuilder.appendHtmlConstant("<div class='"+rowStyle+"'>");
         String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
-        safeHtmlBuilder.append(TEMPLATE.message(styles, actualMessage));
+
+        //safeHtmlBuilder.appendHtmlConstant(TEMPLATE.message(styles, actualMessage));
+        safeHtmlBuilder.appendHtmlConstant(actualMessage);
+        safeHtmlBuilder.appendHtmlConstant("</div>");
+
+
         safeHtmlBuilder.appendHtmlConstant("</td></tr></table>");
 
     }

@@ -73,6 +73,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         public MessageListPopup()
         {
             super(true);
+
             setStyleName("default-popup");
 
             SafeHtmlBuilder emptyMessage = new SafeHtmlBuilder();
@@ -143,7 +144,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
         msg.setNew(false);
 
-        DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetail());
+        DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetailTitle());
         window.setWidth(480);
         window.setHeight(360);
         window.setGlassEnabled(true);
@@ -154,18 +155,19 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
         SafeHtmlBuilder html = new SafeHtmlBuilder();
 
+        // TODO: XSS prevention?
         html.appendHtmlConstant(prototype.getHTML());
         html.appendHtmlConstant("&nbsp;");
-        html.appendEscaped(msg.getFired().toString());
+        html.appendHtmlConstant(msg.getFired().toString());
         html.appendHtmlConstant("<h3>");
-        html.appendEscaped(msg.getConciseMessage());
+        html.appendHtmlConstant(msg.getConciseMessage());
         html.appendHtmlConstant("</h3>");
         html.appendHtmlConstant("<p/>");
 
         String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : Console.CONSTANTS.common_label_messageDetail();
 
         html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
-        html.appendEscaped(detail);
+        html.appendHtmlConstant(detail);
         html.appendHtmlConstant("</pre>");
 
         HTML widget = new HTML(html.toSafeHtml());
@@ -308,7 +310,8 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
                 message.getConciseMessage().substring(0, 40)+" ..." :
                 message.getConciseMessage();
 
-        final Label label = new Label(" "+actualMessage);
+        // TODO: beware of XSS
+        final HTML label = new HTML(" "+actualMessage);
 
         final ImageResource iconSrc = getSeverityIcon(message.severity);
 

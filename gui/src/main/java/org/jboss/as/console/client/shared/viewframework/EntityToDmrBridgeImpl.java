@@ -135,7 +135,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         for (Property prop : attributes.asPropertyList()) {
             operation.get(prop.getName()).set(prop.getValue());
         }
-        execute(operation, name, "Success: Added " + name);
+        execute(operation, name, Console.MESSAGES.added(name));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
 
-        execute(batch, name, "Success: Updated " + name);
+        execute(batch, name, Console.MESSAGES.modified(name));
     }
     
     private boolean changedValuesContainsFlattenedSibling(PropertyBinding prop, Map<String, Object> changedValues) {
