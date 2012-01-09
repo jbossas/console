@@ -18,11 +18,9 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
-import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -100,7 +98,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JMX subsystem", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.unknown_error(), response.getFailureDescription());
                 }
                 else
                 {
@@ -170,11 +168,11 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update JMX subsystem", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("JMX Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update JMX subsystem");
+                    Console.info(Console.MESSAGES.modified("JMX Subsystem"));
                 }
 
                 loadSubsystem();

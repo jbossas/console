@@ -393,4 +393,6 @@ public interface UIConstants extends Constants {
     String subsys_threads_unbounded_desc();
 
     String subsys_threads_scheduled_desc();
+
+    String subsys_jmx_desc();
 }

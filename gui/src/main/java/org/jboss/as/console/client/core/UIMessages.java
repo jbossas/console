@@ -133,4 +133,6 @@ public interface UIMessages extends Messages {
     String selectServerGroupsFor(String deploymentRuntimeName);
     String alreadyAssignedToAllGroups(String deploymentRuntimeName);
     String noServerGroupsSelected();
+
+    String unknown_error();
 }
