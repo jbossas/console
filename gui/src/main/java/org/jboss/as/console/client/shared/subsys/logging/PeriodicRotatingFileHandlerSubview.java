@@ -39,6 +39,11 @@ public class PeriodicRotatingFileHandlerSubview extends AbstractFileHandlerSubvi
     }
 
     @Override
+    protected String provideDescription() {
+         return Console.CONSTANTS.subsys_logging_periodicRotatingFileHandlers_desc();
+    }
+
+    @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_logging_periodicRotatingFileHandlers();
     }

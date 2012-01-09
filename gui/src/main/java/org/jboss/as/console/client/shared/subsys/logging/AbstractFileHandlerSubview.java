@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
@@ -37,6 +38,11 @@ public abstract class AbstractFileHandlerSubview<T> extends AbstractHandlerSubvi
                                  DispatchAsync dispatcher, 
                                  HandlerListManager handlerListManager) {
         super(type, applicationMetaData, dispatcher, handlerListManager);
+    }
+
+    @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_fileHandlers_desc();
     }
 
     @Override

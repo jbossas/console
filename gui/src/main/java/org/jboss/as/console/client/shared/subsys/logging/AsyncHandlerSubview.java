@@ -57,6 +57,11 @@ public class AsyncHandlerSubview extends AbstractHandlerSubview<AsyncHandler>
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_asyncHandlers_desc();
+    }
+
+    @Override
     public void handlersUpdated(List<String> handlerList) {
         handlerView.getListView().setAvailableChoices(handlerList);
     }

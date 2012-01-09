@@ -39,6 +39,11 @@ public class SizeRotatingFileHandlerSubview extends AbstractFileHandlerSubview<S
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_sizeRotatingFileHandlers_desc();
+    }
+
+    @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_logging_sizeRotatingFileHandlers();
     }

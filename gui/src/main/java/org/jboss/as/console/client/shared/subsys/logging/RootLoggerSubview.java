@@ -61,6 +61,11 @@ public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger>
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_rootLogger_desc();
+    }
+
+    @Override
     public EntityToDmrBridge getEntityBridge() {
         return this.rootLoggerBridge;
     }
@@ -101,4 +106,6 @@ public class RootLoggerSubview extends AbstractLoggingSubview<RootLogger>
 
         return additionalTabs;
     }
+
+
 }

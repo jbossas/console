@@ -51,8 +51,13 @@ public abstract class AbstractLoggingSubview<T>
 
     @Override
     public Widget createWidget() {
+        setDescription(provideDescription());
         Widget widget = super.createEmbeddableWidget();
         return widget;
+    }
+
+    protected String provideDescription() {
+        return "DESCRIPTION";
     }
 
     @Override

@@ -52,6 +52,11 @@ public class CustomHandlerSubview extends AbstractHandlerSubview<CustomHandler>
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_customHandlers_desc();
+    }
+
+    @Override
     protected FormAdapter<CustomHandler> makeAddEntityForm() {
         Form<CustomHandler> form = new Form(type);
         form.setNumColumns(1);

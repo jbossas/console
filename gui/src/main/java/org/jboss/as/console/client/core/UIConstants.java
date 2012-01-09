@@ -367,4 +367,20 @@ public interface UIConstants extends Constants {
     String common_label_host();
 
     String common_label_item();
+
+    String subsys_logging_customHandlers_desc();
+
+    String subsys_logging_rootLogger_desc();
+
+    String subsys_logging_fileHandlers_desc();
+
+    String subsys_logging_periodicRotatingFileHandlers_desc();
+
+    String subsys_logging_sizeRotatingFileHandlers_desc();
+
+    String subsys_logging_asyncHandlers_desc();
+
+    String subsys_logging_consoleHandlers_desc();
+
+    String subsys_logging_loggers_desc();
 }

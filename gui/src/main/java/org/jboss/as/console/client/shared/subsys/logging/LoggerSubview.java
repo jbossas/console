@@ -56,6 +56,11 @@ public class LoggerSubview extends AbstractLoggingSubview<Logger>
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_loggers_desc();
+    }
+
+    @Override
     public void handlersUpdated(List<String> handlerList) {
         this.handlerView.getListView().setAvailableChoices(handlerList);
     }

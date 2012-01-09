@@ -41,6 +41,11 @@ public class ConsoleHandlerSubview extends AbstractHandlerSubview<ConsoleHandler
     }
 
     @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_logging_consoleHandlers_desc();
+    }
+
+    @Override
     public void itemAction(Action action, ObservableFormItem item) {
         super.itemAction(action, item);
         if (item.getPropertyBinding().getJavaName().equals("target") && (action == Action.CREATED)) {

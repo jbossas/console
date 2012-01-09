@@ -106,7 +106,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
             panel.setStyleName("fill-layout-width");
 
             panel.add(messageList);
-            InlineLink clearBtn = new InlineLink("Clear");
+            InlineLink clearBtn = new InlineLink(Console.CONSTANTS.common_label_delete());
             clearBtn.getElement().setAttribute("style", "float:right;padding-right:5px;font-size:10px;");
 
             clearBtn.addClickHandler(new ClickHandler() {
