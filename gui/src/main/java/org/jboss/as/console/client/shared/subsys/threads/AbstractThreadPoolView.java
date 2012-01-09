@@ -53,7 +53,12 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
 
     @Override
     public Widget createWidget() {
+        setDescription(provideDescription());
         return super.createEmbeddableWidget();
+    }
+
+    protected String provideDescription() {
+        return "DESCRIPTION";
     }
 
     @Override

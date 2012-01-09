@@ -383,4 +383,14 @@ public interface UIConstants extends Constants {
     String subsys_logging_consoleHandlers_desc();
 
     String subsys_logging_loggers_desc();
+
+    String subsys_threads_factory_desc();
+
+    String subsys_threads_queueless_desc();
+
+    String subsys_threads_bounded_desc();
+
+    String subsys_threads_unbounded_desc();
+
+    String subsys_threads_scheduled_desc();
 }

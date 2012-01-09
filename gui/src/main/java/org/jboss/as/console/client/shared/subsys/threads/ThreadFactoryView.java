@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -52,7 +53,12 @@ public class ThreadFactoryView extends AbstractEntityView<ThreadFactory> impleme
     @Override
     public Widget createWidget() {
 
+        setDescription(provideDescription());
         return super.createEmbeddableWidget();
+    }
+
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_threads_factory_desc();
     }
 
     @Override

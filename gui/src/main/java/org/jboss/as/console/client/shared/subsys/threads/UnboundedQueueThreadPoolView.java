@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
@@ -49,6 +50,11 @@ public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<Unbound
     @Override
     protected String getEntityDisplayName() {
         return "Unbounded Pools";
+    }
+
+    @Override
+    protected String provideDescription() {
+        return Console.CONSTANTS.subsys_threads_unbounded_desc();
     }
 
     @Override

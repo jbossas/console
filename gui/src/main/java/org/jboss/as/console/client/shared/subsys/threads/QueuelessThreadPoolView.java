@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
@@ -43,6 +44,11 @@ public class QueuelessThreadPoolView extends AbstractThreadPoolView<QueuelessThr
 
     public QueuelessThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(QueuelessThreadPool.class, propertyMetaData, dispatcher);
+    }
+
+    @Override
+    protected String provideDescription() {
+        return  Console.CONSTANTS.subsys_threads_queueless_desc();
     }
 
     @Override

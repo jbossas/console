@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
@@ -47,6 +48,11 @@ public class BoundedQueueThreadPoolView
 
     public BoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
+    }
+
+    @Override
+    protected String provideDescription() {
+        return  Console.CONSTANTS.subsys_threads_bounded_desc();
     }
 
     @Override
