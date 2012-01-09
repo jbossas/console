@@ -180,9 +180,10 @@ public class EntityEditor<T> implements EntityListView<T> {
                         @Override
                         public void onClick(ClickEvent event) {
 
+                            String name = Console.CONSTANTS.common_label_item();
                             Feedback.confirm(
-                                    "Remove Item",
-                                    "Really remove this item?",
+                                    Console.MESSAGES.deleteTitle(name),
+                                    Console.MESSAGES.deleteConfirm(name),
                                     new Feedback.ConfirmationHandler() {
                                         @Override
                                         public void onConfirmation(boolean isConfirmed) {

@@ -155,7 +155,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         ModelNode operation = getResourceAddress(name);
         operation.get(OP).set(REMOVE);
 
-        execute(operation, null, "Success: Removed " + name);
+        execute(operation, null, Console.MESSAGES.deleted(name));
     }
 
     protected ModelNode getResourceAddress(String name) {

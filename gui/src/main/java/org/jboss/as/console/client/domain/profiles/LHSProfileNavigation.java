@@ -22,6 +22,7 @@ package org.jboss.as.console.client.domain.profiles;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
@@ -60,11 +61,13 @@ class LHSProfileNavigation {
         // -------- groups
 
 
-        DisclosurePanel groupsPanel = new DisclosureStackPanel("Server Groups").asWidget();
+        DisclosurePanel groupsPanel = new DisclosureStackPanel(
+                Console.CONSTANTS.common_label_serverGroups()).asWidget();
         LHSNavTree groupsTree = new LHSNavTree("profiles");
         groupsPanel.setContent(groupsTree);
 
-        groupsTree.addItem(new LHSNavTreeItem("Group Configurations", NameTokens.ServerGroupPresenter));
+        groupsTree.addItem(
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter));
         stack.add(groupsPanel);
 
         // --------

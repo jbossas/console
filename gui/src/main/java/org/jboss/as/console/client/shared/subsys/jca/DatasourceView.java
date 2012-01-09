@@ -51,8 +51,8 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 
-        tabLayoutpanel.add(dataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSources());
-        tabLayoutpanel.add(xaDataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSourcesXA());
+        tabLayoutpanel.add(dataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSources(), true);
+        tabLayoutpanel.add(xaDataSourceEditor.asWidget(), Console.CONSTANTS.subsys_jca_dataSourcesXA(), true);
 
         tabLayoutpanel.selectTab(0);
 

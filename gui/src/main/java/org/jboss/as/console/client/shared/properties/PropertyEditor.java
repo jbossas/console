@@ -214,13 +214,13 @@ public class PropertyEditor {
         //
         //MenuColumn menuCol = new MenuColumn("...", removeCmd);
         Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
-                new ButtonCell<PropertyRecord>("Remove", new ActionCell.Delegate<PropertyRecord>() {
+                new ButtonCell<PropertyRecord>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<PropertyRecord>() {
                     @Override
                     public void execute(final PropertyRecord o) {
 
                         Feedback.confirm(
-                                "Remove Property",
-                                "Really remove this property?"
+                                Console.MESSAGES.removeProperty(),
+                                Console.MESSAGES.removePropertyConfirm(o.getKey())
                                 , new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {

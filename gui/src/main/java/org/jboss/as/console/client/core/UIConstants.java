@@ -364,4 +364,6 @@ public interface UIConstants extends Constants {
     String common_label_serverGroupDeployments();
 
     String common_label_host();
+
+    String common_label_item();
 }

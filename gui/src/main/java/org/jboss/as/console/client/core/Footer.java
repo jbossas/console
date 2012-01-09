@@ -52,7 +52,7 @@ public class Footer {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
-        HTML settings = new HTML("Settings");
+        HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
         settings.setStyleName("html-link");
         settings.addClickHandler(new ClickHandler() {
             @Override
@@ -72,7 +72,7 @@ public class Footer {
         layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetTopHeight(version, 3, Style.Unit.PX, 16, Style.Unit.PX);
 
-        layout.setWidgetRightWidth(settings, 5, Style.Unit.PX, 50, Style.Unit.PX);
+        layout.setWidgetRightWidth(settings, 5, Style.Unit.PX, 100, Style.Unit.PX);
         layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
         return layout;
     }

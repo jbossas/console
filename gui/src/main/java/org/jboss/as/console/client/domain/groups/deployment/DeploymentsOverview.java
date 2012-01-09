@@ -84,8 +84,8 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
         
-        tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent());
-        tabLayoutPanel.add(makeServerGroupDeploymentsPanel(), Console.CONSTANTS.common_label_serverGroupDeployments());
+        tabLayoutPanel.add(makeDeploymentsPanel(), Console.CONSTANTS.common_label_deploymentContent(), true);
+        tabLayoutPanel.add(makeServerGroupDeploymentsPanel(), Console.CONSTANTS.common_label_serverGroupDeployments(), true);
         
         return tabLayoutPanel;
     }

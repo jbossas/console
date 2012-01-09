@@ -41,7 +41,7 @@ public class ProfileSelector {
             }
         });
 
-        Label profileLabel = new Label("Profile:");
+        Label profileLabel = new Label(Console.CONSTANTS.common_label_profile()+":");
         profileLabel.setStyleName("header-label");
         layout.add(profileLabel);
         Widget hWidget = profiles.asWidget();

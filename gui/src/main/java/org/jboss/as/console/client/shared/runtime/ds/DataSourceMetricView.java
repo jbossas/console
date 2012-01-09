@@ -27,8 +27,8 @@ public class DataSourceMetricView extends SuspendableViewImpl implements DataSou
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        tabLayoutpanel.add(dsMetrics.asWidget(), "Data Sources");
-        tabLayoutpanel.add(xaMetrics.asWidget(), "XA Data Sources");
+        tabLayoutpanel.add(dsMetrics.asWidget(), "Data Sources", true);
+        tabLayoutpanel.add(xaMetrics.asWidget(), "XA Data Sources", true);
 
         tabLayoutpanel.selectTab(0);
 

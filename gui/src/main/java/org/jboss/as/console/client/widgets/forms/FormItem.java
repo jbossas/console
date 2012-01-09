@@ -38,7 +38,10 @@ public @interface FormItem {
     
     String defaultValue() default "";
     String label() default "";
+
+    @Deprecated
     String localLabel() default "";
+
     boolean required() default false;
     String formItemTypeForEdit() default "TEXT_BOX";
     String formItemTypeForAdd() default "TEXT_BOX";

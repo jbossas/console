@@ -84,20 +84,20 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         TabLayoutPanel loggersTabs = new TabLayoutPanel(40, Style.Unit.PX);
         loggersTabs.addStyleName("default-tabpanel");
 
-        loggersTabs.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName());
-        loggersTabs.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName());
+        loggersTabs.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName(), true);
+        loggersTabs.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName(), true);
         loggersTabs.selectTab(0);
 
 
         TabLayoutPanel handlersTabs = new TabLayoutPanel(40, Style.Unit.PX);
         handlersTabs.addStyleName("default-tabpanel");
 
-        handlersTabs.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console());
-        handlersTabs.add(fileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_file());
-        handlersTabs.add(periodicRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_periodic());
-        handlersTabs.add(sizeRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_size());
-        handlersTabs.add(asyncHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_async());
-        handlersTabs.add(customHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_custom());
+        handlersTabs.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console(), true);
+        handlersTabs.add(fileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_file(), true);
+        handlersTabs.add(periodicRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_periodic(),true);
+        handlersTabs.add(sizeRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_size(), true);
+        handlersTabs.add(asyncHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_async(), true);
+        handlersTabs.add(customHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_custom(), true);
         handlersTabs.selectTab(0);
 
         deck.add(loggersTabs);
