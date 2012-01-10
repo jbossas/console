@@ -285,8 +285,8 @@ public class ResourceAdapterPresenter
 
     public void onSave(final ResourceAdapter ra, Map<String, Object> changedValues) {
 
-        /*AddressBinding address = raMetaData.getAddress();
-        ModelNode addressModel = address.asResource(Baseadress.get(), ra.getName());
+        AddressBinding address = raMetaData.getAddress();
+        ModelNode addressModel = address.asResource(Baseadress.get(), ra.getArchive());
         addressModel.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
 
 
@@ -294,29 +294,12 @@ public class ResourceAdapterPresenter
                 ResourceAdapter.class, metaData
         );
 
-        //HACK ALERT: separately write connection definition attributes (key = archive+jndi name)
-        List<ModelNode> extraSteps = new ArrayList<ModelNode>();
-
-        if(changedValues.containsKey("enabled")) {
-            ModelNode enabled = createWriteAttributeOp(ra, addressModel, "enabled", (Boolean)changedValues.remove("enabled"));
-            extraSteps.add(enabled);
-        }
-
-
         ModelNode operation = adapter.fromChangeset(
                 changedValues,
-                addressModel,
-                extraSteps.toArray(new ModelNode[] {})
+                addressModel
         );
 
-        System.out.println(operation);
-
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Console.error("Error: Failed to update resource adapter", caught.getMessage());
-                loadAdapter();
-            }
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
@@ -324,14 +307,15 @@ public class ResourceAdapterPresenter
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info(Console.MESSAGES.saved("resource adapter " + ra.getName()));
+                    Console.info(Console.MESSAGES.saved("Resource Adapter " + ra.getArchive()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("resource adapter " + ra.getName()), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("Resource Adapter " + ra.getArchive()),
+                            response.getFailureDescription());
 
-                loadAdapter();
+                loadAdapter(true);
             }
         });
-        */
+
     }
 
     public void launchNewAdapterWizard() {

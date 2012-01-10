@@ -200,7 +200,7 @@ public class AdapterList implements PropertyManagement {
 
         // ----
 
-        propertyEditor = new PropertyEditor(this);
+        propertyEditor = new PropertyEditor(this, true);
 
         // ----
         MultipleToOneLayout layoutBuilder = new MultipleToOneLayout()
