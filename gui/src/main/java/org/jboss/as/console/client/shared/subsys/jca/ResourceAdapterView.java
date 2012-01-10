@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
@@ -43,7 +44,7 @@ public class ResourceAdapterView extends SuspendableViewImpl implements Resource
         this.connectionList = new ConnectionList(presenter);
         this.adminObjects = new AdminObjectList(presenter);
 
-        panel.addPage("&larr; Back", adapterList.asWidget());
+        panel.addPage(Console.CONSTANTS.common_label_back(), adapterList.asWidget());
         panel.addPage("Connection Definitions", connectionList.asWidget());
         panel.addPage("Admin Objects", adminObjects.asWidget()) ;
 

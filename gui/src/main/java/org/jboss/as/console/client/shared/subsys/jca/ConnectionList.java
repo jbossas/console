@@ -70,8 +70,8 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
                 final ConnectionDefinition selection = getCurrentSelection();
 
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("connection definition"),
-                        Console.MESSAGES.deleteConfirm("connection definition"+selection.getJndiName()),
+                        Console.MESSAGES.deleteTitle("Connection Definition"),
+                        Console.MESSAGES.deleteConfirm("Connection Definition"+selection.getJndiName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -173,8 +173,8 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
                 .setPlain(true)
                 .setHeadlineWidget(headline)
                 .setTitle("TITLE")
-                .setDescription("Configuration of the managed connection factories.")
-                .setMaster("Registered Connection Definitions", table)
+                .setDescription(Console.CONSTANTS.subsys_jca_ra_connection_desc())
+                .setMaster(Console.MESSAGES.available("Connection Definitions"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", connectionDetails.asWidget())
                 .addDetail("Properties", connectionProperties.asWidget())
@@ -220,7 +220,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("configuration properties"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Configuration Property"));
         window.setWidth(480);
         window.setHeight(360);
 

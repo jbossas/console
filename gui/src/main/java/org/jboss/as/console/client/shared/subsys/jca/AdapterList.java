@@ -204,9 +204,9 @@ public class AdapterList implements PropertyManagement {
         MultipleToOneLayout layoutBuilder = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("Resource Adapter")
-                .setHeadline("Resource Adapter Overview")
+                .setHeadline("JCA Resource Adapters")
                 .setDescription(Console.CONSTANTS.subsys_jca_resource_adapter_desc())
-                .setMaster("Registered Resource Adapter", table)
+                .setMaster(Console.MESSAGES.available("Resource Adapter"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", formpanel)
                 .addDetail("Properties", propertyEditor.asWidget());

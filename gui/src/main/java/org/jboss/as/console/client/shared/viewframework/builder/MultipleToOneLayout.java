@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -155,9 +156,9 @@ public class MultipleToOneLayout {
         }
 
         if(null==description)
-            panel.add(new HTML("DESCRIPTION"));
+            panel.add(new ContentDescription("DESCRIPTION"));
         else
-            panel.add(new HTML(description));
+            panel.add(new ContentDescription(description.asString()));
 
         if(master !=null)
         {

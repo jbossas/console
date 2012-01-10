@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -141,7 +142,7 @@ public class OneToOneLayout {
             panel.add(headlineWidget);
         }
 
-        panel.add(new HTML(description));
+        panel.add(new ContentDescription(description));
 
         if(master!=null)
         {
