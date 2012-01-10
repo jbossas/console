@@ -350,7 +350,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     public void onDeleteBootstrapContext(final JcaBootstrapContext entity) {
         if(entity.getName().equals("default"))
         {
-            Console.error("The default context cannot be deleted!");
+            Console.error(Console.CONSTANTS.subsys_jca_error_context_removal(), Console.CONSTANTS.subsys_jca_error_context_removal_desc());
             return;
         }
 
