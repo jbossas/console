@@ -409,4 +409,10 @@ public interface UIConstants extends Constants {
     String common_label_selection();
 
     String subsys_jca_threadpool_config_desc();
+
+    String subsys_jca_error_default_workmanager_deletion();
+
+    String subsys_jca_error_pool_removal();
+
+    String subsys_jca_error_pool_removal_desc();
 }

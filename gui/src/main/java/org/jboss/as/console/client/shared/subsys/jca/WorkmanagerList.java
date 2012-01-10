@@ -79,8 +79,8 @@ public class WorkmanagerList {
             public void onClick(ClickEvent event) {
 
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("Workmanager"),
-                        Console.MESSAGES.deleteConfirm("Workmanager"),
+                        Console.MESSAGES.deleteTitle("Work Manager"),
+                        Console.MESSAGES.deleteConfirm("Work Manager"),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -96,10 +96,10 @@ public class WorkmanagerList {
 
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
-                .setTitle("Workmanager")
+                .setTitle("Work Manager")
                 .setHeadline("JCA Workmanager")
                 .setDescription(Console.CONSTANTS.subsys_jca_workmanager_config_desc())
-                .setMaster(Console.MESSAGES.available("Workmanager"), table)
+                .setMaster(Console.MESSAGES.available("Work Manager"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .build();
 

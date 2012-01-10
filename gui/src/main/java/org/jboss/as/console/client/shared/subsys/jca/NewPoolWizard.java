@@ -27,6 +27,7 @@ public class NewPoolWizard {
 
     public NewPoolWizard(JcaPresenter presenter, String managerName) {
         this.presenter = presenter;
+        this.managerName = managerName;
     }
 
     Widget asWidget() {

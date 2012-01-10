@@ -372,7 +372,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     public void launchNewContextDialogue() {
         window = new ModalWindowLayout()
-                .setTitle("New Bootstrap Context")
+                .setTitle(Console.MESSAGES.createTitle("Bootstrap Context"))
                 .setWidget(new NewContextWizard(this, managers).asWidget())
                 .build();
     }
@@ -392,9 +392,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to add bootstrap context", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.addingFailed("Bootstrap Context"), response.getFailureDescription());
                 else
-                    Console.info("Success: Created bootstrap context");
+                    Console.info(Console.MESSAGES.added("Bootstrap Context"));
 
                 loadWorkManager();
             }
@@ -407,7 +407,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     public void launchNewManagerDialogue() {
         window = new ModalWindowLayout()
-                .setTitle("New Work Manager Context")
+                .setTitle(Console.MESSAGES.createTitle("Work Manager"))
                 .setWidget(new NewManagerWizard(this).asWidget())
                 .build();
     }
@@ -415,7 +415,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     public void onDeleteManager(final JcaWorkmanager entity) {
         if(entity.getName().equals("default"))
         {
-            Console.error("The default work manager cannot be deleted!");
+            Console.error(Console.CONSTANTS.subsys_jca_error_default_workmanager_deletion());
             return;
         }
 
@@ -431,9 +431,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to remove work manager", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.deletionFailed("Work Manager"), response.getFailureDescription());
                 else
-                    Console.info("Success: Removed work manager "+entity.getName());
+                    Console.info(Console.MESSAGES.deleted("Work Manager "+entity.getName() ));
 
                 loadWorkManager();
             }
@@ -448,7 +448,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             // provide a default short running thread pool config (mandatory)
             WorkmanagerPool pool = factory.WorkmanagerPool().as();
             pool.setShortRunning(true);
-            pool.setName("short-running-pool");
+            pool.setName("short-running-pool_"+entity.getName());
             pool.setMaxThreadsCount(10);
             pool.setQueueLengthCount(10);
             pool.setMaxThreadsPerCPU(20);
@@ -494,9 +494,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to add work manager", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.addingFailed("Work Manager"), response.getFailureDescription());
                 else
-                    Console.info("Success: Created work manager");
+                    Console.info(Console.MESSAGES.added("Work Manager "+entity.getName()));
 
                 loadWorkManager();
             }
@@ -644,7 +644,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         if(hasShortRunning && hasLongRunning)
         {
             Console.error("Thread pools already exist",
-                    "Both short-running and long-running thread poll configurations already exist.");
+                    "Both short-running and long-running thread pool configurations already exist.");
             return;
         }
 

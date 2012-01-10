@@ -108,7 +108,8 @@ public class ThreadPoolEditor {
                 final WorkmanagerPool pool = selectionModel.getSelectedObject();
 
                 if (pool.isShortRunning()) {
-                    Console.error("Pool cannot be removed", "A short running pool is mandatory!");
+                    Console.error(Console.CONSTANTS.subsys_jca_error_pool_removal(),
+                            Console.CONSTANTS.subsys_jca_error_pool_removal_desc());
                 } else {
 
                     Feedback.confirm(
@@ -265,7 +266,7 @@ public class ThreadPoolEditor {
 
     public void setContextName(String contextName) {
         this.contextName = contextName;
-        this.headline.setText("Workmanager: " +contextName);
+        this.headline.setText("Work Manager: " +contextName);
     }
 
     public void setWorkManager(JcaWorkmanager manager) {

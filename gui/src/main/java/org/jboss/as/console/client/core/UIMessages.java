@@ -137,4 +137,5 @@ public interface UIMessages extends Messages {
     String unknown_error();
 
     String available(String s);
+
 }

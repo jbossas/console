@@ -75,7 +75,7 @@ public class NewManagerWizard {
                         ModelNode address = new ModelNode();
                         address.set(Baseadress.get());
                         address.add("subsystem", "jca");
-                        address.add("bootstrap-context", "*");
+                        address.add("workmanager", "*");
                         return address;
                     }
                 }, form
