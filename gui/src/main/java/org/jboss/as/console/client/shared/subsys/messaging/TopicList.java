@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -55,7 +56,20 @@ public class TopicList {
         form = new Form(Topic.class);
         form.setNumColumns(2);
 
-        ToolStrip toolStrip = new ToolStrip();
+        FormToolStrip<Topic> toolStrip = new FormToolStrip<Topic>(
+                form,
+                new FormToolStrip.FormCallback<Topic>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                        presenter.onSaveTopic(form.getEditedEntity().getName(), form.getChangedValues());
+                    }
+
+                    @Override
+                    public void onDelete(Topic entity) {
+                        presenter.onDeleteTopic(entity);
+                    }
+                }
+        );
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
@@ -64,12 +78,6 @@ public class TopicList {
             }
         }));
 
-         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.onDeleteTopic(form.getEditedEntity());
-            }
-        }));
 
         layout.add(toolStrip.asWidget());
 

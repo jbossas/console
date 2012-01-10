@@ -443,4 +443,6 @@ public interface UIConstants extends Constants {
     String common_label_advanced();
 
     String subsys_messaging_jms_provider_desc();
+
+    String subsys_messaging_jms_desc();
 }

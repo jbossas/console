@@ -30,10 +30,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -74,6 +76,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
         serverName.setStyleName("content-header-label");
 
         panel.add(serverName);
+        panel.add(new ContentDescription(Console.CONSTANTS.subsys_messaging_jms_desc()));
 
         // ----
 
@@ -136,7 +139,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
 
-        serverName.setHTML("JMS Configuration: "+presenter.getCurrentServer());
+        serverName.setHTML("JMS Config: "+presenter.getCurrentServer());
 
         factoryTable.setRowCount(factories.size(), true);
         factoryTable.setRowData(0, factories);
