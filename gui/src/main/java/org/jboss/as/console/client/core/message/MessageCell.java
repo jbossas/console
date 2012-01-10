@@ -56,7 +56,8 @@ public class MessageCell extends AbstractCell<Message> {
         safeHtmlBuilder.appendHtmlConstant("<td width=16>");
         safeHtmlBuilder.appendHtmlConstant(prototype.getHTML());
         safeHtmlBuilder.appendHtmlConstant("</td><td width='100%'>");
-        safeHtmlBuilder.appendHtmlConstant("<div class='"+rowStyle+"'>");
+
+        safeHtmlBuilder.appendHtmlConstant("<div class='"+styles+"'>");
         String actualMessage = message.getConciseMessage().length()>30 ? message.getConciseMessage().substring(0, 30)+" ..." : message.getConciseMessage();
 
         //safeHtmlBuilder.appendHtmlConstant(TEMPLATE.message(styles, actualMessage));
