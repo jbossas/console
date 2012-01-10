@@ -423,4 +423,14 @@ public interface UIConstants extends Constants {
     String subsys_jca_error_context_removal();
 
     String subsys_jca_error_context_removal_desc();
+
+    String subsys_jca_dataSources_desc();
+
+    String subsys_jca_xadataSources_desc();
+
+    String subsys_jca_datasource_error_loadDriver();
+
+    String subsys_jca_datasource_error_loadDriver_desc();
+
+    String subsys_jca_error_datasource_notenabled();
 }

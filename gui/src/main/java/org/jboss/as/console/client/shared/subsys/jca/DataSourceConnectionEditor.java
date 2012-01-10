@@ -54,7 +54,7 @@ public class DataSourceConnectionEditor extends FormEditor<DataSource>{
         }
         );
 
-        getForm().setFields(urlItem, tx, connectionSql, BlankItem.INSTANCE, jtaItem, ccmItem);
+        getForm().setFields(urlItem, tx, jtaItem, ccmItem, connectionSql);
 
         return super.asWidget();
     }

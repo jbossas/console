@@ -35,6 +35,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -120,11 +121,12 @@ public class DataSourceEditor {
 
         // ---
 
-        vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_jca_dataSource_configurations()));
+        vpanel.add(new ContentHeaderLabel("JDBC Datasources"));
+        vpanel.add(new ContentDescription(Console.CONSTANTS.subsys_jca_dataSources_desc()));
 
         dataSourceTable = new DatasourceTable();
 
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_dataSource_registered()));
+        vpanel.add(new ContentGroupLabel(Console.MESSAGES.available("Datasources")));
         vpanel.add(dataSourceTable.asWidget());
 
 
@@ -193,7 +195,10 @@ public class DataSourceEditor {
 
             @Override
             public void onDoFlush(String editedName) {
-                presenter.onDoFlush(false, editedName);
+                if(getCurrentSelection().isEnabled())
+                    presenter.onDoFlush(false, editedName);
+                else
+                    Console.error(Console.CONSTANTS.subsys_jca_error_datasource_notenabled());
             }
         });
 
@@ -210,7 +215,7 @@ public class DataSourceEditor {
 
         // -----------------
 
-        vpanel.add(new ContentGroupLabel("Datasource"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
         vpanel.add(bottomPanel);
 
         return layout;

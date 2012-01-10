@@ -177,10 +177,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 else {
 
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    html.appendHtmlConstant("<h3>Failed to load JDBC driver</h3>");
-                    html.appendHtmlConstant("Either you did not deploy any JDBC driver or nor is server running. " +
-                            "In order to create a data source you need to provide JDBC driver deployment.");
-                    Feedback.alert("Missing JDBC Driver", html.toSafeHtml());
+                    html.appendHtmlConstant(Console.CONSTANTS.subsys_jca_datasource_error_loadDriver_desc());
+                    Feedback.alert(Console.CONSTANTS.subsys_jca_datasource_error_loadDriver(), html.toSafeHtml());
                 }
             }
         });
@@ -223,10 +221,8 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 }
                 else {
                     SafeHtmlBuilder html = new SafeHtmlBuilder();
-                    html.appendHtmlConstant("<h3>Failed to load JDBC driver</h3>");
-                    html.appendHtmlConstant("Either you did not deploy any JDBC driver or nor is server running. " +
-                            "In order to create a data source you need to provide JDBC driver deployment.");
-                    Feedback.alert("Missing JDBC Driver", html.toSafeHtml());
+                    html.appendHtmlConstant(Console.CONSTANTS.subsys_jca_datasource_error_loadDriver_desc());
+                    Feedback.alert(Console.CONSTANTS.subsys_jca_datasource_error_loadDriver(), html.toSafeHtml());
                 }
             }
         });
@@ -252,11 +248,11 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
-                    Console.info(Console.MESSAGES.added("datasource ")+ datasource.getName());
+                    Console.info(Console.MESSAGES.added("Datasource ")+ datasource.getName());
                     loadDataSources();
                 }
                 else
-                    Console.error(Console.MESSAGES.addingFailed("datasource " + datasource.getName()), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.addingFailed("Datasource " + datasource.getName()), result.getResponse().toString());
             }
         });
 
@@ -277,9 +273,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.info(Console.MESSAGES.deleted("datasource ") + entity.getName());
+                    Console.info(Console.MESSAGES.deleted("Datasource ") + entity.getName());
                 } else {
-                    Console.error(Console.MESSAGES.deletionFailed("datasource ") + entity.getName());
+                    Console.error(Console.MESSAGES.deletionFailed("Datasource ") + entity.getName());
                 }
 
                 loadDataSources();
@@ -293,9 +289,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if (result.getUnderlying()) {
-                    Console.info(Console.MESSAGES.modified("datasource ") + entity.getName());
+                    Console.info(Console.MESSAGES.modified("Datasource ") + entity.getName());
                 } else {
-                    Console.error(Console.MESSAGES.modificationFailed("datasource ") + entity.getName(), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("Datasource ") + entity.getName(), result.getResponse().toString());
                 }
 
                 loadDataSources();
@@ -316,9 +312,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 @Override
                 public void onSuccess(ResponseWrapper<Boolean> response) {
                     if(response.getUnderlying())
-                        Console.info(Console.MESSAGES.saved("datasource "+name));
+                        Console.info(Console.MESSAGES.saved("Datasource "+name));
                     else
-                        Console.error(Console.MESSAGES.saveFailed("datasource ") + name, response.getResponse().toString());
+                        Console.error(Console.MESSAGES.saveFailed("Datasource ") + name, response.getResponse().toString());
 
                     loadDataSources();
                 }
@@ -337,9 +333,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 @Override
                 public void onSuccess(ResponseWrapper<Boolean> response) {
                     if(response.getUnderlying())
-                        Console.info(Console.MESSAGES.saved("xa datasource "+name));
+                        Console.info(Console.MESSAGES.saved("XA Datasource "+name));
                     else
-                        Console.error(Console.MESSAGES.saveFailed("xa datasource " + name), response.getResponse().toString());
+                        Console.error(Console.MESSAGES.saveFailed("XA Datasource " + name), response.getResponse().toString());
 
                     loadXADataSources();
                 }
@@ -364,9 +360,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> response) {
                 if (response.getUnderlying())
-                    Console.info(Console.MESSAGES.added("xa datasource " + updatedEntity.getName()));
+                    Console.info(Console.MESSAGES.added("XA Datasource " + updatedEntity.getName()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("xa datasource " + updatedEntity.getName()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.addingFailed("XA Datasource " + updatedEntity.getName()), response.getResponse().toString());
 
                 loadXADataSources();
             }
@@ -381,9 +377,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(ResponseWrapper<Boolean> result) {
 
                 if (result.getUnderlying()) {
-                    Console.info(Console.MESSAGES.modified("datasource " + entity.getName()));
+                    Console.info(Console.MESSAGES.modified("Datasource " + entity.getName()));
                 } else {
-                    Console.error(Console.MESSAGES.modificationFailed("datasource " + entity.getName()), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.modificationFailed("Datasource " + entity.getName()), result.getResponse().toString());
                 }
 
                 loadXADataSources();
@@ -397,9 +393,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.info(Console.MESSAGES.deleted("datasource "+ entity.getName()));
+                    Console.info(Console.MESSAGES.deleted("Datasource "+ entity.getName()));
                 } else {
-                    Console.error(Console.MESSAGES.deletionFailed("datasource " + entity.getName()));
+                    Console.error(Console.MESSAGES.deletionFailed("Datasource " + entity.getName()));
                 }
 
                 loadXADataSources();
@@ -426,9 +422,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(ResponseWrapper<Boolean> result) {
                 if(result.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("pool settings "+editedName));
+                    Console.info(Console.MESSAGES.saved("Pool Settings "+editedName));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ editedName), result.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("Pool Settings "+ editedName), result.getResponse().toString());
 
                 loadPoolConfig(isXA, editedName);
             }
@@ -469,9 +465,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
                 if (success)
-                    Console.info("Success: Added XA property " + prop.getKey());
+                    Console.info(Console.MESSAGES.added("XA property " + prop.getKey()));
                 else
-                    Console.error("Failed: Adding XA property " + prop.getKey());
+                    Console.error(Console.MESSAGES.addingFailed("XA property " + prop.getKey()));
 
                 loadXAProperties(reference);
             }
@@ -483,9 +479,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
                 if (success)
-                    Console.info("Success: Removed XA property " + prop.getKey());
+                    Console.info(Console.MESSAGES.deleted("XA property " + prop.getKey()));
                 else
-                    Console.error("Failed: Removing XA property " + prop.getKey());
+                    Console.error(Console.MESSAGES.deletionFailed("XA property " + prop.getKey()));
 
                 loadXAProperties(reference);
             }
@@ -493,7 +489,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void launchNewXAPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New XA Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("XA property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -547,9 +543,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             public void onSuccess(ResponseWrapper<Boolean> response) {
 
                 if(response.getUnderlying())
-                    Console.info("Success: Connection settings on "+ dataSourceName);
+                    Console.info(Console.MESSAGES.successful("Connection settings: "+ dataSourceName));
                 else
-                    Console.error("Failed: Connection settings on " + dataSourceName, response.getResponse().toString());
+                    Console.error(Console.MESSAGES.failed( "Connection settings: "+ dataSourceName), response.getResponse().toString());
 
                 getView().setConnectionVerified(response.getUnderlying(), dataSourceName);
             }
@@ -557,11 +553,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
     }
 
     public void onLoadConnectionProperties(final String datasourceName) {
-        dataSourceStore.loadConnectionProperties(datasourceName, new AsyncCallback<List<PropertyRecord>>(){
-            @Override
-            public void onFailure(Throwable throwable) {
-                Console.error("Failed to read connection properties on datasource "+datasourceName);
-            }
+        dataSourceStore.loadConnectionProperties(datasourceName, new SimpleCallback<List<PropertyRecord>>(){
 
             @Override
             public void onSuccess(List<PropertyRecord> propertyRecords) {
@@ -579,9 +571,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
                 if(success)
-                    Console.info("Success: Added connection property "+prop.getKey());
+                    Console.info(Console.MESSAGES.added("Connection property "+prop.getKey()));
                 else
-                    Console.error("Failed: Adding connection property " + prop.getKey());
+                    Console.error(Console.MESSAGES.addingFailed("Connection property "+prop.getKey()));
 
                 onLoadConnectionProperties(reference);
             }
@@ -594,9 +586,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
                 if(success)
-                    Console.info("Success: Removed connection property "+prop.getKey());
+                    Console.info(Console.MESSAGES.deleted("Connection property "+prop.getKey()));
                 else
-                    Console.error("Failed: Removing connection property " + prop.getKey());
+                    Console.error(Console.MESSAGES.deletionFailed("Connection property "+prop.getKey()));
 
                 onLoadConnectionProperties(reference);
             }
@@ -610,7 +602,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New Connection Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Connection Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -638,9 +630,9 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             @Override
             public void onSuccess(Boolean success) {
                 if(success)
-                    Console.info("Success: Flush pool");
+                    Console.info(Console.MESSAGES.successful("Flush Pool"));
                 else
-                    Console.error("Error: Failed to flush pool");
+                    Console.error(Console.MESSAGES.failed("Flush Pool"));
             }
         });
     }

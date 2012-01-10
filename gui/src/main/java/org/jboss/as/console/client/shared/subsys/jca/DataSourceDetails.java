@@ -64,7 +64,7 @@ public class DataSourceDetails {
         form.addEditListener(new EditListener<DataSource>() {
             @Override
             public void editingBean(DataSource bean) {
-                String nextState = bean.isEnabled() ? "Disable":"Enable";
+                String nextState = bean.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
                 disableBtn.setText(nextState);
             }
         });
@@ -82,7 +82,7 @@ public class DataSourceDetails {
                 String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
                 final boolean nextState = !form.getEditedEntity().isEnabled();
                 Feedback.confirm(Console.MESSAGES.modify("datasource"),
-                        Console.MESSAGES.modifyConfirm("datasource "+form.getEditedEntity().getName()),
+                        Console.MESSAGES.modifyConfirm("Datasource "+form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -95,6 +95,7 @@ public class DataSourceDetails {
         };
 
         disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
+
         ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -118,7 +119,10 @@ public class DataSourceDetails {
 
         toolStrip.providesDeleteOp(false);
         toolStrip.addToolButtonRight(disableBtn);
-        toolStrip.addToolButtonRight(verifyBtn);
+
+        // not available in domain mode
+        if(Console.MODULES.getBootstrapContext().isStandalone())
+            toolStrip.addToolButtonRight(verifyBtn);
 
         detailPanel.add(toolStrip.asWidget());
 

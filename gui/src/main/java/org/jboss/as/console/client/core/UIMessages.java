@@ -138,4 +138,7 @@ public interface UIMessages extends Messages {
 
     String available(String s);
 
+    String successful(String p0);
+
+    String failed(String p0);
 }

@@ -61,7 +61,7 @@ public class DataSourceValidationEditor extends FormEditor<DataSource>{
         };
 
 
-        NumberBoxItem backgroundValidationMillis = new NumberBoxItem("backgroundValidationMillis", "Background Validation Millis") {
+        NumberBoxItem backgroundValidationMillis = new NumberBoxItem("backgroundValidationMillis", "Validation Millis") {
             @Override
             public boolean isRequired() {
                 return false;
