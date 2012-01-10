@@ -72,8 +72,8 @@ public class AdminObjectList implements PropertyManagement {
                 final AdminObject selection = getCurrentSelection();
 
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("admin object"),
-                        Console.MESSAGES.deleteConfirm("admin object" + selection.getJndiName()),
+                        Console.MESSAGES.deleteTitle("Admin Object"),
+                        Console.MESSAGES.deleteConfirm("Admin Object" + selection.getJndiName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -124,7 +124,7 @@ public class AdminObjectList implements PropertyManagement {
 
         // ---
 
-        configProperties = new PropertyEditor(this);
+        configProperties = new PropertyEditor(this, true);
 
 
         // ----
@@ -196,11 +196,13 @@ public class AdminObjectList implements PropertyManagement {
                 .setPlain(true)
                 .setHeadlineWidget(headline)
                 .setTitle("TITLE")
-                .setDescription("The administration objects for a resource adapter.")
-                .setMaster("Registered Admin Objects", table)
+                .setDescription(Console.CONSTANTS.subsys_jca_adminobject_desc())
+                .setMaster(Console.MESSAGES.available("Admin Objects"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", formpanel)
                 .addDetail("Properties", configProperties.asWidget());
+
+        configProperties.setAllowEditProps(false);
 
 
         return layout.build();
@@ -228,7 +230,7 @@ public class AdminObjectList implements PropertyManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("configuration properties"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Config Property"));
         window.setWidth(480);
         window.setHeight(360);
 

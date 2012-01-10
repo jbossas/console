@@ -30,6 +30,7 @@ public class AdapterConnectionProperties  {
 
         propertyEditor = new PropertyEditor(delegate, true);
         layout.add(propertyEditor.asWidget());
+        propertyEditor.setAllowEditProps(false);
         return layout;
     }
 

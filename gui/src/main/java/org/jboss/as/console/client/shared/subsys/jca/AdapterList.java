@@ -211,6 +211,7 @@ public class AdapterList implements PropertyManagement {
                 .addDetail("Attributes", formpanel)
                 .addDetail("Properties", propertyEditor.asWidget());
 
+        propertyEditor.setAllowEditProps(false);
 
         return layoutBuilder.build();
     }
