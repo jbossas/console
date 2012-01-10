@@ -129,7 +129,8 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-        loadData();
+        loadJcaSubsystem();
+        loadWorkManager(true);
     }
 
     @Override
@@ -138,12 +139,6 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
         this.selectedWorkmanager = request.getParameter("name", null);
 
-    }
-
-    private void loadData() {
-
-        loadJcaSubsystem();
-        loadWorkManager();
     }
 
     private void loadJcaSubsystem() {
@@ -201,6 +196,10 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
     }
 
     private void loadWorkManager() {
+        loadWorkManager(false);
+    }
+
+    private void loadWorkManager(final boolean retainSelection) {
         loadWorkManager.execute(new SimpleCallback<List<JcaWorkmanager>>() {
             @Override
             public void onSuccess(List<JcaWorkmanager> result) {
@@ -208,7 +207,12 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 JcaPresenter.this.managers = result;
 
                 getView().setWorkManagers(result);
-                getView().setSelectedWorkmanager(selectedWorkmanager);
+
+                // TODO: should only be invoked when called from onReset()
+                if(retainSelection)
+                    getView().setSelectedWorkmanager(selectedWorkmanager);
+                else
+                    getView().setSelectedWorkmanager(null);
 
                 loadBootstrapContexts();
             }
@@ -495,7 +499,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
+                {
                     Console.error(Console.MESSAGES.addingFailed("Work Manager"), response.getFailureDescription());
+                }
                 else
                     Console.info(Console.MESSAGES.added("Work Manager "+entity.getName()));
 
@@ -670,8 +676,6 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             operation.get(ADDRESS).add("short-running-threads", pool.getName());
         else
             operation.get(ADDRESS).add("long-running-threads", pool.getName());
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

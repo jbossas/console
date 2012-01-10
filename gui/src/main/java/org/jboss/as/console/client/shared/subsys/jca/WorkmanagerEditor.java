@@ -16,7 +16,7 @@ public class WorkmanagerEditor {
     private JcaPresenter presenter;
     private WorkmanagerList managerList;
     private ThreadPoolEditor threadPools;
-    PagedView panel;
+    private PagedView panel;
     private List<JcaWorkmanager> managers;
 
     public WorkmanagerEditor(JcaPresenter presenter) {
