@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -55,14 +56,14 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
 
         ToolStrip toolstrip = new ToolStrip();
 
-        toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewSessionWizard();
             }
         }));
 
-        toolstrip.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Feedback.confirm("Remove Mail Session", "Really remove this mail session?",

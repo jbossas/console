@@ -395,4 +395,18 @@ public interface UIConstants extends Constants {
     String subsys_threads_scheduled_desc();
 
     String subsys_jmx_desc();
+
+    String subsys_jca_common_config_desc();
+
+    String subsys_jca_boostrap_config_desc();
+
+    String subsys_jca_workmanager_config_desc();
+
+    String common_label_back();
+
+    String common_label_view();
+
+    String common_label_selection();
+
+    String subsys_jca_threadpool_config_desc();
 }

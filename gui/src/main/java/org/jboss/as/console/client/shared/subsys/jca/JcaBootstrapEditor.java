@@ -7,6 +7,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -58,20 +59,20 @@ public class JcaBootstrapEditor {
 
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewContextDialogue();
             }
         }));
 
-        topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 Feedback.confirm(
-                        "Remove Context",
-                        "Really remove this context?",
+                        Console.MESSAGES.deleteTitle("Bootstrap Context"),
+                        Console.MESSAGES.deleteConfirm("Bootstrap Context"),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -93,7 +94,7 @@ public class JcaBootstrapEditor {
         form.bind(table);
 
         SafeHtmlBuilder description = new SafeHtmlBuilder();
-        description.appendEscaped("Bootstrap context for resource adapters. Each context does reference a workmanager. ");
+        description.appendHtmlConstant(Console.CONSTANTS.subsys_jca_boostrap_config_desc());
 
         FormToolStrip<JcaBootstrapContext> formTools = new FormToolStrip<JcaBootstrapContext>(
                 form,
@@ -118,12 +119,12 @@ public class JcaBootstrapEditor {
 
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
-                .setTitle("Boostrap")
-                .setHeadline("JCA Boostrap Contexts")
+                .setTitle("Bootstrap")
+                .setHeadline("JCA Bootstrap Contexts")
                 .setDescription(description.toSafeHtml())
-                .setMaster("Configured Contexts", table)
+                .setMaster(Console.MESSAGES.available("Bootstrap Context"), table)
                 .setTopLevelTools(topLevelTools.asWidget())
-                .setDetail("Bootstrap Context", formPanel)
+                .setDetail(Console.CONSTANTS.common_label_selection(), formPanel)
                 .build();
 
         return panel;

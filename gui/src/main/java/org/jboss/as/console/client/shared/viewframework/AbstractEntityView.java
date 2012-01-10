@@ -105,7 +105,7 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
 
     /**
      * Create the form with fields used for creating a new Entity.
-     * @return The "Add" form.
+     * @return The Console.CONSTANTS.common_label_add() form.
      */
     protected abstract FormAdapter<T> makeAddEntityForm();
 

@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
@@ -128,8 +129,8 @@ public class JcaBaseEditor {
         Widget panel = new OneToOneLayout()
                 .setPlain(true)
                 .setTitle("JCA")
-                .setHeadline("JCA Common Config")
-                .setDescription("The Java EE Connector Architecture (JCA) subsystem providing general configuration for resource adapters.")
+                .setHeadline("JCA Subsystem")
+                .setDescription(Console.CONSTANTS.subsys_jca_common_config_desc())
                 .setMaster("", new HTML())
                 .addDetail("Connection Manager", ccmPanel)
                 .addDetail("Archive Validation", archivePanel)

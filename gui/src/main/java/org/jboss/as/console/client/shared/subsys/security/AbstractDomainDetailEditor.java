@@ -111,7 +111,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         });
         tableTools.addToolButtonRight(addModule);
         tableTools.addToolButtonRight(
-                new ToolButton("Remove", new ClickHandler() {
+                new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
 

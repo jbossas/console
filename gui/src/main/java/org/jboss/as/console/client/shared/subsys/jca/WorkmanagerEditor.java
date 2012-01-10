@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 
@@ -29,7 +30,7 @@ public class WorkmanagerEditor {
         this.managerList = new WorkmanagerList(presenter);
         this.threadPools = new ThreadPoolEditor(presenter);
 
-        panel.addPage("&larr; Back", managerList.asWidget());
+        panel.addPage(Console.CONSTANTS.common_label_back(), managerList.asWidget());
         panel.addPage("Thread Pools", threadPools.asWidget());
 
         // default page

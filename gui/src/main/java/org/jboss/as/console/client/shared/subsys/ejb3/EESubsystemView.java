@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -98,14 +99,14 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         modules.addColumn(slot, "Slot");
 
         ToolStrip moduleTools = new ToolStrip();
-        moduleTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        moduleTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewModuleDialogue();
             }
         }));
 
-        moduleTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        moduleTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 

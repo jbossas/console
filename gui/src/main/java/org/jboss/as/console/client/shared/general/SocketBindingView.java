@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
@@ -75,7 +76,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         layout.add(titleBar);
 
         ToolStrip toolstrip = new ToolStrip();
-        toolstrip.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -83,7 +84,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
             }
         }));
 
-        toolstrip.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        toolstrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final SocketBinding editedEntity = form.getEditedEntity();

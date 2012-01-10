@@ -91,7 +91,7 @@ public class ThreadPoolEditor {
         table.addColumn(size, "Max Threads");
 
         ToolStrip topLevelTools = new ToolStrip();
-        add = new ToolButton("Add", new ClickHandler() {
+        add = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
@@ -100,7 +100,7 @@ public class ThreadPoolEditor {
         });
         topLevelTools.addToolButtonRight(add);
 
-        remove = new ToolButton("Remove", new ClickHandler() {
+        remove = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
@@ -112,8 +112,8 @@ public class ThreadPoolEditor {
                 } else {
 
                     Feedback.confirm(
-                            "Remove Pool Configuration",
-                            "Really remove this pool configuration?",
+                            Console.MESSAGES.deleteTitle("Pool Config"),
+                            Console.MESSAGES.deleteConfirm("Pool Config"),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -237,8 +237,8 @@ public class ThreadPoolEditor {
                 .setPlain(true)
                 .setHeadlineWidget(headline)
                 .setTitle("Thread Pool")
-                .setDescription("Thread pool configurations used by a JCA workmanager.")
-                .setMaster("Configured Thread Pools", table)
+                .setDescription(Console.CONSTANTS.subsys_jca_threadpool_config_desc())
+                .setMaster(Console.MESSAGES.available("Thread Pools"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", attributesPanel)
                 .addDetail("Sizing", sizingPanel)

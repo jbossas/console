@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -47,7 +48,7 @@ public class WorkmanagerList {
         };
 
         Column<JcaWorkmanager, JcaWorkmanager> option = new Column<JcaWorkmanager, JcaWorkmanager>(
-                new TextLinkCell<JcaWorkmanager>("View &rarr;", new ActionCell.Delegate<JcaWorkmanager>() {
+                new TextLinkCell<JcaWorkmanager>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JcaWorkmanager>() {
                     @Override
                     public void execute(JcaWorkmanager selection) {
                         presenter.getPlaceManager().revealPlace(
@@ -66,20 +67,20 @@ public class WorkmanagerList {
         table.addColumn(option, "Option");
 
         ToolStrip topLevelTools = new ToolStrip();
-        topLevelTools.addToolButtonRight(new ToolButton("Add", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewManagerDialogue();
             }
         }));
 
-        topLevelTools.addToolButtonRight(new ToolButton("Remove", new ClickHandler() {
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 Feedback.confirm(
-                        "Remove Work Manager",
-                        "Really remove this work manager?",
+                        Console.MESSAGES.deleteTitle("Workmanager"),
+                        Console.MESSAGES.deleteConfirm("Workmanager"),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -96,9 +97,9 @@ public class WorkmanagerList {
         Widget panel = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("Workmanager")
-                .setHeadline("Workmanager Overview")
-                .setDescription("Work manager for resource adapters.")
-                .setMaster("Configured Workmanager", table)
+                .setHeadline("JCA Workmanager")
+                .setDescription(Console.CONSTANTS.subsys_jca_workmanager_config_desc())
+                .setMaster(Console.MESSAGES.available("Workmanager"), table)
                 .setMasterTools(topLevelTools.asWidget())
                 .build();
 

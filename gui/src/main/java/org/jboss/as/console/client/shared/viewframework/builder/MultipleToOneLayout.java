@@ -70,7 +70,7 @@ public class MultipleToOneLayout {
 
     @Deprecated
     public MultipleToOneLayout setDescription(String description) {
-        this.description = new SafeHtmlBuilder().appendEscaped(description).toSafeHtml();
+        this.description = new SafeHtmlBuilder().appendHtmlConstant(description).toSafeHtml();
         return this;
     }
 
