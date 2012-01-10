@@ -97,25 +97,28 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
 
     private List<Queue> parseQueues(ModelNode response) {
 
-        List<Property> propList = response.get("jms-queue").asPropertyList();
-        List<Queue> queues = new ArrayList<Queue>(propList.size());
+        List<Queue> queues = new ArrayList<Queue>();
 
-        for(Property prop : propList)
-        {
-            Queue queue = factory.queue().as();
-            queue.setName(prop.getName());
+        if(response.hasDefined("jms-queue")) {
+            List<Property> propList = response.get("jms-queue").asPropertyList();
 
-            ModelNode propValue = prop.getValue();
-            String jndi = propValue.get("entries").asList().get(0).asString();
-            queue.setJndiName(jndi);
+            for(Property prop : propList)
+            {
+                Queue queue = factory.queue().as();
+                queue.setName(prop.getName());
 
-            if(propValue.hasDefined("durable"))
-                queue.setDurable(propValue.get("durable").asBoolean());
+                ModelNode propValue = prop.getValue();
+                String jndi = propValue.get("entries").asList().get(0).asString();
+                queue.setJndiName(jndi);
 
-            if(propValue.hasDefined("selector"))
-                queue.setSelector(propValue.get("selector").asString());
+                if(propValue.hasDefined("durable"))
+                    queue.setDurable(propValue.get("durable").asBoolean());
 
-            queues.add(queue);
+                if(propValue.hasDefined("selector"))
+                    queue.setSelector(propValue.get("selector").asString());
+
+                queues.add(queue);
+            }
         }
 
         return queues;
@@ -123,19 +126,23 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
     }
 
     private List<JMSEndpoint> parseTopics(ModelNode response) {
-        List<Property> propList = response.get("jms-topic").asPropertyList();
-        List<JMSEndpoint> topics = new ArrayList<JMSEndpoint>(propList.size());
+        List<JMSEndpoint> topics = new ArrayList<JMSEndpoint>();
 
-        for(Property prop : propList)
+        if(response.hasDefined("jms-topic"))
         {
-            JMSEndpoint topic = factory.topic().as();
-            topic.setName(prop.getName());
+            List<Property> propList = response.get("jms-topic").asPropertyList();
 
-            ModelNode propValue = prop.getValue();
-            String jndi = propValue.get("entries").asList().get(0).asString();
-            topic.setJndiName(jndi);
+            for(Property prop : propList)
+            {
+                JMSEndpoint topic = factory.topic().as();
+                topic.setName(prop.getName());
 
-            topics.add(topic);
+                ModelNode propValue = prop.getValue();
+                String jndi = propValue.get("entries").asList().get(0).asString();
+                topic.setJndiName(jndi);
+
+                topics.add(topic);
+            }
         }
 
         return topics;
