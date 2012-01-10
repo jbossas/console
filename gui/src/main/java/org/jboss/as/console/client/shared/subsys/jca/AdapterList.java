@@ -20,7 +20,6 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -29,7 +28,6 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
@@ -76,8 +74,8 @@ public class AdapterList implements PropertyManagement {
                 final ResourceAdapter selection = getCurrentSelection();
 
                 Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("resource adapter"),
-                        Console.MESSAGES.deleteConfirm("resource adapter " + selection.getArchive()),
+                        Console.MESSAGES.deleteTitle("Resource Adapter"),
+                        Console.MESSAGES.deleteConfirm("Resource Adapter " + selection.getArchive()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -114,7 +112,7 @@ public class AdapterList implements PropertyManagement {
         };
 
         Column<ResourceAdapter, ResourceAdapter> option = new Column<ResourceAdapter, ResourceAdapter>(
-                new TextLinkCell<ResourceAdapter>("View &rarr;", new ActionCell.Delegate<ResourceAdapter>() {
+                new TextLinkCell<ResourceAdapter>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<ResourceAdapter>() {
                     @Override
                     public void execute(ResourceAdapter selection) {
                         presenter.getPlaceManager().revealPlace(
@@ -207,7 +205,7 @@ public class AdapterList implements PropertyManagement {
                 .setPlain(true)
                 .setTitle("Resource Adapter")
                 .setHeadline("Resource Adapter Overview")
-                .setDescription("Resource adapter configurations.")
+                .setDescription(Console.CONSTANTS.subsys_jca_resource_adapter_desc())
                 .setMaster("Registered Resource Adapter", table)
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", formpanel)
@@ -250,7 +248,7 @@ public class AdapterList implements PropertyManagement {
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("config properties"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Config Property"));
         window.setWidth(480);
         window.setHeight(360);
 

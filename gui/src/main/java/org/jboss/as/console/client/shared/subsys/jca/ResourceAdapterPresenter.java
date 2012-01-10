@@ -273,9 +273,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.deleted("resource adapter "+ra.getArchive()));
+                    Console.info(Console.MESSAGES.deleted("Resource Adapter "+ra.getArchive()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("resource adapter "+ra.getArchive()), result.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Resource Adapter "+ra.getArchive()), result.toString());
 
                 loadAdapter(false);
             }
@@ -312,14 +312,14 @@ public class ResourceAdapterPresenter
                     Console.error(Console.MESSAGES.saveFailed("Resource Adapter " + ra.getArchive()),
                             response.getFailureDescription());
 
-                loadAdapter(true);
+                loadAdapter(false);
             }
         });
 
     }
 
     public void launchNewAdapterWizard() {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("resource adapter"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Resource Adapter"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -356,9 +356,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.added("resource adapter " + ra.getArchive()));
+                    Console.info(Console.MESSAGES.added("Resource Adapter " + ra.getArchive()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("resource adapter " + ra.getArchive()), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Resource Adapter " + ra.getArchive()), result.toString());
 
                 loadAdapter(false);
             }
@@ -390,9 +390,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.added("property " + prop.getKey()));
+                    Console.info(Console.MESSAGES.added("Property " + prop.getKey()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("property " + prop.getKey()), result.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Property " + prop.getKey()), result.toString());
 
                 loadAdapter(false);
             }
@@ -422,9 +422,9 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(result))
-                    Console.info(Console.MESSAGES.deleted("property " + prop.getKey()));
+                    Console.info(Console.MESSAGES.deleted("Property " + prop.getKey()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("property " + prop.getKey()), result.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Property " + prop.getKey()), result.toString());
 
                 loadAdapter(false);
             }
@@ -432,7 +432,7 @@ public class ResourceAdapterPresenter
     }
 
     public void launchNewPropertyDialoge(final ResourceAdapter ra) {
-        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Configuration Property"));
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Config Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -489,21 +489,16 @@ public class ResourceAdapterPresenter
 
         ModelNode operation = poolAdapter.fromChangeset(changeset, proto);
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Console.error("Failed to update RA pool config", caught.getMessage());
-            }
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
 
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("pool settings"));
+                    Console.info(Console.MESSAGES.saved("Pool Settings"));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("pool settings "+ connection.getJndiName()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("Pool Settings "+ connection.getJndiName()), response.getResponse().toString());
 
                 loadAdapter(true);
             }
@@ -534,7 +529,7 @@ public class ResourceAdapterPresenter
     }
 
     public void launchNewConnectionWizard() {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("connection definition"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Connection Definition"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -556,7 +551,13 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed connection definition");
+
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Connection Definition"));
+                else
+                    Console.info(Console.MESSAGES.deleted("Connection Definition"));
+
                 loadAdapter(true);
             }
         });
@@ -605,7 +606,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Add connection definition");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Connection Definition"));
+                else
+                    Console.info(Console.MESSAGES.added("Connection Definition"));
                 loadAdapter(true);
 
             }
@@ -622,7 +627,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Update connection definition");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Connection Definition"));
+                else
+                    Console.info(Console.MESSAGES.modified("Connection Definition"));
                 loadAdapter(true);
             }
         });
@@ -639,7 +648,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Added config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Connection Property"));
+                else
+                    Console.info(Console.MESSAGES.added("Connection Property"));
                 loadAdapter(true);
             }
         });
@@ -660,7 +673,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Remove config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Connection Property"));
+                else
+                    Console.info(Console.MESSAGES.deleted("Connection Property"));
                 loadAdapter(true);
             }
         });
@@ -678,7 +695,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Added config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Config Property"));
+                else
+                    Console.info(Console.MESSAGES.added("Config Property"));
                 loadAdapter(false);
             }
         });
@@ -695,7 +716,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Remove config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Config Property"));
+                else
+                    Console.info(Console.MESSAGES.deleted("Config Property"));
                 loadAdapter(false);
             }
         });
@@ -713,7 +738,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Added config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Config Property"));
+                else
+                    Console.info(Console.MESSAGES.added("Config Property"));
                 loadAdapter(true);
             }
         });
@@ -730,7 +759,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Remove config property");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Config Property"));
+                else
+                    Console.info(Console.MESSAGES.deleted("Config Property"));
                 loadAdapter(true);
             }
         });
@@ -743,12 +776,14 @@ public class ResourceAdapterPresenter
 
         ModelNode operation = adminAdapter.fromChangeset(changeset, addressModel);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Update admin object");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Admin Object"));
+                else
+                    Console.info(Console.MESSAGES.modified("Admin Object"));
                 loadAdapter(true);
             }
         });
@@ -785,7 +820,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Create admin object");
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Admin Object"));
+                else
+                    Console.info(Console.MESSAGES.added("Admin Object"));
                 loadAdapter(true);
             }
         });
@@ -800,7 +839,11 @@ public class ResourceAdapterPresenter
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Remove admin object");
+               ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Admin Object"));
+                else
+                    Console.info(Console.MESSAGES.deleted("Admin Object"));
                 loadAdapter(true);
             }
         });
@@ -820,9 +863,9 @@ public class ResourceAdapterPresenter
 
                 ModelNode response  = result.get();
                 if(response.isFailure())
-                    Console.error("Failed to flush pool", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Flush Pool"), response.getFailureDescription());
                 else
-                    Console.info("Success: flush pool");
+                    Console.info(Console.MESSAGES.successful("Flush Pool"));
             }
         });
     }

@@ -433,4 +433,6 @@ public interface UIConstants extends Constants {
     String subsys_jca_datasource_error_loadDriver_desc();
 
     String subsys_jca_error_datasource_notenabled();
+
+    String subsys_jca_resource_adapter_desc();
 }
