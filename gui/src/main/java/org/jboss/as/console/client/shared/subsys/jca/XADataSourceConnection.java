@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -59,7 +60,7 @@ public class XADataSourceConnection extends FormEditor<XADataSource>{
         CheckBoxItem padXid = new CheckBoxItem("padXid", "Pad XID");
         CheckBoxItem wrap = new CheckBoxItem("wrapXaResource", "Wrap XA");
 
-        getForm().setFields(tx, connectionSql, rmOverride, interleave, padXid, wrap);
+        getForm().setFields(tx, rmOverride, interleave, padXid, wrap, BlankItem.INSTANCE, connectionSql);
 
         return super.asWidget();
     }

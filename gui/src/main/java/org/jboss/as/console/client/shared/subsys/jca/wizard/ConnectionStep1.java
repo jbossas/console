@@ -64,7 +64,7 @@ public class ConnectionStep1 {
         DialogueOptions options = new DialogueOptions(
 
                 // save
-                "Next &rsaquo;&rsaquo;",
+                Console.CONSTANTS.common_label_next(),
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
@@ -75,7 +75,7 @@ public class ConnectionStep1 {
                 },
 
                 // cancel
-                "Cancel",
+                Console.CONSTANTS.common_label_cancel(),
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {

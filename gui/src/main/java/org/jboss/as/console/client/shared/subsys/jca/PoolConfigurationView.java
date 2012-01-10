@@ -67,14 +67,17 @@ public class PoolConfigurationView {
         // disable "reset" functionality
         toolStrip.providesDeleteOp(false);
 
-        toolStrip.addToolButtonRight(
-                new ToolButton("Flush", new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        management.onDoFlush(editedName);
-                    }
-                })
-        );
+        // TODO: https://issues.jboss.org/browse/AS7-3254
+        if(Console.MODULES.getBootstrapContext().isStandalone()) {
+            toolStrip.addToolButtonRight(
+                    new ToolButton("Flush", new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            management.onDoFlush(editedName);
+                        }
+                    })
+            );
+        }
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
             @Override

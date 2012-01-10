@@ -152,8 +152,8 @@ public class XADatasourceStep2 {
         };
 
         DialogueOptions options = new DialogueOptions(
-                "Next &rsaquo;&rsaquo;",submitHandler,
-                "Cancel",cancelHandler
+                Console.CONSTANTS.common_label_next(),submitHandler,
+                Console.CONSTANTS.common_label_cancel(),cancelHandler
         );
 
         return new WindowContentBuilder(layout,options).build();

@@ -22,8 +22,6 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -40,7 +38,6 @@ import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -89,8 +86,8 @@ public class DataSourceEditor {
                 if(currentSelection!=null)
                 {
                     Feedback.confirm(
-                            Console.MESSAGES.deleteTitle("datasource"),
-                            Console.MESSAGES.deleteConfirm("datasource "+currentSelection.getName()),
+                            Console.MESSAGES.deleteTitle("Datasource"),
+                            Console.MESSAGES.deleteConfirm("Datasource "+currentSelection.getName()),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {

@@ -43,6 +43,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -97,8 +98,8 @@ public class XADataSourceEditor implements PropertyManagement {
                 if(currentSelection!=null)
                 {
                     Feedback.confirm(
-                            Console.MESSAGES.deleteTitle("datasource"),
-                            Console.MESSAGES.deleteConfirm("datasource "+currentSelection.getName()),
+                            Console.MESSAGES.deleteTitle("XA Datasource"),
+                            Console.MESSAGES.deleteConfirm("XA Datasource "+currentSelection.getName()),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
@@ -129,7 +130,9 @@ public class XADataSourceEditor implements PropertyManagement {
 
         // ---
 
-        vpanel.add(new ContentHeaderLabel("XA "+Console.CONSTANTS.subsys_jca_dataSource_configurations()));
+        vpanel.add(new ContentHeaderLabel("JDBC XA Datasources"));
+
+        vpanel.add(new ContentDescription(Console.CONSTANTS.subsys_jca_xadataSources_desc()));
 
         dataSourceTable = new DefaultCellTable<XADataSource>(20);
         dataSourceProvider = new ListDataProvider<XADataSource>();
@@ -171,7 +174,7 @@ public class XADataSourceEditor implements PropertyManagement {
         dataSourceTable.addColumn(jndiNameColumn, "JNDI");
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
-        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.subsys_jca_dataSource_registered()));
+        vpanel.add(new ContentGroupLabel(Console.MESSAGES.available("XA Datasources")));
         vpanel.add(dataSourceTable);
 
 
@@ -270,7 +273,7 @@ public class XADataSourceEditor implements PropertyManagement {
         bottomPanel.add(validationEditor.asWidget(), "Validation");
 
         bottomPanel.selectTab(0);
-        vpanel.add(new ContentGroupLabel("XA Datasource"));
+        vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
         vpanel.add(bottomPanel);
         return layout;
     }

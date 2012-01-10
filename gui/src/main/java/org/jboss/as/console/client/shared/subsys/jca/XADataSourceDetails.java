@@ -66,7 +66,7 @@ public class XADataSourceDetails {
         form.addEditListener(new EditListener<DataSource>() {
             @Override
             public void editingBean(DataSource bean) {
-                String nextState = bean.isEnabled() ? "Disable":"Enable";
+                String nextState = bean.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
                 disableBtn.setText(nextState);
             }
         });
@@ -114,7 +114,9 @@ public class XADataSourceDetails {
 
         toolStrip.providesDeleteOp(false);
         toolStrip.addToolButtonRight(disableBtn);
-        toolStrip.addToolButtonRight(verifyBtn);
+
+        if(Console.MODULES.getBootstrapContext().isStandalone())
+            toolStrip.addToolButtonRight(verifyBtn);
 
         VerticalPanel panel = new VerticalPanel();
         panel.add(toolStrip.asWidget());
