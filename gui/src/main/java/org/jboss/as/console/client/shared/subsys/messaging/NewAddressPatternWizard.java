@@ -53,8 +53,6 @@ public class NewAddressPatternWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>Create Address Pattern</h3>"));
-
         final Form<AddressingPattern> form = new Form<AddressingPattern>(AddressingPattern.class);
 
 

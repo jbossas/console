@@ -22,6 +22,7 @@ package org.jboss.as.console.client.shared.subsys.web;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
@@ -100,7 +101,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
 
         form.setFields(disabled, development);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), keepGenerated, checkInterval, sourceFragment);
+        form.setFieldsInGroup(Console.CONSTANTS.common_label_advanced(), new DisclosureGroupRenderer(), keepGenerated, checkInterval, sourceFragment);
 
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {

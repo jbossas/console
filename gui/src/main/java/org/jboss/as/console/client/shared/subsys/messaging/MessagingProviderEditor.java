@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -72,8 +73,7 @@ public class MessagingProviderEditor {
         serverName.setStyleName("content-header-label");
 
         panel.add(serverName);
-
-        panel.add(new ContentGroupLabel("Attributes"));
+        panel.add(new ContentDescription(Console.CONSTANTS.subsys_messaging_jms_provider_desc()));
 
 
         form = new Form(MessagingProvider.class);
@@ -122,8 +122,6 @@ public class MessagingProviderEditor {
 
         // ------
 
-        panel.add(new ContentGroupLabel("Subresources"));
-
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
 
@@ -136,6 +134,7 @@ public class MessagingProviderEditor {
         bottomLayout.selectTab(0);
 
         panel.add(bottomLayout);
+        bottomLayout.getElement().setAttribute("style", "padding-top:10px");
 
         return layout;
     }

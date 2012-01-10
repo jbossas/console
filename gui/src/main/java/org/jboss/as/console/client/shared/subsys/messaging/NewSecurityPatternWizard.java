@@ -56,8 +56,6 @@ public class NewSecurityPatternWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        layout.add(new HTML("<h3>Create Security Setting</h3>"));
-
         final Form<SecurityPattern> form = new Form<SecurityPattern>(SecurityPattern.class);
         form.setNumColumns(1);
 

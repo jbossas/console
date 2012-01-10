@@ -358,9 +358,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.added("security setting"));
+                    Console.info(Console.MESSAGES.added("Security Setting"));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("security setting" + newEntity.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Security Setting" + newEntity.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
@@ -382,9 +382,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("security setting "+pattern.getPattern()));
+                    Console.info(Console.MESSAGES.saved("Security Setting "+pattern.getPattern()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("security setting " + pattern.getPattern()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("Security Setting " + pattern.getPattern()), response.getResponse().toString());
 
                 loadSecurityConfig();
             }
@@ -407,9 +407,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.deleted("security setting"));
+                    Console.info(Console.MESSAGES.deleted("Security Setting"));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("security setting " + pattern.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Security Setting " + pattern.getPattern()), response.toString());
 
                 loadSecurityConfig();
             }
@@ -431,9 +431,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.deleted("address setting"));
+                    Console.info(Console.MESSAGES.deleted("Address Aetting"));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("address setting " + addressingPattern.getPattern()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Address Setting " + addressingPattern.getPattern()), response.toString());
 
                 loadAddressingConfig();
             }
@@ -478,9 +478,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("address setting " + entity.getPattern()));
+                    Console.info(Console.MESSAGES.saved("Address Setting " + entity.getPattern()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("address setting " + entity.getPattern()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("Address Setting " + entity.getPattern()), response.getResponse().toString());
 
                 loadAddressingConfig();
             }
@@ -511,7 +511,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 if(successful)
                     Console.info(Console.MESSAGES.added("Address Setting"));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("address setting")+ address.getPattern(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Address Setting")+ address.getPattern(), response.toString());
 
                 loadAddressingConfig();
             }
@@ -595,12 +595,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         if(entity.getSelector()!=null && !entity.getSelector().equals(""))
             queue.get("selector").set(entity.getSelector());
 
-        dispatcher.execute(new DMRAction(queue), new AsyncCallback<DMRResponse>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Console.error("Failed to create queue", caught.getMessage());
-            }
+        dispatcher.execute(new DMRAction(queue), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
@@ -682,9 +677,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.deleted("topic" + entity.getName()));
+                    Console.info(Console.MESSAGES.deleted("Topic" + entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.deletionFailed("topic " + entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Topic " + entity.getName()), response.toString());
 
                 loadJMSConfig();
             }
@@ -717,9 +712,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.saved("topic "+name));
+                    Console.info(Console.MESSAGES.saved("Topic "+name));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("topic " + name), response.toString());
+                    Console.error(Console.MESSAGES.saveFailed("Topic " + name), response.toString());
 
                 loadJMSConfig();
             }
@@ -769,9 +764,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info(Console.MESSAGES.added("topic "+entity.getName()));
+                    Console.info(Console.MESSAGES.added("Topic "+entity.getName()));
                 else
-                    Console.error(Console.MESSAGES.addingFailed("topic " + entity.getName()), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Topic " + entity.getName()), response.toString());
 
                 Console.schedule(new Command() {
                     @Override
@@ -805,9 +800,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             public void onSuccess(DMRResponse result) {
                 ResponseWrapper<Boolean> response = ModelAdapter.wrapBooleanResponse(result);
                 if(response.getUnderlying())
-                    Console.info(Console.MESSAGES.saved("provider configuration "+getCurrentServer()));
+                    Console.info(Console.MESSAGES.saved("Provider Configuration "+getCurrentServer()));
                 else
-                    Console.error(Console.MESSAGES.saveFailed("provider configuration " + getCurrentServer()), response.getResponse().toString());
+                    Console.error(Console.MESSAGES.saveFailed("Provider Configuration " + getCurrentServer()), response.getResponse().toString());
 
                 loadProviderDetails();
             }

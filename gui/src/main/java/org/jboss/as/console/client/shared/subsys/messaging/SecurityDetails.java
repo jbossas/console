@@ -98,7 +98,7 @@ public class SecurityDetails {
 
 
         form.setFields(send, consume, manage);
-        form.setFieldsInGroup("Advanced", new DisclosureGroupRenderer(), createDQ, deleteDQ, createNDQ, deleteNDQ);
+        form.setFieldsInGroup(Console.CONSTANTS.common_label_advanced(), new DisclosureGroupRenderer(), createDQ, deleteDQ, createNDQ, deleteNDQ);
 
 
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){

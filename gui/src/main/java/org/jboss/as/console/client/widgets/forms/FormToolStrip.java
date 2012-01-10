@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -75,7 +76,7 @@ public class FormToolStrip<T> {
 
                     if(null == form.getEditedEntity())
                     {
-                        Console.warning("Empty form!");
+                        Log.warn("Empty form!");
                         return;
                     }
 
@@ -100,7 +101,7 @@ public class FormToolStrip<T> {
                                 if(!changedValues.isEmpty())
                                     callback.onSave(changedValues);
                                 else
-                                    Console.warning("Empty changeset!");
+                                    Log.warn("Empty changeset!");
                             }
                         }
                     }
@@ -122,11 +123,10 @@ public class FormToolStrip<T> {
 
                     if(null == form.getEditedEntity()) return;
 
-                    String action = deleteOpName != null ? deleteOpName : Console.CONSTANTS.common_label_delete();
 
                     Feedback.confirm(
-                            action +" Item",
-                            "Really "+action+" this item?",
+                            Console.MESSAGES.deleteTitle(Console.CONSTANTS.common_label_item()),
+                            Console.MESSAGES.deleteConfirm(Console.CONSTANTS.common_label_item()),
                             new Feedback.ConfirmationHandler() {
                                 @Override
                                 public void onConfirmation(boolean isConfirmed) {
