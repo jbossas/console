@@ -16,9 +16,11 @@ import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
+import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
@@ -46,6 +48,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
     private AdapterValidation validationConfig;
     private HTML headline;
     private DefaultWindow window;
+    private ToolButton disableBtn;
 
 
     public ConnectionList(ResourceAdapterPresenter presenter) {
@@ -85,6 +88,28 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
+
+
+        disableBtn = new ToolButton("", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final ConnectionDefinition selection = getCurrentSelection();
+                Feedback.confirm(
+                        Console.MESSAGES.modify("Connection Definition"),
+                        Console.MESSAGES.modifyConfirm("Connection Definition " + selection.getJndiName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.enOrDisbaleConnection(currentAdapter, selection);
+                                }
+                            }
+                        });
+
+            }
+        });
+        topLevelTools.addToolButtonRight(disableBtn);
 
         // -------
 
@@ -160,6 +185,12 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
                 poolConfig.updateFrom(selectedObject.getJndiName(), selectedObject.getPoolConfig());
                 securityConfig.updateFrom(selectedObject);
                 validationConfig.updateFrom(selectedObject);
+
+
+                String nextState = selectedObject.isEnabled() ?
+                        Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                disableBtn.setText(nextState);
+
             }
         });
 

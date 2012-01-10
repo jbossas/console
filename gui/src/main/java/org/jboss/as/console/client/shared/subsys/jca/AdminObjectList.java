@@ -20,6 +20,7 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.AdminObject;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -50,6 +51,8 @@ public class AdminObjectList implements PropertyManagement {
     private PropertyEditor configProperties;
     private HTML headline;
     private DefaultWindow window;
+    private ToolButton disableBtn;
+    private ResourceAdapter currentAdapter;
 
     public AdminObjectList(ResourceAdapterPresenter presenter) {
         this.presenter = presenter;
@@ -87,6 +90,27 @@ public class AdminObjectList implements PropertyManagement {
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
+
+         disableBtn = new ToolButton("", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final AdminObject selection = getCurrentSelection();
+                Feedback.confirm(
+                        Console.MESSAGES.modify("Admin Object"),
+                        Console.MESSAGES.modifyConfirm("Admin Object " + selection.getJndiName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.enOrDisbaleAdminObject(currentAdapter, selection);
+                                }
+                            }
+                        });
+
+            }
+        });
+        topLevelTools.addToolButtonRight(disableBtn);
 
         // -------
 
@@ -183,6 +207,10 @@ public class AdminObjectList implements PropertyManagement {
             public void onSelectionChange(SelectionChangeEvent event) {
                 AdminObject selection = getCurrentSelection();
                 configProperties.setProperties("", selection.getProperties());
+
+                String nextState = selection.isEnabled() ?
+                        Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                disableBtn.setText(nextState);
             }
         });
 
@@ -248,6 +276,8 @@ public class AdminObjectList implements PropertyManagement {
     }
 
     public void setAdapter(ResourceAdapter adapter) {
+
+        this.currentAdapter = adapter;
 
         headline.setText("Resource Adapter: "+adapter.getArchive());
 

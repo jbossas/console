@@ -71,6 +71,7 @@ public class ResourceAdapterPresenter
 
     private BeanMetaData raMetaData;
     private BeanMetaData connectionMetaData;
+    private BeanMetaData adminMetaData;
     private String selectedAdapter;
 
     private EntityAdapter<ConnectionDefinition> connectionAdapter;
@@ -78,6 +79,7 @@ public class ResourceAdapterPresenter
     private EntityAdapter<PropertyRecord> propertyAdapter;
     private EntityAdapter<PoolConfig> poolAdapter;
     private EntityAdapter<AdminObject> adminAdapter;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ResourceAdapterPresenter)
@@ -106,6 +108,7 @@ public class ResourceAdapterPresenter
 
         this.raMetaData = metaData.getBeanMetaData(ResourceAdapter.class);
         this.connectionMetaData = metaData.getBeanMetaData(ConnectionDefinition.class);
+        this.adminMetaData = metaData.getBeanMetaData(AdminObject.class);
 
         adapter  = new EntityAdapter<ResourceAdapter>(ResourceAdapter.class, metaData);
         connectionAdapter = new EntityAdapter<ConnectionDefinition>(ConnectionDefinition.class, metaData);
@@ -870,4 +873,43 @@ public class ResourceAdapterPresenter
         });
     }
 
+    // https://issues.jboss.org/browse/AS7-3259
+    public void enOrDisbaleConnection(ResourceAdapter ra, ConnectionDefinition selection) {
+        ModelNode operation = connectionMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, selection.getJndiName());
+
+        operation.get(OP).set(selection.isEnabled() ? "disable":"enable");
+
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Connection Definition"), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Connection Definition"));
+                loadAdapter(true);
+            }
+        });
+    }
+
+    public void enOrDisbaleAdminObject(ResourceAdapter ra, AdminObject selection) {
+        ModelNode operation = adminMetaData.getAddress().asResource(
+                Baseadress.get(), selectedAdapter, selection.getJndiName());
+
+        operation.get(OP).set(selection.isEnabled() ? "disable":"enable");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Admin Object"), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Admin Object"));
+                loadAdapter(true);
+            }
+        });
+    }
 }
