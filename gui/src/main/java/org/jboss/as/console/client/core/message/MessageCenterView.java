@@ -164,7 +164,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         html.appendHtmlConstant("</h3>");
         html.appendHtmlConstant("<p/>");
 
-        String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : Console.CONSTANTS.common_label_messageDetail();
+        String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : "";
 
         html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
         html.appendHtmlConstant(detail);
