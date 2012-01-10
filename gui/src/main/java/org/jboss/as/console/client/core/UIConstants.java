@@ -415,4 +415,8 @@ public interface UIConstants extends Constants {
     String subsys_jca_error_pool_removal();
 
     String subsys_jca_error_pool_removal_desc();
+
+    String subsys_jca_error_pool_exist();
+
+    String subsys_jca_error_pool_exist_desc();
 }

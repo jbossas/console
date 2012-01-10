@@ -228,7 +228,7 @@ public class ThreadPoolEditor {
 
         // ---
 
-        propertyEditor = new PropertyEditor(presenter);
+        propertyEditor = new PropertyEditor(presenter, true);
 
         headline = new Label("HEADLINE");
         headline.setStyleName("content-header-label");

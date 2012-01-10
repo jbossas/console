@@ -38,6 +38,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -511,7 +512,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
     public void launchNewPropertyDialoge(String reference) {
 
-        propertyWindow = new DefaultWindow("New Pool Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Pool Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
@@ -569,6 +570,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         });
     }
 
+
     @Override
     public void onChangeProperty(String groupName, PropertyRecord prop) {
         // do nothing
@@ -597,9 +599,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to update pool config", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("Pool Config"), response.getFailureDescription());
                 else
-                    Console.info("Success: Update pool config");
+                    Console.info(Console.MESSAGES.modified("Pool Config"));
 
                 loadWorkManager();
             }
@@ -627,9 +629,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to remove pool config", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.deletionFailed("Pool Config"), response.getFailureDescription());
                 else
-                    Console.info("Success: Removed  pool config");
+                    Console.info(Console.MESSAGES.deleted("Pool Config"));
 
                 loadWorkManager();
             }
@@ -643,13 +645,13 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
 
         if(hasShortRunning && hasLongRunning)
         {
-            Console.error("Thread pools already exist",
-                    "Both short-running and long-running thread pool configurations already exist.");
+            Console.error(Console.CONSTANTS.subsys_jca_error_pool_exist(),
+                    Console.CONSTANTS.subsys_jca_error_pool_exist_desc());
             return;
         }
 
         window = new ModalWindowLayout()
-                .setTitle("New Pool Configuration")
+                .setTitle(Console.MESSAGES.createTitle("Pool Config"))
                 .setWidget(new NewPoolWizard(this, entity.getName()).asWidget())
                 .build();
     }
@@ -677,9 +679,9 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 ModelNode response = result.get();
 
                 if(response.isFailure())
-                    Console.error("Failed to create pool config", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.addingFailed("Pool Config"), response.getFailureDescription());
                 else
-                    Console.info("Success: Created pool config");
+                    Console.info(Console.MESSAGES.added("Pool Config"));
 
                 loadWorkManager();
             }

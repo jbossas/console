@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
@@ -90,7 +91,7 @@ public class EmbeddedPropertyView<T extends HasProperties, NamedEntity>
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New Thread Pool Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Thread Pool Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 

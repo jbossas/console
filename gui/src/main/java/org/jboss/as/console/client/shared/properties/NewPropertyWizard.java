@@ -49,7 +49,7 @@ public class NewPropertyWizard {
     }
     
     public NewPropertyWizard(PropertyManagement presenter, String reference) {
-        this(presenter, reference, true);
+        this(presenter, reference, false);
     }
 
     public Widget asWidget() {
