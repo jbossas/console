@@ -445,4 +445,20 @@ public interface UIConstants extends Constants {
     String subsys_messaging_jms_provider_desc();
 
     String subsys_messaging_jms_desc();
+
+    String subsys_ejb3_tab_container();
+
+    String subsys_ejb3_tab_services();
+
+    String subsys_ejb3_tab_beanpools();
+
+    String subsys_ejb3_tab_threadpools();
+
+    String subsys_ejb3_container_desc();
+
+    String subsys_ejb3_services_desc();
+
+    String subsys_ejb3_beanpools_desc();
+
+    String subsys_ejb3_threadpools_desc();
 }

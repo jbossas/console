@@ -84,17 +84,16 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
     @Override
     public Widget createWidget() {
 
-        this.setDescription("The overall configuration of the ejb3 subsystem. " +
-                "These setting apply to all beans, unless overridden at the deployment or bean level.");
+        this.setDescription(Console.CONSTANTS.subsys_ejb3_container_desc());
 
         // overall layout
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
-        tabLayoutPanel.add(createEmbeddableWidget(), "Container", true);
-        tabLayoutPanel.add(servicesView.asWidget(), "Services", true);
-        tabLayoutPanel.add(beanPoolsView.asWidget(), "Bean Pools", true);
-        tabLayoutPanel.add(threadPoolsView.asWidget(), "Thread Pools", true);
+        tabLayoutPanel.add(createEmbeddableWidget(), Console.CONSTANTS.subsys_ejb3_tab_container(), true);
+        tabLayoutPanel.add(servicesView.asWidget(), Console.CONSTANTS.subsys_ejb3_tab_services(), true);
+        tabLayoutPanel.add(beanPoolsView.asWidget(), Console.CONSTANTS.subsys_ejb3_tab_beanpools(), true);
+        tabLayoutPanel.add(threadPoolsView.asWidget(), Console.CONSTANTS.subsys_ejb3_tab_threadpools(), true);
 
 
         return tabLayoutPanel;

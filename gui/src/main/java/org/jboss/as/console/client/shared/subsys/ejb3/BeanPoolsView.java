@@ -61,7 +61,7 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
 
     @Override
     public Widget createWidget() {
-        setDescription("Bean pool configurations for the EJB container.");
+        setDescription(Console.CONSTANTS.subsys_ejb3_beanpools_desc());
         return createEmbeddableWidget();
     }
 

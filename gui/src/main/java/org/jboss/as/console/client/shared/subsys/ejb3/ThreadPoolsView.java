@@ -44,7 +44,7 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     private EJB3Presenter presenter;
 
     public ThreadPoolsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(ThreadPool.class, propertyMetaData, EnumSet.of(FrameworkButton.EDIT_SAVE));
+        super(ThreadPool.class, propertyMetaData);
         bridge = new EntityToDmrBridgeImpl<ThreadPool>(propertyMetaData, ThreadPool.class, this, dispatcher) {
             @Override
             protected void onLoadEntitiesSuccess(ModelNode response) {
@@ -56,7 +56,7 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
 
     @Override
     public Widget createWidget() {
-        setDescription("Thread pool configurations that are referenced by EJB services.");
+        setDescription(Console.CONSTANTS.subsys_ejb3_threadpools_desc());
 
         return createEmbeddableWidget();
     }

@@ -55,7 +55,7 @@ public class ServicesView extends SuspendableViewImpl {
         vpanel.setStyleName("rhs-content-panel");
 
         vpanel.add(new ContentHeaderLabel(Console.CONSTANTS.subsys_ejb3_ejbServices()));
-        vpanel.add(new ContentDescription("Centrally configurable services that are part of the EJB3 subsystem."));
+        vpanel.add(new ContentDescription(Console.CONSTANTS.subsys_ejb3_services_desc()));
 
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
