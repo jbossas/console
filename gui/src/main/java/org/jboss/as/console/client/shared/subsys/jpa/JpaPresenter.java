@@ -98,7 +98,7 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load JPA subsystem");
+                    Console.error(Console.MESSAGES.failed("Loading JPA Subsystem"));
                 }
                 else
                 {
@@ -114,7 +114,6 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
         revealStrategy.revealInParent(this);
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2816
     public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
 
         ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
@@ -126,11 +125,11 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update JPA subsystem", response.get("failure-description").asString());
+                    Console.error(Console.MESSAGES.modificationFailed("JPA Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update JPA subsystem");
+                    Console.info(Console.MESSAGES.modified("JPA Subsystem"));
                 }
 
                 loadSubsystem();

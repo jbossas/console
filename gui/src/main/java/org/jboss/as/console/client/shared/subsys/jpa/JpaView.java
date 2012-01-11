@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jpa;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -62,7 +63,7 @@ public class JpaView extends DisposableViewImpl implements JpaPresenter.MyView {
         Widget panel = new OneToOneLayout()
                 .setTitle("JPA")
                 .setHeadline("JPA Subsystem")
-                .setDescription("The configuration of the JPA subsystem.")
+                .setDescription(Console.CONSTANTS.subsys_jpa_desc())
                 .setMaster("Details", detail)
                 .setMasterTools(formToolStrip.asWidget()).build();
 
