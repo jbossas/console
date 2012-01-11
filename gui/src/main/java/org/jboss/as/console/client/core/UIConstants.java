@@ -467,4 +467,6 @@ public interface UIConstants extends Constants {
     String subys_tx_desc();
 
     String subsys_jpa_desc();
+
+    String subsys_jacorb_desc();
 }

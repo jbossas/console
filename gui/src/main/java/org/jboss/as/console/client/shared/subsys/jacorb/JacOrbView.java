@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.inject.Inject;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.jacorb.model.JacOrbSubsystem;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
@@ -29,6 +30,7 @@ public class JacOrbView extends AbstractEntityView<JacOrbSubsystem> implements J
     public JacOrbView(ApplicationMetaData applicationMetaData, DispatchAsync dispatcher) {
         super(JacOrbSubsystem.class, applicationMetaData, EnumSet.of(FrameworkButton.ADD, FrameworkButton.REMOVE));
         bridge = new SingleEntityToDmrBridgeImpl<JacOrbSubsystem>(applicationMetaData, JacOrbSubsystem.class, this, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_jacorb_desc());
     }
 
     @Override
