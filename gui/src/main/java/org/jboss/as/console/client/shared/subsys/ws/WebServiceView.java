@@ -52,7 +52,7 @@ public class WebServiceView extends DisposableViewImpl implements WebServicePres
                 new FormToolStrip.FormCallback<WebServiceProvider>(){
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveProvider(providerForm.getUpdatedEntity());
+                        presenter.onSaveProvider(changeset);
                     }
 
                     @Override
@@ -65,9 +65,17 @@ public class WebServiceView extends DisposableViewImpl implements WebServicePres
         layout.add(formToolStrip.asWidget());
 
         CheckBoxItem modify = new CheckBoxItem("modifyAddress", "Modify SOAP Address");
-        TextBoxItem wsdlHost = new TextBoxItem("wsdlHost", "WSDL Host");
-        NumberBoxItem wsdlPort = new NumberBoxItem("wsdlPort", "WSDL Port");
-        NumberBoxItem wsdlSecurePort = new NumberBoxItem("wsdlSecurePort", "WSDL Secure Port");
+        TextBoxItem wsdlHost = new TextBoxItem("wsdlHost", "WSDL Host", false);
+        NumberBoxItem wsdlPort = new NumberBoxItem("wsdlPort", "WSDL Port", false) {
+            {
+                isRequired=false;
+            }
+        };
+        NumberBoxItem wsdlSecurePort = new NumberBoxItem("wsdlSecurePort", "WSDL Secure Port", false) {
+            {
+                isRequired=false;
+            }
+        };
 
         providerForm.setFields(modify, wsdlHost, wsdlPort, wsdlSecurePort);
 

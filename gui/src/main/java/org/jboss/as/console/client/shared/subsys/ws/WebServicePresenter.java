@@ -28,6 +28,7 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -104,8 +105,6 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
 
         operation.get(OP).set(READ_RESOURCE_OPERATION);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -138,7 +137,31 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
         revealStrategy.revealInParent(this);
     }
 
-    public void onSaveProvider(WebServiceProvider entity) {
+    public void onSaveProvider(Map<String, Object> changes) {
+        ModelNode address = beanMeta.getAddress().asResource(
+                Baseadress.get()
+        );
 
+        ModelNode operation = providerAdapter.fromChangeset(changes, address);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                System.out.println(response);
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("Web Service Provider"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("Web Service Provider"));
+                    loadProvider();
+                }
+            }
+        });
     }
 }
