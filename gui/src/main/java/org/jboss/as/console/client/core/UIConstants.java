@@ -461,4 +461,6 @@ public interface UIConstants extends Constants {
     String subsys_ejb3_beanpools_desc();
 
     String subsys_ejb3_threadpools_desc();
+
+    String subsys_ee_desc();
 }

@@ -110,7 +110,9 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
             @Override
             public void onClick(ClickEvent event) {
 
-                Feedback.confirm("Remove Module", "Really remove module?",
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Module"),
+                        Console.MESSAGES.deleteConfirm("Module"),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -135,7 +137,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         Widget panel = new OneToOneLayout()
                 .setTitle("EE")
                 .setHeadline("EE Subsystem")
-                .setDescription("The configuration of the EE subsystem.")
+                .setDescription(Console.CONSTANTS.subsys_ee_desc())
                 .setMaster("Subsystem Defaults", master)
                 .setMasterTools(formToolStrip.asWidget())
                 .setDetail("Global Modules", moduleList).build();

@@ -96,8 +96,10 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         closeDialoge();
 
         boolean isAlreadyAssigned = false;
-        List<Module> modules = currentEntity.getModules() !=null ?
-                currentEntity.getModules() : new ArrayList<Module>(1);
+        List<Module> modules = new ArrayList<Module>();
+
+        if(currentEntity.getModules()!=null)
+            modules.addAll(currentEntity.getModules());
 
         for(Module m : modules)
         {
@@ -124,7 +126,9 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
     private void onPersistModules(EESubsystem updatedEntity) {
 
-        ModelNode operation = beanMetaData.getAddress().asResource();
+        ModelNode operation= new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "ee");
         operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         operation.get(NAME).set("global-modules");
 
@@ -147,11 +151,11 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update modules subsystem");
+                    Console.error(Console.MESSAGES.modificationFailed("Modules"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update modules ");
+                    Console.info(Console.MESSAGES.modified("Modules"));
                 }
 
                 loadSubsystem();
@@ -173,7 +177,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load EE subsystem", response.get("failed-description").asString());
+                    Console.error(Console.MESSAGES.failed("Loading EE Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
@@ -221,7 +225,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load extensions");
+                    Console.error(Console.MESSAGES.failed("Loading extensions"), response.getFailureDescription());
                 }
                 else
                 {
@@ -238,7 +242,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
     }
 
     private void launchDialogue(List<String> names) {
-        window = new DefaultWindow("Add Module");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Module"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -257,7 +261,12 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
     }
 
     public void onSave(final EESubsystem editedEntity, Map<String, Object> changeset) {
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "ee");
+
+        ModelNode operation = adapter.fromChangeset(changeset, address);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -266,11 +275,11 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update EE subsystem");
+                    Console.error(Console.MESSAGES.modificationFailed("EE Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update EE subsystem");
+                    Console.info(Console.MESSAGES.modified("EE Subsystem"));
                 }
 
                 loadSubsystem();
