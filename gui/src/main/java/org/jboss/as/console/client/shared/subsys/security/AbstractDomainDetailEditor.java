@@ -40,6 +40,7 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -73,6 +74,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     Wizard<T> wizard;
     PropertyEditor propertyEditor;
     DefaultWindow propertyWindow;
+    private String description;
 
     AbstractDomainDetailEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         this.presenter = presenter;
@@ -83,6 +85,11 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     abstract String getStackElementName();
     abstract String getStackName();
     abstract Wizard<T> getWizard();
+
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
     abstract void saveData();
 
     Widget asWidget() {
@@ -97,6 +104,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
 
         headerLabel = new ContentHeaderLabel("TITLE HERE");
         vpanel.add(headerLabel);
+        vpanel.add(new ContentDescription(description));
 
         vpanel.add(new ContentGroupLabel(getStackName()));
 
@@ -116,7 +124,9 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                     public void onClick(ClickEvent event) {
 
                         final T policy = getCurrentSelection();
-                        Feedback.confirm(getEntityName(), Console.MESSAGES.deleteConfirm(policy.getCode()),
+                        Feedback.confirm(
+                                Console.MESSAGES.deleteTitle(getEntityName()),
+                                Console.MESSAGES.deleteConfirm(policy.getCode()),
                                 new Feedback.ConfirmationHandler() {
                                     @Override
                                     public void onConfirmation(boolean isConfirmed) {
@@ -313,7 +323,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     @Override
     public void launchNewPropertyDialoge(String reference) {
 
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Module Option"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 

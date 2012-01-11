@@ -33,6 +33,7 @@ public class MappingEditor extends AbstractDomainDetailEditor<MappingModule> {
 
     public MappingEditor(SecurityDomainsPresenter presenter) {
         super(presenter, MappingModule.class);
+         setDescription(Console.CONSTANTS.subsys_security_mapping_desc());
     }
 
     @Override

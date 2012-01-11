@@ -84,14 +84,14 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         pages = new PagedView();
 
 
-        Widget domainList = createDomainList("Registered security domains. Please select a domain to edit the security policies.");
+        Widget domainList = createDomainList(Console.CONSTANTS.subsys_security_domains_desc());
 
         authenticationEditor = new AuthenticationEditor(presenter);
         authorizationEditor = new AuthorizationEditor(presenter);
         mappingEditor = new MappingEditor(presenter);
         auditEditor = new AuditEditor(presenter);
 
-        pages.addPage("&larr; Back", domainList);
+        pages.addPage(Console.CONSTANTS.common_label_back(), domainList);
         pages.addPage(authenticationEditor.getEntityName(), authenticationEditor.asWidget());
         pages.addPage(authorizationEditor.getEntityName(), authorizationEditor.asWidget());
         pages.addPage(mappingEditor.getEntityName(), mappingEditor.asWidget());
@@ -175,7 +175,7 @@ public class SecurityDomainsView extends AbstractEntityView<SecurityDomain>
         table = new DefaultCellTable<SecurityDomain>(5);
 
         Column<SecurityDomain, SecurityDomain> option = new Column<SecurityDomain, SecurityDomain>(
-                new TextLinkCell<SecurityDomain>("View &rarr;", new ActionCell.Delegate<SecurityDomain>() {
+                new TextLinkCell<SecurityDomain>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<SecurityDomain>() {
                     @Override
                     public void execute(SecurityDomain selection) {
                         presenter.getPlaceManager().revealPlace(

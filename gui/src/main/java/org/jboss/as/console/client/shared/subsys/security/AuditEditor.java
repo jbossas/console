@@ -28,6 +28,7 @@ import org.jboss.as.console.client.shared.subsys.security.wizard.GenericSecurity
 public class AuditEditor extends AbstractDomainDetailEditor<GenericSecurityDomainData>{
     public AuditEditor(SecurityDomainsPresenter presenter) {
         super(presenter, GenericSecurityDomainData.class);
+         setDescription(Console.CONSTANTS.subsys_security_audit_desc());
     }
 
     @Override

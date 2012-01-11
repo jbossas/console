@@ -34,6 +34,7 @@ import java.util.List;
 public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider> {
     AuthorizationEditor(SecurityDomainsPresenter presenter) {
         super(presenter, AuthorizationPolicyProvider.class);
+        setDescription(Console.CONSTANTS.subsys_security_authorization_desc());
     }
 
     @Override

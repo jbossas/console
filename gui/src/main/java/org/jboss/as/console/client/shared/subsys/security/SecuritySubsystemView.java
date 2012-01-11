@@ -60,6 +60,8 @@ public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
 
     @Override
     public Widget createWidget() {
+
+        setDescription(Console.CONSTANTS.subsys_security_desc());
         TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 

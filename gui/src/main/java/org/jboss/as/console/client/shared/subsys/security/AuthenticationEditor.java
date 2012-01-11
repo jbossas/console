@@ -31,6 +31,7 @@ import java.util.List;
 public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
     AuthenticationEditor(SecurityDomainsPresenter presenter) {
         super(presenter, AuthenticationLoginModule.class);
+         setDescription(Console.CONSTANTS.subsys_security_authentication_desc());
     }
 
     @Override

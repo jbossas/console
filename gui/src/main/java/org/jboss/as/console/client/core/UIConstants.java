@@ -469,4 +469,16 @@ public interface UIConstants extends Constants {
     String subsys_jpa_desc();
 
     String subsys_jacorb_desc();
+
+    String subsys_security_desc();
+
+    String subsys_security_domains_desc();
+
+    String subsys_security_authentication_desc();
+
+    String subsys_security_authorization_desc();
+
+    String subsys_security_audit_desc();
+
+    String subsys_security_mapping_desc();
 }
