@@ -122,9 +122,9 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
                 boolean success = ModelAdapter.wasSuccess(response);
                 if(success)
-                    Console.info("Success: Update transaction manager settings");
+                    Console.info(Console.MESSAGES.modified("Transaction Manager"));
                 else
-                    Console.error("Failed: Failed to update transaction manager settings");
+                    Console.error(Console.MESSAGES.modificationFailed("Transaction Manager"), response.getFailureDescription());
 
                 loadModel();
             }

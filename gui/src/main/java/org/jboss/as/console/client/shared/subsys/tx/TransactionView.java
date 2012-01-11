@@ -5,10 +5,12 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -72,11 +74,10 @@ public class TransactionView extends SuspendableViewImpl implements TransactionP
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
         layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
-        panel.add(new ContentHeaderLabel("Transaction Manager Configuration"));
-
+        panel.add(new ContentHeaderLabel("Transaction Manager"));
+        panel.add(new ContentDescription(Console.CONSTANTS.subys_tx_desc()));
         // -----
 
-        panel.add(new ContentGroupLabel("Attributes"));
 
         panel.add(toolstripWidget);
 
