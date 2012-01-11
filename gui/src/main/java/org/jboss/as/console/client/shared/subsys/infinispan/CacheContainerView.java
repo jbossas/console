@@ -75,7 +75,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
         
-        toolStrip.addToolButtonRight(new ToolButton("Set Default",
+        toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_setDefault(),
                     new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {

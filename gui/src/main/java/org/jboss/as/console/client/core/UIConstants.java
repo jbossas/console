@@ -491,4 +491,6 @@ public interface UIConstants extends Constants {
     String subsys_ws_endpoint_desc();
 
     String subsys_ws_endpoints();
+
+    String common_label_setDefault();
 }
