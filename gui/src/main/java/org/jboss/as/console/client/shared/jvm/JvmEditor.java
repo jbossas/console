@@ -74,9 +74,11 @@ public class JvmEditor {
 
                     @Override
                     public void onDelete(Jvm entity) {
-                        presenter.onDeleteJvm(reference, form.getEditedEntity());
+                        //presenter.onDeleteJvm(reference, form.getEditedEntity());
                     }
                 });
+
+        toolStrip.providesDeleteOp(false);
 
         panel.add(toolStrip.asWidget());
 

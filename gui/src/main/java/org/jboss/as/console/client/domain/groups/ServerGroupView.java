@@ -133,8 +133,8 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------
 
-        panel.add(new ContentHeaderLabel("Available Server Group Configurations"));
-        panel.add(new ContentDescription("A Server Group does specify a common management policy for a set of servers. Server Groups are associated with profiles."));
+        panel.add(new ContentHeaderLabel(Console.MESSAGES.available(Console.CONSTANTS.common_label_serverGroupConfigurations())));
+        panel.add(new ContentDescription(Console.CONSTANTS.common_serverGroups_desc()));
 
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(10);
         serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
@@ -191,7 +191,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
-        propertyEditor.setHelpText("A system property to set on all servers in this server-group.");
+        //propertyEditor.setHelpText("A system property to set on all servers in this server-group.");
         bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
         propertyEditor.setAllowEditProps(false);
 

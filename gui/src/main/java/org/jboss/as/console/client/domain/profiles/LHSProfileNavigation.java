@@ -66,9 +66,10 @@ class LHSProfileNavigation {
         LHSNavTree groupsTree = new LHSNavTree("profiles");
         groupsPanel.setContent(groupsTree);
 
-        groupsTree.addItem(
-                new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter));
+        LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
+        groupsTree.addItem(groupItem);
         stack.add(groupsPanel);
+
 
         // --------
 

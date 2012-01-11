@@ -149,6 +149,7 @@ public class ServerGroupPresenter
             @Override
             public void onSuccess(List<String> result) {
                 existingSockets = result;
+
                 getView().updateSocketBindings(result);
             }
         });
@@ -190,15 +191,10 @@ public class ServerGroupPresenter
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Removed server group " + group.getGroupName())
-                    );
-
+                    Console.info(Console.MESSAGES.deleted(group.getGroupName()));
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
                 } else {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to remove " + group.getGroupName(), Message.Severity.Error)
-                    );
+                    Console.error(Console.MESSAGES.deletionFailed(group.getGroupName()));
                 }
 
                 loadServerGroups();
@@ -219,20 +215,15 @@ public class ServerGroupPresenter
             public void onSuccess(Boolean success) {
 
                 if (success) {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Created " + newGroup.getGroupName(), Message.Severity.Info)
-                    );
 
+                    Console.info(Console.MESSAGES.added(newGroup.getGroupName()));
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_GROUPS));
 
                     loadServerGroups();
 
                 } else {
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to create " + newGroup.getGroupName(), Message.Severity.Error)
-                    );
-
+                    Console.error(Console.MESSAGES.addingFailed(newGroup.getGroupName()));
                 }
 
             }
@@ -241,24 +232,17 @@ public class ServerGroupPresenter
 
     public void onSaveChanges(final ServerGroupRecord group, Map<String,Object> changeset) {
 
-        serverGroupStore.save(group.getGroupName(), changeset, new AsyncCallback<Boolean>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // log and reset when something fails
-                Console.error("Failed to modify server-group "+group.getGroupName());
-                loadServerGroups();
-            }
+        serverGroupStore.save(group.getGroupName(), changeset, new SimpleCallback<Boolean>() {
 
             @Override
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
                 {
-                    Console.info("Modified server-group "+group.getGroupName());
+                    Console.info(Console.MESSAGES.modified(group.getGroupName()));
                 }
                 else
                 {
-                    Console.error("Failed to modify server-group "+group.getGroupName());
+                    Console.info(Console.MESSAGES.modificationFailed(group.getGroupName()));
                 }
 
                 loadServerGroups();
@@ -269,7 +253,7 @@ public class ServerGroupPresenter
 
     public void launchNewGroupDialoge() {
 
-        window = new DefaultWindow("Create Server Group");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Server Group"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -347,12 +331,12 @@ public class ServerGroupPresenter
 
     public void launchNewPropertyDialoge(String group) {
 
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
         propertyWindow.setWidget(
-                new NewPropertyWizard(this, group).asWidget()
+                new NewPropertyWizard(this, group, true).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);

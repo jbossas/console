@@ -70,9 +70,9 @@ public class CreateJvmCmd extends AddressableModelCmd implements AsyncCommand<Bo
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info("Success : Create JVM settings");
+                    Console.info(Console.MESSAGES.added("JVM Config"));
                 else
-                    Console.error("Failed: Create JVM settings", response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("JVM Config"), response.getFailureDescription());
 
                 callback.onSuccess(success);
             }

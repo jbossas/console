@@ -59,9 +59,9 @@ public class DeleteJvmCmd extends AddressableModelCmd implements AsyncCommand<Bo
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info("Success: remove Jvm");
+                    Console.info(Console.MESSAGES.deleted("JVM Config"));
                 else
-                    Console.error("Failed: remove Jvm ", response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("JVM Config"), response.getFailureDescription());
 
                 callback.onSuccess(success);
             }

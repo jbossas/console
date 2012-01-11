@@ -69,9 +69,9 @@ public class CreatePropertyCmd extends AddressableModelCmd implements AsyncComma
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info("Success: Created property " + prop.getKey());
+                    Console.info(Console.MESSAGES.added("Property " + prop.getKey()));
                 else
-                    Console.error("Failed: Create property " + prop.getKey(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Property " + prop.getKey()), response.getFailureDescription());
 
                 callback.onSuccess(success);
             }

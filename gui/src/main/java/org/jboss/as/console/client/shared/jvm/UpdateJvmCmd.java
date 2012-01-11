@@ -75,9 +75,9 @@ public class UpdateJvmCmd extends AddressableModelCmd implements AsyncCommand<Bo
                 boolean success = response.get(OUTCOME).asString().equals(SUCCESS);
 
                 if(success)
-                    Console.info("Success: Update Jvm ");
+                    Console.info(Console.MESSAGES.modified("JVM Config"));
                 else
-                    Console.error("Failed: Update Jvm ", response.toString());
+                    Console.error(Console.MESSAGES.modificationFailed("JVM Config"), response.getFailureDescription());
 
                 callback.onSuccess(success);
             }
