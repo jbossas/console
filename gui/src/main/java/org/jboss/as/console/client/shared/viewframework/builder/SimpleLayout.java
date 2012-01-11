@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -114,9 +115,7 @@ public class SimpleLayout {
             panel.add(headlineWidget);
         }
 
-        panel.add(new HTML(description));
-
-
+        panel.add(new ContentDescription(description));
 
 
         for(NamedWidget item : details)
