@@ -30,10 +30,12 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -62,15 +64,11 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
         LayoutPanel layout = new RHSContentPanel("Servlet");
 
         layout.add(new ContentHeaderLabel("Servlet/HTTP Configuration"));
-
+        layout.add(new ContentDescription(Console.CONSTANTS.subsys_web_desc()));
         // ----
 
         form = new Form(JSPContainerConfiguration.class);
         form.setNumColumns(2);
-
-        ContentGroupLabel label = new ContentGroupLabel("JSP Container");
-        label.getElement().setAttribute("style", "margin-bottom:0px;");
-        layout.add(label);
 
         FormToolStrip toolStrip = new FormToolStrip<JSPContainerConfiguration>(
                 form,
@@ -93,11 +91,11 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         // ----
 
-        StatusItem disabled= new StatusItem("disabled", "Disabled?");
-        StatusItem development= new StatusItem("development", "Development?");
-        StatusItem keepGenerated= new StatusItem("keepGenerated", "Keep Generated?");
+        CheckBoxItem disabled= new CheckBoxItem("disabled", "Disabled?");
+        CheckBoxItem development= new CheckBoxItem("development", "Development?");
+        CheckBoxItem keepGenerated= new CheckBoxItem("keepGenerated", "Keep Generated?");
         NumberBoxItem checkInterval = new NumberBoxItem("checkInterval", "Check Interval");
-        StatusItem sourceFragment= new StatusItem("displaySource", "Display Source?");
+        CheckBoxItem sourceFragment= new CheckBoxItem("displaySource", "Display Source?");
 
 
         form.setFields(disabled, development);

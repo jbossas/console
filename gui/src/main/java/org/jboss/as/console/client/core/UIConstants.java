@@ -481,4 +481,6 @@ public interface UIConstants extends Constants {
     String subsys_security_audit_desc();
 
     String subsys_security_mapping_desc();
+
+    String subsys_web_desc();
 }

@@ -261,9 +261,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Updated connector "+name);
+                    Console.info(Console.MESSAGES.modified("Connector "+name));
                 else
-                    Console.error("Failed to update connector " + name, response.toString());
+                    Console.error(Console.MESSAGES.modificationFailed("Connector "+name), response.getFailureDescription());
 
                 loadConnectors();
             }
@@ -284,9 +284,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Removed connector " + name);
+                    Console.info(Console.MESSAGES.deleted("Connector "+name));
                 else
-                    Console.error("Failed to remove connector " + name, response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Connector "+name), response.getFailureDescription());
 
                 Console.schedule(new Command() {
                     @Override
@@ -300,7 +300,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     }
 
     public void launchConnectorDialogue() {
-        window = new DefaultWindow("Create Connector");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Connector"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -340,9 +340,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Created connector " + entity.getName());
+                    Console.info(Console.MESSAGES.added("Connector "+entity.getName()));
                 else
-                    Console.error("Failed to create connector " + entity.getName(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Connector "+entity.getName()), response.getFailureDescription());
 
                 Console.schedule(new Command() {
                     @Override
@@ -385,9 +385,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Created virtual server " + server.getName());
+                    Console.info(Console.MESSAGES.added("Virtual Server "+server.getName()));
                 else
-                    Console.error("Failed to create virtual server" + server.getName(), response.toString());
+                    Console.error(Console.MESSAGES.added("Virtual Server "+server.getName()), response.getFailureDescription());
 
                 Console.schedule(new Command() {
                     @Override
@@ -437,9 +437,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Updated virtual server "+name);
+                    Console.info(Console.MESSAGES.modified("Virtual Server "+name));
                 else
-                    Console.error("Failed to update virtual server " + name, response.toString());
+                    Console.error(Console.MESSAGES.modificationFailed("Virtual Server "+name));
 
                 Console.schedule(new Command() {
                     @Override
@@ -465,9 +465,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Success: Delete virtual server " + name);
+                    Console.info(Console.MESSAGES.deleted("Virtual Server "+name));
                 else
-                    Console.error("Error: Failed to delete virtual server" + name, response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Virtual Server "+name));
 
                 Console.schedule(new Command() {
                     @Override
@@ -483,7 +483,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     public void launchVirtualServerDialogue() {
 
-        window = new DefaultWindow("Create Virtual Server");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Virtual Server"));
         window.setWidth(480);
         window.setHeight(360);
         window.setWidget(
@@ -508,9 +508,9 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 ModelNode response = result.get();
                 boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
                 if(successful)
-                    Console.info("Success: Update JSP container configuration");
+                    Console.info(Console.MESSAGES.successful("JSP Configuration"));
                 else
-                    Console.error("Error: Failed to update JSP container configuration", response.toString());
+                    Console.error(Console.MESSAGES.failed("JSP Configuration"));
 
                 Console.schedule(new Command() {
                     @Override
