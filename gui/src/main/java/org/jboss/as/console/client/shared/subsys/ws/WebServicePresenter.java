@@ -9,17 +9,27 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
+import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.BeanMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -35,6 +45,8 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     private RevealStrategy revealStrategy;
     private ApplicationMetaData propertyMetaData;
     private EndpointRegistry endpointRegistry;
+    private EntityAdapter<WebServiceProvider> providerAdapter;
+    private BeanMetaData beanMeta;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebServicePresenter)
@@ -44,6 +56,8 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     public interface MyView extends View {
         void setPresenter(WebServicePresenter presenter);
         void updateEndpoints(List<WebServiceEndpoint> endpoints);
+
+        void setProvider(WebServiceProvider webServiceProvider);
     }
 
     @Inject
@@ -51,15 +65,21 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
-            ApplicationMetaData propertyMetaData, EndpointRegistry registry) {
+            ApplicationMetaData metaData, EndpointRegistry registry) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.revealStrategy = revealStrategy;
-        this.propertyMetaData = propertyMetaData;
+        this.propertyMetaData = metaData;
         this.endpointRegistry = registry;
+
+        providerAdapter = new EntityAdapter<WebServiceProvider>(
+                WebServiceProvider.class, metaData
+        );
+
+        beanMeta = metaData.getBeanMetaData(WebServiceProvider.class);
     }
 
     @Override
@@ -73,7 +93,35 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     protected void onReset() {
         super.onReset();
 
+        loadProvider();
         loadEndpoints();
+    }
+
+    private void loadProvider() {
+        ModelNode operation = beanMeta.getAddress().asResource(
+                Baseadress.get()
+        );
+
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading Web Service Provider"), response.getFailureDescription());
+                }
+                else
+                {
+                    WebServiceProvider webServiceProvider = providerAdapter.fromDMR(response.get(RESULT));
+                    getView().setProvider(webServiceProvider);
+                }
+            }
+        });
     }
 
     private void loadEndpoints() {
@@ -88,5 +136,9 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
+    }
+
+    public void onSaveProvider(WebServiceProvider entity) {
+
     }
 }

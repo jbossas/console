@@ -106,6 +106,7 @@ import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
+import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceProvider;
 import org.jboss.as.console.client.standalone.StandaloneServer;
 
 
@@ -171,6 +172,7 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<StandaloneServer> standaloneServer();
     AutoBean<WebServiceEndpoint> webServiceEndpoint();
+    AutoBean<WebServiceProvider> WebServiceProvider();
 
     AutoBean<OSGiSubsystem> osgiSubsystem();
     AutoBean<OSGiCapability> osgiCapability();
