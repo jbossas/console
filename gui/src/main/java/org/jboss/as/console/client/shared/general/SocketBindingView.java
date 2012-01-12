@@ -35,6 +35,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -72,7 +73,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     public Widget createWidget() {
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("Socket Binding Groups");
+        FakeTabPanel titleBar = new FakeTabPanel("Socket Binding");
         layout.add(titleBar);
 
         ToolStrip toolstrip = new ToolStrip();
@@ -88,7 +89,9 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
             @Override
             public void onClick(ClickEvent event) {
                 final SocketBinding editedEntity = form.getEditedEntity();
-                Feedback.confirm("Remove Socket Binding", "Really remove socket binding "+editedEntity.getName()+"?",
+                Feedback.confirm(
+                        "Remove Socket Binding",
+                        "Really remove socket binding "+editedEntity.getName()+"?",
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -105,17 +108,10 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Socket Binding Declarations");
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.MESSAGES.available("Socket Bindings"));
 
-        HorizontalPanel horzPanel = new HorizontalPanel();
-        horzPanel.getElement().setAttribute("style", "width:100%;");
-        //Image image = new Image(Icons.INSTANCE.deployment());
-        //horzPanel.add(image);
-        //image.getElement().getParentElement().setAttribute("width", "25");
-
-        horzPanel.add(nameLabel);
-
-        panel.add(horzPanel);
+        panel.add(nameLabel);
+        panel.add(new ContentDescription(Console.CONSTANTS.common_socket_bindings_desc()));
 
         socketTable = new SocketTable();
 
@@ -184,7 +180,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         detailToolStrip.providesDeleteOp(false);
 
-        panel.add(new ContentGroupLabel("Socket Binding"));
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
 
         panel.add(detailToolStrip.asWidget());
         // ---

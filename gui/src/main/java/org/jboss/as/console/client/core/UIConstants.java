@@ -515,4 +515,6 @@ public interface UIConstants extends Constants {
     String interfaces_err_not_set();
 
     String interfaces_desc();
+
+    String common_socket_bindings_desc();
 }
