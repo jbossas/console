@@ -127,7 +127,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
 
     public void launchNewPropertyDialoge(String group) {
 
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -138,7 +138,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
         });
 
         propertyWindow.setWidget(
-                new NewPropertyWizard(this, group).asWidget()
+                new NewPropertyWizard(this, group, true).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);
@@ -162,7 +162,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Created property " + prop.getKey());
+                Console.info(Console.MESSAGES.added("Property " + prop.getKey()));
                 loadProperties();
             }
         });
@@ -178,7 +178,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed property "+prop.getKey());
+                Console.info(Console.MESSAGES.deleted("Property " + prop.getKey()));
                 loadProperties();
             }
         });

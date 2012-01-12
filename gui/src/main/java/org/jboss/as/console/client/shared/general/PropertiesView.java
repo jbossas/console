@@ -26,6 +26,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 
@@ -44,14 +45,9 @@ public class PropertiesView extends DisposableViewImpl implements PropertiesPres
     public Widget createWidget() {
 
         LayoutPanel layout = new RHSContentPanel("System Properties");
-        layout.add(new ContentHeaderLabel("Property Declarations"));
+        layout.add(new ContentHeaderLabel("System Properties"));
 
-        if(!Console.MODULES.getAppProperties().isStandalone())
-        {
-            HTML description = new HTML("These properties will be inherited by any subresource in the domain (i.e. server-groups)");
-            description.getElement().setAttribute("style", "margin-bottom:15px;");
-            layout.add(description);
-        }
+        layout.add(new ContentDescription(Console.CONSTANTS.properties_global_desc()));
 
         propertyEditor = new PropertyEditor(presenter, Console.MODULES.getBootstrapContext().isStandalone(), 20);
         layout.add(propertyEditor.asWidget());
