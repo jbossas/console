@@ -107,7 +107,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setJvm(String reference, Jvm jvm);
         void setProperties(String reference, List<PropertyRecord> properties);
         void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
-        void setConfigurations(String selectedHost, List<Server> servers);
+        void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName);
     }
 
     @Inject
@@ -167,12 +167,12 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 getView().updateSocketBindings(result);
 
                 // step2
-                loadServerConfigurations();
+                loadServerConfigurations(null);
             }
         });
     }
 
-    private void loadServerConfigurations() {
+    private void loadServerConfigurations(final String selectedConfigName) {
 
         if(!hostSelection.isSet())
             throw new RuntimeException("Host selection not set!");
@@ -181,7 +181,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
             @Override
             public void onSuccess(List<Server> result) {
-                getView().setConfigurations(hostSelection.getName(), result);
+                getView().setConfigurations(hostSelection.getName(), result, selectedConfigName);
             }
         });
 
@@ -197,7 +197,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void onHostSelection(String hostName) {
 
         if(isVisible())
-            loadServerConfigurations();
+            loadServerConfigurations(null);
     }
 
     public void launchNewConfigDialoge() {
@@ -240,6 +240,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
         // close popup
         closeDialoge();
+        final String newServerName = newServer.getName();
+
 
         hostInfoStore.createServerConfig(getSelectedHost(), newServer, new AsyncCallback<Boolean>() {
             @Override
@@ -257,7 +259,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                         }
                     });
 
-                    loadServerConfigurations();
+                    loadServerConfigurations(newServerName);
 
                 } else {
                     closeDialoge();
@@ -298,7 +300,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 public void onFailure(Throwable caught) {
                     // log and reset when something fails
                     Console.error("Failed to modify server-config " +name);
-                    loadServerConfigurations();
+                    loadServerConfigurations(null);
                 }
 
                 @Override
@@ -312,7 +314,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                         Console.error("Failed to modify server-config " +name);
                     }
 
-                    loadServerConfigurations();
+                    loadServerConfigurations(name);
                 }
             });
 
@@ -374,7 +376,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
 
-                    loadServerConfigurations();
+                    loadServerConfigurations(null);
                 }
                 else
                 {
@@ -397,12 +399,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
+        final String selectedConfigName = reference;
 
         CreateJvmCmd cmd = new CreateJvmCmd(dispatcher, factory, address);
         cmd.execute(jvm, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations();
+                loadServerConfigurations(selectedConfigName);
             }
         });
     }
@@ -414,12 +417,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add(JVM, jvm.getName());
+        final String selectedConfigName = reference;
 
         DeleteJvmCmd cmd = new DeleteJvmCmd(dispatcher, factory, address);
         cmd.execute(new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations();
+                loadServerConfigurations(selectedConfigName);
             }
         });
 
@@ -434,12 +438,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             address.add("host", hostSelection.getName());
             address.add("server-config", reference);
             address.add(JVM, jvmName);
+            final String selectedConfigName = reference;
 
             UpdateJvmCmd cmd = new UpdateJvmCmd(dispatcher, factory, propertyMetaData, address);
             cmd.execute(changedValues, new SimpleCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
-                    loadServerConfigurations();
+                    loadServerConfigurations(selectedConfigName);
                 }
             });
         }
@@ -456,12 +461,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
+        final String selectedConfigName = reference;
 
         CreatePropertyCmd cmd = new CreatePropertyCmd(dispatcher, factory, address);
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations();
+                loadServerConfigurations(selectedConfigName);
             }
         });
     }
@@ -473,12 +479,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         address.add("host", hostSelection.getName());
         address.add("server-config", reference);
         address.add("system-property", prop.getKey());
+        final String selectedConfigName = reference;
 
         DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher,factory,address);
         cmd.execute(prop, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadServerConfigurations();
+                loadServerConfigurations(selectedConfigName);
             }
         });
     }

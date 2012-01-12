@@ -255,14 +255,28 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     }
 
     @Override
-    public void setConfigurations(String selectedHost, List<Server> servers) {
+    public void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName) {
         serverConfigProvider.setList(servers);
 
         if(!servers.isEmpty())
         {
-            getSelectionModel().setSelected(servers.get(0), true);
+        	if(selectedConfigName == null || selectedConfigName.equals("")) {
+        		getSelectionModel().setSelected(servers.get(0), true);
+        	}
+        	else {
+        		getSelectionModel().setSelected(findSelectedServer(servers, selectedConfigName), true);
+        	}
         }
 
     }
+    
+    private Server findSelectedServer(List<Server> servers,String name){
+    	for (Server server : servers) {
+			if(server.getName().equals(name)) {
+				return server;
+			}
+		}
+    	return servers.get(0);	
+    } 
 
 }
