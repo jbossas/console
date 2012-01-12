@@ -44,8 +44,8 @@ import org.jboss.as.console.client.shared.general.wizard.NewSocketGroupWizard;
 import org.jboss.as.console.client.shared.general.wizard.NewSocketWizard;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
@@ -182,9 +182,9 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
-                    Console.info("Success: Updated socket binding "+name);
+                    Console.info(Console.MESSAGES.modified("Socket Binding "+name));
                 else
-                    Console.error("Failed: Update socket binding "+name, response.toString());
+                    Console.error(Console.MESSAGES.modificationFailed("Socket Binding " + name), response.getFailureDescription());
 
                 loadBindings(group);
             }
@@ -208,9 +208,9 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
-                    Console.info("Success: remove socket binding " + editedEntity.getName());
+                    Console.info(Console.MESSAGES.deleted("Socket binding " + editedEntity.getName()));
                 else
-                    Console.error("Error: Failed to remove socket binding", response.toString());
+                    Console.error(Console.MESSAGES.deletionFailed("Socket binding " + editedEntity.getName()), response.getFailureDescription());
 
                 reload();
             }
@@ -218,7 +218,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     public void launchNewSocketDialogue() {
-        window = new DefaultWindow("New Socket Binding");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Socket Binding"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -247,9 +247,9 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(ModelAdapter.wasSuccess(response))
-                    Console.info("Success: Created socket binding "+socketBinding.getName());
+                    Console.info(Console.MESSAGES.added("Socket Binding "+socketBinding.getName()));
                 else
-                    Console.error("Error: Failed to created socket binding " + socketBinding.getName(), response.toString());
+                    Console.error(Console.MESSAGES.addingFailed("Socket Binding " + socketBinding.getName()), response.getFailureDescription());
 
                 reload();
             }
