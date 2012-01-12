@@ -119,10 +119,12 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel(Console.MESSAGES.available("Socket Bindings"));
+        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Socket Bindings");
 
         panel.add(nameLabel);
         panel.add(new ContentDescription(Console.CONSTANTS.common_socket_bindings_desc()));
+
+        panel.add(new ContentGroupLabel(Console.MESSAGES.available("Socket Bindings")));
 
         socketTable = new SocketTable();
 

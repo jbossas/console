@@ -101,7 +101,8 @@ public class InterfaceEditor {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        panel.add(new ContentHeaderLabel(Console.MESSAGES.available("Network Interfaces")));
+        panel.add(new ContentHeaderLabel("Network Interfaces"));
+        panel.add(new ContentGroupLabel(Console.MESSAGES.available("Interfaces")));
 
         if(description!=null)
             panel.add(new ContentDescription(description));

@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
@@ -60,21 +61,21 @@ public class LHSStandaloneNavigation {
 
         subsysTree = new LHSNavTree("profiles");
 
-        DisclosurePanel subsysPanel  = new DisclosureStackPanel("Profile", true).asWidget();
+        DisclosurePanel subsysPanel  = new DisclosureStackPanel(Console.CONSTANTS.common_label_profile(), true).asWidget();
         subsysPanel.setContent(subsysTree);
         stack.add(subsysPanel);
 
         // ----------------------------------------------------
 
         Tree commonTree = new LHSNavTree("profiles");
-        DisclosurePanel commonPanel  = new DisclosureStackPanel("General Configuration").asWidget();
+        DisclosurePanel commonPanel  = new DisclosureStackPanel(Console.CONSTANTS.common_label_generalConfig()).asWidget();
         commonPanel.setContent(commonTree);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
                 /*new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter),*/
-                new LHSNavTreeItem("Interfaces", NameTokens.InterfacePresenter),
-                new LHSNavTreeItem("Socket Binding Groups", NameTokens.SocketBindingPresenter),
-                new LHSNavTreeItem("System Properties", NameTokens.PropertiesPresenter)
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), NameTokens.InterfacePresenter),
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBinding(), NameTokens.SocketBindingPresenter),
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), NameTokens.PropertiesPresenter)
         };
 
         for(LHSNavTreeItem item : commonItems)
