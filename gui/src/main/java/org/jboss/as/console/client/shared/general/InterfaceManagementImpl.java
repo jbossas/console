@@ -60,7 +60,7 @@ public class InterfaceManagementImpl implements InterfaceManagement {
 
     @Override
     public void launchNewInterfaceDialogue() {
-        window = new DefaultWindow("New Interface Declaration");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Network Interface"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -104,20 +104,18 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         else if(entity.isAnyIP6Address())
             operation.get("any-ip6-address").set(true);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
-                    Console.info("Success: Create interface " + entity.getName());
+                    Console.info(Console.MESSAGES.added("Network Interface"));
                 }
                 else
                 {
-                    Console.error("Error: Failed to create interface " + entity.getName(),
-                            response.get("failure-description").asString());
+                    Console.error(Console.MESSAGES.addingFailed("Network Interface"),
+                            response.getFailureDescription());
                 }
 
                 loadInterfaces();
@@ -143,12 +141,12 @@ public class InterfaceManagementImpl implements InterfaceManagement {
                 ModelNode response = dmrResponse.get();
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
-                    Console.info("Success: Removed interface "+entity.getName());
+                    Console.info(Console.MESSAGES.deleted("Network Interface"));
                 }
                 else
                 {
-                    Console.error("Error: Failed to remove interface " + entity.getName(),
-                            response.get("failure-description").asString());
+                    Console.error(Console.MESSAGES.deletionFailed("Network Interface"),
+                            response.getFailureDescription());
                 }
 
                 loadInterfaces();
@@ -242,12 +240,12 @@ public class InterfaceManagementImpl implements InterfaceManagement {
 
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
-                    Console.info("Success: Update interface "+entity.getName());
+                    Console.info(Console.MESSAGES.modified("Network Interface"));
                 }
                 else
                 {
-                    Console.error("Error: Failed to update interface " + entity.getName(),
-                            response.get("failure-description").asString());
+                    Console.error(Console.MESSAGES.modificationFailed("Network Interface"),
+                            response.getFailureDescription());
                 }
 
                 loadInterfaces();

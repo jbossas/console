@@ -495,4 +495,24 @@ public interface UIConstants extends Constants {
     String common_label_setDefault();
 
     String common_serverGroups_desc();
+
+    String interfaces_err_inetAddress_set();
+
+    String interfaces_err_wildcard_nor_address_set();
+
+    String interfaces_err_wildcard_set();
+
+    String interfaces_err_loopback_set();
+
+    String interfaces_err_loopback_nor_address_set();
+
+    String interfaces_err_loopback_address_set();
+
+    String interfaces_err_nic_set();
+
+    String interfaces_err_nicmatch_set();
+
+    String interfaces_err_not_set();
+
+    String interfaces_desc();
 }

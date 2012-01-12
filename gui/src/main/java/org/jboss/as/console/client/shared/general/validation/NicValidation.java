@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.general.validation;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.model.Interface;
 
 import java.util.Map;
@@ -66,7 +67,7 @@ class NicValidation extends AbstractValidationStep<Interface> {
         });
 
         tree.no(2, 4, "Success: Nic", SUCCESS);
-        tree.yes(2, 5, "When Nic is set, no other values are allowed!", FAILURE);
+        tree.yes(2, 5, Console.CONSTANTS.interfaces_err_nic_set(), FAILURE);
 
 
         tree.yes(3, 6, "Anything conflicts with Nic Match?", new Decision<Interface>() {
@@ -79,7 +80,7 @@ class NicValidation extends AbstractValidationStep<Interface> {
         });
         tree.no(3, 7, "Failure: Neither Nic nor Nic Match set", FAILURE);
 
-        tree.yes(6, 8, "When Nic Match is set, no other values are allowed!", FAILURE);
+        tree.yes(6, 8, Console.CONSTANTS.interfaces_err_nicmatch_set(), FAILURE);
         tree.no(6, 9, "Success: Nic Match", SUCCESS);
 
         return tree;

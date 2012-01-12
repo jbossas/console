@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.general.validation;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.model.Interface;
 
 import java.util.Map;
@@ -66,7 +67,7 @@ class LoopbackValidation extends AbstractValidationStep<Interface> {
         });
 
         tree.no(2, 4, "Success: Loopback", SUCCESS);
-        tree.yes(2, 5, "When Loopback is set, no other values are allowed!", FAILURE);
+        tree.yes(2, 5, Console.CONSTANTS.interfaces_err_loopback_set(), FAILURE);
 
 
         tree.yes(3, 6, "Anything conflicts with Loopback Address?", new Decision<Interface>() {
@@ -77,9 +78,9 @@ class LoopbackValidation extends AbstractValidationStep<Interface> {
                 return !isEmpty(properties);
             }
         });
-        tree.no(3, 7, "Failure: Neither Loopback nor Loopback address set", FAILURE);
+        tree.no(3, 7, Console.CONSTANTS.interfaces_err_loopback_nor_address_set(), FAILURE);
 
-        tree.yes(6, 8, "When Loopback address is set, no other values are allowed!", FAILURE);
+        tree.yes(6, 8, Console.CONSTANTS.interfaces_err_loopback_address_set(), FAILURE);
         tree.no(6, 9, "Success: Loopback address", SUCCESS);
 
         return tree;

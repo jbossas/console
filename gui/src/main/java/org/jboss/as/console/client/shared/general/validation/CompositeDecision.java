@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.general.validation;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.model.Interface;
 
 import java.util.LinkedList;
@@ -140,7 +141,7 @@ public class CompositeDecision extends AbstractValidationStep<Interface>{
                 return result.isValid();
             }
         });
-        tree.no(13, 17, "No interface criteria specified!", FAILURE);
+        tree.no(13, 17, Console.CONSTANTS.interfaces_err_not_set(), FAILURE);
 
         tree.yes(16, 18, "Other criteria is valid.", SUCCESS);
         tree.no(16, 19, "Invalid other criteria!", FAILURE);

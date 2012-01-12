@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.model.Interface;
 
@@ -35,7 +36,7 @@ public class InterfaceView extends DisposableViewImpl implements InterfacePresen
 
     public InterfaceView() {
         this.editor = new InterfaceEditor("Interfaces");
-        this.editor.setDescription("A named network interface, along with required criteria for determining the IP address to associate with that interface.");
+        this.editor.setDescription(Console.CONSTANTS.interfaces_desc());
     }
 
     @Override

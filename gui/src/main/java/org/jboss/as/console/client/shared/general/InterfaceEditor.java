@@ -81,8 +81,9 @@ public class InterfaceEditor {
             public void onClick(ClickEvent event) {
 
                 final Interface editedEntity = form.getEditedEntity();
-                Feedback.confirm("Remove Interface Declaration",
-                        "Really remove interface " + editedEntity.getName() + "?",
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Interface"),
+                        Console.MESSAGES.deleteConfirm("Interface " + editedEntity.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -100,7 +101,7 @@ public class InterfaceEditor {
         VerticalPanel panel = new VerticalPanel();
         panel.setStyleName("rhs-content-panel");
 
-        panel.add(new ContentHeaderLabel("Interface Declarations"));
+        panel.add(new ContentHeaderLabel(Console.MESSAGES.available("Network Interfaces")));
 
         if(description!=null)
             panel.add(new ContentDescription(description));
@@ -119,7 +120,7 @@ public class InterfaceEditor {
         panel.add(table);
 
 
-        panel.add(new ContentGroupLabel("Interface"));
+        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
 
         form.setNumColumns(2);
 
@@ -159,7 +160,7 @@ public class InterfaceEditor {
 
 
         form.setFieldsInGroup(
-                "Other Criteria",
+                Console.CONSTANTS.common_label_advanced(),
                 new DisclosureGroupRenderer(),
                 up, virtual,
                 publicAddress, siteLocalAddress,

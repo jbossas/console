@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.general.validation;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.model.Interface;
 
 import java.util.Map;
@@ -66,7 +67,7 @@ class AddressValidation extends AbstractValidationStep<Interface> {
             }
         });
 
-        tree.yes(2, 4, "When Inet address is set, no other values are possible.", FAILURE);
+        tree.yes(2, 4, Console.CONSTANTS.interfaces_err_inetAddress_set(), FAILURE);
         tree.no(2, 5, "Valid Inet address", SUCCESS);
 
 
@@ -79,10 +80,10 @@ class AddressValidation extends AbstractValidationStep<Interface> {
                 return !isEmpty(properties);
             }
         });
-        tree.no(3, 7, "Neither Inet address nor wildcard set!", FAILURE);
+        tree.no(3, 7, Console.CONSTANTS.interfaces_err_wildcard_nor_address_set(), FAILURE);
 
 
-        tree.yes(6, 8, "When address wildcard is set, no other values are possible.", FAILURE);
+        tree.yes(6, 8, Console.CONSTANTS.interfaces_err_wildcard_set(), FAILURE);
         tree.no(6, 9, "Valid Address Wildcard", SUCCESS);
 
         return tree;
