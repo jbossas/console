@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.general;
+package org.jboss.as.console.client.shared.general.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -6,6 +6,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.general.InterfaceManagement;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
@@ -32,7 +33,7 @@ public class NewInterfaceWizard {
         this.presenter = presenter;
     }
 
-    Widget asWidget() {
+    public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 

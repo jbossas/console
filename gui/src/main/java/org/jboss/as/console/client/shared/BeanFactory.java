@@ -31,6 +31,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.general.model.SocketGroup;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.model.HeapMetric;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
@@ -156,6 +157,7 @@ public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();
+    AutoBean<SocketGroup> socketGroup();
     AutoBean<DeploymentReference> deploymentReference();
 
     AutoBean<CommonSettings> settings();

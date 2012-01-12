@@ -517,4 +517,6 @@ public interface UIConstants extends Constants {
     String interfaces_desc();
 
     String common_socket_bindings_desc();
+
+    String common_label_newGroup();
 }

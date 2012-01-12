@@ -35,8 +35,13 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
+import org.jboss.as.console.client.shared.general.model.SocketGroup;
+import org.jboss.as.console.client.shared.general.wizard.NewSocketGroupWizard;
+import org.jboss.as.console.client.shared.general.wizard.NewSocketWizard;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -64,6 +69,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private List<String> bindingGroups;
     private ApplicationMetaData metaData;
     private EntityAdapter<SocketBinding> entityAdapter;
+    private LoadInterfacesCmd loadInterfacesCmd;
+    private EntityAdapter<SocketGroup> socketGroupAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -92,6 +99,11 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         this.metaData = propertyMetaData;
 
         this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
+        this.socketGroupAdapter = new EntityAdapter<SocketGroup>(SocketGroup.class, metaData);
+
+        ModelNode address = new ModelNode();
+        address.setEmptyList();
+        loadInterfacesCmd = new LoadInterfacesCmd(dispatcher, address, metaData);
     }
 
     @Override
@@ -253,5 +265,48 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     public void closeDialoge() {
         window.hide();
+    }
+
+    public void launchNewGroupDialogue() {
+
+
+        loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
+            @Override
+            public void onSuccess(List<Interface> result) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
+                window.setWidth(480);
+                window.setHeight(400);
+
+                window.setWidget(
+                        new NewSocketGroupWizard(SocketBindingPresenter.this, result).asWidget()
+                );
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+    }
+
+    public void createNewSocketGroup(SocketGroup newGroup) {
+        /*closeDialoge();
+
+        ModelNode operation = socketGroupAdapter.fromEntity(newGroup);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("socket-binding-group", newGroup.getName());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info("Success: Created socket binding "+socketBinding.getName());
+                else
+                    Console.error("Error: Failed to created socket binding " + socketBinding.getName(), response.toString());
+
+                reload();
+            }
+        });*/
+
+
     }
 }

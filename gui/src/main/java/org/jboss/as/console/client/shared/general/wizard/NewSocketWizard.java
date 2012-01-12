@@ -1,9 +1,10 @@
-package org.jboss.as.console.client.shared.general;
+package org.jboss.as.console.client.shared.general.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.general.SocketBindingPresenter;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -31,7 +32,7 @@ public class NewSocketWizard {
         this.bindingGroups = bindingGroups;
     }
 
-    Widget asWidget() {
+    public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
@@ -90,7 +91,7 @@ public class NewSocketWizard {
                     @Override
                     public ModelNode getAddress() {
                         ModelNode address = new ModelNode();
-                        address.add("socket-binding-group", "standard-sockets");
+                        address.add("socket-binding-group", "*");
                         address.add("socket-binding", "*");
                         return address;
                     }

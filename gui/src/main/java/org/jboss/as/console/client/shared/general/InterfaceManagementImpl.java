@@ -11,6 +11,7 @@ import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.validation.CompositeDecision;
 import org.jboss.as.console.client.shared.general.validation.DecisionTree;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
+import org.jboss.as.console.client.shared.general.wizard.NewInterfaceWizard;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;

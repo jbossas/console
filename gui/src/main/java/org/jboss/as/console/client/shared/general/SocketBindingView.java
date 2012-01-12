@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.general;
 
-import com.gargoylesoftware.htmlunit.ConfirmHandler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -90,8 +89,8 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
             public void onClick(ClickEvent event) {
                 final SocketBinding editedEntity = form.getEditedEntity();
                 Feedback.confirm(
-                        "Remove Socket Binding",
-                        "Really remove socket binding "+editedEntity.getName()+"?",
+                        Console.MESSAGES.deleteTitle("Socket Binding"),
+                        Console.MESSAGES.deleteConfirm("Socket Binding " + editedEntity.getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -101,6 +100,18 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                         });
             }
         }));
+
+        /*
+
+        TODO: this is more complex then I thought...
+        toolstrip.addToolButtonRight(
+                new ToolButton(Console.CONSTANTS.common_label_newGroup(), new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        presenter.launchNewGroupDialogue();
+                    }
+                }));
+          */
 
         layout.add(toolstrip);
 
