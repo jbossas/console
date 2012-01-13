@@ -46,6 +46,7 @@ public class ProfileStoreImpl implements ProfileStore {
     private BeanFactory factory;
     private ModelNode operation;
     private CurrentProfileSelection currentProfile;
+    private List<ProfileRecord> cachedRecords = null;
 
     @Inject
     public ProfileStoreImpl(DispatchAsync dispatcher, BeanFactory factory, CurrentProfileSelection currentProfile) {
@@ -62,27 +63,36 @@ public class ProfileStoreImpl implements ProfileStore {
     @Override
     public void loadProfiles(final AsyncCallback<List<ProfileRecord>> callback) {
 
-        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
-                List<ModelNode> payload = response.get("result").asList();
-
-                List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());
-                for(int i=0; i<payload.size(); i++)
-                {
-                    ProfileRecord record = factory.profile().as();
-                    record.setName(payload.get(i).asString());
-                    records.add(record);
+        if(null==this.cachedRecords)
+        {
+            dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    callback.onFailure(caught);
                 }
 
-                callback.onSuccess(records);
-            }
-        });
+                @Override
+                public void onSuccess(DMRResponse result) {
+                    ModelNode response = result.get();
+                    List<ModelNode> payload = response.get("result").asList();
+
+                    List<ProfileRecord> records = new ArrayList<ProfileRecord>(payload.size());
+                    for(int i=0; i<payload.size(); i++)
+                    {
+                        ProfileRecord record = factory.profile().as();
+                        record.setName(payload.get(i).asString());
+                        records.add(record);
+                    }
+
+                    ProfileStoreImpl.this.cachedRecords = records;
+                    callback.onSuccess(records);
+                }
+            });
+        }
+        else
+        {
+            // provide cached results
+            callback.onSuccess(cachedRecords);
+        }
     }
 }

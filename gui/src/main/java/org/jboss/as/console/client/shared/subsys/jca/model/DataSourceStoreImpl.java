@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -40,6 +41,7 @@ import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +107,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response  = result.get();
-                List<DataSource> datasources = dataSourceAdapter.fromDMRList(response.get(RESULT).asList());
-                callback.onSuccess(datasources);
+
+                if(response.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
+                {
+                    List<DataSource> datasources = dataSourceAdapter.fromDMRList(response.get(RESULT).asList());
+                    callback.onSuccess(datasources);
+                }
             }
         });
     }
@@ -123,8 +133,16 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response  = result.get();
-                List<XADataSource> datasources = xaDataSourceAdapter.fromDMRList(response.get(RESULT).asList());
-                callback.onSuccess(datasources);
+
+                if(response.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
+                {
+                    List<XADataSource> datasources = xaDataSourceAdapter.fromDMRList(response.get(RESULT).asList());
+                    callback.onSuccess(datasources);
+                }
 
             }
         });

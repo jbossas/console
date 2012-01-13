@@ -74,7 +74,7 @@ class SubsystemSection {
 
         subsysTree.removeItems();
 
-        SubsystemTreeBuilder.build("domain/profile/", subsysTree, subsystems);
+        SubsystemTreeBuilder.build("profiles/", subsysTree, subsystems);
     }
 
     public void setProfiles(List<String> profileNames) {

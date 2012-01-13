@@ -203,19 +203,26 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
-                ModelNode jspCfg  = config.get("jsp-configuration").asObject();
-                //ModelNode staticCfg = config.get("static-resources").asObject();
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("JSP Configuration"), response.getFailureDescription());
+                }
+                else
+                {
+                    ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
+                    ModelNode jspCfg  = config.get("jsp-configuration").asObject();
+                    //ModelNode staticCfg = config.get("static-resources").asObject();
 
-                JSPContainerConfiguration jspConfig = factory.jspConfig().as();
-                jspConfig.setDisabled(jspCfg.get("disabled").asBoolean());
-                jspConfig.setCheckInterval(jspCfg.get("check-interval").asInt());
-                jspConfig.setDevelopment(jspCfg.get("development").asBoolean());
-                jspConfig.setDisplaySource(jspCfg.get("display-source-fragment").asBoolean());
-                jspConfig.setKeepGenerated(jspCfg.get("keep-generated").asBoolean());
-                jspConfig.setRecompile(jspCfg.get("recompile-on-fail").asBoolean());
+                    JSPContainerConfiguration jspConfig = factory.jspConfig().as();
+                    jspConfig.setDisabled(jspCfg.get("disabled").asBoolean());
+                    jspConfig.setCheckInterval(jspCfg.get("check-interval").asInt());
+                    jspConfig.setDevelopment(jspCfg.get("development").asBoolean());
+                    jspConfig.setDisplaySource(jspCfg.get("display-source-fragment").asBoolean());
+                    jspConfig.setKeepGenerated(jspCfg.get("keep-generated").asBoolean());
+                    jspConfig.setRecompile(jspCfg.get("recompile-on-fail").asBoolean());
 
-                getView().setJSPConfig(jspConfig);
+                    getView().setJSPConfig(jspConfig);
+                }
             }
         });
 

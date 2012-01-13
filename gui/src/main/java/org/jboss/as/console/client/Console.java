@@ -33,6 +33,7 @@ import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
+import org.jboss.as.console.client.core.bootstrap.EagerLoadProfiles;
 import org.jboss.as.console.client.core.bootstrap.ExecutionMode;
 import org.jboss.as.console.client.core.bootstrap.LoadMainApp;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
@@ -88,6 +89,7 @@ public class Console implements EntryPoint {
                 BootstrapProcess bootstrap = new BootstrapProcess();
 
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
+                bootstrap.addHook(new EagerLoadProfiles());
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
                 bootstrap.addHook(new LoadMainApp());
 

@@ -28,6 +28,9 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.core.message.MessageCenter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 2/4/11
@@ -35,13 +38,15 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 public class DefaultPlaceManager extends PlaceManagerImpl {
 
     private MessageCenter messageCenter;
+    private BootstrapContext bootstrap;
 
     @Inject
     public DefaultPlaceManager(
             EventBus eventBus,
-            TokenFormatter tokenFormatter, MessageCenter messageCenter ) {
+            TokenFormatter tokenFormatter, MessageCenter messageCenter, BootstrapContext bootstrap ) {
         super(eventBus, tokenFormatter);
         this.messageCenter = messageCenter;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -52,7 +57,11 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
     }
 
     public void revealDefaultPlace() {
-        revealPlace( new PlaceRequest(NameTokens.mainLayout) );
+
+        List<PlaceRequest> places = new ArrayList<PlaceRequest>();
+        places.add(bootstrap.getDefaultPlace());
+
+        revealPlaceHierarchy(places);
     }
 
     @Override

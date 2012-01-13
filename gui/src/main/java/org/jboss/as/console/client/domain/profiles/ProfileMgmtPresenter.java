@@ -100,10 +100,12 @@ public class ProfileMgmtPresenter
     }
 
 
+
     @Override
     protected void onReveal() {
 
         super.onReveal();
+
         if(!hasBeenRevealed)
         {
             hasBeenRevealed = true;
@@ -131,17 +133,6 @@ public class ProfileMgmtPresenter
                 }
             });
 
-            /*if(NameTokens.ProfileMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
-            {
-                Timer t = new Timer() {
-                    @Override
-                    public void run() {
-                        revealDefaultSubsystem(result);
-                    }
-                };
-
-                t.schedule(250);
-            } */
         }
     }
 
@@ -161,7 +152,7 @@ public class ProfileMgmtPresenter
                 NameTokens.DataSourcePresenter, existingSubsystems
         );
 
-        placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem[1]));
+        placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
 
         Timer t = new Timer() {
             @Override
@@ -182,11 +173,12 @@ public class ProfileMgmtPresenter
         t.schedule(500);
     }
 
+
+
     @Override
     protected void onReset() {
         super.onReset();
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
-
     }
 
     @Override
@@ -205,12 +197,17 @@ public class ProfileMgmtPresenter
     public void onProfileSelection(String profileName) {
 
         profileSelection.setName(profileName);
+
         subsysStore.loadSubsystems(profileName, new SimpleCallback<List<SubsystemRecord>>() {
             @Override
             public void onSuccess(List<SubsystemRecord> result) {
                 getView().setSubsystems(result);
-                revealDefaultSubsystem(result);
+
+                if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.ProfileMgmtPresenter))
+                    revealDefaultSubsystem(result);
+
             }
         });
+
     }
 }

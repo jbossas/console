@@ -68,13 +68,13 @@ public class MainLayoutPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        if(revealDefault && request.getNameToken().equals(NameTokens.mainLayout))
+        /*if(revealDefault && request.getNameToken().equals(NameTokens.mainLayout))
         {
             revealDefault = false;
             Console.MODULES.getPlaceManager().revealPlace(
                     bootstrap.getDefaultPlace()
             );
-        }
+        } */
     }
 
     @Override

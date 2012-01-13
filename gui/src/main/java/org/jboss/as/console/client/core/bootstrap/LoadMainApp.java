@@ -3,9 +3,12 @@ package org.jboss.as.console.client.core.bootstrap;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+
+import java.util.List;
 
 /**
  *
@@ -24,12 +27,16 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
         System.out.println("init from: " +initialToken);
 
         PlaceManager placeManager = Console.MODULES.getPlaceManager();
-        TokenFormatter fromatter = Console.MODULES.getTokenFormatter();
+        TokenFormatter formatter = Console.MODULES.getTokenFormatter();
 
         if(!initialToken.isEmpty())
-            placeManager.revealPlaceHierarchy(fromatter.toPlaceRequestHierarchy(initialToken));
-        else
+        {
+            List<PlaceRequest> hierarchy = formatter.toPlaceRequestHierarchy(initialToken);
+            placeManager.revealPlace(hierarchy.get(hierarchy.size()-1), true);
+        }
+        else {
             placeManager.revealDefaultPlace();
+        }
 
         callback.onSuccess(Boolean.TRUE);
     }

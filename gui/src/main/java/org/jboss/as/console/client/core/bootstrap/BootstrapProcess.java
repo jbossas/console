@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.core.bootstrap;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
@@ -30,7 +31,7 @@ public class BootstrapProcess {
             final AsyncCommand nextHook = hooks.get(index);
             index++;
 
-            //System.out.println(index+": "+nextHook.getClass().getName());
+            Window.setStatus(index + ": " + nextHook.getClass().getName());
 
             nextHook.execute(new AsyncCallback<Boolean>() {
                 @Override
@@ -51,5 +52,7 @@ public class BootstrapProcess {
                 }
             });
         }
+
+        Window.setStatus("");
     }
 }

@@ -96,6 +96,8 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         matchCurrent = NameTokens.serverConfig.equals(request.getNameToken());
     }
 
+
+
     @Override
     protected void onReset() {
         super.onReset();
@@ -145,6 +147,11 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
             hasBeenRevealed = true;
         }
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
     }
 
     @Override
