@@ -41,6 +41,7 @@ import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.MainLayoutViewImpl;
+import org.jboss.as.console.client.core.NewTokenFormatter;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -217,7 +218,11 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
         bind(PlaceManager.class).to(DefaultPlaceManager.class).in(Singleton.class);
-        bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
+
+        // see http://code.google.com/p/gwt-platform/issues/detail?id=381
+        //bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
+        bind(TokenFormatter.class).to(NewTokenFormatter.class).in(Singleton.class);
+
         bind(RootPresenter.class).asEagerSingleton();
         //bind(ProxyFailureHandler.class).to(DefaultProxyFailureHandler.class).in(Singleton.class);
         bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
