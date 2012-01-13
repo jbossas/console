@@ -52,6 +52,8 @@ public interface UIMessages extends Messages {
     String removePropertyConfirm(String key);
 
     String common_validation_requiredField();
+    
+    String common_validation_heapSize();
 
     String mustBeDeployableArchive(String fieldName);
 

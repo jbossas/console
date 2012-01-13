@@ -31,6 +31,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 /**
@@ -47,6 +48,7 @@ public class JvmEditor {
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
+    private final Pattern heapSizeValidationPattern = Pattern.compile("[\\d]{2,4}[mM]");
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -83,8 +85,34 @@ public class JvmEditor {
         panel.add(toolStrip.asWidget());
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
+        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean matchPattern = heapSizeValidationPattern.matcher(value).matches();
+                return hasValue && matchPattern;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return Console.MESSAGES.common_validation_heapSize();
+            }
+        };
+        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean matchPattern = heapSizeValidationPattern.matcher(value).matches();
+                return hasValue && matchPattern;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return Console.MESSAGES.common_validation_heapSize();
+            }
+        };
         //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
