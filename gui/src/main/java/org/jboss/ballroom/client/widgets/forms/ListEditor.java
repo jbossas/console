@@ -41,6 +41,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author Stan Silvert
@@ -57,24 +58,24 @@ public class ListEditor<T extends Comparable> {
     private int numRows;
     private boolean enabled = true;
     private boolean allowEditItems = true;
-    
+
     private String headerLabel;
 
     public ListEditor(ListManagement<T> listManager) {
         this(listManager, 5);
     }
-    
-    
+
+
     public ListEditor(ListManagement<T> listManager, int rows) {
         this(listManager, Console.CONSTANTS.common_label_value(), rows);
     }
-        
+
     public ListEditor(ListManagement<T> listManager, String headerLabel, int rows) {
         this.headerLabel = headerLabel;
         this.listManager = listManager;
         this.numRows = rows;
     }
-    
+
     public void setValueColumnHeader(String headerLabel) {
         this.headerLabel = headerLabel;
     }
@@ -103,8 +104,8 @@ public class ListEditor<T extends Comparable> {
 
         panel.add(itemTools);
 
- //       ColumnSortEvent.ListHandler<T> sortHandler =
- //               new ColumnSortEvent.ListHandler<T>(listProvider.getList());
+        //       ColumnSortEvent.ListHandler<T> sortHandler =
+        //               new ColumnSortEvent.ListHandler<T>(listProvider.getList());
 
         // Create columns
         Column<T, String> valueColumn = new Column<T, String>(new TextCell()) {
@@ -115,13 +116,24 @@ public class ListEditor<T extends Comparable> {
             }
 
         };
-  //      valueColumn.setSortable(true);
+        //      valueColumn.setSortable(true);
 
         Column<T, T> removeCol = new Column<T, T>(
                 new ButtonCell<T>(I18n.CONSTANTS.common_label_remove(), new ActionCell.Delegate<T>() {
                     @Override
-                    public void execute(T o) {
-                        listManager.onDeleteItem(o);
+                    public void execute(final T o) {
+                        Feedback.confirm(
+                                Console.MESSAGES.deleteTitle(Console.CONSTANTS.common_label_item()),
+                                Console.MESSAGES.deleteConfirm(Console.CONSTANTS.common_label_item())
+                                , new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                     listManager.onDeleteItem(o);
+                            }
+                        });
+
+
                     }
                 })
         ) {
@@ -185,16 +197,16 @@ public class ListEditor<T extends Comparable> {
         listTable.setEnabled(enabled && allowEditItems);
         addItem.setEnabled(enabled);
     }
-    
+
     public boolean isEnabled() {
         return this.enabled;
     }
-    
+
     /**
      * If set to false, editor will only allow add and delete, but not
      * in-place editing.
-     * 
-     * @param allowEditItems 
+     *
+     * @param allowEditItems
      */
     public void setAllowEditItems(boolean allowEditItems) {
 
