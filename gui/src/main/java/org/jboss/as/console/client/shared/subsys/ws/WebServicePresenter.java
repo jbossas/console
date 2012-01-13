@@ -144,7 +144,6 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
 
         ModelNode operation = providerAdapter.fromChangeset(changes, address);
 
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
