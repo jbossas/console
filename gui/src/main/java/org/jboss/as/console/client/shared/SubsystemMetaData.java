@@ -99,7 +99,8 @@ public class SubsystemMetaData {
         groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Subsystem", "security", NameTokens.SecuritySubsystemPresenter));
         groups.get(SECURITY).getItems().add(new SubsystemGroupItem("Security Domains", "security", NameTokens.SecurityDomainsPresenter));
 
-        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Framework Configuration", "osgi", NameTokens.OSGiConfigurationPresenter));
+        groups.get(OSGI).getItems().add(new SubsystemGroupItem("Config Admin Service", "configadmin"));
 
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.Infinispan, NameTokens.CacheContainerPresenter));
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Local Caches", NameTokens.Infinispan, NameTokens.LocalCachePresenter));

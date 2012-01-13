@@ -28,6 +28,7 @@ public class NameTokens {
     public static final String mainLayout = "main";
 
     public static final String BoundedQueueThreadPoolPresenter = "threads";
+    public static final String ConfigAdminPresenter = "configadmin";
     public static final String DataSourcePresenter = "datasources";
     public static final String DebugToolsPresenter = "debug-tools";
     public static final String DistributedCachePresenter = "distributed-cache";

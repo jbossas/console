@@ -207,21 +207,22 @@ public interface UIConstants extends Constants {
     String subsys_naming_jndiBindings();
     String subsys_naming_selectedURI();
 
+    String subsys_configadmin();
+    String subsys_configadmin_add();
+    String subsys_configadmin_editPID();
+    String subsys_configadmin_header();
+    String subsys_configadmin_PID();
+    String subsys_configadmin_PIDLabel();
+    String subsys_configadmin_PIDShort();
+    String subsys_configadmin_valueAdd();
+    String subsys_configadmin_valuesLabel();
+
     String subsys_osgi_capabilities();
     String subsys_osgi_capability();
     String subsys_osgi_capabilityAdd();
     String subsys_osgi_capabilityEdit();
     String subsys_osgi_capabilityId();
     String subsys_osgi_capabilityStartLevel();
-    String subsys_osgi_configAdmin();
-    String subsys_osgi_configAdminAdd();
-    String subsys_osgi_configAdminEditPID();
-    String subsys_osgi_configAdminHeader();
-    String subsys_osgi_configAdminPID();
-    String subsys_osgi_configAdminPIDLabel();
-    String subsys_osgi_configAdminPIDShort();
-    String subsys_osgi_configAdminValueAdd();
-    String subsys_osgi_configAdminValuesLabel();
     String subsys_osgi_framework();
     String subsys_osgi_frameworkConfiguration();
     String subsys_osgi_frameworkHeader();

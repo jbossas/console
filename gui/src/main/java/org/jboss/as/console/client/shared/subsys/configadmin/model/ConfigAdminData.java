@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.config.model;
+package org.jboss.as.console.client.shared.subsys.configadmin.model;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 /**
  * @author David Bosschaert
  */
-public interface OSGiConfigAdminData {
+public interface ConfigAdminData {
     String getPid();
     void setPid(String pid);
 

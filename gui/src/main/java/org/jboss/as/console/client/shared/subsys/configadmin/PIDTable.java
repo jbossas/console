@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.config;
+package org.jboss.as.console.client.shared.subsys.configadmin;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
@@ -36,25 +36,25 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
  */
 public class PIDTable {
 
-    private DefaultCellTable<OSGiConfigAdminData> table;
-    private ListDataProvider<OSGiConfigAdminData> dataProvider;
-    private SingleSelectionModel<OSGiConfigAdminData> selectionModel;
+    private DefaultCellTable<ConfigAdminData> table;
+    private ListDataProvider<ConfigAdminData> dataProvider;
+    private SingleSelectionModel<ConfigAdminData> selectionModel;
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        table = new DefaultCellTable<OSGiConfigAdminData>(10);
-        dataProvider = new ListDataProvider<OSGiConfigAdminData>();
+        table = new DefaultCellTable<ConfigAdminData>(10);
+        dataProvider = new ListDataProvider<ConfigAdminData>();
         dataProvider.addDataDisplay(table);
 
-        TextColumn<OSGiConfigAdminData> pidColumn = new TextColumn<OSGiConfigAdminData>() {
+        TextColumn<ConfigAdminData> pidColumn = new TextColumn<ConfigAdminData>() {
             @Override
-            public String getValue(OSGiConfigAdminData pidEntry) {
+            public String getValue(ConfigAdminData pidEntry) {
                 return pidEntry.getPid();
             }
         };
-        table.addColumn(pidColumn, Console.CONSTANTS.subsys_osgi_configAdminPIDShort());
+        table.addColumn(pidColumn, Console.CONSTANTS.subsys_configadmin_PIDShort());
         layout.add(table);
 
         DefaultPager pager = new DefaultPager();
@@ -64,21 +64,21 @@ public class PIDTable {
         return layout;
     }
 
-    void setSelectionModel(SingleSelectionModel<OSGiConfigAdminData> sm) {
+    void setSelectionModel(SingleSelectionModel<ConfigAdminData> sm) {
         table.setSelectionModel(sm);
         selectionModel = sm;
     }
 
-    public OSGiConfigAdminData getSelection() {
+    public ConfigAdminData getSelection() {
         return selectionModel.getSelectedObject();
     }
 
-    public List<OSGiConfigAdminData> getData() {
+    public List<ConfigAdminData> getData() {
         return dataProvider.getList();
     }
 
-    void setData(List<OSGiConfigAdminData> data, String selectPid) {
-        OSGiConfigAdminData sel = selectionModel.getSelectedObject();
+    void setData(List<ConfigAdminData> data, String selectPid) {
+        ConfigAdminData sel = selectionModel.getSelectedObject();
         if (selectPid == null && sel != null)
             selectPid = sel.getPid();
 
@@ -86,7 +86,7 @@ public class PIDTable {
         dataProvider.getList().addAll(data);
 
         if (selectPid != null) {
-            for (OSGiConfigAdminData d : data) {
+            for (ConfigAdminData d : data) {
                 if (d.getPid().equals(selectPid)) {
                     selectionModel.setSelected(d, true);
                     return;
