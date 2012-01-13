@@ -59,7 +59,7 @@ public class NameTokens {
     public static final String SecuritySubsystemPresenter = "security";
     public static final String SettingsPresenter = "settings";
     public static final String SocketBindingPresenter = "socket-bindings";
-    public static final String StandaloneServerPresenter = "standalone-server";
+    public static final String StandaloneServerPresenter = "server-overview";
     public static final String WebPresenter = "web";
     public static final String WebServicePresenter = "webservices";
     public static final String VirtualMachine = "vm";

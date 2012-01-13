@@ -21,12 +21,11 @@ package org.jboss.as.console.client.core;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.History;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
-import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
 
 /**
@@ -36,7 +35,6 @@ import org.jboss.as.console.client.core.message.MessageCenter;
 public class DefaultPlaceManager extends PlaceManagerImpl {
 
     private MessageCenter messageCenter;
-    private boolean discardPlaceRequest = true;
 
     @Inject
     public DefaultPlaceManager(
@@ -49,25 +47,11 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
     @Override
     public void revealErrorPlace(String invalidHistoryToken) {
 
-        // TODO: beware of XSS
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.appendEscaped(invalidHistoryToken);
-
-
-        messageCenter.notify(
-                new Message("Could not reveal: "+builder.toSafeHtml().asString(),
-                        Message.Severity.Fatal)
-        );
-
-        if(discardPlaceRequest)
-        {
-            Log.debug("Discard \"" + invalidHistoryToken + "\". Fallback to default place");
-            revealUnauthorizedPlace(null);
-        }
+        Log.debug("Discard \"" + invalidHistoryToken + "\". Fallback to default place");
+        revealDefaultPlace();
     }
 
     public void revealDefaultPlace() {
-        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.mainLayout) );
     }
 
@@ -75,8 +59,6 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
 
         // TODO: beware of XSS
-
-        discardPlaceRequest = false;
         revealPlace( new PlaceRequest(NameTokens.signInPage) );
     }
 }

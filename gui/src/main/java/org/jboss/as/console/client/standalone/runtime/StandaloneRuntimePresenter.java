@@ -1,7 +1,9 @@
 package org.jboss.as.console.client.standalone.runtime;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -10,6 +12,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -17,8 +20,10 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -76,10 +81,15 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
                 public void onSuccess(List<SubsystemRecord> result) {
-                    System.out.println(result.size()+" subsystems");
                     getView().setSubsystems(result);
                 }
             });
+
+
+            if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.StandaloneRuntimePresenter))
+            {
+                placeManager.revealRelativePlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
+            }
 
             hasBeenRevealed = true;
 
