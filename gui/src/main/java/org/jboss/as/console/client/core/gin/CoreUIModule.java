@@ -55,14 +55,6 @@ import org.jboss.as.console.client.domain.groups.ServerGroupPresenter;
 import org.jboss.as.console.client.domain.groups.ServerGroupView;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview;
 import org.jboss.as.console.client.domain.groups.deployment.DeploymentsPresenter;
-import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
-import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
-import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
-import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
-import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
-import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
-import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
 import org.jboss.as.console.client.domain.hosts.HostMgmtView;
 import org.jboss.as.console.client.domain.hosts.HostVMMetricPresenter;
@@ -109,11 +101,21 @@ import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.shared.model.DeploymentStoreImpl;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.model.SubsystemStoreImpl;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
+import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
+import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresenter;
+import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminView;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerPresenter;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.ScannerView;
 import org.jboss.as.console.client.shared.subsys.ejb3.EEPresenter;
@@ -409,6 +411,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ThreadsPresenter.MyView.class,
                 ThreadsView.class,
                 ThreadsPresenter.MyProxy.class);
+
+        bindPresenter(ConfigAdminPresenter.class,
+                ConfigAdminPresenter.MyView.class,
+                ConfigAdminView.class,
+                ConfigAdminPresenter.MyProxy.class);
 
         bindPresenter(OSGiConfigurationPresenter.class,
                 OSGiConfigurationPresenter.MyView.class,

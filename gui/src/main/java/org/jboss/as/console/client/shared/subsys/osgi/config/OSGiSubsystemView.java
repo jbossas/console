@@ -28,7 +28,6 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 
 /**
@@ -38,19 +37,15 @@ public class OSGiSubsystemView extends SuspendableViewImpl implements OSGiConfig
 
     private OSGiConfigurationPresenter presenter;
     private FrameworkEditor frameworkEditor;
-    private ConfigAdminEditor configAdminEditor;
 
     @Override
     public Widget createWidget() {
         frameworkEditor = new FrameworkEditor(presenter);
-        configAdminEditor = new ConfigAdminEditor(presenter);
 
         TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(frameworkEditor.asWidget(), Console.CONSTANTS.subsys_osgi_framework());
-        tabLayoutPanel.add(configAdminEditor.asWidget(), Console.CONSTANTS.subsys_osgi_configAdmin());
-
         tabLayoutPanel.selectTab(0);
 
         return tabLayoutPanel;
@@ -74,10 +69,5 @@ public class OSGiSubsystemView extends SuspendableViewImpl implements OSGiConfig
     @Override
     public void updateCapabilities(List<OSGiCapability> capabilities) {
         frameworkEditor.updateCapabilities(capabilities);
-    }
-
-    @Override
-    public void updateConfigurationAdmin(List<OSGiConfigAdminData> casDataList, String selectPid) {
-        configAdminEditor.update(casDataList, selectPid);
     }
 }

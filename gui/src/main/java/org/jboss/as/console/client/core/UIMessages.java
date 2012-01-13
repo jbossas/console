@@ -93,10 +93,11 @@ public interface UIMessages extends Messages {
 
     String subsys_naming_failedToLoadJNDIView();
 
+    String subsys_configadmin_remove();
+    String subsys_configadmin_removeConfirm(String pid);
+
     String subsys_osgi_frameworkPropertiesHelp();
     String subsys_osgi_capabilitiesHelp();
-    String subsys_osgi_removeConfigAdmin();
-    String subsys_osgi_removeConfigAdminConfirm(String pid);
     String subsys_osgi_removeCapability();
     String subsys_osgi_removeCapabilityConfirm(String id);
     String subsys_osgi_cant_start_fragment(String bsn);

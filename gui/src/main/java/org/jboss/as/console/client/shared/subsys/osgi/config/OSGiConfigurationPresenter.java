@@ -57,13 +57,10 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
-import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewCapabilityWizard;
-import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewConfigAdminDataWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
 /**
  * @author David Bosschaert
@@ -93,7 +90,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         void setProviderDetails(OSGiSubsystem provider);
         void updateProperties(List<PropertyRecord> properties);
         void updateCapabilities(List<OSGiCapability> capabilities);
-        void updateConfigurationAdmin(List<OSGiConfigAdminData> casDataList, String selectPid);
     }
 
     @Inject
@@ -145,14 +141,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
                             public void execute() {
                                 if (model.hasDefined(CAPABILITY_RESOURCE))
                                     loadOSGiCapabilityDetails();
-
-                                Console.schedule(new Command() {
-                                    @Override
-                                    public void execute() {
-                                        if (model.hasDefined("configuration"))
-                                            loadOSGiConfigAdminDetails(null);
-                                    }
-                                });
                             }
                         });
                     }
@@ -211,36 +199,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         });
     }
 
-    private void loadOSGiConfigAdminDetails(final String selectPid) {
-        ModelNode operation = createOperation(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(CHILD_TYPE).set("configuration");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
-                ModelNode model = response.get(RESULT);
-
-                List<OSGiConfigAdminData> casDataList = new ArrayList<OSGiConfigAdminData>();
-                for (String pid : model.keys()) {
-                    OSGiConfigAdminData data = factory.osgiConfigAdminData().as();
-                    data.setPid(pid);
-
-                    List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
-                    for(Property property : model.get(pid).get("entries").asPropertyList()) {
-                        PropertyRecord record = factory.property().as();
-                        record.setKey(property.getName());
-                        record.setValue(property.getValue().asString());
-                        properties.add(record);
-                    }
-                    data.setProperties(properties);
-                    casDataList.add(data);
-                }
-                getView().updateConfigurationAdmin(casDataList, selectPid);
-            }
-        });
-    }
-
     @Override
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
@@ -257,16 +215,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         window.setWidth(320);
         window.setHeight(240);
         window.setWidget(new NewCapabilityWizard(this, capability).asWidget());
-        window.setGlassEnabled(true);
-        window.center();
-    }
-
-
-    public void launchNewCASPropertyWizard() {
-        window = new DefaultWindow(Console.CONSTANTS.subsys_osgi_configAdminAdd());
-        window.setWidth(480);
-        window.setHeight(360);
-        window.setWidget(new NewConfigAdminDataWizard(this).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }
@@ -359,40 +307,6 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
                     @Override
                     public void execute() {
                         loadOSGiCapabilityDetails();
-                    }
-                }));
-    }
-
-    public void onAddConfigurationAdminData(final OSGiConfigAdminData data) {
-        closeDialogue();
-
-        ModelNode operation = createOperation(ADD);
-        operation.get(ADDRESS).add("configuration", data.getPid());
-        ModelNode modelData = operation.get("entries");
-        for (PropertyRecord record : data.getProperties()) {
-            modelData.get(record.getKey()).set(record.getValue());
-        }
-
-        dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(ADD, Console.CONSTANTS.subsys_osgi_configAdminPID(), data.getPid(),
-                new Command() {
-                    @Override
-                    public void execute() {
-                        loadOSGiConfigAdminDetails(data.getPid());
-                    }
-                }));
-    }
-
-    public void onDeleteConfigurationAdminData(final String pid) {
-        ModelNode operation = createOperation(REMOVE);
-        operation.get(ADDRESS).add("configuration", pid);
-
-        dispatcher.execute(new DMRAction(operation),
-            new SimpleDMRResponseHandler(REMOVE, Console.CONSTANTS.subsys_osgi_configAdminPID(), pid,
-                new Command() {
-                    @Override
-                    public void execute() {
-                        loadOSGiConfigAdminDetails(null);
                     }
                 }));
     }

@@ -1,4 +1,5 @@
 /*
+
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
@@ -16,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.as.console.client.shared.subsys.osgi.config.wizard;
+package org.jboss.as.console.client.shared.subsys.configadmin.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
-import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiConfigAdminData;
+import org.jboss.as.console.client.shared.subsys.configadmin.ConfigAdminPresenter;
+import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -44,21 +45,21 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
  * @author David Bosschaert
  */
 public class NewConfigAdminDataWizard implements PropertyManagement {
-    private final OSGiConfigurationPresenter presenter;
+    private final ConfigAdminPresenter presenter;
     private final List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
     private PropertyEditor propEditor;
     private BeanFactory factory = GWT.create(BeanFactory.class);
 
-    public NewConfigAdminDataWizard(OSGiConfigurationPresenter presenter) {
+    public NewConfigAdminDataWizard(ConfigAdminPresenter presenter) {
         this.presenter = presenter;
     }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
-        final Form<OSGiConfigAdminData> form = new Form<OSGiConfigAdminData>(OSGiConfigAdminData.class);
+        final Form<ConfigAdminData> form = new Form<ConfigAdminData>(ConfigAdminData.class);
 
-        TextBoxItem pid = new TextBoxItem("pid", Console.CONSTANTS.subsys_osgi_configAdminPIDShort());
+        TextBoxItem pid = new TextBoxItem("pid", Console.CONSTANTS.subsys_configadmin_PIDShort());
         form.setFields(pid);
 
         layout.add(form.asWidget());
@@ -72,7 +73,7 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
                 public void onClick(ClickEvent event) {
                     FormValidation validation = form.validate();
                     if (!validation.hasErrors()) {
-                        OSGiConfigAdminData data = form.getUpdatedEntity();
+                        ConfigAdminData data = form.getUpdatedEntity();
                         data.setProperties(properties);
                         presenter.onAddConfigurationAdminData(data);
                     }
@@ -97,7 +98,7 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
         properties.remove(prop);
         propEditor.setProperties("", properties);
     }
-    
+
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
         // do nothing
