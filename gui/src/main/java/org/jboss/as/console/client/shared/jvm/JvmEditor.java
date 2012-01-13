@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -31,7 +32,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 import java.util.Map;
-import java.util.regex.Pattern;
+
 
 
 /**
@@ -48,7 +49,7 @@ public class JvmEditor {
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
-    private final Pattern heapSizeValidationPattern = Pattern.compile("[\\d]{2,4}[mM]");
+    private final String heapSizeValidationPattern = "[\\d]{2,4}[mM]";
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -90,7 +91,7 @@ public class JvmEditor {
             @Override
             public boolean validate(String value) {
                 boolean hasValue = super.validate(value);
-                boolean matchPattern = heapSizeValidationPattern.matcher(value).matches();
+                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
                 return hasValue && matchPattern;
             }
 
@@ -104,7 +105,7 @@ public class JvmEditor {
             @Override
             public boolean validate(String value) {
                 boolean hasValue = super.validate(value);
-                boolean matchPattern = heapSizeValidationPattern.matcher(value).matches();
+                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
                 return hasValue && matchPattern;
             }
 
