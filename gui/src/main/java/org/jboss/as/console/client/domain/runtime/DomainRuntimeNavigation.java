@@ -53,15 +53,8 @@ class DomainRuntimeNavigation {
         TreeItem servers = new DefaultTreeItem("Domain Status");
         statusTree.addItem(servers);
 
-        LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.InstancesPresenter)
-                );
-            }
-        });
+        LHSNavTreeItem serverInstances=
+                new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), NameTokens.InstancesPresenter);
 
 
         LHSNavTreeItem jvm = new LHSNavTreeItem("JVM Status", NameTokens.HostVMMetricPresenter);

@@ -20,13 +20,17 @@
 package org.jboss.as.console.client.core;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +66,20 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
         places.add(bootstrap.getDefaultPlace());
 
         revealPlaceHierarchy(places);
+    }
+
+    @Override
+    protected void doRevealPlace(final PlaceRequest request, boolean updateBrowserUrl) {
+        super.doRevealPlace(request, updateBrowserUrl);
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                Console.MODULES.getEventBus().fireEvent(
+                        new LHSHighlightEvent(null, request.getNameToken(), "*")
+                );
+            }
+        });
     }
 
     @Override
