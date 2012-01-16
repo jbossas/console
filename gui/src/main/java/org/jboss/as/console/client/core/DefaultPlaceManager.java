@@ -22,8 +22,6 @@ package org.jboss.as.console.client.core;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -75,11 +73,15 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
+
+                System.out.println(request.getNameToken());
+
                 Console.MODULES.getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, request.getNameToken(), "*")
+                        new LHSHighlightEvent(request.getNameToken())
                 );
             }
         });
+
     }
 
     @Override

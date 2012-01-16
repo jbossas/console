@@ -45,7 +45,7 @@ import org.jboss.ballroom.client.layout.LHSNavTreeItem;
  */
 public class SubsystemTreeBuilder {
 
-    public static void build(final String parentPlace, final LHSNavTree subsysTree, List<SubsystemRecord> subsystems)
+    public static void build(final LHSNavTree subsysTree, List<SubsystemRecord> subsystems)
     {
 
         int includedSubsystems =0;
@@ -84,7 +84,7 @@ public class SubsystemTreeBuilder {
 
                                             for(String server : result)
                                             {
-                                                String token = parentPlace + key+";name="+server;
+                                                String token = key+";name="+server;
                                                 final LHSNavTreeItem link = new LHSNavTreeItem("Provider: "+server, token);
                                                 link.setKey(key);
                                                 groupTreeItem.addItem(link);
@@ -122,7 +122,7 @@ public class SubsystemTreeBuilder {
                         }
                         
 
-                        String token = parentPlace + key;
+                        String token = key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);
 

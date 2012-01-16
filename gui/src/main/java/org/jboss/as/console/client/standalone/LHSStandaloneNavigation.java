@@ -98,7 +98,7 @@ public class LHSStandaloneNavigation {
 
         subsysTree.removeItems();
 
-        SubsystemTreeBuilder.build("server/", subsysTree, subsystems);
+        SubsystemTreeBuilder.build(subsysTree, subsystems);
 
     }
 }

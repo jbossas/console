@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.core.bootstrap;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,28 +27,20 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
 
         String initialToken = History.getToken();
 
-        //System.out.println("init from: " +initialToken);
-
-        PlaceManager placeManager = Console.MODULES.getPlaceManager();
+        final PlaceManager placeManager = Console.MODULES.getPlaceManager();
         TokenFormatter formatter = Console.MODULES.getTokenFormatter();
 
         if(!initialToken.isEmpty())
         {
             List<PlaceRequest> hierarchy = formatter.toPlaceRequestHierarchy(initialToken);
             final PlaceRequest placeRequest = hierarchy.get(hierarchy.size() - 1);
-            placeManager.revealPlace(placeRequest, true);
 
-            /*
-            Timer t = new Timer() {
+            Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
                 @Override
-                public void run() {
-                    Console.MODULES.getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, placeRequest.getNameToken(), "*")
-                    );
+                public void execute() {
+                    placeManager.revealPlace(placeRequest, true);
                 }
-            };
-
-            t.schedule(1500);*/
+            });
 
 
         }
