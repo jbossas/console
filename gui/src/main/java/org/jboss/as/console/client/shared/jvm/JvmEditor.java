@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -31,6 +32,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 
 import java.util.Map;
+
 
 
 /**
@@ -47,6 +49,7 @@ public class JvmEditor {
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
+    private final String heapSizeValidationPattern = "[\\d]{2,4}[mM]";
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -83,8 +86,34 @@ public class JvmEditor {
         panel.add(toolStrip.asWidget());
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
+        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
+                return hasValue && matchPattern;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return Console.MESSAGES.common_validation_heapSize();
+            }
+        };
+        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size")
+        {
+            @Override
+            public boolean validate(String value) {
+                boolean hasValue = super.validate(value);
+                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
+                return hasValue && matchPattern;
+            }
+
+            @Override
+            public String getErrMessage() {
+                return Console.MESSAGES.common_validation_heapSize();
+            }
+        };
         //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
         //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
 
