@@ -27,6 +27,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.LoadingPanel;
@@ -98,7 +99,6 @@ public class Console implements EntryPoint {
 
                 bootstrap.execute();
             }
-
 
         });
     }

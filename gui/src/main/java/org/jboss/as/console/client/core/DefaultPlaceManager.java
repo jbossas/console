@@ -73,9 +73,6 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-
-                System.out.println(request.getNameToken());
-
                 Console.MODULES.getEventBus().fireEvent(
                         new LHSHighlightEvent(request.getNameToken())
                 );

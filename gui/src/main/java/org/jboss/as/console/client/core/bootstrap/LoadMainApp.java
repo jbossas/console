@@ -35,13 +35,30 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
             List<PlaceRequest> hierarchy = formatter.toPlaceRequestHierarchy(initialToken);
             final PlaceRequest placeRequest = hierarchy.get(hierarchy.size() - 1);
 
-            Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
                     placeManager.revealPlace(placeRequest, true);
                 }
             });
 
+            // the page needs to be rendered otherwise the event listener would not be attached...
+
+            Timer t = new Timer() {
+                @Override
+                public void run() {
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            Console.MODULES.getEventBus().fireEvent(
+                                    new LHSHighlightEvent(placeRequest.getNameToken())
+                            );
+                        }
+                    });
+                }
+            };
+
+            t.schedule(2500);
 
         }
         else {
