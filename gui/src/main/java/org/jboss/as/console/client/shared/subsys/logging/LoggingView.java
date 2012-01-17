@@ -26,7 +26,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.messaging.JMSEditor;
+import org.jboss.as.console.client.shared.subsys.messaging.MessagingProviderEditor;
+import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.pages.PagedView;
 
 import javax.inject.Inject;
 
@@ -47,9 +51,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
     private AsyncHandlerSubview asyncHandlerSubview;
     private CustomHandlerSubview customHandlerSubview;
-
-    private DeckPanel deck;
-    private int page = 0;
+    private TabLayoutPanel loggersTabs;
 
 
     @Inject
@@ -78,33 +80,29 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     @Override
     public Widget createWidget() {
 
-        deck = new DeckPanel();
-        deck.setStyleName("fill-layout");
-
-        TabLayoutPanel loggersTabs = new TabLayoutPanel(40, Style.Unit.PX);
+        loggersTabs = new TabLayoutPanel(40, Style.Unit.PX);
         loggersTabs.addStyleName("default-tabpanel");
 
         loggersTabs.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName(), true);
         loggersTabs.add(loggerSubview.asWidget(), loggerSubview.getEntityDisplayName(), true);
+
+
+        // log handler
+
+        PagedView handlerPages = new PagedView(true);
+
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_console(), consoleHandlerSubview.asWidget());
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_file(), fileHandlerSubview.asWidget());
+
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_periodic(), periodicRotatingFileHandlerSubview.asWidget());
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_size(), sizeRotatingFileHandlerSubview.asWidget());
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_async(), asyncHandlerSubview.asWidget());
+        handlerPages.addPage(Console.CONSTANTS.subsys_logging_custom(), customHandlerSubview.asWidget());
+
+        loggersTabs.add(handlerPages.asWidget(), Console.CONSTANTS.subsys_logging_handler(), true);
+
         loggersTabs.selectTab(0);
-
-
-        TabLayoutPanel handlersTabs = new TabLayoutPanel(40, Style.Unit.PX);
-        handlersTabs.addStyleName("default-tabpanel");
-
-        handlersTabs.add(consoleHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_console(), true);
-        handlersTabs.add(fileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_file(), true);
-        handlersTabs.add(periodicRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_periodic(),true);
-        handlersTabs.add(sizeRotatingFileHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_size(), true);
-        handlersTabs.add(asyncHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_async(), true);
-        handlersTabs.add(customHandlerSubview.asWidget(), Console.CONSTANTS.subsys_logging_custom(), true);
-        handlersTabs.selectTab(0);
-
-        deck.add(loggersTabs);
-        deck.add(handlersTabs);
-
-        // default
-        deck.showWidget(page);
+        handlerPages.showPage(0);
 
         LoggingLevelProducer.setLogLevels(
                 dispatcher, rootLoggerSubview,
@@ -118,7 +116,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         );
 
 
-        return deck;
+        return loggersTabs;
     }
     
     public void initialLoad() {
@@ -131,13 +129,5 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
         sizeRotatingFileHandlerSubview.initialLoad();
         asyncHandlerSubview.initialLoad();
         customHandlerSubview.initialLoad();
-    }
-
-    @Override
-    public void setPage(int page) {
-        if(deck!=null)
-            deck.showWidget(page);
-
-        this.page = page;
     }
 }

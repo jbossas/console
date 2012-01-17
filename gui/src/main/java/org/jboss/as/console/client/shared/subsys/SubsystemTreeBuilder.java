@@ -65,28 +65,6 @@ public class SubsystemTreeBuilder {
 
                         final String key = groupItem.getPresenter();
 
-                        // logging  -----------------------------------
-
-                        if("logging".equals(key))
-                        {
-
-                            //TreeItem logging = new DefaultTreeItem("Logging");
-
-                            final LHSNavTreeItem loggers  = new LHSNavTreeItem("Loggers", NameTokens.Logger);
-                            final LHSNavTreeItem handlers = new LHSNavTreeItem("Log Handlers", NameTokens.Logger+";page=handler");
-
-                            //logging.addItem(loggers);
-                            //logging.addItem(handlers);
-
-                            groupTreeItem.addItem(loggers);
-                            groupTreeItem.addItem(handlers);
-
-                            subsysTree.addItem(groupTreeItem);
-
-                            continue;
-                        }
-                        
-
                         String token = key;
                         final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
                         link.setKey(key);

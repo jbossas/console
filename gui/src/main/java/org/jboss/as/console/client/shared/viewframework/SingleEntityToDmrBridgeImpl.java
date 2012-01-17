@@ -115,13 +115,9 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
             return;
 
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
-        System.out.println("executing:" );
-        System.out.println(batch);
         dispatcher.execute(new DMRAction(batch), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
-                System.out.println("response:");
-                System.out.println(response.toString());
                 Console.info("Update successful");
                 loadEntities(null);
             }
