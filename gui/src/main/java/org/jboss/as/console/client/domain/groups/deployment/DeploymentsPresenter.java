@@ -46,6 +46,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,21 +114,37 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     }
 
     @Override
-    public void enableDisableDeployment(final DeploymentRecord deployment) {
-        deploymentStore.enableDisableDeployment(deployment, new SimpleCallback<DMRResponse>() {
+    public void enableDisableDeployment(final DeploymentRecord record) {
+
+
+        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
+        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                domainDeploymentInfo.refreshView(deployment);
-                DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(DeploymentsPresenter.this, deployment);
+                loading.hide();
+
+                ModelNode result = response.get();
+
+                if(result.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("Deployment "+record.getRuntimeName()), result.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("Deployment "+record.getRuntimeName()));
+                }
+
+                domainDeploymentInfo.refreshView();
+
             }
 
-            @Override
-            public void onFailure(Throwable t) {
-                super.onFailure(t);
-                domainDeploymentInfo.refreshView(deployment);
-                DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
-            }
         });
 
     }
@@ -153,19 +171,35 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @Override
     public void addToServerGroup(final DeploymentRecord deployment, final boolean enable, final String... serverGroups) {
+
+
+        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
         deploymentStore.addToServerGroups(serverGroups, enable, deployment, new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                domainDeploymentInfo.refreshView();
-                DeploymentCommand.ADD_TO_GROUP.displaySuccessMessage(DeploymentsPresenter.this, deployment);
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                super.onFailure(t);
+                loading.hide();
+
+                ModelNode result = response.get();
+
+                if(result.isFailure())
+                {
+                    Console.error(Console.MESSAGES.addingFailed("Deployment "+deployment.getRuntimeName()), result.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.added("Deployment "+deployment.getRuntimeName()));
+                }
+
                 domainDeploymentInfo.refreshView();
-                DeploymentCommand.ADD_TO_GROUP.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
+
             }
         });
     }
@@ -178,19 +212,34 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             return;
         }
 
+        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
         deploymentStore.removeContent(deployment, new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse response) {
-                domainDeploymentInfo.refreshView();
-                DeploymentCommand.REMOVE_FROM_DOMAIN.displaySuccessMessage(DeploymentsPresenter.this, deployment);
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                super.onFailure(t);
+                loading.hide();
+
+                ModelNode result = response.get();
+
+                if(result.isFailure())
+                {
+                    Console.error(Console.MESSAGES.deletionFailed("Deployment "+deployment.getRuntimeName()), result.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.deleted("Deployment "+deployment.getRuntimeName()));
+                }
+
+
                 domainDeploymentInfo.refreshView();
-                DeploymentCommand.REMOVE_FROM_DOMAIN.displayFailureMessage(DeploymentsPresenter.this, deployment, t);
+
             }
         });
     }
@@ -203,15 +252,15 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
                 possibleGroupAssignments.add(group);
             }
         }
-        
+
         return possibleGroupAssignments;
     }
-    
+
     @Override
     public void promptForGroupSelections(DeploymentRecord record) {
         new ServerGroupSelector(this, record);
     }
-    
+
     public void launchNewDeploymentDialoge() {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(480);
@@ -229,7 +278,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
         window.setGlassEnabled(true);
         window.center();
     }
-    
+
     public List<ServerGroupRecord> getServerGroups() {
         return serverGroups;
     }
