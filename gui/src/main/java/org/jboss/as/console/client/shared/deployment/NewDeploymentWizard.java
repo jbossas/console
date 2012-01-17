@@ -27,6 +27,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -35,6 +36,7 @@ import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author Heiko Braun
@@ -125,6 +127,15 @@ public class NewDeploymentWizard  {
         rb.setHeader(HEADER_CONTENT_TYPE, APPLICATION_JSON);
 
         try {
+
+
+            final PopupPanel loading = Feedback.loading("Processing Content", "Please wait ...", new Feedback.LoadingCallback() {
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+
             rb.sendRequest(requestJSO, new RequestCallback(){
                 @Override
                 public void onResponseReceived(Request request, Response response) {
@@ -133,6 +144,7 @@ public class NewDeploymentWizard  {
                         return;
                     }
 
+                    loading.hide();
                     window.hide();
                     refresher.refreshView();
                 }

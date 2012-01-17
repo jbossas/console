@@ -28,12 +28,14 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
@@ -44,6 +46,7 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 public class DeploymentStep1 {
     private NewDeploymentWizard wizard;
     private DefaultWindow window;
+    private PopupPanel loading;
 
     public DeploymentStep1(NewDeploymentWizard wizard, DefaultWindow window) {
         this.wizard = wizard;
@@ -82,21 +85,33 @@ public class DeploymentStep1 {
                 window.hide();
             }
         };
+
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                loading = Feedback.loading("Uploading Content", "Please wait ...", new Feedback.LoadingCallback() {
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
                 form.submit();
             }
         };
 
         DialogueOptions options = new DialogueOptions(
-                "Next &rsaquo;&rsaquo;", submitHandler,
-                "Cancel", cancelHandler);
+                Console.CONSTANTS.common_label_next(), submitHandler,
+                Console.CONSTANTS.common_label_cancel(), cancelHandler);
 
         // Add an event handler to the form.
         form.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
             @Override
             public void onSubmitComplete(FormPanel.SubmitCompleteEvent event) {
+
+                getLoading().hide();
+
+
                 String html = event.getResults();
 
                 // Step 1: upload content, retrieve hash value
@@ -135,5 +150,9 @@ public class DeploymentStep1 {
         layout.add(description);
         layout.add(form);
         return new WindowContentBuilder(layout, options).build();
+    }
+
+    private PopupPanel getLoading() {
+        return loading;
     }
 }

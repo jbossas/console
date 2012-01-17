@@ -44,6 +44,8 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.DeploymentStore;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,9 +71,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   }
 
   public interface MyView extends View {
-
     void setPresenter(DeploymentListPresenter presenter);
-
     void updateDeploymentInfo(List<DeploymentRecord> deployments);
   }
 
@@ -128,24 +128,39 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
     });
   }
 
-  @Override
-  public void enableDisableDeployment(final DeploymentRecord record) {
-    deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
+    @Override
+    public void enableDisableDeployment(final DeploymentRecord record) {
 
-      @Override
-      public void onSuccess(DMRResponse response) {
-        deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displaySuccessMessage(DeploymentListPresenter.this, record);
-      }
+        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
+            @Override
+            public void onCancel() {
 
-      @Override
-      public void onFailure(Throwable t) {
-        super.onFailure(t);
-        deploymentInfo.refreshView();
-        DeploymentCommand.ENABLE_DISABLE.displayFailureMessage(DeploymentListPresenter.this, record, t);
-      }
-    });
-  }
+            }
+        });
+
+        deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                loading.hide();
+
+                ModelNode result = response.get();
+
+                if(result.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("Deployment "+record.getRuntimeName()), result.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("Deployment "+record.getRuntimeName()));
+                }
+
+                deploymentInfo.refreshView();
+
+            }
+
+        });
+    }
 
   @Override
   public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups) {
