@@ -19,16 +19,11 @@
 
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
@@ -42,6 +37,10 @@ import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
 
 /**

@@ -25,11 +25,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 
 /**
  * @author Stan Silvert

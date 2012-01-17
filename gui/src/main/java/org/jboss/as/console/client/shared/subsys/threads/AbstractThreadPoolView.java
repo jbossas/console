@@ -19,10 +19,8 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 import com.google.gwt.user.cellview.client.TextColumn;
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadPool;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
@@ -35,6 +33,9 @@ import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Common superclass for thread pool views.

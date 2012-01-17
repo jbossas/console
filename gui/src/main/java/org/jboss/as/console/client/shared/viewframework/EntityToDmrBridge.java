@@ -18,9 +18,10 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
+import org.jboss.dmr.client.ModelNode;
+
 import java.util.List;
 import java.util.Map;
-import org.jboss.dmr.client.ModelNode;
 
 /**
  * Implementers of this class know how to perform CRUD and other

@@ -18,12 +18,13 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import java.util.List;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 

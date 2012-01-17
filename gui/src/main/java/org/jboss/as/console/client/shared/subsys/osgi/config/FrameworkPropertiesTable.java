@@ -18,17 +18,16 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewPropertyWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author David Bosschaert

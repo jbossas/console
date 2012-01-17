@@ -19,8 +19,9 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
-import java.util.List;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+
+import java.util.List;
 
 /**
  * Defines a class that is capable of refreshing a deployment view.

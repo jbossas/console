@@ -18,9 +18,10 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 
 /**
  * This class manages the aggregated list of handlers.  The list of handlers is provided

@@ -18,22 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.config;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADD;
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.REMOVE;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
-import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.dmr.client.ModelDescriptionConstants.VALUE;
-import static org.jboss.dmr.client.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
@@ -44,7 +28,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -61,6 +44,11 @@ import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem
 import org.jboss.as.console.client.shared.subsys.osgi.config.wizard.NewCapabilityWizard;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author David Bosschaert

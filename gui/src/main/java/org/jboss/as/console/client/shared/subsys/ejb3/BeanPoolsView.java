@@ -18,10 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
-import java.util.Collection;
-
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
@@ -38,6 +35,8 @@ import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.forms.UnitBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Collection;
 
 /**
  * @author David Bosschaert

@@ -49,6 +49,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private CurrentHostSelection hostSelection;
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
+    private String lastSubPlace;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -70,7 +71,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
             CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
-             SubsystemStore subsysStore, BootstrapContext bootstrap) {
+            SubsystemStore subsysStore, BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -114,6 +115,16 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         }
 
         Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
+
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        if(!currentToken.equals(getProxy().getNameToken()))
+        {
+            lastSubPlace = currentToken;
+        }
+        else if(lastSubPlace!=null)
+        {
+            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+        }
 
         // first request, select default contents
         if(!hasBeenRevealed &&

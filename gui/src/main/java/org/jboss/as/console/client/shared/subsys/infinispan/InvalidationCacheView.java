@@ -19,11 +19,12 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
-import javax.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.InvalidationCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+
+import javax.inject.Inject;
 
 /**
  * Main view class for Infinispan Invalidation Cache.

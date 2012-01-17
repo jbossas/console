@@ -18,9 +18,6 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import org.jboss.as.console.client.widgets.forms.Binding;
-import org.jboss.as.console.client.widgets.forms.FormItem;
-
 /**
  * Data Model interface for Entities with an enabled attribute.
  *

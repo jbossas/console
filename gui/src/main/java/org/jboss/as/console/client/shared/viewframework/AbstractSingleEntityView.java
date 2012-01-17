@@ -18,13 +18,13 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.EnumSet;
 
 /**
  * @author David Bosschaert

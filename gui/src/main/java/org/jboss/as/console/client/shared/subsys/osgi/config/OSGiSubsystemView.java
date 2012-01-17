@@ -18,17 +18,16 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.config;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
+
+import java.util.List;
 
 /**
  * @author David Bosschaert

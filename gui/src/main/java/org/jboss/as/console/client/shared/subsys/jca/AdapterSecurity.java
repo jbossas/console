@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;

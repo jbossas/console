@@ -10,7 +10,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.expr.ExpressionColumn;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 
 import java.util.Comparator;
 import java.util.List;

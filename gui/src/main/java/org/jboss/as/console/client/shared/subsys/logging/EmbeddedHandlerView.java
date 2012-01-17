@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.logging.model.HasHandlers;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedListView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
@@ -28,7 +29,6 @@ import org.jboss.ballroom.client.widgets.forms.ListManagement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jboss.as.console.client.Console;
 
 /**
  * @author Heiko Braun

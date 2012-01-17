@@ -17,9 +17,10 @@
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.infinispan;
-import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedListView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
@@ -28,7 +29,6 @@ import org.jboss.ballroom.client.widgets.forms.ListManagement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jboss.as.console.client.Console;
 
 /**
  * @author Heiko Braun

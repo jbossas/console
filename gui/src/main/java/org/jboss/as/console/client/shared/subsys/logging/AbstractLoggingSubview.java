@@ -19,15 +19,16 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.user.client.ui.Widget;
-import java.util.EnumSet;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.LogLevelConsumer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+
+import java.util.EnumSet;
 
 /**
  * Abstract base class for sub-views.  This class knows how to set the log levels in the drop-downs.

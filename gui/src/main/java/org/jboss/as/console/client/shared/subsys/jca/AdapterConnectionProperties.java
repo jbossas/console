@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 
 import java.util.List;
 

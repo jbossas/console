@@ -20,7 +20,6 @@
 package org.jboss.as.console.server.proxy;
 
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

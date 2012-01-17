@@ -18,11 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPoolEntity;
 import org.jboss.as.console.client.shared.viewframework.AbstractSingleEntityView;
@@ -30,6 +26,9 @@ import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
+
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * @author David Bosschaert

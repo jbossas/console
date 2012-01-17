@@ -18,12 +18,9 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
-import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.LinkedList;
 import java.util.List;

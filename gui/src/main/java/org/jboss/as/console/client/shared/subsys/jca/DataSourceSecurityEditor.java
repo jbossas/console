@@ -8,8 +8,6 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
-
 /**
  * @author Heiko Braun
  * @date 12/13/11

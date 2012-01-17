@@ -19,17 +19,11 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.InterfaceEditor;
 import org.jboss.as.console.client.shared.general.InterfaceManagement;
-import org.jboss.ballroom.client.layout.RHSContentPanel;
 import org.jboss.as.console.client.shared.general.model.Interface;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
 

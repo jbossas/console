@@ -19,9 +19,10 @@
 
 package org.jboss.as.console.client.shared.deployment;
 
-import java.util.List;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
+
+import java.util.List;
 
 /**
  * Implementers of this interface carry out sending the actual command to the

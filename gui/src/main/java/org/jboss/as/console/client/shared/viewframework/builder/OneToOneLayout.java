@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.viewframework.builder;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;

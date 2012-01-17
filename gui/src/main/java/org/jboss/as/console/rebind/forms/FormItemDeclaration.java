@@ -19,8 +19,9 @@
 
 package org.jboss.as.console.rebind.forms;
 
-import java.lang.annotation.Annotation;
 import org.jboss.as.console.client.widgets.forms.FormItem;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @author Stan Silvert

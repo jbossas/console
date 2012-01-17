@@ -18,14 +18,14 @@
  */
 package org.jboss.as.console.client.shared.subsys.jacorb.model;
 
-import java.util.List;
-
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
+
+import java.util.List;
 
 /**
  * @author David Bosschaert

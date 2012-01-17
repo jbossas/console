@@ -1,10 +1,7 @@
 package org.jboss.as.console.client.shared.runtime.tx;
 
 import com.gwtplatform.mvp.client.View;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.runtime.Metric;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun

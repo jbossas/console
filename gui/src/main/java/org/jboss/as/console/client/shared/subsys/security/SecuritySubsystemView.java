@@ -18,13 +18,10 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.EnumSet;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
@@ -38,6 +35,8 @@ import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeI
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.EnumSet;
 
 /**
  * @author David Bosschaert

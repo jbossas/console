@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.runtime;
 
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.dmr.client.ModelNode;
 

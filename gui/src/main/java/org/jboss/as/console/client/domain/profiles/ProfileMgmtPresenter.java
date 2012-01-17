@@ -67,6 +67,7 @@ public class ProfileMgmtPresenter
     private boolean hasBeenRevealed;
     private CurrentProfileSelection profileSelection;
     private BootstrapContext bootstrap;
+    private String lastSubPlace;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -111,6 +112,16 @@ public class ProfileMgmtPresenter
 
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
 
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        if(!currentToken.equals(getProxy().getNameToken()))
+        {
+           lastSubPlace = currentToken;
+        }
+        else if(lastSubPlace!=null)
+        {
+            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+        }
+
         if(!hasBeenRevealed)
         {
             hasBeenRevealed = true;
@@ -149,6 +160,12 @@ public class ProfileMgmtPresenter
         });
     }
 
+    @Override
+    protected void onHide() {
+        super.onHide();
+
+    }
+
     private void selectDefaultProfile(List<ProfileRecord> result) {
         if(!profileSelection.isSet())
         {
@@ -179,6 +196,7 @@ public class ProfileMgmtPresenter
                     Console.MODULES.getEventBus().fireEvent(
                             new LHSHighlightEvent(bootstrap.getInitialPlace())
                     );
+
                     bootstrap.setInitialPlace(null);
                 }
             });

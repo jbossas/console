@@ -19,11 +19,11 @@
 
 package org.jboss.as.console.client.widgets.forms;
 
-import java.util.Collections;
-
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemType;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
+
+import java.util.Collections;
 
 /**
  * @author Heiko Braun

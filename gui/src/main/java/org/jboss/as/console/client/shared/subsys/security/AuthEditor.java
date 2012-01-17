@@ -18,15 +18,14 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author David Bosschaert

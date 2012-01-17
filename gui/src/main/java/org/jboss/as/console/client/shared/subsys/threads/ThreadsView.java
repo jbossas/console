@@ -22,10 +22,11 @@ package org.jboss.as.console.client.shared.subsys.threads;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import javax.inject.Inject;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+
+import javax.inject.Inject;
 
 /**
  * Main view class for the Threads subsystem.  

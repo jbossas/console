@@ -18,15 +18,12 @@
  */
 package org.jboss.as.console.client.shared.dispatch.impl;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.FAILURE_DESCRIPTION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.OUTCOME;
-import static org.jboss.dmr.client.ModelDescriptionConstants.SUCCESS;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.dmr.client.ModelNode;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author David Bosschaert

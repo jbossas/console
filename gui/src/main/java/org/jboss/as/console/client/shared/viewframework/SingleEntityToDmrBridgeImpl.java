@@ -18,10 +18,6 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
@@ -33,6 +29,10 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author David Bosschaert

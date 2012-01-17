@@ -1,7 +1,5 @@
 package org.jboss.as.console.client.shared.subsys.configadmin;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -12,7 +10,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.InputWindow;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -26,6 +23,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.List;
 
 public class ConfigAdminEditor implements PropertyManagement {
     private final ConfigAdminPresenter presenter;

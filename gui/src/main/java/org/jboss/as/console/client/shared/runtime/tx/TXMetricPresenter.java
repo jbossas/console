@@ -25,9 +25,6 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.Collections;
-import java.util.Random;
-
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**

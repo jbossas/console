@@ -18,9 +18,9 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.model;
 
-import java.util.List;
-
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+
+import java.util.List;
 
 /**
  * @author David Bosschaert

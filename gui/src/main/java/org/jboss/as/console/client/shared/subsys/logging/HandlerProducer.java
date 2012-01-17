@@ -18,8 +18,9 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging;
 
-import java.util.List;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
+
+import java.util.List;
 
 /**
  * This is implemented by handler subviews.

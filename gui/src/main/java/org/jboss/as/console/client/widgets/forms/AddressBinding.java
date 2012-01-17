@@ -5,7 +5,8 @@ import org.jboss.dmr.client.ModelNode;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+import static org.jboss.dmr.client.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
 
 /**
  * Represents entity address meta data, that declared using the {@link Address} annotation.<br/>

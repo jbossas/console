@@ -19,9 +19,9 @@
 
 package org.jboss.dmr.client;
 
-import java.io.IOException;
-
 import com.google.gwt.core.client.JsArrayInteger;
+
+import java.io.IOException;
 
 public class DataOutput {
 

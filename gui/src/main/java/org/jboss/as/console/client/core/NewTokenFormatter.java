@@ -1,14 +1,14 @@
 package org.jboss.as.console.client.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.google.gwt.http.client.URL;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatException;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Formats tokens from {@code String} values to {@link PlaceRequest} and {@link PlaceRequest} hierarchies and vice-versa. The default implementation

@@ -64,6 +64,7 @@ public class HostMgmtPresenter
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
     private BootstrapContext bootstrap;
+    private String lastSubPlace;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostMgmtPresenter)
@@ -115,6 +116,16 @@ public class HostMgmtPresenter
         }
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
+
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        if(!currentToken.equals(getProxy().getNameToken()))
+        {
+            lastSubPlace = currentToken;
+        }
+        else if(lastSubPlace!=null)
+        {
+            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+        }
 
         // first request, select default contents
         if(!hasBeenRevealed &&

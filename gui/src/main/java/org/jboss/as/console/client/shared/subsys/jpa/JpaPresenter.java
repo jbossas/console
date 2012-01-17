@@ -25,9 +25,7 @@ import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
 
-import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
-import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun

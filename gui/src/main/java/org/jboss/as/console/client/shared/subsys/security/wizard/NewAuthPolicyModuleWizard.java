@@ -18,8 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.security.wizard;
 
-import java.util.List;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.subsys.security.AbstractDomainDetailEditor.Wizard;
@@ -28,6 +26,8 @@ import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresent
 import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.ListBoxItem;
+
+import java.util.List;
 
 /**
  * @author David Bosschaert

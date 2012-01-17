@@ -18,16 +18,15 @@
  */
 package org.jboss.as.console.client.shared.viewframework;
 
-import java.util.EnumSet;
-import java.util.Map;
-
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+
+import java.util.EnumSet;
+import java.util.Map;
 
 /**
  * Displays form and buttons that allow editing of attributes of the Entity.

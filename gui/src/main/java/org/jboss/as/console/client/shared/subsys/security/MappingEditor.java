@@ -20,7 +20,6 @@ package org.jboss.as.console.client.shared.subsys.security;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewMappingModuleWizard;

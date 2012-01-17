@@ -22,7 +22,6 @@ package org.jboss.as.console.client.standalone;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -61,6 +60,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private boolean hasBeenRevealed;
     private boolean matchCurrent;
     private BootstrapContext bootstrap;
+    private String lastSubPlace;
 
     public interface ServerManagementView extends View {
 
@@ -120,6 +120,16 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
         }
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        if(!currentToken.equals(getProxy().getNameToken()))
+        {
+            lastSubPlace = currentToken;
+        }
+        else if(lastSubPlace!=null)
+        {
+            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+        }
 
         if(!hasBeenRevealed)
         {

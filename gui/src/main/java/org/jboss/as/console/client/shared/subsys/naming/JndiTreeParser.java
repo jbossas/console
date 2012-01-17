@@ -18,9 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.naming;
 
-import java.util.List;
-import java.util.Stack;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTree;
@@ -28,10 +25,11 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
-
 import org.jboss.as.console.client.widgets.tree.DefaultCellTree;
-import org.jboss.ballroom.client.widgets.icons.DefaultTreeResources;
 import org.jboss.dmr.client.Property;
+
+import java.util.List;
+import java.util.Stack;
 
 /**
  * really awkward jndi parsing routine.

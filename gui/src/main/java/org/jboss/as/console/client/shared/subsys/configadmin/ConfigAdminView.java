@@ -1,14 +1,13 @@
 package org.jboss.as.console.client.shared.subsys.configadmin;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
+
+import java.util.List;
 
 public class ConfigAdminView extends SuspendableViewImpl implements ConfigAdminPresenter.MyView {
     private ConfigAdminEditor configAdminEditor;

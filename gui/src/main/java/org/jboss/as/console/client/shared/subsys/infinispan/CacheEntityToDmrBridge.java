@@ -18,24 +18,25 @@
  */
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
+import org.jboss.as.console.client.shared.viewframework.DmrCallback;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
+import org.jboss.as.console.client.shared.viewframework.FrameworkView;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.viewframework.DmrCallback;
-import org.jboss.dmr.client.Property;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FrameworkView;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.dmr.client.ModelNode;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  *

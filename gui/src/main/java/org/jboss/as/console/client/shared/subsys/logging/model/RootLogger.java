@@ -18,11 +18,12 @@
  */
 package org.jboss.as.console.client.shared.subsys.logging.model;
 
-import java.util.List;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
+
+import java.util.List;
 
 /**
  * Model for a Logger

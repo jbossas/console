@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.shared.viewframework.FormItemObserver.Action;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
 
 /**
  *

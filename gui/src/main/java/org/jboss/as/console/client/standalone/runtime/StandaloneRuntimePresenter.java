@@ -3,7 +3,6 @@ package org.jboss.as.console.client.standalone.runtime;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -21,7 +20,6 @@ import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
-import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
@@ -42,6 +40,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
             new GwtEvent.Type<RevealContentHandler<?>>();
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
+    private String lastSubPlace;
 
 
     @ProxyCodeSplit
@@ -92,6 +91,16 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
 
         Console.MODULES.getHeader().highlight(NameTokens.StandaloneRuntimePresenter);
+
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+        if(!currentToken.equals(getProxy().getNameToken()))
+        {
+            lastSubPlace = currentToken;
+        }
+        else if(lastSubPlace!=null)
+        {
+            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
+        }
 
         // first request, select default contents
         if(!hasBeenRevealed )
