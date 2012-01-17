@@ -65,43 +65,9 @@ public class SubsystemTreeBuilder {
 
                         final String key = groupItem.getPresenter();
 
-                        // messaging  -----------------------------------
-
-                        if("messaging".equals(key)) {
-                            // See  https://issues.jboss.org/browse/AS7-1857
-                            // there can be multiple messaging server instances
-
-                            new LoadHornetQServersCmd(Console.MODULES.getDispatchAsync()).execute(
-                                    new AsyncCallback<List<String>>() {
-                                        @Override
-                                        public void onFailure(Throwable caught) {
-                                            Console.error("Failed to load messaging server names", caught.getMessage());
-                                        }
-
-                                        @Override
-                                        public void onSuccess(List<String> result) {
-
-                                            for(String server : result)
-                                            {
-                                                String token = key+";name="+server;
-                                                final LHSNavTreeItem link = new LHSNavTreeItem("Provider: "+server, token);
-                                                link.setKey(key);
-                                                groupTreeItem.addItem(link);
-                                            }
-                                        }
-                                    }
-                            );
-
-                            //if(groupTreeItem.getChildCount()>0)
-                            subsysTree.addItem(groupTreeItem);
-
-                            // skip ahead
-                            continue;
-                        }
-
                         // logging  -----------------------------------
 
-                        else if("logging".equals(key))
+                        if("logging".equals(key))
                         {
 
                             //TreeItem logging = new DefaultTreeItem("Logging");

@@ -20,16 +20,19 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.widgets.pages.PagedView;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
 import java.util.List;
 
@@ -42,22 +45,37 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     private MessagingPresenter presenter;
     private MessagingProviderEditor providerEditor;
     private JMSEditor jmsEditor;
+    private PagedView panel;
+    private ProviderList providerList;
 
     @Override
     public Widget createWidget() {
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        LayoutPanel layout = new LayoutPanel();
 
+        FakeTabPanel titleBar = new FakeTabPanel("Messaging Provider");
+        layout.add(titleBar);
+
+        panel = new PagedView();
+
+        providerList = new ProviderList(presenter);
         providerEditor = new MessagingProviderEditor(presenter);
         jmsEditor = new JMSEditor(presenter);
 
-        tabLayoutpanel.add(providerEditor.asWidget(), Console.CONSTANTS.subsys_messaging_jms_provider());
-        tabLayoutpanel.add(jmsEditor.asWidget(), Console.CONSTANTS.subsys_messaging_jms_destinations());
+        panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
+        panel.addPage("Provider Config", providerEditor.asWidget());
+        panel.addPage("JMS Destinations", jmsEditor.asWidget()) ;
 
-        tabLayoutpanel.selectTab(0);
+        // default page
+        panel.showPage(0);
 
-        return tabLayoutpanel;
+        Widget panelWidget = panel.asWidget();
+        layout.add(panelWidget);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(panelWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
     }
 
     @Override
@@ -104,4 +122,29 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
         providerEditor.setAddressingConfig(addrPatterns);
     }
+
+    @Override
+    public void setProvider(List<String> result) {
+        providerList.setProvider(result);
+    }
+
+    @Override
+    public void setSelectedProvider(String selectedProvider) {
+
+
+        if(null==selectedProvider)
+        {
+            panel.showPage(0);
+        }
+        else{
+
+            presenter.loadDetails(selectedProvider);
+
+            // move to first page if still showing overview
+            if(0==panel.getPage())
+                panel.showPage(1);
+        }
+    }
+
+
 }

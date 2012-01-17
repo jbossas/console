@@ -23,6 +23,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -87,6 +88,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private String currentServer = null;
     private LoadJMSCmd loadJMSCmd;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
     public interface MyProxy extends Proxy<MessagingPresenter>, Place {
@@ -99,6 +101,9 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         void setProviderDetails(MessagingProvider provider);
         void setSecurityConfig(List<SecurityPattern> secPatterns);
         void setAddressingConfig(List<AddressingPattern> addrPatterns);
+
+        void setProvider(List<String> result);
+        void setSelectedProvider(String selectedProvider);
     }
 
     public interface JMSView {
@@ -156,10 +161,40 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     @Override
     protected void onReset() {
         super.onReset();
+
+        loadProvider();
+    }
+
+    public PlaceManager getPlaceManager() {
+
+        return placeManager;
+    }
+
+    public void loadDetails(String selectedProvider) {
         loadProviderDetails();
         loadSecurityConfig();
         loadAddressingConfig();
         loadJMSConfig();
+    }
+
+
+    private void loadProvider() {
+        new LoadHornetQServersCmd(Console.MODULES.getDispatchAsync()).execute(
+                new AsyncCallback<List<String>>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Console.error("Failed to load messaging server names", caught.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(List<String> result) {
+
+                        getView().setProvider(result);
+                        getView().setSelectedProvider(currentServer);
+                    }
+                }
+        );
+
     }
 
     private void loadProviderDetails() {
@@ -810,9 +845,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public String getCurrentServer() {
-
-        if(null==currentServer)
-            throw new IllegalArgumentException("Current server name not set!");
 
         return currentServer;
     }
