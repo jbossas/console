@@ -43,6 +43,8 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
     private static final String HEADER_ACCEPT = "Accept";
     private static final String DMR_ENCODED = "application/dmr-encoded";
+    private static final String HEADER_CONNECTION = "Connection";
+    private static final String KEEP_ALIVE = "Keep-Alive";
 
     private final RequestBuilder requestBuilder;
 
@@ -63,7 +65,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
 
         requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
         requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
-        requestBuilder.setHeader("Connection", "Keep-Alive");
+        requestBuilder.setHeader(HEADER_CONNECTION, KEEP_ALIVE);
     }
 
     @Override

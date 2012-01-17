@@ -20,12 +20,10 @@
 package org.jboss.as.console.client.shared.dispatch.impl;
 
 
-import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.dispatch.ResponseProcessor;
+import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 import org.jboss.as.console.client.shared.dispatch.Result;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -33,43 +31,24 @@ import java.util.List;
  */
 public class DMRResponse implements Result<ModelNode> {
 
-    private static final String RESPONSE_HEADERS = "response-headers";
-    private static final String PROCESS_STATE = "process-state";
-    private static final String RELOAD_REQUIRED = "reload-required";
-
     private String responseText;
     private String contentType;
+    private ResponseProcessor processor;
 
     public DMRResponse(String responseText, String contentType) {
         this.responseText = responseText;
         this.contentType = contentType;
+
+        this.processor = ResponseProcessorFactory.INSTANCE.create();
     }
 
     @Override
     public ModelNode get() {
         ModelNode response = ModelNode.fromBase64(responseText);
 
-        // update the state anytime
-        Console.MODULES.getReloadState().setReloadRequired(
-                parseReloadRequired(response)
-        );
+        processor.process(response);
 
         return response;
     }
 
-    private static boolean parseReloadRequired(ModelNode response) {
-        boolean hasReloadFlag = false;
-        if(response.hasDefined(RESPONSE_HEADERS))
-        {
-            List<Property> headers = response.get(RESPONSE_HEADERS).asPropertyList();
-            for(Property header : headers) {
-                if(PROCESS_STATE.equals(header.getName())) {
-                    if(RELOAD_REQUIRED.equals(header.getValue().asString())) {
-                        hasReloadFlag=true;
-                    }
-                }
-            }
-        }
-        return hasReloadFlag;
-    }
 }

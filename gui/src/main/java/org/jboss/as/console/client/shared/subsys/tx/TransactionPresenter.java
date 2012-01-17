@@ -120,6 +120,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = dmrResponse.get();
 
+                System.out.println(response);
                 boolean success = ModelAdapter.wasSuccess(response);
                 if(success)
                     Console.info(Console.MESSAGES.modified("Transaction Manager"));
