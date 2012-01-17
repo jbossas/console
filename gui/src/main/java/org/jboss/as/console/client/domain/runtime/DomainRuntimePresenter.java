@@ -130,9 +130,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         if(!hasBeenRevealed &&
                 NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
-            placeManager.revealRelativePlace(
-                    new PlaceRequest(NameTokens.InstancesPresenter)
-            );
+            placeManager.revealPlace(new PlaceRequest(NameTokens.InstancesPresenter));
             hasBeenRevealed = true;
 
 

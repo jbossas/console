@@ -133,7 +133,7 @@ public class HostMgmtPresenter
         {
 
 
-            placeManager.revealRelativePlace(
+            placeManager.revealPlace(
                     new PlaceRequest(NameTokens.ServerPresenter)
             );
             hasBeenRevealed = true;

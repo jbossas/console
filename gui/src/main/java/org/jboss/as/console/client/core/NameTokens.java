@@ -141,12 +141,12 @@ public class NameTokens {
         return ProfileOverviewPresenter;
     }
 
-    public static final String ServerGroupPresenter = "server-group";
+    public static final String ServerGroupPresenter = "server-groups";
     public static String getServerGroupPresenter() {
         return ServerGroupPresenter;
     }
 
-    public static final String ServerGroupMgmtPresenter = "server-groups";
+    public static final String ServerGroupMgmtPresenter = "_server-groups";
     public static String getServerGroupMgmtPresenter() {
         return ServerGroupMgmtPresenter;
     }
