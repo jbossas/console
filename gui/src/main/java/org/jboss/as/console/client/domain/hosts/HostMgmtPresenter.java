@@ -35,6 +35,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -62,6 +63,7 @@ public class HostMgmtPresenter
 
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
+    private BootstrapContext bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostMgmtPresenter)
@@ -77,12 +79,14 @@ public class HostMgmtPresenter
     public HostMgmtPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection) {
+            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection,
+            BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
         this.hostSelection = hostSelection;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -95,6 +99,20 @@ public class HostMgmtPresenter
     @Override
     protected void onReset() {
         super.onReset();
+
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+        }
 
         Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
 

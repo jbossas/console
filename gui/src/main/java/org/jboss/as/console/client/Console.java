@@ -92,7 +92,7 @@ public class Console implements EntryPoint {
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
                 bootstrap.addHook(new EagerLoadProfiles());
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
-                bootstrap.addHook(new LoadMainApp());
+                bootstrap.addHook(new LoadMainApp(MODULES.getBootstrapContext(), MODULES.getPlaceManager(), MODULES.getTokenFormatter()));
 
                 // viz can be loaded in background ...
                 //bootstrap.addHook(new LoadGoogleViz());

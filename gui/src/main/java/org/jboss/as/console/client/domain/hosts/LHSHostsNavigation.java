@@ -72,9 +72,9 @@ class LHSHostsNavigation {
 
         LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
         //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
-        LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "hosts/host-jvms");
-        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "hosts/host-interfaces");
-        LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host/host-properties");
+        LHSNavTreeItem jvms = new LHSNavTreeItem(Console.CONSTANTS.common_label_virtualMachines(), "host-jvms");
+        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "host-interfaces");
+        LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host-properties");
 
         hostTree.addItem(serversItem);
         hostTree.addItem(jvms);

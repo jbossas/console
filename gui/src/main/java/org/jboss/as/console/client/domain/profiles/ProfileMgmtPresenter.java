@@ -35,6 +35,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -65,6 +66,7 @@ public class ProfileMgmtPresenter
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
     private CurrentProfileSelection profileSelection;
+    private BootstrapContext bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -88,7 +90,7 @@ public class ProfileMgmtPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             SubsystemStore subsysStore,
             ServerGroupStore serverGroupStore,
-            CurrentProfileSelection currentProfileSelection) {
+            CurrentProfileSelection currentProfileSelection, BootstrapContext bootstrap) {
 
         super(eventBus, view, proxy);
 
@@ -97,14 +99,17 @@ public class ProfileMgmtPresenter
         this.subsysStore = subsysStore;
         this.serverGroupStore = serverGroupStore;
         this.profileSelection = currentProfileSelection;
+        this.bootstrap = bootstrap;
     }
 
 
 
     @Override
-    protected void onReveal() {
+    protected void onReset() {
 
-        super.onReveal();
+        super.onReset();
+
+        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
 
         if(!hasBeenRevealed)
         {
@@ -122,18 +127,26 @@ public class ProfileMgmtPresenter
                     }
 
                     getView().setProfiles(result);
+
+                    Timer t = new Timer() {
+                        @Override
+                        public void run() {
+                            highlightLHSNav();
+                        }
+                    };
+
+                    t.schedule(150);
                 }
             });
-
-            // load server groups
-            serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-                @Override
-                public void onSuccess(List<ServerGroupRecord> result) {
-                    getView().setServerGroups(result);
-                }
-            });
-
         }
+
+        // load server groups
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().setServerGroups(result);
+            }
+        });
     }
 
     private void selectDefaultProfile(List<ProfileRecord> result) {
@@ -153,32 +166,24 @@ public class ProfileMgmtPresenter
         );
 
         placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
-
-        Timer t = new Timer() {
-            @Override
-            public void run() {
-
-                //link.setSelected(true);
-
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
-                    @Override
-                    public void execute() {
-                        getEventBus().fireEvent(
-                                new LHSHighlightEvent(null, defaultSubsystem[0], "profiles")
-                        );
-                    }
-                });
-            }
-        };
-        t.schedule(500);
     }
 
 
+    private void highlightLHSNav()
+    {
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+        }
 
-    @Override
-    protected void onReset() {
-        super.onReset();
-        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
     }
 
     @Override
@@ -191,6 +196,7 @@ public class ProfileMgmtPresenter
     protected void onBind() {
         super.onBind();
         getEventBus().addHandler(ProfileSelectionEvent.TYPE, this);
+
     }
 
     @Override

@@ -17,6 +17,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -40,6 +41,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent =
             new GwtEvent.Type<RevealContentHandler<?>>();
     private SubsystemStore subsysStore;
+    private BootstrapContext bootstrap;
 
 
     @ProxyCodeSplit
@@ -49,17 +51,17 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
     public interface MyView extends View {
         void setPresenter(StandaloneRuntimePresenter presenter);
-
         void setSubsystems(List<SubsystemRecord> result);
     }
 
     @Inject
     public StandaloneRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, SubsystemStore subsysStore) {
+            PlaceManager placeManager, SubsystemStore subsysStore,  BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
+        this.bootstrap = bootstrap;
         this.subsysStore = subsysStore;
     }
 
@@ -72,7 +74,23 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
     @Override
     protected void onReset() {
+
         super.onReset();
+
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+        }
+
+
         Console.MODULES.getHeader().highlight(NameTokens.StandaloneRuntimePresenter);
 
         // first request, select default contents

@@ -38,6 +38,7 @@ public class BootstrapContext implements ApplicationProperties {
     private static final String[] persistentProperties = new String[] {
             //STANDALONE
     };
+    private String initialPlace = null;
 
     @Inject
     public BootstrapContext() {
@@ -160,5 +161,13 @@ public class BootstrapContext implements ApplicationProperties {
     @Override
     public boolean isStandalone() {
         return getProperty(BootstrapContext.STANDALONE).equals("true");
+    }
+
+    public void setInitialPlace(String nameToken) {
+        this.initialPlace = nameToken;
+    }
+
+    public String getInitialPlace() {
+        return initialPlace;
     }
 }

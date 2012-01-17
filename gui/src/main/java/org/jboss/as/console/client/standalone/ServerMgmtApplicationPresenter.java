@@ -36,6 +36,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -59,6 +60,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private SubsystemStore subsysStore;
     private boolean hasBeenRevealed;
     private boolean matchCurrent;
+    private BootstrapContext bootstrap;
 
     public interface ServerManagementView extends View {
 
@@ -76,11 +78,13 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     public ServerMgmtApplicationPresenter(
             EventBus eventBus, ServerManagementView view,
             ServerManagementProxy proxy, PlaceManager placeManager,
-            SubsystemStore subsysStore) {
+            SubsystemStore subsysStore, BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.subsysStore = subsysStore;
+        this.bootstrap = bootstrap;
     }
+
 
     /**
      * Load a default sub page upon first reveal
@@ -101,6 +105,19 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     @Override
     protected void onReset() {
         super.onReset();
+
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+        }
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
 
@@ -147,11 +164,6 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
             hasBeenRevealed = true;
         }
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
     }
 
     @Override

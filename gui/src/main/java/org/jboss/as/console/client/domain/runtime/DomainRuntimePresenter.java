@@ -16,6 +16,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -47,6 +48,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private CurrentServerSelection serverSelection;
     private CurrentHostSelection hostSelection;
     private SubsystemStore subsysStore;
+    private BootstrapContext bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -68,7 +70,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
             CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
-             SubsystemStore subsysStore) {
+             SubsystemStore subsysStore, BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -76,6 +78,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         this.serverSelection = serverSelection;
         this.hostSelection = hostSelection;
         this.subsysStore = subsysStore;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -93,6 +96,23 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     protected void onReset() {
         super.onReset();
+
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+
+
+        }
+
         Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
 
         // first request, select default contents

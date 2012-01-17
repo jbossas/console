@@ -13,6 +13,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -43,6 +44,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     private DispatchAsync dispatcher;
     private BeanFactory factory;
     private ReloadState reloadState;
+    private BootstrapContext bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneServerPresenter)
@@ -59,13 +61,14 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     public StandaloneServerPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher, BeanFactory factory,
-            ReloadState reloadState) {
+            ReloadState reloadState, BootstrapContext bootstrap) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.factory = factory;
         this.reloadState = reloadState;
+        this.bootstrap = bootstrap;
     }
 
     @Override
@@ -164,6 +167,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
     @Override
     protected void revealInParent() {
+
         RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
     }
 

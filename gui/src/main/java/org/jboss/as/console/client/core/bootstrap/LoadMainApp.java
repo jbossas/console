@@ -2,14 +2,12 @@ package org.jboss.as.console.client.core.bootstrap;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
-import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -22,13 +20,20 @@ import java.util.List;
  */
 public class LoadMainApp implements AsyncCommand<Boolean> {
 
+    private PlaceManager placeManager;
+    private TokenFormatter formatter;
+    private BootstrapContext bootstrapContext;
+
+    public LoadMainApp(BootstrapContext bootstrapContext, PlaceManager placeManager, TokenFormatter formatter) {
+        this.bootstrapContext = bootstrapContext;
+        this.placeManager = placeManager;
+        this.formatter = formatter;
+    }
+
     @Override
     public void execute(AsyncCallback<Boolean> callback) {
 
         String initialToken = History.getToken();
-
-        final PlaceManager placeManager = Console.MODULES.getPlaceManager();
-        TokenFormatter formatter = Console.MODULES.getTokenFormatter();
 
         if(!initialToken.isEmpty())
         {
@@ -42,23 +47,7 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
                 }
             });
 
-            // the page needs to be rendered otherwise the event listener would not be attached...
-
-            Timer t = new Timer() {
-                @Override
-                public void run() {
-                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                        @Override
-                        public void execute() {
-                            Console.MODULES.getEventBus().fireEvent(
-                                    new LHSHighlightEvent(placeRequest.getNameToken())
-                            );
-                        }
-                    });
-                }
-            };
-
-            t.schedule(2500);
+            bootstrapContext.setInitialPlace(placeRequest.getNameToken());
 
         }
         else {
