@@ -1,7 +1,6 @@
 package org.jboss.as.console.client.shared.dispatch;
 
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
@@ -11,19 +10,27 @@ public class ResponseProcessorFactory {
 
     public static ResponseProcessorFactory INSTANCE = new ResponseProcessorFactory();
 
-    public static ResponseProcessor PROCESSOR;
+    // used before bootstrap completes
+    public static ResponseProcessor NOOP = new ResponseProcessor() {
 
-    public ResponseProcessor create() {
-        BootstrapContext bootstrapContext = Console.MODULES.getBootstrapContext();
+        @Override
+        public void process(ModelNode response) {
 
-        if(null==PROCESSOR) // run a single instance
-        {
-            if(bootstrapContext.isStandalone())
-                PROCESSOR = new StandaloneResponseProcessor();
-            else
-                PROCESSOR = new DomainResponseProcessor();
         }
+    };
 
+    public static ResponseProcessor PROCESSOR = NOOP;
+
+    public ResponseProcessor create()
+    {
         return PROCESSOR;
+    }
+
+    public void bootstrap(boolean isStandalone)
+    {
+        if(isStandalone)
+            PROCESSOR = new StandaloneResponseProcessor();
+        else
+            PROCESSOR = new DomainResponseProcessor();
     }
 }
