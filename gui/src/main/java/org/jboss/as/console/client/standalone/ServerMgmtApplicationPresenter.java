@@ -101,11 +101,8 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     }
 
 
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-
+    private void highlightLHSNav()
+    {
         if(bootstrap.getInitialPlace()!=null)
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -114,10 +111,17 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
                     Console.MODULES.getEventBus().fireEvent(
                             new LHSHighlightEvent(bootstrap.getInitialPlace())
                     );
+
                     bootstrap.setInitialPlace(null);
                 }
             });
         }
+
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
 
@@ -133,7 +137,8 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
 
         if(!hasBeenRevealed)
         {
-            Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+
+            hasBeenRevealed = true;
 
             subsysStore.loadSubsystems("default", new SimpleCallback<List<SubsystemRecord>>() {
                 @Override
@@ -149,30 +154,21 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
                                 NameTokens.DataSourcePresenter, existingSubsystems
                         );
 
-                        placeManager.revealRelativePlace(new PlaceRequest(defaultSubsystem[1]));
+                        placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
 
-                        Timer t = new Timer() {
-                            @Override
-                            public void run() {
-
-                                //link.setSelected(true);
-
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand(){
-                                    @Override
-                                    public void execute() {
-                                        getEventBus().fireEvent(
-                                                new LHSHighlightEvent(null, defaultSubsystem[0], "profiles")
-                                        );
-                                    }
-                                });
-                            }
-                        };
-                        t.schedule(500);
                     }
+
+                    Timer t = new Timer() {
+                        @Override
+                        public void run() {
+                            highlightLHSNav();
+                        }
+                    };
+
+                    t.schedule(150);
                 }
             });
 
-            hasBeenRevealed = true;
         }
     }
 
