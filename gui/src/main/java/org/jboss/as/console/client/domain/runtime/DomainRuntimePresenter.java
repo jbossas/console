@@ -145,8 +145,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 }
             });
 
-
-            // load it once intitialy. subsequent loads need to be triggered by a stale model event
+        }
+        else if(!NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        {
             loadHostData();
         }
 
