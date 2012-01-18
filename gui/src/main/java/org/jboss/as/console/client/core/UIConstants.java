@@ -20,6 +20,8 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.user.cellview.client.*;
+import com.google.gwt.user.cellview.client.Header;
 
 /**
  * @author Heiko Braun
@@ -522,4 +524,6 @@ public interface UIConstants extends Constants {
     String common_label_newGroup();
 
     String properties_global_desc();
+
+    String common_label_active();
 }

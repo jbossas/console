@@ -24,6 +24,9 @@ package org.jboss.as.console.client.domain.model;
  * @date 3/3/11
  */
 public interface ServerInstance {
+
+    public enum ServerFlag { RELOAD_REQUIRED, RESTART_REQUIRED }
+
     String getName();
     void setName(String name);
 
@@ -35,4 +38,8 @@ public interface ServerInstance {
 
     String getGroup();
     void setGroup(String group);
+
+    ServerFlag getFlag();
+    void setFlag(ServerFlag state);
+
 }

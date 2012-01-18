@@ -44,6 +44,7 @@ import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
     private CurrentHostSelection hostSelection;
+    private ReloadState reloadState;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -77,12 +79,14 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public ServerInstancesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection) {
+            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection,
+            ReloadState reloadState) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
         this.hostSelection = hostSelection;
+        this.reloadState = reloadState;
     }
 
     @Override
@@ -107,11 +111,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             }
         });
 
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
     }
 
     private void loadHostData() {
@@ -144,7 +143,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
         // current host selection is set in DomainRuntimePresenter
 
-        if(isVisible())
+        if(isVisible() && hostSelection.isSet())
             loadHostData();
     }
 
@@ -182,7 +181,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
                 if(wasSuccessful)
                 {
-                    int limit = startIt ? 10:5;
+                    int limit = startIt ? 15:5;
                     LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
                         @Override
                         public void execute(final AsyncCallback<Boolean> callback) {

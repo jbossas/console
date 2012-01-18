@@ -29,7 +29,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -40,6 +43,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -96,7 +100,8 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         vpanel.add(new ContentDescription("Server instances represent the server runtime state. This includes the virtual machine status, as well as deployments and subsystem specific state (i.e. datasource pool sizes)."));
 
-        // ----------------------------------------------------------------------
+
+        // -----------------
 
         HorizontalPanel tableOptions = new HorizontalPanel();
         tableOptions.getElement().setAttribute("cellpadding", "2px");
@@ -120,7 +125,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         //TODO: Fixme vpanel.add(tableOptions);
 
-        // ----------------------------------------------------------------------
+        // -----------------
 
         instanceTable = new DefaultCellTable<ServerInstance>(10);
         instanceProvider = new ListDataProvider<ServerInstance>();
@@ -142,25 +147,43 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             }
         };
 
+        Column<ServerInstance, String> stateColumn =
+                new Column<ServerInstance, String>(new TextCell()) {
+                    @Override
+                    public String getValue(ServerInstance object) {
+
+                        if(object.getFlag()!=null)
+                        {
+                            return object.getFlag().name();
+                        }
+                        else
+                        {
+                            return "";
+                        }
+
+                    }
+                };
+
         Column<ServerInstance, ImageResource> statusColumn =
                 new Column<ServerInstance, ImageResource>(new ImageResourceCell()) {
-            @Override
-            public ImageResource getValue(ServerInstance instance) {
+                    @Override
+                    public ImageResource getValue(ServerInstance instance) {
 
-                ImageResource res = null;
+                        ImageResource res = null;
 
-                if(instance.isRunning())
-                    res = Icons.INSTANCE.statusGreen_small();
-                else
-                    res = Icons.INSTANCE.statusRed_small();
+                        if(instance.isRunning())
+                            res = Icons.INSTANCE.statusGreen_small();
+                        else
+                            res = Icons.INSTANCE.statusRed_small();
 
-                return res;
-            }
-        };
+                        return res;
+                    }
+                };
 
         instanceTable.addColumn(nameColumn, Console.CONSTANTS.common_label_server());
         instanceTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
-        instanceTable.addColumn(statusColumn, Console.CONSTANTS.common_label_status());
+        instanceTable.addColumn(stateColumn, Console.CONSTANTS.common_label_status());
+        instanceTable.addColumn(statusColumn, Console.CONSTANTS.common_label_active());
         vpanel.add(instanceTable);
 
         DefaultPager pager = new DefaultPager();
@@ -292,5 +315,4 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         groupFilter.clearValues();
         groupFilter.setValues(names);*/
     }
-
 }

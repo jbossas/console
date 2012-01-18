@@ -139,7 +139,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
 
                 getView().updateFrom(server);
-                getView().setReloadRequired(reloadState.isReloadRequired());
+                getView().setReloadRequired(reloadState.isStaleModel());
 
             }
         });
@@ -162,7 +162,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
         loadConfig();
 
-        getView().setReloadRequired(reloadState.isReloadRequired());
+        getView().setReloadRequired(reloadState.isStaleModel());
     }
 
     @Override
@@ -228,13 +228,21 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-                boolean keepRunning = reloadState.isReloadRequired();
+                System.out.println(response);
+
+                // TODO: only works when this response changes the reload state
+                boolean keepRunning = reloadState.isStaleModel();
+
                 callback.onSuccess(keepRunning);
 
                 if(!keepRunning)
                 {
+
+                    // clear state
+                    reloadState.reset();
+
                     Console.info("Success: Reload server");
-                    getView().setReloadRequired(reloadState.isReloadRequired());
+                    getView().setReloadRequired(reloadState.isStaleModel());
                     getEventBus().fireEvent(new ReloadEvent());
                 }
             }
