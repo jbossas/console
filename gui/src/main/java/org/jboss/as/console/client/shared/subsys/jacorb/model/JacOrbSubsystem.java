@@ -18,14 +18,14 @@
  */
 package org.jboss.as.console.client.shared.subsys.jacorb.model;
 
+import java.util.List;
+
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
-
-import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -48,6 +48,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="print-version")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_printVersion",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=20,
               tabName="subsys_jacorb_orbTab")
     public String getPrintVersion();
@@ -56,6 +59,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="use-imr")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_useIMR",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=30,
               tabName="subsys_jacorb_orbTab")
     public String getUseIMR();
@@ -64,6 +70,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="use-bom")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_useBOM",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=40,
               tabName="subsys_jacorb_orbTab")
     public String getUseBOM();
@@ -72,6 +81,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="cache-typecodes")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_cacheTypecodes",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=50,
               tabName="subsys_jacorb_orbTab")
     public String getCacheTypecodes();
@@ -80,6 +92,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="cache-poa-names")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_cachePOANames",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=60,
               tabName="subsys_jacorb_orbTab")
     public String getCachePOANames();
@@ -178,6 +193,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="security")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_security",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=160,
               tabName="subsys_jacorb_initializersTab")
     public String getSecurity();
@@ -186,6 +204,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="transactions")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_transactions",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=170,
               tabName="subsys_jacorb_initializersTab")
     public String getTransactions();
@@ -194,6 +215,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="monitoring")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_monitoring",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=180,
               tabName="subsys_jacorb_poaTab")
     public String getMonitoring();
@@ -202,6 +226,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="queue-wait")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_queueWait",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=190,
               tabName="subsys_jacorb_poaTab")
     public String getQueueWait();
@@ -258,6 +285,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="export-corbaloc")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_exportCorbaloc",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=250,
               tabName="subsys_jacorb_namingTab")
     public String getExportCorbaloc();
@@ -266,6 +296,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="sun")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_sun",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=260,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getSun();
@@ -274,6 +307,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="comet")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_comet",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=270,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getComet();
@@ -282,6 +318,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="iona")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_iona",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=280,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getIona();
@@ -290,6 +329,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="chunk-custom-rmi-valuetypes")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_chunkCustomRMIValuetypes",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=290,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getChunkCustomRMIValueTypes();
@@ -298,6 +340,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="lax-boolean-encoding")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_laxBooleanEncoding",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=300,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getLaxBooleanEncoding();
@@ -306,6 +351,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="indirection-encoding-disable")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_indirectionEncodingDisable",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=310,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getIndirectionEncodingDisable();
@@ -314,6 +362,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="strict-check-on-tc-creation")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_strictCheckOnTCCreation",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=320,
               tabName="subsys_jacorb_interoperabilityTab")
     public String getStrictCheckOnTCCreation();
@@ -322,6 +373,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="support-ssl")
     @FormItem(defaultValue="off",
               localLabel="subsys_jacorb_supportSSL",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=330,
               tabName="subsys_jacorb_securityTab")
     public String getSupportSSL();
@@ -338,6 +392,9 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     @Binding(detypedName="add-component-via-interceptor")
     @FormItem(defaultValue="on",
               localLabel="subsys_jacorb_addComponentViaInterceptor",
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              acceptedValues={"off", "on"},
               order=350,
               tabName="subsys_jacorb_securityTab")
     public String getAddComponentViaInterceptor();
