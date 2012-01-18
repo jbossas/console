@@ -26,11 +26,9 @@ public class DomainResponseProcessor implements ResponseProcessor {
 
         ReloadState reloadState = Console.MODULES.getReloadState();
 
-        boolean staleModel = parseServerState(response, reloadState);
+        parseServerState(response, reloadState);
 
-        if(staleModel)
-            reloadState.propagateChanges();
-
+        reloadState.propagateChanges();
 
     }
 
@@ -54,24 +52,24 @@ public class DomainResponseProcessor implements ResponseProcessor {
                     if(serverResponse.hasDefined(RESPONSE_HEADERS))
                     {
                         List<Property> headers = serverResponse.get(RESPONSE_HEADERS).asPropertyList();
-                        for(Property header : headers) {
-                            if(PROCESS_STATE.equals(header.getName())) {
-                                if(RESTART_REQUIRED.equals(header.getValue().asString()))
+                        for(Property header : headers)
+                        {
+                            if(PROCESS_STATE.equals(header.getName()))
+                            {
+                                String headerValue = header.getValue().asString();
+
+                                if(RESTART_REQUIRED.equals(headerValue))
                                 {
                                     staleModel=true;
                                     reloadState.setRestartRequired(server.getName(), staleModel);
                                 }
-                                else if(RELOAD_REQUIRED.equals(header.getValue().asString()))
+                                else if(RELOAD_REQUIRED.equals(headerValue))
                                 {
                                     staleModel=true;
                                     reloadState.setReloadRequired(server.getName(), staleModel);
                                 }
-                                else
-                                {
-                                    // none of the above: reset flags
-                                    reloadState.resetServer(server.getName());
 
-                                }
+                                System.out.println(server.getName() +" >> "+staleModel);
                             }
                         }
                     }

@@ -175,6 +175,9 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     public void startServer(final String hostName, final String serverName, final boolean startIt) {
+
+        reloadState.resetServer(serverName);
+
         hostInfoStore.startServer(hostName, serverName, startIt, new SimpleCallback<Boolean>() {
             @Override
             public void onSuccess(final Boolean wasSuccessful) {

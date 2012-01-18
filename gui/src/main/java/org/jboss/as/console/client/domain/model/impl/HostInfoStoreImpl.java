@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerFlag;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -221,11 +222,11 @@ public class HostInfoStoreImpl implements HostInformationStore {
                                     String state = payload.get("server-state").asString();
                                     if(state.equals("reload-required"))
                                     {
-                                        instance.setFlag(ServerInstance.ServerFlag.RELOAD_REQUIRED);
+                                        instance.setFlag(ServerFlag.RELOAD_REQUIRED);
                                     }
                                     else if (state.equals("restart-required"))
                                     {
-                                        instance.setFlag(ServerInstance.ServerFlag.RESTART_REQUIRED);
+                                        instance.setFlag(ServerFlag.RESTART_REQUIRED);
                                     }
                                 }
 

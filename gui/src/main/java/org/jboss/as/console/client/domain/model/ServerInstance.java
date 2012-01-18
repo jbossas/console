@@ -25,7 +25,6 @@ package org.jboss.as.console.client.domain.model;
  */
 public interface ServerInstance {
 
-    public enum ServerFlag { RELOAD_REQUIRED, RESTART_REQUIRED }
 
     String getName();
     void setName(String name);
