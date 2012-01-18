@@ -10,6 +10,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.hosts.ServerPicker;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
@@ -113,5 +114,10 @@ class DomainRuntimeNavigation {
     public void setServer(List<ServerInstance> server) {
 
         serverPicker.setServers(server);
+    }
+
+    public void updateSubsystems(List<SubsystemRecord> subsystems) {
+
+        // TODO
     }
 }

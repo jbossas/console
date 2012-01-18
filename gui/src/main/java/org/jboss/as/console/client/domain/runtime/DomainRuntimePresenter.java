@@ -213,6 +213,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         serverSelection.setHost(hostName);
         serverSelection.setServer(server);
+
+        // load subsystems for selected server
+
+
     }
 
     @Override

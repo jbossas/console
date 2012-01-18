@@ -1,5 +1,9 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -27,6 +31,10 @@ public class ServerPicker implements HostServerManagement {
 
     public Widget asWidget() {
 
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
+        layout.getElement().setAttribute("style","padding:4px;");
+
         serverSelection = new HostServerTable(this);
 
         serverSelection.setPopupWidth(400);
@@ -35,8 +43,13 @@ public class ServerPicker implements HostServerManagement {
         Widget widget = serverSelection.asWidget();
         widget.getElement().setAttribute("style", "width:100%;");
 
+        Label label = new Label(Console.CONSTANTS.common_label_server()+":");
+        label.setStyleName("header-label");
 
-        return widget;
+        layout.add(label);
+        layout.add(widget);
+
+        return layout;
     }
 
     public void setServers(List<ServerInstance> servers) {

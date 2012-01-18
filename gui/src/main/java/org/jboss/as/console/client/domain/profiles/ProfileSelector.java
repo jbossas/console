@@ -5,6 +5,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
@@ -22,7 +23,7 @@ public class ProfileSelector {
 
     public Widget asWidget() {
 
-        HorizontalPanel layout = new HorizontalPanel();
+        VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
         layout.getElement().setAttribute("style","padding:4px;");
 
