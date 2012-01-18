@@ -5,6 +5,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -23,7 +24,7 @@ public class HostSelector {
 
     public Widget asWidget() {
 
-        HorizontalPanel layout = new HorizontalPanel();
+        VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
         layout.getElement().setAttribute("style","padding:4px;");
@@ -32,12 +33,17 @@ public class HostSelector {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {
 
-                Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        Console.MODULES.getEventBus().fireEvent(new HostSelectionEvent(event.getValue()));
-                    }
-                });
+                if(!event.getValue().isEmpty())
+                {
+                    Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            Console.MODULES.getEventBus().fireEvent(
+                                    new HostSelectionEvent(event.getValue())
+                            );
+                        }
+                    });
+                }
             }
         });
 
@@ -55,6 +61,9 @@ public class HostSelector {
 
     public void setHosts(List<String> hostNames)
     {
+
+
+        hosts.clearSelection();
         hosts.setValues(hostNames);
 
         CurrentHostSelection hostSelection = Console.MODULES.getCurrentSelectedHost();
@@ -65,16 +74,16 @@ public class HostSelector {
             {
                 if(name.equals(hostSelection.getName()))
                 {
-                    setItemSelected(i, true);
+                    hosts.setItemSelected(i, true);
                     break;
                 }
                 i++;
             }
         }
+        else {
+            if(!hostNames.isEmpty())
+                hosts.setItemSelected(0, true);
+        }
 
-    }
-
-    public void setItemSelected(int item, boolean b) {
-        hosts.setItemSelected(item, b);
     }
 }
