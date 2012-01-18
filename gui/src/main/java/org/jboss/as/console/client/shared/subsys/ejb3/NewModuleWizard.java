@@ -2,17 +2,13 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
-
-import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -20,40 +16,36 @@ import java.util.List;
  */
 public class NewModuleWizard {
     private EEPresenter presenter;
-    private List<String> modules;
 
-    public NewModuleWizard(EEPresenter eePresenter, List<String> modules) {
+    public NewModuleWizard(EEPresenter eePresenter) {
         this.presenter = eePresenter;
-        this.modules = modules;
-    }
 
+    }
 
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
+        final Form<Module> form = new Form<Module>(Module.class);
 
-        final DefaultCellTable<String> table = new DefaultCellTable<String>(5);
-        table.setSelectionModel(new SingleSelectionModel<String>());
-        ListDataProvider<String> dataProvider = new ListDataProvider<String>();
-        dataProvider.addDataDisplay(table);
-
-        TextColumn<String> name = new TextColumn<String>() {
+       /* FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback() {
             @Override
-            public String getValue(String record) {
-                return record;
+            public ModelNode getAddress() {
+                ModelNode address = Baseadress.get();
+                address.add("subsystem", "ee");
+                return address;
             }
-        };
+        }, form);*/
 
-        table.addColumn(name, "Name");
 
-        layout.add(table.asWidget());
+        TextBoxItem name = new TextBoxItem("name", "Name");
+        TextBoxItem slot = new TextBoxItem("slot", "Slot");
+        slot.setValue("main"); // default slot
 
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(table);
-        layout.add(pager.asWidget());
+        form.setFields(name, slot);
 
-        dataProvider.setList(modules);
+        //layout.add(helpPanel.asWidget());
+        layout.add(form.asWidget());
 
         DialogueOptions options = new DialogueOptions(
 
@@ -62,8 +54,8 @@ public class NewModuleWizard {
                     @Override
                     public void onClick(ClickEvent event) {
 
-                        String name = ((SingleSelectionModel<String>)table.getSelectionModel()).getSelectedObject();
-                        presenter.onAddModule(name);
+                        Module module = form.getUpdatedEntity();
+                        presenter.onAddModule(module);
 
                     }
                 },
@@ -82,15 +74,4 @@ public class NewModuleWizard {
         return new WindowContentBuilder(layout, options).build();
     }
 
-    class Wrapper {
-        String name;
-
-        Wrapper(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 }

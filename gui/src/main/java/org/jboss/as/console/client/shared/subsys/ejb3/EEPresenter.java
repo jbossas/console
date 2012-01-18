@@ -92,7 +92,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         loadSubsystem();
     }
 
-    public void onAddModule(String moduleName) {
+    public void onAddModule(Module module) {
         closeDialoge();
 
         boolean isAlreadyAssigned = false;
@@ -103,7 +103,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
 
         for(Module m : modules)
         {
-            if(m.getName().equals(moduleName))
+            if(m.getName().equals(module.getName()))
             {
                 isAlreadyAssigned = true;
                 break;
@@ -113,8 +113,8 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         if(!isAlreadyAssigned)
         {
             Module newModule = factory.eeModuleRef().as();
-            newModule.setName(moduleName);
-            newModule.setSlot("main");
+            newModule.setName(module.getName());
+            newModule.setSlot(module.getSlot());
 
             modules.add(newModule);
 
@@ -213,45 +213,20 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
     }
 
     public void launchNewModuleDialogue() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(CHILD_TYPE).set("extension");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
-
-                if(response.isFailure())
-                {
-                    Console.error(Console.MESSAGES.failed("Loading extensions"), response.getFailureDescription());
-                }
-                else
-                {
-                    List<ModelNode> modelNodes = response.get(RESULT).asList();
-                    List<String> names = new ArrayList<String>(modelNodes.size());
-                    for(ModelNode model : modelNodes)
-                        names.add(model.asString());
-
-                    launchDialogue(names);
-                }
-
-            }
-        });
-    }
-
-    private void launchDialogue(List<String> names) {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Module"));
         window.setWidth(480);
         window.setHeight(360);
 
         window.setWidget(
-                new NewModuleWizard(this, names).asWidget()
+                new NewModuleWizard(this).asWidget()
         );
 
         window.setGlassEnabled(true);
         window.center();
+    }
+
+    private void launchDialogue(List<String> names) {
+
     }
 
 

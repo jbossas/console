@@ -19,6 +19,7 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -141,6 +142,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                 .setMaster("Subsystem Defaults", master)
                 .setMasterTools(formToolStrip.asWidget())
                 .setDetail("Global Modules", moduleList).build();
+
 
 
         modules.getElement().setAttribute("style", "padding-top:5px");
