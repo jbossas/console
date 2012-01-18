@@ -26,7 +26,10 @@ public class DomainResponseProcessor implements ResponseProcessor {
 
         ReloadState reloadState = Console.MODULES.getReloadState();
 
-        parseServerState(response, reloadState);
+        boolean staleModel = parseServerState(response, reloadState);
+
+        if(staleModel)
+            reloadState.propagateChanges();
 
 
     }

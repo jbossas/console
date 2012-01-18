@@ -26,6 +26,8 @@ public class StandaloneResponseProcessor implements ResponseProcessor {
         ReloadState reloadState = Console.MODULES.getReloadState();
         boolean staleModel = parseServerState(response, reloadState);
 
+        reloadState.propagateChanges();
+
         if(!staleModel) reloadState.reset();
 
     }

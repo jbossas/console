@@ -526,4 +526,8 @@ public interface UIConstants extends Constants {
     String properties_global_desc();
 
     String common_label_active();
+
+    String server_instance_reloadRequired();
+
+    String server_instance_servers_needRestart();
 }

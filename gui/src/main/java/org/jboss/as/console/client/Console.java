@@ -136,6 +136,15 @@ public class Console implements EntryPoint {
         MODULES.getMessageCenter().notify(msg);
     }
 
+    public static void warning(String message, String detail, boolean sticky) {
+        Message msg = sticky ?
+                new Message(message, detail, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky)) :
+                new Message(message, detail, Message.Severity.Warning);
+
+
+        MODULES.getMessageCenter().notify(msg);
+    }
+
     public static void warning(String message, String detail) {
         MODULES.getMessageCenter().notify(
                 new Message(message, detail, Message.Severity.Warning)

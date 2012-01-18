@@ -27,8 +27,6 @@ public class ReloadState {
 
         if(willBeRequired && !isLogged(name))
         {
-            // state update, fire notification
-            Console.warning("A server reload is required: "+name, true);
             ServerState state = new ServerState(name);
             state.setReloadRequired(true);
             serverStates.put(name, state);
@@ -39,11 +37,25 @@ public class ReloadState {
 
         if(willBeRequired && !isLogged(name))
         {
-            // state update, fire notification
-            Console.warning("A server restart is required: "+name, true);
             ServerState state = new ServerState(name);
             state.setRestartRequired(true);
             serverStates.put(name, state);
+        }
+    }
+
+    public void propagateChanges() {
+        if(isStaleModel())
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append(Console.CONSTANTS.server_instance_servers_needRestart());
+            sb.append("<ul>");
+            for(ServerState server : serverStates.values())
+            {
+                sb.append("<li>").append(server.getName());
+            }
+            sb.append("</ul>");
+            // state update, fire notification
+            Console.warning(Console.CONSTANTS.server_instance_reloadRequired(), sb.toString(), true);
         }
     }
 
