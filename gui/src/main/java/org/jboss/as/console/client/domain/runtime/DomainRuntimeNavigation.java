@@ -28,6 +28,7 @@ class DomainRuntimeNavigation {
     private VerticalPanel layout;
 
     private ServerPicker serverPicker;
+    private DefaultTreeItem subsystemTree;
 
     public Widget asWidget()
     {
@@ -67,20 +68,10 @@ class DomainRuntimeNavigation {
 
         Tree metricTree = new LHSNavTree("domain-runtime");
 
-        TreeItem subsystems = new DefaultTreeItem("Subsystem Metrics");
+        subsystemTree = new DefaultTreeItem("Subsystem Metrics");
 
-        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
-        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
-        LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
-
-        subsystems.addItem(datasources);
-        subsystems.addItem(jmsQueues);
-        subsystems.addItem(web);
-        subsystems.addItem(tx);
-
-        metricTree.addItem(subsystems);
-        subsystems.setState(true); // open by default
+        metricTree.addItem(subsystemTree);
+        //subsystemTree.setState(true); // open by default
         servers.setState(true);
 
         innerlayout.add(metricTree);
@@ -116,8 +107,29 @@ class DomainRuntimeNavigation {
         serverPicker.setServers(server);
     }
 
-    public void updateSubsystems(List<SubsystemRecord> subsystems) {
+    public void setSubsystems(List<SubsystemRecord> subsystems) {
 
-        // TODO
+
+        subsystemTree.setState(false);
+        subsystemTree.removeItems();
+
+
+        System.out.println("subsystems: "+ subsystems.size());
+
+        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
+        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
+        LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
+        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
+
+        subsystemTree.addItem(datasources);
+        subsystemTree.addItem(jmsQueues);
+        subsystemTree.addItem(web);
+        subsystemTree.addItem(tx);
+
+
+        subsystemTree.setState(true);
     }
+
+
+
 }

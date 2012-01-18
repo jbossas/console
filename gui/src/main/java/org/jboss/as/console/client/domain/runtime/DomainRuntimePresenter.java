@@ -23,8 +23,11 @@ import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
+import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
@@ -50,6 +53,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
     private String lastSubPlace;
+    private ServerGroupStore serverGroupStore;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -64,6 +68,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
         void setServer(List<ServerInstance> server);
+
+        void setSubsystems(List<SubsystemRecord> result);
     }
 
     @Inject
@@ -71,7 +77,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
             CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
-            SubsystemStore subsysStore, BootstrapContext bootstrap) {
+            SubsystemStore subsysStore, BootstrapContext bootstrap,
+            ServerGroupStore serverGroupStore) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -80,6 +87,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         this.hostSelection = hostSelection;
         this.subsysStore = subsysStore;
         this.bootstrap = bootstrap;
+        this.serverGroupStore = serverGroupStore;
     }
 
     @Override
@@ -216,6 +224,18 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         // load subsystems for selected server
 
+        serverGroupStore.loadServerGroup(server.getGroup(), new SimpleCallback<ServerGroupRecord>() {
+            @Override
+            public void onSuccess(ServerGroupRecord group)
+            {
+                subsysStore.loadSubsystems(group.getProfileName(), new SimpleCallback<List<SubsystemRecord>>() {
+                    @Override
+                    public void onSuccess(List<SubsystemRecord> result) {
+                        getView().setSubsystems(result);
+                    }
+                });
+            }
+        });
 
     }
 

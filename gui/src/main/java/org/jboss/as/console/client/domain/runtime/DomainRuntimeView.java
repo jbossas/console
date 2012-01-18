@@ -9,6 +9,7 @@ import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.domain.hosts.HostSelector;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.model.SubsystemRecord;
 
 import java.util.List;
 
@@ -77,5 +78,10 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     @Override
     public void setServer(List<ServerInstance> server) {
         lhsNavigation.setServer(server);
+    }
+
+    @Override
+    public void setSubsystems(List<SubsystemRecord> result) {
+        lhsNavigation.setSubsystems(result);
     }
 }
