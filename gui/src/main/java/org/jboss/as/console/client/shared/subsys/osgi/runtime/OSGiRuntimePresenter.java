@@ -91,7 +91,9 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     @Override
     protected void onReset() {
         super.onReset();
-        getView().initialLoad();
+
+        if(serverSelection.isSet())
+            getView().initialLoad();
 
     }
 
