@@ -99,17 +99,9 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        //refreshView();
 
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                getEventBus().fireEvent(
-                        new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverInstances(), "domain-runtime")
-
-                );
-            }
-        });
+        if(hostSelection.isSet())
+            loadHostData();
 
     }
 
@@ -142,9 +134,19 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public void onHostSelection(final String hostName) {
 
         // current host selection is set in DomainRuntimePresenter
+        if (isVisible() && !hostSelection.isSet())
+        {
+            // edge case: init from external url (#server-instances)
+            // in that case the order of initialization is different
+            hostSelection.setName(hostName);
+
+        }
 
         if(isVisible() && hostSelection.isSet())
+        {
             loadHostData();
+        }
+
     }
 
     public void onFilterByGroup(String serverConfig) {
