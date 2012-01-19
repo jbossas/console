@@ -18,7 +18,9 @@ import java.util.List;
 public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPresenter.MyView {
     private JPAMetricPresenter presenter;
     private PagedView pages;
-    private DeploymentList deploymentList;
+    private PersistenceUnitList deploymentList;
+    private BasicMetrics basicMetrics;
+    private List<JPADeployment> units;
 
     @Override
     public void setPresenter(JPAMetricPresenter presenter) {
@@ -31,9 +33,11 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
 
         pages = new PagedView();
 
-        this.deploymentList = new DeploymentList(presenter);
+        this.deploymentList = new PersistenceUnitList(presenter);
+        this.basicMetrics = new BasicMetrics(this.presenter);
 
         pages.addPage(Console.CONSTANTS.common_label_back(), deploymentList.asWidget());
+        pages.addPage("Basic", basicMetrics.asWidget());
 
         // default page
         pages.showPage(0);
@@ -56,6 +60,32 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
 
     @Override
     public void setJpaUnits(List<JPADeployment> jpaUnits) {
+
+        this.units = jpaUnits;
         deploymentList.setUnits(jpaUnits);
+    }
+
+    @Override
+    public void setSelectedUnit(String[] tokens) {
+        if(null==tokens)
+            pages.showPage(0);
+        else
+        {
+            // TODO threadPools.setContextName(selectedWorkmanager);
+
+            if(units!=null)
+            {
+                for(JPADeployment unit : units)
+                {
+                    if(unit.getPersistenceUnit().equals(tokens[1]))
+                    {
+                        basicMetrics.setUnit(unit);
+                        break;
+                    }
+                }
+            }
+
+            pages.showPage(1);
+        }
     }
 }

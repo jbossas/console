@@ -7,6 +7,8 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -41,6 +43,12 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     private RevealStrategy revealStrategy;
     private CurrentServerSelection serverSelection;
     private BeanFactory factory;
+    private PlaceManager placeManager;
+    private String[] selectedUnit;
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JPAMetricPresenter)
@@ -49,8 +57,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
     public interface MyView extends View {
         void setPresenter(JPAMetricPresenter presenter);
-
         void setJpaUnits(List<JPADeployment> jpaUnits);
+        void setSelectedUnit(String[] strings);
     }
 
     @Inject
@@ -58,13 +66,15 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
             EventBus eventBus, MyView view, MyProxy proxy,
             DispatchAsync dispatcher,
             ApplicationMetaData metaData, RevealStrategy revealStrategy,
-            CurrentServerSelection serverSelection, BeanFactory factory) {
+            CurrentServerSelection serverSelection, BeanFactory factory, PlaceManager placeManager) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
+        this.placeManager = placeManager;
         this.serverSelection = serverSelection;
         this.factory = factory;
+
     }
 
     @Override
@@ -74,6 +84,23 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+
+
+        String dpl = request.getParameter("dpl", null);
+        if(dpl!=null) {
+            this.selectedUnit = new String[] {
+                    dpl,
+                    request.getParameter("unit", null)
+            };
+        }
+        else
+        {
+            this.selectedUnit = null;
+        }
+
+    }
 
     @Override
     protected void onReset() {
@@ -137,6 +164,9 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
                     getView().setJpaUnits(jpaUnits);
                 }
 
+
+                // update selection (paging)
+                getView().setSelectedUnit(selectedUnit);
 
 
             }

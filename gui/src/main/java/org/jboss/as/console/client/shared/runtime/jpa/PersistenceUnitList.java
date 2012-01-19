@@ -7,7 +7,9 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
@@ -56,9 +58,11 @@ public class PersistenceUnitList {
                 new TextLinkCell<JPADeployment>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JPADeployment>() {
                     @Override
                     public void execute(JPADeployment selection) {
-                        /*presenter.getPlaceManager().revealPlace(
-                                new PlaceRequest(NameTokens.JcaPresenter).with("name", selection.getName())
-                        );*/
+                        presenter.getPlaceManager().revealPlace(
+                                new PlaceRequest(NameTokens.JPAMetricPresenter)
+                                        .with("dpl", selection.getDeploymentName())
+                                        .with("unit", selection.getPersistenceUnit())
+                        );
                     }
                 })
         ) {
