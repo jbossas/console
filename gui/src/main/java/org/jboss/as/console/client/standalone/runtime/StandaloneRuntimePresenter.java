@@ -3,6 +3,7 @@ package org.jboss.as.console.client.standalone.runtime;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -40,8 +41,8 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
             new GwtEvent.Type<RevealContentHandler<?>>();
     private SubsystemStore subsysStore;
     private BootstrapContext bootstrap;
-    private String lastSubPlace;
 
+    private String lastSubPlace;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneRuntimePresenter)
@@ -76,19 +77,6 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
         super.onReset();
 
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
-                    bootstrap.setInitialPlace(null);
-                }
-            });
-        }
-
 
         Console.MODULES.getHeader().highlight(NameTokens.StandaloneRuntimePresenter);
 
@@ -118,8 +106,32 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
                 placeManager.revealRelativePlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
             }
 
+            Timer t = new Timer() {
+                @Override
+                public void run() {
+                    highlightLHSNav();
+                }
+            };
+
+            t.schedule(150);
+
             hasBeenRevealed = true;
 
+        }
+    }
+
+    private void highlightLHSNav() {
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+                    bootstrap.setInitialPlace(null);
+                }
+            });
         }
     }
 

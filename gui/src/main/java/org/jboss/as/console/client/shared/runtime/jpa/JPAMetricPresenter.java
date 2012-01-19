@@ -107,8 +107,6 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                System.out.println(response);
-
                 if(response.isFailure())
                 {
                     Console.error(Console.MESSAGES.failed("JPA Deployments"), response.getFailureDescription());
