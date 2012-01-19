@@ -104,6 +104,8 @@ import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricView;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricView;
+import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricsView;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
@@ -566,6 +568,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DataSourceMetricPresenter.MyView.class,
                 DataSourceMetricView.class,
                 DataSourceMetricPresenter.MyProxy.class);
+
+        bindPresenter(JPAMetricPresenter.class,
+                JPAMetricPresenter.MyView.class,
+                JPAMetricsView.class,
+                JPAMetricPresenter.MyProxy.class);
+
 
     }
 

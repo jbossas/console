@@ -123,7 +123,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         osPanel.add(processors);
 
         // cross references
-        HTML jvmConfigLink = new HTML("<a href='javascript:void(0)'>Configure Virtual Machine &rarr;</a>");
+       /* HTML jvmConfigLink = new HTML("<a href='javascript:void(0)'>Configure Virtual Machine &rarr;</a>");
         jvmConfigLink.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -133,7 +133,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
             }
         });
         if(hasServerPicker)
-            osPanel.add(jvmConfigLink);
+            osPanel.add(jvmConfigLink);  */
 
         header.add(osPanel);
 

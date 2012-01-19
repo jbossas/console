@@ -77,6 +77,7 @@ public class NameTokens {
     public static final String WebMetricPresenter = "web-metrics";
     public static final String JmsMetricPresenter = "jms-metrics";
     public static final String DataSourceMetricPresenter  = "ds-metrics";
+    public static final String JPAMetricPresenter = "jpa-metrics";
 
     public static String getMainLayout() {
         return mainLayout;

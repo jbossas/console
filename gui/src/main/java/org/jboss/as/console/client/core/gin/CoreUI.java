@@ -70,6 +70,7 @@ import org.jboss.as.console.client.shared.model.SubsystemStore;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.ds.DataSourceMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
@@ -279,5 +280,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JMSMetricPresenter> JMSMetricPresenter();
 
     AsyncProvider<DataSourceMetricPresenter> DataSourceMetricPresenter();
+
+    AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
 
 }
