@@ -24,7 +24,6 @@ public class ServerPicker implements HostServerManagement {
 
     private HostServerTable serverSelection;
     private LoadServerCmd loadServerCmd;
-    private boolean isBootstrapped = false;
 
     public ServerPicker() {
         this.loadServerCmd = new LoadServerCmd(Console.MODULES.getHostInfoStore());
@@ -69,10 +68,22 @@ public class ServerPicker implements HostServerManagement {
     }
 
     public void setHosts(List<Host> hosts) {
+
+
+        Host previousHost = serverSelection.getSelectedHost();
+
         serverSelection.setHosts(hosts);
 
-        // TODO: retain selection
-        serverSelection.defaultHostSelection();
+        if(null==previousHost)
+        {
+            serverSelection.defaultHostSelection();
+        }
+        else
+        {
+            // restore previous selection
+            serverSelection.selectHost(previousHost);
+        }
+
 
     }
 

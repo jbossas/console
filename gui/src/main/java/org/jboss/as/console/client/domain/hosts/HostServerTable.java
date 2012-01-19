@@ -219,7 +219,7 @@ public class HostServerTable {
         );
     }
 
-    private Host getSelectedHost() {
+    public Host getSelectedHost() {
         return ((SingleSelectionModel<Host>) hostList.getSelectionModel()).getSelectedObject();
     }
 
@@ -276,17 +276,20 @@ public class HostServerTable {
     public void setHosts(List<Host> hosts) {
 
         ratio.setText("");
-
         hostList.setRowData(0, hosts);
-        // clear when hosts are updated
         serverList.setRowData(0, Collections.EMPTY_LIST);
     }
 
     public void defaultHostSelection() {
         if(hostList.getRowCount()>0)
         {
-            hostList.getSelectionModel().setSelected(hostList.getVisibleItem(0), true);
+            selectHost(hostList.getVisibleItem(0));
         }
+    }
+
+    public void selectHost(Host host) {
+        hostList.getSelectionModel().setSelected(host, true);
+
     }
 
     interface Template extends SafeHtmlTemplates {

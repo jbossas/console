@@ -98,6 +98,7 @@ class DomainRuntimeNavigation {
     }
 
     public void setHosts(List<Host> hosts) {
+
         serverPicker.setHosts(hosts);
 
     }

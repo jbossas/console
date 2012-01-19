@@ -54,6 +54,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private BootstrapContext bootstrap;
     private String lastSubPlace;
     private ServerGroupStore serverGroupStore;
+    private String previousServerSelection = null;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
@@ -217,25 +218,31 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
 
-        //System.out.println("** Update state "+hostName+"/"+server.getName());
+        // prevent reloading upon every request
+        if(!server.getName().equals(previousServerSelection))
+        {
+            previousServerSelection = server.getName();
 
-        serverSelection.setHost(hostName);
-        serverSelection.setServer(server);
+            System.out.println("** Update state "+hostName+"/"+server.getName());
 
-        // load subsystems for selected server
+            serverSelection.setHost(hostName);
+            serverSelection.setServer(server);
 
-        serverGroupStore.loadServerGroup(server.getGroup(), new SimpleCallback<ServerGroupRecord>() {
-            @Override
-            public void onSuccess(ServerGroupRecord group)
-            {
-                subsysStore.loadSubsystems(group.getProfileName(), new SimpleCallback<List<SubsystemRecord>>() {
-                    @Override
-                    public void onSuccess(List<SubsystemRecord> result) {
-                        getView().setSubsystems(result);
-                    }
-                });
-            }
-        });
+            // load subsystems for selected server
+
+            serverGroupStore.loadServerGroup(server.getGroup(), new SimpleCallback<ServerGroupRecord>() {
+                @Override
+                public void onSuccess(ServerGroupRecord group)
+                {
+                    subsysStore.loadSubsystems(group.getProfileName(), new SimpleCallback<List<SubsystemRecord>>() {
+                        @Override
+                        public void onSuccess(List<SubsystemRecord> result) {
+                            getView().setSubsystems(result);
+                        }
+                    });
+                }
+            });
+        }
 
     }
 
