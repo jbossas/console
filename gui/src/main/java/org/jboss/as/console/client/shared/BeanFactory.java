@@ -39,6 +39,7 @@ import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
@@ -225,4 +226,5 @@ public interface BeanFactory extends AutoBeanFactory {
 
 
     AutoBean<JacOrbSubsystem> jacORBSubsystem();
+    AutoBean<JPADeployment> jpaDeployment();
 }

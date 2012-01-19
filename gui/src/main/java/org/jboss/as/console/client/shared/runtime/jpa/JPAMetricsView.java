@@ -1,9 +1,15 @@
 package org.jboss.as.console.client.shared.runtime.jpa;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.widgets.pages.PagedView;
+import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -11,7 +17,7 @@ import org.jboss.as.console.client.widgets.pages.PagedView;
  */
 public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPresenter.MyView {
     private JPAMetricPresenter presenter;
-    private PagedView panel;
+    private PagedView pages;
     private DeploymentList deploymentList;
 
     @Override
@@ -22,17 +28,34 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
     @Override
     public Widget createWidget() {
 
-        panel = new PagedView();
+
+        pages = new PagedView();
 
         this.deploymentList = new DeploymentList(presenter);
 
-        panel.addPage(Console.CONSTANTS.common_label_back(), deploymentList.asWidget());
-       // panel.addPage("Thread Pools", threadPools.asWidget());
+        pages.addPage(Console.CONSTANTS.common_label_back(), deploymentList.asWidget());
 
         // default page
-        panel.showPage(0);
+        pages.showPage(0);
 
+        LayoutPanel layout = new LayoutPanel();
 
-        return panel.asWidget();
+        // Top Most Tab
+        FakeTabPanel titleBar = new FakeTabPanel("JPA");
+        layout.add(titleBar);
+
+        Widget pagesWidget = pages.asWidget();
+        layout.add(pagesWidget);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(pagesWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
+
+    }
+
+    @Override
+    public void setJpaUnits(List<JPADeployment> jpaUnits) {
+        deploymentList.setUnits(jpaUnits);
     }
 }

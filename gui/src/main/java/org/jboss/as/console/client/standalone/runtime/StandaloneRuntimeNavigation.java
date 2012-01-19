@@ -78,11 +78,13 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
+        LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
         metricPredicates.add(new Predicate("transactions", tx));
+        metricPredicates.add(new Predicate("jpa", jpa));
 
         innerlayout.add(metricTree);
 

@@ -5,11 +5,15 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.model.DeploymentRecord;
+import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -18,7 +22,9 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 public class DeploymentList {
 
 
-    private CellTable<DeploymentRecord> table;
+    private CellTable<JPADeployment> table;
+    private ListDataProvider<JPADeployment> dataProvider;
+    
     private JPAMetricPresenter presenter;
 
     public DeploymentList(JPAMetricPresenter presenter) {
@@ -28,28 +34,28 @@ public class DeploymentList {
     Widget asWidget() {
 
 
-        table = new DefaultCellTable<DeploymentRecord>(8);
+        table = new DefaultCellTable<JPADeployment>(8);
 
-        TextColumn<DeploymentRecord> name = new TextColumn<DeploymentRecord>() {
+        TextColumn<JPADeployment> name = new TextColumn<JPADeployment>() {
 
             @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getName();
+            public String getValue(JPADeployment record) {
+                return record.getDeploymentName();
             }
         };
 
-        TextColumn<DeploymentRecord> runtimeName = new TextColumn<DeploymentRecord>() {
+        TextColumn<JPADeployment> unit = new TextColumn<JPADeployment>() {
 
             @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getRuntimeName();
+            public String getValue(JPADeployment record) {
+                return record.getPersistenceUnit();
             }
         };
 
-        Column<DeploymentRecord, DeploymentRecord> option = new Column<DeploymentRecord, DeploymentRecord>(
-                new TextLinkCell<DeploymentRecord>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<DeploymentRecord>() {
+        Column<JPADeployment, JPADeployment> option = new Column<JPADeployment, JPADeployment>(
+                new TextLinkCell<JPADeployment>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<JPADeployment>() {
                     @Override
-                    public void execute(DeploymentRecord selection) {
+                    public void execute(JPADeployment selection) {
                         /*presenter.getPlaceManager().revealPlace(
                                 new PlaceRequest(NameTokens.JcaPresenter).with("name", selection.getName())
                         );*/
@@ -57,24 +63,34 @@ public class DeploymentList {
                 })
         ) {
             @Override
-            public DeploymentRecord getValue(DeploymentRecord manager) {
+            public JPADeployment getValue(JPADeployment manager) {
                 return manager;
             }
         };
 
-        table.addColumn(name, "Name");
-        table.addColumn(runtimeName, "Runtime Name");
+
+        table.addColumn(unit, "Persistence Unit");
+        table.addColumn(name, "Deployment");
         table.addColumn(option, "Option");
+
+        table.setSelectionModel(new SingleSelectionModel<JPADeployment>());
+
+        dataProvider = new ListDataProvider<JPADeployment>();
+        dataProvider.addDataDisplay(table);
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("JPA Metrics")
-                .setHeadline("JPA Deployments")
-                .setDescription(Console.MESSAGES.available("JPA Deployments"))
-                .setMaster("Deploment List", table);
+                .setHeadline("Persistence Units")
+                .setDescription("DESCRIPTION")
+                .setMaster(Console.MESSAGES.available("Persistence Units"), table);
 
 
         return layout.build();
 
+    }
+
+    public void setUnits(List<JPADeployment> jpaUnits) {
+        dataProvider.setList(jpaUnits);
     }
 }
