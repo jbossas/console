@@ -52,7 +52,7 @@ import org.jboss.dmr.client.ModelNode;
  * @author David Bosschaert
  */
 public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView, OSGiRuntimePresenter.MyProxy>
-    implements ServerSelectionEvent.ServerSelectionListener  {
+        implements ServerSelectionEvent.ServerSelectionListener  {
     private final BeanMetaData bundleMetaData;
     private final DispatchAsync dispatcher;
     private final RevealStrategy revealStrategy;
@@ -99,7 +99,6 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     public void onServerSelection(String hostName, ServerInstance server) {
         if(isVisible())
             getView().initialLoad();
-
     }
 
     @Override
@@ -133,14 +132,14 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         window.setWidth(320);
         window.setHeight(140);
         window.setWidget(new MessageWindow(Console.MESSAGES.subsys_osgi_activate(),
-            new MessageWindow.Result() {
-                @Override
-                public void result(boolean result) {
-                    window.hide();
-                    if (result)
-                        activateSubsystem();
-                }
-            }).asWidget());
+                new MessageWindow.Result() {
+                    @Override
+                    public void result(boolean result) {
+                        window.hide();
+                        if (result)
+                            activateSubsystem();
+                    }
+                }).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }
@@ -157,8 +156,6 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         AddressBinding address = bundleMetaData.getAddress();
         ModelNode operation = address.asSubresource(RuntimeBaseAddress.get()); // get an operation on the parent address...
         operation.get(ModelDescriptionConstants.OP).set("activate");
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
