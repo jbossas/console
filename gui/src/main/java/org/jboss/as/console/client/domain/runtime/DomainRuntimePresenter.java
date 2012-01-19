@@ -107,22 +107,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     protected void onReset() {
         super.onReset();
 
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
-
-                    bootstrap.setInitialPlace(null);
-                }
-            });
-
-
-        }
-
         Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
@@ -141,27 +125,27 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         {
             placeManager.revealPlace(new PlaceRequest(NameTokens.InstancesPresenter));
             hasBeenRevealed = true;
-
-
-            //  highlight LHS nav
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverInstances(), "domain-runtime")
-
-                    );
-                }
-            });
-
         }
         else if(!NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
             loadHostData();
         }
 
+    }
 
-
+    private void highlightLHSNav() {
+        if(bootstrap.getInitialPlace()!=null)
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    Console.MODULES.getEventBus().fireEvent(
+                            new LHSHighlightEvent(bootstrap.getInitialPlace())
+                    );
+                    bootstrap.setInitialPlace(null);
+                }
+            });
+        }
     }
 
     private void loadHostData() {
