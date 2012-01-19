@@ -77,15 +77,17 @@ class DomainRuntimeNavigation {
         subsystemMetrics = new DefaultTreeItem("Subsystem Metrics");
         metricTree.addItem(subsystemMetrics);
 
-        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
-        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
-        LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
+        LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
+        LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", NameTokens.JmsMetricPresenter);
+        LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
+        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
+        LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
         metricPredicates.add(new Predicate("transactions", tx));
+        metricPredicates.add(new Predicate("jpa", jpa));
 
         innerlayout.add(metricTree);
 
