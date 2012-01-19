@@ -117,13 +117,26 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     }
 
     private void bundleAction(OSGiBundle bundle, String operationName) {
+
         AddressBinding address = bundleMetaData.getAddress();
-        ModelNode operation = address.asResource(bundle.getName());
+        ModelNode operation = address.asResource(RuntimeBaseAddress.get(), bundle.getName());
         operation.get(ModelDescriptionConstants.OP).set(operationName);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("OSGi Bundle"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("OSGi Bundle"));
+                }
                 getView().initialLoad();
             }
         });

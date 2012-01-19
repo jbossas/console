@@ -217,7 +217,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
             operation.get(INCLUDE_RUNTIME).set(true);
         }
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override

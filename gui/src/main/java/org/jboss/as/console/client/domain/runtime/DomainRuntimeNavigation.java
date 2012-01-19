@@ -29,10 +29,12 @@ class DomainRuntimeNavigation {
     private VerticalPanel layout;
 
     private ServerPicker serverPicker;
-    private DefaultTreeItem subsystemTree;
+    private DefaultTreeItem subsystemMetrics;
 
-    private List<Predicate> potentialItems = new ArrayList<Predicate>();
-    private LHSNavTree runtimeOpsTree;
+    private List<Predicate> metricPredicates = new ArrayList<Predicate>();
+    private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
+
+    private DefaultTreeItem subsystemRuntime;
 
     public Widget asWidget()
     {
@@ -67,30 +69,39 @@ class DomainRuntimeNavigation {
 
         innerlayout.add(statusTree);
 
+        servers.setState(true);
 
         // -------------
 
         Tree metricTree = new LHSNavTree("domain-runtime");
-
-        subsystemTree = new DefaultTreeItem("Subsystem Metrics");
-
+        subsystemMetrics = new DefaultTreeItem("Subsystem Metrics");
+        metricTree.addItem(subsystemMetrics);
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
 
-        potentialItems.add(new Predicate("datasources", datasources));
-        potentialItems.add(new Predicate("messaging", jmsQueues));
-        potentialItems.add(new Predicate("web", web));
-        potentialItems.add(new Predicate("transactions", tx));
-
-        metricTree.addItem(subsystemTree);
-        //subsystemTree.setState(true); // open by default
-        servers.setState(true);
+        metricPredicates.add(new Predicate("datasources", datasources));
+        metricPredicates.add(new Predicate("messaging", jmsQueues));
+        metricPredicates.add(new Predicate("web", web));
+        metricPredicates.add(new Predicate("transactions", tx));
 
         innerlayout.add(metricTree);
 
+        // ---
+
+        Tree runtimeTree = new LHSNavTree("domain-runtime");
+        subsystemRuntime = new DefaultTreeItem("Runtime Operations");
+        runtimeTree.addItem(subsystemRuntime);
+
+        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
+
+        runtimePredicates.add(new Predicate("osgi", osgi));
+
+        innerlayout.add(runtimeTree);
+
+        // ---
 
         DisclosurePanel statusPanel  = new DisclosureStackPanel("Runtime", true).asWidget();
         statusPanel.setContent(innerlayout);
@@ -110,17 +121,6 @@ class DomainRuntimeNavigation {
         layout.add(stack);
 
 
-        // ----
-
-
-        runtimeOpsTree = new LHSNavTree("standalone-runtime");
-        DisclosurePanel runtimePanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
-        runtimePanel.setContent(runtimeOpsTree);
-
-        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
-        runtimeOpsTree.addItem(osgi);
-
-        stack.add(runtimePanel);
 
         return layout;
     }
@@ -139,20 +139,26 @@ class DomainRuntimeNavigation {
     public void setSubsystems(List<SubsystemRecord> subsystems) {
 
 
-        subsystemTree.setState(false);
-        subsystemTree.removeItems();
+        subsystemMetrics.setState(false);
+        subsystemMetrics.removeItems();
 
-        // match subystems
+        // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
-            for(Predicate predicate : potentialItems)
+            for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
-                    subsystemTree.addItem(predicate.getNavItem());
+                    subsystemMetrics.addItem(predicate.getNavItem());
+            }
+
+            for(Predicate predicate : runtimePredicates)
+            {
+                if(predicate.matches(subsys.getKey()))
+                    subsystemRuntime.addItem(predicate.getNavItem());
             }
         }
 
-        subsystemTree.setState(true);
+        subsystemMetrics.setState(true);
     }
 
     final class Predicate {
