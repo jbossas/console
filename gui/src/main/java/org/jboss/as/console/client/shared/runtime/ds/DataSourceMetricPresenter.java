@@ -36,7 +36,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 12/19/11
  */
-public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresenter.MyView, DataSourceMetricPresenter.MyProxy>
+public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresenter.MyView,
+        DataSourceMetricPresenter.MyProxy>
         implements ServerSelectionEvent.ServerSelectionListener{
 
     private final PlaceManager placeManager;

@@ -37,6 +37,7 @@ import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -320,6 +321,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
     @Override
     public void initialLoad() {
         getEntityBridge().loadEntities(null);
+    }
+
+    public void initialLoad(ModelNode baseAddress) {
+        getEntityBridge().loadEntities(null, baseAddress);
     }
 
     /**

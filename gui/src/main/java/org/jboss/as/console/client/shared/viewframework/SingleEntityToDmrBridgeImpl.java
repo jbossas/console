@@ -62,7 +62,12 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
 
     @Override
     public void loadEntities(String nameEditedOrAdded) {
-        ModelNode operation = address.asResource(Baseadress.get());
+        loadEntities(nameEditedOrAdded, Baseadress.get());
+    }
+
+    @Override
+    public void loadEntities(String nameEditedOrAdded, ModelNode baseAddress) {
+        ModelNode operation = address.asResource(baseAddress);
         operation.get(ModelDescriptionConstants.OP).set(ModelDescriptionConstants.READ_RESOURCE_OPERATION);
         operation.get(ModelDescriptionConstants.INCLUDE_RUNTIME).set(true);
 

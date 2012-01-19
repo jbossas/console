@@ -37,6 +37,8 @@ public interface EntityToDmrBridge<T> {
      */
     public void loadEntities(String nameEditedOrAdded);
 
+    public void loadEntities(String nameEditedOrAdded, ModelNode baseAddress);
+
     /**
      * Get the name of the Entity just edited/added.  This is used to keep the selection on the
      * proper entity when the list of entities is refreshed.  Note that during refresh, the list
@@ -111,5 +113,6 @@ public interface EntityToDmrBridge<T> {
      */
     @Deprecated
     public void onCancel();
+
 
 }

@@ -19,6 +19,7 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.dmr.client.ModelNode;
 
 /**
  * Super interface for Views that use this framework.
@@ -39,7 +40,7 @@ public interface FrameworkView {
      * Call for Entities to be loaded into the view for the first time.
      */
     public void initialLoad();
-    
+
     /**
      * Called whenever the data in the view needs to be refreshed.
      */

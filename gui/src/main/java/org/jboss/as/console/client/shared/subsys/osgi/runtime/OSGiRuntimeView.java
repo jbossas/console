@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -58,20 +59,14 @@ public class OSGiRuntimeView extends SuspendableViewImpl implements OSGiRuntimeP
 
     @Override
     public void initialLoad() {
-        ModelNode address = Baseadress.get();
-        if (address.asObject().get("profile").isDefined()) {
-            // Temporary disabled in domains mode until it is available properly there.
-            Feedback.alert(Console.CONSTANTS.subsys_osgi(), "OSGi Subsystem runtime information is not available on the profile level.");
-            return;
-        }
 
-        bundles.initialLoad();
+        bundles.initialLoad(RuntimeBaseAddress.get());
 
         // Async to speed up loading
         Console.schedule(new Command() {
             @Override
             public void execute() {
-                framework.initialLoad();
+                framework.initialLoad(RuntimeBaseAddress.get());
             }
         });
     }

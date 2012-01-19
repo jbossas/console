@@ -30,11 +30,15 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.MessageWindow;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
@@ -47,10 +51,12 @@ import org.jboss.dmr.client.ModelNode;
 /**
  * @author David Bosschaert
  */
-public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView, OSGiRuntimePresenter.MyProxy> {
+public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView, OSGiRuntimePresenter.MyProxy>
+    implements ServerSelectionEvent.ServerSelectionListener  {
     private final BeanMetaData bundleMetaData;
     private final DispatchAsync dispatcher;
     private final RevealStrategy revealStrategy;
+    private CurrentServerSelection serverSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.OSGiRuntimePresenter)
@@ -65,24 +71,35 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
     @Inject
     public OSGiRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            DispatchAsync dispatcher, ApplicationMetaData propertyMetaData, RevealStrategy revealStrategy) {
+            DispatchAsync dispatcher, ApplicationMetaData propertyMetaData,
+            RevealStrategy revealStrategy, CurrentServerSelection serverSelection) {
         super(eventBus, view, proxy);
 
         this.dispatcher = dispatcher;
         this.revealStrategy = revealStrategy;
         this.bundleMetaData = propertyMetaData.getBeanMetaData(OSGiBundle.class);
+        this.serverSelection = serverSelection;
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
         getView().initialLoad();
+
+    }
+
+    @Override
+    public void onServerSelection(String hostName, ServerInstance server) {
+        if(isVisible())
+            getView().initialLoad();
+
     }
 
     @Override
@@ -138,8 +155,10 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         window.center();
 
         AddressBinding address = bundleMetaData.getAddress();
-        ModelNode operation = address.asSubresource(); // get an operation on the parent address...
+        ModelNode operation = address.asSubresource(RuntimeBaseAddress.get()); // get an operation on the parent address...
         operation.get(ModelDescriptionConstants.OP).set("activate");
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

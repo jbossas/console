@@ -32,6 +32,7 @@ class DomainRuntimeNavigation {
     private DefaultTreeItem subsystemTree;
 
     private List<Predicate> potentialItems = new ArrayList<Predicate>();
+    private LHSNavTree runtimeOpsTree;
 
     public Widget asWidget()
     {
@@ -107,6 +108,19 @@ class DomainRuntimeNavigation {
         stack.add(deploymentPanel);
 
         layout.add(stack);
+
+
+        // ----
+
+
+        runtimeOpsTree = new LHSNavTree("standalone-runtime");
+        DisclosurePanel runtimePanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
+        runtimePanel.setContent(runtimeOpsTree);
+
+        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
+        runtimeOpsTree.addItem(osgi);
+
+        stack.add(runtimePanel);
 
         return layout;
     }

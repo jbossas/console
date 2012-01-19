@@ -204,7 +204,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         loadEntities(nameEditedOrAdded, Baseadress.get());
     }
 
-    void loadEntities(String nameEditedOrAdded, ModelNode baseAddress) {
+    public void loadEntities(String nameEditedOrAdded, ModelNode baseAddress) {
         this.nameOfLastEdited = nameEditedOrAdded;
 
         ModelNode operation = address.asSubresource(baseAddress);
@@ -216,6 +216,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
             // Runtime information is only available in the DMR on non-recursive reads
             operation.get(INCLUDE_RUNTIME).set(true);
         }
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
