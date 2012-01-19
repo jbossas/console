@@ -267,14 +267,8 @@ public class HostServerTable {
      */
     public void setServer(List<ServerInstance> servers) {
 
-        /*List<ServerInstance> active = new ArrayList<ServerInstance>();
-        for(ServerInstance instance : servers)
-            if(instance.isRunning())
-                active.add(instance);
-
-        ratio.setHTML("<i>Active Server: "+active.size()+" of "+servers.size()+" instances</i>");*/
-
         serverList.setRowData(0, servers);
+
         if(!servers.isEmpty())
             serverList.getSelectionModel().setSelected(servers.get(0), true);
     }
@@ -288,11 +282,10 @@ public class HostServerTable {
         serverList.setRowData(0, Collections.EMPTY_LIST);
     }
 
-    public void defaultServerSelection() {
+    public void defaultHostSelection() {
         if(hostList.getRowCount()>0)
         {
             hostList.getSelectionModel().setSelected(hostList.getVisibleItem(0), true);
-            presenter.loadServer(getSelectedHost());
         }
     }
 

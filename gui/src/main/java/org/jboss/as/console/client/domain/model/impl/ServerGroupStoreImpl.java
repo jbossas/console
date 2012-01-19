@@ -159,7 +159,6 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
                 }
                 else
                 {
-                    System.out.println(response);
                     callback.onFailure(new RuntimeException("Failed load server config " + name));
                 }
 

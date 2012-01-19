@@ -389,7 +389,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                System.out.println(response);
                 String outcome = response.get("outcome").asString();
 
                 Boolean wasSuccessful = outcome.equals("success") ? Boolean.TRUE : Boolean.FALSE;

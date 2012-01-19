@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -71,7 +72,7 @@ public class ServerPicker implements HostServerManagement {
         serverSelection.setHosts(hosts);
 
         // TODO: retain selection
-        serverSelection.defaultServerSelection();
+        serverSelection.defaultHostSelection();
 
     }
 
@@ -89,16 +90,22 @@ public class ServerPicker implements HostServerManagement {
     }
 
     @Override
-    public void onServerSelected(Host host, ServerInstance server) {
+    public void onServerSelected(final Host host, final ServerInstance server) {
 
         //System.out.println("** Fire " + host.getName()+"/"+server.getName());
 
-        Console.MODULES.getEventBus().fireEvent(
-                new HostSelectionEvent(host.getName())
-        );
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                Console.MODULES.getEventBus().fireEvent(
+                        new HostSelectionEvent(host.getName())
+                );
 
-        Console.MODULES.getEventBus().fireEvent(
-                new ServerSelectionEvent(host.getName(), server)
-        );
+                Console.MODULES.getEventBus().fireEvent(
+                        new ServerSelectionEvent(host.getName(), server)
+                );
+            }
+        });
+
     }
 }

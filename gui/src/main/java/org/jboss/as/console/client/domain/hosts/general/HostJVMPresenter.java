@@ -218,8 +218,6 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
             ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-            System.out.println(operation.toString());
-
             dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
                 @Override
