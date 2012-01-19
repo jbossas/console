@@ -79,7 +79,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     protected void onReset() {
         super.onReset();
 
-        refresh();
+        if(serverSelection.isActive())
+            refresh();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     public void onServerSelection(String hostName, ServerInstance server) {
 
         //getView().clearSamples();
-        //if(isVisible()) refresh();
+        if(isVisible()) refresh();
     }
 
     public void refresh() {
