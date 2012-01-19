@@ -12,6 +12,7 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
+import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
@@ -29,12 +30,11 @@ class DomainRuntimeNavigation {
     private VerticalPanel layout;
 
     private ServerPicker serverPicker;
-    private DefaultTreeItem subsystemMetrics;
 
     private List<Predicate> metricPredicates = new ArrayList<Predicate>();
     private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
-
     private DefaultTreeItem subsystemRuntime;
+    private DefaultTreeItem subsystemMetrics;
 
     public Widget asWidget()
     {
@@ -173,22 +173,6 @@ class DomainRuntimeNavigation {
 
     }
 
-    final class Predicate {
-        private String subsysName;
-        private LHSNavTreeItem navItem;
 
-        Predicate(String subsysName, LHSNavTreeItem navItem) {
-            this.subsysName = subsysName;
-            this.navItem = navItem;
-        }
-
-        public boolean matches(String current) {
-                return current.equals(subsysName);
-        }
-
-        public LHSNavTreeItem getNavItem() {
-            return navItem;
-        }
-    }
 
 }

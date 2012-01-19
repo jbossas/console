@@ -6,12 +6,14 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,13 @@ public class StandaloneRuntimeNavigation {
     private LHSNavTree subsysTree;
     private List<SubsystemRecord> subsystems;
 
-    private Map<String, LHSNavTreeItem> mapping = new HashMap<String,LHSNavTreeItem>();
-    private Tree statusTree;
+
+    private List<Predicate> metricPredicates = new ArrayList<Predicate>();
+    private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
+
+    private DefaultTreeItem subsystemRuntime;
+    private DefaultTreeItem subsystemMetrics;
+
 
     public Widget asWidget()
     {
@@ -40,16 +47,19 @@ public class StandaloneRuntimeNavigation {
 
         // ----------------------------------------------------
 
+        VerticalPanel innerlayout = new VerticalPanel();
+        innerlayout.setStyleName("fill-layout-width");
 
         subsysTree = new LHSNavTree("standalone-runtime");
 
 
         // ----------------------------------------------------
 
-        statusTree = new LHSNavTree("standalone-runtime");
+        LHSNavTree statusTree = new LHSNavTree("standalone-runtime");
         TreeItem serverContents = new DefaultTreeItem("Server");
-
         statusTree.addItem(serverContents);
+
+        innerlayout.add(statusTree);
 
 
         LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
@@ -58,27 +68,41 @@ public class StandaloneRuntimeNavigation {
         serverContents.addItem(jvmItem);
 
 
-        //LHSNavTreeItem metrics = new LHSNavTreeItem("Subsystem Metrics", "metrics");
+        // -------------
+
+        Tree metricTree = new LHSNavTree("standalone-runtime");
+        subsystemMetrics = new DefaultTreeItem("Subsystem Metrics");
+        metricTree.addItem(subsystemMetrics);
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
-        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
+        LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
 
-        /*subsysContents.addItem(datasources);
-        subsysContents.addItem(jmsQueues);
-        subsysContents.addItem(web);
-        subsysContents.addItem(tx);*/
+        metricPredicates.add(new Predicate("datasources", datasources));
+        metricPredicates.add(new Predicate("messaging", jmsQueues));
+        metricPredicates.add(new Predicate("web", web));
+        metricPredicates.add(new Predicate("transactions", tx));
+
+        innerlayout.add(metricTree);
+
+        // ---
+
+        Tree runtimeTree = new LHSNavTree("standalone-runtime");
+        subsystemRuntime = new DefaultTreeItem("Runtime Operations");
+        runtimeTree.addItem(subsystemRuntime);
+
+        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
+
+        runtimePredicates.add(new Predicate("osgi", osgi));
+
+        innerlayout.add(runtimeTree);
+
+        // ---
 
 
-        mapping.put(NameTokens.DataSourcePresenter, datasources);
-        mapping.put(NameTokens.MessagingPresenter, jmsQueues);
-        mapping.put(NameTokens.WebPresenter, web);
-        mapping.put(NameTokens.TransactionPresenter, tx);
-
-
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Status", true).asWidget();
-        serverPanel.setContent(statusTree);
+        DisclosurePanel serverPanel  = new DisclosureStackPanel("Runtime", true).asWidget();
+        serverPanel.setContent(innerlayout);
 
         // open by default
         serverContents.setState(true);
@@ -96,39 +120,47 @@ public class StandaloneRuntimeNavigation {
 
         stack.add(deploymentPanel);
 
-
-        // ----
-
-        Tree runtimeOpsTree = new LHSNavTree("standalone-runtime");
-        DisclosurePanel runtimePanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
-        runtimePanel.setContent(runtimeOpsTree);
-
-        LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
-        runtimeOpsTree.addItem(osgi);
-
-        stack.add(runtimePanel);
-
-         // ---
+        // ---
 
         layout.add(stack);
 
         return layout;
     }
 
-    public void setSubsystems(List<SubsystemRecord> result) {
+    public void setSubsystems(List<SubsystemRecord> subsystems) {
 
-        TreeItem subsysContents = new DefaultTreeItem("Subsystem Metrics");
 
-        for(SubsystemRecord subsys : result)
+        subsystemMetrics.setState(false);
+        subsystemMetrics.removeItems();
+
+        subsystemRuntime.setState(false);
+        subsystemRuntime.removeItems();
+
+        // match subsystems
+        for(SubsystemRecord subsys : subsystems)
         {
-            LHSNavTreeItem navEntry = mapping.get(subsys.getKey());
-            if(navEntry!=null)
+
+            //System.out.println(subsys.getKey());
+
+            for(Predicate predicate : metricPredicates)
             {
-                subsysContents.addItem(navEntry);
+                if(predicate.matches(subsys.getKey()))
+                    subsystemMetrics.addItem(predicate.getNavItem());
+            }
+
+            for(Predicate predicate : runtimePredicates)
+            {
+                if(predicate.matches(subsys.getKey()))
+                    subsystemRuntime.addItem(predicate.getNavItem());
             }
         }
 
-        statusTree.addItem(subsysContents);
-        subsysContents.setState(true);
+        subsystemMetrics.setVisible(subsystemMetrics.getChildCount()>0);
+        subsystemRuntime.setVisible(subsystemRuntime.getChildCount()>0);
+
+        subsystemMetrics.setState(true);
+        subsystemRuntime.setState(true);
+
+
     }
 }
