@@ -223,7 +223,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         {
             previousServerSelection = server.getName();
 
-            System.out.println("** Update state "+hostName+"/"+server.getName());
+            //System.out.println("** Update state "+hostName+"/"+server.getName());
 
             serverSelection.setHost(hostName);
             serverSelection.setServer(server);
@@ -238,6 +238,18 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                         @Override
                         public void onSuccess(List<SubsystemRecord> result) {
                             getView().setSubsystems(result);
+
+
+                            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                @Override
+                                public void execute() {
+                                    Console.MODULES.getEventBus().fireEvent(
+                                            new LHSHighlightEvent(
+                                                    placeManager.getCurrentPlaceRequest().getNameToken()
+                                            )
+                                    );
+                                }
+                            });
                         }
                     });
                 }
