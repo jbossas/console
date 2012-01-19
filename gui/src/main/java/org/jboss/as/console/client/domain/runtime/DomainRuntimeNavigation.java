@@ -86,7 +86,7 @@ class DomainRuntimeNavigation {
         innerlayout.add(metricTree);
 
 
-        DisclosurePanel statusPanel  = new DisclosureStackPanel("Status", true).asWidget();
+        DisclosurePanel statusPanel  = new DisclosureStackPanel("Runtime", true).asWidget();
         statusPanel.setContent(innerlayout);
 
         stack.add(statusPanel);
