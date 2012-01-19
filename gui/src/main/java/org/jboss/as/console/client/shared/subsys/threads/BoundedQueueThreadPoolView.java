@@ -66,8 +66,7 @@ public class BoundedQueueThreadPoolView
                        formMetaData.findAttribute("maxThreads").getFormItemForAdd(),
                        formMetaData.findAttribute("coreThreads").getFormItemForAdd(),
                        formMetaData.findAttribute("keepaliveTime").getFormItemForAdd(),
-                       formMetaData.findAttribute("threadFactory").getFormItemForAdd(),
-                       formMetaData.findAttribute("handoffExecutor").getFormItemForAdd(),
+                       formMetaData.findAttribute("keepaliveTimeUnit").getFormItemForAdd(),
                        formMetaData.findAttribute("allowCoreTimeout").getFormItemForAdd());
         return form;
     }

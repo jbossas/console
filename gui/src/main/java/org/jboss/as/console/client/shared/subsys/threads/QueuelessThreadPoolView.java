@@ -23,14 +23,10 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EmbeddedPropertyView;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
-import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Main view class for Queueless Thread Pools
@@ -61,25 +57,10 @@ public class QueuelessThreadPoolView extends AbstractThreadPoolView<QueuelessThr
         Form<QueuelessThreadPool> form = new Form(QueuelessThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                formMetaData.findAttribute("maxThreads").getFormItemForAdd(),
                 formMetaData.findAttribute("keepaliveTimeout").getFormItemForAdd(),
-                formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd(),
-                formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
-                formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd());
+                formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd());
         return form;
     }
 
-    @Override
-    protected List<SingleEntityView<QueuelessThreadPool>> provideAdditionalTabs(
-            Class<?> beanType,
-            FormMetaData formMetaData,
-            FrameworkPresenter presenter) {
-
-        this.presenter = presenter;
-
-        List<SingleEntityView<QueuelessThreadPool>> additionalTabs = new ArrayList<SingleEntityView<QueuelessThreadPool>>();
-        propertyView = new EmbeddedPropertyView(presenter);
-        additionalTabs.add(propertyView);
-
-        return additionalTabs;
-    }
 }

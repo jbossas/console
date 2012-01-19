@@ -46,7 +46,7 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
 
     protected EntityToDmrBridgeImpl threadPoolBridge;
     private ComboBoxItem threadFactoryComboForEdit;
-    
+
     public AbstractThreadPoolView(Class<?> beanType, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(beanType, propertyMetaData);
         this.threadPoolBridge = new ThreadsEntityToDmrBridge(propertyMetaData, beanType, this, dispatcher);
@@ -69,7 +69,7 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
 
     @Override
     protected abstract String getEntityDisplayName();
-    
+
     @Override
     protected abstract FormAdapter<T> makeAddEntityForm();
 
@@ -84,35 +84,27 @@ public abstract class AbstractThreadPoolView<T extends ThreadPool> extends Abstr
     protected DefaultCellTable<T> makeEntityTable() {
         DefaultCellTable<T> table = new DefaultCellTable<T>(4);
         table.addColumn(new NameColumn(), NameColumn.LABEL);
-        
+
         TextColumn<T> maxThreadsColumn = new TextColumn<T>() {
             @Override
             public String getValue(T record) {
-                return ((ThreadPool)record).getMaxThreadsCount().toString();
+                return ((ThreadPool)record).getMaxThreads().toString();
             }
         };
-        table.addColumn(maxThreadsColumn, formMetaData.findAttribute("maxThreadsCount").getLabel());
-        
-        TextColumn<T> maxThreadsPerCPUColumn = new TextColumn<T>() {
-            @Override
-            public String getValue(T record) {
-                return ((ThreadPool)record).getMaxThreadsPerCPU().toString();
-            }
-        };
-        table.addColumn(maxThreadsPerCPUColumn, formMetaData.findAttribute("maxThreadsPerCPU").getLabel());
-        
+        table.addColumn(maxThreadsColumn, formMetaData.findAttribute("maxThreads").getLabel());
+
         return table;
     }
 
     public void setThreadFactoryComboValues(List<NamedEntity> threadFactories) {
         List<String> factoryNames = new ArrayList<String>();
         factoryNames.add(""); // factory not required.  Empty String is a valid choice.
-        
+
         for (NamedEntity factory : threadFactories) {
             factoryNames.add(factory.getName());
         }
-        
+
         this.threadFactoryComboForEdit.setValueMap(factoryNames);
     }
-    
+
 }

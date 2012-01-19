@@ -453,10 +453,8 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             WorkmanagerPool pool = factory.WorkmanagerPool().as();
             pool.setShortRunning(true);
             pool.setName("short-running-pool_"+entity.getName());
-            pool.setMaxThreadsCount(10);
-            pool.setQueueLengthCount(10);
-            pool.setMaxThreadsPerCPU(20);
-            pool.setQueueLengthPerCPU(20);
+            pool.setMaxThreads(10);
+            pool.setQueueLength(10);
 
             List<WorkmanagerPool> managers = new ArrayList<WorkmanagerPool>(1);
             managers.add(pool);

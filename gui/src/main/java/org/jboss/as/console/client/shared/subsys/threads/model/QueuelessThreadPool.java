@@ -1,30 +1,26 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.threads.model;
 
-import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
-
-import java.util.List;
 
 /**
  * Model for a Queueless Thread Pool
@@ -32,8 +28,8 @@ import java.util.List;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=threads/queueless-thread-pool={0}")
-public interface QueuelessThreadPool extends ThreadPool, HasProperties {
-    
+public interface QueuelessThreadPool extends ThreadPool {
+
     @Override
     @Binding(detypedName="name", key=true)
     @FormItem(defaultValue="",
@@ -45,7 +41,7 @@ public interface QueuelessThreadPool extends ThreadPool, HasProperties {
     public String getName();
     @Override
     public void setName(String name);
-    
+
    @Binding(detypedName="thread-factory")
    @FormItem(defaultValue="",
             label="Thread Factory",
@@ -54,7 +50,7 @@ public interface QueuelessThreadPool extends ThreadPool, HasProperties {
             formItemTypeForAdd="COMBO_BOX")
    String getThreadFactory();
    void setThreadFactory(String threadFactory);
-   
+
    @Binding(detypedName="handoff-executor")
    @FormItem(defaultValue="",
             label="Handoff Executor",
@@ -63,19 +59,50 @@ public interface QueuelessThreadPool extends ThreadPool, HasProperties {
             formItemTypeForAdd="TEXT_BOX")
    String getHandoffExecutor();
    void setHandoffExecutor(String handoffExecutor);
-   
-   @Binding(detypedName="blocking")
-   @FormItem(defaultValue="true",
-            label="Blocking",
-            required=false,
-            formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
-   boolean isBlocking();
-   void setBlocking(boolean blocking);
-   
+
+   @Override
+   @Binding(detypedName="max-threads")
+   @FormItem(defaultValue="2",
+            required=true,
+            label="Max Threads",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getMaxThreads();
+   void setMaxThreads(Integer maxThreadsCount);
+
+   // read-only metric
+    @Binding(detypedName="current-thread-count")
+    @FormItem(defaultValue="",
+              label="Current Thread Count",
+              required=false,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT")
+    public String getCurrentThreadCount();
+    public void setCurrentThreadCount(String currentThreadCount);
+
+    // read-only metric
+    @Binding(detypedName="rejected-count")
+    @FormItem(defaultValue="",
+              label="Rejected Tasks Count",
+              required=false,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT")
+    public String getRejectedCount();
+    public void setRejectedCount(String rejectedCount);
+
+    // read-only metric
+    @Binding(detypedName="largest-thread-count")
+    @FormItem(defaultValue="",
+              label="Largest Thread Count",
+              required=false,
+              formItemTypeForEdit="TEXT",
+              formItemTypeForAdd="TEXT")
+    public String getLargestThreadCount();
+    public void setLargestThreadCount(String largestThreadCount);
+
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="60",
-            required=true,
+            required=false,
             label="Keepalive Timeout",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX")
@@ -85,44 +112,10 @@ public interface QueuelessThreadPool extends ThreadPool, HasProperties {
    @Binding(detypedName="keepalive-time/unit")
    @FormItem(defaultValue="SECONDS",
             label="Keepalive Timeout Unit",
-            required=true,
+            required=false,
             formItemTypeForEdit="TIME_UNITS",
             formItemTypeForAdd="TIME_UNITS")
    String getKeepaliveTimeoutUnit();
    void setKeepaliveTimeoutUnit(String unit);
-   
-   // ---- SIZING TAB --------------------
-   @Override
-   @Binding(detypedName="max-threads/count")
-   @FormItem(defaultValue="2",
-            required=true,
-            label="Max Threads Count",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getMaxThreadsCount();
-   void setMaxThreadsCount(Integer maxThreadsCount);
-    
-   @Override
-   @Binding(detypedName="max-threads/per-cpu")
-   @FormItem(defaultValue="1",
-            required=true,
-            label="Max Threads Per CPU",
-            formItemTypeForAdd="NUMBER_BOX",
-            formItemTypeForEdit="NUMBER_BOX",
-            tabName="subsys_threads_sizing")
-   Integer getMaxThreadsPerCPU();
-   void setMaxThreadsPerCPU(Integer maxThreadsPerCPU);
-   
-   // ------ PROPERTIES TAB --------------
-   @Binding(detypedName="properties", 
-           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
-   @FormItem(defaultValue="",
-            label="Properties",
-            required=false,
-            formItemTypeForEdit="PROPERTY_EDITOR",
-            formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="CUSTOM")
-   List<PropertyRecord> getProperties();
-   void setProperties(List<PropertyRecord> properties);
+
 }

@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.shared.subsys.threads.model;
 
-import org.jboss.as.console.client.shared.viewframework.HasProperties;
 import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
@@ -29,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.FormItem;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 @Address("/subsystem=threads/bounded-queue-thread-pool={0}")
-public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
+public interface BoundedQueueThreadPool extends ThreadPool {
 
     @Override
     @Binding(detypedName="name", key=true)
@@ -59,8 +58,8 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
               required=false,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT")
-    public Integer getCurrentThreadCount();
-    public void setCurrentThreadCount(Integer currentThreadCount);
+    public String getCurrentThreadCount();
+    public void setCurrentThreadCount(String currentThreadCount);
 
     // read-only metric
     @Binding(detypedName="largest-thread-count")
@@ -69,8 +68,8 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
               required=false,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT")
-    public Integer getLargestThreadCount();
-    public void setLargestThreadCount(Integer largestThreadCount);
+    public String getLargestThreadCount();
+    public void setLargestThreadCount(String largestThreadCount);
 
     // read-only metric
     @Binding(detypedName="rejected-count")
@@ -79,8 +78,8 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
              label="Rejected Count",
              formItemTypeForAdd="TEXT",
              formItemTypeForEdit="TEXT")
-    Integer getRejectedCount();
-    void setRejectedCount(Integer rejectedCount);
+    String getRejectedCount();
+    void setRejectedCount(String rejectedCount);
 
     @Binding(detypedName="keepalive-time/time")
     @FormItem(defaultValue="60",
@@ -133,6 +132,7 @@ public interface BoundedQueueThreadPool extends ThreadPool, HasProperties {
              label="Max Threads",
              formItemTypeForAdd="NUMBER_BOX",
              formItemTypeForEdit="NUMBER_BOX")
+    @Override
     Integer getMaxThreads();
     void setMaxThreads(Integer maxThreads);
 
