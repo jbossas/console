@@ -3,9 +3,12 @@ package org.jboss.as.console.client.widgets.pages;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.as.console.client.Console;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -72,16 +75,26 @@ public class PagedView {
         for(PageCallback callback : callbacks)
             callback.onRevealPage(index);
 
-        // TODO: clear history tokens?
 
         if(!navOnFirstPage && navigationBar!=null)
         {
-            // only on subsequent pages
+            // navigation only on subsequent pages
             if(index>0)
+            {
                 navigationBar.setVisible(true);
+            }
             else
+            {
                 navigationBar.setVisible(false);
+            }
+        }
 
+         // TODO: clear history tokens
+        if(index==0)
+        {
+            PlaceManager placeManager = Console.MODULES.getPlaceManager();
+            String nameToken = placeManager.getCurrentPlaceRequest().getNameToken();
+            History.newItem(nameToken, false);
         }
 
         deck.showWidget(index);

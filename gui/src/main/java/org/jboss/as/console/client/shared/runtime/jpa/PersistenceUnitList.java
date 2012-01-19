@@ -19,7 +19,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 1/19/12
  */
-public class DeploymentList {
+public class PersistenceUnitList {
 
 
     private CellTable<JPADeployment> table;
@@ -27,7 +27,7 @@ public class DeploymentList {
     
     private JPAMetricPresenter presenter;
 
-    public DeploymentList(JPAMetricPresenter presenter) {
+    public PersistenceUnitList(JPAMetricPresenter presenter) {
         this.presenter = presenter;
     }
 
