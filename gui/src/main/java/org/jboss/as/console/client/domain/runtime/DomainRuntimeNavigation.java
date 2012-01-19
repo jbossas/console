@@ -142,9 +142,15 @@ class DomainRuntimeNavigation {
         subsystemMetrics.setState(false);
         subsystemMetrics.removeItems();
 
+        subsystemRuntime.setState(false);
+        subsystemRuntime.removeItems();
+
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
+
+            //System.out.println(subsys.getKey());
+
             for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
@@ -158,7 +164,13 @@ class DomainRuntimeNavigation {
             }
         }
 
+        subsystemMetrics.setVisible(subsystemMetrics.getChildCount()>0);
+        subsystemRuntime.setVisible(subsystemRuntime.getChildCount()>0);
+
         subsystemMetrics.setState(true);
+        subsystemRuntime.setState(true);
+
+
     }
 
     final class Predicate {

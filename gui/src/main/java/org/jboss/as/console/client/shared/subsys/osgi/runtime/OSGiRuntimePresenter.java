@@ -122,8 +122,6 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         ModelNode operation = address.asResource(RuntimeBaseAddress.get(), bundle.getName());
         operation.get(ModelDescriptionConstants.OP).set(operationName);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
