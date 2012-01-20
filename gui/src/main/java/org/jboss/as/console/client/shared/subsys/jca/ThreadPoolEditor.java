@@ -136,9 +136,8 @@ public class ThreadPoolEditor {
         attributesForm.setEnabled(false);
 
         TextItem nameItem = new TextItem("name", "Name");
-        CheckBoxItem blocking = new CheckBoxItem ("blocking", "Is Blocking?");
         CheckBoxItem allowCore = new CheckBoxItem ("allowCoreTimeout", "Allow Core Timeout?");
-        NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTimeout", "Keep Alive Timeout (ms)") {
+        NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTime", "Keep Alive Timeout (ms)") {
             {
                 isRequired = false;
             }
@@ -148,13 +147,8 @@ public class ThreadPoolEditor {
                 isRequired = false;
             }
         };
-        TextBoxItem handoff = new TextBoxItem("handoffExecutor", "Handoff Executor") {
-            {
-                isRequired = false;
-            }
-        };
 
-        attributesForm.setFields(nameItem, keepAliveTimeout, blocking, allowCore, threadFactory, handoff);
+        attributesForm.setFields(nameItem, keepAliveTimeout, allowCore, threadFactory);
 
         // ---
 

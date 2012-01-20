@@ -452,7 +452,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
             // provide a default short running thread pool config (mandatory)
             WorkmanagerPool pool = factory.WorkmanagerPool().as();
             pool.setShortRunning(true);
-            pool.setName("short-running-pool_"+entity.getName());
+            pool.setName("short-running-pool_" + entity.getName());
             pool.setMaxThreads(10);
             pool.setQueueLength(10);
 
@@ -588,6 +588,11 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         address.get(ADDRESS).set(Baseadress.get());
         address.get(ADDRESS).add("subsystem", "jca");
         address.get(ADDRESS).add("workmanager", managerName);
+
+        if(changeset.containsKey("keepaliveTime"))
+        {
+            changeset.put("keepaliveTimeUnit", "MILLISECONDS");
+        }
 
         if(entity.isShortRunning())
             address.get(ADDRESS).add("short-running-threads", entity.getName());
