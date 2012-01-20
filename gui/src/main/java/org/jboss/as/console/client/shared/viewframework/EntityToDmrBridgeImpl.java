@@ -69,7 +69,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         this.view = view;
         this.dispatcher = dispatcher;
         this.formMetaData = propertyMetadata.getFormMetaData(type);
-        
+
         entityComparator = new Comparator<T>() {
             @Override
             public int compare(T entity1, T entity2) {
@@ -175,27 +175,27 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         for (PropertyBinding prop : beanMetaData.getProperties()) {
             String javaName = prop.getJavaName();
             Object value = mutator.getValue(entity, javaName);
-            if (changedValuesContainsFlattenedSibling(prop, changedValues) && 
+            if (changedValuesContainsFlattenedSibling(prop, changedValues) &&
                     (value != null) && !changedValues.containsKey(javaName)) {
                 changedValues.put(javaName, value);
             }
         }
-        
+
         ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
 
         execute(batch, name, Console.MESSAGES.modified(name));
     }
-    
+
     private boolean changedValuesContainsFlattenedSibling(PropertyBinding prop, Map<String, Object> changedValues) {
         if (!prop.isFlattened()) return false;
-        
+
         String detypedName = prop.getDetypedName();
         String attributePath = detypedName.substring(0, detypedName.lastIndexOf("/"));
         for (String javaName : changedValues.keySet()) {
             PropertyBinding binding = formMetaData.findAttribute(javaName);
             if (binding.getDetypedName().startsWith(attributePath)) return true;
         }
-        
+
         return false;
     }
 
@@ -204,18 +204,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         loadEntities(nameEditedOrAdded, Baseadress.get());
     }
 
+    @Override
     public void loadEntities(String nameEditedOrAdded, ModelNode baseAddress) {
         this.nameOfLastEdited = nameEditedOrAdded;
 
         ModelNode operation = address.asSubresource(baseAddress);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-
-        if (formMetaData.isFlattened()) {
-            operation.get(RECURSIVE).set(true);
-        } else {
-            // Runtime information is only available in the DMR on non-recursive reads
-            operation.get(INCLUDE_RUNTIME).set(true);
-        }
+        operation.get(RECURSIVE).set(true);
+        operation.get(INCLUDE_RUNTIME).set(true);
 
         //System.out.println(operation);
 

@@ -43,9 +43,6 @@ public class BoundedQueueThreadPoolView
         extends AbstractThreadPoolView<BoundedQueueThreadPool>
         implements FrameworkView {
 
-    private FrameworkPresenter presenter;
-    private EmbeddedPropertyView propertyView;
-
     public BoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
     }
@@ -65,31 +62,13 @@ public class BoundedQueueThreadPoolView
         Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                       formMetaData.findAttribute("keepaliveTimeout").getFormItemForAdd(),
-                       formMetaData.findAttribute("keepaliveTimeoutUnit").getFormItemForAdd(),
-                       formMetaData.findAttribute("maxThreadsCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("maxThreadsPerCPU").getFormItemForAdd(),
-                       formMetaData.findAttribute("coreThreadsCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("coreThreadsPerCPU").getFormItemForAdd(),
-                       formMetaData.findAttribute("queueLengthCount").getFormItemForAdd(),
-                       formMetaData.findAttribute("queueLengthPerCPU").getFormItemForAdd());
+                       formMetaData.findAttribute("queueLength").getFormItemForAdd(),
+                       formMetaData.findAttribute("maxThreads").getFormItemForAdd(),
+                       formMetaData.findAttribute("coreThreads").getFormItemForAdd(),
+                       formMetaData.findAttribute("keepaliveTime").getFormItemForAdd(),
+                       formMetaData.findAttribute("keepaliveTimeUnit").getFormItemForAdd(),
+                       formMetaData.findAttribute("allowCoreTimeout").getFormItemForAdd());
         return form;
     }
-
-    @Override
-    protected List<SingleEntityView<BoundedQueueThreadPool>> provideAdditionalTabs(
-            Class<?> beanType,
-            FormMetaData formMetaData,
-            FrameworkPresenter presenter) {
-
-        this.presenter = presenter;
-
-        List<SingleEntityView<BoundedQueueThreadPool>> additionalTabs = new ArrayList<SingleEntityView<BoundedQueueThreadPool>>();
-        propertyView = new EmbeddedPropertyView(presenter);
-        additionalTabs.add(propertyView);
-
-        return additionalTabs;
-    }
-
 
 }

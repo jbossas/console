@@ -79,7 +79,7 @@ public class ThreadPoolEditor {
         TextColumn<WorkmanagerPool> size = new TextColumn<WorkmanagerPool>() {
                    @Override
                    public String getValue(WorkmanagerPool record) {
-                       return String.valueOf(record.getMaxThreadsCount());
+                       return String.valueOf(record.getMaxThreads());
                    }
                };
 
@@ -241,19 +241,8 @@ public class ThreadPoolEditor {
                 .setMasterTools(topLevelTools.asWidget())
                 .addDetail("Attributes", attributesPanel)
                 .addDetail("Sizing", sizingPanel)
-                .addDetail("Properties", propertyEditor.asWidget())
                 .build();
 
-
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                WorkmanagerPool pool = ((SingleSelectionModel<WorkmanagerPool>) table.getSelectionModel()).getSelectedObject();
-
-                String ref = createReferenceToken(pool);
-                propertyEditor.setProperties(ref, pool.getProperties());
-            }
-        });
         return panel;
     }
 
