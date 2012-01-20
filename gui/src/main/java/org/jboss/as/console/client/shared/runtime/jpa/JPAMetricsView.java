@@ -71,7 +71,7 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
             pages.showPage(0);
         else
         {
-            // TODO threadPools.setContextName(selectedWorkmanager);
+            basicMetrics.setContextName(tokens);
 
             if(units!=null)
             {

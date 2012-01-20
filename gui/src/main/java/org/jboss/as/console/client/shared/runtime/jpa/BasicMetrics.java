@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.runtime.jpa;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -30,6 +31,8 @@ public class BasicMetrics {
     private JPADeployment currentUnit;
     private PlainColumnView querySampler;
     private PlainColumnView queryExecSampler;
+    private HTML title;
+    private PlainColumnView secondLevelSampler;
 
     public BasicMetrics(JPAMetricPresenter presenter) {
         this.presenter = presenter;
@@ -104,31 +107,36 @@ public class BasicMetrics {
                 .setWidth(100, Style.Unit.PCT);
 
 
+        //  ------
+
+        NumberColumn secondLevelCount = new NumberColumn("second-level-cache-put-count","Put Count");
+
+        Column[] secondLevelCols = new Column[] {
+                secondLevelCount.setBaseline(true),
+                new NumberColumn("second-level-cache-hit-count","Hit Count").setComparisonColumn(secondLevelCount),
+                new TextColumn("second-level-cache-miss-count","Miss Count").setComparisonColumn(secondLevelCount)
+
+        };
+
+        secondLevelSampler  = new PlainColumnView("Second Level Cache", null)
+                .setColumns(secondLevelCols)
+                .setWidth(100, Style.Unit.PCT);
 
 
         // ----
 
+        title = new HTML();
+        title.setStyleName("content-header-label");
+
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
-                .setHeadline("Persistence Unit Metrics")
+                .setHeadlineWidget(title)
                 .setDescription("Metrics for a persistence unit.")
                 .addContent("Transactions", txSampler.asWidget())
                 .addContent("Query Execution", queryExecSampler.asWidget())
-                .addContent("Query Cache", querySampler.asWidget());
-
-
-
-        // test data
-        txSampler.addSample(new Metric(
-                20l, 19l
-        ));
-
-
-        queryExecSampler.addSample(new Metric(
-                "10", "3", "select u from User u"
-
-        ) );
+                .addContent("Query Cache", querySampler.asWidget())
+                .addContent("Second Level Cache", secondLevelSampler.asWidget());;
 
 
         return layout.build();
@@ -137,4 +145,11 @@ public class BasicMetrics {
     public void setUnit(JPADeployment unit) {
         this.currentUnit = unit;
     }
+
+    public void setContextName(String[] tokens) {
+
+        title.setText("Persistence Unit Metrics: "+tokens[0]+"#"+tokens[1]);
+    }
+
+
 }
