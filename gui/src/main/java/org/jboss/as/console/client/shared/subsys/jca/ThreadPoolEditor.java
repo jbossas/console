@@ -179,7 +179,7 @@ public class ThreadPoolEditor {
                     public void onSave(Map<String, Object> changeset) {
                         presenter.onSavePoolConfig(
                                 contextName,
-                                attributesForm.getEditedEntity(),
+                                sizingForm.getEditedEntity(),
                                 changeset
                         );
                     }

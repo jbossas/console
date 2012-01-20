@@ -606,7 +606,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info(Console.MESSAGES.modified("Pool Config"));
 
-                loadWorkManager();
+                loadWorkManager(true);
             }
         });
     }
@@ -636,7 +636,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info(Console.MESSAGES.deleted("Pool Config"));
 
-                loadWorkManager();
+                loadWorkManager(true);
             }
         });
     }
@@ -684,7 +684,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
                 else
                     Console.info(Console.MESSAGES.added("Pool Config"));
 
-                loadWorkManager();
+                loadWorkManager(true);
             }
         });
     }
