@@ -42,8 +42,6 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -178,122 +176,114 @@ public class HostInfoStoreImpl implements HostInformationStore {
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
 
-        final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
+        //final long s0 = System.currentTimeMillis();
 
-        getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        // ---  fetch configs
+
+        final ModelNode configOp = new ModelNode();
+        configOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        configOp.get(CHILD_TYPE).set("server-config");
+        configOp.get(ADDRESS).setEmptyList();
+        configOp.get(ADDRESS).add("host", host);
+        configOp.get(INCLUDE_RUNTIME).set(true);
+
+
+        steps.add(configOp);
+
+        // ---  fetch instance state
+
+        final ModelNode instanceOp = new ModelNode();
+        instanceOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        instanceOp.get(CHILD_TYPE).set("server");
+        instanceOp.get(ADDRESS).setEmptyList();
+        instanceOp.get(ADDRESS).add("host", host);
+        instanceOp.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(instanceOp);
+
+        operation.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
             @Override
-            public void onSuccess(final List<Server> serverConfigs) {
+            public void onSuccess(DMRResponse result) {
 
-                for(final Server handle : serverConfigs)
+                ModelNode response = result.get();
+
+                List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
+
+                if(response.isFailure())
                 {
-                    final ModelNode operation = new ModelNode();
-                    operation.get(OP).set(READ_RESOURCE_OPERATION);
-                    operation.get(INCLUDE_RUNTIME).set(true);
-                    operation.get(ADDRESS).setEmptyList();
-                    operation.get(ADDRESS).add("host", host);
-                    operation.get(ADDRESS).add("server", handle.getName());
+                   callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
+                {
 
-                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                    ModelNode overallResult = response.get("result");
+                    ModelNode configModel = overallResult.get("step-1").asObject();
+                    ModelNode instanceModel = overallResult.get("step-2").asObject();
+
+                    List<Property> configProperties = configModel.get("result").asPropertyList();
+
+                    List<Server> configs = new LinkedList<Server>();
+                    for(Property cfg : configProperties)
+                    {
+                        ModelNode model = cfg.getValue();
+                        Server server = serverAdapter.fromDMR(model);
+                        server.setStarted(model.get("status").asString().equals("STARTED"));
+                        configs.add(server);
+                    }
+
+                    // ---
 
 
-                        @Override
-                        public void onSuccess(DMRResponse result) {
+                    ModelNode instances = instanceModel.get("result").asObject();
+                    for(Server svr : configs)
+                    {
+                        // match configs against instances
+                        ServerInstance i = factory.serverInstance().as();
+                        i.setName(svr.getName());
+                        i.setServer(svr.getName());
+                        i.setGroup(svr.getGroup());
+                        i.setRunning(svr.isStarted());
 
-                            ModelNode statusResponse = result.get();
-                            ModelNode payload = statusResponse.get(RESULT);
+                        if(instances.hasDefined(svr.getName()))
+                        {
+                            ModelNode instancePayload = instances.get(svr.getName()).asObject();
 
-                            ServerInstance instance = factory.serverInstance().as();
-                            instance.setName(handle.getName());
-                            instance.setServer(handle.getName());
-                            instance.setGroup(handle.getGroup());
 
-                            instanceList.add(instance);
-
-                            if(statusResponse.isFailure())
+                            if(instancePayload.hasDefined("server-state"))
                             {
-                                instance.setRunning(false);
-                            }
-                            else
-                            {
-                                instance.setRunning(handle.isStarted());
-
-                                if(payload.hasDefined("server-state"))
+                                String state = instancePayload.get("server-state").asString();
+                                if(state.equals("reload-required"))
                                 {
-                                    String state = payload.get("server-state").asString();
-                                    if(state.equals("reload-required"))
-                                    {
-                                        instance.setFlag(ServerFlag.RELOAD_REQUIRED);
-                                    }
-                                    else if (state.equals("restart-required"))
-                                    {
-                                        instance.setFlag(ServerFlag.RESTART_REQUIRED);
-                                    }
+                                    i.setFlag(ServerFlag.RELOAD_REQUIRED);
                                 }
-
+                                else if (state.equals("restart-required"))
+                                {
+                                    i.setFlag(ServerFlag.RESTART_REQUIRED);
+                                }
                             }
 
-                            if(instanceList.size()== serverConfigs.size())
-                            {
-                                Collections.sort(instanceList, new Comparator<ServerInstance>() {
-                                    @Override
-                                    public int compare(ServerInstance a, ServerInstance b) {
-                                        return a.getName().compareTo(b.getName());
-                                    }
-                                });
-                                callback.onSuccess(instanceList);
-                            }
                         }
-                    });
+
+                        instanceList.add(i);
+
+                    }
 
                 }
+
+                //System.out.println(( System.currentTimeMillis()-s0) +" ms");
+                callback.onSuccess(instanceList);
             }
+
         });
-
-
-        /* ModelNode operation = new ModelNode();
-     operation.get(ADDRESS).setEmptyList();
-     operation.get(OP).set(COMPOSITE);
-
-     List<ModelNode> steps = new ArrayList<ModelNode>();
-
-     // ---  fetch configs
-
-     final ModelNode configOp = new ModelNode();
-     configOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-     configOp.get(CHILD_TYPE).set("server-config");
-     configOp.get(ADDRESS).setEmptyList();
-     configOp.get(ADDRESS).add("host", host);
-     configOp.get(INCLUDE_RUNTIME).set(true);
-
-
-     steps.add(configOp);
-
-     // ---  fetch instance state
-
-     final ModelNode instanceOp = new ModelNode();
-     instanceOp.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-     instanceOp.get(CHILD_TYPE).set("server");
-     instanceOp.get(ADDRESS).setEmptyList();
-     instanceOp.get(ADDRESS).add("host", host);
-     instanceOp.get(INCLUDE_RUNTIME).set(true);
-
-     steps.add(instanceOp);
-
-     operation.get(STEPS).set(steps);
-
-     System.out.println(operation);
-
-     dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-         @Override
-         public void onSuccess(DMRResponse result) {
-
-             ModelNode response = result.get();
-
-             System.out.println(response);
-         }
-
-     });   */
 
     }
 
