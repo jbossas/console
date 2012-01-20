@@ -42,17 +42,15 @@ public class NewPoolWizard {
         type.setDefaultToFirstOption(true);
         type.setValueMap(new String[] {"long-running"});
 
-        NumberBoxItem maxThreads = new NumberBoxItem("maxThreadsCount", "Max Threads");
-        NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("maxThreadsPerCPU", "Max Threads/CPU");
-        NumberBoxItem queueLength = new NumberBoxItem("queueLengthCount", "Queue Length");
-        NumberBoxItem queueLengthPerCPU = new NumberBoxItem("queueLengthPerCPU", "Queue Length/CPU");
+        NumberBoxItem maxThreads = new NumberBoxItem("maxThreads", "Max Threads");
+        NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("coreThreads", "Core Threads");
+        NumberBoxItem queueLength = new NumberBoxItem("queueLength", "Queue Length");
 
         maxThreads.setValue(10);
         maxThreadsPerCPU.setValue(20);
         queueLength.setValue(10);
-        queueLengthPerCPU.setValue(20);
 
-        form.setFields(nameField, type, maxThreads, maxThreadsPerCPU, queueLength, queueLengthPerCPU);
+        form.setFields(nameField, type, maxThreads, maxThreadsPerCPU, queueLength);
 
         DialogueOptions options = new DialogueOptions(
 

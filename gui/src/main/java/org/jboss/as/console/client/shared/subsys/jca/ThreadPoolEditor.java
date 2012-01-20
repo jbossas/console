@@ -14,6 +14,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -162,12 +163,11 @@ public class ThreadPoolEditor {
         sizingForm.setNumColumns(2);
         sizingForm.setEnabled(false);
 
-        NumberBoxItem maxThreads = new NumberBoxItem("maxThreadsCount", "Max Threads");
-        NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("maxThreadsPerCPU", "Max Threads/CPU");
-        NumberBoxItem queueLength = new NumberBoxItem("queueLengthCount", "Queue Length");
-        NumberBoxItem queueLengthPerCPU = new NumberBoxItem("queueLengthPerCPU", "Queue Length/CPU");
+        NumberBoxItem maxThreads = new NumberBoxItem("maxThreads", "Max Threads");
+        NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("coreThreads", "Core threads");
+        NumberBoxItem queueLength = new NumberBoxItem("queueLength", "Queue Length");
 
-        sizingForm.setFields(nameItem, maxThreads, maxThreadsPerCPU, queueLength, queueLengthPerCPU);
+        sizingForm.setFields(nameItem, BlankItem.INSTANCE, maxThreads, maxThreadsPerCPU, queueLength);
 
         attributesForm.bind(table);
         sizingForm.bind(table);
