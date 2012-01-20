@@ -35,6 +35,7 @@ public class BasicMetrics {
     private PlainColumnView queryExecSampler;
     private HTML title;
     private PlainColumnView secondLevelSampler;
+    private String[] tokens;
 
     public BasicMetrics(JPAMetricPresenter presenter) {
         this.presenter = presenter;
@@ -46,7 +47,7 @@ public class BasicMetrics {
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO
+                presenter.loadMetrics(tokens);
             }
         }));
 
@@ -167,9 +168,13 @@ public class BasicMetrics {
     }
 
     public void setContextName(String[] tokens) {
-
+        this.tokens = tokens;
         title.setText("Persistence Unit Metrics: "+tokens[0]+"#"+tokens[1]);
     }
 
 
+    public void updateMetric(UnitMetric unitMetric) {
+        txSampler.addSample(unitMetric.getTxMetric());
+        queryExecSampler.addSample(unitMetric.getQueryExecMetric());
+    }
 }

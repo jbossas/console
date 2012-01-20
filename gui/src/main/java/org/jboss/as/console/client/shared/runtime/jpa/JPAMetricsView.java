@@ -85,7 +85,16 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
                 }
             }
 
+
+            // load the actual metric data
+            presenter.loadMetrics(tokens);
+
             pages.showPage(1);
         }
+    }
+
+    @Override
+    public void updateMetric(UnitMetric unitMetric) {
+        basicMetrics.updateMetric(unitMetric);
     }
 }

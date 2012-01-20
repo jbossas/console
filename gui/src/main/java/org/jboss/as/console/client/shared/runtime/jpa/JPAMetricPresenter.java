@@ -18,6 +18,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
@@ -37,7 +38,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 1/19/12
  */
 public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPAMetricPresenter.MyProxy>
-    implements ServerSelectionEvent.ServerSelectionListener {
+        implements ServerSelectionEvent.ServerSelectionListener {
 
     private DispatchAsync dispatcher;
     private RevealStrategy revealStrategy;
@@ -59,6 +60,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         void setPresenter(JPAMetricPresenter presenter);
         void setJpaUnits(List<JPADeployment> jpaUnits);
         void setSelectedUnit(String[] strings);
+
+        void updateMetric(UnitMetric unitMetric);
     }
 
     @Inject
@@ -171,5 +174,78 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
             }
         });
+    }
+
+    public void loadMetrics(String[] tokens) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("deployment", tokens[0]);
+        operation.get(ADDRESS).add("subsystem", "jpa");
+        operation.get(ADDRESS).add("hibernate-persistence-unit", tokens[0]+"#"+tokens[1]);
+
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(
+                            Console.MESSAGES.failed("JPA Metrics"),
+                            response.getFailureDescription()
+                    );
+                }
+                else
+                {
+
+                    ModelNode payload  = response.get(RESULT).asObject();
+
+                    Metric txMetric = new Metric(
+                            payload.get("completed-transaction-count").asLong(),
+                            payload.get("successful-transaction-count").asLong()
+                    );
+
+                    //  ----
+
+                    Metric queryExecMetric = new Metric(
+                            payload.get("query-execution-count").asLong(),
+                            payload.get("query-execution-max-time").asLong()
+                    );
+
+                    if(payload.hasDefined("query-execution-max-time-query-string"))
+                    {
+                        queryExecMetric.add(
+                                payload.get("query-execution-max-time-query-string").asString()
+                        );
+                    }
+
+                    //  ----
+
+                    Metric queryCacheMetric = new Metric(
+                            payload.get("query-cache-put-count").asLong(),
+                            payload.get("query-cache-hit-count").asLong(),
+                            payload.get("query-cache-miss-count").asLong()
+                    );
+
+                     //  ----
+
+                    Metric secondLevelCacheMetric = new Metric(
+                            payload.get("second-level-cache-put-count").asLong(),
+                            payload.get("second-level-cache-hit-count").asLong(),
+                            payload.get("second-level-cache-miss-count").asLong()
+                    );
+
+                    getView().updateMetric(
+                            new UnitMetric(txMetric, queryCacheMetric, queryExecMetric, secondLevelCacheMetric)
+                    );
+
+                }
+
+            }
+        });
+
     }
 }
