@@ -59,18 +59,19 @@ public class BasicMetrics {
         };
 
 
-        /*final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
+        final HelpSystem.AddressCallback addressCallback = new HelpSystem.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
                 address.get(ModelDescriptionConstants.ADDRESS).set(RuntimeBaseAddress.get());
+                address.get(ModelDescriptionConstants.ADDRESS).add("deployment", "*");
                 address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "jpa");
                 address.get(ModelDescriptionConstants.ADDRESS).add("hibernate-persistence-unit", "*");
                 return address;
             }
-        };*/
+        };
 
-        txSampler = new PlainColumnView("Transactions", null)
+        txSampler = new PlainColumnView("Transactions", addressCallback)
                 .setColumns(cols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -86,7 +87,7 @@ public class BasicMetrics {
 
         };
 
-        querySampler  = new PlainColumnView("Query Cache", null)
+        querySampler  = new PlainColumnView("Query Cache", addressCallback)
                 .setColumns(queryCols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -102,7 +103,7 @@ public class BasicMetrics {
 
         };
 
-        queryExecSampler  = new PlainColumnView("Query Execution", null)
+        queryExecSampler  = new PlainColumnView("Query Execution", addressCallback)
                 .setColumns(queryExecCols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -118,7 +119,7 @@ public class BasicMetrics {
 
         };
 
-        secondLevelSampler  = new PlainColumnView("Second Level Cache", null)
+        secondLevelSampler  = new PlainColumnView("Second Level Cache", addressCallback)
                 .setColumns(secondLevelCols)
                 .setWidth(100, Style.Unit.PCT);
 
