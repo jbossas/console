@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -14,6 +15,7 @@ import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.charts.TextColumn;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -129,15 +131,32 @@ public class BasicMetrics {
         title = new HTML();
         title.setStyleName("content-header-label");
 
-        SimpleLayout layout = new SimpleLayout()
+
+        // -------
+
+
+        VerticalPanel txPanel = new VerticalPanel();
+        txPanel.setStyleName("fill-layout-width");
+        txPanel.add(txSampler.asWidget());
+
+        VerticalPanel queryPanel = new VerticalPanel();
+        queryPanel.setStyleName("fill-layout-width");
+        queryPanel.add(queryExecSampler.asWidget());
+        queryPanel.add(querySampler.asWidget());
+
+        VerticalPanel secondPanel = new VerticalPanel();
+        secondPanel.setStyleName("fill-layout-width");
+        secondPanel.add(secondLevelSampler.asWidget());
+
+
+        OneToOneLayout layout = new OneToOneLayout()
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadlineWidget(title)
                 .setDescription("Metrics for a persistence unit.")
-                .addContent("Transactions", txSampler.asWidget())
-                .addContent("Query Execution", queryExecSampler.asWidget())
-                .addContent("Query Cache", querySampler.asWidget())
-                .addContent("Second Level Cache", secondLevelSampler.asWidget());;
+                .addDetail("Transactions", txPanel)
+                .addDetail("Queries", queryPanel)
+                .addDetail("Second Level Cache", secondPanel);
 
 
         return layout.build();

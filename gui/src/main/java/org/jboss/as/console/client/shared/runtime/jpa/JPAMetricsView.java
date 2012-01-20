@@ -37,7 +37,7 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
         this.basicMetrics = new BasicMetrics(this.presenter);
 
         pages.addPage(Console.CONSTANTS.common_label_back(), deploymentList.asWidget());
-        pages.addPage("Basic", basicMetrics.asWidget());
+        pages.addPage("Basic Metrics", basicMetrics.asWidget());
 
         // default page
         pages.showPage(0);
