@@ -82,8 +82,16 @@ public class DataSourceMetrics {
             }
         };
 
+        com.google.gwt.user.cellview.client.Column<DataSource, String> status = new com.google.gwt.user.cellview.client.Column<DataSource, String>(new TextCell()) {
+            @Override
+            public String getValue(DataSource object) {
+                return String.valueOf(object.isEnabled());
+            }
+        };
+
         table.addColumn(nameColumn, "Name");
         table.addColumn(protocolColumn, "JNDI");
+        table.addColumn(status, "Enabled?");
 
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
             @Override

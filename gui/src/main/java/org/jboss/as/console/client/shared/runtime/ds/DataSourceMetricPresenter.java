@@ -102,6 +102,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
             return;
         }
 
+        // Regular Datasources
         loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {
             @Override
             public void onSuccess(List<DataSource> result) {
@@ -109,6 +110,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
             }
         }, false);
 
+        // XA Data Sources
         loadDSCmd.execute(new SimpleCallback<List<DataSource>>() {
             @Override
             public void onSuccess(List<DataSource> result) {
@@ -138,6 +140,13 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
     public void setSelectedDS(DataSource currentSelection, boolean xa) {
 
+
+        if(!currentSelection.isEnabled())
+        {
+            Console.error("Datasource not enabled: "+currentSelection.getName());
+            getView().clearSamples();
+            return;
+        }
 
         if(xa) {
             this.selectedXA = currentSelection;
