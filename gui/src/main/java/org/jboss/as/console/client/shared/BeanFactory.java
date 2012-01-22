@@ -97,7 +97,9 @@ import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityD
 import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.as.console.client.shared.subsys.security.model.SecurityDomain;
 import org.jboss.as.console.client.shared.subsys.security.model.SecuritySubsystem;
+import org.jboss.as.console.client.shared.subsys.threads.model.BlockingBoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.BlockingQueuelessThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.QueuelessThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ScheduledThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
@@ -198,8 +200,10 @@ public interface BeanFactory extends AutoBeanFactory {
     // Thread subsystem
     AutoBean<ThreadFactory> threadFactory();
     AutoBean<BoundedQueueThreadPool> boundedQueueThreadPool();
+    AutoBean<BlockingBoundedQueueThreadPool> blockingBoundedQueueThreadPool();
     AutoBean<UnboundedQueueThreadPool> unboundedQueueThreadPool();
     AutoBean<QueuelessThreadPool> queuelessThreadPool();
+    AutoBean<BlockingQueuelessThreadPool> blockingQueuelessThreadPool();
     AutoBean<ScheduledThreadPool> scheduledThreadPool();
 
     AutoBean<TransactionManager> transactionManager();

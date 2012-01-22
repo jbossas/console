@@ -35,9 +35,6 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  */
 public class QueuelessThreadPoolView extends AbstractThreadPoolView<QueuelessThreadPool> {
 
-    private FrameworkPresenter presenter;
-    private EmbeddedPropertyView propertyView;
-
     public QueuelessThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(QueuelessThreadPool.class, propertyMetaData, dispatcher);
     }

@@ -27,49 +27,67 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 import javax.inject.Inject;
+import org.jboss.as.console.client.widgets.pages.PagedView;
 
 /**
- * Main view class for the Threads subsystem.  
- * 
+ * Main view class for the Threads subsystem.
+ *
  * @author Stan Silvert
  */
 public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter.MyView {
 
     private ThreadFactoryView threadFactoryView;
     private BoundedQueueThreadPoolView boundedQueuePoolView;
+    private BlockingBoundedQueueThreadPoolView blockingBoundedQueuePoolView;
     private UnboundedQueueThreadPoolView unboundedQueuePoolView;
     private QueuelessThreadPoolView queuelessPoolView;
+    private BlockingQueuelessThreadPoolView blockingQueuelessPoolView;
     private ScheduledThreadPoolView scheduledPoolView;
 
     @Inject
     public ThreadsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         queuelessPoolView = new QueuelessThreadPoolView(propertyMetaData, dispatcher);
+        blockingQueuelessPoolView = new BlockingQueuelessThreadPoolView(propertyMetaData, dispatcher);
         unboundedQueuePoolView = new UnboundedQueueThreadPoolView(propertyMetaData, dispatcher);
         boundedQueuePoolView = new BoundedQueueThreadPoolView(propertyMetaData, dispatcher);
+        blockingBoundedQueuePoolView = new BlockingBoundedQueueThreadPoolView(propertyMetaData, dispatcher);
         scheduledPoolView = new ScheduledThreadPoolView(propertyMetaData, dispatcher);
-        threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher, 
-                queuelessPoolView, unboundedQueuePoolView, boundedQueuePoolView, scheduledPoolView);
+        threadFactoryView = new ThreadFactoryView(propertyMetaData, dispatcher,
+                queuelessPoolView, blockingQueuelessPoolView, unboundedQueuePoolView,
+                boundedQueuePoolView, blockingBoundedQueuePoolView, scheduledPoolView);
     }
 
     @Override
     public Widget createWidget() {
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
-        
-        tabLayoutpanel.add(threadFactoryView.asWidget(), threadFactoryView.getEntityDisplayName());
-        tabLayoutpanel.add(queuelessPoolView.asWidget(), queuelessPoolView.getEntityDisplayName());
-        tabLayoutpanel.add(unboundedQueuePoolView.asWidget(), unboundedQueuePoolView.getEntityDisplayName());
-        tabLayoutpanel.add(boundedQueuePoolView.asWidget(), boundedQueuePoolView.getEntityDisplayName());
-        tabLayoutpanel.add(scheduledPoolView.asWidget(), scheduledPoolView.getEntityDisplayName());
-        return tabLayoutpanel;
+        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
+        tabLayoutPanel.addStyleName("default-tabpanel");
+
+        tabLayoutPanel.add(threadFactoryView.asWidget(), "Thread Factories");
+
+        PagedView poolPages = new PagedView(true);
+        poolPages.addPage("Queless", queuelessPoolView.asWidget());
+        poolPages.addPage("Blocking Queless", blockingQueuelessPoolView.asWidget());
+        poolPages.addPage("Unbounded", unboundedQueuePoolView.asWidget());
+        poolPages.addPage("Bounded", boundedQueuePoolView.asWidget());
+        poolPages.addPage("Blocking Bounded", blockingBoundedQueuePoolView.asWidget());
+        poolPages.addPage("Scheduled", scheduledPoolView.asWidget());
+
+        tabLayoutPanel.add(poolPages.asWidget(), "Thread Pools");
+
+        tabLayoutPanel.selectTab(0);
+        poolPages.showPage(0);
+
+        return tabLayoutPanel;
     }
-    
+
     public void initialLoad() {
         this.threadFactoryView.initialLoad();
         this.queuelessPoolView.initialLoad();
+        this.blockingQueuelessPoolView.initialLoad();
         this.unboundedQueuePoolView.initialLoad();
         this.boundedQueuePoolView.initialLoad();
+        this.blockingBoundedQueuePoolView.initialLoad();
         this.scheduledPoolView.initialLoad();
     }
-  
+
 }
