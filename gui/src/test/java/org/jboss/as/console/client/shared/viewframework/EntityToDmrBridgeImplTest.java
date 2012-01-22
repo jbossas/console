@@ -81,7 +81,7 @@ public class EntityToDmrBridgeImplTest extends GWTTestCase {
         DMRAction action = (DMRAction) testDispatcher.lastExecuteAction;
         ModelNode op = action.getOperation();
 
-        Set<String> expectedSet = new HashSet<String>(Arrays.asList(ADDRESS, CHILD_TYPE, OP, INCLUDE_RUNTIME));
+        Set<String> expectedSet = new HashSet<String>(Arrays.asList(ADDRESS, CHILD_TYPE, OP, INCLUDE_RUNTIME, RECURSIVE));
         Assert.assertEquals(expectedSet, op.keys());
         Assert.assertEquals("someroot", op.get(ADDRESS).asString());
         Assert.assertEquals("resource", op.get(CHILD_TYPE).asString());
@@ -112,7 +112,7 @@ public class EntityToDmrBridgeImplTest extends GWTTestCase {
         DMRAction action = (DMRAction) testDispatcher.lastExecuteAction;
         ModelNode op = action.getOperation();
 
-        Set<String> expectedSet = new HashSet<String>(Arrays.asList(ADDRESS, CHILD_TYPE, OP, RECURSIVE));
+        Set<String> expectedSet = new HashSet<String>(Arrays.asList(ADDRESS, CHILD_TYPE, OP, RECURSIVE, INCLUDE_RUNTIME));
         Assert.assertEquals(expectedSet, op.keys());
         Assert.assertEquals("someroot", op.get(ADDRESS).asString());
         Assert.assertEquals("resource", op.get(CHILD_TYPE).asString());
