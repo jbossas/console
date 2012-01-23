@@ -391,7 +391,11 @@ public interface UIConstants extends Constants {
 
     String subsys_threads_queueless_desc();
 
+    String subsys_threads_blocking_queueless_desc();
+
     String subsys_threads_bounded_desc();
+
+    String subsys_threads_blocking_bounded_desc();
 
     String subsys_threads_unbounded_desc();
 

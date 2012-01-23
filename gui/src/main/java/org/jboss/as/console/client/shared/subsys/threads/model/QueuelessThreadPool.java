@@ -70,36 +70,6 @@ public interface QueuelessThreadPool extends ThreadPool {
    Integer getMaxThreads();
    void setMaxThreads(Integer maxThreadsCount);
 
-   // read-only metric
-    @Binding(detypedName="current-thread-count")
-    @FormItem(defaultValue="",
-              label="Current Thread Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getCurrentThreadCount();
-    public void setCurrentThreadCount(String currentThreadCount);
-
-    // read-only metric
-    @Binding(detypedName="rejected-count")
-    @FormItem(defaultValue="",
-              label="Rejected Tasks Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getRejectedCount();
-    public void setRejectedCount(String rejectedCount);
-
-    // read-only metric
-    @Binding(detypedName="largest-thread-count")
-    @FormItem(defaultValue="",
-              label="Largest Thread Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getLargestThreadCount();
-    public void setLargestThreadCount(String largestThreadCount);
-
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="60",
             required=false,

@@ -20,23 +20,19 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSEditor;
-import org.jboss.as.console.client.shared.subsys.messaging.MessagingProviderEditor;
-import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 
 import javax.inject.Inject;
 
 /**
- * Main view class for the Logging subsystem.  
- * 
+ * Main view class for the Logging subsystem.
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class LoggingView extends SuspendableViewImpl implements LoggingPresenter.MyView {
@@ -118,7 +114,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
 
         return loggersTabs;
     }
-    
+
     public void initialLoad() {
         rootLoggerSubview.initialLoad();
         loggerSubview.initialLoad();

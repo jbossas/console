@@ -23,12 +23,12 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Model for a Scheduled Thread Pool
+ * Model for a Blocking Queueless Thread Pool
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=threads/scheduled-thread-pool={0}")
-public interface ScheduledThreadPool extends ThreadPool {
+@Address("/subsystem=threads/blocking-queueless-thread-pool={0}")
+public interface BlockingQueuelessThreadPool extends ThreadPool {
 
     @Override
     @Binding(detypedName="name", key=true)
@@ -51,19 +51,19 @@ public interface ScheduledThreadPool extends ThreadPool {
    String getThreadFactory();
    void setThreadFactory(String threadFactory);
 
-    @Override
-    @Binding(detypedName="max-threads")
-    @FormItem(defaultValue="2",
-             required=true,
-             label="Max Threads",
-             formItemTypeForAdd="NUMBER_BOX",
-             formItemTypeForEdit="NUMBER_BOX")
-    Integer getMaxThreads();
-    void setMaxThreads(Integer maxThreads);
+   @Override
+   @Binding(detypedName="max-threads")
+   @FormItem(defaultValue="2",
+            required=true,
+            label="Max Threads",
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
+   Integer getMaxThreads();
+   void setMaxThreads(Integer maxThreadsCount);
 
    @Binding(detypedName="keepalive-time/time")
    @FormItem(defaultValue="60",
-            required=true,
+            required=false,
             label="Keepalive Timeout",
             formItemTypeForAdd="NUMBER_BOX",
             formItemTypeForEdit="NUMBER_BOX")
@@ -73,7 +73,7 @@ public interface ScheduledThreadPool extends ThreadPool {
    @Binding(detypedName="keepalive-time/unit")
    @FormItem(defaultValue="SECONDS",
             label="Keepalive Timeout Unit",
-            required=true,
+            required=false,
             formItemTypeForEdit="TIME_UNITS",
             formItemTypeForAdd="TIME_UNITS")
    String getKeepaliveTimeoutUnit();

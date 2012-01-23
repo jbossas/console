@@ -23,12 +23,12 @@ import org.jboss.as.console.client.widgets.forms.Binding;
 import org.jboss.as.console.client.widgets.forms.FormItem;
 
 /**
- * Model for a Bounded Queue Thread Pool
+ * Model for a Blocking Bounded Queue Thread Pool
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-@Address("/subsystem=threads/bounded-queue-thread-pool={0}")
-public interface BoundedQueueThreadPool extends ThreadPool {
+@Address("/subsystem=threads/blocking-bounded-queue-thread-pool={0}")
+public interface BlockingBoundedQueueThreadPool extends ThreadPool {
 
     @Override
     @Binding(detypedName="name", key=true)
@@ -86,15 +86,6 @@ public interface BoundedQueueThreadPool extends ThreadPool {
              formItemTypeForEdit="NUMBER_BOX")
     Integer getQueueLength();
     void setQueueLength(Integer queueLength);
-
-    @Binding(detypedName="handoff-executor")
-    @FormItem(defaultValue="",
-             label="Handoff Executor",
-             required=false,
-             formItemTypeForEdit="TEXT_BOX",
-             formItemTypeForAdd="TEXT_BOX")
-    String getHandoffExecutor();
-    void setHandoffExecutor(String handoffExecutor);
 
     @Binding(detypedName="max-threads")
     @FormItem(defaultValue="2",

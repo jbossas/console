@@ -42,66 +42,6 @@ public interface UnboundedQueueThreadPool extends ThreadPool {
     @Override
     public void setName(String name);
 
-    // read-only metric
-    @Binding(detypedName="active-count")
-    @FormItem(defaultValue="",
-              label="Active Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getActiveCount();
-    public void setActiveCount(String activeCount);
-
-    // read-only metric
-    @Binding(detypedName="current-thread-count")
-    @FormItem(defaultValue="",
-              label="Current Thread Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getCurrentThreadCount();
-    public void setCurrentThreadCount(String currentThreadCount);
-
-    // read-only metric
-    @Binding(detypedName="task-count")
-    @FormItem(defaultValue="",
-              label="Task Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getTaskCount();
-    public void setTaskCount(String taskCount);
-
-    // read-only metric
-    @Binding(detypedName="completed-task-count")
-    @FormItem(defaultValue="",
-              label="Completed Task Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getCompletedTaskCount();
-    public void setCompletedTaskCount(String completedTaskCount);
-
-    // read-only metric
-    @Binding(detypedName="largest-thread-count")
-    @FormItem(defaultValue="",
-              label="Largest Thread Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getLargestThreadCount();
-    public void setLargestThreadCount(String largestThreadCount);
-
-    // read-only metric
-    @Binding(detypedName="rejected-count")
-    @FormItem(defaultValue="",
-              label="Rejected Tasks Count",
-              required=false,
-              formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT")
-    public String getRejectedCount();
-    public void setRejectedCount(String rejectedCount);
-
    @Binding(detypedName="thread-factory")
    @FormItem(defaultValue="",
             label="Thread Factory",

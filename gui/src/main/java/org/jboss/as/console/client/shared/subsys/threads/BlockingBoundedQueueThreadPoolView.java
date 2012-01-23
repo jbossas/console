@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.threads;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.threads.model.BlockingBoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.model.BoundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -33,27 +34,27 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  *
  * @author Stan Silvert
  */
-public class BoundedQueueThreadPoolView
-        extends AbstractThreadPoolView<BoundedQueueThreadPool>
+public class BlockingBoundedQueueThreadPoolView
+        extends AbstractThreadPoolView<BlockingBoundedQueueThreadPool>
         implements FrameworkView {
 
-    public BoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(BoundedQueueThreadPool.class, propertyMetaData, dispatcher);
+    public BlockingBoundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(BlockingBoundedQueueThreadPool.class, propertyMetaData, dispatcher);
     }
 
     @Override
     protected String provideDescription() {
-        return  Console.CONSTANTS.subsys_threads_bounded_desc();
+        return  Console.CONSTANTS.subsys_threads_blocking_bounded_desc();
     }
 
     @Override
     protected String getEntityDisplayName() {
-        return "Bounded Pools";
+        return "Blocking Bounded Queue Thread Pools";
     }
 
     @Override
-    protected FormAdapter<BoundedQueueThreadPool> makeAddEntityForm() {
-        Form<BoundedQueueThreadPool> form = new Form(BoundedQueueThreadPool.class);
+    protected FormAdapter<BlockingBoundedQueueThreadPool> makeAddEntityForm() {
+        Form<BlockingBoundedQueueThreadPool> form = new Form(BlockingBoundedQueueThreadPool.class);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
                        formMetaData.findAttribute("queueLength").getFormItemForAdd(),
