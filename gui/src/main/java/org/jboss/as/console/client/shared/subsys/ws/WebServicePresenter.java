@@ -19,7 +19,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
-import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
@@ -27,7 +26,6 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -45,7 +43,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private ApplicationMetaData propertyMetaData;
-    private EndpointRegistry endpointRegistry;
+
     private EntityAdapter<WebServiceProvider> providerAdapter;
     private BeanMetaData beanMeta;
 
@@ -56,8 +54,6 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
 
     public interface MyView extends View {
         void setPresenter(WebServicePresenter presenter);
-        void updateEndpoints(List<WebServiceEndpoint> endpoints);
-
         void setProvider(WebServiceProvider webServiceProvider);
     }
 
@@ -74,7 +70,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
         this.factory = factory;
         this.revealStrategy = revealStrategy;
         this.propertyMetaData = metaData;
-        this.endpointRegistry = registry;
+
 
         providerAdapter = new EntityAdapter<WebServiceProvider>(
                 WebServiceProvider.class, metaData
@@ -95,7 +91,6 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
         super.onReset();
 
         loadProvider();
-        loadEndpoints();
     }
 
     private void loadProvider() {
@@ -119,15 +114,6 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
                     WebServiceProvider webServiceProvider = providerAdapter.fromDMR(response.get(RESULT));
                     getView().setProvider(webServiceProvider);
                 }
-            }
-        });
-    }
-
-    private void loadEndpoints() {
-        endpointRegistry.create().refreshEndpoints(new SimpleCallback<List<WebServiceEndpoint>>() {
-            @Override
-            public void onSuccess(List<WebServiceEndpoint> result) {
-                getView().updateEndpoints(result);
             }
         });
     }

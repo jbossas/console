@@ -73,6 +73,7 @@ import org.jboss.as.console.client.shared.runtime.jms.JMSMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.jpa.JPAMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
+import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
@@ -248,6 +249,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<StandaloneServerPresenter> getStandaloneServerPresenter();
 
     AsyncProvider<WebServicePresenter> getWebServicePresenter();
+    AsyncProvider<WebServiceRuntimePresenter> getWebServiceRuntimePresenter();
 
     EndpointRegistry getEndpointRegistry();
     DomainEndpointStrategy getDomainEndpointStrategy();

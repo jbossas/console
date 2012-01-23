@@ -1,9 +1,11 @@
-package org.jboss.as.console.client.shared.subsys.ws;
+package org.jboss.as.console.client.shared.runtime.ws;
 
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.subsys.ws.WebServiceDescriptions;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -14,15 +16,21 @@ import java.util.List;
 
 /**
  * @author Heiko Braun
- * @date 1/11/12
+ * @date 1/23/12
  */
-public class EndpointList {
+public class WebServiceRuntimeView extends SuspendableViewImpl implements WebServiceRuntimePresenter.MyView {
 
+    private WebServiceRuntimePresenter presenter;
+
+    @Override
+    public void setPresenter(WebServiceRuntimePresenter presenter) {
+        this.presenter = presenter;
+    }
 
     private DefaultCellTable<WebServiceEndpoint> table;
     private Form<WebServiceEndpoint> form;
 
-    Widget asWidget() {
+    public Widget createWidget() {
 
         table = new DefaultCellTable<WebServiceEndpoint>(6);
 
@@ -61,12 +69,10 @@ public class EndpointList {
         form.setEnabled(false);
 
 
-        final StaticHelpPanel helpPanel = new StaticHelpPanel(WebServiceDescriptions.getEndpointDescription());
-
+        //final StaticHelpPanel helpPanel = new StaticHelpPanel(WebServiceDescriptions.getEndpointDescription());
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
-                .setPlain(true)
-                .setTitle("Endpoints")
+                .setTitle("Webservices")
                 .setHeadline("Web Service Endpoints")
                 .setMaster(Console.MESSAGES.available("Web Service Endpoints"), table)
                 .setDescription(Console.CONSTANTS.subsys_ws_endpoint_desc())

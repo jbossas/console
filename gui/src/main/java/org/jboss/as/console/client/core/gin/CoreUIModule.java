@@ -110,6 +110,8 @@ import org.jboss.as.console.client.shared.runtime.tx.TXMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.tx.TXMetricViewImpl;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricPresenter;
 import org.jboss.as.console.client.shared.runtime.web.WebMetricView;
+import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimePresenter;
+import org.jboss.as.console.client.shared.runtime.ws.WebServiceRuntimeView;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
@@ -469,6 +471,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 WebServicePresenter.MyView.class,
                 WebServiceView.class,
                 WebServicePresenter.MyProxy.class);
+
+         bindPresenter(WebServiceRuntimePresenter.class,
+                WebServiceRuntimePresenter.MyView.class,
+                WebServiceRuntimeView.class,
+                WebServiceRuntimePresenter.MyProxy.class);
 
         bind(EndpointRegistry.class).in(Singleton.class);
         bind(DomainEndpointStrategy.class).in(Singleton.class);
