@@ -13,12 +13,18 @@ public class UnitMetric {
     private Metric queryMetric;
     private Metric queryExecMetric;
     private Metric secondLevelCacheMetric;
+    private boolean isEnabled;
 
     public UnitMetric(Metric txMetric, Metric queryMetric, Metric queryExecMetric, Metric secondLevelCacheMetric) {
         this.txMetric = txMetric;
         this.queryMetric = queryMetric;
         this.queryExecMetric = queryExecMetric;
         this.secondLevelCacheMetric = secondLevelCacheMetric;
+        this.isEnabled = true;
+    }
+
+    public UnitMetric(boolean isEnabled) {
+        this.isEnabled = isEnabled;
     }
 
     public Metric getTxMetric() {
@@ -35,5 +41,9 @@ public class UnitMetric {
 
     public Metric getSecondLevelCacheMetric() {
         return secondLevelCacheMetric;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }

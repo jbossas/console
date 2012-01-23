@@ -21,6 +21,7 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
     private PersistenceUnitList deploymentList;
     private BasicMetrics basicMetrics;
     private List<JPADeployment> units;
+    private String[] currentToken;
 
     @Override
     public void setPresenter(JPAMetricPresenter presenter) {
@@ -67,6 +68,9 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
 
     @Override
     public void setSelectedUnit(String[] tokens) {
+
+        currentToken = tokens;
+
         if(null==tokens)
             pages.showPage(0);
         else
@@ -95,6 +99,14 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
 
     @Override
     public void updateMetric(UnitMetric unitMetric) {
-        basicMetrics.updateMetric(unitMetric);
+
+        if(unitMetric.isEnabled())
+        {
+            basicMetrics.updateMetric(unitMetric);
+        }
+        else
+        {
+            Console.error("Metric not enabled on "+currentToken[0]);
+        }
     }
 }

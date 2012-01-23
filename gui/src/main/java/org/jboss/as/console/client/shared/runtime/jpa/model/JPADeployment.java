@@ -11,4 +11,7 @@ public interface JPADeployment {
 
     String getPersistenceUnit();
     void setPersistenceUnit(String unit);
+
+    void setMetricEnabled(boolean enabled);
+    boolean isMetricEnabled();
 }

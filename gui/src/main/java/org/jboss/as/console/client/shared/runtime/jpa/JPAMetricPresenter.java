@@ -130,7 +130,9 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
         operation.get(ADDRESS).add("deployment", "*");
         operation.get(ADDRESS).add("subsystem", "jpa");
+        operation.get(ADDRESS).add("hibernate-persistence-unit", "*");
         operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -145,22 +147,21 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
                 {
                     List<JPADeployment> jpaUnits = new ArrayList<JPADeployment>();
                     List<ModelNode> deployments = response.get(RESULT).asList();
+
                     for(ModelNode deployment : deployments)
                     {
                         ModelNode deploymentValue = deployment.get(RESULT).asObject();
-                        if(deploymentValue.hasDefined("hibernate-persistence-unit"))
-                        {
-                            List<Property> units = deploymentValue.get("hibernate-persistence-unit").asPropertyList();
-                            for(Property unit : units)
-                            {
-                                JPADeployment jpaDeployment = factory.jpaDeployment().as();
-                                String[] tokens = unit.getName().split("#");
-                                jpaDeployment.setDeploymentName(tokens[0]);
-                                jpaDeployment.setPersistenceUnit(tokens[1]);
 
-                                jpaUnits.add(jpaDeployment);
-                            }
-                        }
+                        List<Property> addressValue = deployment.get(ADDRESS).asPropertyList();
+
+                        Property unit = addressValue.get(2);
+                        JPADeployment jpaDeployment = factory.jpaDeployment().as();
+                        String[] tokens = unit.getValue().asString().split("#");
+                        jpaDeployment.setDeploymentName(tokens[0]);
+                        jpaDeployment.setPersistenceUnit(tokens[1]);
+                        jpaDeployment.setMetricEnabled(deploymentValue.get("enabled").asBoolean());
+
+                        jpaUnits.add(jpaDeployment);
 
                     }
 
@@ -203,44 +204,60 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
                     ModelNode payload  = response.get(RESULT).asObject();
 
-                    Metric txMetric = new Metric(
-                            payload.get("completed-transaction-count").asLong(),
-                            payload.get("successful-transaction-count").asLong()
-                    );
+                    boolean isEnabled = payload.get("enabled").asBoolean();
 
-                    //  ----
-
-                    Metric queryExecMetric = new Metric(
-                            payload.get("query-execution-count").asLong(),
-                            payload.get("query-execution-max-time").asLong()
-                    );
-
-                    if(payload.hasDefined("query-execution-max-time-query-string"))
+                    if(!isEnabled)
                     {
+
+                        getView().updateMetric(
+                                new UnitMetric(false)
+                        );
+                    }
+                    else
+                    {
+
+                        Metric txMetric = new Metric(
+                                payload.get("completed-transaction-count").asLong(),
+                                payload.get("successful-transaction-count").asLong()
+                        );
+
+                        //  ----
+
+                        Metric queryExecMetric = new Metric(
+                                payload.get("query-execution-count").asLong(),
+                                payload.get("query-execution-max-time").asLong()
+                        );
+
                         queryExecMetric.add(
                                 payload.get("query-execution-max-time-query-string").asString()
                         );
+
+
+                        //  ----
+
+                        Metric queryCacheMetric = new Metric(
+                                payload.get("query-cache-put-count").asLong(),
+                                payload.get("query-cache-hit-count").asLong(),
+                                payload.get("query-cache-miss-count").asLong()
+                        );
+
+                        //  ----
+
+                        Metric secondLevelCacheMetric = new Metric(
+                                payload.get("second-level-cache-put-count").asLong(),
+                                payload.get("second-level-cache-hit-count").asLong(),
+                                payload.get("second-level-cache-miss-count").asLong()
+                        );
+
+                        getView().updateMetric(
+                                new UnitMetric(
+                                        txMetric,
+                                        queryCacheMetric, queryExecMetric,
+                                        secondLevelCacheMetric
+                                )
+                        );
+
                     }
-
-                    //  ----
-
-                    Metric queryCacheMetric = new Metric(
-                            payload.get("query-cache-put-count").asLong(),
-                            payload.get("query-cache-hit-count").asLong(),
-                            payload.get("query-cache-miss-count").asLong()
-                    );
-
-                     //  ----
-
-                    Metric secondLevelCacheMetric = new Metric(
-                            payload.get("second-level-cache-put-count").asLong(),
-                            payload.get("second-level-cache-hit-count").asLong(),
-                            payload.get("second-level-cache-miss-count").asLong()
-                    );
-
-                    getView().updateMetric(
-                            new UnitMetric(txMetric, queryCacheMetric, queryExecMetric, secondLevelCacheMetric)
-                    );
 
                 }
 
