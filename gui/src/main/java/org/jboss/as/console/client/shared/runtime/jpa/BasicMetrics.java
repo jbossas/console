@@ -179,7 +179,7 @@ public class BasicMetrics {
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadlineWidget(title)
-                .setDescription("Metrics for a persistence unit.")
+                .setDescription(Console.CONSTANTS.subsys_jpa_basicMetric_desc())
                 .addDetail("Connections", connectionPanel)
                 .addDetail("Transactions", txPanel)
                 .addDetail("Queries", queryPanel)

@@ -110,7 +110,7 @@ public class PersistenceUnitList {
 
         table.addColumn(unit, "Persistence Unit");
         table.addColumn(name, "Deployment");
-        table.addColumn(statusColumn, "Enabled?");
+        table.addColumn(statusColumn, "Metrics Enabled?");
         table.addColumn(option, "Option");
 
         table.setSelectionModel(
@@ -174,7 +174,7 @@ public class PersistenceUnitList {
                 .setPlain(true)
                 .setTitle("JPA Metrics")
                 .setHeadline("Persistence Units")
-                .setDescription("DESCRIPTION")
+                .setDescription(Console.CONSTANTS.subsys_jpa_puList_desc())
                 .setMaster(Console.MESSAGES.available("Persistence Units"), table)
                 .addDetail("Persistence Unit", formPanel);
 

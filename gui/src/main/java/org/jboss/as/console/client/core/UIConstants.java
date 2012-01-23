@@ -537,4 +537,8 @@ public interface UIConstants extends Constants {
     String server_instance_servers_needRestart();
 
     String subsys_jpa_deployment_desc();
+
+    String subsys_jpa_basicMetric_desc();
+
+    String subsys_jpa_puList_desc();
 }
