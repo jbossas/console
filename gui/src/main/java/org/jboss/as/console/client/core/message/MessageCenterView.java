@@ -189,10 +189,6 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         window.center();
     }
 
-    private MessageListPopup getMessagePopup() {
-        return messagePopup;
-    }
-
     public Widget asWidget()
     {
         /*LayoutPanel layout = new LayoutPanel()
@@ -206,7 +202,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         };*/
 
         HorizontalPanel layout = new HorizontalPanel();
-        layout.getElement().setAttribute("style", "width:430px;padding-top:5px;");
+        layout.getElement().setAttribute("style", "width:100%;padding-top:5px;");
 
         messageButton = new Label("("+messageCenter.getNewMessageCount()+") "+Console.CONSTANTS.common_label_messages());
         messageButton.addStyleName("notification-button");
@@ -239,7 +235,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         layout.add(messageDisplay);
         layout.add(messageButton);
 
-        messageDisplay.getElement().getParentElement().setAttribute("style", "width:250px");
+        messageDisplay.getElement().getParentElement().setAttribute("style", "width:100%;padding-right:5px");
         messageDisplay.getElement().getParentElement().setAttribute("align", "right");
 
         messageButton.getElement().getParentElement().setAttribute("style", "width:60px");
