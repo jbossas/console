@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.HelpSystem;
-import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
@@ -16,7 +15,6 @@ import org.jboss.as.console.client.shared.runtime.charts.TextColumn;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.dmr.client.ModelDescriptionConstants;
@@ -28,14 +26,19 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class BasicMetrics {
 
-    private PlainColumnView txSampler;
     private JPAMetricPresenter presenter;
     private JPADeployment currentUnit;
-    private PlainColumnView querySampler;
-    private PlainColumnView queryExecSampler;
+
     private HTML title;
+
+    private PlainColumnView queryCacheSampler;
+    private PlainColumnView txSampler;
+    private PlainColumnView queryExecSampler;
     private PlainColumnView secondLevelSampler;
+    private PlainColumnView connectionSampler;
+
     private String[] tokens;
+    private HTML slowQuery;
 
     public BasicMetrics(JPAMetricPresenter presenter) {
         this.presenter = presenter;
@@ -90,7 +93,7 @@ public class BasicMetrics {
 
         };
 
-        querySampler  = new PlainColumnView("Query Cache", addressCallback)
+        queryCacheSampler = new PlainColumnView("Query Cache", addressCallback)
                 .setColumns(queryCols)
                 .setWidth(100, Style.Unit.PCT);
 
@@ -101,9 +104,7 @@ public class BasicMetrics {
 
         Column[] queryExecCols = new Column[] {
                 queryExecCount,
-                new NumberColumn("query-execution-max-time","Exec Max Time"),
-                new TextColumn("query-execution-max-time-query-string","Max Time Query")
-
+                new NumberColumn("query-execution-max-time","Exec Max Time")
         };
 
         queryExecSampler  = new PlainColumnView("Query Execution", addressCallback)
@@ -127,6 +128,22 @@ public class BasicMetrics {
                 .setWidth(100, Style.Unit.PCT);
 
 
+
+        //  ------
+
+
+        NumberColumn sessionOpenCount = new NumberColumn("session-open-count", "Session Open Count");
+        Column[] connectionCols = new Column[] {
+                sessionOpenCount.setBaseline(true),
+                new TextColumn("session-close-count","Sesison Close Count").setComparisonColumn(sessionOpenCount),
+                new NumberColumn("connect-count","Connection Count")
+
+        };
+
+        connectionSampler  = new PlainColumnView("Connections", addressCallback)
+                .setColumns(connectionCols)
+                .setWidth(100, Style.Unit.PCT);
+
         // ----
 
         title = new HTML();
@@ -135,6 +152,9 @@ public class BasicMetrics {
 
         // -------
 
+        VerticalPanel connectionPanel = new VerticalPanel();
+        connectionPanel.setStyleName("fill-layout-width");
+        connectionPanel.add(connectionSampler.asWidget());
 
         VerticalPanel txPanel = new VerticalPanel();
         txPanel.setStyleName("fill-layout-width");
@@ -142,8 +162,13 @@ public class BasicMetrics {
 
         VerticalPanel queryPanel = new VerticalPanel();
         queryPanel.setStyleName("fill-layout-width");
+        queryPanel.add(queryCacheSampler.asWidget());
         queryPanel.add(queryExecSampler.asWidget());
-        queryPanel.add(querySampler.asWidget());
+
+        slowQuery = new HTML();
+        slowQuery.setStyleName("help-panel-open");
+        slowQuery.getElement().setAttribute("style", "padding:5px");
+        queryPanel.add(slowQuery);
 
         VerticalPanel secondPanel = new VerticalPanel();
         secondPanel.setStyleName("fill-layout-width");
@@ -155,6 +180,7 @@ public class BasicMetrics {
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadlineWidget(title)
                 .setDescription("Metrics for a persistence unit.")
+                .addDetail("Connections", connectionPanel)
                 .addDetail("Transactions", txPanel)
                 .addDetail("Queries", queryPanel)
                 .addDetail("Second Level Cache", secondPanel);
@@ -175,6 +201,12 @@ public class BasicMetrics {
 
     public void updateMetric(UnitMetric unitMetric) {
         txSampler.addSample(unitMetric.getTxMetric());
+        queryCacheSampler.addSample(unitMetric.getQueryMetric());
         queryExecSampler.addSample(unitMetric.getQueryExecMetric());
+
+        slowQuery.setHTML("<b>Max Time Query</b>: "+ unitMetric.getQueryExecMetric().get(2));
+
+        secondLevelSampler.addSample(unitMetric.getSecondLevelCacheMetric());
+        connectionSampler.addSample(unitMetric.getConnectionMetric());
     }
 }

@@ -254,11 +254,20 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
                                 payload.get("second-level-cache-miss-count").asLong()
                         );
 
+
+                        Metric connectionMetric = new Metric(
+                                payload.get("connect-count").asLong(),
+                                payload.get("session-open-count").asLong(),
+                                payload.get("session-close-count").asLong()
+                        );
+
                         getView().updateMetric(
                                 new UnitMetric(
                                         txMetric,
-                                        queryCacheMetric, queryExecMetric,
-                                        secondLevelCacheMetric
+                                        queryCacheMetric,
+                                        queryExecMetric,
+                                        secondLevelCacheMetric,
+                                        connectionMetric
                                 )
                         );
 
@@ -279,8 +288,6 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         address.get(ADDRESS).add("hibernate-persistence-unit", editedEntity.getDeploymentName()+"#"+editedEntity.getPersistenceUnit());
 
         ModelNode operation = adapter.fromChangeset(changeset, address);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

@@ -144,6 +144,9 @@ public class PlainColumnView implements Sampler {
             int dataIndex = row - ROW_OFFSET;
             String actualValue = metric.get(dataIndex);
 
+            if(null==actualValue)
+                throw new RuntimeException("Metric value at index "+dataIndex+" is null");
+
             grid.setText(row, 1, actualValue );
 
             if(c.getComparisonColumn()!=null && baseline>0)
