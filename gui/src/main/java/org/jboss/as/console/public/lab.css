@@ -1,8 +1,39 @@
 
-
-
-
 input[type=text] {
-    resize: horizontal;
     width: 95%;
+}
+
+
+input[type=password] {
+    width: 95%;
+}
+
+textarea {
+    width:95%;
+}
+
+
+.form-edit-panel table {
+    width:100%;
+}
+
+#cols_1 .form-item-title-col {
+    width:20%;
+    word-wrap: break-word;
+    text-align: right;
+}
+
+#cols_1 .form-item-col {
+    width:80%;
+}
+
+#cols_2 .form-item-title-col {
+
+    width:15%;
+    word-wrap: break-word;
+    text-align: right;
+}
+
+#cols_2 .form-item-col {
+    width:35%;
 }
