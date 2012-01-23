@@ -73,7 +73,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
                 presenter.launchNewJVMDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_hostJVMView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_hostJVMView());
         toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip);

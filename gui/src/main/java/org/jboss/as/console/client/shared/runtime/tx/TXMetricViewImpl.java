@@ -36,7 +36,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
                 presenter.refresh();
             }
         });
-        refreshBtn.ensureDebugId(Console.CONSTANTS.debug_label_refresh_tXMetricViewImp());
+        refreshBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_refresh_tXMetricViewImp());
         toolStrip.addToolButton(refreshBtn);
 
         this.executionMetric = new TXExecutionView();

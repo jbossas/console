@@ -88,7 +88,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
                 presenter.launchNewDeploymentDialoge();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_deploymentListView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_deploymentListView());
         toolStrip.addToolButtonRight(addBtn);
         
         layout.add(toolStrip);

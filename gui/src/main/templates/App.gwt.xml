@@ -29,6 +29,11 @@
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
+    
+    <!-- Enable debug ID. -->
+	<inherits name="com.google.gwt.user.Debug"/>
+	<set-property name="gwt.enableDebugId" value="true"/>   
+    
 
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"

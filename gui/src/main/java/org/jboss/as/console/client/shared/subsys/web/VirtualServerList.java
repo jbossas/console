@@ -84,7 +84,7 @@ public class VirtualServerList {
                 presenter.launchVirtualServerDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_virtualServelList());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_virtualServelList());
         toolstrip.addToolButtonRight(addBtn);
 
 

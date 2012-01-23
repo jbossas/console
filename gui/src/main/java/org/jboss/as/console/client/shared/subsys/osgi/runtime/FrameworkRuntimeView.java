@@ -66,7 +66,7 @@ public class FrameworkRuntimeView extends AbstractEntityView<OSGiFramework>
                 initialLoad(RuntimeBaseAddress.get());
             }
         });
-        refreshBtn.ensureDebugId(Console.CONSTANTS.debug_label_refresh_frameworkRuntimeView());
+        refreshBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_refresh_frameworkRuntimeView());
         toolStrip.addToolButtonRight(refreshBtn);
         return toolStrip;
     }

@@ -99,7 +99,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                 presenter.launchNewConfigDialoge();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_serverConfigView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_serverConfigView());
         toolStrip.addToolButtonRight(addBtn);
 
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
@@ -122,7 +122,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             }
         });
 
-        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_serverConfigView());
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_serverConfigView());
         toolStrip.addToolButtonRight(deleteBtn);
 
         layout.add(toolStrip);

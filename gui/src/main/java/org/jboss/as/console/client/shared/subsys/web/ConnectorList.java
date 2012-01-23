@@ -87,7 +87,7 @@ public class ConnectorList {
                 presenter.launchConnectorDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_connectorList());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_connectorList());
         toolstrip.addToolButtonRight(addBtn);
 
 

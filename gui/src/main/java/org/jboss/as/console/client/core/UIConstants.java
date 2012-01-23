@@ -20,9 +20,7 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.cellview.client.*;
-import com.google.gwt.user.cellview.client.Header;
+
 
 /**
  * @author Heiko Braun
@@ -536,67 +534,9 @@ public interface UIConstants extends Constants {
 
     String server_instance_servers_needRestart();
 
-
     String subsys_jpa_deployment_desc();
 
     String subsys_jpa_basicMetric_desc();
 
     String subsys_jpa_puList_desc();
-
-    //TODO - pslegr, add all the debug buttons labes here, add properties into UIConstants.properties
-    // and for _de properties file as well 
-    // debug labels
-    String debug_label_addContent_deploymentsOverview();
-    String debug_label_add_serverGroupsView();
-    String debug_label_delete_serverGroupsView();
-    String debug_label_add_hostJVMView();
-    String debug_label_add_serverConfigView();
-    String debug_label_delete_serverConfigView();
-    String debug_label_start_serverInstancesView();
-    String debug_label_add_interfaceEditor();
-    String debug_label_remove_interfaceEditor();
-    String debug_label_add_socketBindingView();
-    String debug_label_remove_socketBindingView();
-    String debug_label_add_propertyEditor();
-    String debug_label_refresh_tXMetricViewImp();
-    String debug_label_add_eESubsystemView();
-    String debug_label_remove_eESubsystemView();
-    String debug_label_enOrDisable_dataSourceDetails();
-    String debug_label_verify_dataSourceDetails();
-    String debug_label_add_dataSourceEditor();
-    String debug_label_delete_dataSourceEditor();
-    String debug_label_add_resourceAdapterView();
-    String debug_label_delete_resourceAdapterView();
-    String debug_label_enOrDisable_xADataSourceDetails();
-    String debug_label_verify_xADataSourceDetails();
-    String debug_label_add_xADataSourceEditor();
-    String debug_label_delete_xADataSourceEditor();
-    String debug_label_add_mailSessionView();
-    String debug_label_remove_mailSessionView();
-    String debug_label_add_addressingDetails();
-    String debug_label_add_queueList();
-    String debug_label_add_securityDetails();
-    String debug_label_add_topicList();
-    String debug_label_remove_topicList();
-    String debug_label_edit_configAdminEditor();
-    String debug_label_delete_configAdminEditor();
-    String debug_label_add_configAdminEditor();
-    String debug_label_edit_frameworkEditor();
-    String debug_label_delete_frameworkEditor();
-    String debug_label_add_frameworkEditor();
-    String debug_label_refresh_bundleRuntimeView();
-    String debug_label_refresh_frameworkRuntimeView();
-    String debug_label_add_abstractDomainDetailEditor();
-    String debug_label_add_connectorList();
-    String debug_label_add_virtualServelList();
-    String debug_label_add_entityEditor();
-    String debug_label_remove_entityEditor();
-    String debug_label_add_deploymentListView();
-    String debug_label_pause_vMMetricsView();
-    String debug_label_reload_standaloneServerView();
-    String debug_label_edit_formToolStrip();
-    String debug_label_delete_formToolStrip();
-    String debug_label_cancel_formToolStrip();
-    String debug_label_add_listEditor();
-
 }

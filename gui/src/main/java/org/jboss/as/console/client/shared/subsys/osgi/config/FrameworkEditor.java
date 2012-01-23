@@ -115,7 +115,7 @@ public class FrameworkEditor {
                 presenter.launchCapabilityWizard(capability);
             }
         });
-        editBtn.ensureDebugId(Console.CONSTANTS.debug_label_edit_frameworkEditor());
+        editBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_edit_frameworkEditor());
         toolStrip.addToolButton(editBtn);
         
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
@@ -133,7 +133,7 @@ public class FrameworkEditor {
                     });
             }
         });
-        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_frameworkEditor());
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_frameworkEditor());
         toolStrip.addToolButton(deleteBtn);
         
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
@@ -142,7 +142,7 @@ public class FrameworkEditor {
                 presenter.launchCapabilityWizard(null);
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_frameworkEditor());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_frameworkEditor());
         toolStrip.addToolButton(addBtn);
         layout.add(toolStrip);
 

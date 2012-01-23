@@ -227,7 +227,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
                         });
             }
         });
-        startBtn.ensureDebugId(Console.CONSTANTS.debug_label_start_serverInstancesView());
+        startBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_start_serverInstancesView());
         formTools.addToolButtonRight(startBtn);
         form.addEditListener(new EditListener<ServerInstance>(
 

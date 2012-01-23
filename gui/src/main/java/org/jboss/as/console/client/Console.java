@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
+import org.jboss.as.console.client.core.UIDebugConstants;
 import org.jboss.as.console.client.core.UIMessages;
 import org.jboss.as.console.client.core.bootstrap.BootstrapProcess;
 import org.jboss.as.console.client.core.bootstrap.ChoseProcessor;
@@ -57,6 +58,7 @@ public class Console implements EntryPoint {
 
     public final static CoreUI MODULES = GWT.create(CoreUI.class);
     public final static UIConstants CONSTANTS = GWT.create(UIConstants.class);
+    public final static UIDebugConstants DEBUG_CONSTANTS = GWT.create(UIDebugConstants.class);
     public final static UIMessages MESSAGES = GWT.create(UIMessages.class);
 
     public void onModuleLoad() {

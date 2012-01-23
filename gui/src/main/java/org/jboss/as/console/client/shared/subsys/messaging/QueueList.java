@@ -82,7 +82,7 @@ public class QueueList {
                 presenter.launchNewQueueDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_queueList());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_queueList());
         toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip.asWidget());

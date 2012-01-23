@@ -118,7 +118,7 @@ public class AddressingDetails {
                 presenter.launchNewAddrDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_addressingDetails());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_addressingDetails());
         toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip.asWidget());

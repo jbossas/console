@@ -102,7 +102,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 presenter.launchNewDeploymentDialoge();
             }
         });
-        addContentBtn.ensureDebugId(Console.CONSTANTS.debug_label_addContent_deploymentsOverview());
+        addContentBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_addContent_deploymentsOverview());
         toolStrip.addToolButtonRight(addContentBtn);
         layout.add(toolStrip);
 

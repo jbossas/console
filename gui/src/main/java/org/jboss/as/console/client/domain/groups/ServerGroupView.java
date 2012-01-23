@@ -94,7 +94,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 presenter.launchNewGroupDialoge();
             }
         });
-        newServerGroupBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_serverGroupsView());
+        newServerGroupBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_serverGroupsView());
         toolStrip.addToolButtonRight(newServerGroupBtn);
         
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
@@ -115,7 +115,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
             }
         });
 
-        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_serverGroupsView());
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_serverGroupsView());
         toolStrip.addToolButtonRight(deleteBtn);
 
         layout.add(toolStrip);

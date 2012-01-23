@@ -56,7 +56,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
                         });
             }
         });
-        reloadBtn.ensureDebugId(Console.CONSTANTS.debug_label_reload_standaloneServerView());
+        reloadBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_reload_standaloneServerView());
 
         ToolStrip tools = new ToolStrip();
         tools.addToolButtonRight(reloadBtn);

@@ -87,7 +87,7 @@ public class XADataSourceDetails {
         };
 
         disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
-        disableBtn.ensureDebugId(Console.CONSTANTS.debug_label_enOrDisable_xADataSourceDetails());
+        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_xADataSourceDetails());
         disableBtn.addClickHandler(disableHandler);
 
         ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
@@ -96,7 +96,7 @@ public class XADataSourceDetails {
                 presenter.verifyConnection(form.getEditedEntity().getName(), true);
             }
         });
-        verifyBtn.ensureDebugId(Console.CONSTANTS.debug_label_verify_xADataSourceDetails());
+        verifyBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_verify_xADataSourceDetails());
 
         FormToolStrip<XADataSource> toolStrip = new FormToolStrip<XADataSource>(
                 form,

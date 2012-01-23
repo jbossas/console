@@ -83,7 +83,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                 presenter.launchNewSocketDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_socketBindingView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_socketBindingView());
         toolstrip.addToolButtonRight(addBtn);
 
         ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
@@ -102,7 +102,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                         });
             }
         });
-        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_socketBindingView());
+        removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_socketBindingView());
         toolstrip.addToolButtonRight(removeBtn);
 
         /*

@@ -135,7 +135,7 @@ public class SecurityDetails {
                 presenter.launchNewSecDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_securityDetails());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_securityDetails());
         toolStrip.addToolButtonRight(addBtn);
 
         // asembly

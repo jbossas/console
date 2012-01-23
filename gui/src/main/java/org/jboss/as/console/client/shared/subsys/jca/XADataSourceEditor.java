@@ -86,7 +86,7 @@ public class XADataSourceEditor implements PropertyManagement {
                 presenter.launchNewXADatasourceWizard();
             }
         });
-        commonLabelAddBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_xADataSourceEditor());
+        commonLabelAddBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_xADataSourceEditor());
         topLevelTools.addToolButtonRight(commonLabelAddBtn);
 
 
@@ -112,7 +112,7 @@ public class XADataSourceEditor implements PropertyManagement {
             }
         };
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
-        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_xADataSourceEditor());
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_xADataSourceEditor());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 

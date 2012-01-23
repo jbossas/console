@@ -106,7 +106,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                 presenter.launchNewModuleDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_eESubsystemView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_eESubsystemView());
         moduleTools.addToolButtonRight(addBtn);
         
         ToolButton button = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
@@ -128,7 +128,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                         });
             }
         });
-        button.ensureDebugId(Console.CONSTANTS.debug_label_remove_eESubsystemView());
+        button.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_eESubsystemView());
         moduleTools.addToolButtonRight(button);        
 
         VerticalPanel moduleList = new VerticalPanel();

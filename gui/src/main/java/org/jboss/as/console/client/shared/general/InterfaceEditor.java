@@ -73,7 +73,7 @@ public class InterfaceEditor {
                 presenter.launchNewInterfaceDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_interfaceEditor());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_interfaceEditor());
         topLevelTools.addToolButtonRight(addBtn);
         
         ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
@@ -94,7 +94,7 @@ public class InterfaceEditor {
                         });
             }
         });
-        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_interfaceEditor());
+        removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_interfaceEditor());
         topLevelTools.addToolButtonRight(removeBtn);
 
 

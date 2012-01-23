@@ -63,7 +63,7 @@ public class ConfigAdminEditor implements PropertyManagement {
                 dialog.center();
             }
         });
-        editBtn.ensureDebugId(Console.CONSTANTS.debug_label_edit_configAdminEditor());
+        editBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_edit_configAdminEditor());
         topLevelTools.addToolButton(editBtn);
         
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
@@ -80,7 +80,7 @@ public class ConfigAdminEditor implements PropertyManagement {
                     });
             }
         });
-        deleteBtn.ensureDebugId(Console.CONSTANTS.debug_label_delete_configAdminEditor());
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_configAdminEditor());
         topLevelTools.addToolButton(deleteBtn);
         
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
@@ -89,7 +89,7 @@ public class ConfigAdminEditor implements PropertyManagement {
                 presenter.launchNewCASPropertyWizard();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_configAdminEditor());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_configAdminEditor());
         topLevelTools.addToolButtonRight(addBtn);
         layout.add(topLevelTools);
 

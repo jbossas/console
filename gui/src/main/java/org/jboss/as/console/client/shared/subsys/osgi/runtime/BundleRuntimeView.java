@@ -100,7 +100,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 initialLoad(RuntimeBaseAddress.get());
             }
         });
-        refreshBtn.ensureDebugId(Console.CONSTANTS.debug_label_refresh_bundleRuntimeView());
+        refreshBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_refresh_bundleRuntimeView());
         toolStrip.addToolButton(refreshBtn);
         return toolStrip;
     }

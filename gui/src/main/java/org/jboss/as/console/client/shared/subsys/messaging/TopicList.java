@@ -75,7 +75,7 @@ public class TopicList {
                 presenter.launchNewTopicDialogue();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_topicList());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_topicList());
         toolStrip.addToolButtonRight(addBtn);
 
         layout.add(toolStrip.asWidget());

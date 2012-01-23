@@ -172,7 +172,7 @@ public class EntityEditor<T> implements EntityListView<T> {
                             window.show();
                         }
                     });
-            addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_entityEditor());        
+            addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_entityEditor());        
             toolStrip.addToolButtonRight(addBtn);
         }
 
@@ -198,7 +198,7 @@ public class EntityEditor<T> implements EntityListView<T> {
                                     });
                         }
                     });
-            removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_entityEditor());
+            removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_entityEditor());
             toolStrip.addToolButtonRight(removeBtn);
         }
 

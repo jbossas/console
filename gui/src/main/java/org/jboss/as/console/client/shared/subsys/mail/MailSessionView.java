@@ -62,7 +62,7 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
                 presenter.launchNewSessionWizard();
             }
         });
-        addBtn.ensureDebugId(Console.CONSTANTS.debug_label_add_mailSessionView());
+        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_mailSessionView());
         toolstrip.addToolButtonRight(addBtn);
 
         ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
@@ -78,7 +78,7 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
                         });
             }
         });
-        removeBtn.ensureDebugId(Console.CONSTANTS.debug_label_remove_mailSessionView());
+        removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_mailSessionView());
         toolstrip.addToolButtonRight(removeBtn);
 
         // ------
