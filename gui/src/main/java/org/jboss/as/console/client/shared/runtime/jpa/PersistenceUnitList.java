@@ -9,6 +9,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -41,7 +42,7 @@ import java.util.Map;
 public class PersistenceUnitList {
 
 
-    private CellTable<JPADeployment> table;
+    private DefaultCellTable<JPADeployment> table;
     private ListDataProvider<JPADeployment> dataProvider;
 
     private JPAMetricPresenter presenter;
@@ -112,7 +113,16 @@ public class PersistenceUnitList {
         table.addColumn(statusColumn, "Enabled?");
         table.addColumn(option, "Option");
 
-        table.setSelectionModel(new SingleSelectionModel<JPADeployment>());
+        table.setSelectionModel(
+                new SingleSelectionModel<JPADeployment>(
+                        new ProvidesKey<JPADeployment>() {
+                            @Override
+                            public Object getKey(JPADeployment item) {
+                                return item.getDeploymentName()+"#"+item.getPersistenceUnit();
+                            }
+                        }
+                )
+        );
 
         dataProvider = new ListDataProvider<JPADeployment>();
         dataProvider.addDataDisplay(table);
@@ -137,6 +147,7 @@ public class PersistenceUnitList {
         form.bind(table);
         form.setNumColumns(2);
         form.setEnabled(false);
+
 
         FormToolStrip<JPADeployment> formTools = new FormToolStrip<JPADeployment>(
                 form, new FormToolStrip.FormCallback<JPADeployment>() {
@@ -175,6 +186,7 @@ public class PersistenceUnitList {
     public void setUnits(List<JPADeployment> jpaUnits) {
         dataProvider.setList(jpaUnits);
 
+        //table.defaultSelectEntity();
         if(!jpaUnits.isEmpty())
             table.getSelectionModel().setSelected(jpaUnits.get(0), true);
     }
