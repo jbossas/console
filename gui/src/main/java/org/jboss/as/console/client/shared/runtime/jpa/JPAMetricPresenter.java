@@ -25,11 +25,13 @@ import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
@@ -46,6 +48,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     private BeanFactory factory;
     private PlaceManager placeManager;
     private String[] selectedUnit;
+    private EntityAdapter<JPADeployment> adapter;
 
     public PlaceManager getPlaceManager() {
         return placeManager;
@@ -60,7 +63,6 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         void setPresenter(JPAMetricPresenter presenter);
         void setJpaUnits(List<JPADeployment> jpaUnits);
         void setSelectedUnit(String[] strings);
-
         void updateMetric(UnitMetric unitMetric);
     }
 
@@ -77,6 +79,9 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         this.placeManager = placeManager;
         this.serverSelection = serverSelection;
         this.factory = factory;
+
+
+        adapter = new EntityAdapter<JPADeployment>(JPADeployment.class, metaData);
 
     }
 
@@ -263,6 +268,38 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
             }
         });
+    }
 
+    public void onSaveJPADeployment(JPADeployment editedEntity, Map<String, Object> changeset) {
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(RuntimeBaseAddress.get());
+        address.get(ADDRESS).add("deployment", editedEntity.getDeploymentName());
+        address.get(ADDRESS).add("subsystem", "jpa");
+        address.get(ADDRESS).add("hibernate-persistence-unit", editedEntity.getDeploymentName()+"#"+editedEntity.getPersistenceUnit());
+
+        ModelNode operation = adapter.fromChangeset(changeset, address);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(
+                            Console.MESSAGES.modificationFailed("JPA Deployment"),
+                            response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("JPA Deployment"));
+
+                    refresh();
+                }
+            }
+        });
     }
 }

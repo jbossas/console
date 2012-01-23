@@ -6,20 +6,33 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.help.HelpSystem;
+import org.jboss.as.console.client.shared.help.StaticHelpPanel;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -104,12 +117,55 @@ public class PersistenceUnitList {
         dataProvider = new ListDataProvider<JPADeployment>();
         dataProvider.addDataDisplay(table);
 
+
+        // ---
+
+
+        final Form<JPADeployment> form = new Form<JPADeployment>(JPADeployment.class);
+
+        TextItem deployment = new TextItem("deploymentName", "Deployment");
+        TextItem persistenceUnit = new TextItem("persistenceUnit", "Unit");
+        CheckBoxItem enabledField = new CheckBoxItem("metricEnabled", "Metrics Enabled?");
+
+        form.setFields(deployment, persistenceUnit, enabledField);
+
+
+         final StaticHelpPanel helpPanel = new StaticHelpPanel(
+                 Console.CONSTANTS.subsys_jpa_deployment_desc()
+         );
+
+        form.bind(table);
+        form.setNumColumns(2);
+        form.setEnabled(false);
+
+        FormToolStrip<JPADeployment> formTools = new FormToolStrip<JPADeployment>(
+                form, new FormToolStrip.FormCallback<JPADeployment>() {
+            @Override
+            public void onSave(Map<String, Object> changeset) {
+                presenter.onSaveJPADeployment(form.getEditedEntity(), changeset);
+            }
+
+            @Override
+            public void onDelete(JPADeployment entity) {
+                // not provided
+            }
+        }
+        );
+
+        VerticalPanel formPanel = new VerticalPanel();
+        formPanel.add(formTools.asWidget());
+        formPanel.add(helpPanel.asWidget());
+        formPanel.add(form.asWidget());
+
+        // ---
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setTitle("JPA Metrics")
                 .setHeadline("Persistence Units")
                 .setDescription("DESCRIPTION")
-                .setMaster(Console.MESSAGES.available("Persistence Units"), table);
+                .setMaster(Console.MESSAGES.available("Persistence Units"), table)
+                .addDetail("Persistence Unit", formPanel);
 
 
         return layout.build();
@@ -118,5 +174,8 @@ public class PersistenceUnitList {
 
     public void setUnits(List<JPADeployment> jpaUnits) {
         dataProvider.setList(jpaUnits);
+
+        if(!jpaUnits.isEmpty())
+            table.getSelectionModel().setSelected(jpaUnits.get(0), true);
     }
 }
