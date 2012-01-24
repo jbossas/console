@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaBootstrapContext;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -19,6 +21,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,9 +115,22 @@ public class JcaBootstrapEditor {
         );
         formTools.providesDeleteOp(false);
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "jca");
+                        address.add("bootstrap-context", "*");
+                        return address;
+                    }
+                }, form
+        );
+
         VerticalPanel formPanel = new VerticalPanel();
         formPanel.setStyleName("fill-layout-width");
         formPanel.add(formTools.asWidget());
+        formPanel.add(helpPanel.asWidget());
         formPanel.add(form.asWidget());
 
         Widget panel = new MultipleToOneLayout()

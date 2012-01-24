@@ -9,7 +9,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaWorkmanager;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
@@ -25,6 +27,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,14 +209,42 @@ public class ThreadPoolEditor {
         );
         attributesTools.providesDeleteOp(false);
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "jca");
+                        address.add("workmanager", "*");
+                        address.add("short-running-threads", "*");
+                        return address;
+                    }
+                }, attributesForm
+        );
+
         Widget attributesPanel = new FormLayout()
                 .setForm(attributesForm)
+                .setHelp(helpPanel)
                 .setSetTools(attributesTools)
                 .build();
 
 
+        final FormHelpPanel sizingHelpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "jca");
+                        address.add("workmanager", "*");
+                        address.add("short-running-threads", "*");
+                        return address;
+                    }
+                }, sizingForm
+        );
+
         Widget sizingPanel = new FormLayout()
                 .setForm(sizingForm)
+                .setHelp(sizingHelpPanel)
                 .setSetTools(sizingTools)
                 .build();
 

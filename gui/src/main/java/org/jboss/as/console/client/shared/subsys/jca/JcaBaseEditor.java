@@ -4,12 +4,15 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaArchiveValidation;
 import org.jboss.as.console.client.shared.subsys.jca.model.JcaConnectionManager;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
 
@@ -21,7 +24,7 @@ public class JcaBaseEditor {
 
     private Form<JcaArchiveValidation> archiveForm;
     private Form<JcaBeanValidation> validationForm;
-    private Form<JcaConnectionManager> ccmForm;
+    private Form<JcaConnectionManager> connectionManagerForm;
 
     private JcaPresenter presenter;
 
@@ -57,8 +60,22 @@ public class JcaBaseEditor {
         );
         archiveTools.providesDeleteOp(false);
 
+        final FormHelpPanel archiveHelpPanel = new FormHelpPanel(
+                       new FormHelpPanel.AddressCallback() {
+                           @Override
+                           public ModelNode getAddress() {
+                               ModelNode address = Baseadress.get();
+                               address.add("subsystem", "jca");
+                               address.add("archive-validation", "archive-validation");
+                               return address;
+                           }
+                       }, archiveForm
+               );
+
+
         VerticalPanel archivePanel = new VerticalPanel();
         archivePanel.add(archiveTools.asWidget());
+        archivePanel.add(archiveHelpPanel.asWidget());
         archivePanel.add(archiveForm.asWidget());
 
         // ----
@@ -88,25 +105,38 @@ public class JcaBaseEditor {
         );
         validationTools.providesDeleteOp(false);
 
+        final FormHelpPanel validationHelpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "jca");
+                        address.add("bean-validation", "bean-validation");
+                        return address;
+                    }
+                }, validationForm
+        );
+
         VerticalPanel validationPanel = new VerticalPanel();
         validationPanel.add(validationTools.asWidget());
+        validationPanel.add(validationHelpPanel.asWidget());
         validationPanel.add(validationForm.asWidget());
 
         // ----
         // ----
 
 
-        ccmForm = new Form<JcaConnectionManager>(JcaConnectionManager.class);
-        ccmForm.setNumColumns(2);
-        ccmForm.setEnabled(false);
+        connectionManagerForm = new Form<JcaConnectionManager>(JcaConnectionManager.class);
+        connectionManagerForm.setNumColumns(2);
+        connectionManagerForm.setEnabled(false);
 
         CheckBoxItem errorEnabled = new CheckBoxItem("error", "Error Log Enabled?");
         CheckBoxItem debugEnabled = new CheckBoxItem("debug", "Debug Log Enabled?");
 
-        ccmForm.setFields(errorEnabled, debugEnabled);
+        connectionManagerForm.setFields(errorEnabled, debugEnabled);
 
         FormToolStrip<JcaConnectionManager> ccmTools = new FormToolStrip<JcaConnectionManager>(
-                ccmForm,
+                connectionManagerForm,
                 new FormToolStrip.FormCallback<JcaConnectionManager>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
@@ -121,9 +151,22 @@ public class JcaBaseEditor {
         );
         ccmTools.providesDeleteOp(false);
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "jca");
+                        address.add("cached-connection-manager", "cached-connection-manager");
+                        return address;
+                    }
+                }, connectionManagerForm
+        );
+
         VerticalPanel ccmPanel = new VerticalPanel();
         ccmPanel.add(ccmTools.asWidget());
-        ccmPanel.add(ccmForm.asWidget());
+        ccmPanel.add(helpPanel.asWidget());
+        ccmPanel.add(connectionManagerForm.asWidget());
 
 
         Widget panel = new OneToOneLayout()
@@ -150,6 +193,6 @@ public class JcaBaseEditor {
     }
 
     public void setCCMSettings(JcaConnectionManager jcaConnectionManager) {
-        ccmForm.edit(jcaConnectionManager);
+        connectionManagerForm.edit(jcaConnectionManager);
     }
 }
