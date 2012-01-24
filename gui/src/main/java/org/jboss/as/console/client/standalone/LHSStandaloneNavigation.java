@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.standalone;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,6 +41,8 @@ import java.util.List;
  * @date 2/10/11
  */
 public class LHSStandaloneNavigation {
+
+    private ScrollPanel scroll ;
 
     private VerticalPanel stack;
 
@@ -86,11 +89,13 @@ public class LHSStandaloneNavigation {
 
         layout.add(stack);
 
+        scroll = new ScrollPanel(layout);
+
     }
 
     public Widget asWidget()
     {
-        return layout;
+        return scroll;
     }
 
     public void updateFrom(List<SubsystemRecord> subsystems) {

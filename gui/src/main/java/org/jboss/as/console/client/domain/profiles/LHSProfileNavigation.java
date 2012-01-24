@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -45,6 +46,7 @@ class LHSProfileNavigation {
     private VerticalPanel layout;
     private VerticalPanel stack;
     private SubsystemSection subsystemSection;
+    private ScrollPanel scroll;
 
     public LHSProfileNavigation() {
 
@@ -78,11 +80,12 @@ class LHSProfileNavigation {
 
         layout.add(stack);
 
+        scroll = new ScrollPanel(layout);
     }
 
     public Widget asWidget()
     {
-        return layout;
+        return scroll;
     }
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
