@@ -523,7 +523,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
 
                     @Override
                     public void closePropertyDialoge() {
-
+                        closeXAPropertyDialoge();
                     }
                 }, reference).asWidget()
         );

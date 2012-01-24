@@ -3,10 +3,12 @@ package org.jboss.as.console.client.shared.subsys.jca;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
@@ -32,14 +34,14 @@ public class DataSourceConnectionEditor extends FormEditor<DataSource>{
     public Widget asWidget() {
 
 
-        TextBoxItem connectionSql= new TextBoxItem("connectionSql", "New Connection Sql") {
+        TextAreaItem connectionSql= new TextAreaItem("connectionSql", "New Connection Sql") {
             @Override
             public boolean isRequired() {
                 return false;
             }
         };
 
-        TextBoxItem urlItem = new TextBoxItem("connectionUrl", "Connection URL");
+        TextAreaItem urlItem = new TextAreaItem("connectionUrl", "Connection URL");
         CheckBoxItem jtaItem = new CheckBoxItem("jta", "Use JTA?");
         CheckBoxItem ccmItem = new CheckBoxItem("ccm", "Use CCM?");
 
@@ -53,7 +55,10 @@ public class DataSourceConnectionEditor extends FormEditor<DataSource>{
         }
         );
 
-        getForm().setFields(urlItem, tx, jtaItem, ccmItem, connectionSql);
+        getForm().setFields(
+                urlItem,
+                connectionSql,
+                tx, BlankItem.INSTANCE, jtaItem, ccmItem);
 
         return super.asWidget();
     }

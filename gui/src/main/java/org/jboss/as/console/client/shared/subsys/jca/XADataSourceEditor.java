@@ -178,7 +178,8 @@ public class XADataSourceEditor implements PropertyManagement {
 
         // -----------
         details = new XADataSourceDetails(presenter);
-        propertyEditor = new PropertyEditor(this,true);
+
+        propertyEditor = new PropertyEditor(this, true);
         propertyEditor.setHelpText(Console.CONSTANTS.subsys_jca_dataSource_xaprop_help());
 
         final SingleSelectionModel<XADataSource> selectionModel = new SingleSelectionModel<XADataSource>();
