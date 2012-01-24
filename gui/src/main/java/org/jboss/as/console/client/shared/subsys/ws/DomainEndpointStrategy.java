@@ -1,10 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.ws;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
-import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -24,15 +21,11 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/10/11
  */
-public class DomainEndpointStrategy implements EndpointStrategy {
+public class DomainEndpointStrategy extends BaseRegistry implements EndpointStrategy {
 
     DispatchAsync dispatcher;
     BeanFactory factory;
 
-    final List<WebServiceEndpoint> endpoints = new ArrayList<WebServiceEndpoint>();
-    int numRequests = 0;
-    int numResponses = 0;
-    private HostInformationStore hostInformationStore;
     private CurrentServerSelection serverSelection;
 
     @Inject
@@ -41,43 +34,47 @@ public class DomainEndpointStrategy implements EndpointStrategy {
             BeanFactory factory,
             HostInformationStore hostInformationStore, CurrentServerSelection serverSelection) {
 
+        super(factory, dispatcher);
+
         this.dispatcher = dispatcher;
         this.factory = factory;
-        this.hostInformationStore = hostInformationStore;
         this.serverSelection = serverSelection;
     }
 
     @Override
     public void refreshEndpoints(final AsyncCallback<List<WebServiceEndpoint>> callback) {
-
-        endpoints.clear();
-        numRequests=0;
-        numResponses=0;
-
-
-        hostInformationStore.getHosts(new SimpleCallback<List<Host>>() {
-            @Override
-            public void onSuccess(List<Host> hosts) {
-
-                for(Host host : hosts)
-                {
-                    endpointsOnHost(host.getName(), callback);
-                }
-            }
-        });
-
+        endpointsOnHost(callback);
     }
 
-    private void endpointsOnHost(final String host, final AsyncCallback<List<WebServiceEndpoint>> callback) {
-
+    private void endpointsOnHost(final AsyncCallback<List<WebServiceEndpoint>> callback) {
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).add("host", serverSelection.getHost());
-        operation.get(ADDRESS).add("server", serverSelection.getServer().getName());
-        operation.get(ADDRESS).add("deployment", "*");
-        operation.get(ADDRESS).add("subsystem", "webservices");
-        operation.get(ADDRESS).add("endpoint", "*");
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode deploymentsOp = new ModelNode();
+        deploymentsOp.get(OP).set(READ_RESOURCE_OPERATION);
+        deploymentsOp.get(ADDRESS).add("host", serverSelection.getHost());
+        deploymentsOp.get(ADDRESS).add("server", serverSelection.getServer().getName());
+        deploymentsOp.get(ADDRESS).add("deployment", "*");
+        deploymentsOp.get(ADDRESS).add("subsystem", "webservices");
+        deploymentsOp.get(ADDRESS).add("endpoint", "*");
+
+        ModelNode subdeploymentOp = new ModelNode();
+        subdeploymentOp.get(OP).set(READ_RESOURCE_OPERATION);
+        subdeploymentOp.get(ADDRESS).add("host", serverSelection.getHost());
+        subdeploymentOp.get(ADDRESS).add("server", serverSelection.getServer().getName());
+        subdeploymentOp.get(ADDRESS).add("deployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subdeployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subsystem", "webservices");
+        subdeploymentOp.get(ADDRESS).add("endpoint", "*");
+
+        steps.add(deploymentsOp);
+        steps.add(subdeploymentOp);
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -86,57 +83,28 @@ public class DomainEndpointStrategy implements EndpointStrategy {
 
                 List<WebServiceEndpoint> endpoints = new ArrayList<WebServiceEndpoint>();
 
-                ModelNode response = result.get();
 
-                if(SUCCESS.equals(response.get(OUTCOME).asString())) {
+                ModelNode compositeResponse= result.get();
 
-                    List<ModelNode> modelNodes = response.get(RESULT).asList();
-                    for(ModelNode node : modelNodes)
-                    {
-                        ModelNode value = node.get(RESULT).asObject();
-                        WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
-                        endpoint.setName(value.get("name").asString());
-                        endpoint.setClassName(value.get("class").asString());
-                        endpoint.setContext(value.get("context").asString());
-                        endpoint.setType(value.get("type").asString());
-                        endpoint.setWsdl(value.get("wsdl-url").asString());
+                if(compositeResponse.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(compositeResponse.getFailureDescription()));
+                }
+                else
+                {
+                    ModelNode compositeResult = compositeResponse.get(RESULT).asObject();
 
-                        endpoints.add(endpoint);
-                    }
+                    ModelNode mainResponse = compositeResult.get("step-1").asObject();
+                    ModelNode subdeploymentResponse = compositeResult.get("step-2").asObject();
+
+                    parseEndpoints(mainResponse, endpoints);
+                    parseEndpoints(subdeploymentResponse, endpoints);
+
                 }
 
                 callback.onSuccess(endpoints);
 
             }
         });
-    }
-
-
-    private void addIfNotExists(WebServiceEndpoint endpoint) {
-
-        boolean doesExist = false;
-        for(WebServiceEndpoint existing : endpoints) // we don't control the AutoBean hash() or equals() method.
-        {
-            if(existing.getContext().equals(endpoint.getContext())
-                    && existing.getName().equals(endpoint.getName()))
-            {
-                doesExist = true;
-                break;
-            }
-        }
-        if(!doesExist)
-            endpoints.add(endpoint);
-    }
-
-    private void checkComplete(AsyncCallback<List<WebServiceEndpoint>> callback) {
-        if(numResponses==numRequests)
-            callback.onSuccess(endpoints);
-    }
-
-    private void checkComplete(AsyncCallback<List<WebServiceEndpoint>> callback, Throwable caught) {
-        if(numResponses==numRequests)
-            callback.onFailure(caught);
-        else
-            Console.error("Failed to query WebService endpoints ", caught.getMessage());
     }
 }

@@ -8,6 +8,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -19,16 +20,12 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 6/10/11
  */
-public class StandaloneEndpointStrategy implements EndpointStrategy {
+public class StandaloneEndpointStrategy extends BaseRegistry implements EndpointStrategy {
 
-
-    DispatchAsync dispatcher;
-    BeanFactory factory;
 
     @Inject
     public StandaloneEndpointStrategy(DispatchAsync dispatcher, BeanFactory factory) {
-        this.dispatcher = dispatcher;
-        this.factory = factory;
+        super(factory, dispatcher);
     }
 
     @Override
@@ -37,37 +34,56 @@ public class StandaloneEndpointStrategy implements EndpointStrategy {
         // /deployment="*"/subsystem=webservices/endpoint="*":read-resource
 
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).add("deployment", "*");
-        operation.get(ADDRESS).add("subsystem", "webservices");
-        operation.get(ADDRESS).add("endpoint", "*");
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode deploymentsOp = new ModelNode();
+        deploymentsOp.get(OP).set(READ_RESOURCE_OPERATION);
+        deploymentsOp.get(ADDRESS).add("deployment", "*");
+        deploymentsOp.get(ADDRESS).add("subsystem", "webservices");
+        deploymentsOp.get(ADDRESS).add("endpoint", "*");
+
+        ModelNode subdeploymentOp = new ModelNode();
+        subdeploymentOp.get(OP).set(READ_RESOURCE_OPERATION);
+        subdeploymentOp.get(ADDRESS).add("deployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subdeployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subsystem", "webservices");
+        subdeploymentOp.get(ADDRESS).add("endpoint", "*");
+
+        steps.add(deploymentsOp);
+        steps.add(subdeploymentOp);
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
 
                 List<WebServiceEndpoint> endpoints = new ArrayList<WebServiceEndpoint>();
-                if(response.hasDefined(RESULT))
+
+
+                ModelNode compositeResponse= result.get();
+
+                if(compositeResponse.isFailure())
                 {
-                    List<ModelNode> modelNodes = response.get(RESULT).asList();
-
-                    for(ModelNode node : modelNodes)
-                    {
-                        ModelNode value = node.get(RESULT).asObject();
-                        WebServiceEndpoint endpoint = factory.webServiceEndpoint().as();
-                        endpoint.setName(value.get("name").asString());
-                        endpoint.setClassName(value.get("class").asString());
-                        endpoint.setContext(value.get("context").asString());
-                        endpoint.setType(value.get("type").asString());
-                        endpoint.setWsdl(value.get("wsdl-url").asString());
-
-                        endpoints.add(endpoint);
-                    }
+                    callback.onFailure(new RuntimeException(compositeResponse.getFailureDescription()));
                 }
+                else
+                {
+                    ModelNode compositeResult = compositeResponse.get(RESULT).asObject();
 
+                    ModelNode mainResponse = compositeResult.get("step-1").asObject();
+                    ModelNode subdeploymentResponse = compositeResult.get("step-2").asObject();
+
+                    parseEndpoints(mainResponse, endpoints);
+                    parseEndpoints(subdeploymentResponse, endpoints);
+
+                }
                 callback.onSuccess(endpoints);
             }
         });
     }
+
 }

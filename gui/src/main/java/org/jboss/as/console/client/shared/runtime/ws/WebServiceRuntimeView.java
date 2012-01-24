@@ -4,8 +4,6 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.help.StaticHelpPanel;
-import org.jboss.as.console.client.shared.subsys.ws.WebServiceDescriptions;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -48,8 +46,16 @@ public class WebServiceRuntimeView extends SuspendableViewImpl implements WebSer
             }
         };
 
+         TextColumn<WebServiceEndpoint> deploymentCol = new TextColumn<WebServiceEndpoint>() {
+            @Override
+            public String getValue(WebServiceEndpoint object) {
+                return object.getDeployment();
+            }
+        };
+
         table.addColumn(nameCol, "Name");
         table.addColumn(contextCol, "Context");
+        table.addColumn(deploymentCol, "Deployment");
 
 
         // -----
@@ -63,8 +69,9 @@ public class WebServiceRuntimeView extends SuspendableViewImpl implements WebSer
         TextItem classItem = new TextItem("className", "Class");
         TextItem typeItem = new TextItem("type", "Type");
         TextItem wsdlItem = new TextItem("wsdl", "WSDL Url");
+        TextItem dplItem = new TextItem("deployment", "Deployment");
 
-        form.setFields(nameItem, contextItem, classItem, typeItem, wsdlItem);
+        form.setFields(nameItem, contextItem, classItem, typeItem, wsdlItem, dplItem);
         form.bind(table);
         form.setEnabled(false);
 

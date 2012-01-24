@@ -24,4 +24,7 @@ public interface WebServiceEndpoint {
     String getWsdl();
     void setWsdl(String wsdl);
 
+    @Binding(skip = true)
+    String getDeployment();
+    void setDeployment(String name);
 }

@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.ws;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -9,6 +10,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -18,6 +20,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,7 +29,7 @@ import java.util.List;
  */
 public class WebServiceRuntimePresenter
         extends Presenter<WebServiceRuntimePresenter.MyView, WebServiceRuntimePresenter.MyProxy>
-    implements ServerSelectionEvent.ServerSelectionListener {
+        implements ServerSelectionEvent.ServerSelectionListener {
 
     private EndpointRegistry endpointRegistry;
     private RevealStrategy revealStrategy;
@@ -56,9 +59,19 @@ public class WebServiceRuntimePresenter
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
-        if(isVisible() && serverSelection.isActive())
-            loadEndpoints();
+    public void onServerSelection(String hostName, final ServerInstance server) {
+
+        if(isVisible())
+        {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    loadEndpoints();
+
+                }
+            });
+
+        }
     }
 
     @Override
@@ -73,11 +86,17 @@ public class WebServiceRuntimePresenter
     protected void onReset() {
         super.onReset();
 
-        if(serverSelection.isActive())
-            loadEndpoints();
+        loadEndpoints();
     }
 
     private void loadEndpoints() {
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            getView().updateEndpoints(Collections.EMPTY_LIST);
+            return;
+        }
+
         endpointRegistry.create().refreshEndpoints(new SimpleCallback<List<WebServiceEndpoint>>() {
             @Override
             public void onSuccess(List<WebServiceEndpoint> result) {
