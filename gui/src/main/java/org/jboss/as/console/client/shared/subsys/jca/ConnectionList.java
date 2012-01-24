@@ -70,17 +70,20 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
                 final ConnectionDefinition selection = getCurrentSelection();
 
-                Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("Connection Definition"),
-                        Console.MESSAGES.deleteConfirm("Connection Definition"+selection.getJndiName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDeleteConnection(selection);
+                if(selection!=null)
+                {
+                    Feedback.confirm(
+                            Console.MESSAGES.deleteTitle("Connection Definition"),
+                            Console.MESSAGES.deleteConfirm("Connection Definition"+selection.getJndiName()),
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.onDeleteConnection(selection);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         };
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
@@ -88,22 +91,28 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
         topLevelTools.addToolButtonRight(deleteBtn);
 
 
-        disableBtn = new ToolButton("", new ClickHandler() {
+        disableBtn = new ToolButton(Console.CONSTANTS.common_label_disable(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 final ConnectionDefinition selection = getCurrentSelection();
-                Feedback.confirm(
-                        Console.MESSAGES.modify("Connection Definition"),
-                        Console.MESSAGES.modifyConfirm("Connection Definition " + selection.getJndiName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.enOrDisbaleConnection(currentAdapter, selection);
+                if(selection!=null)
+                {
+
+                    selection.setEnabled(!selection.isEnabled());
+
+                    Feedback.confirm(
+                            Console.MESSAGES.modify("Connection Definition"),
+                            Console.MESSAGES.modifyConfirm("Connection Definition " + selection.getJndiName()),
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.enOrDisbaleConnection(currentAdapter, selection);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
             }
         });

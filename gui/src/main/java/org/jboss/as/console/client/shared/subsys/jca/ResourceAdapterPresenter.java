@@ -877,13 +877,16 @@ public class ResourceAdapterPresenter
         ModelNode operation = connectionMetaData.getAddress().asResource(
                 Baseadress.get(), selectedAdapter, selection.getJndiName());
 
-        operation.get(OP).set(selection.isEnabled() ? "disable":"enable");
 
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("enabled");
+        operation.get(VALUE).set(selection.isEnabled());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
+
                 if(response.isFailure())
                     Console.error(Console.MESSAGES.modificationFailed("Connection Definition"), response.getFailureDescription());
                 else
@@ -897,7 +900,9 @@ public class ResourceAdapterPresenter
         ModelNode operation = adminMetaData.getAddress().asResource(
                 Baseadress.get(), selectedAdapter, selection.getJndiName());
 
-        operation.get(OP).set(selection.isEnabled() ? "disable":"enable");
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("enabled");
+        operation.get(VALUE).set(selection.isEnabled());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

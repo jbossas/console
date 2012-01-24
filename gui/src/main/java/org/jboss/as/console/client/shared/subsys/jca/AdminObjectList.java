@@ -73,39 +73,49 @@ public class AdminObjectList implements PropertyManagement {
 
                 final AdminObject selection = getCurrentSelection();
 
-                Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("Admin Object"),
-                        Console.MESSAGES.deleteConfirm("Admin Object" + selection.getJndiName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onRemoveAdmin(selection);
+                if(selection!=null)
+                {
+                    Feedback.confirm(
+                            Console.MESSAGES.deleteTitle("Admin Object"),
+                            Console.MESSAGES.deleteConfirm("Admin Object" + selection.getJndiName()),
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.onRemoveAdmin(selection);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         };
+
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete());
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 
-         disableBtn = new ToolButton("", new ClickHandler() {
+        disableBtn = new ToolButton("", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
                 final AdminObject selection = getCurrentSelection();
-                Feedback.confirm(
-                        Console.MESSAGES.modify("Admin Object"),
-                        Console.MESSAGES.modifyConfirm("Admin Object " + selection.getJndiName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.enOrDisbaleAdminObject(currentAdapter, selection);
+
+                if(selection!=null)
+                {
+                    selection.setEnabled(!selection.isEnabled());
+
+                    Feedback.confirm(
+                            Console.MESSAGES.modify("Admin Object"),
+                            Console.MESSAGES.modifyConfirm("Admin Object " + selection.getJndiName()),
+                            new Feedback.ConfirmationHandler() {
+                                @Override
+                                public void onConfirmation(boolean isConfirmed) {
+                                    if (isConfirmed) {
+                                        presenter.enOrDisbaleAdminObject(currentAdapter, selection);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
             }
         });
@@ -176,7 +186,7 @@ public class AdminObjectList implements PropertyManagement {
 
             @Override
             public void onDelete(AdminObject entity) {
-                   // not possible
+                // not possible
             }
         }
         );
