@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -45,6 +46,7 @@ class LHSHostsNavigation {
     private LHSNavTree hostTree;
 
     private HostSelector hostSelector;
+    private ScrollPanel scroll;
 
     public LHSHostsNavigation() {
 
@@ -87,11 +89,13 @@ class LHSHostsNavigation {
 
         layout.add(stack);
 
+        scroll = new ScrollPanel(layout);
+
     }
 
     public Widget asWidget()
     {
-        return layout;
+        return scroll;
     }
 
     public void setHosts(List<Host> hosts) {

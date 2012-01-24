@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.domain.runtime;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,6 +35,8 @@ class DomainRuntimeNavigation {
 
     private LHSNavTree metricTree;
     private LHSNavTree runtimeTree;
+
+    private ScrollPanel scroll;
 
     public Widget asWidget()
     {
@@ -115,8 +118,9 @@ class DomainRuntimeNavigation {
         layout.add(stack);
 
 
+        scroll = new ScrollPanel(layout);
 
-        return layout;
+        return scroll;
     }
 
     public void setHosts(List<Host> hosts) {

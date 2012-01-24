@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.standalone.runtime;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,6 +33,7 @@ public class StandaloneRuntimeNavigation {
     private LHSNavTree metricTree;
     private LHSNavTree runtimeOpTree;
 
+    private ScrollPanel scroll;
 
     public Widget asWidget()
     {
@@ -109,7 +111,9 @@ public class StandaloneRuntimeNavigation {
 
         layout.add(stack);
 
-        return layout;
+        scroll = new ScrollPanel(layout);
+
+        return scroll;
     }
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {
