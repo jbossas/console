@@ -59,6 +59,17 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     protected Comparator entityComparator;
 
+    /**
+     * Create a new EntityToDmrBridgeImpl.
+     *
+     * The view is passed in for receiving callbacks.  It is therefore acceptable to pass in a null view if
+     * these callbacks are not desired.
+     *
+     * @param propertyMetadata The main ApplicationMetaData object.
+     * @param type The class that this bridge knows how to handle.
+     * @param view The view that will receive FrameworkView callbacks.
+     * @param dispatcher The dispatcher for sending commands to the server.
+     */
     public EntityToDmrBridgeImpl(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
                                  DispatchAsync dispatcher) {
         this.propertyMetadata = propertyMetadata;
@@ -134,11 +145,13 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public void onEdit() {
+        if (view == null) return;
         view.setEditingEnabled(true);
     }
 
     @Override
     public void onCancel() {
+        if (view == null) return;
         view.setEditingEnabled(false);
     }
 
@@ -160,7 +173,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
 
     @Override
     public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
-        view.setEditingEnabled(false);
+        if (view != null) view.setEditingEnabled(false);
 
         String name = getName(entity);
 
@@ -226,7 +239,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected void onLoadEntitiesSuccess(ModelNode response) {
         List<T> entities = entityAdapter.fromDMRList(response.get(RESULT).asList());
         entityList = sortEntities(entities);
-        view.refresh();
+        if (view != null) view.refresh();
     }
 
     // Not really needed if the table supports sorting...

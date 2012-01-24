@@ -34,7 +34,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
-import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
+import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -67,6 +67,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
         void setPoolTimeoutUnits(Collection<String> units, String defaultUnit);
         void setThreadPoolNames(List<String> threadPoolNames);
         void setPresenter(EJB3Presenter ejb3Presenter);
+        void setThreadFactories();
     }
 
     @Inject
@@ -89,6 +90,7 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
     protected void onReset() {
         super.onReset();
         loadBeanPoolTimeoutUnits();
+        getView().setThreadFactories();
     }
 
     @Override
@@ -135,9 +137,9 @@ public class EJB3Presenter extends Presenter<EJB3Presenter.MyView, EJB3Presenter
     }
 
     // Invoked once the thread pools are loaded
-    public void propagateThreadPoolNames(List<ThreadPool> entityList) {
+    public void propagateThreadPoolNames(List<UnboundedQueueThreadPool> entityList) {
         List<String> poolNames = new ArrayList<String>();
-        for (ThreadPool tp : entityList) {
+        for (UnboundedQueueThreadPool tp : entityList) {
             poolNames.add(tp.getName());
         }
         getView().setThreadPoolNames(poolNames);

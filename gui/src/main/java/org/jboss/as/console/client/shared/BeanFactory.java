@@ -48,7 +48,6 @@ import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
-import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.TimerService;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.DefaultCacheContainer;
@@ -144,7 +143,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<StrictMaxBeanPool> strictMaxBeanPool();
     AutoBean<AsyncService> asyncService();
     AutoBean<TimerService> timerService();
-    AutoBean<ThreadPool> ejbThreadPool();
     AutoBean<RemoteService> remoteService();
 
     // logging subsystem

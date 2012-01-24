@@ -71,5 +71,5 @@ public class ThreadsPresenter extends Presenter<ThreadsPresenter.MyView, Threads
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
-    
+
 }

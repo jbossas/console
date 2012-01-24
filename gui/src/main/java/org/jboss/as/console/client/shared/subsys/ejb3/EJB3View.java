@@ -25,12 +25,15 @@ import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
+import org.jboss.as.console.client.shared.subsys.threads.model.ThreadFactory;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.EntityDetails;
 import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
+import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
+import org.jboss.as.console.client.shared.viewframework.NamedEntity;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
@@ -52,6 +55,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
     private final ServicesView servicesView;
     private final ThreadPoolsView threadPoolsView;
     private ComboBoxItem defaultSLSBPoolItem, defaultMDBPoolItem;
+    private final EntityToDmrBridgeImpl<NamedEntity> threadFactoryBridge;
 
     @Inject
     public EJB3View(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
@@ -61,6 +65,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
         servicesView = new ServicesView(propertyMetaData, dispatcher);
         beanPoolsView = new BeanPoolsView(propertyMetaData, dispatcher);
         threadPoolsView = new ThreadPoolsView(propertyMetaData, dispatcher);
+        threadFactoryBridge = new EntityToDmrBridgeImpl<NamedEntity>(propertyMetaData, ThreadFactory.class, this, dispatcher);
     }
 
     @Override
@@ -164,4 +169,18 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
     public void loadServices() {
         servicesView.initialLoad();
     }
+
+    @Override
+    public void setThreadFactories() {
+        // do this so that you update the thread factory combo box
+        // threadFactoryBridge will call back to the refresh() method below
+        threadFactoryBridge.loadEntities(null);
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        this.threadPoolsView.setThreadFactoryComboValues(threadFactoryBridge.getEntityList());
+    }
+
 }
