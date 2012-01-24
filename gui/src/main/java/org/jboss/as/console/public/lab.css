@@ -37,3 +37,10 @@ textarea {
 #cols_2 .form-item-col {
     width:35%;
 }
+
+
+.combobox {
+    padding:0px;
+    margin:0px;
+    width:95%!important;
+}
