@@ -206,9 +206,10 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         TextItem nameItem = new TextItem("name", "Name");
         TextItem interfaceItem = new TextItem("interface", "Interface");
-        TextItem defaultInterface = new TextItem("defaultInterface", "Default Interface");
+        //TextItem defaultInterface = new TextItem("defaultInterface", "Default Interface");
         NumberBoxItem portItem = new NumberBoxItem("port", "Port");
         StatusItem fixedPort = new StatusItem("fixedPort", "Fixed Port?");
+
         TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address") {
             @Override
             public boolean isRequired() {
@@ -222,7 +223,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
             }
         };
 
-        form.setFields(nameItem, interfaceItem, portItem, fixedPort, defaultInterface);
+        form.setFields(nameItem, interfaceItem, portItem, fixedPort);
         form.setFieldsInGroup("Multicast", new DisclosureGroupRenderer(), multicastPortItem, multicastItem);
         form.bind(socketTable.getCellTable());
 
