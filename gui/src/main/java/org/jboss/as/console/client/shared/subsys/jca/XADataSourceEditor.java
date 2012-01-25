@@ -69,6 +69,7 @@ public class XADataSourceEditor implements PropertyManagement {
     private XADataSourceConnection connectionEditor;
     private DataSourceSecurityEditor securityEditor;
     private DataSourceValidationEditor validationEditor;
+    private ToolButton disableBtn;
 
     public XADataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -116,8 +117,6 @@ public class XADataSourceEditor implements PropertyManagement {
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 
-        layout.add(topLevelTools);
-
         // ----
 
         VerticalPanel vpanel = new VerticalPanel();
@@ -126,8 +125,7 @@ public class XADataSourceEditor implements PropertyManagement {
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);
 
-        layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -176,6 +174,7 @@ public class XADataSourceEditor implements PropertyManagement {
         dataSourceTable.addColumn(statusColumn, "Enabled?");
 
         vpanel.add(new ContentGroupLabel(Console.MESSAGES.available("XA Datasources")));
+        vpanel.add(topLevelTools.asWidget());
         vpanel.add(dataSourceTable);
 
 
@@ -202,17 +201,41 @@ public class XADataSourceEditor implements PropertyManagement {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 XADataSource selectedObject = ((SingleSelectionModel<XADataSource>) dataSourceTable.getSelectionModel()).getSelectedObject();
+                String nextState = selectedObject.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                disableBtn.setText(nextState);
                 presenter.loadPoolConfig(true, selectedObject.getName());
             }
         });
 
+
+        ClickHandler disableHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final XADataSource selection = getCurrentSelection();
+                final boolean doEnable = !selection.isEnabled();
+                Feedback.confirm(Console.MESSAGES.modify("XA datasource"), Console.MESSAGES.modifyConfirm("XA datasource " + selection.getName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.onDisableXA(selection, doEnable);
+                                }
+                            }
+                        });
+            }
+        };
+
+        disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
+        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_xADataSourceDetails());
+        disableBtn.addClickHandler(disableHandler);
+        topLevelTools.addToolButtonRight(disableBtn);
+
+        // -----
+
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
-
-
         bottomPanel.add(details.asWidget(), "Attributes");
-
-
 
         final FormToolStrip.FormCallback<XADataSource> xaCallback = new FormToolStrip.FormCallback<XADataSource>() {
             @Override
@@ -240,8 +263,9 @@ public class XADataSourceEditor implements PropertyManagement {
             }
         };
 
-        connectionEditor = new XADataSourceConnection(xaCallback);
+        connectionEditor = new XADataSourceConnection(presenter, xaCallback);
         connectionEditor.getForm().bind(dataSourceTable);
+
         bottomPanel.add(connectionEditor.asWidget(), "Connection");
 
         securityEditor = new DataSourceSecurityEditor(dsCallback);

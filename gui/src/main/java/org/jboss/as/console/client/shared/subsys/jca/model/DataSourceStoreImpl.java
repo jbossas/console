@@ -538,8 +538,6 @@ public class DataSourceStoreImpl implements DataSourceStore {
             public void onSuccess(DMRResponse response) {
                 ModelNode result = response.get();
 
-                System.out.println(result);
-
                 ResponseWrapper<Boolean> wrapped = new ResponseWrapper<Boolean>(
                     !result.isFailure(),result
                 );

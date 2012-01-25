@@ -51,7 +51,7 @@ public class XADataSourceDetails {
 
     private Form<XADataSource> form;
     private DataSourcePresenter presenter;
-    private ToolButton disableBtn;
+
 
     public XADataSourceDetails(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -61,42 +61,6 @@ public class XADataSourceDetails {
 
     public Widget asWidget() {
 
-        form.addEditListener(new EditListener<DataSource>() {
-            @Override
-            public void editingBean(DataSource bean) {
-                String nextState = bean.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
-                disableBtn.setText(nextState);
-            }
-        });
-
-        ClickHandler disableHandler = new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                final boolean doEnable = !form.getEditedEntity().isEnabled();
-                Feedback.confirm(Console.MESSAGES.modify("XA datasource"), Console.MESSAGES.modifyConfirm("XA datasource " + form.getEditedEntity().getName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    presenter.onDisableXA(form.getEditedEntity(), doEnable);
-                                }
-                            }
-                        });
-            }
-        };
-
-        disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable());
-        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_xADataSourceDetails());
-        disableBtn.addClickHandler(disableHandler);
-
-        ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                presenter.verifyConnection(form.getEditedEntity().getName(), true);
-            }
-        });
-        verifyBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_verify_xADataSourceDetails());
 
         FormToolStrip<XADataSource> toolStrip = new FormToolStrip<XADataSource>(
                 form,
@@ -113,10 +77,6 @@ public class XADataSourceDetails {
                 });
 
         toolStrip.providesDeleteOp(false);
-        toolStrip.addToolButtonRight(disableBtn);
-
-        if(Console.MODULES.getBootstrapContext().isStandalone())
-            toolStrip.addToolButtonRight(verifyBtn);
 
         VerticalPanel panel = new VerticalPanel();
         panel.add(toolStrip.asWidget());

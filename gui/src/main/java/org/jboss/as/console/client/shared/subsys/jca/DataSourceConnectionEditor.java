@@ -88,7 +88,9 @@ public class DataSourceConnectionEditor {
         FormToolStrip<DataSource> formTools = new FormToolStrip<DataSource>(form,callback);
         formTools.providesDeleteOp(false);
 
-        formTools.addToolButtonRight(verifyBtn);
+        // standalone only
+        if(Console.MODULES.getBootstrapContext().isStandalone())
+            formTools.addToolButtonRight(verifyBtn);
 
         FormLayout layout = new FormLayout()
                 .setHelp(new FormHelpPanel(new FormHelpPanel.AddressCallback() {

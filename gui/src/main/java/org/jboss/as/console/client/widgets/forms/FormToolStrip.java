@@ -27,7 +27,7 @@ public class FormToolStrip<T> {
     private FormAdapter<T> form = null;
     private FormCallback<T> callback;
     private String deleteOpName = null;
-    private boolean providesDeleteOp = true;
+    private boolean providesDeleteOp = false;
     private boolean providesEditSaveOp = true;
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
