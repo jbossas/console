@@ -206,7 +206,7 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
               localLabel="subsys_jacorb_transactions",
               formItemTypeForEdit="COMBO_BOX",
               formItemTypeForAdd="COMBO_BOX",
-              acceptedValues={"off", "on"},
+              acceptedValues={"off", "on", "spec"},
               order=170,
               tabName="subsys_jacorb_initializersTab")
     public String getTransactions();
@@ -401,44 +401,48 @@ public interface JacOrbSubsystem extends NamedEntity, HasProperties {
     public void setAddComponentViaInterceptor(String value);
 
     @Binding(detypedName="client-supports")
-    @FormItem(defaultValue="60",
+    @FormItem(defaultValue="MutualAuth",
               localLabel="subsys_jacorb_clientSupports",
-              formItemTypeForAdd="NUMBER_BOX",
-              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              formItemTypeForEdit="COMBO_BOX",
+              acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=360,
               tabName="subsys_jacorb_securityTab")
-    public int getClientSupports();
-    public void setClientSupports(int value);
+    public String getClientSupports();
+    public void setClientSupports(String value);
 
     @Binding(detypedName="client-requires")
-    @FormItem(defaultValue="0",
+    @FormItem(defaultValue="None",
               localLabel="subsys_jacorb_clientRequires",
-              formItemTypeForAdd="NUMBER_BOX",
-              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              formItemTypeForEdit="COMBO_BOX",
+              acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=370,
               tabName="subsys_jacorb_securityTab")
-    public int getClientRequires();
-    public void setClientRequires(int value);
+    public String getClientRequires();
+    public void setClientRequires(String value);
 
     @Binding(detypedName="server-supports")
-    @FormItem(defaultValue="60",
+    @FormItem(defaultValue="MutualAuth",
               localLabel="subsys_jacorb_serverSupports",
-              formItemTypeForAdd="NUMBER_BOX",
-              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              formItemTypeForEdit="COMBO_BOX",
+              acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=380,
               tabName="subsys_jacorb_securityTab")
-    public int getServerSupports();
-    public void setServerSupports(int value);
+    public String getServerSupports();
+    public void setServerSupports(String value);
 
     @Binding(detypedName="server-requires")
-    @FormItem(defaultValue="0",
+    @FormItem(defaultValue="None",
               localLabel="subsys_jacorb_serverRequires",
-              formItemTypeForAdd="NUMBER_BOX",
-              formItemTypeForEdit="NUMBER_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              formItemTypeForEdit="COMBO_BOX",
+              acceptedValues={"None", "ServerAuth", "ClientAuth", "MutualAuth"},
               order=390,
               tabName="subsys_jacorb_securityTab")
-    public int getServerRequires();
-    public void setServerRequires(int value);
+    public String getServerRequires();
+    public void setServerRequires(String value);
 
     @Override
     @Binding(detypedName="properties",
