@@ -21,33 +21,22 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.subsys.ejb3.model.ThreadPool;
-import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
-import org.jboss.as.console.client.shared.viewframework.Columns;
+import org.jboss.as.console.client.shared.subsys.threads.UnboundedQueueThreadPoolView;
+import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author David Bosschaert
  */
-public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
-    private final EntityToDmrBridgeImpl<ThreadPool> bridge;
+public class ThreadPoolsView extends UnboundedQueueThreadPoolView {
+    private final EntityToDmrBridgeImpl<UnboundedQueueThreadPool> bridge;
     private EJB3Presenter presenter;
 
     public ThreadPoolsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(ThreadPool.class, propertyMetaData);
-        bridge = new EntityToDmrBridgeImpl<ThreadPool>(propertyMetaData, ThreadPool.class, this, dispatcher) {
-            @Override
-            protected void onLoadEntitiesSuccess(ModelNode response) {
-                super.onLoadEntitiesSuccess(response);
-                presenter.propagateThreadPoolNames(entityList);
-            }
-        };
+        super(propertyMetaData, dispatcher);
+        bridge = new EntityToDmrBridgeImpl<UnboundedQueueThreadPool>(propertyMetaData, UnboundedQueueThreadPool.class, this, dispatcher);
     }
 
     @Override
@@ -58,30 +47,19 @@ public class ThreadPoolsView extends AbstractEntityView<ThreadPool>{
     }
 
     @Override
-    public EntityToDmrBridge<ThreadPool> getEntityBridge() {
+    public EntityToDmrBridge<UnboundedQueueThreadPool> getEntityBridge() {
         return bridge;
-    }
-
-    @Override
-    protected DefaultCellTable<ThreadPool> makeEntityTable() {
-        DefaultCellTable<ThreadPool> table = new DefaultCellTable<ThreadPool>(10);
-        table.addColumn(new Columns.NameColumn(), Columns.NameColumn.LABEL);
-        return table;
-    }
-
-    @Override
-    protected FormAdapter<ThreadPool> makeAddEntityForm() {
-        Form<ThreadPool> form = new Form<ThreadPool>(ThreadPool.class);
-        form.setNumColumns(1);
-        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
-                formMetaData.findAttribute("maxThreads").getFormItemForAdd(),
-                formMetaData.findAttribute("keepAliveTime").getFormItemForAdd());
-        return form;
     }
 
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_ejb3_threadPools();
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        presenter.propagateThreadPoolNames(bridge.getEntityList());
     }
 
     public void setPresenter(EJB3Presenter presenter) {
