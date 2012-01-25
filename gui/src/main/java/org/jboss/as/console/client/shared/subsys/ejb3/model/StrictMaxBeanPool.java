@@ -49,15 +49,16 @@ public interface StrictMaxBeanPool extends NamedEntity {
 
     @FormItem(defaultValue="5",
             localLabel="subsys_ejb3_beanPoolTimeout",
-            formItemTypeForAdd="NUMBER_UNIT_BOX",
-            formItemTypeForEdit="NUMBER_UNIT_BOX")
+            formItemTypeForAdd="NUMBER_BOX",
+            formItemTypeForEdit="NUMBER_BOX")
     long getTimeout();
     void setTimeout(long timeout);
 
     @Binding(detypedName="timeout-unit")
     @FormItem(defaultValue="MINUTES",
-              formItemTypeForAdd="UNITS",
-              formItemTypeForEdit="UNITS")
+              label="Timeout Unit",
+              formItemTypeForAdd="TIME_UNITS",
+              formItemTypeForEdit="TIME_UNITS")
     String getTimeoutUnit();
     void setTimeoutUnit(String unit);
 }
