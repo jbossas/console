@@ -589,11 +589,6 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         address.get(ADDRESS).add("subsystem", "jca");
         address.get(ADDRESS).add("workmanager", managerName);
 
-        if(changeset.containsKey("keepaliveTime"))
-        {
-            changeset.put("keepaliveTimeUnit", "MILLISECONDS");
-        }
-
         if(entity.isShortRunning())
             address.get(ADDRESS).add("short-running-threads", entity.getName());
         else

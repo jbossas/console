@@ -19,6 +19,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLay
 import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -140,7 +141,7 @@ public class ThreadPoolEditor {
 
         TextItem nameItem = new TextItem("name", "Name");
         CheckBoxItem allowCore = new CheckBoxItem ("allowCoreTimeout", "Allow Core Timeout?");
-        NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTime", "Keep Alive Timeout (ms)") {
+        NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTime", "Keep Alive Timeout") {
             {
                 isRequired = false;
             }
@@ -151,7 +152,15 @@ public class ThreadPoolEditor {
             }
         };
 
-        attributesForm.setFields(nameItem, keepAliveTimeout, allowCore, threadFactory);
+        ComboBoxItem unit = new ComboBoxItem("keepaliveTimeUnit", "Keepalive Timeout Unit");
+        unit.setValueMap(new String[] {"DAYS", "HOURS", "MINUTES", "SECONDS", "MILLISECONDS", "NANOSECONDS"});
+        unit.selectItem(4);
+
+        attributesForm.setFields(
+                nameItem, BlankItem.INSTANCE,
+                keepAliveTimeout, unit,
+                allowCore, threadFactory
+        );
 
         // ---
 
