@@ -68,10 +68,13 @@ public class LoadPropertiesCmd extends AddressableModelCmd implements AsyncComma
 
                 List<PropertyRecord> properties = new ArrayList<PropertyRecord>();
 
-                if(response.hasDefined(RESULT))
+                if(response.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
                 {
                     List<Property> payload = response.get(RESULT).asPropertyList();
-
 
                     for(Property prop : payload)
                     {

@@ -44,7 +44,20 @@ public class DMRResponse implements Result<ModelNode> {
 
     @Override
     public ModelNode get() {
-        ModelNode response = ModelNode.fromBase64(responseText);
+
+
+        ModelNode response = null;
+        try {
+            response = ModelNode.fromBase64(responseText);
+        } catch (Throwable e) {
+
+            ModelNode err = new ModelNode();
+            err.get("outcome").set("failed");
+            err.get("failure-description").set(
+                    "Failed to decode response: "+
+                    e.getClass().getName() +": "+e.getMessage());
+            response = err;
+        }
 
         processor.process(response);
 
