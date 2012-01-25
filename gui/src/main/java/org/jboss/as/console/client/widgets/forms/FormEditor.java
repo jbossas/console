@@ -16,6 +16,7 @@ public class FormEditor<T> {
     protected Form<T> form;
     protected FormToolStrip.FormCallback<T> callback;
     protected ModelNode helpAddress;
+    private FormToolStrip<T> tools;
 
     public FormEditor(Class baseType) {
         form = new Form<T>(baseType);
@@ -36,7 +37,7 @@ public class FormEditor<T> {
         form.setNumColumns(2);
         form.setEnabled(false);
 
-        FormToolStrip<T> tools = new FormToolStrip<T>(form, callback);
+        tools = new FormToolStrip<T>(form, callback);
 
         tools.providesDeleteOp(false);
 
@@ -54,6 +55,10 @@ public class FormEditor<T> {
         panel.add(form.asWidget());
 
         return panel;
+    }
+
+    public FormToolStrip<T> getTools() {
+        return tools;
     }
 
     public Form<T> getForm() {

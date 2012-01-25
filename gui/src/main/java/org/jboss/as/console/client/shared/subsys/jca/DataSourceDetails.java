@@ -58,13 +58,14 @@ public class DataSourceDetails {
         this.presenter = presenter;
         form = new Form(DataSource.class);
         form.setNumColumns(2);
-        form.addEditListener(new EditListener<DataSource>() {
+
+        /*form.addEditListener(new EditListener<DataSource>() {
             @Override
             public void editingBean(DataSource bean) {
                 String nextState = bean.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
                 disableBtn.setText(nextState);
             }
-        });
+        });*/
     }
 
     public Widget asWidget() {
@@ -72,11 +73,10 @@ public class DataSourceDetails {
         detailPanel.setStyleName("fill-layout-width");
 
 
-        ClickHandler disableHandler = new ClickHandler() {
+        /*ClickHandler disableHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
-                String state = form.getEditedEntity().isEnabled() ? Console.CONSTANTS.common_label_disable() : Console.CONSTANTS.common_label_enable();
                 final boolean nextState = !form.getEditedEntity().isEnabled();
                 Feedback.confirm(Console.MESSAGES.modify("datasource"),
                         Console.MESSAGES.modifyConfirm("Datasource "+form.getEditedEntity().getName()),
@@ -92,6 +92,7 @@ public class DataSourceDetails {
         };
 
         disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
+        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_dataSourceDetails());
 
         ToolButton verifyBtn = new ToolButton(Console.CONSTANTS.subsys_jca_dataSource_verify(), new ClickHandler() {
             @Override
@@ -99,7 +100,10 @@ public class DataSourceDetails {
                 presenter.verifyConnection(form.getEditedEntity().getName(), false);
             }
         });
-        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_dataSourceDetails());
+
+        verifyBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_verify_dataSourceDetails());
+
+        */
 
         FormToolStrip<DataSource> toolStrip = new FormToolStrip<DataSource>(
                 form,
@@ -114,14 +118,15 @@ public class DataSourceDetails {
 
                     }
                 });
-        verifyBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_verify_dataSourceDetails());
+
 
         toolStrip.providesDeleteOp(false);
-        toolStrip.addToolButtonRight(disableBtn);
+
+       /* toolStrip.addToolButtonRight(disableBtn);
 
         // not available in domain mode
         if(Console.MODULES.getBootstrapContext().isStandalone())
-            toolStrip.addToolButtonRight(verifyBtn);
+            toolStrip.addToolButtonRight(verifyBtn);  */
 
         detailPanel.add(toolStrip.asWidget());
 

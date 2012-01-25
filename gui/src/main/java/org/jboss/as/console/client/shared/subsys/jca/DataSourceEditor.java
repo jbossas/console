@@ -59,6 +59,7 @@ public class DataSourceEditor {
     private FormEditor<DataSource> securityEditor;
     private DataSourceValidationEditor validationEditor;
     private DataSourceConnectionEditor connectionEditor;
+    private ToolButton disableBtn;
 
     public DataSourceEditor(DataSourcePresenter presenter) {
         this.presenter = presenter;
@@ -103,8 +104,6 @@ public class DataSourceEditor {
         deleteBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButtonRight(deleteBtn);
 
-        layout.add(topLevelTools);
-
         // ----
 
         VerticalPanel vpanel = new VerticalPanel();
@@ -113,8 +112,7 @@ public class DataSourceEditor {
         ScrollPanel scroll = new ScrollPanel(vpanel);
         layout.add(scroll);
 
-        layout.setWidgetTopHeight(topLevelTools, 0, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 30, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // ---
 
@@ -124,6 +122,7 @@ public class DataSourceEditor {
         dataSourceTable = new DatasourceTable();
 
         vpanel.add(new ContentGroupLabel(Console.MESSAGES.available("Datasources")));
+        vpanel.add(topLevelTools.asWidget());
         vpanel.add(dataSourceTable.asWidget());
 
 
@@ -164,7 +163,7 @@ public class DataSourceEditor {
             }
         };
 
-        connectionEditor = new DataSourceConnectionEditor(formCallback);
+        connectionEditor = new DataSourceConnectionEditor(presenter, formCallback);
         connectionEditor.getForm().bind(dataSourceTable.getCellTable());
         bottomPanel.add(connectionEditor.asWidget(), "Connection");
 
@@ -213,6 +212,45 @@ public class DataSourceEditor {
         // -----------------
 
         vpanel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
+
+        // --
+        ClickHandler disableHandler = new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                final DataSource selection = getCurrentSelection();
+                final boolean nextState = !selection.isEnabled();
+                Feedback.confirm(Console.MESSAGES.modify("datasource"),
+                        Console.MESSAGES.modifyConfirm("Datasource "+selection.getName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    presenter.onDisable(selection, nextState);
+                                }
+                            }
+                        });
+            }
+        };
+
+        disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
+        disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_dataSourceDetails());
+
+        dataSourceTable.getCellTable().getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+
+                String nextState = getCurrentSelection().isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                disableBtn.setText(nextState);
+            }
+        }) ;
+
+
+        topLevelTools.addToolButtonRight(disableBtn);
+
+
+        // --
+
         vpanel.add(bottomPanel);
 
         return layout;
