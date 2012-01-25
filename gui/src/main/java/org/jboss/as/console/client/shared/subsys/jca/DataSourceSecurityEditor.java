@@ -5,6 +5,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
@@ -41,7 +42,7 @@ public class DataSourceSecurityEditor extends FormEditor<DataSource>{
                 return false;
             }
         };
-        TextBoxItem pass = new TextBoxItem("password", "Password") {
+        PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
             @Override
             public boolean isRequired() {
                 return false;
