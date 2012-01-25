@@ -115,7 +115,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         super.onReset();
 
         if(serverSelection.isActive())
-            refresh();
+            refresh(true);
     }
 
     @Override
@@ -127,10 +127,10 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     public void onServerSelection(String hostName, ServerInstance server) {
 
         //getView().clearSamples();
-        if(isVisible()) refresh();
+        if(isVisible()) refresh(true);
     }
 
-    public void refresh() {
+    public void refresh(final boolean paging) {
 
 
         ModelNode operation = new ModelNode();
@@ -188,7 +188,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
 
                 // update selection (paging)
-                getView().setSelectedUnit(selectedUnit);
+                if(paging)
+                    getView().setSelectedUnit(selectedUnit);
 
 
             }
@@ -207,7 +208,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
             Property unit = addressTokens.get(addressTokens.size()-1);
 
             JPADeployment jpaDeployment = factory.jpaDeployment().as();
-            String[] tokens = unit.getValue().asString().split("#");
+            String tokenString = unit.getValue().asString();
+            String[] tokens = tokenString.split("#");
             jpaDeployment.setDeploymentName(tokens[0]);
             jpaDeployment.setPersistenceUnit(tokens[1]);
             jpaDeployment.setMetricEnabled(deploymentValue.get("enabled").asBoolean());
@@ -220,7 +222,20 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     public void loadMetrics(String[] tokens) {
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
-        operation.get(ADDRESS).add("deployment", tokens[0]);
+
+
+        // parent deployment names
+        if(tokens[0].indexOf("/")!=-1)
+        {
+            String[] parent = tokens[0].split("/");
+            operation.get(ADDRESS).add("deployment", parent[0]);
+            operation.get(ADDRESS).add("subdeployment", parent[1]);
+        }
+        else
+        {
+            operation.get(ADDRESS).add("deployment", tokens[0]);
+        }
+
         operation.get(ADDRESS).add("subsystem", "jpa");
         operation.get(ADDRESS).add("hibernate-persistence-unit", tokens[0]+"#"+tokens[1]);
 
@@ -318,7 +333,20 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
         ModelNode address = new ModelNode();
         address.get(ADDRESS).set(RuntimeBaseAddress.get());
-        address.get(ADDRESS).add("deployment", editedEntity.getDeploymentName());
+
+        // parent deployment names
+        if(editedEntity.getDeploymentName().indexOf("/")!=-1)
+        {
+            String[] parent = editedEntity.getDeploymentName().split("/");
+            address.get(ADDRESS).add("deployment", parent[0]);
+            address.get(ADDRESS).add("subdeployment", parent[1]);
+        }
+        else
+        {
+            address.get(ADDRESS).add("deployment", editedEntity.getDeploymentName());
+        }
+
+
         address.get(ADDRESS).add("subsystem", "jpa");
         address.get(ADDRESS).add("hibernate-persistence-unit", editedEntity.getDeploymentName()+"#"+editedEntity.getPersistenceUnit());
 
@@ -339,7 +367,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
                 {
                     Console.info(Console.MESSAGES.modified("JPA Deployment"));
 
-                    refresh();
+                    refresh(false);
                 }
             }
         });

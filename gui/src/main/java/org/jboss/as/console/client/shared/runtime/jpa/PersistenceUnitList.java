@@ -115,12 +115,14 @@ public class PersistenceUnitList {
 
         table.setSelectionModel(
                 new SingleSelectionModel<JPADeployment>(
-                        new ProvidesKey<JPADeployment>() {
+
+                        // TODO: https://issues.jboss.org/browse/AS7-3441
+                        /*new ProvidesKey<JPADeployment>() {
                             @Override
                             public Object getKey(JPADeployment item) {
                                 return item.getDeploymentName()+"#"+item.getPersistenceUnit();
                             }
-                        }
+                        } */
                 )
         );
 
@@ -132,6 +134,8 @@ public class PersistenceUnitList {
 
 
         final Form<JPADeployment> form = new Form<JPADeployment>(JPADeployment.class);
+        form.setNumColumns(2);
+        form.setEnabled(false);
 
         TextItem deployment = new TextItem("deploymentName", "Deployment");
         TextItem persistenceUnit = new TextItem("persistenceUnit", "Unit");
@@ -145,8 +149,7 @@ public class PersistenceUnitList {
          );
 
         form.bind(table);
-        form.setNumColumns(2);
-        form.setEnabled(false);
+
 
 
         FormToolStrip<JPADeployment> formTools = new FormToolStrip<JPADeployment>(
@@ -162,6 +165,7 @@ public class PersistenceUnitList {
             }
         }
         );
+        formTools.providesDeleteOp(false);
 
         VerticalPanel formPanel = new VerticalPanel();
         formPanel.add(formTools.asWidget());
