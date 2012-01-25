@@ -131,44 +131,57 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     }
 
     public void refresh() {
+
+
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
-        operation.get(ADDRESS).add("deployment", "*");
-        operation.get(ADDRESS).add("subsystem", "jpa");
-        operation.get(ADDRESS).add("hibernate-persistence-unit", "*");
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(INCLUDE_RUNTIME).set(true);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode deploymentsOp = new ModelNode();
+        deploymentsOp.get(OP).set(READ_RESOURCE_OPERATION);
+        deploymentsOp.get(ADDRESS).set(RuntimeBaseAddress.get());
+        deploymentsOp.get(ADDRESS).add("deployment", "*");
+        deploymentsOp.get(ADDRESS).add("subsystem", "jpa");
+        deploymentsOp.get(ADDRESS).add("hibernate-persistence-unit", "*");
+        deploymentsOp.get(INCLUDE_RUNTIME).set(true);
+
+        ModelNode subdeploymentOp = new ModelNode();
+        subdeploymentOp.get(OP).set(READ_RESOURCE_OPERATION);
+        subdeploymentOp.get(ADDRESS).set(RuntimeBaseAddress.get());
+        subdeploymentOp.get(ADDRESS).add("deployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subdeployment", "*");
+        subdeploymentOp.get(ADDRESS).add("subsystem", "jpa");
+        subdeploymentOp.get(ADDRESS).add("hibernate-persistence-unit", "*");
+        subdeploymentOp.get(INCLUDE_RUNTIME).set(true);
+
+        steps.add(deploymentsOp);
+        steps.add(subdeploymentOp);
+
+        operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
+                ModelNode compositeResponse = result.get();
 
-                if(response.isFailure())
+                if(compositeResponse.isFailure())
                 {
-                    Console.error(Console.MESSAGES.failed("JPA Deployments"), response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("JPA Deployments"), compositeResponse.getFailureDescription());
                 }
                 else
                 {
                     List<JPADeployment> jpaUnits = new ArrayList<JPADeployment>();
-                    List<ModelNode> deployments = response.get(RESULT).asList();
 
-                    for(ModelNode deployment : deployments)
-                    {
-                        ModelNode deploymentValue = deployment.get(RESULT).asObject();
+                    ModelNode compositeResult = compositeResponse.get(RESULT).asObject();
 
-                        List<Property> addressValue = deployment.get(ADDRESS).asPropertyList();
+                    ModelNode mainResponse = compositeResult.get("step-1").asObject();
+                    ModelNode subdeploymentResponse = compositeResult.get("step-2").asObject();
 
-                        Property unit = addressValue.get(2);
-                        JPADeployment jpaDeployment = factory.jpaDeployment().as();
-                        String[] tokens = unit.getValue().asString().split("#");
-                        jpaDeployment.setDeploymentName(tokens[0]);
-                        jpaDeployment.setPersistenceUnit(tokens[1]);
-                        jpaDeployment.setMetricEnabled(deploymentValue.get("enabled").asBoolean());
-
-                        jpaUnits.add(jpaDeployment);
-
-                    }
+                    parseJpaResources(mainResponse, jpaUnits);
+                    parseJpaResources(subdeploymentResponse, jpaUnits);
 
                     getView().setJpaUnits(jpaUnits);
                 }
@@ -180,6 +193,31 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
             }
         });
+    }
+
+    private void parseJpaResources(ModelNode response, List<JPADeployment> jpaUnits) {
+
+        System.out.println(response);
+        List<ModelNode> deployments = response.get(RESULT).asList();
+
+        for(ModelNode deployment : deployments)
+        {
+            ModelNode deploymentValue = deployment.get(RESULT).asObject();
+            List<Property> addressTokens = deployment.get(ADDRESS).asPropertyList();
+
+            Property unit = addressTokens.get(addressTokens.size()-1);
+
+            System.out.println(unit.getValue());
+
+            JPADeployment jpaDeployment = factory.jpaDeployment().as();
+            String[] tokens = unit.getValue().asString().split("#");
+            jpaDeployment.setDeploymentName(tokens[0]);
+            jpaDeployment.setPersistenceUnit(tokens[1]);
+            jpaDeployment.setMetricEnabled(deploymentValue.get("enabled").asBoolean());
+
+            jpaUnits.add(jpaDeployment);
+
+        }
     }
 
     public void loadMetrics(String[] tokens) {
