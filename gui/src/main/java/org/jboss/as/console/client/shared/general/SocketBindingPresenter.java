@@ -139,21 +139,31 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                List<ModelNode> payload = response.get("result").asList();
 
-                List<String> groups = new ArrayList<String>();
-                for (ModelNode group : payload) {
-                    groups.add(group.asString());
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Binding Groups"), response.getFailureDescription());
                 }
+                else
+                {
+                    List<ModelNode> payload = response.get("result").asList();
 
-                bindingGroups = groups;
-                getView().updateGroups(groups);
+                    List<String> groups = new ArrayList<String>();
+                    for (ModelNode group : payload) {
+                        groups.add(group.asString());
+                    }
+
+                    bindingGroups = groups;
+                    getView().updateGroups(groups);
+                }
             }
         });
     }
 
     public void onFilterGroup(String groupName) {
-        loadBindings(groupName);
+
+        if(!groupName.isEmpty())
+            loadBindings(groupName);
     }
 
     private void loadBindings(final String groupName) {
