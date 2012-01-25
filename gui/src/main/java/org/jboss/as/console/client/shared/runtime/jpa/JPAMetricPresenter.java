@@ -197,7 +197,6 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
     private void parseJpaResources(ModelNode response, List<JPADeployment> jpaUnits) {
 
-        System.out.println(response);
         List<ModelNode> deployments = response.get(RESULT).asList();
 
         for(ModelNode deployment : deployments)
@@ -206,8 +205,6 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
             List<Property> addressTokens = deployment.get(ADDRESS).asPropertyList();
 
             Property unit = addressTokens.get(addressTokens.size()-1);
-
-            System.out.println(unit.getValue());
 
             JPADeployment jpaDeployment = factory.jpaDeployment().as();
             String[] tokens = unit.getValue().asString().split("#");
