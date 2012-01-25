@@ -32,10 +32,14 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  *
  * @author Stan Silvert
  */
-public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<UnboundedQueueThreadPool> implements FrameworkView {
+public class UnboundedQueueThreadPoolView<T extends UnboundedQueueThreadPool> extends AbstractThreadPoolView<T> implements FrameworkView {
+
+    public UnboundedQueueThreadPoolView(Class<?> beanType, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(beanType, propertyMetaData, dispatcher);
+    }
 
     public UnboundedQueueThreadPoolView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(UnboundedQueueThreadPool.class, propertyMetaData, dispatcher);
+        this(UnboundedQueueThreadPool.class, propertyMetaData, dispatcher);
     }
 
     @Override
@@ -49,8 +53,8 @@ public class UnboundedQueueThreadPoolView extends AbstractThreadPoolView<Unbound
     }
 
     @Override
-    protected FormAdapter<UnboundedQueueThreadPool> makeAddEntityForm() {
-        Form<UnboundedQueueThreadPool> form = new Form(UnboundedQueueThreadPool.class);
+    protected FormAdapter<T> makeAddEntityForm() {
+        Form<T> form = new Form(this.beanType);
         form.setNumColumns(1);
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
                 formMetaData.findAttribute("maxThreads").getFormItemForAdd(),
