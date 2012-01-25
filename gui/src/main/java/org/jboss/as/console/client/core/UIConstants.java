@@ -539,4 +539,6 @@ public interface UIConstants extends Constants {
     String subsys_jpa_basicMetric_desc();
 
     String subsys_jpa_puList_desc();
+
+    String subsys_web_socketInUse();
 }

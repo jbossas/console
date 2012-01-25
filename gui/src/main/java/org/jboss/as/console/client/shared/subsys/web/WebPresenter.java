@@ -252,6 +252,27 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         if(changedValues.isEmpty()) return;
 
+        if(changedValues.containsKey("socketBinding"))
+        {
+            boolean inUse = false;
+            for(HttpConnector existing : connectors)
+            {
+                if(existing.getSocketBinding().equals(changedValues.get("socketBinding")))
+                {
+                    inUse = true;
+                    break;
+                }
+            }
+
+            if(inUse)
+            {
+                Console.error(Console.CONSTANTS.subsys_web_socketInUse());
+                loadConnectors();
+                return;
+            }
+
+        }
+
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         proto.get(ADDRESS).set(Baseadress.get());
