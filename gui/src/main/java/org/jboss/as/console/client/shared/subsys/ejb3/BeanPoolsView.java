@@ -18,7 +18,10 @@
  */
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
@@ -26,17 +29,12 @@ import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
-import org.jboss.as.console.client.shared.viewframework.FormItemObserver;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.forms.FormItem;
-import org.jboss.ballroom.client.widgets.forms.ObservableFormItem;
 import org.jboss.ballroom.client.widgets.forms.UnitBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.dmr.client.ModelNode;
-
-import java.util.Collection;
 
 /**
  * @author David Bosschaert
@@ -65,25 +63,6 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     }
 
     @Override
-    public void itemAction(Action action, ObservableFormItem item) {
-        timeoutUnitItemAction(action, item, true);
-    }
-
-    private void timeoutUnitItemAction(Action action, ObservableFormItem item, boolean mainEditor) {
-        if (item.getPropertyBinding().getJavaName().equals("timeout") && action == Action.CREATED) {
-            FormItem<?> wrapped = item.getWrapped();
-            if (wrapped instanceof UnitBoxItem) {
-                UnitBoxItem<?> unitBoxItem = (UnitBoxItem<?>) wrapped;
-                unitBoxItem.setUnitPropertyName("timeoutUnit");
-                if (mainEditor)
-                    timeoutItem = unitBoxItem;
-                else
-                    timeoutItemAdd = unitBoxItem;
-            }
-        }
-    }
-
-    @Override
     public EntityToDmrBridge<StrictMaxBeanPool> getEntityBridge() {
         return bridge;
     }
@@ -99,15 +78,9 @@ public class BeanPoolsView extends AbstractEntityView<StrictMaxBeanPool> {
     protected FormAdapter<StrictMaxBeanPool> makeAddEntityForm() {
         Form<StrictMaxBeanPool> form = new Form<StrictMaxBeanPool>(StrictMaxBeanPool.class);
         form.setNumColumns(1);
-        FormItemObserver listener = new FormItemObserver() {
-            @Override
-            public void itemAction(Action action, ObservableFormItem item) {
-                timeoutUnitItemAction(action, item, false);
-            }
-        };
         form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
                        formMetaData.findAttribute("maxPoolSize").getFormItemForAdd(),
-                       formMetaData.findAttribute("timeout").getFormItemForAdd(listener),
+                       formMetaData.findAttribute("timeout").getFormItemForAdd(),
                        formMetaData.findAttribute("timeoutUnit").getFormItemForAdd());
         return form;
     }
