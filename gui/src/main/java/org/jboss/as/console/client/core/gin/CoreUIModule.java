@@ -29,20 +29,19 @@ import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.auth.CurrentUser;
-import org.jboss.as.console.client.auth.LoggedInGatekeeper;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.DefaultPlaceManager;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.DomainUse;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.MainLayoutViewImpl;
 import org.jboss.as.console.client.core.NewTokenFormatter;
-import org.jboss.as.console.client.core.StandaloneGatekeeper;
+import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.StandaloneUse;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
@@ -231,8 +230,8 @@ public class CoreUIModule extends AbstractPresenterModule {
         //bind(ProxyFailureHandler.class).to(DefaultProxyFailureHandler.class).in(Singleton.class);
         //bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
 
-        bind(Gatekeeper.class).annotatedWith(DomainUse.class).to(DomainGatekeeper.class).in(Singleton.class);
-        bind(Gatekeeper.class).annotatedWith(StandaloneUse.class).to(StandaloneGatekeeper.class).in(Singleton.class);
+        bind(Gatekeeper.class).annotatedWith(DomainUse.class).to(DomainGateKeeper.class).in(Singleton.class);
+        bind(Gatekeeper.class).annotatedWith(StandaloneUse.class).to(StandaloneGateKeeper.class).in(Singleton.class);
 
         bind(CurrentUser.class).in(Singleton.class);
         bind(BootstrapContext.class).in(Singleton.class);

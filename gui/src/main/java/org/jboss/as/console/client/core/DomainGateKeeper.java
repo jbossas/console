@@ -10,12 +10,13 @@ import javax.inject.Singleton;
  * @date 1/26/12
  */
 @Singleton
-public class DomainGatekeeper implements Gatekeeper {
+public class DomainGateKeeper implements Gatekeeper {
+
 
     private final BootstrapContext bootstrapContext;
 
     @Inject
-    public DomainGatekeeper(final BootstrapContext bootstrapContext) {
+    public DomainGateKeeper(final BootstrapContext bootstrapContext) {
         this.bootstrapContext = bootstrapContext;
     }
 

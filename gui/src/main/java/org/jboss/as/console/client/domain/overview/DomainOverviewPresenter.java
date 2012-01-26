@@ -31,7 +31,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
@@ -62,7 +62,7 @@ public class DomainOverviewPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainOverviewPresenter)
-    @UseGatekeeper( DomainGatekeeper.class )
+    @UseGatekeeper( DomainGateKeeper.class )
     public interface MyProxy extends Proxy<DomainOverviewPresenter>, Place {
     }
 

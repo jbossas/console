@@ -11,7 +11,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -48,7 +48,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostVMMetricPresenter)
-    @UseGatekeeper( DomainGatekeeper.class )
+    @UseGatekeeper( DomainGateKeeper.class )
     public interface MyProxy extends Proxy<HostVMMetricPresenter>, Place {
     }
 

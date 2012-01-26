@@ -24,18 +24,17 @@ import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
-import org.jboss.as.console.client.core.StandaloneGatekeeper;
+import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -141,8 +140,8 @@ public interface CoreUI extends Ginjector {
     //@DefaultGatekeeper
     //Gatekeeper getLoggedInGatekeeper();
 
-    StandaloneGatekeeper getStandaloneGatekeeper();
-    DomainGatekeeper getDomainGatekeeper();
+    StandaloneGateKeeper getStandaloneGatekeeper();
+    DomainGateKeeper getDomainGatekeeper();
 
     CurrentUser getCurrentUser();
     BootstrapContext getBootstrapContext();

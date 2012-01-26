@@ -35,7 +35,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
@@ -59,7 +59,7 @@ public class ServerGroupMgmtPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
-    @UseGatekeeper( DomainGatekeeper.class )
+    @UseGatekeeper( DomainGateKeeper.class )
     public interface MyProxy extends Proxy<ServerGroupMgmtPresenter>, Place {
 
     }

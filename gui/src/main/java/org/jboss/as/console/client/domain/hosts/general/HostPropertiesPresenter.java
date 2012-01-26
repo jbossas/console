@@ -33,7 +33,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.hosts.HostMgmtPresenter;
@@ -67,7 +67,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostPropertiesPresenter)
-    @UseGatekeeper( DomainGatekeeper.class )
+    @UseGatekeeper( DomainGateKeeper.class )
     public interface MyProxy extends Proxy<HostPropertiesPresenter>, Place {
     }
 

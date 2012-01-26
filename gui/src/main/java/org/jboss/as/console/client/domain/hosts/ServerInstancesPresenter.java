@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -31,9 +30,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DomainGatekeeper;
-import org.jboss.as.console.client.core.DomainUse;
+import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -48,7 +45,6 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -70,7 +66,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
-    @UseGatekeeper( DomainGatekeeper.class )
+    @UseGatekeeper( DomainGateKeeper.class )
     public interface MyProxy extends Proxy<ServerInstancesPresenter>, Place {
     }
 
