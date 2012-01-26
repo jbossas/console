@@ -45,11 +45,9 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmManagement;
-import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -210,6 +208,14 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     @Override
     public void onDeleteJvm(String reference, Jvm jvm) {
+
+        if(jvm.getName().equals("default"))
+        {
+            Console.error(Console.MESSAGES.deletionFailed("JVM Configurations"),
+                    Console.CONSTANTS.hosts_jvm_err_deleteDefault());
+            return;
+        }
+
         ModelNode operation = new ModelNode();
         operation.get(OP).set(REMOVE);
         operation.get(ADDRESS).add("host", currentHost.getName());
@@ -219,7 +225,17 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Removed JVM settings");
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.deletionFailed("JVM Configurations"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.deleted("JVM Configuration"));
+                }
+
                 loadJVMConfig();
             }
         });

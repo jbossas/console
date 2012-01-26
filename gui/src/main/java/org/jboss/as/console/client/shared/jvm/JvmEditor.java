@@ -25,11 +25,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.general.HeapBoxItem;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 
 import java.util.Map;
 
@@ -49,7 +53,7 @@ public class JvmEditor {
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
-    private final String heapSizeValidationPattern = "[\\d]{2,4}[mM]";
+
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -85,39 +89,13 @@ public class JvmEditor {
 
         panel.add(toolStrip.asWidget());
 
-        TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size")
-        {
-            @Override
-            public boolean validate(String value) {
-                boolean hasValue = super.validate(value);
-                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
-                return hasValue && matchPattern;
-            }
+        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
+        HeapBoxItem heapItem = new HeapBoxItem("heapSize", "Heap Size");
+        HeapBoxItem maxHeapItem = new HeapBoxItem("maxHeapSize", "Max Heap Size");
+        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size");
+        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size");
 
-            @Override
-            public String getErrMessage() {
-                return Console.MESSAGES.common_validation_heapSize();
-            }
-        };
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size")
-        {
-            @Override
-            public boolean validate(String value) {
-                boolean hasValue = super.validate(value);
-                boolean matchPattern = RegExp.compile(heapSizeValidationPattern).test(value);
-                return hasValue && matchPattern;
-            }
-
-            @Override
-            public String getErrMessage() {
-                return Console.MESSAGES.common_validation_heapSize();
-            }
-        };
-        //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
-        //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
-
-        form.setFields(nameItem, heapItem, maxHeapItem);
+        form.setFields(nameItem, BlankItem.INSTANCE, heapItem, maxHeapItem, permgen, maxPermgen);
         form.setEnabled(false);
 
         // ---

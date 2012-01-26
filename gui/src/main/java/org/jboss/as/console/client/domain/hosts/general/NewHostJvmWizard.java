@@ -26,9 +26,11 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.general.HeapBoxItem;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
@@ -57,12 +59,12 @@ public class NewHostJvmWizard {
         final Form<Jvm> form = new Form<Jvm>(Jvm.class);
 
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        TextBoxItem heapItem = new TextBoxItem("heapSize", "Heap Size");
-        TextBoxItem maxHeapItem = new TextBoxItem("maxHeapSize", "Max Heap Size");
-        //CheckBoxItem debugItem = new CheckBoxItem("debugEnabled", "Debug Enabled?");
-        //TextBoxItem debugOptionsItem = new TextBoxItem("debugOptions", "Debug Options");
+        HeapBoxItem heapItem = new HeapBoxItem("heapSize", "Heap Size");
+        HeapBoxItem maxHeapItem = new HeapBoxItem("maxHeapSize", "Max Heap Size");
+        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size");
+        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size");
 
-        form.setFields(nameItem, heapItem, maxHeapItem);
+        form.setFields(nameItem, heapItem, maxHeapItem, permgen, maxPermgen);
 
 
          final FormHelpPanel helpPanel = new FormHelpPanel(
