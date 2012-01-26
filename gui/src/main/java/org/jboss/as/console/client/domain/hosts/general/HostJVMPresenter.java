@@ -145,16 +145,12 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
         operation.get(OP).set(ADD);
         operation.get(ADDRESS).set(address);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-
-                System.out.println(response);
 
                 if(response.isFailure())
                 {
@@ -231,29 +227,34 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
     @Override
     public void onUpdateJvm(String reference, String jvmName, Map<String, Object> changedValues) {
-        if(changedValues.size()>0)
-        {
-            ModelNode proto = new ModelNode();
-            proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-            proto.get(ADDRESS).add("host", currentHost.getName());
-            proto.get(ADDRESS).add(JVM, jvmName);
 
-            List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Jvm.class);
-            ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+        ModelNode address = new ModelNode();
+        address.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        address.get(ADDRESS).add("host", currentHost.getName());
+        address.get(ADDRESS).add(JVM, jvmName);
 
-            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        ModelNode operation = adapter.fromChangeset(changedValues, address);
 
-                @Override
-                public void onSuccess(DMRResponse result) {
-                    Console.info("Success: Updated JVM settings");
-                    loadJVMConfig();
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("JVM Configuration"), response.getFailureDescription());
                 }
-            });
-        }
-        else
-        {
-            Console.warning("No changes applied!");
-        }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("JVM Configuration"));
+                }
+
+                loadJVMConfig();
+            }
+        });
+
     }
 
     public void launchNewJVMDialogue() {
