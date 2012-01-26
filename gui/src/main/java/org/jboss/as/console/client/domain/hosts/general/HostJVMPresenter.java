@@ -48,6 +48,7 @@ import org.jboss.as.console.client.shared.jvm.JvmManagement;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
@@ -73,6 +74,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     private BeanFactory factory;
     private ApplicationMetaData propertyMetaData;
     private DefaultWindow window;
+    private EntityAdapter<Jvm> adapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostJVMPresenter)
@@ -90,19 +92,22 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, CurrentHostSelection currentHost,
-            ApplicationMetaData propertyMetaData) {
+            ApplicationMetaData metaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         this.currentHost = currentHost;
         this.factory = factory;
-        this.propertyMetaData = propertyMetaData;
+        this.propertyMetaData = metaData;
+
+
+        adapter = new EntityAdapter<Jvm>(Jvm.class, metaData);
     }
 
     @Override
     public void onHostSelection(String hostName) {
-        if(isVisible())
+        if(isVisible() && currentHost.isSet())
             loadJVMConfig();
     }
 
@@ -117,7 +122,9 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     @Override
     protected void onReset() {
         super.onReset();
-        loadJVMConfig();
+
+        if(currentHost.isSet())
+            loadJVMConfig();
     }
 
     @Override
@@ -130,20 +137,34 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
 
         closeDialogue();
 
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(ADD);
-        operation.get(ADDRESS).add("host", currentHost.getName());
-        operation.get(ADDRESS).add(JVM, jvm.getName());
+        ModelNode address = new ModelNode();
+        address.add("host", currentHost.getName());
+        address.add(JVM, jvm.getName());
 
-        operation.get("heap-size").set(jvm.getHeapSize());
-        operation.get("max-heap-size").set(jvm.getMaxHeapSize());
-        operation.get("debug-enabled").set(jvm.isDebugEnabled());
+        ModelNode operation = adapter.fromEntity(jvm);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).set(address);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
-                Console.info("Success: Created JVM settings");
+
+                ModelNode response = result.get();
+
+                System.out.println(response);
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.addingFailed("JVM Configurations"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.MESSAGES.added("JVM Configurations");
+                }
+
                 loadJVMConfig();
             }
         });
@@ -165,29 +186,28 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             public void onSuccess(DMRResponse result) {
 
                 ModelNode response = result.get();
-                List<Property> payload = response.get(RESULT).asPropertyList();
-                List<Jvm> jvms = new ArrayList<Jvm>(payload.size());
+                List<Jvm> jvms = new ArrayList<Jvm>();
 
-                for(Property prop : payload) {
-                    String jvmName = prop.getName();
-                    Jvm jvm = factory.jvm().as();
-                    jvm.setName(jvmName);
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("JVM Configurations"), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Property> payload = response.get(RESULT).asPropertyList();
 
-                    ModelNode jvmPropValue = prop.getValue();
+                    for(Property prop : payload) {
+                        String jvmName = prop.getName();
+                        ModelNode jvmPropValue = prop.getValue();
+                        Jvm jvm = adapter.fromDMR(jvmPropValue);
+                        jvm.setName(jvmName);
+                        jvms.add(jvm);
+                    }
 
-                    if(jvmPropValue.hasDefined("heap-size"))
-                        jvm.setHeapSize(jvmPropValue.get("heap-size").asString());
-
-                    if(jvmPropValue.hasDefined("max-heap-size"))
-                        jvm.setMaxHeapSize(jvmPropValue.get("max-heap-size").asString());
-
-                    if(jvmPropValue.hasDefined("debug-enabled"))
-                        jvm.setDebugEnabled(jvmPropValue.get("debug-enabled").asBoolean());
-
-                    jvms.add(jvm);
                 }
 
                 getView().setJvms(jvms);
+
             }
         });
     }

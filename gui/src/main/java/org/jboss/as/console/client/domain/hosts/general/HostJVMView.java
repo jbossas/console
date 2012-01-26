@@ -19,14 +19,10 @@
 
 package org.jboss.as.console.client.domain.hosts.general;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -35,13 +31,11 @@ import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -60,10 +54,6 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel("Host JVM Configurations");
-        layout.add(titleBar);
 
         ToolStrip toolStrip = new ToolStrip();
 
@@ -76,24 +66,29 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_hostJVMView());
         toolStrip.addToolButtonRight(addBtn);
 
-        layout.add(toolStrip);
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
+                final Jvm entity = ((SingleSelectionModel<Jvm>) table.getSelectionModel()).getSelectedObject();
 
-        ScrollPanel scroll = new ScrollPanel(panel);
-        layout.add(scroll);
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("JVM Configuration"),
+                        Console.MESSAGES.deleteConfirm("JVM Configuration"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteJvm("", entity);
+                            }
+                        });
 
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
+            }
+        });
+        removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_hostJVMView());
+        toolStrip.addToolButtonRight(removeBtn);
 
         // ---
-
-        panel.add(new ContentHeaderLabel("Available JVM Configurations"));
-        panel.add(new ContentDescription("These JVM configuration are applicable to any server on a host. " +
-                "JVM configurations can be assigned to server configuration by name."));
-
 
         table = new DefaultCellTable<Jvm>(10);
 
@@ -108,24 +103,16 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         table.addColumn(nameCol, "Name");
         //table.addColumn(debugCol, "IsDebugEnabled?");
 
-        panel.add(table);
-
-        // ----
-
-
-        panel.add(new ContentGroupLabel("JVM Details"));
-
         jvmEditor = new JvmEditor(presenter);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
-                address.add("host", Console.MODULES.getCurrentSelectedHost().getName());
+                address.add("host", "*");
                 address.add("jvm", "*");
                 return address;
             }
         });
-        panel.add(jvmEditor.asWidget());
 
         final SingleSelectionModel<Jvm> selectionModel = new SingleSelectionModel<Jvm>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -137,7 +124,15 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         table.setSelectionModel(selectionModel);
 
 
-        return layout;
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setTitle("JVM Configurations")
+                .setDescription(Console.CONSTANTS.hosts_jvm_desc())
+                .setHeadline(Console.CONSTANTS.hosts_jvm_title())
+                .setMaster(Console.MESSAGES.available("JVM Configurations"), table)
+                .setMasterTools(toolStrip)
+                .setDetail(Console.CONSTANTS.common_label_selection(), jvmEditor.asWidget());
+
+        return layout.build();
     }
 
     @Override

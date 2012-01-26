@@ -111,6 +111,7 @@ public class MultipleToOneLayout {
             throw new IllegalStateException("no master set");
 
         layout  = new LayoutPanel();
+        layout.setStyleName("fill-layout");
 
         FakeTabPanel titleBar = null;
         if(!isPlain) {
@@ -129,7 +130,7 @@ public class MultipleToOneLayout {
         ScrollPanel scroll = new ScrollPanel(panel);
         layout.add(scroll);
 
-        int offset = isPlain ? 0 : 28;
+        int offset = isPlain ? 0 : 40;
 
         if(toolStrip!=null)
         {

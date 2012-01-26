@@ -46,4 +46,13 @@ public interface Jvm {
     @Binding(detypedName = "max-heap-size")
     String getMaxHeapSize();
     void setMaxHeapSize(String maxHeap);
+
+    @Binding(detypedName = "permgen-size")
+    String getPermgen();
+    void setPermgen(String permgen);
+
+    @Binding(detypedName = "max-permgen-size")
+    String getMaxPermgen();
+    void setMaxPermgen(String maxPermgen);
+
 }
