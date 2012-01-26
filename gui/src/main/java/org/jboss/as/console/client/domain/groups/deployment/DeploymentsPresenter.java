@@ -26,11 +26,13 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.DomainGatekeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.model.EntityFilter;
@@ -71,6 +73,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
 
     @ProxyCodeSplit
     @NameToken(NameTokens.DeploymentsPresenter)
+    @UseGatekeeper( DomainGatekeeper.class )
     public interface MyProxy extends Proxy<DeploymentsPresenter>, Place {
     }
 

@@ -103,7 +103,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
 
             if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.StandaloneRuntimePresenter))
             {
-                placeManager.revealRelativePlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
+                placeManager.revealPlace(new PlaceRequest(NameTokens.StandaloneServerPresenter));
             }
 
             Timer t = new Timer() {

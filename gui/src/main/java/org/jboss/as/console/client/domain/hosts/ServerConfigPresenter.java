@@ -29,12 +29,14 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.DomainGatekeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.core.message.Message;
@@ -98,6 +100,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerPresenter)
+    @UseGatekeeper( DomainGatekeeper.class )
     public interface MyProxy extends Proxy<ServerConfigPresenter>, Place {
     }
 

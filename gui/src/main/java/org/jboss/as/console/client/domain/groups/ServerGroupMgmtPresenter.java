@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -34,6 +35,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.DomainGatekeeper;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
@@ -57,6 +59,7 @@ public class ServerGroupMgmtPresenter
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
+    @UseGatekeeper( DomainGatekeeper.class )
     public interface MyProxy extends Proxy<ServerGroupMgmtPresenter>, Place {
 
     }

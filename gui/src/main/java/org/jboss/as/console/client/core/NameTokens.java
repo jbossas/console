@@ -138,9 +138,9 @@ public class NameTokens {
         return ProfileMgmtPresenter;
     }
 
-    public static final String ProfileOverviewPresenter = "profile-overview";
-    public static String getProfileOverviewPresenter() {
-        return ProfileOverviewPresenter;
+    public static final String DomainOverviewPresenter = "domain-overview";
+    public static String getDomainOverviewPresenter() {
+        return DomainOverviewPresenter;
     }
 
     public static final String ServerGroupPresenter = "server-groups";
@@ -173,7 +173,7 @@ public class NameTokens {
         return InstancesPresenter;
     }
 
-    public static final String DeploymentListPresenter = "deployment-list";
+    public static final String DeploymentListPresenter = "deployments";
     public static String getDeploymentListPresenter() {
         return DeploymentListPresenter;
     }

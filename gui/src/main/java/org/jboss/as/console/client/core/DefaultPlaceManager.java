@@ -84,7 +84,13 @@ public class DefaultPlaceManager extends PlaceManagerImpl {
     @Override
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
 
-        // TODO: beware of XSS
-        revealPlace( new PlaceRequest(NameTokens.signInPage) );
+        // for now this is only used to prevent access to screen that don't work in either execution mode
+        // i.e. domain screens accessed on a standalone server instance (linked from external URL)
+        // hence we can safely redirect to a default place.
+        // Once we move to actual authorization concept this practice needs to be reconsidered
+        Log.debug("Unauthorized place: "+unauthorizedHistoryToken+". Fallback to default place.");
+
+        revealDefaultPlace();
+
     }
 }

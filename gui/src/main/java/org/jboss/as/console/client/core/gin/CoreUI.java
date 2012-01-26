@@ -31,9 +31,11 @@ import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.as.console.client.auth.SignInPagePresenter;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.DomainGatekeeper;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
+import org.jboss.as.console.client.core.StandaloneGatekeeper;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -116,10 +118,9 @@ import org.jboss.as.console.client.shared.subsys.ws.WebServicePresenter;
 import org.jboss.as.console.client.standalone.ServerMgmtApplicationPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
-import org.jboss.as.console.client.standalone.path.PathToolPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
-import org.jboss.as.console.client.system.SystemApplicationPresenter;
+
 
 /**
  * Overall module configuration.
@@ -138,7 +139,11 @@ public interface CoreUI extends Ginjector {
     TokenFormatter getTokenFormatter();
 
     //@DefaultGatekeeper
-    Gatekeeper getLoggedInGatekeeper();
+    //Gatekeeper getLoggedInGatekeeper();
+
+    StandaloneGatekeeper getStandaloneGatekeeper();
+    DomainGatekeeper getDomainGatekeeper();
+
     CurrentUser getCurrentUser();
     BootstrapContext getBootstrapContext();
     ApplicationProperties getAppProperties();
@@ -171,8 +176,6 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<SettingsPresenter> getSettingsPresenter();
     AsyncProvider<SettingsPresenterWidget> getSettingsPresenterWidget();
 
-    // ----------------------------------------------------------------------
-    AsyncProvider<SystemApplicationPresenter> getSystemAppPresenter();
 
     // ----------------------------------------------------------------------
     AsyncProvider<ServerMgmtApplicationPresenter> getServerManagementAppPresenter();
@@ -180,7 +183,6 @@ public interface CoreUI extends Ginjector {
 
     DeploymentStore getDeploymentStore();
 
-    AsyncProvider<PathToolPresenter> getPathToolPresenter();
 
     // ----------------------------------------------------------------------
     // domain config below

@@ -35,11 +35,15 @@ import org.jboss.as.console.client.auth.SignInPageView;
 import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.DefaultPlaceManager;
+import org.jboss.as.console.client.core.DomainGatekeeper;
+import org.jboss.as.console.client.core.DomainUse;
 import org.jboss.as.console.client.core.Footer;
 import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.MainLayoutViewImpl;
 import org.jboss.as.console.client.core.NewTokenFormatter;
+import org.jboss.as.console.client.core.StandaloneGatekeeper;
+import org.jboss.as.console.client.core.StandaloneUse;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
@@ -184,14 +188,10 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.StandaloneServerView;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
-import org.jboss.as.console.client.standalone.path.PathToolPresenter;
-import org.jboss.as.console.client.standalone.path.PathToolViewImpl;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
-import org.jboss.as.console.client.system.SystemApplicationPresenter;
-import org.jboss.as.console.client.system.SystemApplicationViewImpl;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -229,7 +229,11 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         bind(RootPresenter.class).asEagerSingleton();
         //bind(ProxyFailureHandler.class).to(DefaultProxyFailureHandler.class).in(Singleton.class);
-        bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
+        //bind(Gatekeeper.class).to(LoggedInGatekeeper.class);
+
+        bind(Gatekeeper.class).annotatedWith(DomainUse.class).to(DomainGatekeeper.class).in(Singleton.class);
+        bind(Gatekeeper.class).annotatedWith(StandaloneUse.class).to(StandaloneGatekeeper.class).in(Singleton.class);
+
         bind(CurrentUser.class).in(Singleton.class);
         bind(BootstrapContext.class).in(Singleton.class);
         bind(ApplicationProperties.class).to(BootstrapContext.class).in(Singleton.class);
@@ -263,14 +267,6 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         // ----------------------------------------------------------------------
 
-        // system application
-        bindPresenter(SystemApplicationPresenter.class,
-                SystemApplicationPresenter.SystemAppView.class,
-                SystemApplicationViewImpl.class,
-                SystemApplicationPresenter.SystemAppProxy.class);
-
-        // ----------------------------------------------------------------------
-
         // server management application
 
         bindPresenter(ServerMgmtApplicationPresenter.class,
@@ -284,12 +280,6 @@ public class CoreUIModule extends AbstractPresenterModule {
                 DeploymentListPresenter.MyProxy.class);
 
         bind(DeploymentStore.class).to(DeploymentStoreImpl.class).in(Singleton.class);
-
-        // server/path
-        bindPresenter(PathToolPresenter.class,
-                PathToolPresenter.MyView.class,
-                PathToolViewImpl.class,
-                PathToolPresenter.MyProxy.class);
 
         // ------------------------------------------------
         // domain management application

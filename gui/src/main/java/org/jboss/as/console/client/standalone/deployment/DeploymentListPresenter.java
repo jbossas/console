@@ -27,12 +27,14 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.core.StandaloneGatekeeper;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.deployment.DeployCommandExecutor;
@@ -67,6 +69,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
   
   @ProxyCodeSplit
   @NameToken(NameTokens.DeploymentListPresenter)
+  @UseGatekeeper( StandaloneGatekeeper.class )
   public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
   }
 
