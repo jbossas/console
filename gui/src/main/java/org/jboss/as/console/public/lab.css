@@ -44,3 +44,25 @@ textarea {
     margin:0px;
     width:95%!important;
 }
+
+.help-field-name {
+    font-size:11px;
+    padding-right:2px;
+    vertical-align:top;
+    text-align: right;
+    white-space: nowrap!important;
+}
+
+.help-field-desc {
+
+}
+
+.help-field-row{
+    margin-top: 4px;
+}
+
+.help-panel-open {
+    padding-bottom:10px;
+    padding-left:10px;
+    padding-right:10px;
+}

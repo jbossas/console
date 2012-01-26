@@ -75,9 +75,11 @@ public class HelpSystem {
                     html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
                     List<ModelNode> modelNodes = response.get(RESULT).asList();
+                    List<String> processed = new ArrayList<String>();
+
                     for (ModelNode res : modelNodes) {
-                        matchAttributes(res, fieldNames, html);
-                        matchChildren(res, fieldNames, html);
+                        matchAttributes(processed, res, fieldNames, html);
+                        matchChildren(processed, res, fieldNames, html);
                     }
 
                     html.appendHtmlConstant("</table>");
@@ -127,9 +129,11 @@ public class HelpSystem {
                        html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
                        List<ModelNode> modelNodes = response.get(RESULT).asList();
+                       List<String> processed = new ArrayList<String>();
+
                        for (ModelNode res : modelNodes) {
-                           matchAttributes(res, attributeNames, html);
-                           matchChildren(res, attributeNames, html);
+                           matchAttributes(processed, res, attributeNames, html);
+                           matchChildren(processed, res, attributeNames, html);
                        }
 
                        html.appendHtmlConstant("</table>");
@@ -150,15 +154,15 @@ public class HelpSystem {
        }
 
 
-    private void matchAttributes(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        matchSubElement(prototype, fieldNames, html, ATTRIBUTES);
+    private void matchAttributes(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
+        matchSubElement(processed, prototype, fieldNames, html, ATTRIBUTES);
     }
 
-    private void matchChildren(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        matchSubElement(prototype, fieldNames, html, CHILDREN);
+    private void matchChildren(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
+        matchSubElement(processed, prototype, fieldNames, html, CHILDREN);
     }
 
-    private void matchSubElement(ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html, String entity) {
+    private void matchSubElement(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html, String entity) {
         if (prototype.hasDefined(RESULT))
             prototype = prototype.get(RESULT).asObject();
 
@@ -166,6 +170,7 @@ public class HelpSystem {
             return;
 
         try {
+
             List<Property> attributes = prototype.get(entity).asPropertyList();
 
             for(Property prop : attributes)
@@ -175,11 +180,17 @@ public class HelpSystem {
 
                 if(fieldNames.contains(childName))
                 {
-                    html.appendHtmlConstant("<tr>");
-                    html.appendHtmlConstant("<td style='font-size:11px;padding-right:2px;vertical-align:top'>");
+                    // TODO: Workaround AS7-3426
+                    if(processed.contains(childName))
+                        continue;
+                    else
+                        processed.add(childName);
+
+                    html.appendHtmlConstant("<tr class='help-field-row'>");
+                    html.appendHtmlConstant("<td class='help-field-name'>");
                     html.appendEscaped(childName).appendEscaped(": ");
                     html.appendHtmlConstant("</td>");
-                    html.appendHtmlConstant("<td>");
+                    html.appendHtmlConstant("<td class='help-field-desc'>");
                     html.appendEscaped(value.get("description").asString());
                     html.appendHtmlConstant("</td>");
                     html.appendHtmlConstant("</tr>");
