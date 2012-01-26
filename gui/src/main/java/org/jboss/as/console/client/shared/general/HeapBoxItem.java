@@ -17,11 +17,24 @@ public class HeapBoxItem extends TextBoxItem {
         super(name, title);
     }
 
+    public HeapBoxItem(String name, String title, boolean required) {
+        super(name, title, required);
+    }
+
     @Override
     public boolean validate(String value) {
-        boolean hasValue = super.validate(value);
-        boolean matchPattern = regex.test(value);
-        return hasValue && matchPattern;
+        boolean parentValidation = super.validate(value);
+
+        if(parentValidation && !value.isEmpty())
+        {
+            boolean matchPattern = regex.test(value);
+            return parentValidation && matchPattern;
+        }
+        else
+        {
+            return parentValidation;
+        }
+
     }
 
     @Override

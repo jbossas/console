@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.dmr.client.ModelNode;
@@ -61,8 +62,14 @@ public class NewHostJvmWizard {
         TextBoxItem nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
         HeapBoxItem heapItem = new HeapBoxItem("heapSize", "Heap Size");
         HeapBoxItem maxHeapItem = new HeapBoxItem("maxHeapSize", "Max Heap Size");
-        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size");
-        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size");
+        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size", false);
+        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size", false);
+
+
+        heapItem.setValue("64m");
+        maxHeapItem.setValue("256m");
+        permgen.setValue("128m");
+        maxPermgen.setValue("128m");
 
         form.setFields(nameItem, heapItem, maxHeapItem, permgen, maxPermgen);
 
@@ -87,7 +94,12 @@ public class NewHostJvmWizard {
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        presenter.onCreateJvm(currentHost.getName(), form.getUpdatedEntity());
+
+                        FormValidation validation = form.validate();
+                        if(!validation.hasErrors())
+                        {
+                            presenter.onCreateJvm(currentHost.getName(), form.getUpdatedEntity());
+                        }
                     }
                 },
                 new ClickHandler() {

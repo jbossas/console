@@ -31,6 +31,7 @@ import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -54,14 +55,21 @@ public class JvmEditor {
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
 
+    private boolean overrideName = true;
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
     }
 
+    public JvmEditor(JvmManagement presenter, boolean overrideName) {
+        this.presenter = presenter;
+        this.overrideName = overrideName;
+    }
+
     public void setAddressCallback(FormHelpPanel.AddressCallback addressCallback) {
         this.addressCallback = addressCallback;
     }
+
 
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
@@ -89,7 +97,13 @@ public class JvmEditor {
 
         panel.add(toolStrip.asWidget());
 
-        TextItem nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
+        FormItem nameItem = null;
+
+        if(overrideName)
+            nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
+        else
+            nameItem = new TextItem("name", Console.CONSTANTS.common_label_name());
+
         HeapBoxItem heapItem = new HeapBoxItem("heapSize", "Heap Size");
         HeapBoxItem maxHeapItem = new HeapBoxItem("maxHeapSize", "Max Heap Size");
         HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size");

@@ -220,7 +220,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                 if(response.isFailure())
                 {
-                   callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
                 }
                 else
                 {
@@ -398,6 +398,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
 
+        System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -407,7 +409,15 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                callback.onSuccess(response.get(OUTCOME).asString().equals(SUCCESS));
+
+                if(response.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
+                {
+                    callback.onSuccess(!response.isFailure());
+                }
             }
         });
     }

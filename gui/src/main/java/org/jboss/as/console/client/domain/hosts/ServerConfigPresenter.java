@@ -287,41 +287,30 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
 
-        if(changedValues.size()>0)
-        {
+        if(changedValues.containsKey("portOffset"))
+            changedValues.put("socketBinding", entity.getSocketBinding());
+        else if(changedValues.containsKey("socketBinding"))
+            changedValues.put("portOffset", entity.getPortOffset());
 
-            if(changedValues.containsKey("portOffset"))
-                changedValues.put("socketBinding", entity.getSocketBinding());
-            else if(changedValues.containsKey("socketBinding"))
-                changedValues.put("portOffset", entity.getPortOffset());
+        final String name = entity.getName();
 
-            final String name = entity.getName();
+        hostInfoStore.saveServerConfig(hostSelection.getName(), name, changedValues, new SimpleCallback<Boolean>() {
 
-            hostInfoStore.saveServerConfig(hostSelection.getName(), name, changedValues, new AsyncCallback<Boolean>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    // log and reset when something fails
+            @Override
+            public void onSuccess(Boolean wasSuccessful) {
+                if(wasSuccessful)
+                {
+                    Console.info("Successfully modified server-config " +name);
+                }
+                else
+                {
                     Console.error("Failed to modify server-config " +name);
-                    loadServerConfigurations(null);
                 }
 
-                @Override
-                public void onSuccess(Boolean wasSuccessful) {
-                    if(wasSuccessful)
-                    {
-                        Console.info("Successfully modified server-config " +name);
-                    }
-                    else
-                    {
-                        Console.error("Failed to modify server-config " +name);
-                    }
+                loadServerConfigurations(name);
+            }
+        });
 
-                    loadServerConfigurations(name);
-                }
-            });
-
-        }
     }
 
 

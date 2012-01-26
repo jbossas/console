@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -46,14 +47,13 @@ import java.util.List;
  */
 public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.MyView {
 
-
     private HostJVMPresenter presenter;
     private JvmEditor jvmEditor;
     private CellTable<Jvm> table;
+    private ListDataProvider<Jvm> dataProvider;
 
     @Override
     public Widget createWidget() {
-
 
         ToolStrip toolStrip = new ToolStrip();
 
@@ -90,7 +90,9 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         // ---
 
-        table = new DefaultCellTable<Jvm>(10);
+        table = new DefaultCellTable<Jvm>(8);
+        dataProvider = new ListDataProvider<Jvm>();
+        dataProvider.addDataDisplay(table);
 
         TextColumn<Jvm> nameCol = new TextColumn<Jvm>() {
             @Override
@@ -103,7 +105,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         table.addColumn(nameCol, "Name");
         //table.addColumn(debugCol, "IsDebugEnabled?");
 
-        jvmEditor = new JvmEditor(presenter);
+        jvmEditor = new JvmEditor(presenter, false);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
@@ -142,8 +144,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
     @Override
     public void setJvms(List<Jvm> jvms) {
-        table.setRowCount(jvms.size(), true);
-        table.setRowData(jvms);
+        dataProvider.setList(jvms);
 
         if(!jvms.isEmpty())
             table.getSelectionModel().setSelected(jvms.get(0), true);
