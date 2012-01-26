@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.Deploym
 import org.jboss.as.console.client.shared.subsys.ejb3.model.AsyncService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EESubsystem;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3Subsystem;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3ThreadPool;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.Module;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.RemoteService;
 import org.jboss.as.console.client.shared.subsys.ejb3.model.StrictMaxBeanPool;
@@ -144,6 +145,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<AsyncService> asyncService();
     AutoBean<TimerService> timerService();
     AutoBean<RemoteService> remoteService();
+    AutoBean<EJB3ThreadPool> ejb3ThreadPool();
 
     // logging subsystem
     AutoBean<RootLogger> rootLogger();

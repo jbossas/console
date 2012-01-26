@@ -21,8 +21,8 @@ package org.jboss.as.console.client.shared.subsys.ejb3;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.subsys.ejb3.model.EJB3ThreadPool;
 import org.jboss.as.console.client.shared.subsys.threads.UnboundedQueueThreadPoolView;
-import org.jboss.as.console.client.shared.subsys.threads.model.UnboundedQueueThreadPool;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -30,13 +30,13 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 /**
  * @author David Bosschaert
  */
-public class ThreadPoolsView extends UnboundedQueueThreadPoolView {
-    private final EntityToDmrBridgeImpl<UnboundedQueueThreadPool> bridge;
+public class ThreadPoolsView extends UnboundedQueueThreadPoolView<EJB3ThreadPool> {
+    private final EntityToDmrBridgeImpl<EJB3ThreadPool> bridge;
     private EJB3Presenter presenter;
 
     public ThreadPoolsView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(propertyMetaData, dispatcher);
-        bridge = new EntityToDmrBridgeImpl<UnboundedQueueThreadPool>(propertyMetaData, UnboundedQueueThreadPool.class, this, dispatcher);
+        super(EJB3ThreadPool.class, propertyMetaData, dispatcher);
+        bridge = new EntityToDmrBridgeImpl<EJB3ThreadPool>(propertyMetaData, EJB3ThreadPool.class, this, dispatcher);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ThreadPoolsView extends UnboundedQueueThreadPoolView {
     }
 
     @Override
-    public EntityToDmrBridge<UnboundedQueueThreadPool> getEntityBridge() {
+    public EntityToDmrBridge<EJB3ThreadPool> getEntityBridge() {
         return bridge;
     }
 
