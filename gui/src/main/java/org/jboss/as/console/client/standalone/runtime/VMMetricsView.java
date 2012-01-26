@@ -139,7 +139,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         header.add(osPanel);
 
         // 50/50
-        osPanel.getElement().getParentElement().setAttribute("style", "width:50%; vertical-align:top");
+        osPanel.getElement().getParentElement().setAttribute("style", "width:50%; vertical-align:top;padding-right:15px;");
         osPanel.getElement().getParentElement().setAttribute("align", "right");
         vmName.getElement().getParentElement().setAttribute("style", "width:50%; vertical-align:top");
 
