@@ -547,4 +547,6 @@ public interface UIConstants extends Constants {
     String hosts_jvm_title();
 
     String hosts_jvm_err_deleteDefault();
+
+    String common_serverConfig_desc();
 }

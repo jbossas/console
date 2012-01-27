@@ -20,14 +20,9 @@
 package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -41,12 +36,8 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -84,13 +75,6 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverConfigs());
-        layout.add(titleBar);
-
-        // ----
-
         final ToolStrip toolStrip = new ToolStrip();
 
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler(){
@@ -125,27 +109,8 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_serverConfigView());
         toolStrip.addToolButtonRight(deleteBtn);
 
-        layout.add(toolStrip);
-
-        // ---
-
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
-
-        ScrollPanel scrollPanel = new ScrollPanel(panel);
-        layout.add(scrollPanel);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scrollPanel, 70, Style.Unit.PX, 100, Style.Unit.PCT);
-
 
         // ------------------------------------------------------
-
-        // table
-
-        panel.add(new ContentHeaderLabel("Available Server Configurations"));
-        panel.add(new ContentDescription("A server configuration does specify the overall configuration of a server. A server configuration can be started and perform work. Server configurations belong to server groups."));
 
         // Create columns
         Column<Server, String> nameColumn = new Column<Server, String>(new TextCell()) {
@@ -167,26 +132,14 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
         serverConfigTable.addColumn(nameColumn, "Configuration Name");
         serverConfigTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
 
-        panel.add(serverConfigTable);
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(serverConfigTable);
-        panel.add(pager);
-
 
         // ---------------------
 
-        TabPanel bottomLayout = new TabPanel();
-        bottomLayout.addStyleName("default-tabpanel");
-
-        // details
 
         details = new ServerConfigDetails(presenter);
-        bottomLayout.add(details.asWidget(), "Attributes");
-        details.bind(serverConfigTable);
 
         // jvm editor
-        jvmEditor = new JvmEditor(presenter);
+        jvmEditor = new JvmEditor(presenter, true, true);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
@@ -198,39 +151,42 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
                 return address;
             }
         });
-        bottomLayout.add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
-        propertyEditor.setHelpText("A system property to set on this server.");
-        bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
-        propertyEditor.setAllowEditProps(false);
 
         portsView = new PortsView();
-        //bottomLayout.add(portsView.asWidget(), "Ports");
-
-        // ------------
-
-        panel.add(new ContentGroupLabel("Server Configuration"));
-        panel.add(bottomLayout);
-
-        bottomLayout.selectTab(0);
 
 
         // --------------------
 
 
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setTitle(Console.CONSTANTS.common_label_serverGroupConfigurations())
+                .setHeadline("Server Configurations")
+                .setDescription(Console.CONSTANTS.common_serverConfig_desc())
+                .setMaster(Console.MESSAGES.available(Console.CONSTANTS.common_label_serverConfigs()), serverConfigTable)
+                .setMasterTools(toolStrip.asWidget())
+                .addDetail("Attributes", details.asWidget())
+                .addDetail(Console.CONSTANTS.common_label_virtualMachine(), jvmEditor.asWidget())
+                .addDetail(Console.CONSTANTS.common_label_systemProperties(), propertyEditor.asWidget());
+
+
+        details.bind(serverConfigTable);
+
         serverConfigTable.getSelectionModel().addSelectionChangeHandler(
                 new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                Server server = getSelectionModel().getSelectedObject();
-                presenter.loadJVMConfiguration(server);
-                presenter.loadProperties(server);
-                presenter.loadPorts(server);
-            }
-        });
+                    @Override
+                    public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                        Server server = getSelectionModel().getSelectedObject();
+                        presenter.loadJVMConfiguration(server);
+                        presenter.loadProperties(server);
+                        presenter.loadPorts(server);
+                    }
+                });
 
-        return layout;
+        propertyEditor.setAllowEditProps(false);
+
+        return layout.build();
     }
 
     private SingleSelectionModel<Server> getSelectionModel() {
@@ -263,23 +219,23 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
 
         if(!servers.isEmpty())
         {
-        	if(selectedConfigName == null || selectedConfigName.equals("")) {
-        		getSelectionModel().setSelected(servers.get(0), true);
-        	}
-        	else {
-        		getSelectionModel().setSelected(findSelectedServer(servers, selectedConfigName), true);
-        	}
+            if(selectedConfigName == null || selectedConfigName.equals("")) {
+                getSelectionModel().setSelected(servers.get(0), true);
+            }
+            else {
+                getSelectionModel().setSelected(findSelectedServer(servers, selectedConfigName), true);
+            }
         }
 
     }
-    
+
     private Server findSelectedServer(List<Server> servers,String name){
-    	for (Server server : servers) {
-			if(server.getName().equals(name)) {
-				return server;
-			}
-		}
-    	return servers.get(0);	
-    } 
+        for (Server server : servers) {
+            if(server.getName().equals(name)) {
+                return server;
+            }
+        }
+        return servers.get(0);
+    }
 
 }
