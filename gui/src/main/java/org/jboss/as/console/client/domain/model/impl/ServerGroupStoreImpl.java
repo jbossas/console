@@ -125,6 +125,10 @@ public class ServerGroupStoreImpl implements ServerGroupStore {
         record.setSocketBinding(model.get("socket-binding-group").asString());
 
         Jvm jvm = ModelAdapter.model2JVM(factory, model);
+
+        if(jvm!=null)
+            jvm.setInherited(false);  // on this level they can't inherit from anyone
+
         record.setJvm(jvm);
 
         List<PropertyRecord> propertyRecords = ModelAdapter.model2Property(factory, model);

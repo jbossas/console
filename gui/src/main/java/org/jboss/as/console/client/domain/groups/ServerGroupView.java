@@ -20,13 +20,9 @@
 package org.jboss.as.console.client.domain.groups;
 
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -40,12 +36,8 @@ import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmEditor;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
-import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -79,12 +71,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
     @Override
     public Widget createWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel(Console.CONSTANTS.common_label_serverGroupConfigurations());
-        layout.add(titleBar);
-
-        // ----
 
         final ToolStrip toolStrip = new ToolStrip();
 
@@ -118,24 +104,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_serverGroupsView());
         toolStrip.addToolButtonRight(deleteBtn);
 
-        layout.add(toolStrip);
-
-        // ----
-
-        panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
-
-        ScrollPanel scroll = new ScrollPanel(panel);
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
-
         // ---------------------------------------------
-
-        panel.add(new ContentHeaderLabel(Console.MESSAGES.available(Console.CONSTANTS.common_label_serverGroupConfigurations())));
-        panel.add(new ContentDescription(Console.CONSTANTS.common_serverGroups_desc()));
 
         serverGroupTable = new DefaultCellTable<ServerGroupRecord>(10);
         serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
@@ -161,12 +130,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         serverGroupTable.addColumn(nameColumn, "Group Name");
         serverGroupTable.addColumn(profileColumn, "Profile");
 
-        panel.add(serverGroupTable);
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(serverGroupTable);
-        panel.add(pager);
-
 
         // ---------------------------------------------------
 
@@ -175,10 +138,6 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         // ---------------------------------------------------
 
 
-        TabPanel bottomLayout = new TabPanel();
-        bottomLayout.addStyleName("default-tabpanel");
-
-        bottomLayout.add(details.asWidget(), "Attributes");
 
         jvmEditor = new JvmEditor(presenter);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
@@ -190,35 +149,37 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
                 return address;
             }
         });
-        bottomLayout .add(jvmEditor.asWidget(), Console.CONSTANTS.common_label_virtualMachine());
 
         propertyEditor = new PropertyEditor(presenter);
-        //propertyEditor.setHelpText("A system property to set on all servers in this server-group.");
-        bottomLayout.add(propertyEditor.asWidget(), Console.CONSTANTS.common_label_systemProperties());
-        propertyEditor.setAllowEditProps(false);
-
-        bottomLayout.selectTab(0);
-
-        panel.add(new ContentGroupLabel("Server Group"));
-        panel.add(bottomLayout);
-
-        details.bind(serverGroupTable);
-
 
         // --------------------
 
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setTitle(Console.CONSTANTS.common_label_serverGroupConfigurations())
+                .setHeadline("Server Groups")
+                .setDescription(Console.CONSTANTS.common_serverGroups_desc())
+                .setMaster(Console.MESSAGES.available(Console.CONSTANTS.common_label_serverGroupConfigurations()), serverGroupTable)
+                .setMasterTools(toolStrip.asWidget())
+                .addDetail("Attributes", details.asWidget())
+                .addDetail(Console.CONSTANTS.common_label_virtualMachine(), jvmEditor.asWidget())
+                .addDetail(Console.CONSTANTS.common_label_systemProperties(), propertyEditor.asWidget());
 
+
+        details.bind(serverGroupTable);
         serverGroupTable.getSelectionModel().addSelectionChangeHandler(
                 new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                ServerGroupRecord group = getSelectionModel().getSelectedObject();
-                presenter.loadJVMConfiguration(group);
-                presenter.loadProperties(group);
-            }
-        });
+                    @Override
+                    public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                        ServerGroupRecord group = getSelectionModel().getSelectedObject();
+                        presenter.loadJVMConfiguration(group);
+                        presenter.loadProperties(group);
+                    }
+                });
 
-        return layout;
+        propertyEditor.setAllowEditProps(false);
+
+
+        return layout.build();
     }
 
     public void setServerGroups(final List<ServerGroupRecord> groups) {

@@ -55,4 +55,9 @@ public interface Jvm {
     String getMaxPermgen();
     void setMaxPermgen(String maxPermgen);
 
+    @Binding(skip = true)
+    boolean isInherited();
+    void setInherited(boolean inherited);
+
+
 }
