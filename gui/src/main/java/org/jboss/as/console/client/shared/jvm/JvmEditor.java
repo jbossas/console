@@ -63,6 +63,7 @@ public class JvmEditor {
 
     private boolean overrideName = true;
     private ToolButton clearBtn;
+    private FormItem nameItem;
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -133,7 +134,7 @@ public class JvmEditor {
 
         panel.add(toolStrip.asWidget());
 
-        FormItem nameItem = null;
+        nameItem = null;
 
         if(overrideName)
             nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
@@ -185,6 +186,7 @@ public class JvmEditor {
         hasJvm = jvm!=null;
 
         clearBtn.setVisible(hasJvm);
+        nameItem.setEnabled(!hasJvm); // prevent changing the name of existing configurations
 
         form.setEnabled(false);
 
