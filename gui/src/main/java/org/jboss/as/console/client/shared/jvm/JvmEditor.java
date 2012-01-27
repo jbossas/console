@@ -55,7 +55,7 @@ public class JvmEditor {
     private Form<Jvm> form;
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
-    private boolean provideDeleteOp = false;
+    private boolean providesClearOp = false;
 
     private String reference;
     private Widget formWidget;
@@ -73,10 +73,10 @@ public class JvmEditor {
         this.overrideName = overrideName;
     }
 
-    public JvmEditor(JvmManagement presenter, boolean overrideName, boolean provideDeleteOp) {
+    public JvmEditor(JvmManagement presenter, boolean overrideName, boolean providesClearOp) {
         this.presenter = presenter;
         this.overrideName = overrideName;
-        this.provideDeleteOp = provideDeleteOp;
+        this.providesClearOp = providesClearOp;
     }
 
     public void setAddressCallback(FormHelpPanel.AddressCallback addressCallback) {
@@ -128,7 +128,8 @@ public class JvmEditor {
             }
         });
 
-        toolStrip.addToolButtonRight(clearBtn);
+        if(providesClearOp)
+            toolStrip.addToolButtonRight(clearBtn);
 
         panel.add(toolStrip.asWidget());
 

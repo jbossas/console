@@ -105,7 +105,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
         table.addColumn(nameCol, "Name");
         //table.addColumn(debugCol, "IsDebugEnabled?");
 
-        jvmEditor = new JvmEditor(presenter, false);
+        jvmEditor = new JvmEditor(presenter, false, false);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
