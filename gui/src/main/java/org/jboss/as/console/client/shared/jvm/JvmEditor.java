@@ -183,7 +183,7 @@ public class JvmEditor {
 
         hasJvm = jvm!=null;
 
-        clearBtn.setEnabled(hasJvm);
+        clearBtn.setVisible(hasJvm);
 
         form.setEnabled(false);
 
