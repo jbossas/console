@@ -139,7 +139,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
 
-        jvmEditor = new JvmEditor(presenter);
+        jvmEditor = new JvmEditor(presenter, true, true);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {

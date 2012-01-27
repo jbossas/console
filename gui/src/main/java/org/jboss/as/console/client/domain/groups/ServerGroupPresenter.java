@@ -205,11 +205,7 @@ public class ServerGroupPresenter
 
     public void createNewGroup(final ServerGroupRecord newGroup) {
 
-        // close popup
-        if(window!=null && window.isShowing())
-        {
-            window.hide();
-        }
+        closeDialoge();
 
         serverGroupStore.create(newGroup, new SimpleCallback<Boolean>() {
             @Override

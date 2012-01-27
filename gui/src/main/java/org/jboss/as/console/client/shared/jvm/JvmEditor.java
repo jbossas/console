@@ -20,6 +20,8 @@
 package org.jboss.as.console.client.shared.jvm;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,6 +37,8 @@ import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.Map;
 
@@ -51,12 +55,14 @@ public class JvmEditor {
     private Form<Jvm> form;
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
+    private boolean provideDeleteOp = false;
 
     private String reference;
     private Widget formWidget;
     private FormHelpPanel.AddressCallback addressCallback;
 
     private boolean overrideName = true;
+    private ToolButton clearBtn;
 
     public JvmEditor(JvmManagement presenter) {
         this.presenter = presenter;
@@ -65,6 +71,12 @@ public class JvmEditor {
     public JvmEditor(JvmManagement presenter, boolean overrideName) {
         this.presenter = presenter;
         this.overrideName = overrideName;
+    }
+
+    public JvmEditor(JvmManagement presenter, boolean overrideName, boolean provideDeleteOp) {
+        this.presenter = presenter;
+        this.overrideName = overrideName;
+        this.provideDeleteOp = provideDeleteOp;
     }
 
     public void setAddressCallback(FormHelpPanel.AddressCallback addressCallback) {
@@ -90,11 +102,33 @@ public class JvmEditor {
 
                     @Override
                     public void onDelete(Jvm entity) {
-                        //presenter.onDeleteJvm(reference, form.getEditedEntity());
+
+                        // not provided: it's overriden below
                     }
-                });
+                }
+        );
+
 
         toolStrip.providesDeleteOp(false);
+
+        clearBtn = new ToolButton(Console.CONSTANTS.common_label_clear(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("JVM Configuration"),
+                        Console.MESSAGES.deleteConfirm("JVM Configuration"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteJvm(reference, form.getEditedEntity());
+
+                            }
+                        });
+            }
+        });
+
+        toolStrip.addToolButtonRight(clearBtn);
 
         panel.add(toolStrip.asWidget());
 
@@ -107,8 +141,8 @@ public class JvmEditor {
 
         HeapBoxItem heapItem = new HeapBoxItem("heapSize", "Heap Size");
         HeapBoxItem maxHeapItem = new HeapBoxItem("maxHeapSize", "Max Heap Size");
-        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size");
-        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size");
+        HeapBoxItem maxPermgen = new HeapBoxItem("maxPermgen", "Max Permgen Size", false);
+        HeapBoxItem permgen = new HeapBoxItem("permgen", "Permgen Size", false);
 
         form.setFields(nameItem, BlankItem.INSTANCE, heapItem, maxHeapItem, permgen, maxPermgen);
         form.setEnabled(false);
@@ -148,6 +182,8 @@ public class JvmEditor {
         this.reference = reference;
 
         hasJvm = jvm!=null;
+
+        clearBtn.setEnabled(hasJvm);
 
         form.setEnabled(false);
 
