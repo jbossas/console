@@ -47,6 +47,7 @@ import java.util.Map;
 public class JvmEditor {
 
     private JvmManagement presenter;
+
     private Form<Jvm> form;
     BeanFactory factory = GWT.create(BeanFactory.class);
     private boolean hasJvm;
@@ -135,6 +136,7 @@ public class JvmEditor {
         {
             form.setEnabled(false);
             Jvm jvm = form.getUpdatedEntity();
+
             if(hasJvm)
                 presenter.onUpdateJvm(reference, jvm.getName(), form.getChangedValues());
             else

@@ -279,20 +279,18 @@ public class ServerGroupPresenter
 
     public void onUpdateJvm(final String groupName, String jvmName, Map<String, Object> changedValues) {
 
-        if(changedValues.size()>0)
-        {
-            ModelNode address = new ModelNode();
-            address.add("server-group", groupName);
-            address.add("jvm", jvmName);
+        ModelNode address = new ModelNode();
+        address.add("server-group", groupName);
+        address.add("jvm", jvmName);
 
-            UpdateJvmCmd cmd = new UpdateJvmCmd(dispatcher, factory, propertyMetaData, address);
-            cmd.execute(changedValues, new SimpleCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-                    loadServerGroups();
-                }
-            });
-        }
+        UpdateJvmCmd cmd = new UpdateJvmCmd(dispatcher, factory, propertyMetaData, address);
+        cmd.execute(changedValues, new SimpleCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadServerGroups();
+            }
+        });
+
     }
 
     public void onCreateJvm(final String groupName, Jvm jvm) {

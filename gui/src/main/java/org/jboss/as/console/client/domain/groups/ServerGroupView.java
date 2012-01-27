@@ -170,7 +170,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------------
 
-        details =new ServerGroupDetails(presenter);
+        details = new ServerGroupDetails(presenter);
 
         // ---------------------------------------------------
 
@@ -179,12 +179,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
         bottomLayout.addStyleName("default-tabpanel");
 
         bottomLayout.add(details.asWidget(), "Attributes");
+
         jvmEditor = new JvmEditor(presenter);
         jvmEditor.setAddressCallback(new FormHelpPanel.AddressCallback() {
             @Override
             public ModelNode getAddress() {
                 ModelNode address = new ModelNode();
-                address.add("server-group", getSelectionModel().getSelectedObject().getGroupName());
+                address.add("server-group", "*");
                 address.add("jvm", "*");
                 return address;
             }
