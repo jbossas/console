@@ -24,16 +24,18 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.Lo
 import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
  * Subview for PeriodicRotatingFileHandler.
- * 
+ *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
-public class PeriodicRotatingFileHandlerSubview extends AbstractFileHandlerSubview<PeriodicRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
+public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<PeriodicRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 
-    public PeriodicRotatingFileHandlerSubview(ApplicationMetaData applicationMetaData, 
-                              DispatchAsync dispatcher, 
+    public PeriodicRotatingFileHandlerSubview(ApplicationMetaData applicationMetaData,
+                              DispatchAsync dispatcher,
                               HandlerListManager handlerListManager) {
         super(PeriodicRotatingFileHandler.class, applicationMetaData, dispatcher, handlerListManager);
     }
@@ -46,5 +48,17 @@ public class PeriodicRotatingFileHandlerSubview extends AbstractFileHandlerSubvi
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_logging_periodicRotatingFileHandlers();
+    }
+
+    @Override
+    protected FormAdapter<PeriodicRotatingFileHandler> makeAddEntityForm() {
+        Form<PeriodicRotatingFileHandler> form = new Form(type);
+        form.setNumColumns(1);
+        form.setFields(formMetaData.findAttribute("name").getFormItemForAdd(),
+                       levelItemForAdd,
+                       formMetaData.findAttribute("filePath").getFormItemForAdd(),
+                       formMetaData.findAttribute("fileRelativeTo").getFormItemForAdd(),
+                       formMetaData.findAttribute("suffix").getFormItemForAdd());
+        return form;
     }
 }
