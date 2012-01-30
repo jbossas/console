@@ -37,7 +37,7 @@ public class TXMetricViewImpl extends SuspendableViewImpl implements TXMetricPre
             }
         });
         refreshBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_refresh_tXMetricViewImp());
-        toolStrip.addToolButton(refreshBtn);
+        toolStrip.addToolButtonRight(refreshBtn);
 
         this.executionMetric = new TXExecutionView();
         this.rollbackMetric = new TXRollbackView();
