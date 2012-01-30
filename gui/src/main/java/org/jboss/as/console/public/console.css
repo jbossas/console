@@ -250,9 +250,15 @@ body {
 }
 
 .paged-view-navigation {
-    background-color: #f3f3f3;
-    border-bottom: 1px solid #d6d6d6;
-    padding-left:15px;
+
+    background: #F3F3F3;
+
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#F3F3F3');
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#F3F3F3));
+    background: -moz-linear-gradient(top,  #ffffff,  #F3F3F3);
+
+    border-bottom: 1px solid #D6D6D6;
+    padding-left: 15px;
 }
 
 .status-panel {
