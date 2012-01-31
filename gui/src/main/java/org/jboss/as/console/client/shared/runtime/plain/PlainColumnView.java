@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.HelpSystem;
@@ -61,18 +62,19 @@ public class PlainColumnView implements Sampler {
     @Override
     public Widget asWidget() {
 
+
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
         layout.add(new HTML("<div class='metric-table-title'>"+title+"</div>"));
 
         grid = new FlexTable();
-        grid.getElement().setAttribute("style", "width:"+width+unit.getType()+";");
+        grid.getElement().setAttribute("width", width+unit.getType()+"");
 
         // header columns
         grid.setHTML(0, 0, "Metric");
         grid.setHTML(0, 1, "Actual");
-        grid.setHTML(0, 2, "");
+        grid.setHTML(0, 2, "&nbsp;");
 
         grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
@@ -124,7 +126,7 @@ public class PlainColumnView implements Sampler {
             layout.add(staticHelp.asWidget());
         }
 
-        return layout;
+       return layout;
     }
 
     @Override

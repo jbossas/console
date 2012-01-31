@@ -34,6 +34,7 @@ public class StackedBar {
         Element outerElement = panel.getElementById(outerId);
         outerElement.addClassName("stacked-bar-total");
         outerElement.setAttribute("style", "width:100%");
+        outerElement.setAttribute("cssText", "width:100%!important");
 
 
         Element innerElement = panel.getElementById(innerId);
@@ -48,9 +49,15 @@ public class StackedBar {
         Element inner = panel.getElementById(innerId);
         double percentage = percentage(total, actual);
         if(percentage>0)
+        {
             inner.setAttribute("style", "width:" + percentage + "%");
+            inner.setAttribute("cssText", "width:" + percentage + "%");
+        }
         else
+        {
             inner.setAttribute("style", "background:none");
+            inner.setAttribute("cssText", "background:none");
+        }
         inner.setInnerHTML(percentage+"%");
     }
 
