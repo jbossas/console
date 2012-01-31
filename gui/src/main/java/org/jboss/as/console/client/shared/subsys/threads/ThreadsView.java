@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.threads;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -59,7 +59,7 @@ public class ThreadsView extends SuspendableViewImpl implements ThreadsPresenter
 
     @Override
     public Widget createWidget() {
-        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(threadFactoryView.asWidget(), "Thread Factories");

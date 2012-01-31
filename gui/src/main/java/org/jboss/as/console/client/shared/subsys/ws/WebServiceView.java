@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.ws;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
@@ -23,7 +23,7 @@ public class WebServiceView extends DisposableViewImpl implements WebServicePres
 
         providerEditor = new ProviderEditor(presenter);
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 

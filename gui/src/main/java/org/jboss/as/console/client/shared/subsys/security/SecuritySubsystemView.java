@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.security;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
@@ -61,7 +61,7 @@ public class SecuritySubsystemView extends AbstractEntityView<SecuritySubsystem>
     public Widget createWidget() {
 
         setDescription(Console.CONSTANTS.subsys_security_desc());
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         tabLayoutpanel.add(createEmbeddableWidget(), getEntityDisplayName());

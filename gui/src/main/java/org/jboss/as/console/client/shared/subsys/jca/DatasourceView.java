@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.jca;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -47,7 +47,7 @@ public class DatasourceView extends SuspendableViewImpl implements DataSourcePre
         this.dataSourceEditor = new DataSourceEditor(presenter);
         this.xaDataSourceEditor = new XADataSourceEditor(presenter);
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
 

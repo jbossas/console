@@ -20,7 +20,7 @@ package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
@@ -47,7 +47,7 @@ public class OSGiRuntimeView extends SuspendableViewImpl implements OSGiRuntimeP
 
     @Override
     public Widget createWidget() {
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         tabLayoutpanel.add(framework.asWidget(), framework.getEntityDisplayName());

@@ -1,7 +1,7 @@
 package org.jboss.as.console.client.shared.runtime.jms;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
@@ -26,7 +26,7 @@ public class JMSMetricView extends SuspendableViewImpl implements JMSMetricPrese
         this.topicMetrics = new TopicMetrics(presenter);
         this.queueMetrics= new QueueMetrics(presenter);
 
-        TabLayoutPanel tabLayoutpanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
         tabLayoutpanel.add(topicMetrics.asWidget(), "Topics", true);

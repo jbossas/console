@@ -20,7 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -47,7 +47,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     private SizeRotatingFileHandlerSubview sizeRotatingFileHandlerSubview;
     private AsyncHandlerSubview asyncHandlerSubview;
     private CustomHandlerSubview customHandlerSubview;
-    private TabLayoutPanel loggersTabs;
+    private DefaultTabLayoutPanel loggersTabs;
 
 
     @Inject
@@ -76,7 +76,7 @@ public class LoggingView extends SuspendableViewImpl implements LoggingPresenter
     @Override
     public Widget createWidget() {
 
-        loggersTabs = new TabLayoutPanel(40, Style.Unit.PX);
+        loggersTabs = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         loggersTabs.addStyleName("default-tabpanel");
 
         loggersTabs.add(rootLoggerSubview.asWidget(), rootLoggerSubview.getEntityDisplayName(), true);

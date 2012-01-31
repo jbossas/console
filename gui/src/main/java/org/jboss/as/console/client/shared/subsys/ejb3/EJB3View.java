@@ -19,7 +19,7 @@
 package org.jboss.as.console.client.shared.subsys.ejb3;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
@@ -86,7 +86,7 @@ public class EJB3View extends AbstractEntityView<EJB3Subsystem>
         this.setDescription(Console.CONSTANTS.subsys_ejb3_container_desc());
 
         // overall layout
-        TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(40, Style.Unit.PX);
+        DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutPanel.addStyleName("default-tabpanel");
 
         tabLayoutPanel.add(createEmbeddableWidget(), Console.CONSTANTS.subsys_ejb3_tab_container(), true);
