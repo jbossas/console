@@ -374,6 +374,7 @@ body {
 
 .logo-section {
     height:58px;
+    vertical-align:bottom;
 }
 
 .toolstrip-button-secondary {
