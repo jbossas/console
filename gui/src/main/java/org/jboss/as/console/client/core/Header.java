@@ -139,6 +139,7 @@ public class Header implements ValueChangeHandler<String> {
 
         prodVersion.getElement().getParentElement().setAttribute("valign", "bottom");
         prodVersion.getElement().getParentElement().setAttribute("style", "vertical-align:bottom;padding-bottom:5px;");
+        prodVersion.getElement().getParentElement().setAttribute("width", "100%");
         return panel;
     }
 
