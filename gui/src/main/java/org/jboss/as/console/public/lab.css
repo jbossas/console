@@ -39,12 +39,6 @@ textarea {
 }
 
 
-.combobox {
-    padding:0px;
-    margin:0px;
-    width:95%!important;
-}
-
 .help-field-name {
     font-size:11px;
     padding-right:2px;
@@ -65,4 +59,47 @@ textarea {
     padding-bottom:10px;
     padding-left:10px;
     padding-right:10px;
+}
+
+/* default form customizations */
+
+select {
+    width: 220px;
+    background-color: white;
+}
+
+input, textarea, select, .uneditable-input {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    margin-bottom: 9px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #555;
+    border: 1px solid #CCC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+select, input[type="file"] {
+    height: 28px;
+    line-height: 28px;
+}
+
+.radio input[type="radio"], .checkbox input[type="checkbox"] {
+    float: left;
+    display:block;
+}
+
+.formItemTableCell {
+    padding-top:10px;
+    padding-bottom:10px;
+    font-size: 13px!important;
+    line-height: 18px;
+}
+
+.formItem {
+    font-size: 13px!important;
+    line-height: 18px;
 }
