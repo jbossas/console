@@ -41,8 +41,12 @@ public interface SecurityDomain extends NamedEntity {
 
     @Binding(detypedName="cache-type")
     @FormItem(localLabel="subsys_security_cacheType",
+    		  defaultValue="default",
               required=false,
-              tabName="common_label_attributes")
+              formItemTypeForEdit="COMBO_BOX",
+              formItemTypeForAdd="COMBO_BOX",
+              tabName="common_label_attributes",
+              acceptedValues={"default","infinispan"})
     String getCacheType();
     void setCacheType(String type);
 }
