@@ -61,6 +61,12 @@ textarea {
     padding-right:10px;
 }
 
+.combobox {
+    padding:0px;
+    margin:0px;
+    width:100%
+}
+
 /* default form customizations */
 
 select {
