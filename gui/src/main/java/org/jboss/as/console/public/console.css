@@ -3,7 +3,6 @@ body {
     background: url("images/org_bg.png") repeat-x scroll 0 0 #F3F3F3;
     color: #555555;
     font: 12px/1.4 "Lucida Sans Unicode","Lucida Grande",sans-serif;
-	text-align:center;
 }
 
 #container {
@@ -12,7 +11,6 @@ body {
     border-right: 1px solid #A7ABB4!important;
     border-left: 1px solid #A7ABB4!important;
     margin:0 auto;
-    text-align:left;
 }
 
 #loading-panel {
