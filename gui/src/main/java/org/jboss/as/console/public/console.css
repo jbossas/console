@@ -2,8 +2,8 @@
 body {
     background: url("images/org_bg.png") repeat-x scroll 0 0 #F3F3F3;
     color: #555555;
-    font: 12px "Lucida Sans Unicode","Lucida Grande",sans-serif;
-    text-align:center;
+    font: 12px/1.4 "Lucida Sans Unicode","Lucida Grande",sans-serif;
+	text-align:center;
 }
 
 #container {
@@ -13,6 +13,19 @@ body {
     border-left: 1px solid #A7ABB4!important;
     margin:0 auto;
     text-align:left;
+}
+
+#loading-panel {
+    margin-top:200px;
+    margin-left:auto;
+    margin-right:auto;
+    height:50px;
+    width:120px;
+    border: 1px solid #A7ABB4;
+    background-color: #ffffff;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding-top:15px;
 }
 
 .default-window {
@@ -189,19 +202,6 @@ body {
     background-image: url("images/icons/expr.png");
     background-repeat:no-repeat;
     background-position-right:0px 50%;
-}
-
-.loading-panel {
-    position: relative;
-    margin-top:200px;
-    margin-left:auto;
-    margin-right:auto;
-    height:50px;
-    width:120px;
-    border: 1px solid #A7ABB4;
-    background-color: #ffffff;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
 }
 
 .content-description {
