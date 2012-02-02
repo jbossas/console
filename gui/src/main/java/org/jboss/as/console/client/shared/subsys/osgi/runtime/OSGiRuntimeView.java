@@ -20,17 +20,14 @@ package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Command;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
 /**
  * @author David Bosschaert

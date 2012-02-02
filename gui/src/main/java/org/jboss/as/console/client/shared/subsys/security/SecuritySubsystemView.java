@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.subsys.security;
 
 import com.google.gwt.dom.client.Style;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import org.jboss.as.console.client.Console;
@@ -33,6 +32,7 @@ import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityToDmrBridgeImpl;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 

@@ -19,7 +19,6 @@
 package org.jboss.as.console.client.shared.viewframework;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.dmr.client.ModelNode;
 
 /**
  * Super interface for Views that use this framework.

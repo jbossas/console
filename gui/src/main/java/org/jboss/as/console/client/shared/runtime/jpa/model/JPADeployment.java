@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.shared.runtime.jpa.model;
 
-import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**

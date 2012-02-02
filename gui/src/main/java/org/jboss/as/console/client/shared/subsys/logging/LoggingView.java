@@ -20,13 +20,13 @@
 package org.jboss.as.console.client.shared.subsys.logging;
 
 import com.google.gwt.dom.client.Style;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.pages.PagedView;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
 import javax.inject.Inject;
 

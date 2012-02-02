@@ -1,11 +1,11 @@
 package org.jboss.as.console.client.shared.runtime.ds;
 
 import com.google.gwt.dom.client.Style;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 
 import java.util.List;
 

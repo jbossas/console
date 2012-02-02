@@ -30,7 +30,6 @@ import org.jboss.as.console.client.shared.general.HeapBoxItem;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
-import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
