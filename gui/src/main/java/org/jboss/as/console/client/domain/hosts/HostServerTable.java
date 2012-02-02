@@ -9,6 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -26,6 +27,7 @@ import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.widgets.icons.ConsoleIcons;
 import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
+import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +59,8 @@ public class HostServerTable {
     int popupWidth = -1;
     private String description = null;
     private HTML ratio;
+    private DefaultPager hostPager  ;
+    private DefaultPager serverPager;
 
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
@@ -111,11 +115,13 @@ public class HostServerTable {
         // --------------
 
         hostList = new DefaultCellList<Host>(new HostCell());
+        hostList.setPageSize(6);
         hostList.setSelectionModel(new SingleSelectionModel<Host>());
         hostList.addStyleName("fill-layout-width");
 
         serverList = new DefaultCellList<ServerInstance>(new ServerCell());
         serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
+        serverList.setPageSize(6);
         serverList.addStyleName("fill-layout-width");
 
         hostProvider = new ListDataProvider<Host>();
@@ -156,16 +162,35 @@ public class HostServerTable {
 
         layout.add(millerHeader);
 
+        millerHeader.getElement().addClassName("cellTableHeader");
         millerHeader.getElement().getParentElement().setAttribute("style", "vertical-align:bottom");
 
         HorizontalPanel millerPanel = new HorizontalPanel();
         millerPanel.setStyleName("fill-layout");
-        millerPanel.add(hostList);
-        millerPanel.add(serverList);
 
-        hostList.getElement().getParentElement().setAttribute("style", "border-right:1px solid #A7ABB4");
-        hostList.getElement().getParentElement().setAttribute("width", "50%");
-        serverList.getElement().getParentElement().setAttribute("width", "50%");
+
+        hostPager = new DefaultPager();
+        hostPager.setDisplay(hostList);
+        FlowPanel lhs = new FlowPanel();
+        lhs.add(hostList);
+        lhs.add(hostPager.asWidget());
+
+        millerPanel.add(lhs);
+
+
+        serverPager = new DefaultPager();
+        serverPager.setDisplay(serverList);
+        FlowPanel rhs = new FlowPanel();
+        rhs.add(serverList);
+        rhs.add(serverPager.asWidget());
+        millerPanel.add(rhs);
+
+        hostPager.setVisible(false);
+        serverPager.setVisible(false);
+
+        lhs.getElement().getParentElement().setAttribute("style", "border-right:1px solid #A7ABB4");
+        lhs.getElement().getParentElement().setAttribute("width", "50%");
+        rhs.getElement().getParentElement().setAttribute("width", "50%");
 
         ScrollPanel scroll = new ScrollPanel(millerPanel);
         layout.add(scroll);
@@ -277,6 +302,8 @@ public class HostServerTable {
      */
     public void setServer(List<ServerInstance> servers) {
 
+        serverPager.setVisible(servers.size()>=5);
+
         serverProvider.setList(servers);
 
         if(!servers.isEmpty())
@@ -286,6 +313,8 @@ public class HostServerTable {
     public void setHosts(List<Host> hosts) {
 
         ratio.setText("");
+
+        hostPager.setVisible(hosts.size()>=5);
 
         hostProvider.setList(hosts);
         serverProvider.setList(Collections.EMPTY_LIST);

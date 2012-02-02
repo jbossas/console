@@ -2,6 +2,7 @@ package org.jboss.as.console.client.domain.hosts;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
@@ -45,7 +46,9 @@ public class ServerPicker implements HostServerManagement {
         label.setStyleName("header-label");
 
         layout.add(label);
-        layout.add(widget);
+
+        ScrollPanel scroll = new ScrollPanel(widget);
+        layout.add(scroll);
 
         return layout;
     }

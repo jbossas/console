@@ -123,7 +123,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // -----------------
 
-        instanceTable = new DefaultCellTable<ServerInstance>(10);
+        instanceTable = new DefaultCellTable<ServerInstance>(8);
         instanceProvider = new ListDataProvider<ServerInstance>();
         instanceProvider.addDataDisplay(instanceTable);
 

@@ -62,7 +62,7 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     private ListDataProvider serverConfigProvider;
 
     public ServerConfigView() {
-        serverConfigTable = new DefaultCellTable<Server>(10);
+        serverConfigTable = new DefaultCellTable<Server>(8);
         serverConfigProvider = new ListDataProvider<Server>();
         serverConfigProvider.addDataDisplay(serverConfigTable);
     }
