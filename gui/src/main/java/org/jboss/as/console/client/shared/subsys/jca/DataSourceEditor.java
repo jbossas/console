@@ -38,6 +38,7 @@ import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
@@ -121,6 +122,7 @@ public class DataSourceEditor {
 
         dataSourceTable = new DatasourceTable();
 
+
         vpanel.add(new ContentGroupLabel(Console.MESSAGES.available("Datasources")));
         vpanel.add(topLevelTools.asWidget());
         vpanel.add(dataSourceTable.asWidget());
@@ -129,8 +131,10 @@ public class DataSourceEditor {
         // -----------
         details = new DataSourceDetails(presenter);
         details.bind(dataSourceTable.getCellTable());
+
         SingleSelectionModel<DataSource> selectionModel =
                 (SingleSelectionModel<DataSource>)dataSourceTable.getCellTable().getSelectionModel();
+
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
@@ -148,7 +152,7 @@ public class DataSourceEditor {
 
         bottomPanel.add(details.asWidget(), "Attributes");
 
-         // -----------------
+        // -----------------
 
         final FormToolStrip.FormCallback<DataSource> formCallback = new FormToolStrip.FormCallback<DataSource>() {
             @Override
@@ -198,7 +202,9 @@ public class DataSourceEditor {
             }
         });
 
+
         bottomPanel.add(poolConfig.asWidget(), "Pool");
+        poolConfig.getForm().bind(dataSourceTable.getCellTable());
 
 
         // ----
@@ -236,14 +242,18 @@ public class DataSourceEditor {
         disableBtn = new ToolButton(Console.CONSTANTS.common_label_enOrDisable(), disableHandler);
         disableBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_enOrDisable_dataSourceDetails());
 
-        dataSourceTable.getCellTable().getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
 
-                String nextState = getCurrentSelection().isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
-                disableBtn.setText(nextState);
-            }
-        }) ;
+        // -----
+        // handle modifications to the model
+
+        dataSourceTable.getCellTable().getSelectionModel().addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler() {
+                    @Override
+                    public void onSelectionChange(SelectionChangeEvent event) {
+                        String nextState = getCurrentSelection().isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                        disableBtn.setText(nextState);
+                    }
+                }) ;
 
 
         topLevelTools.addToolButtonRight(disableBtn);
@@ -264,11 +274,14 @@ public class DataSourceEditor {
 
     public void updateDataSources(List<DataSource> datasources) {
 
+        // some cleanup has to be done manually
+        connectionProps.clearProperties();
+
+
         dataSourceTable.getDataProvider().setList(datasources);
 
-        if(!datasources.isEmpty())
-            dataSourceTable.getCellTable().getSelectionModel().setSelected(datasources.get(0), true);
-
+        final DefaultCellTable<DataSource> cellTable = dataSourceTable.getCellTable();
+        cellTable.selectDefaultEntity();
     }
 
     public void setEnabled(boolean isEnabled) {

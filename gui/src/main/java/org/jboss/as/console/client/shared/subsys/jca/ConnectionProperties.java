@@ -35,4 +35,7 @@ public class ConnectionProperties {
     }
 
 
+    public void clearProperties() {
+        propEditor.clearValues();
+    }
 }

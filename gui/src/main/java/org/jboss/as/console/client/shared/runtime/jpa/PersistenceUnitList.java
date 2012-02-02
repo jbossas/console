@@ -181,7 +181,7 @@ public class PersistenceUnitList {
     public void setUnits(List<JPADeployment> jpaUnits) {
         dataProvider.setList(jpaUnits);
 
-        //table.defaultSelectEntity();
+        //table.selectDefaultEntity();
         if(!jpaUnits.isEmpty())
             table.getSelectionModel().setSelected(jpaUnits.get(0), true);
     }

@@ -52,6 +52,10 @@ public class XADataSourceDetails {
         form.setNumColumns(2);
     }
 
+    public Form<XADataSource> getForm() {
+        return form;
+    }
+
     public Widget asWidget() {
 
 

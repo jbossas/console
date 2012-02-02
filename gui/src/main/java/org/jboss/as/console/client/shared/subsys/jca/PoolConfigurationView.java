@@ -114,6 +114,10 @@ public class PoolConfigurationView {
         return panel;
     }
 
+    public Form<PoolConfig> getForm() {
+        return form;
+    }
+
     public void updateFrom(String name, PoolConfig poolConfig) {
         this.editedName = name;
         form.edit(poolConfig);

@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -133,7 +134,14 @@ public class XADataSourceEditor implements PropertyManagement {
 
         vpanel.add(new ContentDescription(Console.CONSTANTS.subsys_jca_xadataSources_desc()));
 
-        dataSourceTable = new DefaultCellTable<XADataSource>(20);
+        dataSourceTable = new DefaultCellTable<XADataSource>(8,
+                new ProvidesKey<XADataSource>() {
+                    @Override
+                    public Object getKey(XADataSource item) {
+                        return item.getJndiName();
+                    }
+                });
+
         dataSourceProvider = new ListDataProvider<XADataSource>();
         dataSourceProvider.addDataDisplay(dataSourceTable);
 
@@ -181,31 +189,24 @@ public class XADataSourceEditor implements PropertyManagement {
         // -----------
         details = new XADataSourceDetails(presenter);
 
+
         propertyEditor = new PropertyEditor(this, true);
         propertyEditor.setHelpText(Console.CONSTANTS.subsys_jca_dataSource_xaprop_help());
 
         final SingleSelectionModel<XADataSource> selectionModel = new SingleSelectionModel<XADataSource>();
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                XADataSource dataSource = selectionModel.getSelectedObject();
-                details.setSelectedRecord(dataSource);
-                //propertyEditor.setProperties(dataSource.getName(), dataSource.getProperties());
-                presenter.loadXAProperties(dataSource.getName());
-            }
-        });
+        selectionModel.addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler() {
+                    @Override
+                    public void onSelectionChange(SelectionChangeEvent event) {
+                        XADataSource dataSource = selectionModel.getSelectedObject();
+                        String nextState = dataSource.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
+                        disableBtn.setText(nextState);
+
+                        presenter.loadXAProperties(dataSource.getName());
+                        presenter.loadPoolConfig(true, dataSource.getName());
+                    }
+                });
         dataSourceTable.setSelectionModel(selectionModel);
-
-
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                XADataSource selectedObject = ((SingleSelectionModel<XADataSource>) dataSourceTable.getSelectionModel()).getSelectedObject();
-                String nextState = selectedObject.isEnabled() ? Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
-                disableBtn.setText(nextState);
-                presenter.loadPoolConfig(true, selectedObject.getName());
-            }
-        });
 
 
         ClickHandler disableHandler = new ClickHandler() {
@@ -236,6 +237,7 @@ public class XADataSourceEditor implements PropertyManagement {
         TabPanel bottomPanel = new TabPanel();
         bottomPanel.setStyleName("default-tabpanel");
         bottomPanel.add(details.asWidget(), "Attributes");
+        details.getForm().bind(dataSourceTable);
 
         final FormToolStrip.FormCallback<XADataSource> xaCallback = new FormToolStrip.FormCallback<XADataSource>() {
             @Override
@@ -265,7 +267,6 @@ public class XADataSourceEditor implements PropertyManagement {
 
         connectionEditor = new XADataSourceConnection(presenter, xaCallback);
         connectionEditor.getForm().bind(dataSourceTable);
-
         bottomPanel.add(connectionEditor.asWidget(), "Connection");
 
         securityEditor = new DataSourceSecurityEditor(dsCallback);
@@ -291,8 +292,8 @@ public class XADataSourceEditor implements PropertyManagement {
                 presenter.onDoFlush(true, editedName);
             }
         });
-
         bottomPanel.add(poolConfig.asWidget(), "Pool");
+        poolConfig.getForm().bind(dataSourceTable);
 
         validationEditor = new DataSourceValidationEditor(dsCallback);
         validationEditor.getForm().bind(dataSourceTable);
@@ -306,10 +307,13 @@ public class XADataSourceEditor implements PropertyManagement {
 
 
     public void updateDataSources(List<XADataSource> datasources) {
+
+        // requires manual cleanup
+        propertyEditor.clearValues();
+
         dataSourceProvider.setList(datasources);
 
-        if(!datasources.isEmpty())
-            dataSourceTable.getSelectionModel().setSelected(datasources.get(0), true);
+        dataSourceTable.selectDefaultEntity();
 
     }
 

@@ -27,6 +27,8 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -39,7 +41,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 public class DatasourceTable {
 
     private static final int PAGE_SIZE = 5;
-    private CellTable<DataSource> dataSourceTable;
+    private DefaultCellTable<DataSource> dataSourceTable;
     private ListDataProvider<DataSource> dataProvider;
 
     Widget asWidget() {
@@ -47,7 +49,15 @@ public class DatasourceTable {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        dataSourceTable = new DefaultCellTable<DataSource>(PAGE_SIZE);
+        dataSourceTable = new DefaultCellTable<DataSource>(
+                PAGE_SIZE,
+                new ProvidesKey<DataSource>() {
+                    @Override
+                    public Object getKey(DataSource item) {
+                        return item.getJndiName();
+                    }
+                });
+
         dataProvider = new ListDataProvider<DataSource>();
         dataProvider.addDataDisplay(dataSourceTable);
 
@@ -98,7 +108,7 @@ public class DatasourceTable {
         return layout;
     }
 
-    public CellTable<DataSource> getCellTable() {
+    public DefaultCellTable<DataSource> getCellTable() {
         return dataSourceTable;
     }
 
