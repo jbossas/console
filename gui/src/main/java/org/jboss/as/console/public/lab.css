@@ -67,6 +67,17 @@ textarea {
     width:100%
 }
 
+
+.cellTableCell {
+    padding:5px;
+    border-right: 1px solid #e5e5e5;
+
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+    max-width:250px;
+}
+
 /* default form customizations */
 
 select {
@@ -88,6 +99,12 @@ input, textarea, select, .uneditable-input {
     border-radius: 3px;
 }
 
+input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+    background-color: whiteSmoke;
+    border-color: #DDD;
+    cursor: not-allowed;
+}
+
 select, input[type="file"] {
     height: 28px;
     line-height: 28px;
@@ -103,6 +120,9 @@ select, input[type="file"] {
     padding-bottom:10px;
     font-size: 13px!important;
     line-height: 18px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    max-width: 250px;
 }
 
 .formItem {
