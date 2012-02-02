@@ -23,7 +23,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -43,6 +45,8 @@ import java.util.Map;
 public class TopicList {
 
     private EndpointTable table;
+    private ListDataProvider<JMSEndpoint> endpointProvider;
+
     private MessagingPresenter presenter;
     private Form<Topic> form;
 
@@ -107,6 +111,8 @@ public class TopicList {
 
         // -----
         table = new EndpointTable();
+        endpointProvider = new ListDataProvider<JMSEndpoint>();
+        endpointProvider.addDataDisplay(table);
 
         layout.add(table);
 
@@ -131,8 +137,7 @@ public class TopicList {
 
     public void setTopics(List<JMSEndpoint> topics) {
 
-        table.setRowCount(topics.size(),true);
-        table.setRowData(0, topics);
+        endpointProvider.setList(topics);
 
         if(!topics.isEmpty())
             table.getSelectionModel().setSelected(topics.get(0), true);

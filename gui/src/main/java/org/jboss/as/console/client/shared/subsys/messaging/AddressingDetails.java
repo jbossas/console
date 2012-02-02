@@ -25,12 +25,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
-import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -53,7 +53,9 @@ public class AddressingDetails {
     private MessagingPresenter presenter;
     private Form<AddressingPattern> form;
     private MessagingProvider providerEntity;
-    private DefaultCellTable<SecurityPattern> addrTable;
+
+    private DefaultCellTable<AddressingPattern> addrTable;
+    private ListDataProvider<AddressingPattern> addrProvider;
 
     public AddressingDetails(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -63,7 +65,9 @@ public class AddressingDetails {
 
         VerticalPanel layout = new VerticalPanel();
 
-        addrTable = new DefaultCellTable<SecurityPattern>(10);
+        addrTable = new DefaultCellTable<AddressingPattern>(10);
+        addrProvider = new ListDataProvider<AddressingPattern>();
+        addrProvider.addDataDisplay(addrTable);
 
         Column<AddressingPattern, String> patternColumn = new Column<AddressingPattern, String>(new TextCell()) {
             @Override
@@ -159,8 +163,9 @@ public class AddressingDetails {
     }
 
     public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
-        addrTable.setRowCount(addrPatterns.size(),true);
-        addrTable.setRowData(0, addrPatterns);
+
+        addrProvider.setList(addrPatterns);
+
         if(!addrPatterns.isEmpty())
             addrTable.getSelectionModel().setSelected(addrPatterns.get(0), true);
 

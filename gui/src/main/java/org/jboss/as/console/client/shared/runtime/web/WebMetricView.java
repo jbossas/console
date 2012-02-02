@@ -5,6 +5,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -35,6 +36,7 @@ public class WebMetricView extends DisposableViewImpl implements WebMetricPresen
     private WebMetricPresenter presenter;
     private Sampler sampler;
     private DefaultCellTable<HttpConnector> connectorTable;
+    private ListDataProvider<HttpConnector> connectorProvider;
 
     @Override
     public Widget createWidget() {
@@ -52,6 +54,9 @@ public class WebMetricView extends DisposableViewImpl implements WebMetricPresen
 
         connectorTable = new DefaultCellTable<HttpConnector>(10);
         connectorTable.setSelectionModel(new SingleSelectionModel<HttpConnector>());
+
+        connectorProvider = new ListDataProvider<HttpConnector>();
+        connectorProvider.addDataDisplay(connectorTable);
 
         com.google.gwt.user.cellview.client.Column<HttpConnector, String> nameColumn = new com.google.gwt.user.cellview.client.Column<HttpConnector, String>(new TextCell()) {
             @Override
@@ -145,8 +150,8 @@ public class WebMetricView extends DisposableViewImpl implements WebMetricPresen
 
     @Override
     public void setConnectors(List<HttpConnector> list) {
-        connectorTable.setRowCount(list.size(), true);
-        connectorTable.setRowData(0, list);
+
+        connectorProvider.setList(list);
 
         if(!list.isEmpty())
             connectorTable.getSelectionModel().setSelected(list.get(0), true);

@@ -25,9 +25,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -48,6 +50,8 @@ import java.util.Map;
 public class VirtualServerList {
 
     private DefaultCellTable<VirtualServer> table;
+    private ListDataProvider<VirtualServer> dataProvider;
+
     private WebPresenter presenter;
     private Form<VirtualServer> form;
 
@@ -93,7 +97,8 @@ public class VirtualServerList {
         // ----
 
         table = new DefaultCellTable<VirtualServer>(10);
-
+        dataProvider = new ListDataProvider<VirtualServer>();
+        dataProvider.addDataDisplay(table);
 
         Column<VirtualServer, String> nameColumn = new Column<VirtualServer, String>(new TextCell()) {
             @Override
@@ -154,8 +159,8 @@ public class VirtualServerList {
     }
 
     public void setVirtualServers(List<VirtualServer> servers) {
-        table.setRowCount(servers.size(), true);
-        table.setRowData(0, servers);
+
+        dataProvider.setList(servers);
 
         if(!servers.isEmpty())
             table.getSelectionModel().setSelected(servers.get(0), true);

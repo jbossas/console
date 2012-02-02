@@ -27,6 +27,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -52,6 +53,8 @@ import java.util.Map;
 public class ConnectorList {
 
     private DefaultCellTable<HttpConnector> connectorTable;
+    private ListDataProvider<HttpConnector> dataProvider;
+
     private WebPresenter presenter;
     private Form<HttpConnector> form;
 
@@ -97,7 +100,8 @@ public class ConnectorList {
 
 
         connectorTable = new DefaultCellTable<HttpConnector>(10);
-
+        dataProvider = new ListDataProvider<HttpConnector>();
+        dataProvider.addDataDisplay(connectorTable);
 
         Column<HttpConnector, String> nameColumn = new Column<HttpConnector, String>(new TextCell()) {
             @Override
@@ -179,8 +183,7 @@ public class ConnectorList {
 
     public void setConnectors(List<HttpConnector> connectors) {
 
-        connectorTable.setRowCount(connectors.size(), true);
-        connectorTable.setRowData(0, connectors);
+        dataProvider.setList(connectors);
 
         if(!connectors.isEmpty())
             connectorTable.getSelectionModel().setSelected(connectors.get(0), true);

@@ -20,11 +20,11 @@
 package org.jboss.as.console.client.domain.overview;
 
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -52,7 +52,11 @@ public class DomainOverview
     private DomainOverviewPresenter presenter;
     private CellList<ProfileRecord> profileList;
     private CellList<ServerGroupRecord> groupList;
-    private CellTable<DeploymentRecord> deploymentTable;
+
+    ListDataProvider<ProfileRecord> profileProvider;
+    ListDataProvider<ServerGroupRecord> groupProvider;
+
+    //private CellTable<DeploymentRecord> deploymentTable;
 
     @Override
     public void setPresenter(DomainOverviewPresenter presenter) {
@@ -93,6 +97,14 @@ public class DomainOverview
         groupList = new CellList<ServerGroupRecord>(groupCell);
         groupList.setPageSize(25);
 
+
+        groupProvider = new ListDataProvider<ServerGroupRecord>();
+        profileProvider = new ListDataProvider<ProfileRecord>();
+
+
+        groupProvider.addDataDisplay(groupList);
+        profileProvider.addDataDisplay(profileList);
+
         final SingleSelectionModel<ServerGroupRecord> selectionModel = new SingleSelectionModel<ServerGroupRecord>();
         groupList.setSelectionModel(selectionModel);
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -130,12 +142,12 @@ public class DomainOverview
 
     public void updateProfiles(List<ProfileRecord> profiles)
     {
-        profileList.setRowData(0, profiles);
+        profileProvider.setList(profiles);
     }
 
     public void updateGroups(List<ServerGroupRecord> groups)
     {
-        groupList.setRowData(0, groups);
+        groupProvider.setList(groups);
     }
 
     public void updateDeployments(List<DeploymentRecord> deploymentRecords) {

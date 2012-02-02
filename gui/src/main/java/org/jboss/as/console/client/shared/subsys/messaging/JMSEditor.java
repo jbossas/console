@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
@@ -48,6 +49,8 @@ public class JMSEditor implements MessagingPresenter.JMSView{
     private TopicList topicList;
     private QueueList queueList;
     private DefaultCellTable<ConnectionFactory> factoryTable;
+    private ListDataProvider<ConnectionFactory> factoryProvider;
+
     private HTML serverName;
 
     public JMSEditor(MessagingPresenter presenter) {
@@ -79,6 +82,8 @@ public class JMSEditor implements MessagingPresenter.JMSView{
         panel.add(new ContentGroupLabel("Connection Factories"));
 
         factoryTable = new DefaultCellTable<ConnectionFactory>(10);
+        factoryProvider = new ListDataProvider<ConnectionFactory>();
+        factoryProvider.addDataDisplay(factoryTable);
 
         Column<ConnectionFactory, String> nameColumn = new Column<ConnectionFactory, String>(new TextCell()) {
             @Override
@@ -135,8 +140,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
 
         serverName.setHTML("JMS Config: "+presenter.getCurrentServer());
 
-        factoryTable.setRowCount(factories.size(), true);
-        factoryTable.setRowData(0, factories);
+        factoryProvider.setList(factories);
     }
 
     @Override

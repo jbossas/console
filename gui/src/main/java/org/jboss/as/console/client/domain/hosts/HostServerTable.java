@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.domain.model.Host;
@@ -45,6 +46,9 @@ public class HostServerTable {
 
     private CellList<Host> hostList;
     private CellList<ServerInstance> serverList;
+
+    private ListDataProvider<Host> hostProvider = new ListDataProvider<Host>();
+    private ListDataProvider<ServerInstance> serverProvider = new ListDataProvider<ServerInstance>();
 
     private PopupPanel popup;
 
@@ -113,6 +117,12 @@ public class HostServerTable {
         serverList = new DefaultCellList<ServerInstance>(new ServerCell());
         serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
         serverList.addStyleName("fill-layout-width");
+
+        hostProvider = new ListDataProvider<Host>();
+        serverProvider = new ListDataProvider<ServerInstance>();
+
+        hostProvider.addDataDisplay(hostList);
+        serverProvider.addDataDisplay(serverList);
 
         hostList.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -267,7 +277,7 @@ public class HostServerTable {
      */
     public void setServer(List<ServerInstance> servers) {
 
-        serverList.setRowData(0, servers);
+        serverProvider.setList(servers);
 
         if(!servers.isEmpty())
             serverList.getSelectionModel().setSelected(servers.get(0), true);
@@ -276,8 +286,9 @@ public class HostServerTable {
     public void setHosts(List<Host> hosts) {
 
         ratio.setText("");
-        hostList.setRowData(0, hosts);
-        serverList.setRowData(0, Collections.EMPTY_LIST);
+
+        hostProvider.setList(hosts);
+        serverProvider.setList(Collections.EMPTY_LIST);
     }
 
     public void defaultHostSelection() {
