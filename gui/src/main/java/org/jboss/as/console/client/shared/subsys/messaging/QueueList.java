@@ -35,6 +35,8 @@ import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -61,7 +63,7 @@ public class QueueList {
         form = new Form(Queue.class);
         form.setNumColumns(2);
 
-        FormToolStrip<Queue> toolStrip = new FormToolStrip<Queue>(
+        FormToolStrip<Queue> formTools = new FormToolStrip<Queue>(
                 form,
                 new FormToolStrip.FormCallback<Queue>() {
                     @Override
@@ -71,11 +73,13 @@ public class QueueList {
 
                     @Override
                     public void onDelete(Queue entity) {
-                        presenter.onDeleteQueue(entity);
+
                     }
                 }
         );
 
+
+        ToolStrip tableTools = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -83,9 +87,28 @@ public class QueueList {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_queueList());
-        toolStrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
 
-        layout.add(toolStrip.asWidget());
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                 Feedback.confirm(
+                         Console.MESSAGES.deleteTitle("Queue"),
+                         Console.MESSAGES.deleteConfirm("Queue"),
+                         new Feedback.ConfirmationHandler() {
+                             @Override
+                             public void onConfirmation(boolean isConfirmed) {
+                                 if (isConfirmed)
+                                     presenter.onDeleteQueue(form.getEditedEntity());
+                             }
+                         });
+
+            }
+        });
+
+        tableTools.addToolButtonRight(removeBtn);
+
+        layout.add(tableTools.asWidget());
 
         queueTable = new DefaultCellTable<Queue>(10);
 
@@ -144,6 +167,11 @@ public class QueueList {
                 }, form
         );
 
+
+        Widget formToolsWidget = formTools.asWidget();
+        formToolsWidget.getElement().setAttribute("style", "padding-top:15px;");
+
+        layout.add(formToolsWidget);
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());

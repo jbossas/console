@@ -30,6 +30,8 @@ import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,7 @@ public class TopicList {
         form = new Form(Topic.class);
         form.setNumColumns(2);
 
-        FormToolStrip<Topic> toolStrip = new FormToolStrip<Topic>(
+        FormToolStrip<Topic> formTools = new FormToolStrip<Topic>(
                 form,
                 new FormToolStrip.FormCallback<Topic>() {
                     @Override
@@ -64,10 +66,12 @@ public class TopicList {
 
                     @Override
                     public void onDelete(Topic entity) {
-                        presenter.onDeleteTopic(entity);
+
                     }
                 }
         );
+
+        ToolStrip tableTools = new ToolStrip();
 
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
@@ -76,9 +80,30 @@ public class TopicList {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_topicList());
-        toolStrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
 
-        layout.add(toolStrip.asWidget());
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Topic"),
+                        Console.MESSAGES.deleteConfirm("Topic"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteTopic(form.getEditedEntity());
+                            }
+                        });
+
+
+            }
+        });
+
+        tableTools.addToolButtonRight(removeBtn);
+
+        layout.add(tableTools.asWidget());
 
         // -----
         table = new EndpointTable();
@@ -93,9 +118,11 @@ public class TopicList {
 
         form.setFields(name, jndi);
 
-        Widget formWidget = form.asWidget();
-        formWidget.getElement().setAttribute("style", "padding-top:15px;");
-        layout.add(formWidget);
+        Widget formToolsWidget = formTools.asWidget();
+        formToolsWidget.getElement().setAttribute("style", "padding-top:15px;");
+
+        layout.add(formToolsWidget);
+        layout.add(form.asWidget());
 
         form.bind(table);
 

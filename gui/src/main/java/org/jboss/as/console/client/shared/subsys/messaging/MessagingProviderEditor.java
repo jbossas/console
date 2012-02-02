@@ -117,12 +117,16 @@ public class MessagingProviderEditor {
         }, form);
 
         panel.add(helpPanel.asWidget());
-        panel.add(form.asWidget());
+        Widget formWidget = form.asWidget();
+        panel.add(formWidget);
+
+        formWidget.getElement().setAttribute("style", "padding-bottom:20px;");
 
         // ------
 
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
+
 
         secDetails = new SecurityDetails(presenter);
         bottomLayout.add(secDetails.asWidget(), "Security");

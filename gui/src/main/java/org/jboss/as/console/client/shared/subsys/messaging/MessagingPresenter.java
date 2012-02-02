@@ -87,6 +87,8 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     private EntityAdapter<AddressingPattern> addressingAdapter;
     private String currentServer = null;
     private LoadJMSCmd loadJMSCmd;
+    //private EntityAdapter<Queue> queueAdapter;
+    //private EntityAdapter<Topic> topicAdapter;
 
 
     @ProxyCodeSplit
@@ -127,6 +129,16 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         this.factory = factory;
         this.revealStrategy = revealStrategy;
         this.metaData = propertyMetaData;
+
+       /* this.queueAdapter = new EntityAdapter<Queue>(
+                Queue.class,
+                propertyMetaData
+        );
+
+        this.topicAdapter = new EntityAdapter<Topic>(
+                Topic.class,
+                propertyMetaData
+        );*/
 
         this.providerAdapter = new EntityAdapter<MessagingProvider>(
                 MessagingProvider.class,
@@ -503,8 +515,6 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
         List<PropertyBinding> bindings = metaData.getBindingsForType(AddressingPattern.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

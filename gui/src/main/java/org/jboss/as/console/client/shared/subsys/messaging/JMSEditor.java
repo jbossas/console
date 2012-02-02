@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -98,18 +97,16 @@ public class JMSEditor implements MessagingPresenter.JMSView{
         factoryTable.addColumn(nameColumn, "Name");
         factoryTable.addColumn(jndiColumn, "JNDI");
 
-        StaticHelpPanel helpPanel = new StaticHelpPanel("The JMS connection factories.");
-
-        panel.add(helpPanel.asWidget());
-
         panel.add(factoryTable);
 
         // ----
 
-        panel.add(new ContentGroupLabel("Subresources"));
+        ContentGroupLabel destinations = new ContentGroupLabel("Destinations");
+        panel.add(destinations);
+        destinations.getElement().setAttribute("style", "padding-top:20px;");
+
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
-        bottomLayout.getElement().setAttribute("style", "padding-top:20px;");
 
         queueList = new QueueList(presenter);
         bottomLayout.add(queueList.asWidget(),"Queues");

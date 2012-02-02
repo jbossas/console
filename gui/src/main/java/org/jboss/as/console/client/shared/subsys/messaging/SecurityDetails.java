@@ -35,6 +35,8 @@ import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -60,7 +62,6 @@ public class SecurityDetails {
         VerticalPanel layout = new VerticalPanel();
 
         secTable = new DefaultCellTable<SecurityPattern>(10);
-        secTable.getElement().setAttribute("style", "margin-top:10px");
 
         Column<SecurityPattern, String> roleColumn = new Column<SecurityPattern, String>(new TextCell()) {
             @Override
@@ -114,7 +115,7 @@ public class SecurityDetails {
         }, form);
 
 
-        FormToolStrip<SecurityPattern> toolStrip = new FormToolStrip<SecurityPattern>(
+        FormToolStrip<SecurityPattern> formTools = new FormToolStrip<SecurityPattern>(
                 form,
                 new FormToolStrip.FormCallback<SecurityPattern>() {
                     @Override
@@ -124,10 +125,12 @@ public class SecurityDetails {
 
                     @Override
                     public void onDelete(SecurityPattern entity) {
-                        presenter.onDeleteSecDetails(entity);
+
                     }
                 }
         );
+
+        ToolStrip tableTools = new ToolStrip();
 
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
@@ -136,12 +139,33 @@ public class SecurityDetails {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_securityDetails());
-        toolStrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
+
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Security Config"),
+                        Console.MESSAGES.deleteConfirm("Security Config"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteSecDetails(form.getEditedEntity());
+                            }
+                        });
+
+            }
+        });
+
+        tableTools.addToolButtonRight(removeBtn);
 
         // asembly
-        layout.add(toolStrip.asWidget());
+        layout.add(tableTools.asWidget());
         layout.add(secTable);
         layout.add(helpPanel.asWidget());
+        layout.add(formTools.asWidget());
         layout.add(form.asWidget());
 
         return layout;

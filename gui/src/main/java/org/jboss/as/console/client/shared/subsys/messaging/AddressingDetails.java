@@ -37,6 +37,8 @@ import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -62,7 +64,6 @@ public class AddressingDetails {
         VerticalPanel layout = new VerticalPanel();
 
         addrTable = new DefaultCellTable<SecurityPattern>(10);
-        addrTable.getElement().setAttribute("style", "margin-top:10px");
 
         Column<AddressingPattern, String> patternColumn = new Column<AddressingPattern, String>(new TextCell()) {
             @Override
@@ -97,7 +98,7 @@ public class AddressingDetails {
             }
         }, form);
 
-        FormToolStrip<AddressingPattern> toolStrip = new FormToolStrip<AddressingPattern>(
+        FormToolStrip<AddressingPattern> formTools = new FormToolStrip<AddressingPattern>(
                 form,
                 new FormToolStrip.FormCallback<AddressingPattern>() {
                     @Override
@@ -107,11 +108,11 @@ public class AddressingDetails {
 
                     @Override
                     public void onDelete(AddressingPattern entity) {
-                        presenter.onDeleteAddressDetails(entity);
+
                     }
                 }
         );
-
+        ToolStrip tableTools = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -119,11 +120,32 @@ public class AddressingDetails {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_addressingDetails());
-        toolStrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
 
-        layout.add(toolStrip.asWidget());
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Addressing Config"),
+                        Console.MESSAGES.deleteConfirm("Addressing Config"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteAddressDetails(form.getEditedEntity());
+                            }
+                        });
+
+            }
+        });
+
+        tableTools.addToolButtonRight(removeBtn);
+
+        layout.add(tableTools.asWidget());
         layout.add(addrTable);
 
+        layout.add(formTools.asWidget());
         layout.add(helpPanel.asWidget());
         layout.add(form.asWidget());
 

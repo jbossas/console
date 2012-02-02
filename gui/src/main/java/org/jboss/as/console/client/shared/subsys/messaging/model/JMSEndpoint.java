@@ -19,14 +19,19 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
+import org.jboss.as.console.client.widgets.forms.Binding;
+
 /**
  * @author Heiko Braun
  * @date 3/29/11
  */
 public interface JMSEndpoint {
+
+    @Binding(skip = true)
     String getName();
     void setName(String name);
 
+    @Binding(detypedName = "jndi-name")
     String getJndiName();
     void setJndiName(String jndi);
 }
