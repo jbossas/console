@@ -105,12 +105,17 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
                     ModelNode payload = response.get(RESULT).asObject();
                     JMXSubsystem jmxSubsystem = adapter.fromDMR(payload);
 
-                    if(payload.hasDefined("connector"))
+                    // TODO: https://issues.jboss.org/browse/AS7-3566
+                    if(payload.hasDefined("remoting-connector"))
                     {
-                        Property item = payload.get("connector").asPropertyList().get(0);
-                        ModelNode jmxConnector = item.getValue();
-                        jmxSubsystem.setRegistryBinding(jmxConnector.get("registry-binding").asString());
-                        jmxSubsystem.setServerBinding(jmxConnector.get("server-binding").asString());
+                        List<Property> connectorList = payload.get("remoting-connector").asPropertyList();
+                        if(!connectorList.isEmpty())
+                        {
+                            Property item = connectorList.get(0);
+                            ModelNode jmxConnector = item.getValue();
+                            jmxSubsystem.setRegistryBinding(jmxConnector.get("registry-binding").asString());
+                            jmxSubsystem.setServerBinding(jmxConnector.get("server-binding").asString());
+                        }
                     }
 
                     getView().updateFrom(jmxSubsystem);
@@ -133,7 +138,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
             ModelNode registry = new ModelNode();
             registry.get(ADDRESS).set(Baseadress.get());
             registry.get(ADDRESS).add("subsystem", "jmx");
-            registry.get(ADDRESS).add("connector", "jmx");
+            registry.get(ADDRESS).add("remoting-connector", "jmx");
             registry.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
             registry.get(NAME).set("registry-binding");
             registry.get(VALUE).set((String)changeset.get("registryBinding"));
@@ -147,7 +152,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
             ModelNode registry = new ModelNode();
             registry.get(ADDRESS).set(Baseadress.get());
             registry.get(ADDRESS).add("subsystem", "jmx");
-            registry.get(ADDRESS).add("connector", "jmx");
+            registry.get(ADDRESS).add("remoting-connector", "jmx");
             registry.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
             registry.get(NAME).set("server-binding");
             registry.get(VALUE).set((String)changeset.get("serverBinding"));
@@ -158,7 +163,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
 
         ModelNode operation = adapter.fromChangeset(
                 changeset,
-                beanMetaData.getAddress().asResource(),
+                beanMetaData.getAddress().asResource(Baseadress.get()),
                 extraSteps.toArray(new ModelNode[] {}));
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
