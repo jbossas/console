@@ -11,6 +11,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.PoolConfig;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.dmr.client.ModelNode;
@@ -34,21 +35,33 @@ public class PoolConfigurationView {
 
     Widget asWidget() {
 
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout");
-        form = new Form<PoolConfig>(PoolConfig.class);
-        form.setNumColumns(2);
-
-        NumberBoxItem maxCon = new NumberBoxItem("maxPoolSize", "Max Pool Size");
-        NumberBoxItem minCon = new NumberBoxItem("minPoolSize", "Min Pool Size");
+        final NumberBoxItem maxCon = new NumberBoxItem("maxPoolSize", "Max Pool Size");
+        final NumberBoxItem minCon = new NumberBoxItem("minPoolSize", "Min Pool Size");
         CheckBoxItem strictMin = new CheckBoxItem("poolStrictMin", "Strict Minimum");
         CheckBoxItem prefill = new CheckBoxItem("poolPrefill", "Prefill enabled");
 
+        VerticalPanel panel = new VerticalPanel();
+        panel.setStyleName("fill-layout");
+        form = new Form<PoolConfig>(PoolConfig.class) {
+        	@Override
+        	public FormValidation validate() {
+        		FormValidation superValidation = super.validate();
+        		int minPoolSize = this.getUpdatedEntity().getMinPoolSize();
+        		int maxPoolSize = this.getUpdatedEntity().getMaxPoolSize();
+        		if(minPoolSize > maxPoolSize){
+        			superValidation.addError("maxPoolSize");
+        			maxCon.setErroneous(true);
+        			maxCon.setErrMessage("Max Pool Size must be greater than Min Pool Size");
+        		} 
+        		return superValidation;
+        	}
+        };
+        form.setNumColumns(2);
+        form.setEnabled(false);
+        
         if(!xaDisplay)
             form.setFields(minCon, maxCon, strictMin, prefill);
-
-        form.setEnabled(false);
-
+        
         FormToolStrip<PoolConfig> toolStrip = new FormToolStrip<PoolConfig>(
                 form,
                 new FormToolStrip.FormCallback<PoolConfig>() {
