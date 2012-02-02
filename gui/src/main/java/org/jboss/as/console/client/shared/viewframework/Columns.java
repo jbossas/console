@@ -57,9 +57,9 @@ public class Columns {
             ImageResource res = null;
 
             if (entity.isEnabled()) {
-                res = Icons.INSTANCE.statusGreen_small();
+                res = Icons.INSTANCE.status_good();
             } else {
-                res = Icons.INSTANCE.statusRed_small();
+                res = Icons.INSTANCE.status_bad();
             }
 
             return res;

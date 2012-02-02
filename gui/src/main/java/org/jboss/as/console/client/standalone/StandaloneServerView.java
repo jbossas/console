@@ -92,7 +92,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         uptodateContent.setStyleName("status-panel");
         uptodateContent.addStyleName("serverUptoDate");
 
-        Image img = new Image(Icons.INSTANCE.statusGreen_small());
+        Image img = new Image(Icons.INSTANCE.status_good());
         HTML desc = new HTML("The server configuration seems uptodate!");
         uptodateContent.add(desc);
         uptodateContent.add(img);
@@ -114,7 +114,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         staleContent.setStyleName("status-panel");
         staleContent.addStyleName("serverNeedsUpdate");
 
-        Image img2 = new Image(Icons.INSTANCE.statusRed_small());
+        Image img2 = new Image(Icons.INSTANCE.status_bad());
         HTML desc2 = new HTML("The server configuration needs to be reloaded or the server restartet!");
         staleContent.add(desc2);
         staleContent.add(img2);

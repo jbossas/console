@@ -157,12 +157,14 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
             @Override
             public ImageResource getValue(OSGiBundle bundle) {
                 if ("ACTIVE".equals(bundle.getState()))
-                    return Icons.INSTANCE.statusGreen_small();
+                    return Icons.INSTANCE.status_good();
                 if ("STARTING".equals(bundle.getState()))
-                    return Icons.INSTANCE.statusYellow_small();
+                    return Icons.INSTANCE.status_warn();
                 if ("RESOLVED".equals(bundle.getState()))
-                    return Icons.INSTANCE.statusBlue_small();
-                return Icons.INSTANCE.statusRed_small();
+                    return Icons.INSTANCE.status_none();
+
+                // default
+                return Icons.INSTANCE.status_none();
             }
         };
         stateColumn.setSortable(true);

@@ -71,9 +71,9 @@ public class PersistenceUnitList {
                         ImageResource res = null;
 
                         if(jpa.isMetricEnabled())
-                            res = Icons.INSTANCE.statusGreen_small();
+                            res = Icons.INSTANCE.status_good();
                         else
-                            res = Icons.INSTANCE.statusRed_small();
+                            res = Icons.INSTANCE.status_bad();
 
                         return res;
                     }

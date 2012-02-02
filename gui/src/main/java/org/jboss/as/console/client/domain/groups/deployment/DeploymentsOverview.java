@@ -332,9 +332,9 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
                 ImageResource res = null;
 
                 if (deployment.isEnabled()) {
-                    res = Icons.INSTANCE.statusGreen_small();
+                    res = Icons.INSTANCE.status_good();
                 } else {
-                    res = Icons.INSTANCE.statusRed_small();
+                    res = Icons.INSTANCE.status_bad();
                 }
 
                 return res;
