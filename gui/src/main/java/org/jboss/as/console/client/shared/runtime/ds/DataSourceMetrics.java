@@ -55,8 +55,7 @@ public class DataSourceMetrics {
             @Override
             public void onClick(ClickEvent event) {
 
-                //presenter.setSelectedDS(getCurrentSelection(), isXA);
-                presenter.refresh();
+                presenter.setSelectedDS(getCurrentSelection(), isXA);
             }
         }));
 

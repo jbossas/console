@@ -89,10 +89,10 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
         getView().clearSamples();
 
         // refresh if needed. Otherwise it will happen onReset()
-        if(isVisible()) refresh();
+        if(isVisible()) refreshDatasources();
     }
 
-    public void refresh() {
+    public void refreshDatasources() {
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
@@ -130,7 +130,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     @Override
     protected void onReset() {
         super.onReset();
-        refresh();
+        refreshDatasources();
     }
 
     @Override
