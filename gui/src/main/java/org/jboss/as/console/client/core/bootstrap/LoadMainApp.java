@@ -7,6 +7,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class LoadMainApp implements AsyncCommand<Boolean> {
 
         String initialToken = History.getToken();
 
-        if(!initialToken.isEmpty())
+        if(!initialToken.isEmpty() && !initialToken.equals(NameTokens.SettingsPresenter))
         {
             List<PlaceRequest> hierarchy = formatter.toPlaceRequestHierarchy(initialToken);
             final PlaceRequest placeRequest = hierarchy.get(hierarchy.size() - 1);
