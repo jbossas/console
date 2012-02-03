@@ -144,4 +144,6 @@ public interface UIMessages extends Messages {
     String successful(String p0);
 
     String failed(String p0);
+
+    String server_config_stillRunning(String name);
 }

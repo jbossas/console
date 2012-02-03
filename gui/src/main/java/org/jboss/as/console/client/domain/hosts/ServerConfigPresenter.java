@@ -215,7 +215,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void launchNewConfigDialoge() {
 
-        window = new DefaultWindow("Create Server Configuration");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Server Configuration"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -261,7 +261,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
 
-                    Console.info("Created server config " + newServer.getName());
+                    Console.info(Console.MESSAGES.added("Server Configuration ") + newServer.getName());
 
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
@@ -274,7 +274,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                 } else {
                     closeDialoge();
-                    Console.error("Failed to create server config " + newServer.getName());
+                    Console.error(Console.MESSAGES.addingFailed("Server Configuration ") + newServer.getName());
 
                 }
 
@@ -284,7 +284,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onFailure(Throwable caught) {
 
                 Console.MODULES.getMessageCenter().notify(
-                        new Message("Failed to create server config " + newServer.getName(), Message.Severity.Error)
+                        new Message(Console.MESSAGES.addingFailed("Server Configuration ") + newServer.getName(), Message.Severity.Error)
                 );
 
             }
@@ -306,11 +306,11 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
                 {
-                    Console.info("Successfully modified server-config " +name);
+                    Console.info(Console.MESSAGES.modified("Server Configuration ") +name);
                 }
                 else
                 {
-                    Console.error("Failed to modify server-config " +name);
+                    Console.error(Console.MESSAGES.modificationFailed("Server Configuration ") +name);
                 }
 
                 loadServerConfigurations(name);
@@ -345,8 +345,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                     performDeleteOperation(server);
                 else
                     Console.error(
-                            "Failed to delete server configuration",
-                            "The server instance is still running: "+server.getName()
+                            Console.MESSAGES.deletionFailed("Server Configuration"),
+                            Console.MESSAGES.server_config_stillRunning(server.getName())
                     );
             }
         });
@@ -360,7 +360,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onFailure(Throwable caught) {
                 Console.MODULES.getMessageCenter().notify(
-                        new Message("Failed to delete server config "+server.getName(), Message.Severity.Error)
+                        new Message(Console.MESSAGES.deletionFailed("Server Configuration ")+server.getName(), Message.Severity.Error)
                 );
             }
 
@@ -369,7 +369,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 if(wasSuccessful)
                 {
                     Console.MODULES.getMessageCenter().notify(
-                            new Message("Successfully deleted server config "+server.getName())
+                            new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName())
                     );
 
                     getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
@@ -379,7 +379,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 else
                 {
                     Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to delete server config "+server.getName(), Message.Severity.Error)
+                            new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName(), Message.Severity.Error)
                     );
                 }
             }
@@ -495,7 +495,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        propertyWindow = new DefaultWindow("New System Property");
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
