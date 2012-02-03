@@ -56,6 +56,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private ServerGroupStore serverGroupStore;
     private String previousServerSelection = null;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.DomainRuntimePresenter)
     public interface MyProxy extends Proxy<DomainRuntimePresenter>, Place {
@@ -96,10 +97,11 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         super.onBind();
         getView().setPresenter(this);
 
-        // register for server election events
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
         getEventBus().addHandler(HostSelectionEvent.TYPE, this);
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
+
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
+
     }
 
 
@@ -158,7 +160,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                     selectDefaultHost(hosts);
 
 
-                hostInfoStore.getServerInstances(serverSelection.getHost(), new SimpleCallback<List<ServerInstance>>() {
+                final String host = serverSelection.getHost();
+                hostInfoStore.getServerInstances(host, new SimpleCallback<List<ServerInstance>>() {
                     @Override
                     public void onSuccess(List<ServerInstance> server) {
 
@@ -166,9 +169,19 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                         {
                             if(!server.isEmpty())
                             {
-                                ServerInstance serverInstance = server.get(0);
+                                final ServerInstance serverInstance = server.get(0);
                                 Console.info("Default server selection: " + serverInstance.getName());
-                                serverSelection.setServer(serverInstance);
+
+                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                    @Override
+                                    public void execute() {
+
+                                        System.out.println("*** fire default selection "+host + " " +serverInstance.getName());
+
+                                        // make this fires
+                                        getEventBus().fireEvent(new ServerSelectionEvent(host, serverInstance));
+                                    }
+                                });
                             }
                         }
 

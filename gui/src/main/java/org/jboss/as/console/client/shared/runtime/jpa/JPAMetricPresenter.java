@@ -10,7 +10,6 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.sun.tools.internal.ws.processor.modeler.wsdl.ConsoleErrorReporter;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -87,13 +86,16 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
         adapter = new EntityAdapter<JPADeployment>(JPADeployment.class, metaData);
 
+
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
+
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, JPAMetricPresenter.this);
+
     }
 
     @Override
@@ -129,6 +131,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
 
+        System.out.println("*** caught selection "+hostName + " " +server.getName());
 
         refresh(true);
     }
