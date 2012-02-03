@@ -9,6 +9,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -20,6 +21,7 @@ import org.jboss.as.console.client.shared.properties.PropertyEditor;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -44,7 +46,7 @@ import java.util.Map;
 public class AdapterList implements PropertyManagement {
 
     private ResourceAdapterPresenter presenter;
-    private CellTable<ResourceAdapter> table;
+    private DefaultCellTable<ResourceAdapter> table;
     private ListDataProvider<ResourceAdapter> dataProvider;
 
     private Form<ResourceAdapter> form;
@@ -93,7 +95,14 @@ public class AdapterList implements PropertyManagement {
         // -------
 
 
-        table = new DefaultCellTable<ResourceAdapter>(5);
+        table = new DefaultCellTable<ResourceAdapter>(5,
+                new ProvidesKey<ResourceAdapter>() {
+                    @Override
+                    public Object getKey(ResourceAdapter item) {
+                        return item.getArchive();
+                    }
+                });
+
         dataProvider = new ListDataProvider<ResourceAdapter>();
         dataProvider.addDataDisplay(table);
 
@@ -225,8 +234,7 @@ public class AdapterList implements PropertyManagement {
     public void setAdapters(List<ResourceAdapter> adapters) {
         dataProvider.setList(adapters);
 
-        if(!adapters.isEmpty())
-            table.getSelectionModel().setSelected(adapters.get(0), true);
+        table.selectDefaultEntity();
 
     }
 

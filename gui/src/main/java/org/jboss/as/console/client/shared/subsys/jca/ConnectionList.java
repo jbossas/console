@@ -9,6 +9,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -120,7 +121,14 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
         // -------
 
-        table = new DefaultCellTable<ConnectionDefinition>(10);
+        table = new DefaultCellTable<ConnectionDefinition>(10,
+                new ProvidesKey<ConnectionDefinition>() {
+                    @Override
+                    public Object getKey(ConnectionDefinition item) {
+                        return item.getJndiName();
+                    }
+                });
+
         dataProvider = new ListDataProvider<ConnectionDefinition>();
         dataProvider.addDataDisplay(table);
 
@@ -152,11 +160,13 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
         table.addColumn(statusColumn, "Enabled?");
 
 
+        table.setSelectionModel(new SingleSelectionModel<ConnectionDefinition>());
+
+
         // -------
 
 
         connectionDetails = new AdapterConnectionDetails(presenter);
-        connectionDetails.getForm().bind(table);
 
         // ---
 
@@ -174,25 +184,15 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
         final SingleSelectionModel<ConnectionDefinition> selectionModel = (SingleSelectionModel<ConnectionDefinition>)table.getSelectionModel();
 
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-            public void onSelectionChange(SelectionChangeEvent event) {
-                ConnectionDefinition selection = selectionModel.getSelectedObject();
-                connectionProperties.updateFrom(selection.getProperties());
-            }
-        });
-
         poolConfig = new PoolConfigurationView(this);
-
 
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler () {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ConnectionDefinition selectedObject = getCurrentSelection();
-                poolConfig.updateFrom(selectedObject.getJndiName(), selectedObject.getPoolConfig());
-                securityConfig.updateFrom(selectedObject);
-                validationConfig.updateFrom(selectedObject);
 
+                connectionProperties.updateFrom(selectedObject.getProperties());
+                poolConfig.updateFrom(selectedObject.getJndiName(), selectedObject.getPoolConfig());
 
                 String nextState = selectedObject.isEnabled() ?
                         Console.CONSTANTS.common_label_disable():Console.CONSTANTS.common_label_enable();
@@ -221,6 +221,12 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
                 .addDetail("Validation", validationConfig.asWidget());
 
 
+
+        connectionDetails.getForm().bind(table);
+        securityConfig.getForm().bind(table);
+        poolConfig.getForm().bind(table);
+        validationConfig.getForm().bind(table);
+
         return layout.build();
     }
 
@@ -233,11 +239,13 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
 
         headline.setText("Resource Adapter: "+adapter.getArchive());
 
+        // some subviews require manual cleanup
+        connectionProperties.clearProperties();
+
         List<ConnectionDefinition> connections = adapter.getConnectionDefinitions();
         dataProvider.setList(connections);
 
-        if(!connections.isEmpty())
-            table.getSelectionModel().setSelected(connections.get(0), true);
+        table.selectDefaultEntity();
     }
 
     @Override

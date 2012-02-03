@@ -26,6 +26,10 @@ public class AdapterSecurity {
         this.presenter = presenter;
     }
 
+    public Form<ConnectionDefinition> getForm() {
+        return form;
+    }
+
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");

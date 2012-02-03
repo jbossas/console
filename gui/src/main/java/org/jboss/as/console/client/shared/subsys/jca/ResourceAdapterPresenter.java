@@ -610,7 +610,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.addingFailed("Connection Definition"));
+                    Console.error(Console.MESSAGES.addingFailed("Connection Definition"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.added("Connection Definition"));
                 loadAdapter(true);
@@ -631,7 +631,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.modificationFailed("Connection Definition"));
+                    Console.error(Console.MESSAGES.modificationFailed("Connection Definition"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.modified("Connection Definition"));
                 loadAdapter(true);
@@ -652,7 +652,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.addingFailed("Connection Property"));
+                    Console.error(Console.MESSAGES.addingFailed("Connection Property"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.added("Connection Property"));
                 loadAdapter(true);
@@ -677,7 +677,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.deletionFailed("Connection Property"));
+                    Console.error(Console.MESSAGES.deletionFailed("Connection Property"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.deleted("Connection Property"));
                 loadAdapter(true);
@@ -699,7 +699,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.addingFailed("Config Property"));
+                    Console.error(Console.MESSAGES.addingFailed("Config Property"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.added("Config Property"));
                 loadAdapter(false);
@@ -720,7 +720,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.deletionFailed("Config Property"));
+                    Console.error(Console.MESSAGES.deletionFailed("Config Property"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.deleted("Config Property"));
                 loadAdapter(false);
@@ -763,7 +763,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.deletionFailed("Config Property"));
+                    Console.error(Console.MESSAGES.deletionFailed("Config Property"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.deleted("Config Property"));
                 loadAdapter(true);
@@ -783,7 +783,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.modificationFailed("Admin Object"));
+                    Console.error(Console.MESSAGES.modificationFailed("Admin Object"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.modified("Admin Object"));
                 loadAdapter(true);
@@ -824,7 +824,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.addingFailed("Admin Object"));
+                    Console.error(Console.MESSAGES.addingFailed("Admin Object"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.added("Admin Object"));
                 loadAdapter(true);
@@ -843,7 +843,7 @@ public class ResourceAdapterPresenter
             public void onSuccess(DMRResponse result) {
                ModelNode response = result.get();
                 if(response.isFailure())
-                    Console.error(Console.MESSAGES.deletionFailed("Admin Object"));
+                    Console.error(Console.MESSAGES.deletionFailed("Admin Object"), response.getFailureDescription());
                 else
                     Console.info(Console.MESSAGES.deleted("Admin Object"));
                 loadAdapter(true);

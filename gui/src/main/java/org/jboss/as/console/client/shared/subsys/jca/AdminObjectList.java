@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -123,7 +124,13 @@ public class AdminObjectList implements PropertyManagement {
 
         // -------
 
-        table = new DefaultCellTable<AdminObject>(10);
+        table = new DefaultCellTable<AdminObject>(10, new ProvidesKey<AdminObject>() {
+            @Override
+            public Object getKey(AdminObject item) {
+                return item.getJndiName();
+            }
+        });
+
         dataProvider = new ListDataProvider<AdminObject>();
         dataProvider.addDataDisplay(table);
 
@@ -293,8 +300,7 @@ public class AdminObjectList implements PropertyManagement {
         List<AdminObject> list = adapter.getAdminObjects();
         dataProvider.setList(list);
 
-        if(!list.isEmpty())
-            table.getSelectionModel().setSelected(list.get(0), true);
+        table.selectDefaultEntity();
 
     }
 }

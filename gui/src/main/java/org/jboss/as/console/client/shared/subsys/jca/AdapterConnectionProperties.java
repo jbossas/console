@@ -40,4 +40,8 @@ public class AdapterConnectionProperties  {
     public void updateFrom(List<PropertyRecord> properties) {
         propertyEditor.setProperties("", properties);
     }
+
+    public void clearProperties() {
+        propertyEditor.clearValues();
+    }
 }
