@@ -32,8 +32,10 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.inject.spi.ProviderKeyBinding;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -85,6 +87,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     abstract String getStackElementName();
     abstract String getStackName();
     abstract Wizard<T> getWizard();
+    abstract ProvidesKey<T> getKeyProvider();
 
     protected void setDescription(String description) {
         this.description = description;
@@ -97,7 +100,11 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("rhs-content-panel");
 
+        // TODO: in order for the selection to retain we need a distinct key per module.
+
+        // attributesTable = new DefaultCellTable<T>(4, getKeyProvider());
         attributesTable = new DefaultCellTable<T>(4);
+
         attributesTable.getElement().setAttribute("style", "margin-top:5px;");
         attributesProvider = new ListDataProvider<T>();
         attributesProvider.addDataDisplay(attributesTable);

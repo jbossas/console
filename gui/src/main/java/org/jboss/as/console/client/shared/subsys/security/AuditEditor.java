@@ -18,6 +18,8 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SimpleKeyProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.GenericSecurityDomainData;
 import org.jboss.as.console.client.shared.subsys.security.wizard.GenericSecurityDomainWizard;
@@ -29,6 +31,11 @@ public class AuditEditor extends AbstractDomainDetailEditor<GenericSecurityDomai
     public AuditEditor(SecurityDomainsPresenter presenter) {
         super(presenter, GenericSecurityDomainData.class);
          setDescription(Console.CONSTANTS.subsys_security_audit_desc());
+    }
+
+    @Override
+    ProvidesKey<GenericSecurityDomainData> getKeyProvider() {
+        return new SimpleKeyProvider<GenericSecurityDomainData>();
     }
 
     @Override

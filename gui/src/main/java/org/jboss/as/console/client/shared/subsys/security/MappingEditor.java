@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.subsys.security;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SimpleKeyProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.MappingModule;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewMappingModuleWizard;
@@ -33,6 +35,11 @@ public class MappingEditor extends AbstractDomainDetailEditor<MappingModule> {
     public MappingEditor(SecurityDomainsPresenter presenter) {
         super(presenter, MappingModule.class);
          setDescription(Console.CONSTANTS.subsys_security_mapping_desc());
+    }
+
+    @Override
+    ProvidesKey<MappingModule> getKeyProvider() {
+        return new SimpleKeyProvider<MappingModule>();
     }
 
     @Override

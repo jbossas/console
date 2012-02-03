@@ -20,6 +20,8 @@ package org.jboss.as.console.client.shared.subsys.security;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SimpleKeyProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AbstractAuthData;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -32,6 +34,11 @@ import java.util.List;
  */
 public abstract class AuthEditor <T extends AbstractAuthData> extends AbstractDomainDetailEditor<T> {
     List<String> flagValues = Collections.EMPTY_LIST;
+
+    @Override
+    ProvidesKey<T> getKeyProvider() {
+        return new SimpleKeyProvider<T>();
+    }
 
     AuthEditor(SecurityDomainsPresenter presenter, Class<T> entityClass) {
         super(presenter, entityClass);
