@@ -22,6 +22,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 
 import java.util.Map;
 
@@ -114,8 +115,15 @@ public class JpaPresenter extends Presenter<JpaPresenter.MyView, JpaPresenter.My
 
     public void onSave(JpaSubsystem editedEntity, Map<String, Object> changeset) {
 
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
+        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource(Baseadress.get()));
 
+        if(changeset.containsKey("defaultDataSource") && changeset.get("defaultDataSource").equals(""))
+        {
+            changeset.remove("defaultDataSource");
+            operation.get("default-datasource").set(ModelType.UNDEFINED);
+        }
+
+        // TODO: https://issues.jboss.org/browse/AS7-3596
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {

@@ -29,7 +29,7 @@ public class JpaView extends DisposableViewImpl implements JpaPresenter.MyView {
 
         form = new Form<JpaSubsystem>(JpaSubsystem.class);
 
-        TextBoxItem defaultDs = new TextBoxItem("defaultDataSource", "Default Datasource");
+        TextBoxItem defaultDs = new TextBoxItem("defaultDataSource", "Default Datasource", false);
         form.setFields(defaultDs);
         form.setEnabled(false);
 
