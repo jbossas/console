@@ -4,17 +4,20 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,7 @@ public class ServerConfigDetails {
     private ServerConfigPresenter presenter;
     private Form<Server> form;
     private ComboBoxItem socketItem;
+    private ComboBoxItem groupItem;
 
     public ServerConfigDetails(ServerConfigPresenter presenter) {
         this.presenter = presenter;
@@ -70,7 +74,8 @@ public class ServerConfigDetails {
         TextItem nameItem = new TextItem("name", "Name");
 
         CheckBoxItem startedItem = new CheckBoxItem("autoStart", Console.CONSTANTS.common_label_autoStart());
-        TextItem groupItem = new TextItem("group", Console.CONSTANTS.common_label_serverGroup());
+
+        groupItem = new ComboBoxItem("group", "Server Group");
 
         // ------------------------------------------------------
 
@@ -122,5 +127,14 @@ public class ServerConfigDetails {
 
     public void bind(DefaultCellTable table) {
         form.bind(table);
+    }
+
+    public void setAvailableGroups(List<ServerGroupRecord> result) {
+
+        List<String> names = new ArrayList<String>(result.size());
+        for(ServerGroupRecord rec : result)
+            names.add(rec.getGroupName());
+
+        groupItem.setValueMap(names);
     }
 }

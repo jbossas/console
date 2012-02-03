@@ -111,6 +111,8 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         void setProperties(String reference, List<PropertyRecord> properties);
         void setPorts(String socketBinding, Server selectedRecord, List<SocketBinding> result);
         void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName);
+
+        void setGroups(List<ServerGroupRecord> result);
     }
 
     @Inject
@@ -185,6 +187,14 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onSuccess(List<Server> result) {
                 getView().setConfigurations(hostSelection.getName(), result, selectedConfigName);
+            }
+        });
+
+
+        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
+            @Override
+            public void onSuccess(List<ServerGroupRecord> result) {
+                getView().setGroups(result);
             }
         });
 

@@ -30,6 +30,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.Server;
+import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.jvm.Jvm;
@@ -217,6 +218,9 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
     public void setConfigurations(String selectedHost, List<Server> servers, String selectedConfigName) {
         serverConfigProvider.setList(servers);
 
+        jvmEditor.clearValues();
+        propertyEditor.clearValues();
+
         if(!servers.isEmpty())
         {
             if(selectedConfigName == null || selectedConfigName.equals("")) {
@@ -227,6 +231,11 @@ public class ServerConfigView extends SuspendableViewImpl implements ServerConfi
             }
         }
 
+    }
+
+    @Override
+    public void setGroups(List<ServerGroupRecord> result) {
+        details.setAvailableGroups(result);
     }
 
     private Server findSelectedServer(List<Server> servers,String name){
