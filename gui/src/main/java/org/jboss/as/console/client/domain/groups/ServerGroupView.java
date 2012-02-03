@@ -26,6 +26,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -106,7 +107,12 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
         // ---------------------------------------------
 
-        serverGroupTable = new DefaultCellTable<ServerGroupRecord>(10);
+        serverGroupTable = new DefaultCellTable<ServerGroupRecord>(8, new ProvidesKey<ServerGroupRecord>() {
+            @Override
+            public Object getKey(ServerGroupRecord item) {
+                return item.getGroupName()+"_"+item.getProfileName();
+            }
+        });
         serverGroupProvider = new ListDataProvider<ServerGroupRecord>();
         serverGroupProvider.addDataDisplay(serverGroupTable);
 
@@ -166,6 +172,7 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
 
         details.bind(serverGroupTable);
+
         serverGroupTable.getSelectionModel().addSelectionChangeHandler(
                 new SelectionChangeEvent.Handler() {
                     @Override
@@ -184,9 +191,13 @@ public class ServerGroupView extends SuspendableViewImpl implements ServerGroupP
 
     public void setServerGroups(final List<ServerGroupRecord> groups) {
 
+        // requires manual cleanup
+        jvmEditor.clearValues();
+        propertyEditor.clearValues();
+
         serverGroupProvider.setList(groups);
-        if(!groups.isEmpty())
-            getSelectionModel().setSelected(groups.get(0), true);
+
+        serverGroupTable.selectDefaultEntity();
     }
 
     @Override

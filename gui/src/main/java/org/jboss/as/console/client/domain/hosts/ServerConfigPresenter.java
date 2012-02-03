@@ -251,9 +251,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(Boolean wasSuccessful) {
                 if (wasSuccessful) {
 
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Created server config " + newServer.getName())
-                    );
+                    Console.info("Created server config " + newServer.getName());
 
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
@@ -266,9 +264,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
                 } else {
                     closeDialoge();
-                    Console.MODULES.getMessageCenter().notify(
-                            new Message("Failed to create server config " + newServer.getName(), Message.Severity.Error)
-                    );
+                    Console.error("Failed to create server config " + newServer.getName());
 
                 }
 
