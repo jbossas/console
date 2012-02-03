@@ -26,6 +26,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -63,7 +64,12 @@ public class SecurityDetails {
 
         VerticalPanel layout = new VerticalPanel();
 
-        secTable = new DefaultCellTable<SecurityPattern>(10);
+        secTable = new DefaultCellTable<SecurityPattern>(8, new ProvidesKey<SecurityPattern>() {
+            @Override
+            public Object getKey(SecurityPattern item) {
+                return item.getPattern()+"_"+item.getRole();
+            }
+        });
         secProvider = new ListDataProvider<SecurityPattern>();
         secProvider.addDataDisplay(secTable);
 
@@ -178,9 +184,7 @@ public class SecurityDetails {
     public void setSecurityConfig(List<SecurityPattern> patterns) {
 
         secProvider.setList(patterns);
-
-        if(!patterns.isEmpty())
-            secTable.getSelectionModel().setSelected(patterns.get(0), true);
+        secTable.selectDefaultEntity();
 
         form.setEnabled(false);
     }

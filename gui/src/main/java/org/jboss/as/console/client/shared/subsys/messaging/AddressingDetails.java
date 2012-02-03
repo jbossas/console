@@ -26,6 +26,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -65,7 +66,12 @@ public class AddressingDetails {
 
         VerticalPanel layout = new VerticalPanel();
 
-        addrTable = new DefaultCellTable<AddressingPattern>(10);
+        addrTable = new DefaultCellTable<AddressingPattern>(8, new ProvidesKey<AddressingPattern>() {
+            @Override
+            public Object getKey(AddressingPattern item) {
+                return item.getPattern();
+            }
+        });
         addrProvider = new ListDataProvider<AddressingPattern>();
         addrProvider.addDataDisplay(addrTable);
 
@@ -166,8 +172,7 @@ public class AddressingDetails {
 
         addrProvider.setList(addrPatterns);
 
-        if(!addrPatterns.isEmpty())
-            addrTable.getSelectionModel().setSelected(addrPatterns.get(0), true);
+        addrTable.selectDefaultEntity();
 
         form.setEnabled(false);
     }
