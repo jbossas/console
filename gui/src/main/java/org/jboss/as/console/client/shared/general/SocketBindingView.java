@@ -117,7 +117,6 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
                 }));
           */
 
-        layout.add(toolstrip);
 
         // -----------
         VerticalPanel panel = new VerticalPanel();
@@ -153,11 +152,11 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         tableOptions.getElement().setAttribute("style", "float:right;");
         panel.add(tableOptions);
         DefaultCellTable socketTableWidget = socketTable.asWidget();
+        panel.add(toolstrip.asWidget());
         panel.add(socketTableWidget);
 
+
         DefaultPager pager = new DefaultPager();
-        pager.setPage(0);
-        pager.setPageSize(6);
         pager.setDisplay(socketTableWidget);
         panel.add(pager);
 
@@ -166,8 +165,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolstrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
         // -----------
 
@@ -273,6 +271,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     @Override
     public void setBindings(String groupName, List<SocketBinding> bindings) {
+
         socketTable.updateFrom(groupName, bindings);
     }
 

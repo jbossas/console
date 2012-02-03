@@ -7,6 +7,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.shared.expr.ExpressionColumn;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -33,7 +34,12 @@ public class SocketTable {
 
     public DefaultCellTable asWidget() {
 
-        table = new DefaultCellTable<SocketBinding>(6);
+        table = new DefaultCellTable<SocketBinding>(8, new ProvidesKey<SocketBinding>() {
+            @Override
+            public Object getKey(SocketBinding item) {
+                return item.getName()+String.valueOf(item.getGroup());
+            }
+        });
         dataProvider = new ListDataProvider<SocketBinding>();
         dataProvider.addDataDisplay(table);
 
@@ -106,9 +112,9 @@ public class SocketTable {
         List<SocketBinding> list = dataProvider.getList();
         list.clear(); // cannot call setList() as that breaks the sort handler
         list.addAll(bindings);
+        dataProvider.flush();
 
-        if(!bindings.isEmpty() && table.getSelectionModel()!=null)
-            table.getSelectionModel().setSelected(bindings.get(0), true);
+        table.selectDefaultEntity();
     }
 
      public void updateFrom(String groupName, List<SocketBinding> bindings, int portOffset) {
