@@ -4,7 +4,6 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -108,10 +107,11 @@ public class InterfaceEditor {
         panel.setStyleName("rhs-content-panel");
 
         panel.add(new ContentHeaderLabel("Network Interfaces"));
-        panel.add(new ContentGroupLabel(Console.MESSAGES.available("Interfaces")));
 
-        if(description!=null)
+        if(description!=null) {
             panel.add(new ContentDescription(description));
+        }
+        panel.add(new ContentGroupLabel(Console.MESSAGES.available("Interfaces")));
 
         table = new DefaultCellTable<Interface>(8, new ProvidesKey<Interface>() {
             @Override

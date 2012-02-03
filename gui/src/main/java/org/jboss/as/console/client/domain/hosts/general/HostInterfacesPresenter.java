@@ -119,7 +119,9 @@ public class HostInterfacesPresenter extends Presenter<HostInterfacesPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
-        loadInterfaces();
+
+        if(currentHost.isSet())
+            loadInterfaces();
     }
 
     @Override

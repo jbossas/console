@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.domain.hosts.general;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.InterfaceEditor;
 import org.jboss.as.console.client.shared.general.InterfaceManagement;
@@ -40,7 +41,7 @@ public class HostInterfacesView extends DisposableViewImpl implements HostInterf
 
     public HostInterfacesView() {
         this.editor = new InterfaceEditor("Host Interfaces");
-        editor.setDescription("Specific rules to bind interfaces on a host. A server configuration will reference an interface by name.");
+        editor.setDescription(Console.CONSTANTS.host_interfaces_desc());
     }
 
     @Override

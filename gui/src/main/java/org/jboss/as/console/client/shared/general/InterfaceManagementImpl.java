@@ -134,12 +134,12 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         operation.get(ADDRESS).add("interface", entity.getName());
         operation.get(OP).set(REMOVE);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = dmrResponse.get();
+
+                System.out.println(response);
                 if(ModelNodeUtil.indicatesSuccess(response))
                 {
                     Console.info(Console.MESSAGES.deleted("Network Interface"));
