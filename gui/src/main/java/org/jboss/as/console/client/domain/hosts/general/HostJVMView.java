@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -49,7 +50,7 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
     private HostJVMPresenter presenter;
     private JvmEditor jvmEditor;
-    private CellTable<Jvm> table;
+    private DefaultCellTable<Jvm> table;
     private ListDataProvider<Jvm> dataProvider;
 
     @Override
@@ -90,7 +91,12 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
 
         // ---
 
-        table = new DefaultCellTable<Jvm>(8);
+        table = new DefaultCellTable<Jvm>(8, new ProvidesKey<Jvm>() {
+            @Override
+            public Object getKey(Jvm item) {
+                return item.getName();
+            }
+        });
         dataProvider = new ListDataProvider<Jvm>();
         dataProvider.addDataDisplay(table);
 
@@ -146,7 +152,6 @@ public class HostJVMView extends DisposableViewImpl implements HostJVMPresenter.
     public void setJvms(List<Jvm> jvms) {
         dataProvider.setList(jvms);
 
-        if(!jvms.isEmpty())
-            table.getSelectionModel().setSelected(jvms.get(0), true);
+        table.selectDefaultEntity();
     }
 }
