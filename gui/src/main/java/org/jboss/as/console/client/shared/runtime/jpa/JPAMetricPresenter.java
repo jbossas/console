@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.sun.tools.internal.ws.processor.modeler.wsdl.ConsoleErrorReporter;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -30,6 +31,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -132,6 +134,11 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
     public void refresh(final boolean paging) {
 
+
+        if(!serverSelection.isActive()) {
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
+            return;
+        }
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).setEmptyList();

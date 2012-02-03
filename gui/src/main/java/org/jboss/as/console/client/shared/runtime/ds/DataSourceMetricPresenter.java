@@ -95,7 +95,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     public void refreshDatasources() {
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             getView().setDatasources(Collections.EMPTY_LIST, true);
             getView().setDatasources(Collections.EMPTY_LIST, false);
             getView().clearSamples();

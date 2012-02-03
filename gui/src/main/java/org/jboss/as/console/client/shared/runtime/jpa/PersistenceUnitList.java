@@ -8,6 +8,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
@@ -45,7 +46,12 @@ public class PersistenceUnitList {
     Widget asWidget() {
 
 
-        table = new DefaultCellTable<JPADeployment>(8);
+        table = new DefaultCellTable<JPADeployment>(8, new ProvidesKey<JPADeployment>() {
+            @Override
+            public Object getKey(JPADeployment item) {
+                return item.getDeploymentName()+"_"+item.getPersistenceUnit();
+            }
+        });
 
         TextColumn<JPADeployment> name = new TextColumn<JPADeployment>() {
 
@@ -181,8 +187,6 @@ public class PersistenceUnitList {
     public void setUnits(List<JPADeployment> jpaUnits) {
         dataProvider.setList(jpaUnits);
 
-        //table.selectDefaultEntity();
-        if(!jpaUnits.isEmpty())
-            table.getSelectionModel().setSelected(jpaUnits.get(0), true);
+        table.selectDefaultEntity();
     }
 }
