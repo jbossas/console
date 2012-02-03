@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.web;
 
+import com.gargoylesoftware.htmlunit.ConfirmHandler;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,6 +29,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -41,6 +44,8 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -69,7 +74,7 @@ public class ConnectorList {
         form = new Form<HttpConnector>(HttpConnector.class);
         form.setNumColumns(2);
 
-        FormToolStrip<HttpConnector> toolstrip = new FormToolStrip<HttpConnector>(
+        FormToolStrip<HttpConnector> formTools = new FormToolStrip<HttpConnector>(
                 form,
                 new FormToolStrip.FormCallback<HttpConnector>() {
                     @Override
@@ -79,11 +84,12 @@ public class ConnectorList {
 
                     @Override
                     public void onDelete(final HttpConnector entity) {
-                        presenter.onDeleteConnector(entity.getName());
+
                     }
                 }
         );
 
+        ToolStrip tableTools = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -91,15 +97,43 @@ public class ConnectorList {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_connectorList());
-        toolstrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
 
 
-        layout.add(toolstrip.asWidget());
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final HttpConnector selectedObject = ((SingleSelectionModel<HttpConnector>) connectorTable.getSelectionModel()).getSelectedObject();
+                if(selectedObject!=null)
+                {
+                    Feedback.confirm(
+                            Console.MESSAGES.deleteTitle("Connector"),
+                            Console.MESSAGES.deleteConfirm("Connector"), new Feedback.ConfirmationHandler()
+                    {
+                        @Override
+                        public void onConfirmation(boolean isConfirmed) {
+                            if(isConfirmed)
+                                presenter.onDeleteConnector(selectedObject.getName());
+                        }
+                    });
+                }
+            }
+        });
+
+        tableTools.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(removeBtn);
+
+        layout.add(tableTools.asWidget());
 
         // ----
 
 
-        connectorTable = new DefaultCellTable<HttpConnector>(10);
+        connectorTable = new DefaultCellTable<HttpConnector>(8, new ProvidesKey<HttpConnector>() {
+            @Override
+            public Object getKey(HttpConnector item) {
+                return item.getName()+"_"+item.getProtocol();
+            }
+        });
         dataProvider = new ListDataProvider<HttpConnector>();
         dataProvider.addDataDisplay(connectorTable);
 
@@ -139,6 +173,7 @@ public class ConnectorList {
         connectorTable.addColumn(protocolColumn, "Protocol");
         connectorTable.addColumn(statusColumn, "Enabled?");
 
+        layout.add(tableTools.asWidget());
         layout.add(connectorTable);
 
 
@@ -174,6 +209,8 @@ public class ConnectorList {
                     }
                 }, form
         );
+
+        layout.add(formTools.asWidget());
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
@@ -185,8 +222,7 @@ public class ConnectorList {
 
         dataProvider.setList(connectors);
 
-        if(!connectors.isEmpty())
-            connectorTable.getSelectionModel().setSelected(connectors.get(0), true);
+        connectorTable.selectDefaultEntity();
 
         form.setEnabled(false);
     }
