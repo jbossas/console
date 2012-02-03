@@ -26,6 +26,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -37,6 +39,8 @@ import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -66,7 +70,7 @@ public class VirtualServerList {
         form = new Form<VirtualServer>(VirtualServer.class);
         form.setNumColumns(2);
 
-        FormToolStrip<VirtualServer> toolstrip = new FormToolStrip<VirtualServer>(
+        FormToolStrip<VirtualServer> formTools = new FormToolStrip<VirtualServer>(
                 form,
                 new FormToolStrip.FormCallback<VirtualServer>() {
                     @Override
@@ -81,6 +85,7 @@ public class VirtualServerList {
                 }
         );
 
+        ToolStrip tableTools = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -88,14 +93,42 @@ public class VirtualServerList {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_virtualServelList());
-        toolstrip.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(addBtn);
 
 
-        layout.add(toolstrip.asWidget());
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final VirtualServer selectedObject = ((SingleSelectionModel<VirtualServer>) table.getSelectionModel()).getSelectedObject();
+                if(selectedObject!=null)
+                {
+                    Feedback.confirm(
+                            Console.MESSAGES.deleteTitle("Virtual Server"),
+                            Console.MESSAGES.deleteConfirm("Virtual Server"), new Feedback.ConfirmationHandler() {
+                        @Override
+                        public void onConfirmation(boolean isConfirmed) {
+                            if (isConfirmed)
+                                presenter.onDeleteVirtualServer(selectedObject.getName());
+                        }
+                    });
+                }
+            }
+        });
+
+        tableTools.addToolButtonRight(addBtn);
+        tableTools.addToolButtonRight(removeBtn);
+
+        layout.add(tableTools.asWidget());
 
         // ----
 
-        table = new DefaultCellTable<VirtualServer>(10);
+        table = new DefaultCellTable<VirtualServer>(8, new ProvidesKey<VirtualServer>() {
+            @Override
+            public Object getKey(VirtualServer item) {
+                return item.getName();
+            }
+        });
+
         dataProvider = new ListDataProvider<VirtualServer>();
         dataProvider.addDataDisplay(table);
 
@@ -142,6 +175,9 @@ public class VirtualServerList {
                     }
                 }, form
         );
+
+
+        layout.add(formTools.asWidget());
         layout.add(helpPanel.asWidget());
 
         layout.add(form.asWidget());
@@ -161,8 +197,7 @@ public class VirtualServerList {
 
         dataProvider.setList(servers);
 
-        if(!servers.isEmpty())
-            table.getSelectionModel().setSelected(servers.get(0), true);
+        table.selectDefaultEntity();
 
         form.setEnabled(false);
 
