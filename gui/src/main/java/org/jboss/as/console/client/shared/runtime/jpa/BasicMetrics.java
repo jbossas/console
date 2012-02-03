@@ -209,4 +209,13 @@ public class BasicMetrics {
         secondLevelSampler.addSample(unitMetric.getSecondLevelCacheMetric());
         connectionSampler.addSample(unitMetric.getConnectionMetric());
     }
+
+    public void clearValues() {
+        txSampler.clearSamples();
+        queryCacheSampler.clearSamples();
+        queryExecSampler.clearSamples();
+        slowQuery.setHTML("<b>Max Time Query</b>: ");
+        secondLevelSampler.clearSamples();
+        connectionSampler.clearSamples();
+    }
 }

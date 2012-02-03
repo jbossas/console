@@ -66,6 +66,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
         void setJpaUnits(List<JPADeployment> jpaUnits);
         void setSelectedUnit(String[] strings);
         void updateMetric(UnitMetric unitMetric);
+
+        void clearValues();
     }
 
     @Inject
@@ -116,8 +118,7 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     protected void onReset() {
         super.onReset();
 
-        if(serverSelection.isActive())
-            refresh(true);
+        if(isVisible()) refresh(true);
     }
 
     @Override
@@ -128,8 +129,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
 
-        //getView().clearSamples();
-        if(isVisible()) refresh(true);
+
+        refresh(true);
     }
 
     public void refresh(final boolean paging) {
@@ -137,6 +138,8 @@ public class JPAMetricPresenter extends Presenter<JPAMetricPresenter.MyView, JPA
 
         if(!serverSelection.isActive()) {
             Console.warning(Console.CONSTANTS.common_err_server_not_active());
+            getView().clearValues();
+            getView().setJpaUnits(Collections.EMPTY_LIST);
             return;
         }
 

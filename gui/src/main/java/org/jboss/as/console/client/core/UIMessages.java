@@ -148,4 +148,6 @@ public interface UIMessages extends Messages {
     String server_config_stillRunning(String name);
 
     String subsys_jca_err_ds_notEnabled(String name);
+
+    String subsys_jpa_err_mericDisabled(String s);
 }

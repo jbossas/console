@@ -106,7 +106,12 @@ public class JPAMetricsView extends SuspendableViewImpl implements JPAMetricPres
         }
         else
         {
-            Console.error("Metric not enabled on "+currentToken[0]);
+            Console.error(Console.MESSAGES.subsys_jpa_err_mericDisabled(currentToken[0]));
         }
+    }
+
+    @Override
+    public void clearValues() {
+        basicMetrics.clearValues();
     }
 }
