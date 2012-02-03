@@ -274,7 +274,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
     }
 
     public void launchNewJVMDialogue() {
-        window = new DefaultWindow("Create JVM Declaration");
+        window = new DefaultWindow(Console.MESSAGES.createTitle("JVM Configuration"));
         window.setWidth(480);
         window.setHeight(360);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
