@@ -99,7 +99,7 @@ public class NewConnectorWizard {
         CheckBoxItem enabled = new CheckBoxItem("enabled", "Enabled?");
         enabled.setValue(Boolean.TRUE);
 
-        form.setFields(name,enabled,socket,protocol,scheme);
+        form.setFields(name,socket,protocol,scheme, enabled);
 
         final FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {

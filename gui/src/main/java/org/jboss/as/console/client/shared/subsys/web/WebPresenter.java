@@ -330,7 +330,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void launchConnectorDialogue() {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Connector"));
         window.setWidth(480);
-        window.setHeight(360);
+        window.setHeight(400);
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
