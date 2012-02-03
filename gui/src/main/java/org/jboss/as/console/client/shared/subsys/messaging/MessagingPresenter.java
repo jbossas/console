@@ -438,13 +438,49 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     public void onDeleteSecDetails(final SecurityPattern pattern) {
+
         ModelNode operation = new ModelNode();
-        operation.get(OP).set(REMOVE);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "messaging");
-        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
-        operation.get(ADDRESS).add("security-setting", pattern.getPattern());
-        operation.get(ADDRESS).add("role", pattern.getRole());
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>(2);
+
+        ModelNode deleteRoleOp = new ModelNode();
+        deleteRoleOp.get(OP).set(REMOVE);
+        deleteRoleOp.get(ADDRESS).set(Baseadress.get());
+        deleteRoleOp.get(ADDRESS).add("subsystem", "messaging");
+        deleteRoleOp.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        deleteRoleOp.get(ADDRESS).add("security-setting", pattern.getPattern());
+        deleteRoleOp.get(ADDRESS).add("role", pattern.getRole());
+
+        steps.add(deleteRoleOp);
+
+        // verify if pattern can be removed as well
+        boolean remains = false;
+        for(SecurityPattern remaining : securitySettings)
+        {
+            if(remaining.getPattern().equals(pattern.getPattern())
+                    && !remaining.getRole().equals(pattern.getRole()))
+            {
+                remains = true;
+                break;
+            }
+
+        }
+
+        if(!remains)
+        {
+            ModelNode deletePatternOp = new ModelNode();
+            deletePatternOp.get(OP).set(REMOVE);
+            deletePatternOp.get(ADDRESS).set(Baseadress.get());
+            deletePatternOp.get(ADDRESS).add("subsystem", "messaging");
+            deletePatternOp.get(ADDRESS).add("hornetq-server", getCurrentServer());
+            deletePatternOp.get(ADDRESS).add("security-setting", pattern.getPattern());
+            steps.add(deletePatternOp);
+        }
+
+        operation.get(STEPS).set(steps);
+
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
