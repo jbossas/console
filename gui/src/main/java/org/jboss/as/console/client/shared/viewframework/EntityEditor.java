@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
@@ -79,22 +80,32 @@ public class EntityEditor<T> implements EntityListView<T> {
      * @param entitiesName The display name (plural) of the entities.
      * @param window The window used for creating a new entity.
      * @param table The table that holds the entities.
-     * @param details  The EntityDetails that manages CRUD for the selected entity.
+     * @param entityDetails  The EntityDetails that manages CRUD for the selected entity.
      */
     public EntityEditor(
             FrameworkPresenter presenter,
             String entitiesName,
             EntityPopupWindow<T> window,
             DefaultCellTable<T> table,
-            EntityDetails<T> details,
+            EntityDetails<T> entityDetails,
             EnumSet<FrameworkButton> hideButtons) {
 
         this.presenter = presenter;
         this.entitiesName = entitiesName;
         this.window = window;
         this.table = table;
-        this.details = details;
+        this.details = entityDetails;
         this.hideButtons = hideButtons;
+
+          // cleanup before editing
+        table.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+            @Override
+            public void onRowCountChange(RowCountChangeEvent event) {
+                if(event.getNewRowCount()==0 && event.isNewRowCountExact())
+                    details.clearValues();
+
+            }
+        });
     }
 
     public void setDescription(String description) {
@@ -150,7 +161,6 @@ public class EntityEditor<T> implements EntityListView<T> {
         pager.setDisplay(table);
         if (table.isVisible())
             panel.add(pager);
-
 
         panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_details()));
         panel.add(details.asWidget());
@@ -217,6 +227,8 @@ public class EntityEditor<T> implements EntityListView<T> {
         list.clear();
         list.addAll(entityList);
         dataProvider.flush();
+
+
 
         if (table.isEmpty()) return;
 

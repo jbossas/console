@@ -24,6 +24,7 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -158,5 +159,13 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
     @Override
     public String getTitle() {
         return entitiesName + " Details";
+    }
+
+    /*public void bind(DefaultCellTable<T> table) {
+        form.bind(table);
+    } */
+
+    public void clearValues() {
+        form.clearValues();
     }
 }
