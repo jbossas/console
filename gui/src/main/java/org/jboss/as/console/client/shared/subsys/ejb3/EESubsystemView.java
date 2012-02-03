@@ -6,6 +6,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
@@ -35,6 +36,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
     private EEPresenter presenter;
     private Form<EESubsystem> form;
     private ListDataProvider<Module> dataProvider;
+    private DefaultCellTable<Module> moduleList;
 
     @Override
     public Widget createWidget() {
@@ -76,10 +78,16 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         // -----
         // module list
 
-        final DefaultCellTable<Module> modules = new DefaultCellTable<Module>(5);
+        moduleList = new DefaultCellTable<Module>(5, new ProvidesKey<Module>() {
+            @Override
+            public Object getKey(Module item) {
+                return item.getName()+"_"+item.getSlot();
+            }
+        });
+
         dataProvider = new ListDataProvider<Module>();
-        dataProvider.addDataDisplay(modules);
-        modules.setSelectionModel(new SingleSelectionModel());
+        dataProvider.addDataDisplay(moduleList);
+        moduleList.setSelectionModel(new SingleSelectionModel());
 
         TextColumn<Module> name = new TextColumn<Module>() {
             @Override
@@ -95,8 +103,8 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
             }
         };
 
-        modules.addColumn(name, "Name");
-        modules.addColumn(slot, "Slot");
+        moduleList.addColumn(name, "Name");
+        moduleList.addColumn(slot, "Slot");
 
         ToolStrip moduleTools = new ToolStrip();
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
@@ -107,10 +115,13 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_eESubsystemView());
         moduleTools.addToolButtonRight(addBtn);
-        
+
         ToolButton button = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+                final Module module = ((SingleSelectionModel<Module>) moduleList.getSelectionModel()).getSelectedObject();
+                if(null==module) return;
 
                 Feedback.confirm(
                         Console.MESSAGES.deleteTitle("Module"),
@@ -120,7 +131,6 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                             public void onConfirmation(boolean isConfirmed) {
                                 if(isConfirmed)
                                 {
-                                    Module module = ((SingleSelectionModel<Module>) modules.getSelectionModel()).getSelectedObject();
                                     presenter.onRemoveModule(form.getEditedEntity(), module);
                                 }
                             }
@@ -128,13 +138,13 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
             }
         });
         button.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_eESubsystemView());
-        moduleTools.addToolButtonRight(button);        
+        moduleTools.addToolButtonRight(button);
 
-        VerticalPanel moduleList = new VerticalPanel();
-        moduleList.setStyleName("fill-layout-width");
+        VerticalPanel modulePanel = new VerticalPanel();
+        modulePanel.setStyleName("fill-layout-width");
 
-        moduleList.add(moduleTools.asWidget());
-        moduleList.add(modules.asWidget());
+        modulePanel.add(moduleTools.asWidget());
+        modulePanel.add(moduleList.asWidget());
 
         // ----
 
@@ -144,11 +154,11 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
                 .setDescription(Console.CONSTANTS.subsys_ee_desc())
                 .setMaster("Subsystem Defaults", master)
                 .setMasterTools(formToolStrip.asWidget())
-                .setDetail("Global Modules", moduleList).build();
+                .setDetail("Global Modules", modulePanel).build();
 
 
 
-        modules.getElement().setAttribute("style", "padding-top:5px");
+        modulePanel.getElement().setAttribute("style", "padding-top:5px");
 
         return panel;
     }
@@ -162,5 +172,7 @@ public class EESubsystemView extends DisposableViewImpl implements EEPresenter.M
     public void updateFrom(EESubsystem eeSubsystem) {
         form.edit(eeSubsystem);
         dataProvider.setList(eeSubsystem.getModules());
+
+        moduleList.selectDefaultEntity();
     }
 }
