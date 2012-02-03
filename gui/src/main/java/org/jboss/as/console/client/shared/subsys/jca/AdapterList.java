@@ -234,6 +234,7 @@ public class AdapterList implements PropertyManagement {
     public void setAdapters(List<ResourceAdapter> adapters) {
         dataProvider.setList(adapters);
 
+        propertyEditor.clearValues();
         table.selectDefaultEntity();
 
     }
