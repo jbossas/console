@@ -28,8 +28,8 @@ public class LongRunningTask {
     public void schedule(int millis) {
 
         final PopupPanel window = Feedback.loading(
-                "Please wait",
-                "Your request is being processed ...",
+                Console.CONSTANTS.common_label_plaseWait(),
+                Console.CONSTANTS.common_label_requestProcessed(),
                 new Feedback.LoadingCallback() {
                     @Override
                     public void onCancel() {

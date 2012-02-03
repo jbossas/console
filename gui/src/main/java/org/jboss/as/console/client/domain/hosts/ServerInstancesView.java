@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
@@ -67,10 +68,11 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private ServerInstancesPresenter presenter;
     private ListDataProvider<ServerInstance> instanceProvider;
     private ComboBox groupFilter;
-    private CellTable<ServerInstance> instanceTable;
+    private DefaultCellTable<ServerInstance> instanceTable;
     private String hostName;
     private ContentHeaderLabel nameLabel;
-	private ToolButton startBtn;
+    private ToolButton startBtn;
+    private Form<ServerInstance> form;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -94,7 +96,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         vpanel.add(nameLabel);
 
-        vpanel.add(new ContentDescription("Server instances represent the server runtime state. This includes the virtual machine status, as well as deployments and subsystem specific state (i.e. datasource pool sizes)."));
+        vpanel.add(new ContentDescription(Console.CONSTANTS.server_instances_desc()));
 
 
         // -----------------
@@ -123,7 +125,13 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         // -----------------
 
-        instanceTable = new DefaultCellTable<ServerInstance>(8);
+        instanceTable = new DefaultCellTable<ServerInstance>(8, new ProvidesKey<ServerInstance>() {
+            @Override
+            public Object getKey(ServerInstance item) {
+                return item.getName()+"_"+item.getGroup();
+            }
+        });
+
         instanceProvider = new ListDataProvider<ServerInstance>();
         instanceProvider.addDataDisplay(instanceTable);
 
@@ -167,8 +175,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
                         ImageResource res = null;
 
-                        if(instance.isRunning())
+                        if(instance.isRunning() && instance.getFlag()==null)
                             res = Icons.INSTANCE.status_good();
+                        else if(instance.isRunning() && instance.getFlag()!=null)
+                            res = Icons.INSTANCE.status_warn();
                         else
                             res = Icons.INSTANCE.status_bad();
 
@@ -180,6 +190,31 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         instanceTable.addColumn(groupColumn, Console.CONSTANTS.common_label_serverGroup());
         instanceTable.addColumn(stateColumn, Console.CONSTANTS.common_label_status());
         instanceTable.addColumn(statusColumn, Console.CONSTANTS.common_label_active());
+
+        ToolStrip tableTools = new ToolStrip();
+        startBtn = new ToolButton("Start/Stop", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                String state = form.getEditedEntity().isRunning() ? "Stop" : "Start";
+                Feedback.confirm(
+                        state + " Server Instance",
+                        Console.MESSAGES.modifyConfirm("Server Instance "+ form.getEditedEntity().getName()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed) {
+                                    ServerInstance instance = form.getEditedEntity();
+                                    presenter.startServer(hostName, instance.getServer(), !instance.isRunning());
+                                }
+                            }
+                        });
+            }
+        });
+        startBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_start_serverInstancesView());
+        tableTools.addToolButtonRight(startBtn);
+
+        vpanel.add(tableTools.asWidget());
         vpanel.add(instanceTable);
 
         DefaultPager pager = new DefaultPager();
@@ -202,41 +237,22 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         VerticalPanel formPanel = new VerticalPanel();
         formPanel.setStyleName("fill-layout-width");
 
-        final Form<ServerInstance> form = new Form<ServerInstance>(ServerInstance.class);
+        form = new Form<ServerInstance>(ServerInstance.class);
         form.setNumColumns(2);
 
-        ToolStrip formTools = new ToolStrip();
-        startBtn = new ToolButton("Start/Stop", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+        form.addEditListener(
+                new EditListener<ServerInstance>(
 
-                String state = form.getEditedEntity().isRunning() ? "stop" : "start";
-                Feedback.confirm(Console.CONSTANTS.common_label_serverInstances(), Console.MESSAGES.changeServerStatus(state, form.getEditedEntity().getName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if (isConfirmed) {
-                                    ServerInstance instance = form.getEditedEntity();
-                                    presenter.startServer(hostName, instance.getServer(), !instance.isRunning());
-                                }
-                            }
-                        });
-            }
-        });
-        startBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_start_serverInstancesView());
-        formTools.addToolButtonRight(startBtn);
-        form.addEditListener(new EditListener<ServerInstance>(
-
-        ) {
-            @Override
-            public void editingBean(ServerInstance serverInstance) {
-                String label = serverInstance.isRunning() ? "Stop":"Start";
-                startBtn.setText(label);
-            }
-        });
+                ) {
+                    @Override
+                    public void editingBean(ServerInstance serverInstance) {
+                        String label = serverInstance.isRunning() ? "Stop":"Start";
+                        startBtn.setText(label);
+                    }
+                });
 
         /* https://issues.jboss.org/browse/AS7-953
-        formTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
+        tableTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 
@@ -257,7 +273,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         }));
 
         */
-        formPanel.add(formTools);
 
         // -----
 
@@ -297,9 +312,11 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         nameLabel.setText(Console.CONSTANTS.common_label_runtimeStatus()+" (Host: "+hostName+")");
 
-        instanceProvider.setList(instances);
-        if(!instances.isEmpty())
-            instanceTable.getSelectionModel().setSelected(instances.get(0), true);
+        instanceProvider.getList().clear();
+        instanceProvider.getList().addAll(instances);
+        instanceProvider.flush();
+
+        instanceTable.selectDefaultEntity();
 
         /*List<String> names = new ArrayList<String>(instances.size());
         names.add(""); // de-select filter

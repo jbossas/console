@@ -553,4 +553,10 @@ public interface UIConstants extends Constants {
     String host_interfaces_desc();
 
     String host_properties_desc();
+
+    String server_instances_desc();
+
+    String common_label_plaseWait();
+
+    String common_label_requestProcessed();
 }

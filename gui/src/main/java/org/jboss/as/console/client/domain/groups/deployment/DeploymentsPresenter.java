@@ -120,12 +120,15 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     public void enableDisableDeployment(final DeploymentRecord record) {
 
 
-        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
-            @Override
-            public void onCancel() {
+        final PopupPanel loading = Feedback.loading(
+                Console.CONSTANTS.common_label_plaseWait(),
+                Console.CONSTANTS.common_label_requestProcessed(),
+                new Feedback.LoadingCallback() {
+                    @Override
+                    public void onCancel() {
 
-            }
-        });
+                    }
+                });
 
         deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
 
@@ -176,12 +179,15 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
     public void addToServerGroup(final DeploymentRecord deployment, final boolean enable, final String... serverGroups) {
 
 
-        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
-            @Override
-            public void onCancel() {
+        final PopupPanel loading = Feedback.loading(
+                Console.CONSTANTS.common_label_plaseWait(),
+                Console.CONSTANTS.common_label_requestProcessed(),
+                new Feedback.LoadingCallback() {
+                    @Override
+                    public void onCancel() {
 
-            }
-        });
+                    }
+                });
 
         deploymentStore.addToServerGroups(serverGroups, enable, deployment, new SimpleCallback<DMRResponse>() {
 
@@ -215,7 +221,10 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             return;
         }
 
-        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
+        final PopupPanel loading = Feedback.loading(
+                Console.CONSTANTS.common_label_plaseWait(),
+                Console.CONSTANTS.common_label_requestProcessed(),
+                new Feedback.LoadingCallback() {
             @Override
             public void onCancel() {
 

@@ -51,13 +51,13 @@ public class NewDeploymentWizard  {
 
     private DeploymentStep1 step1;
     private DeploymentStep2 step2;
-    
+
     private DefaultWindow window;
     private DispatchAsync dispatcher;
     private DeploymentViewRefresher refresher;
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
- 	private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON = "application/json";
 
     public NewDeploymentWizard(DefaultWindow window, DispatchAsync dispatcher, DeploymentViewRefresher refresher) {
         this.window = window;
@@ -81,23 +81,23 @@ public class NewDeploymentWizard  {
 
 
     public void onUploadComplete(String fileName, String hash) {
-        
+
         // html5 spec: anonymous file upload (C:\fakepath\)
         int fakePathIndex = fileName.lastIndexOf("\\");
         if(fakePathIndex!=-1)
         {
             fileName = fileName.substring(fakePathIndex+1, fileName.length());
         }
-        
+
         DeploymentReference deploymentRef = factory.deploymentReference().as();
         deploymentRef.setHash(hash);
         deploymentRef.setName(fileName);
         deploymentRef.setRuntimeName(fileName);
-        
+
         step2.edit(deploymentRef);
         deck.showWidget(1); // proceed to step2
     }
-    
+
     public void onDeployToGroup(final DeploymentReference deployment) {
         window.hide();
         assignDeploymentName(deployment);
@@ -129,12 +129,14 @@ public class NewDeploymentWizard  {
         try {
 
 
-            final PopupPanel loading = Feedback.loading("Processing Content", "Please wait ...", new Feedback.LoadingCallback() {
-                    @Override
-                    public void onCancel() {
+            final PopupPanel loading = Feedback.loading(
+                    Console.CONSTANTS.common_label_plaseWait(),
+                    Console.CONSTANTS.common_label_requestProcessed(), new Feedback.LoadingCallback() {
+                @Override
+                public void onCancel() {
 
-                    }
-                });
+                }
+            });
 
             rb.sendRequest(requestJSO, new RequestCallback(){
                 @Override

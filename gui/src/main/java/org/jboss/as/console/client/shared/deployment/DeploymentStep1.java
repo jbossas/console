@@ -90,12 +90,15 @@ public class DeploymentStep1 {
             @Override
             public void onClick(ClickEvent event) {
 
-                loading = Feedback.loading("Uploading Content", "Please wait ...", new Feedback.LoadingCallback() {
-                    @Override
-                    public void onCancel() {
+                loading = Feedback.loading(
+                        Console.CONSTANTS.common_label_plaseWait(),
+                        Console.CONSTANTS.common_label_requestProcessed(),
+                        new Feedback.LoadingCallback() {
+                            @Override
+                            public void onCancel() {
 
-                    }
-                });
+                            }
+                        });
                 form.submit();
             }
         };
@@ -142,7 +145,7 @@ public class DeploymentStep1 {
         });
 
         String stepText = "<h3>" + Console.CONSTANTS.common_label_step() + "1/2: " +
-                          Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
+                Console.CONSTANTS.common_label_deploymentSelection() + "</h3>";
         layout.add(new HTML(stepText));
         HTML description = new HTML();
         description.setHTML(Console.CONSTANTS.common_label_chooseFile());

@@ -60,86 +60,89 @@ import java.util.List;
 public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.MyView, DeploymentListPresenter.MyProxy>
         implements DeployCommandExecutor {
 
-  private final PlaceManager placeManager;
-  private StandaloneDeploymentInfo deploymentInfo;
-  private DeploymentStore deploymentStore;
+    private final PlaceManager placeManager;
+    private StandaloneDeploymentInfo deploymentInfo;
+    private DeploymentStore deploymentStore;
 
-  private DefaultWindow window;
-  private DispatchAsync dispatcher;
-  
-  @ProxyCodeSplit
-  @NameToken(NameTokens.DeploymentListPresenter)
-  @UseGatekeeper( StandaloneGateKeeper.class )
-  public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
-  }
+    private DefaultWindow window;
+    private DispatchAsync dispatcher;
 
-  public interface MyView extends View {
-    void setPresenter(DeploymentListPresenter presenter);
-    void updateDeploymentInfo(List<DeploymentRecord> deployments);
-  }
+    @ProxyCodeSplit
+    @NameToken(NameTokens.DeploymentListPresenter)
+    @UseGatekeeper( StandaloneGateKeeper.class )
+    public interface MyProxy extends Proxy<DeploymentListPresenter>, Place {
+    }
 
-  @Inject
-  public DeploymentListPresenter(
-          EventBus eventBus, MyView view, MyProxy proxy,
-          DeploymentStore deploymentStore,
-          PlaceManager placeManager,
-          DispatchAsync dispatcher) {
+    public interface MyView extends View {
+        void setPresenter(DeploymentListPresenter presenter);
+        void updateDeploymentInfo(List<DeploymentRecord> deployments);
+    }
 
-    super(eventBus, view, proxy);
-    this.placeManager = placeManager;
-    this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
-    this.deploymentStore = deploymentStore;
-    this.dispatcher = dispatcher;
-  }
+    @Inject
+    public DeploymentListPresenter(
+            EventBus eventBus, MyView view, MyProxy proxy,
+            DeploymentStore deploymentStore,
+            PlaceManager placeManager,
+            DispatchAsync dispatcher) {
 
-  @Override
-  protected void onBind() {
-    super.onBind();
-    getView().setPresenter(this);
-  }
+        super(eventBus, view, proxy);
+        this.placeManager = placeManager;
+        this.deploymentInfo = new StandaloneDeploymentInfo(this, deploymentStore);
+        this.deploymentStore = deploymentStore;
+        this.dispatcher = dispatcher;
+    }
 
-  @Override
-  protected void onReset() {
-    super.onReset();
-    deploymentInfo.refreshView();
-  }
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
 
-  @Override
-  protected void revealInParent() {
-    RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
-  }
-
-  public void onFilterType(String value) {
-  }
-
-  @Override
-  public void removeContent(final DeploymentRecord record) {
-    deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>() {
-
-      @Override
-      public void onSuccess(DMRResponse response) {
+    @Override
+    protected void onReset() {
+        super.onReset();
         deploymentInfo.refreshView();
-        DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentListPresenter.this, record);
-      }
+    }
 
-      @Override
-      public void onFailure(Throwable t) {
-        super.onFailure(t);
-        deploymentInfo.refreshView();
-        DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(DeploymentListPresenter.this, record, t);
-      }
-    });
-  }
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(getEventBus(), StandaloneRuntimePresenter.TYPE_MainContent, this);
+    }
+
+    public void onFilterType(String value) {
+    }
+
+    @Override
+    public void removeContent(final DeploymentRecord record) {
+        deploymentStore.removeContent(record, new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse response) {
+                deploymentInfo.refreshView();
+                DeploymentCommand.REMOVE_FROM_STANDALONE.displaySuccessMessage(DeploymentListPresenter.this, record);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                super.onFailure(t);
+                deploymentInfo.refreshView();
+                DeploymentCommand.REMOVE_FROM_STANDALONE.displayFailureMessage(DeploymentListPresenter.this, record, t);
+            }
+        });
+    }
 
     @Override
     public void enableDisableDeployment(final DeploymentRecord record) {
 
-        final PopupPanel loading = Feedback.loading("Processing Deployment", "Please wait ...", new Feedback.LoadingCallback() {
-            @Override
-            public void onCancel() {
+        final PopupPanel loading = Feedback.loading(
+                Console.CONSTANTS.common_label_plaseWait(),
+                Console.CONSTANTS.common_label_requestProcessed(),
+                new Feedback.LoadingCallback() {
+                    @Override
+                    public void onCancel() {
 
-            }
-        });
+                    }
+                });
 
         deploymentStore.enableDisableDeployment(record, new SimpleCallback<DMRResponse>() {
 
@@ -165,27 +168,27 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         });
     }
 
-  @Override
-  public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups) {
-      throw new UnsupportedOperationException("Not supported in standalone mode.");
-  }
+    @Override
+    public void addToServerGroup(DeploymentRecord record, boolean enable, String... selectedGroups) {
+        throw new UnsupportedOperationException("Not supported in standalone mode.");
+    }
 
-  @Override
-  public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
-      return Collections.EMPTY_LIST;
-  }
-  
-  @Override
-  public void promptForGroupSelections(DeploymentRecord record) {
-      throw new UnsupportedOperationException("Not supported in standalone mode.");
-  }
-  
-  @Override
-  public void removeDeploymentFromGroup(DeploymentRecord record) {
-    throw new UnsupportedOperationException("Not supported in standalone mode.");
-  }
-  
-  public void launchNewDeploymentDialoge() {
+    @Override
+    public List<ServerGroupRecord> getPossibleGroupAssignments(DeploymentRecord record) {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void promptForGroupSelections(DeploymentRecord record) {
+        throw new UnsupportedOperationException("Not supported in standalone mode.");
+    }
+
+    @Override
+    public void removeDeploymentFromGroup(DeploymentRecord record) {
+        throw new UnsupportedOperationException("Not supported in standalone mode.");
+    }
+
+    public void launchNewDeploymentDialoge() {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(480);
         window.setHeight(360);
@@ -197,7 +200,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         });
 
         window.setWidget(
-            new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
+                new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
         );
 
         window.setGlassEnabled(true);
