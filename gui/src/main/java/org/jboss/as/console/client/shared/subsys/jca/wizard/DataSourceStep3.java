@@ -32,6 +32,7 @@ import org.jboss.as.console.client.widgets.forms.items.NonRequiredTextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.PasswordBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
@@ -59,7 +60,7 @@ public class DataSourceStep3 {
 
         form = new Form<DataSource>(DataSource.class);
 
-        TextBoxItem connectionUrl = new TextBoxItem("connectionUrl", "Connection URL");
+        TextAreaItem connectionUrl = new TextAreaItem("connectionUrl", "Connection URL");
         TextBoxItem user = new NonRequiredTextBoxItem("username", "Username");
         PasswordBoxItem pass = new PasswordBoxItem("password", "Password") {
             {

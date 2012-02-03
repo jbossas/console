@@ -165,7 +165,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 {
                     window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
                     window.setWidth(480);
-                    window.setHeight(400);
+                    window.setHeight(450);
 
                     window.setWidget(
                             new NewDatasourceWizard(DataSourcePresenter.this, drivers, bootstrap).asWidget()
@@ -204,7 +204,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
                 {
                     window = new DefaultWindow(Console.MESSAGES.createTitle("XA Datasource"));
                     window.setWidth(480);
-                    window.setHeight(320);
+                    window.setHeight(450);
                     window.addCloseHandler(new CloseHandler<PopupPanel>() {
                         @Override
                         public void onClose(CloseEvent<PopupPanel> event) {
