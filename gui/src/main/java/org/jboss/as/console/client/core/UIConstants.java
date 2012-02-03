@@ -551,4 +551,6 @@ public interface UIConstants extends Constants {
     String common_serverConfig_desc();
 
     String host_interfaces_desc();
+
+    String host_properties_desc();
 }
