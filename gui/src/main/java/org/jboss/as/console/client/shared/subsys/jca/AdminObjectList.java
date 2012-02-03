@@ -166,7 +166,6 @@ public class AdminObjectList implements PropertyManagement {
 
         configProperties = new PropertyEditor(this, true);
 
-
         // ----
 
         VerticalPanel formpanel = new VerticalPanel();
@@ -294,6 +293,8 @@ public class AdminObjectList implements PropertyManagement {
     public void setAdapter(ResourceAdapter adapter) {
 
         this.currentAdapter = adapter;
+
+        configProperties.clearValues();
 
         headline.setText("Resource Adapter: "+adapter.getArchive());
 
