@@ -138,8 +138,7 @@ public class TopicList {
 
         endpointProvider.setList(topics);
 
-        if(!topics.isEmpty())
-            table.getSelectionModel().setSelected(topics.get(0), true);
+        table.selectDefaultEntity();
     }
 
     public void setEnabled(boolean b) {

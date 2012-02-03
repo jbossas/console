@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -113,7 +114,12 @@ public class QueueList {
 
         layout.add(tableTools.asWidget());
 
-        queueTable = new DefaultCellTable<Queue>(10);
+        queueTable = new DefaultCellTable<Queue>(8, new ProvidesKey<Queue>() {
+            @Override
+            public Object getKey(Queue item) {
+                return item.getJndiName();
+            }
+        });
         queueProvider = new ListDataProvider<Queue>();
         queueProvider.addDataDisplay(queueTable);
 
@@ -189,8 +195,7 @@ public class QueueList {
     {
         queueProvider.setList(queues);
 
-        if(!queues.isEmpty())
-            queueTable.getSelectionModel().setSelected(queues.get(0), true);
+        queueTable.selectDefaultEntity();
 
         form.setEnabled(false);
     }

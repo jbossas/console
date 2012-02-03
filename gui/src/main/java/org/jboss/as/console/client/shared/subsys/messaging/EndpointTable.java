@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
@@ -30,7 +31,12 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 class EndpointTable extends DefaultCellTable<JMSEndpoint>{
 
     public EndpointTable() {
-        super(20);
+        super(8, new ProvidesKey<JMSEndpoint>() {
+            @Override
+            public Object getKey(JMSEndpoint item) {
+                return item.getJndiName();
+            }
+        });
 
         TextColumn<JMSEndpoint> nameColumn = new TextColumn<JMSEndpoint>() {
             @Override
