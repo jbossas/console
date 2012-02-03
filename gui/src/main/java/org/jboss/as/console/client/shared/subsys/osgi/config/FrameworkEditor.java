@@ -117,25 +117,7 @@ public class FrameworkEditor {
         });
         editBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_edit_frameworkEditor());
         toolStrip.addToolButton(editBtn);
-        
-        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final OSGiCapability capability =  capabilitiesTable.getSelection();
-                Feedback.confirm(Console.MESSAGES.subsys_osgi_removeCapability(),
-                    Console.MESSAGES.subsys_osgi_removeCapabilityConfirm(capability.getIdentifier()),
-                    new Feedback.ConfirmationHandler() {
-                        @Override
-                        public void onConfirmation(boolean isConfirmed) {
-                            if (isConfirmed)
-                                presenter.onDeleteCapability(capability.getIdentifier());
-                        }
-                    });
-            }
-        });
-        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_frameworkEditor());
-        toolStrip.addToolButton(deleteBtn);
-        
+
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -143,8 +125,26 @@ public class FrameworkEditor {
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_frameworkEditor());
-        toolStrip.addToolButton(addBtn);
+        toolStrip.addToolButtonRight(addBtn);
         layout.add(toolStrip);
+
+        ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final OSGiCapability capability =  capabilitiesTable.getSelection();
+                Feedback.confirm(Console.MESSAGES.subsys_osgi_removeCapability(),
+                        Console.MESSAGES.subsys_osgi_removeCapabilityConfirm(capability.getIdentifier()),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onDeleteCapability(capability.getIdentifier());
+                            }
+                        });
+            }
+        });
+        deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_frameworkEditor());
+        toolStrip.addToolButtonRight(deleteBtn);
 
         StaticHelpPanel helpPanel = new StaticHelpPanel(Console.MESSAGES.subsys_osgi_capabilitiesHelp());
         layout.add(helpPanel.asWidget());

@@ -47,7 +47,7 @@ public class FrameworkPropertiesTable implements PropertyManagement {
       propEditor.setHelpText(Console.MESSAGES.subsys_osgi_frameworkPropertiesHelp());
 
       Widget widget = propEditor.asWidget();
-      propEditor.setAllowEditProps(true);
+      propEditor.setAllowEditProps(false);
       return widget;
     }
 

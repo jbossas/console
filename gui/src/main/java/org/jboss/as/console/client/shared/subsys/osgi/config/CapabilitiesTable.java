@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author David Bosschaert
  */
 public class CapabilitiesTable {
-    private CellTable<OSGiCapability> table;
+    private DefaultCellTable<OSGiCapability> table;
     private ListDataProvider<OSGiCapability> dataProvider;
     private SingleSelectionModel<OSGiCapability> selectionModel;
 
@@ -45,7 +46,13 @@ public class CapabilitiesTable {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
-        table = new DefaultCellTable<OSGiCapability>(10);
+        table = new DefaultCellTable<OSGiCapability>(8, new ProvidesKey<OSGiCapability>() {
+            @Override
+            public Object getKey(OSGiCapability item) {
+                return item.getIdentifier();
+            }
+        });
+
         dataProvider = new ListDataProvider<OSGiCapability>();
         dataProvider.addDataDisplay(table);
 
@@ -122,5 +129,7 @@ public class CapabilitiesTable {
     void setCapabilities(List<OSGiCapability> capabilities) {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(capabilities);
+
+        table.selectDefaultEntity();
     }
 }
