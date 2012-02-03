@@ -92,7 +92,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
         if(isVisible()) refresh();
     }
 
-    private void refresh() {
+    public void refresh() {
 
         if(!serverSelection.isActive()) {
             Console.warning("The selected server is not running");
@@ -143,7 +143,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
         if(!currentSelection.isEnabled())
         {
-            Console.error("Datasource not enabled: "+currentSelection.getName());
+            Console.error(Console.MESSAGES.subsys_jca_err_ds_notEnabled(currentSelection.getName()));
             getView().clearSamples();
             return;
         }
@@ -190,7 +190,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
                 if(response.isFailure())
                 {
-                    Console.error("Error loading metrics", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Datasource Metrics"), response.getFailureDescription());
                 }
                 else
                 {
@@ -235,7 +235,7 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
                 if(response.isFailure())
                 {
-                    Console.error("Error loading metrics", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Datasource Metrics"), response.getFailureDescription());
                 }
                 else
                 {

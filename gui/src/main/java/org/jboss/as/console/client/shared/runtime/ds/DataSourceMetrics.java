@@ -55,7 +55,8 @@ public class DataSourceMetrics {
             @Override
             public void onClick(ClickEvent event) {
 
-                presenter.setSelectedDS(getCurrentSelection(), isXA);
+                //presenter.setSelectedDS(getCurrentSelection(), isXA);
+                presenter.refresh();
             }
         }));
 
@@ -189,7 +190,7 @@ public class DataSourceMetrics {
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline(isXA ? "XA Data Source Metrics":"Data Source Metrics")
-                .setDescription("Metrics for data sources.")
+                .setDescription(Console.CONSTANTS.subsys_jca_dataSource_metric_desc())
                 .setMaster("Datasource", tablePanel)
                 .addDetail("Pool Usage", poolSampler.asWidget())
                 .addDetail("Prepared Statement Cache", cacheSampler.asWidget());
