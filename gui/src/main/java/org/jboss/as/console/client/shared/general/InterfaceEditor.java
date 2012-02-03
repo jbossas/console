@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.validation.ValidationResult;
@@ -42,7 +44,9 @@ import java.util.Map;
  */
 public class InterfaceEditor {
 
-    private CellTable<Interface> table;
+    private DefaultCellTable<Interface> table;
+    private ListDataProvider<Interface> dataProvider;
+
     private String title;
     private String description = null;
     private InterfaceManagement presenter;
@@ -66,7 +70,7 @@ public class InterfaceEditor {
         form = new Form<Interface>(Interface.class);
 
         ToolStrip topLevelTools = new ToolStrip();
-        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add() , new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -76,7 +80,7 @@ public class InterfaceEditor {
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_interfaceEditor());
         topLevelTools.addToolButtonRight(addBtn);
         
-        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
+        ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -98,7 +102,6 @@ public class InterfaceEditor {
         topLevelTools.addToolButtonRight(removeBtn);
 
 
-        layout.add(topLevelTools);
 
         // -----------
         VerticalPanel panel = new VerticalPanel();
@@ -110,7 +113,15 @@ public class InterfaceEditor {
         if(description!=null)
             panel.add(new ContentDescription(description));
 
-        table = new DefaultCellTable<Interface>(10);
+        table = new DefaultCellTable<Interface>(8, new ProvidesKey<Interface>() {
+            @Override
+            public Object getKey(Interface item) {
+                return item.getName();
+            }
+        });
+
+        dataProvider = new ListDataProvider<Interface>();
+        dataProvider.addDataDisplay(table);
 
         TextColumn<Interface> nameColumn = new TextColumn<Interface>() {
             @Override
@@ -121,6 +132,7 @@ public class InterfaceEditor {
 
         table.addColumn(nameColumn, "Name");
 
+        panel.add(topLevelTools);
         panel.add(table);
 
 
@@ -251,8 +263,7 @@ public class InterfaceEditor {
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(topLevelTools, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
@@ -262,11 +273,9 @@ public class InterfaceEditor {
         anyAddress.clearSelection();
         form.clearValues();
 
-        table.setRowCount(interfaces.size(), true);
-        table.setRowData(interfaces);
+        dataProvider.setList(interfaces);
 
-        if(!interfaces.isEmpty())
-            table.getSelectionModel().setSelected(interfaces.get(0), true);
+        table.selectDefaultEntity();
     }
 
     public void setPresenter(InterfaceManagement presenter) {
