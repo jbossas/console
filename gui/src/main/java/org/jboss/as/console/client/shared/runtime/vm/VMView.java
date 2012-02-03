@@ -18,4 +18,6 @@ public interface VMView extends View {
     void setThreads(Metric thread);
     void setOSMetric(OSMetric osMetric);
     void setRuntimeMetric(RuntimeMetric runtime);
+
+    void clearSamples();
 }

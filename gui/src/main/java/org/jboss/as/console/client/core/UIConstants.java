@@ -559,4 +559,6 @@ public interface UIConstants extends Constants {
     String common_label_plaseWait();
 
     String common_label_requestProcessed();
+
+    String common_err_server_not_active();
 }

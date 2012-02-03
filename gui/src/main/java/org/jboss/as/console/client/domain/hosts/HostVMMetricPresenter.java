@@ -15,6 +15,7 @@ import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
+import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.BeanFactory;
@@ -25,15 +26,18 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.vm.VMMetricsManagement;
 import org.jboss.as.console.client.shared.runtime.vm.VMView;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.dmr.client.ModelNode;
+
+import java.util.Collections;
 
 /**
  * @author Heiko Braun
  * @date 10/7/11
  */
 public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresenter.MyProxy>
-        implements VMMetricsManagement, HostSelectionEvent.HostSelectionListener  {
+        implements VMMetricsManagement, ServerSelectionEvent.ServerSelectionListener  {
 
 
     private DispatchAsync dispatcher;
@@ -72,16 +76,17 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     }
 
     @Override
-    public void onHostSelection(String hostName) {
-        if(isVisible())
-            refresh();
+    public void onServerSelection(String hostName, ServerInstance server) {
+
+        System.out.println(hostName + " "+server.getName());
+        if(isVisible()) refresh();
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override
@@ -91,8 +96,14 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
     @Override
     public void refresh() {
-        if(serverSelection.isSet())
-            loadVMStatus(serverSelection.getServer().getName());
+
+        if(!serverSelection.isActive()) {
+            Console.warning("The selected server is not running");
+            getView().clearSamples();
+            return;
+        }
+
+        loadVMStatus(serverSelection.getServer().getName());
     }
 
     private LoadJVMMetricsCmd createLoadMetricCmd() {
@@ -121,7 +132,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             return;
         }
 
@@ -130,7 +141,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("No VM Metrics available for server "+serverName, caught.getMessage());
+                Console.error(Console.MESSAGES.failed("JVM Status ")+serverName, caught.getMessage());
             }
 
             @Override
@@ -160,4 +171,6 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
             }
         });
     }
+
+
 }

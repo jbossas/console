@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.jvm.model.OSMetric;
 import org.jboss.as.console.client.shared.jvm.model.RuntimeMetric;
@@ -42,6 +43,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
     private ToolButton pauseBtn;
 
     protected boolean hasServerPicker = false;
+
 
     @Override
     public void setPresenter(VMMetricsManagement presenter) {
@@ -80,12 +82,13 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
 
         pauseBtn.addClickHandler(clickHandler);
         topLevelTools.addToolButton(pauseBtn);      */
-        topLevelTools.addToolButtonRight(new ToolButton("Refresh", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.refresh();
-            }
-        }));
+        topLevelTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_refresh(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        presenter.refresh();
+                    }
+                }));
 
 
         // -------
@@ -121,17 +124,17 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         osPanel.add(processors);
 
         // cross references
-       /* HTML jvmConfigLink = new HTML("<a href='javascript:void(0)'>Configure Virtual Machine &rarr;</a>");
-        jvmConfigLink.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
-                        new PlaceRequest(NameTokens.HostJVMPresenter)
-                );
-            }
-        });
-        if(hasServerPicker)
-            osPanel.add(jvmConfigLink);  */
+        /* HTML jvmConfigLink = new HTML("<a href='javascript:void(0)'>Configure Virtual Machine &rarr;</a>");
+  jvmConfigLink.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+          Console.MODULES.getPlaceManager().revealPlace(
+                  new PlaceRequest(NameTokens.HostJVMPresenter)
+          );
+      }
+  });
+  if(hasServerPicker)
+      osPanel.add(jvmConfigLink);  */
 
         header.add(osPanel);
 
@@ -198,8 +201,16 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
         if(threadChart!=null)
         {
             osName.setHTML("<b style='color:#A7ABB4'>Operating System:</b>   "+osMetric.getName()+" "+osMetric.getVersion());
-            processors.setHTML("<b style='color:#A7ABB4'>Number of processors:</b>   "+osMetric.getNumProcessors());
+            processors.setHTML("<b style='color:#A7ABB4'>Processors:</b>   "+osMetric.getNumProcessors());
         }
 
     }
+
+    @Override
+    public void clearSamples() {
+        heapChart.clearSamples();
+        nonHeapChart.clearSamples();
+        threadChart.clearSamples();
+    }
+
 }
