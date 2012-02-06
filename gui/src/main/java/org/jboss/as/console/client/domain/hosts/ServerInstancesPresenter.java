@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -33,7 +34,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
-import org.jboss.as.console.client.domain.events.HostSelectionEvent;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
@@ -43,8 +43,9 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
-import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 
 import java.util.List;
 
@@ -55,14 +56,14 @@ import java.util.List;
  * @date 3/8/11
  */
 public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter.MyView, ServerInstancesPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener {
+        implements ServerSelectionEvent.ServerSelectionListener {
 
     private final PlaceManager placeManager;
     private HostInformationStore hostInfoStore;
     private EntityFilter<ServerInstance> filter = new EntityFilter<ServerInstance>();
     private List<ServerInstance> serverInstances;
-    private CurrentHostSelection hostSelection;
     private ReloadState reloadState;
+    private CurrentServerSelection serverSelection;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -79,13 +80,13 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public ServerInstancesPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            HostInformationStore hostInfoStore, CurrentHostSelection hostSelection,
+            HostInformationStore hostInfoStore, CurrentServerSelection serverSelection,
             ReloadState reloadState) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
-        this.hostSelection = hostSelection;
+        this.serverSelection = serverSelection;
         this.reloadState = reloadState;
     }
 
@@ -93,24 +94,29 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
 
-        if(hostSelection.isSet())
-            loadHostData();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(serverSelection.isSet())
+                    loadHostData();
+            }
+        });
 
     }
 
     private void loadHostData() {
 
-        if(!hostSelection.isSet())
+        if(!serverSelection.isSet())
             throw new RuntimeException("Host selection not set!");
 
-        hostInfoStore.getServerInstances(hostSelection.getName(), new SimpleCallback<List<ServerInstance>>() {
+        hostInfoStore.getServerInstances(serverSelection.getHost(), new SimpleCallback<List<ServerInstance>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -120,7 +126,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
-                getView().updateInstances(hostSelection.getName(), result);
+                getView().updateInstances(serverSelection.getHost(), result);
             }
         });
     }
@@ -131,22 +137,11 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     @Override
-    public void onHostSelection(final String hostName) {
-
-        // current host selection is set in DomainRuntimePresenter
-        /*if (isVisible() && !hostSelection.isSet())
-        {
-            // edge case: init from external url (#server-instances)
-            // in that case the order of initialization is different
-            hostSelection.setName(hostName);
-
-        }  */
-
-        if(isVisible() && hostSelection.isSet())
+    public void onServerSelection(String hostName, ServerInstance server) {
+         if(isVisible() && serverSelection.isSet())
         {
             loadHostData();
         }
-
     }
 
     public void onFilterByGroup(String serverConfig) {
@@ -156,7 +151,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                 serverInstances
         );
 
-        getView().updateInstances(hostSelection.getName(), filtered);
+        getView().updateInstances(serverSelection.getHost(), filtered);
     }
 
     class ServerGroupPredicate implements Predicate<ServerInstance> {
