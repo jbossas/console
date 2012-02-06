@@ -209,8 +209,12 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         @Override
                         public void onFailure(Throwable caught) {
                             numResponses++;
-                            if(numResponses==numRequests)
-                                callback.onFailure(caught);
+
+                            ServerInstance instance = createInstanceModel(handle);
+                            instance.setRunning(false);
+                            instanceList.add(instance);
+
+                            checkComplete(instanceList, callback);
                         }
 
                         @Override
@@ -221,11 +225,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                             ModelNode statusResponse = result.get();
                             ModelNode payload = statusResponse.get(RESULT);
 
-                            ServerInstance instance = factory.serverInstance().as();
-                            instance.setName(handle.getName());
-                            instance.setServer(handle.getName());
-                            instance.setGroup(handle.getGroup());
-
+                            ServerInstance instance = createInstanceModel(handle);
                             instanceList.add(instance);
 
                             if(statusResponse.isFailure())
@@ -251,16 +251,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                             }
 
-                            if(numRequests==numResponses)
-                            {
-                                Collections.sort(instanceList, new Comparator<ServerInstance>() {
-                                    @Override
-                                    public int compare(ServerInstance a, ServerInstance b) {
-                                        return a.getName().compareTo(b.getName());
-                                    }
-                                });
-                                callback.onSuccess(instanceList);
-                            }
+                            checkComplete(instanceList, callback);
                         }
                     });
 
@@ -314,6 +305,27 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
      });   */
 
+    }
+
+    private void checkComplete(List<ServerInstance> instanceList, AsyncCallback<List<ServerInstance>> callback) {
+        if(numRequests==numResponses)
+        {
+            Collections.sort(instanceList, new Comparator<ServerInstance>() {
+                @Override
+                public int compare(ServerInstance a, ServerInstance b) {
+                    return a.getName().compareTo(b.getName());
+                }
+            });
+            callback.onSuccess(instanceList);
+        }
+    }
+
+    private ServerInstance createInstanceModel(Server handle) {
+        ServerInstance instance = factory.serverInstance().as();
+        instance.setName(handle.getName());
+        instance.setServer(handle.getName());
+        instance.setGroup(handle.getGroup());
+        return instance;
     }
 
     @Override
