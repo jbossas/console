@@ -21,6 +21,7 @@ package org.jboss.as.console.client.domain.model.impl;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -34,6 +35,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -175,8 +177,14 @@ public class HostInfoStoreImpl implements HostInformationStore {
         });
     }
 
+    int numRequests = 0;
+    int numResponses = 0;
+
     @Override
     public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
+
+        numRequests=0;
+        numResponses = 0;
 
         final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
 
@@ -193,11 +201,22 @@ public class HostInfoStoreImpl implements HostInformationStore {
                     operation.get(ADDRESS).add("host", host);
                     operation.get(ADDRESS).add("server", handle.getName());
 
+                    numRequests++;
+
                     dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
 
                         @Override
+                        public void onFailure(Throwable caught) {
+                            numResponses++;
+                            if(numResponses==numRequests)
+                                callback.onFailure(caught);
+                        }
+
+                        @Override
                         public void onSuccess(DMRResponse result) {
+
+                            numResponses++;
 
                             ModelNode statusResponse = result.get();
                             ModelNode payload = statusResponse.get(RESULT);
@@ -232,7 +251,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                             }
 
-                            if(instanceList.size()== serverConfigs.size())
+                            if(numRequests==numResponses)
                             {
                                 Collections.sort(instanceList, new Comparator<ServerInstance>() {
                                     @Override
