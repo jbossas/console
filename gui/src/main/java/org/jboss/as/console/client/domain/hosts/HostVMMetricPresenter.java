@@ -78,8 +78,12 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
 
-        System.out.println(hostName + " "+server.getName());
-        if(isVisible()) refresh();
+         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(isVisible()) refresh();
+            }
+         });
     }
 
     @Override

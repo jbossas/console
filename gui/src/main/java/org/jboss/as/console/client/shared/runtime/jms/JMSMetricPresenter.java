@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.jms;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -105,8 +106,13 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
 
         getView().clearSamples();
 
-        // refresh if needed. Otherwise it will happen onReset()
-        if(isVisible()) refresh();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(isVisible()) refresh();
+            }
+        });
+
     }
 
     public void refresh() {

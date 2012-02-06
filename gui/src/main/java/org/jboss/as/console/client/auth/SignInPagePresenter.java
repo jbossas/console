@@ -146,7 +146,7 @@ public class SignInPagePresenter extends
                 placeManager.revealPlace(myRequest);
             }                                       */
 
-            LoadingOverlay.on(getView().asWidget(), true);
+            //LoadingOverlay.on(getView().asWidget(), true);
             getView().asWidget().setVisible(false);
 
             PlaceRequest myRequest = new PlaceRequest(NameTokens.mainLayout);

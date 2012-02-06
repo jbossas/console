@@ -134,13 +134,13 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public void onHostSelection(final String hostName) {
 
         // current host selection is set in DomainRuntimePresenter
-        if (isVisible() && !hostSelection.isSet())
+        /*if (isVisible() && !hostSelection.isSet())
         {
             // edge case: init from external url (#server-instances)
             // in that case the order of initialization is different
             hostSelection.setName(hostName);
 
-        }
+        }  */
 
         if(isVisible() && hostSelection.isSet())
         {

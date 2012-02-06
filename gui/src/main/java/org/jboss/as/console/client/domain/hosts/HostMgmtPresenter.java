@@ -52,8 +52,7 @@ import java.util.List;
  * @date 3/2/11
  */
 public class HostMgmtPresenter
-        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
-        implements HostSelectionEvent.HostSelectionListener  {
+        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
 
@@ -172,10 +171,5 @@ public class HostMgmtPresenter
     @Override
     protected void revealInParent() {
         RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
-    }
-
-    @Override
-    public void onHostSelection(String hostName) {
-        hostSelection.setName(hostName);
     }
 }

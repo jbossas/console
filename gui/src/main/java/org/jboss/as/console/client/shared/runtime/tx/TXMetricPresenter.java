@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.tx;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -71,10 +72,13 @@ public class TXMetricPresenter extends Presenter<TXMetricPresenter.MyView, TXMet
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
 
-        getView().clearSamples();
-
-        // refresh if needed. Otherwise it will happen onReset()
-        if(isVisible()) refresh();
+         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                getView().clearSamples();
+                if(isVisible()) refresh();
+            }
+         });
     }
 
     @Override

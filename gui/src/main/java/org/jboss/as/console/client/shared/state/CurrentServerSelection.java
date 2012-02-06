@@ -41,7 +41,6 @@ public class CurrentServerSelection {
     }
 
     public void setServer(ServerInstance server) {
-        System.out.println("**** update to "+server.getName());
         this.server = server;
     }
 

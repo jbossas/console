@@ -31,6 +31,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
+import org.jboss.as.console.client.domain.events.HostSelectionEvent;
+import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.state.CurrentHostSelection;
+import org.jboss.as.console.client.shared.state.CurrentServerSelection;
+import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.util.LoadingOverlay;
 
 /**
@@ -39,10 +44,13 @@ import org.jboss.ballroom.client.util.LoadingOverlay;
  */
 public class MainLayoutPresenter
         extends Presenter<MainLayoutPresenter.MainLayoutView,
-        MainLayoutPresenter.MainLayoutProxy> {
+        MainLayoutPresenter.MainLayoutProxy>
+        implements ServerSelectionEvent.ServerSelectionListener, HostSelectionEvent.HostSelectionListener   {
 
     boolean revealDefault = true;
     private BootstrapContext bootstrap;
+    private CurrentServerSelection serverSelection;
+    private CurrentHostSelection hostSelection;
 
     public interface MainLayoutView extends View {
     }
@@ -58,28 +66,31 @@ public class MainLayoutPresenter
     public MainLayoutPresenter(
             EventBus eventBus,
             MainLayoutView view,
-            MainLayoutProxy proxy, BootstrapContext bootstrap) {
+            MainLayoutProxy proxy, BootstrapContext bootstrap,
+            CurrentServerSelection serverSelection, CurrentHostSelection hostSelection) {
         super(eventBus, view, proxy);
         this.bootstrap = bootstrap;
+        this.hostSelection = hostSelection;
+        this.serverSelection = serverSelection;
 
     }
 
     @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-        /*if(revealDefault && request.getNameToken().equals(NameTokens.mainLayout))
-        {
-            revealDefault = false;
-            Console.MODULES.getPlaceManager().revealPlace(
-                    bootstrap.getDefaultPlace()
-            );
-        } */
+    protected void onBind() {
+        super.onBind();
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
+        getEventBus().addHandler(ServerSelectionEvent.TYPE, this);
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        LoadingOverlay.hide();
+    public void onHostSelection(String hostName) {
+        hostSelection.setName(hostName);
+    }
+
+    @Override
+    public void onServerSelection(String hostName, ServerInstance server) {
+        serverSelection.setHost(hostName);
+        serverSelection.setServer(server);
     }
 
     @Override

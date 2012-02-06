@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.runtime.ds;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -84,12 +85,16 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
+    public void onServerSelection(String hostName, final ServerInstance server) {
 
         getView().clearSamples();
 
-        // refresh if needed. Otherwise it will happen onReset()
-        if(isVisible()) refreshDatasources();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(isVisible()) refreshDatasources();
+            }
+        });
     }
 
     public void refreshDatasources() {

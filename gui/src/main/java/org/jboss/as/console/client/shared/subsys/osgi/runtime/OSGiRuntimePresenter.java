@@ -18,6 +18,7 @@
  */
 package org.jboss.as.console.client.shared.subsys.osgi.runtime;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
@@ -99,8 +100,13 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
 
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
-        if(isVisible())
-            getView().initialLoad();
+
+         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(isVisible()) getView().initialLoad();
+            }
+         });
     }
 
     @Override

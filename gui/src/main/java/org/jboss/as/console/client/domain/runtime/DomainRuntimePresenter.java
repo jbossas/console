@@ -42,7 +42,6 @@ import java.util.List;
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
         implements ServerSelectionEvent.ServerSelectionListener,
-        HostSelectionEvent.HostSelectionListener,
         StaleModelEvent.StaleModelListener{
 
     private final PlaceManager placeManager;
@@ -97,9 +96,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         super.onBind();
         getView().setPresenter(this);
 
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
-
         getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
 
     }
@@ -133,21 +130,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             loadHostData();
         }
 
-    }
-
-    private void highlightLHSNav() {
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
-                    bootstrap.setInitialPlace(null);
-                }
-            });
-        }
     }
 
     private void loadHostData() {
@@ -213,17 +195,22 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
+    public void onServerSelection(String hostName, final ServerInstance server) {
 
-        // prevent reloading upon every request
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                loadSubsystems(server);
+            }
+        });
+
+
+    }
+
+    private void loadSubsystems(ServerInstance server) {
         if(!server.getName().equals(previousServerSelection))
         {
             previousServerSelection = server.getName();
-
-            //System.out.println("** Update state "+hostName+"/"+server.getName());
-
-            serverSelection.setHost(hostName);
-            serverSelection.setServer(server);
 
             // load subsystems for selected server
 
@@ -252,13 +239,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 }
             });
         }
-
     }
 
-    @Override
-    public void onHostSelection(String hostName) {
-        hostSelection.setName(hostName);
-    }
 
     @Override
     public void onStaleModel(String modelName) {
