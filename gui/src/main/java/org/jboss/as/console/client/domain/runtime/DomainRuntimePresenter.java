@@ -158,8 +158,6 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                                     @Override
                                     public void execute() {
 
-                                        System.out.println("*** fire default selection "+host + " " +serverInstance.getName());
-
                                         // make this fires
                                         getEventBus().fireEvent(new ServerSelectionEvent(host, serverInstance));
                                     }
@@ -246,7 +244,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     public void onStaleModel(String modelName) {
         if(StaleModelEvent.SERVER_INSTANCES.equals(modelName))
         {
-            loadHostData();
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    loadHostData();
+                }
+            });
+
         }
     }
 }

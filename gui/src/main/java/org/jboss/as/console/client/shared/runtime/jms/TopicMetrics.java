@@ -173,7 +173,7 @@ public class TopicMetrics {
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("JMS Topic Metrics")
-                .setDescription("Metrics for JMS topics.")
+                .setDescription(Console.CONSTANTS.subsys_messaging_topic_metric_desc())
                 .setMaster("Topic Selection", tablePanel)
                 .addDetail("Messages", messagePanel)
                 .addDetail("Subscriptions", subscriptionSampler.asWidget());

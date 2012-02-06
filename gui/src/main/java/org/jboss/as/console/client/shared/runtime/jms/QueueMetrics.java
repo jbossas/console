@@ -167,7 +167,7 @@ public class QueueMetrics {
                 .setPlain(true)
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("JMS Queue Metrics")
-                .setDescription("Metrics for JMS queues.")
+                .setDescription(Console.CONSTANTS.subsys_messaging_queue_metric_desc())
                 .setMaster("Queue Selection", tablePanel)
                 .addDetail("Messages", messagePanel)
                 .addDetail("Consumer", consumerSampler.asWidget());

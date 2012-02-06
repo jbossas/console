@@ -122,7 +122,7 @@ public class WebMetricView extends DisposableViewImpl implements WebMetricPresen
                 .setTitle("Web")
                 .setTopLevelTools(toolStrip.asWidget())
                 .setHeadline("Web Metrics")
-                .setDescription("Metrics for the web subsystem.")
+                .setDescription(Console.CONSTANTS.subys_web_metric_desc())
                 .addContent("Connector Selection", connectorTable)
                 .addContent("Connector Metrics", sampler.asWidget());
 

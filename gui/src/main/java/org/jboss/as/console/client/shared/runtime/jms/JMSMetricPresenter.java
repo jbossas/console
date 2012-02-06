@@ -118,7 +118,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
     public void refresh() {
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             getView().setTopics(Collections.EMPTY_LIST);
             getView().setQueues(Collections.EMPTY_LIST);
             getView().clearSamples();

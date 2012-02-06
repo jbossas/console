@@ -565,4 +565,11 @@ public interface UIConstants extends Constants {
     String subsys_jca_dataSource_metric_desc();
 
 
+    String subsys_messaging_queue_metric_desc();
+
+    String subys_tx_metric_desc();
+
+    String subsys_messaging_topic_metric_desc();
+
+    String subys_web_metric_desc();
 }

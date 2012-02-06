@@ -93,7 +93,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
     public void refresh() {
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             getView().setConnectors(Collections.EMPTY_LIST);
             getView().clearSamples();
             return;
@@ -131,7 +131,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
 
                 if(response.isFailure())
                 {
-                    Console.error("Error loading metrics", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Web Metrics"), response.getFailureDescription());
                 }
                 else
                 {
