@@ -18,12 +18,12 @@
  */
 package org.jboss.as.console.client.shared.subsys.security;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.security.model.AuthorizationPolicyProvider;
 import org.jboss.as.console.client.shared.subsys.security.wizard.NewAuthPolicyModuleWizard;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -56,12 +56,11 @@ public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider>
 
     @Override
     Wizard<AuthorizationPolicyProvider> getWizard() {
-
         List<String> flagValues = new LinkedList<String>();
-        flagValues.add("REQUIRED");
-        flagValues.add("REQUISITE");
-        flagValues.add("SUFFICIENT");
-        flagValues.add("OPTIONAL");
+        flagValues.add("required");
+        flagValues.add("requisite");
+        flagValues.add("sufficient");
+        flagValues.add("optional");
 
         // should really wait until flagValues are set.
         return new NewAuthPolicyModuleWizard<AuthorizationPolicyProvider>(this, entityClass, flagValues,
