@@ -101,13 +101,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     protected void onReset() {
         super.onReset();
 
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                if(serverSelection.isSet())
-                    loadHostData();
-            }
-        });
+        if(serverSelection.isSet()) loadHostData();
 
     }
 

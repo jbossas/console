@@ -203,6 +203,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
                     numRequests++;
 
+                    System.out.println("** request "+handle.getName());
+
                     dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
 
@@ -210,6 +212,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         public void onFailure(Throwable caught) {
                             numResponses++;
 
+                            System.out.println("** failure "+handle.getName());
                             ServerInstance instance = createInstanceModel(handle);
                             instance.setRunning(false);
                             instanceList.add(instance);
@@ -221,6 +224,8 @@ public class HostInfoStoreImpl implements HostInformationStore {
                         public void onSuccess(DMRResponse result) {
 
                             numResponses++;
+
+                            System.out.println("** success "+handle.getName());
 
                             ModelNode statusResponse = result.get();
                             ModelNode payload = statusResponse.get(RESULT);
@@ -429,6 +434,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
     }
 
     @Override
+    @Deprecated
     public void saveServerConfig(String host, String name, Map<String, Object> changedValues, final AsyncCallback<Boolean> callback) {
         ModelNode proto = new ModelNode();
         proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
@@ -438,6 +444,7 @@ public class HostInfoStoreImpl implements HostInformationStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override

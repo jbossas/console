@@ -58,6 +58,7 @@ import org.jboss.as.console.client.shared.jvm.DeleteJvmCmd;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.jvm.JvmManagement;
 import org.jboss.as.console.client.shared.jvm.UpdateJvmCmd;
+import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.CreatePropertyCmd;
 import org.jboss.as.console.client.shared.properties.DeletePropertyCmd;
 import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
@@ -65,7 +66,9 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.state.CurrentHostSelection;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.dmr.client.ModelDescriptionConstants;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
@@ -293,24 +296,44 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
 
     public void onSaveChanges(final Server entity, Map<String, Object> changedValues) {
 
+        //System.out.println(changedValues);
+
         if(changedValues.containsKey("portOffset"))
             changedValues.put("socketBinding", entity.getSocketBinding());
-        else if(changedValues.containsKey("socketBinding"))
+
+        if(changedValues.containsKey("socketBinding"))
             changedValues.put("portOffset", entity.getPortOffset());
 
         final String name = entity.getName();
 
-        hostInfoStore.saveServerConfig(hostSelection.getName(), name, changedValues, new SimpleCallback<Boolean>() {
+        ModelNode proto = new ModelNode();
+        proto.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        proto.get(ADDRESS).add("host", hostSelection.getName());
+        proto.get(ADDRESS).add(ModelDescriptionConstants.SERVER_CONFIG, name);
+
+        List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
+        ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
+
+        //System.out.println(operation);
+
+        // TODO: https://issues.jboss.org/browse/AS7-3643
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
-            public void onSuccess(Boolean wasSuccessful) {
-                if(wasSuccessful)
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                System.out.println(response);
+
+                if(response.isFailure())
                 {
-                    Console.info(Console.MESSAGES.modified("Server Configuration ") +name);
+                    Console.error(Console.MESSAGES.modificationFailed("Server Configuration ") +name, response.getFailureDescription());
+
                 }
                 else
                 {
-                    Console.error(Console.MESSAGES.modificationFailed("Server Configuration ") +name);
+                    Console.info(Console.MESSAGES.modified("Server Configuration ") +name);
                 }
 
                 loadServerConfigurations(name);
