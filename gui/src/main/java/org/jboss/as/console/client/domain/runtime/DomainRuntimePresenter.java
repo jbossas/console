@@ -102,8 +102,8 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
+    protected void onReset() {
+        super.onReset();
 
         Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
 
