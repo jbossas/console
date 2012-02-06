@@ -103,7 +103,7 @@ public class SubsystemMetaData {
         groups.get(OSGI).getItems().add(new SubsystemGroupItem("Framework", "osgi", NameTokens.OSGiConfigurationPresenter));
 
         /*
-        Infinispan is disabled for 1.0.1-SNAPSHOT
+        Infinispan is disabled for 1.0.1.Final
 
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Cache Containers", NameTokens.Infinispan, NameTokens.CacheContainerPresenter));
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Local Caches", NameTokens.Infinispan, NameTokens.LocalCachePresenter));
