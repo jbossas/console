@@ -314,6 +314,13 @@ body {
     min-height: 20px;
     padding-left: 5px;
     vertical-align: middle;
+
+    word-wrap:normal;
+    white-space:nowrap;
+    overflow:hidden!important;
+    -moz-binding:url(/app/ellipsis-xbl.xml#ellipsis)!important;
+    -o-text-overflow:ellipsis!important;
+    text-overflow:ellipsis!important;
 }
 
 /*metrics */
@@ -378,4 +385,9 @@ body {
 .toolstrip-button-secondary {
     border-color:#cccccc;
     color:#666!important;
+}
+
+.clip-text {
+    overflow: hidden;
+    white-space: nowrap;
 }

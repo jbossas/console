@@ -108,7 +108,7 @@ public class HostServerTable {
         //layout.addStyleName("tablepicker-popup");
 
         if(description!=null)
-            layout.add(new Label(description));
+            layout.add(new HTML(description));
 
         ratio = new HTML("RATIO HERE");
         layout.add(ratio);
@@ -118,11 +118,13 @@ public class HostServerTable {
         hostList.setPageSize(6);
         hostList.setSelectionModel(new SingleSelectionModel<Host>());
         hostList.addStyleName("fill-layout-width");
+        hostList.addStyleName("clip-text") ;
 
         serverList = new DefaultCellList<ServerInstance>(new ServerCell());
         serverList.setSelectionModel(new SingleSelectionModel<ServerInstance>());
         serverList.setPageSize(6);
         serverList.addStyleName("fill-layout-width");
+        serverList.addStyleName("clip-text") ;
 
         hostProvider = new ListDataProvider<Host>();
         serverProvider = new ListDataProvider<ServerInstance>();

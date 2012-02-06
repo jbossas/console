@@ -37,7 +37,7 @@ public class ServerPicker implements HostServerManagement {
         serverSelection = new HostServerTable(this);
 
         serverSelection.setPopupWidth(400);
-        serverSelection.setDescription("Please select a server instance:");
+        serverSelection.setDescription(Console.CONSTANTS.server_instance_pleaseSelect());
 
         Widget widget = serverSelection.asWidget();
         widget.getElement().setAttribute("style", "width:100%;");
