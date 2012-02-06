@@ -47,7 +47,7 @@ public class ProfileMgmtView extends SuspendableViewImpl
     public ProfileMgmtView() {
         super();
 
-        layout = new SplitLayoutPanel(4);
+        layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSProfileNavigation();

@@ -25,7 +25,7 @@ public class StandaloneRuntimeView extends ViewImpl implements StandaloneRuntime
     public StandaloneRuntimeView() {
         super();
 
-        layout = new SplitLayoutPanel(4);
+        layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new StandaloneRuntimeNavigation();

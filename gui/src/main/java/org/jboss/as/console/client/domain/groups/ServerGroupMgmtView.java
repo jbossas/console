@@ -42,7 +42,7 @@ public class ServerGroupMgmtView extends SuspendableViewImpl implements ServerGr
     public ServerGroupMgmtView() {
         super();
 
-        layout = new SplitLayoutPanel(4);
+        layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSServerGroupNavigation();

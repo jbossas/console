@@ -30,7 +30,7 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     public DomainRuntimeView() {
         super();
 
-        layout = new SplitLayoutPanel(4);
+        layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new DomainRuntimeNavigation();

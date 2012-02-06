@@ -229,7 +229,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 28, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
 
         // ----------------------------------------------------------------------

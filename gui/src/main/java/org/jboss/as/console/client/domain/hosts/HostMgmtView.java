@@ -41,7 +41,7 @@ public class HostMgmtView extends SuspendableViewImpl implements HostMgmtPresent
 
     public HostMgmtView() {
 
-        layout = new SplitLayoutPanel(4);
+        layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
         lhsNavigation = new LHSHostsNavigation();
