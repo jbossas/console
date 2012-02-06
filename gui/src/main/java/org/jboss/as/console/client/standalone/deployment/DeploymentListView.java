@@ -90,8 +90,6 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_deploymentListView());
         toolStrip.addToolButtonRight(addBtn);
-        
-        layout.add(toolStrip);
 
 
         VerticalPanel panel = new VerticalPanel();
@@ -108,7 +106,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         panel.add(horzPanel);
 
-        deploymentTable = new DefaultCellTable<DeploymentRecord>(10);
+        deploymentTable = new DefaultCellTable<DeploymentRecord>(8);
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
         deploymentProvider.addDataDisplay(deploymentTable);
 
@@ -132,7 +130,9 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         
         deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), Console.CONSTANTS.common_label_enOrDisable());
         deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), Console.CONSTANTS.common_label_remove());
-        
+
+
+        panel.add(toolStrip);
         panel.add(deploymentTable);
 
         DefaultPager pager = new DefaultPager();
@@ -145,8 +145,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         layout.add(scroll);
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(toolStrip, 40, Style.Unit.PX, 30, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 70, Style.Unit.PX, 100, Style.Unit.PCT);
+        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
         
         return layout;
     }
