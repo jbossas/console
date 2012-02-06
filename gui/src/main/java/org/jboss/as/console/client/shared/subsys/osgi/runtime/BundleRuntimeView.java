@@ -101,7 +101,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
             }
         });
         refreshBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_refresh_bundleRuntimeView());
-        toolStrip.addToolButton(refreshBtn);
+        toolStrip.addToolButtonRight(refreshBtn);
         return toolStrip;
     }
 

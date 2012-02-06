@@ -47,9 +47,9 @@ public class OSGiRuntimeView extends SuspendableViewImpl implements OSGiRuntimeP
         DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        tabLayoutpanel.add(framework.asWidget(), framework.getEntityDisplayName());
         tabLayoutpanel.add(bundles.asWidget(), bundles.getEntityDisplayName());
-        tabLayoutpanel.selectTab(1);
+        tabLayoutpanel.add(framework.asWidget(), framework.getEntityDisplayName());
+        tabLayoutpanel.selectTab(0);
 
         return tabLayoutpanel;
     }
