@@ -101,10 +101,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     }
 
-
     @Override
-    protected void onReset() {
-        super.onReset();
+    protected void onReveal() {
+        super.onReveal();
 
         Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
 
@@ -127,7 +126,13 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         }
         else if(!NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
         {
-            loadHostData();
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    loadHostData();
+                }
+            });
+
         }
 
     }

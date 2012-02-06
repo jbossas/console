@@ -101,7 +101,13 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     protected void onReset() {
         super.onReset();
 
-        if(serverSelection.isSet()) loadHostData();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(serverSelection.getHost()!=null)
+                    loadHostData();
+            }
+        });
 
     }
 
@@ -166,6 +172,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     public void startServer(final String hostName, final String serverName, final boolean startIt) {
+
+        // TODO: https://issues.jboss.org/browse/AS7-3646
 
         reloadState.resetServer(serverName);
 

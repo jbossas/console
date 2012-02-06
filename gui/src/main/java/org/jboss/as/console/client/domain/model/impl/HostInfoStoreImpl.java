@@ -19,9 +19,11 @@
 
 package org.jboss.as.console.client.domain.model.impl;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.inject.Inject;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Server;
@@ -35,7 +37,6 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.jvm.Jvm;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
@@ -177,92 +178,131 @@ public class HostInfoStoreImpl implements HostInformationStore {
         });
     }
 
-    int numRequests = 0;
-    int numResponses = 0;
+
 
     @Override
-    public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callback) {
+    public void getServerInstances(final String host, final AsyncCallback<List<ServerInstance>> callbackReference) {
 
-        numRequests=0;
-        numResponses = 0;
 
-        final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
+        final Command cmd = new Command() {
 
-        getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+            private int numRequests = 0;
+            private int numResponses = 0;
+            private final AsyncCallback<List<ServerInstance>> cb = callbackReference;
+            private final String id = HTMLPanel.createUniqueId();
+
             @Override
-            public void onSuccess(final List<Server> serverConfigs) {
+            public void execute() {
+                final List<ServerInstance> instanceList = new LinkedList<ServerInstance>();
 
-                for(final Server handle : serverConfigs)
-                {
-                    final ModelNode operation = new ModelNode();
-                    operation.get(OP).set(READ_RESOURCE_OPERATION);
-                    operation.get(INCLUDE_RUNTIME).set(true);
-                    operation.get(ADDRESS).setEmptyList();
-                    operation.get(ADDRESS).add("host", host);
-                    operation.get(ADDRESS).add("server", handle.getName());
+                //System.out.println("*** ["+id+"] attempt to fetch server instances *** ");
 
-                    numRequests++;
-
-                    System.out.println("** request "+handle.getName());
-
-                    dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+                getServerConfigurations(host, new SimpleCallback<List<Server>>() {
+                    @Override
+                    public void onSuccess(final List<Server> serverConfigs) {
 
 
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            numResponses++;
-
-                            System.out.println("** failure "+handle.getName());
-                            ServerInstance instance = createInstanceModel(handle);
-                            instance.setRunning(false);
-                            instanceList.add(instance);
-
-                            checkComplete(instanceList, callback);
+                        if(serverConfigs.isEmpty())
+                        {
+                            callbackReference.onSuccess(Collections.EMPTY_LIST);
+                            return;
                         }
 
-                        @Override
-                        public void onSuccess(DMRResponse result) {
+                        for(final Server handle : serverConfigs)
+                        {
+                            final ModelNode operation = new ModelNode();
+                            operation.get(OP).set(READ_RESOURCE_OPERATION);
+                            operation.get(INCLUDE_RUNTIME).set(true);
+                            operation.get(ADDRESS).setEmptyList();
+                            operation.get(ADDRESS).add("host", host);
+                            operation.get(ADDRESS).add("server", handle.getName());
 
-                            numResponses++;
+                            numRequests++;
 
-                            System.out.println("** success "+handle.getName());
+                            dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
-                            ModelNode statusResponse = result.get();
-                            ModelNode payload = statusResponse.get(RESULT);
 
-                            ServerInstance instance = createInstanceModel(handle);
-                            instanceList.add(instance);
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    numResponses++;
 
-                            if(statusResponse.isFailure())
-                            {
-                                instance.setRunning(false);
-                            }
-                            else
-                            {
-                                instance.setRunning(handle.isStarted());
+                                    ServerInstance instance = createInstanceModel(handle);
+                                    instance.setRunning(false);
+                                    instanceList.add(instance);
 
-                                if(payload.hasDefined("server-state"))
-                                {
-                                    String state = payload.get("server-state").asString();
-                                    if(state.equals("reload-required"))
-                                    {
-                                        instance.setFlag(ServerFlag.RELOAD_REQUIRED);
-                                    }
-                                    else if (state.equals("restart-required"))
-                                    {
-                                        instance.setFlag(ServerFlag.RESTART_REQUIRED);
-                                    }
+                                    checkComplete(instanceList, cb);
                                 }
 
-                            }
+                                @Override
+                                public void onSuccess(DMRResponse result) {
 
-                            checkComplete(instanceList, callback);
+                                    numResponses++;
+
+                                    ModelNode statusResponse = result.get();
+                                    ModelNode payload = statusResponse.get(RESULT);
+
+                                    ServerInstance instance = createInstanceModel(handle);
+                                    instanceList.add(instance);
+
+                                    if(statusResponse.isFailure())
+                                    {
+                                        instance.setRunning(false);
+                                    }
+                                    else
+                                    {
+                                        instance.setRunning(handle.isStarted());
+
+                                        if(payload.hasDefined("server-state"))
+                                        {
+                                            String state = payload.get("server-state").asString();
+                                            if(state.equals("reload-required"))
+                                            {
+                                                instance.setFlag(ServerFlag.RELOAD_REQUIRED);
+                                            }
+                                            else if (state.equals("restart-required"))
+                                            {
+                                                instance.setFlag(ServerFlag.RESTART_REQUIRED);
+                                            }
+                                        }
+
+                                    }
+
+                                    checkComplete(instanceList, cb);
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
+
+            private void checkComplete(List<ServerInstance> instanceList, AsyncCallback<List<ServerInstance>> callback) {
+                if(numRequests==numResponses)
+                {
+
+                    Collections.sort(instanceList, new Comparator<ServerInstance>() {
+                        @Override
+                        public int compare(ServerInstance a, ServerInstance b) {
+                            return a.getName().compareTo(b.getName());
                         }
                     });
 
+
+                    //System.out.println("*** ["+id+"] complete roundtrips  *** ");
+
+                    callback.onSuccess(instanceList);
                 }
             }
+        };
+
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                cmd.execute();
+            }
         });
+
 
 
         /* ModelNode operation = new ModelNode();
@@ -310,19 +350,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
      });   */
 
-    }
-
-    private void checkComplete(List<ServerInstance> instanceList, AsyncCallback<List<ServerInstance>> callback) {
-        if(numRequests==numResponses)
-        {
-            Collections.sort(instanceList, new Comparator<ServerInstance>() {
-                @Override
-                public int compare(ServerInstance a, ServerInstance b) {
-                    return a.getName().compareTo(b.getName());
-                }
-            });
-            callback.onSuccess(instanceList);
-        }
     }
 
     private ServerInstance createInstanceModel(Server handle) {
