@@ -53,6 +53,7 @@ public class Footer {
 
         HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
         settings.setStyleName("html-link");
+        settings.getElement().setAttribute("style", "text-align:right; padding-right:10px");
         settings.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
