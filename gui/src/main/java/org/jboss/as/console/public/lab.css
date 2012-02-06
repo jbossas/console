@@ -125,7 +125,7 @@ body {
 a {
     outline : none;
     text-decoration: none;
-    color:#4A6882!important;
+    color:#415d73!important;
 }
 
 a:active {
@@ -312,7 +312,7 @@ a:focus {
     border: 1px solid #888888;
     border-radius: 2px 2px 2px 2px;
     color: #000000 !important;
-    text-decoration: underline!important;
+    text-decoration: none!important;
 }
 
 
@@ -1209,23 +1209,23 @@ a:focus {
     padding-right:10px;
     padding-top:4px;
     cursor: pointer;
+    border:none!important;
 }
 
 .InfoBlock,.ConfirmationBlock {
-    background-color: #BFF1B5; /* light green */
+    background-color: #BCD589; /* light green */
 }
 
 .WarnBlock {
-    background-color: #FFFD99; /* light yellow */
+    background-color: #FFD272; /* light yellow */
 }
 
 .ErrorBlock {
-    background-color: #FF9999; /* light red */
+    background-color: #FF6161; /* light red */
 }
 
 .FatalBlock {
-    background-color: #FF6666; /* slightly darker light red */
-    border-color: #EE1111; /* slightly darker medium red */
+    background-color: #FF6161; /* slightly darker light red */
 }
 
 

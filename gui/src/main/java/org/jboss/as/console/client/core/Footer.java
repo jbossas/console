@@ -31,6 +31,8 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
+import org.jboss.ballroom.client.widgets.common.DefaultButton;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
 
 /**
  * @author Heiko Braun
@@ -51,9 +53,11 @@ public class Footer {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
+
+
         HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
         settings.setStyleName("html-link");
-        settings.getElement().setAttribute("style", "text-align:right; padding-right:10px");
+        settings.getElement().setAttribute("style", "color:#ffffff;text-align:right; padding-right:10px");
         settings.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

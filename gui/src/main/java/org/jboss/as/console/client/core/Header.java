@@ -97,7 +97,7 @@ public class Header implements ValueChangeHandler<String> {
 
         rhs.setWidgetRightWidth(messageCenter, 10, Style.Unit.PX, 100, Style.Unit.PCT);
         rhs.setWidgetRightWidth(links, 10, Style.Unit.PX, 100, Style.Unit.PCT);
-        rhs.setWidgetBottomHeight(messageCenter, 30, Style.Unit.PX, 28, Style.Unit.PX);
+        rhs.setWidgetBottomHeight(messageCenter, 27, Style.Unit.PX, 28, Style.Unit.PX);
         rhs.setWidgetBottomHeight(links, 0, Style.Unit.PX, 24, Style.Unit.PX);
 
         LayoutPanel innerLayout = new LayoutPanel();
