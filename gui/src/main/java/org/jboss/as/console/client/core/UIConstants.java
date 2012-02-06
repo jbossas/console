@@ -28,6 +28,8 @@ import com.google.gwt.i18n.client.Constants;
  * @date 5/2/11
  */
 public interface UIConstants extends Constants {
+
+
     String common_error_contentStillAssignedToGroup();
     String common_error_unexpectedHttpResponse();
     String common_error_detailsMissing();
@@ -572,4 +574,12 @@ public interface UIConstants extends Constants {
     String subsys_messaging_topic_metric_desc();
 
     String subys_web_metric_desc();
+
+    String server_reload_title();
+
+    String server_reload_desc();
+
+    String server_config_uptodate();
+
+    String server_config_desc();
 }

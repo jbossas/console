@@ -150,4 +150,7 @@ public interface UIMessages extends Messages {
     String subsys_jca_err_ds_notEnabled(String name);
 
     String subsys_jpa_err_mericDisabled(String s);
+
+
+    String server_reload_confirm(String p0);
 }

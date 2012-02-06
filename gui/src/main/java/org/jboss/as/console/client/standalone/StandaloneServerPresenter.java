@@ -186,7 +186,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
                 if(response.isFailure())
                 {
-                    Console.error("Error: Failed to reload server", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Reload Server"), response.getFailureDescription());
                 }
                 else
                 {
@@ -196,7 +196,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Error: Failed to reload server", caught.getMessage());
+                Console.error(Console.MESSAGES.failed("Reload Server"), caught.getMessage());
             }
         });
     }
@@ -244,7 +244,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                     // clear state
                     reloadState.reset();
 
-                    Console.info("Success: Reload server");
+                    Console.info(Console.MESSAGES.successful("Reload Server"));
                     getView().setReloadRequired(reloadState.isStaleModel());
                     getEventBus().fireEvent(new ReloadEvent());
                 }

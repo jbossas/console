@@ -44,8 +44,8 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         ToolButton reloadBtn = new ToolButton(Console.CONSTANTS.common_label_reload(), new ClickHandler(){
             @Override
             public void onClick(ClickEvent event) {
-                Feedback.confirm("Reload server configuration",
-                        "Do you want ot reload the server configuration for server " + form.getEditedEntity().getName() + "?",
+                Feedback.confirm(Console.CONSTANTS.server_reload_title(),
+                        Console.MESSAGES.server_reload_confirm(form.getEditedEntity().getName()),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -93,7 +93,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         uptodateContent.addStyleName("serverUptoDate");
 
         Image img = new Image(Icons.INSTANCE.status_good());
-        HTML desc = new HTML("The server configuration seems uptodate!");
+        HTML desc = new HTML(Console.CONSTANTS.server_config_uptodate());
         uptodateContent.add(desc);
         uptodateContent.add(img);
 
@@ -115,7 +115,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         staleContent.addStyleName("serverNeedsUpdate");
 
         Image img2 = new Image(Icons.INSTANCE.status_bad());
-        HTML desc2 = new HTML("The server configuration needs to be reloaded or the server restartet!");
+        HTML desc2 = new HTML(Console.CONSTANTS.server_reload_desc());
         staleContent.add(desc2);
         staleContent.add(img2);
 
@@ -158,7 +158,7 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         SimpleLayout layout = new SimpleLayout()
                 .setTitle("Standalone Server")
                 .setHeadlineWidget(headline)
-                .setDescription("Server configuration status. In some cases the configuration needs to be reloaded in order to become effective.")
+                .setDescription(Console.CONSTANTS.server_config_desc())
                 .addContent("ReloadPanel", reloadPanel)
                 .addContent("Attributes", form.asWidget())
                 .addContent("Extensions", extPanel);
