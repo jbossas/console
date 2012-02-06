@@ -93,7 +93,6 @@ public class HostMgmtPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override
