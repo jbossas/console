@@ -86,13 +86,14 @@ public class DomainEndpointStrategy extends BaseRegistry implements EndpointStra
 
                 ModelNode compositeResponse= result.get();
 
+
                 if(compositeResponse.isFailure())
                 {
                     callback.onFailure(new RuntimeException(compositeResponse.getFailureDescription()));
                 }
                 else
                 {
-                    ModelNode compositeResult = compositeResponse.get(RESULT).asObject();
+                    ModelNode compositeResult = compositeResponse.get(RESULT).get("domain-results");
 
                     ModelNode mainResponse = compositeResult.get("step-1").asObject();
                     ModelNode subdeploymentResponse = compositeResult.get("step-2").asObject();

@@ -92,7 +92,7 @@ public class WebServiceRuntimePresenter
     private void loadEndpoints() {
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             getView().updateEndpoints(Collections.EMPTY_LIST);
             return;
         }

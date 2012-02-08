@@ -116,7 +116,8 @@ public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncComma
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                ModelNode steps = response.get(RESULT);
+
+                ModelNode steps = response.get(RESULT).get("domain-results");
 
                 CompositeVMMetric metric = new CompositeVMMetric();
 
@@ -124,6 +125,7 @@ public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncComma
                 {
                     // memory
                     ModelNode memory  = steps.get("step-1").get(RESULT);
+
                     HeapMetric heap = heapMetricAdapter.fromDMR(memory.get("heap-memory-usage"));
                     HeapMetric nonHeap = heapMetricAdapter.fromDMR(memory.get("non-heap-memory-usage"));
 

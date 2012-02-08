@@ -102,7 +102,7 @@ public class HostVMMetricPresenter extends Presenter<VMView, HostVMMetricPresent
     public void refresh() {
 
         if(!serverSelection.isActive()) {
-            Console.warning("The selected server is not running");
+            Console.warning(Console.CONSTANTS.common_err_server_not_active());
             getView().clearSamples();
             return;
         }
