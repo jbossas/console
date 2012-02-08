@@ -97,6 +97,8 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
     @Override
     protected void onLoadEntitiesSuccess(ModelNode response) {
         List<T> entities = new ArrayList<T>();
+
+        // TODO: https://issues.jboss.org/browse/AS7-3670
         for (ModelNode entity : response.get(RESULT).get("step-1").get(RESULT).asList()) {
             for (Property addressProp : entity.get(ADDRESS).asPropertyList()) {
                 entity.get(RESULT).get(addressProp.getName()).set(addressProp.getValue());
