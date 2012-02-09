@@ -27,8 +27,9 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.CacheContainer;
 import org.jboss.as.console.client.shared.viewframework.AbstractEntityView;
 import org.jboss.as.console.client.shared.viewframework.Columns.NameColumn;
+import org.jboss.as.console.client.shared.viewframework.EntityDetails;
+import org.jboss.as.console.client.shared.viewframework.EntityEditor;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridge;
-import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkPresenter;
 import org.jboss.as.console.client.shared.viewframework.SingleEntityView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -45,23 +46,23 @@ import java.util.List;
 
 /**
  * Main view class for Infinispan Cache Containers.
- * 
+ *
  * @author Stan Silvert
  */
 public class CacheContainerView extends AbstractEntityView<CacheContainer> implements CacheContainerPresenter.MyView {
 
     private EntityToDmrBridge bridge;
     private DefaultCacheContainerWindow defaultCacheContainerWindow;
-    
+
     private EmbeddedAliasesView aliasesView;
-    
+
     @Inject
     public CacheContainerView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(CacheContainer.class, propertyMetaData);
-        bridge = new EntityToDmrBridgeImpl(propertyMetaData, CacheContainer.class, this, dispatcher);
+        bridge = new CacheContainerEntityToDmrBridge(propertyMetaData, CacheContainer.class, this, dispatcher);
         defaultCacheContainerWindow = new DefaultCacheContainerWindow(propertyMetaData, dispatcher);
     }
-    
+
     @Override
     public EntityToDmrBridge getEntityBridge() {
         return bridge;
@@ -75,7 +76,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     @Override
     protected ToolStrip createToolStrip() {
         ToolStrip toolStrip = super.createToolStrip();
-        
+
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_setDefault(),
                     new ClickHandler() {
                         @Override
@@ -86,7 +87,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
                     }));
         return toolStrip;
     }
-    
+
     @Override
     protected FormAdapter<CacheContainer> makeAddEntityForm() {
         Form<CacheContainer> form = new Form(CacheContainer.class);
@@ -99,21 +100,31 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
     @Override
     protected DefaultCellTable<CacheContainer> makeEntityTable() {
         DefaultCellTable<CacheContainer> table = new DefaultCellTable<CacheContainer>(4);
-        
+
         table.addColumn(new NameColumn(), NameColumn.LABEL);
-        
+
         TextColumn<CacheContainer> defaultCacheColumn = new TextColumn<CacheContainer>() {
             @Override
             public String getValue(CacheContainer record) {
                 return record.getDefaultCache();
             }
         };
-        
+
         table.addColumn(defaultCacheColumn, Console.CONSTANTS.subsys_infinispan_default_cache());
-        
+
         return table;
     }
-    
+
+    @Override
+    protected EntityEditor<CacheContainer> makeEntityEditor() {
+        EntityDetails<CacheContainer> details = new EntityDetails<CacheContainer>(
+                this, getEntityDisplayName(),
+                makeEditEntityDetailsForm(),
+                getAddress(),
+                hideButtons);
+        return new EntityEditor<CacheContainer>(this, getEntityDisplayName(), makeAddEntityPopup(), makeEntityTable(), details, hideButtons);
+    }
+
     @Override
     protected List<SingleEntityView<CacheContainer>> provideAdditionalTabs(
             Class<?> beanType,
@@ -133,5 +144,5 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
 
         return additionalTabs;
     }
-    
+
 }
