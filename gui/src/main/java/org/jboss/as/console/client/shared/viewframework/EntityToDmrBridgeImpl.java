@@ -249,10 +249,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
+        System.out.println("operation=");
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override
             public void onDmrSuccess(ModelNode response) {
+                System.out.println("execute onDmrSuccess=");
+                System.out.println(response);
                 Console.info(successMessage);
                 loadEntities(nameEditedOrAdded);
             }

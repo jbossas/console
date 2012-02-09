@@ -94,7 +94,7 @@ public interface CacheContainer extends NamedEntity {
     void setListenerExecutor(String listenerExecutor);
 
     // Transport tab
-    @Binding(detypedName="transport=TRANSPORT/stack")
+    @Binding(detypedName="transport/TRANSPORT/stack")
     @FormItem(label="Stack",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
@@ -103,7 +103,7 @@ public interface CacheContainer extends NamedEntity {
     String getStack();
     void setStack(String stack);
 
-    @Binding(detypedName="transport=TRANSPORT/executor")
+    @Binding(detypedName="transport/TRANSPORT/executor")
     @FormItem(label="Executor",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
@@ -112,7 +112,7 @@ public interface CacheContainer extends NamedEntity {
     String getExecutor();
     void setExecutor(String executor);
 
-    @Binding(detypedName="transport=TRANSPORT/site")
+    @Binding(detypedName="transport/TRANSPORT/site")
     @FormItem(label="Site",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
@@ -121,7 +121,7 @@ public interface CacheContainer extends NamedEntity {
     String getSite();
     void setSite(String site);
 
-    @Binding(detypedName="transport=TRANSPORT/lock-timeout")
+    @Binding(detypedName="transport/TRANSPORT/lock-timeout")
     @FormItem(defaultValue = "60000",
             label="Lock Timeout (ms)",
             required=true,
@@ -131,7 +131,7 @@ public interface CacheContainer extends NamedEntity {
     Long getLockTimeout();
     void setLockTimeout(Long lockTimeout);
 
-    @Binding(detypedName="transport=TRANSPORT/rack")
+    @Binding(detypedName="transport/TRANSPORT/rack")
     @FormItem(label="Rack",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
@@ -140,7 +140,7 @@ public interface CacheContainer extends NamedEntity {
     String getRack();
     void setRack(String rack);
 
-    @Binding(detypedName="transport=TRANSPORT/machine")
+    @Binding(detypedName="transport/TRANSPORT/machine")
     @FormItem(label="Machine",
             required=false,
             formItemTypeForEdit="TEXT_BOX",

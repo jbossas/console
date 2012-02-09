@@ -41,7 +41,7 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
     private FormAdapter<T> form;
     private EntityToDmrBridge bridge;
     private EnumSet<FrameworkButton> hideButtons;
-    private AddressBinding address;
+    private AddressBinding helpAddress;
 
     /**
      * Create a new EntityDetails.
@@ -49,20 +49,21 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
      * @param presenter the presenter that will be called for various actions.
      * @param entitiesName The heading for the details form
      * @param form The form containing all AttributesMetadata that can be displayed or edited.
+     * @param helpAddress The address used to find help for the attributes on the form.
      */
-    public EntityDetails(FrameworkPresenter presenter,String entitiesName, FormAdapter form, AddressBinding address) {
-        this(presenter, entitiesName, form, address, EnumSet.noneOf(FrameworkButton.class));
+    public EntityDetails(FrameworkPresenter presenter,String entitiesName, FormAdapter form, AddressBinding helpAddress) {
+        this(presenter, entitiesName, form, helpAddress, EnumSet.noneOf(FrameworkButton.class));
     }
 
     public EntityDetails(FrameworkPresenter presenter,
                          String entitiesName,
                          FormAdapter form,
-                         AddressBinding address,
+                         AddressBinding helpAddress,
                          EnumSet<FrameworkButton> hideButtons) {
         this.entitiesName = entitiesName;
         this.form = form;
         this.bridge = presenter.getEntityBridge();
-        this.address = address;
+        this.helpAddress = helpAddress;
         this.hideButtons = hideButtons;
     }
 
@@ -89,7 +90,7 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
             // assign click handler
             TabbedFormLayoutPanel formTabs = (TabbedFormLayoutPanel)form;
             formTabs.setBridge(bridge);
-            formTabs.setHelpAddress(address);
+            formTabs.setHelpAddress(helpAddress);
 
         }
         else
@@ -117,8 +118,8 @@ public class EntityDetails<T> implements EditListener, SingleEntityView<T> {
             }
 
             // help panel
-            if (address != null) {
-                layout.add(HelpWidgetFactory.makeHelpWidget(address, form));
+            if (helpAddress != null) {
+                layout.add(HelpWidgetFactory.makeHelpWidget(helpAddress, form));
             }
         }
 
