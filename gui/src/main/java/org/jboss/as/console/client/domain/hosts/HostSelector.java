@@ -25,8 +25,9 @@ public class HostSelector {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
-
+        layout.addStyleName("lhs-selector");
         layout.getElement().setAttribute("style","padding:4px;");
+
         hosts = new ComboBox();
         hosts.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override

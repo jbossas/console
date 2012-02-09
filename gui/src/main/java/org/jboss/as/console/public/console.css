@@ -381,12 +381,12 @@ body {
     vertical-align:bottom;
 }
 
-.toolstrip-button-secondary {
-    border-color:#cccccc;
-    color:#666!important;
-}
 
 .clip-text {
     overflow: hidden;
     white-space: nowrap;
+}
+
+.lhs-selector {
+
 }
