@@ -170,4 +170,13 @@ public class BootstrapContext implements ApplicationProperties {
     public String getInitialPlace() {
         return initialPlace;
     }
+
+    public String getLogoutUrl() {
+
+        String base = getBaseUrl();
+        String protocol = base.substring(0, base.indexOf("//")+2);
+        String remainder = base.substring(base.indexOf(protocol)+protocol.length(), base.length());
+
+        return protocol+"bogus@"+remainder+"logout";
+    }
 }

@@ -584,4 +584,8 @@ public interface UIConstants extends Constants {
     String server_config_desc();
 
     String server_instance_pleaseSelect();
+
+    String common_label_logout();
+
+    String logout_confirm();
 }

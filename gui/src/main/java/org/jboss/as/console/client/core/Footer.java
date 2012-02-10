@@ -23,6 +23,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -33,6 +34,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
 import org.jboss.ballroom.client.widgets.common.DefaultButton;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
  * @author Heiko Braun
@@ -56,8 +58,7 @@ public class Footer {
 
 
         HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
-        settings.setStyleName("html-link");
-        settings.getElement().setAttribute("style", "color:#ffffff;text-align:right; padding-right:10px");
+        settings.addStyleName("footer-link");
         settings.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -67,6 +68,31 @@ public class Footer {
             }
         });
 
+
+        HTML logout = new HTML(Console.CONSTANTS.common_label_logout());
+        logout.addStyleName("footer-link");
+        logout.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Feedback.confirm(
+                        Console.CONSTANTS.common_label_logout(),
+                        Console.CONSTANTS.logout_confirm(),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if(isConfirmed)
+                                {
+                                    String logoutUrl = Console.MODULES.getBootstrapContext().getLogoutUrl();
+                                    Window.Location.replace(logoutUrl);
+                                }
+                            }
+                        }
+                );
+
+            }
+        });
+
+        layout.add(logout);
         layout.add(settings);
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
@@ -76,8 +102,12 @@ public class Footer {
         layout.setWidgetLeftWidth(version, 20, Style.Unit.PX, 200, Style.Unit.PX);
         layout.setWidgetTopHeight(version, 3, Style.Unit.PX, 16, Style.Unit.PX);
 
-        layout.setWidgetRightWidth(settings, 5, Style.Unit.PX, 100, Style.Unit.PX);
+        layout.setWidgetRightWidth(logout, 5, Style.Unit.PX, 60, Style.Unit.PX);
+        layout.setWidgetTopHeight(logout, 2, Style.Unit.PX, 28, Style.Unit.PX);
+
+        layout.setWidgetRightWidth(settings, 65, Style.Unit.PX, 60, Style.Unit.PX);
         layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
+
         return layout;
     }
 }

@@ -390,3 +390,15 @@ body {
 .lhs-selector {
 
 }
+
+.footer-link {
+    text-decoration:none;
+    color:#ffffff;
+    text-align:right;
+    padding-right:10px;
+    cursor:pointer;
+}
+
+.footer-link:hover {
+    text-decoration:underline;
+}
