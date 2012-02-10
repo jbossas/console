@@ -117,7 +117,7 @@ public class LoadJVMMetricsCmd extends AddressableModelCmd implements AsyncComma
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                ModelNode steps = response.get(RESULT).get("domain-results");
+                ModelNode steps = response.get(RESULT);
 
                 CompositeVMMetric metric = new CompositeVMMetric();
 
