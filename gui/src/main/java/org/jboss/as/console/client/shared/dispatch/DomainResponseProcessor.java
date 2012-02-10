@@ -34,11 +34,10 @@ public class DomainResponseProcessor implements ResponseProcessor {
 
     private static boolean parseServerState(ModelNode response, ReloadState reloadState) {
         boolean staleModel = false;
-        ModelNode result = response.get("result");
 
-        if(result.hasDefined(SERVER_GROUPS))
+        if(response.hasDefined(SERVER_GROUPS))
         {
-            List<Property> serverGroups = result.get(SERVER_GROUPS).asPropertyList();
+            List<Property> serverGroups = response.get(SERVER_GROUPS).asPropertyList();
             for(Property serverGroup : serverGroups)
             {
                 ModelNode serverGroupValue = serverGroup.getValue();
