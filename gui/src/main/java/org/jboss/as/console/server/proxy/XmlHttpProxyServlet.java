@@ -238,7 +238,6 @@ public class XmlHttpProxyServlet extends HttpServlet
 
         boolean isPost = XmlHttpProxy.POST.equals(method);
 
-
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] bodyContent = null;
 
@@ -495,12 +494,18 @@ public class XmlHttpProxyServlet extends HttpServlet
                 res.setHeader("WWW-Authenticate", authEx.getAuthHeader());
                 res.setStatus(authEx.getCode());
             }
-            /*else if(iox instanceof RedirectException)
+            else if(iox instanceof RedirectException)
             {
                 RedirectException redirect = (RedirectException)iox;
-                res.setHeader("Location", redirect.getLocation());
+
+                String redir = redirect.getLocation();
+                if(redir.equals("/")) redir+="App.html";
+                redir+="?gwt.codesvr=127.0.0.1:9997";
+
+                System.out.println(">> "+ redir);
+                res.setHeader("Location", redir);
                 res.setStatus(307);
-            } */
+            }
             else
             {
                 iox.printStackTrace();
