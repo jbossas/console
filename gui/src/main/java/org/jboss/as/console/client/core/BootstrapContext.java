@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.core;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.shared.Preferences;
 
@@ -54,6 +55,10 @@ public class BootstrapContext implements ApplicationProperties {
 
         String deploymentApi = GWT.isScript() ? getBaseUrl()+"management/add-content" : "http://127.0.0.1:8888/app/upload";
         setProperty(DEPLOYMENT_API, deploymentApi);
+
+        String logoutApi = GWT.isScript() ? getBaseUrl()+"logout" : "http://127.0.0.1:8888/app/logout";
+        setProperty(LOGOUT_API, logoutApi);
+
 
         //Log.info("Domain API Endpoint: " + domainApi);
     }
@@ -172,11 +177,10 @@ public class BootstrapContext implements ApplicationProperties {
     }
 
     public String getLogoutUrl() {
+        String url = getProperty(LOGOUT_API);
 
-        String base = getBaseUrl();
-        String protocol = base.substring(0, base.indexOf("//")+2);
-        String remainder = base.substring(base.indexOf(protocol)+protocol.length(), base.length());
-
-        return protocol+"bogus@"+remainder+"logout";
+        if(!GWT.isScript())
+            url += "?gwt.codesvr=" + Window.Location.getParameter("gwt.codesvr");
+        return url;
     }
 }

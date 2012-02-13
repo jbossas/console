@@ -23,7 +23,6 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -32,8 +31,6 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
@@ -82,8 +79,7 @@ public class Footer {
                             public void onConfirmation(boolean isConfirmed) {
                                 if(isConfirmed)
                                 {
-                                    String logoutUrl = Console.MODULES.getBootstrapContext().getLogoutUrl();
-                                    Window.Location.replace(logoutUrl);
+                                    new LogoutCmd().execute();
                                 }
                             }
                         }
