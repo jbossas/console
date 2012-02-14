@@ -13,6 +13,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -47,8 +48,9 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     private DefaultWindow window;
     private String selectedSession;
     private EntityAdapter<MailServerDefinition> serverAdapter;
+    private BeanFactory factory;
 
-    public enum ServerType {smtp, imap, pop3};
+
 
     public PlaceManager getPlaceManager() {
         return placeManager;
@@ -71,7 +73,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
             PlaceManager placeManager,
             DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            ApplicationMetaData metaData) {
+            ApplicationMetaData metaData, BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -82,6 +84,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         this.beanMetaData = metaData.getBeanMetaData(MailSession.class);
         this.adapter = new EntityAdapter<MailSession>(MailSession.class, metaData);
         this.serverAdapter= new EntityAdapter<MailServerDefinition>(MailServerDefinition.class, metaData);
+        this.factory = factory;
 
     }
 
@@ -148,6 +151,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
                                 if(server.getName().equals(ServerType.smtp.name()))
                                 {
                                     MailServerDefinition smtpServer = serverAdapter.fromDMR(server.getValue());
+                                    smtpServer.setType(ServerType.smtp);
                                     mailSession.setSmtpServer(smtpServer);
                                 }
                             }
@@ -314,4 +318,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         });
     }
 
+    public MailServerDefinition createServerEntity() {
+        return factory.mailServerDefinition().as();
+    }
 }
