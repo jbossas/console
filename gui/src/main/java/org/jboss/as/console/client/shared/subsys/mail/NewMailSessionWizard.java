@@ -32,18 +32,8 @@ public class NewMailSessionWizard {
         final Form<MailSession> form = new Form(MailSession.class);
 
         TextBoxItem jndi = new JndiNameItem("jndiName", "JNDI Name");
-        TextBoxItem pop = new TextBoxItem("popServer", "Pop3 Server") {
-            {
-                setRequired(false);
-            }
-        };
-        TextBoxItem imap = new TextBoxItem("imapServer", "IMAP Server") {{
-            setRequired(false);
-        }};
 
-        TextBoxItem smtp = new TextBoxItem("smtpServer", "SMTP Server");
-
-        form.setFields(jndi, smtp, imap, pop);
+        form.setFields(jndi);
 
         DialogueOptions options = new DialogueOptions(
 

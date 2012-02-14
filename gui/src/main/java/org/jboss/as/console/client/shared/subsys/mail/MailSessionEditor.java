@@ -1,17 +1,22 @@
 package org.jboss.as.console.client.shared.subsys.mail;
 
+import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -27,20 +32,27 @@ import java.util.Map;
 
 /**
  * @author Heiko Braun
- * @date 11/28/11
+ * @date 2/14/12
  */
-public class MailSessionView extends DisposableViewImpl implements MailPresenter.MyView{
+public class MailSessionEditor {
 
     private MailPresenter presenter;
     private Form<MailSession> form;
     private ListDataProvider<MailSession> dataProvider;
     private DefaultCellTable<MailSession> table ;
 
-    @Override
-    public Widget createWidget() {
+    public MailSessionEditor(MailPresenter presenter) {
+        this.presenter = presenter;
+    }
 
+    Widget asWidget() {
 
-        table = new DefaultCellTable<MailSession>(10);
+        table = new DefaultCellTable<MailSession>(8, new ProvidesKey<MailSession>() {
+            @Override
+            public Object getKey(MailSession item) {
+                return item.getJndiName();
+            }
+        });
         dataProvider = new ListDataProvider<MailSession>();
         dataProvider.addDataDisplay(table);
 
@@ -51,8 +63,25 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
             }
         };
 
-        table.addColumn(jndiName, "JNDI Name");
+        Column<MailSession, MailSession> option = new Column<MailSession, MailSession>(
+                new TextLinkCell<MailSession>(Console.CONSTANTS.common_label_view(), new ActionCell.Delegate<MailSession>() {
+                    @Override
+                    public void execute(MailSession selection) {
+                        presenter.getPlaceManager().revealPlace(
+                                new PlaceRequest(NameTokens.MailPresenter).with("name", selection.getJndiName())
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public MailSession getValue(MailSession manager) {
+                return manager;
+            }
+        };
 
+
+        table.addColumn(jndiName, "JNDI Name");
+        table.addColumn(option, "Option");
 
         ToolStrip toolstrip = new ToolStrip();
 
@@ -69,10 +98,10 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
             @Override
             public void onClick(ClickEvent event) {
                 Feedback.confirm("Remove Mail Session", "Really remove this mail session?",
-                        new Feedback.ConfirmationHandler(){
+                        new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
+                                if (isConfirmed)
                                     presenter.onDelete(form.getEditedEntity());
                             }
                         });
@@ -88,12 +117,10 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
         form.setNumColumns(2);
 
         TextItem jndi = new TextItem("jndiName", "JNDI Name");
-        TextBoxItem smtp = new TextBoxItem("smtpServer", "SMTP Server");
-        TextBoxItem imap = new TextBoxItem("imapServer", "IMAP Server");
-        TextBoxItem pop = new TextBoxItem("popServer", "Pop3 Server");
         CheckBoxItem debug = new CheckBoxItem("debug", "Debug Enabled?");
+        TextBoxItem from = new TextBoxItem("from", "Default From");
 
-        form.setFields(jndi, smtp, imap, pop, debug);
+        form.setFields(jndi, debug, from);
         form.setEnabled(false);
 
 
@@ -127,11 +154,12 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
         formToolStrip.providesDeleteOp(false);
 
         Widget panel = new MultipleToOneLayout()
+                .setPlain(true)
                 .setTitle("Mail")
                 .setHeadline("Mail Sessions")
                 .setDescription("The mail session configuration.")
                 .setMaster("Configured mail sessions", table)
-                .setTopLevelTools(toolstrip.asWidget())
+                .setMasterTools(toolstrip.asWidget())
                 .setDetailTools(formToolStrip.asWidget())
                 .setDetail("Mail Session", detail).build();
 
@@ -140,18 +168,12 @@ public class MailSessionView extends DisposableViewImpl implements MailPresenter
 
 
         return panel;
+
     }
 
-    @Override
-    public void setPresenter(MailPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
     public void updateFrom(List<MailSession> list) {
         dataProvider.setList(list);
 
-        if(!list.isEmpty())
-            table.getSelectionModel().setSelected(list.get(0), true);
+        table.selectDefaultEntity();
     }
 }
