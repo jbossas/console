@@ -56,6 +56,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         return placeManager;
     }
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MailPresenter)
     public interface MyProxy extends Proxy<MailPresenter>, Place {
@@ -105,8 +106,21 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         loadMailSessions(true);
     }
 
+    public void launchNewServerWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Mail Server"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewMailServerWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
     public void launchNewSessionWizard() {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("Datasource"));
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Mail Session"));
         window.setWidth(480);
         window.setHeight(360);
 
@@ -153,6 +167,18 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
                                     MailServerDefinition smtpServer = serverAdapter.fromDMR(server.getValue());
                                     smtpServer.setType(ServerType.smtp);
                                     mailSession.setSmtpServer(smtpServer);
+                                }
+                                else if(server.getName().equals(ServerType.imap.name()))
+                                {
+                                    MailServerDefinition imap = serverAdapter.fromDMR(server.getValue());
+                                    imap.setType(ServerType.imap);
+                                    mailSession.setImapServer(imap);
+                                }
+                                else if(server.getName().equals(ServerType.pop3.name()))
+                                {
+                                    MailServerDefinition pop = serverAdapter.fromDMR(server.getValue());
+                                    pop.setType(ServerType.pop3);
+                                    mailSession.setPopServer(pop);
                                 }
                             }
 
@@ -290,12 +316,12 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         });
     }
 
-    public void onRemoveServer(ServerType type, MailServerDefinition entity) {
+    public void onRemoveServer(MailServerDefinition entity) {
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "mail");
         operation.get(ADDRESS).add("mail-session", selectedSession);
-        operation.get(ADDRESS).add("server", type.name());
+        operation.get(ADDRESS).add("server", entity.getType().name());
 
         operation.get(OP).set(REMOVE);
 
@@ -318,7 +344,34 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         });
     }
 
-    public MailServerDefinition createServerEntity() {
-        return factory.mailServerDefinition().as();
+    public void onCreateServer(MailServerDefinition entity) {
+
+        closeDialoge();
+
+        ModelNode operation = serverAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "mail");
+        operation.get(ADDRESS).add("mail-session", selectedSession);
+        operation.get(ADDRESS).add("server", entity.getType().name());
+
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.addingFailed("Mail Server"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.added("Mail Server"));
+                }
+
+                loadMailSessions(true);
+            }
+        });
     }
 }
