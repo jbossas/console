@@ -15,6 +15,9 @@ public interface MailSession {
     String getJndiName();
     void setJndiName(String jndiName);
 
+    String getFrom();
+    void setFrom(String jndiName);
+
     boolean isDebug();
     void setDebug(boolean debug);
 

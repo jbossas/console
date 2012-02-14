@@ -8,6 +8,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -44,6 +45,11 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     private EntityAdapter<MailSession> adapter;
     private BeanMetaData beanMetaData;
     private DefaultWindow window;
+    private String selectedSession;
+
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MailPresenter)
@@ -53,6 +59,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     public interface MyView extends View {
         void setPresenter(MailPresenter presenter);
         void updateFrom(List<MailSession> list);
+        void setSelectedSession(String selectedSession);
     }
 
     @Inject
@@ -80,11 +87,15 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         getView().setPresenter(this);
     }
 
+      @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        this.selectedSession = request.getParameter("name", null);
+    }
 
     @Override
     protected void onReset() {
         super.onReset();
-        loadMailSessions();
+        loadMailSessions(false);
     }
 
     public void launchNewSessionWizard() {
@@ -100,8 +111,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         window.center();
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-2814
-    private void loadMailSessions() {
+    private void loadMailSessions(final boolean refreshDetail) {
 
         ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -113,7 +123,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load Mail sessions");
+                    Console.error(Console.MESSAGES.failed("Mail Sessions"));
                 }
                 else
                 {
@@ -128,6 +138,9 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                     getView().updateFrom(sessions);
                 }
+
+                 if(refreshDetail)
+                    getView().setSelectedSession(selectedSession);
 
             }
         });
@@ -153,7 +166,6 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         operation.get(ADDRESS).set(address.get(ADDRESS));
         operation.get(OP).set(ADD);
 
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -162,14 +174,14 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to create mail session");
+                    Console.error(Console.MESSAGES.addingFailed("Mail Session"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Added mail session "+entity.getJndiName());
+                    Console.info(Console.MESSAGES.added("Mail Session "+entity.getJndiName()));
                 }
 
-                loadMailSessions();
+                loadMailSessions(false);
             }
         });
     }
@@ -178,7 +190,6 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get(), entity.getJndiName());
         operation.get(OP).set(REMOVE);
 
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -187,20 +198,24 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to remove mail session", response.get("failure-description").asString());
+                    Console.error(Console.MESSAGES.deletionFailed("Mail Session"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Removed mail session "+entity.getJndiName());
+                    Console.info(Console.MESSAGES.deleted("Mail Session "+entity.getJndiName()));
                 }
 
-                loadMailSessions();
+                loadMailSessions(false);
             }
         });
     }
 
     public void onSave(final MailSession editedEntity, Map<String, Object> changeset) {
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource());
+        ModelNode address = beanMetaData.getAddress().asResource(
+                Baseadress.get(),
+                editedEntity.getJndiName()
+        );
+        ModelNode operation = adapter.fromChangeset(changeset, address);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -209,14 +224,14 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update mail session subsystem");
+                    Console.error(Console.MESSAGES.modificationFailed("Mail Session"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update mail session "+editedEntity.getJndiName());
+                    Console.info(Console.MESSAGES.modified("Mail Session "+editedEntity.getJndiName()));
                 }
 
-                loadMailSessions();
+                loadMailSessions(false);
             }
         });
     }
