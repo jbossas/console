@@ -1,19 +1,19 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.subsys.infinispan;
@@ -44,32 +44,32 @@ public class DefaultCacheContainerWindow extends EntityPopupWindow<DefaultCacheC
     private static final ComboBoxItem valueCombo = new ComboBoxItem("name", "Default Cache Container");
     private static final Form<DefaultCacheContainer> myForm = makeForm(valueCombo);
     private static final WindowView myView = new WindowView(myForm);
-    
+
     public DefaultCacheContainerWindow(ApplicationMetaData propertyMetadata, DispatchAsync dispatcher) {
-        super("Set Default Cache Container", myForm, null, 
+        super("Set Default Cache Container", myForm, null,
                 new SingleEntityToDmrBridgeImpl(propertyMetadata, DefaultCacheContainer.class, myView, dispatcher));
         myView.setBridge(bridge);
         this.bridge.loadEntities(null);
         setWidth("330");
         setHeight("180");
     }
-    
+
     private static Form<DefaultCacheContainer> makeForm(ComboBoxItem valueCombo) {
         Form<DefaultCacheContainer> form = new Form<DefaultCacheContainer>(DefaultCacheContainer.class);
         form.setFields(valueCombo);
         return form;
     }
-    
+
     public static void setChoices(Collection<CacheContainer> choices) {
         List<String> names = new ArrayList(choices.size());
-        
+
         for (CacheContainer container : choices) names.add(container.getName());
-        
+
         valueCombo.setValueMap(names);
-        
+
         valueCombo.setValue(((DefaultCacheContainer)myView.getBridge().getEntityList().get(0)).getName());
     }
-    
+
     @Override
     protected void doCommand(FormAdapter<DefaultCacheContainer> form) {
         this.bridge.onSaveDetails(form.getUpdatedEntity(), form.getChangedValues());
@@ -78,19 +78,19 @@ public class DefaultCacheContainerWindow extends EntityPopupWindow<DefaultCacheC
     private static class WindowView implements FrameworkView {
         private Form myForm;
         private EntityToDmrBridge bridge;
-        
+
         WindowView(Form myForm) {
             this.myForm = myForm;
         }
-        
+
         void setBridge(EntityToDmrBridge bridge) {
             this.bridge = bridge;
         }
-        
+
         EntityToDmrBridge getBridge() {
             return this.bridge;
         }
-        
+
         @Override
         public Widget asWidget() {
             return null;
@@ -111,7 +111,7 @@ public class DefaultCacheContainerWindow extends EntityPopupWindow<DefaultCacheC
         public void setEditingEnabled(boolean isEnabled) {
             // do nothing
         }
-        
+
     }
-    
+
 }

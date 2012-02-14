@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -43,6 +44,16 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBridgeImpl<T> {
+
+    private static final Set<String> singletons = new HashSet<String>();
+
+    static {
+        singletons.add("store");
+        singletons.add("locking");
+        singletons.add("eviction");
+        singletons.add("expiration");
+        singletons.add("rehashing");
+    }
 
     public CacheEntityToDmrBridge(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
                                  DispatchAsync dispatcher) {
@@ -129,10 +140,49 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
 
     @Override
     public void onSaveDetails(T entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
+        List<ModelNode> stepsList = new ArrayList<ModelNode>();
+        stepsList.addAll(Arrays.asList(extraSteps));
+
+        ModelNode setDefaultCacheStep = makeSetDefaultCacheStep(entity, changedValues);
+        if (setDefaultCacheStep != null) stepsList.add(setDefaultCacheStep);
+
+        List<ModelNode> specialEntitySteps = makeSingletonEntitySteps(entity, changedValues);
+        stepsList.addAll(specialEntitySteps);
+
+        super.onSaveDetails(entity, changedValues, stepsList.toArray(new ModelNode[stepsList.size()]));
+    }
+
+    private List<ModelNode> makeSingletonEntitySteps(T entity, Map<String, Object> changedValues) {
+        List<ModelNode> stepsList = new ArrayList<ModelNode>();
+        List<String> removals = new ArrayList<String>();
+        for (String javaName : changedValues.keySet()) {
+            PropertyBinding binding = formMetaData.findAttribute(javaName);
+            String[] splitDetypedName = binding.getDetypedName().split("/");
+            String singletonName = splitDetypedName[0];
+            if (!singletons.contains(singletonName)) continue;
+
+            ModelNode writeSingletonAttributeStep = getResourceAddress(getName(entity));
+            writeSingletonAttributeStep.get(ADDRESS).add(singletonName, singletonName.toUpperCase());
+            writeSingletonAttributeStep.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            writeSingletonAttributeStep.get(NAME).set(splitDetypedName[splitDetypedName.length - 1]);
+            writeSingletonAttributeStep.get(VALUE).set(changedValues.get(javaName).toString());
+            stepsList.add(writeSingletonAttributeStep);
+            removals.add(javaName);
+        }
+
+        // Need to remove singleton attributes from normal processing.
+        // Remove outside main loop to avoid ConcurrentModificationException
+        for (String javaName: removals) {
+            changedValues.remove(javaName);
+        }
+
+        return stepsList;
+    }
+
+    private ModelNode makeSetDefaultCacheStep(T entity, Map<String, Object> changedValues) {
         Boolean isDefault = (Boolean)changedValues.remove("default");
         if (isDefault == null) {
-            super.onSaveDetails(entity, changedValues, extraSteps);
-            return;
+            return null;
         }
 
         String cacheContainer = entity.getCacheContainer();
@@ -142,10 +192,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         setDefaultCacheStep.get(NAME).set("default-cache");
         setDefaultCacheStep.get(VALUE).set(entity.getName());
 
-        List<ModelNode> stepsList = new ArrayList<ModelNode>();
-        stepsList.addAll(Arrays.asList(extraSteps));
-        stepsList.add(setDefaultCacheStep);
-        super.onSaveDetails(entity, changedValues, stepsList.toArray(new ModelNode[stepsList.size()]));
+        return setDefaultCacheStep;
     }
 
 }
