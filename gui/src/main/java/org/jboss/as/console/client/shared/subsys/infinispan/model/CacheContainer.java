@@ -93,12 +93,26 @@ public interface CacheContainer extends NamedEntity {
     String getListenerExecutor();
     void setListenerExecutor(String listenerExecutor);
 
+    // Not part of detyped model.  This is a flag to tell us if the transport
+    // needs to be added to or removed from the model.
+    @Binding(detypedName="has-transport")
+    @FormItem(defaultValue="false",
+            label="Is transport defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_transport")
+    public boolean isHasTransport();
+    public void setHasTransport(boolean hasTransport);
+
     // Transport tab
     @Binding(detypedName="transport/TRANSPORT/stack")
     @FormItem(label="Stack",
-            required=false,
+            required=true,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
+            order=2,
             tabName="subsys_infinispan_transport")
     String getStack();
     void setStack(String stack);
@@ -149,7 +163,7 @@ public interface CacheContainer extends NamedEntity {
     String getMachine();
     void setMachine(String machine);
 
-    @Binding(detypedName="alias",
+    @Binding(detypedName="aliases",
              listType="java.lang.String")
     @FormItem(defaultValue="",
              label="Aliases",

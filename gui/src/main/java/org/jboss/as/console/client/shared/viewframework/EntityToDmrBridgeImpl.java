@@ -239,6 +239,13 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected void onLoadEntitiesSuccess(ModelNode response) {
         List<T> entities = entityAdapter.fromDMRList(response.get(RESULT).asList());
         entityList = sortEntities(entities);
+        refreshView(response);
+    }
+
+    /**
+     * Overriding this method allows a subclass to modify entities before the view is refreshed.
+     */
+    protected void refreshView(ModelNode response) {
         if (view != null) view.refresh();
     }
 
