@@ -158,10 +158,10 @@ public class MailSessionEditor {
                 .setTitle("Mail")
                 .setHeadline("Mail Sessions")
                 .setDescription("The mail session configuration.")
-                .setMaster("Configured mail sessions", table)
+                .setMaster(Console.MESSAGES.available("Mail Session"), table)
                 .setMasterTools(toolstrip.asWidget())
                 .setDetailTools(formToolStrip.asWidget())
-                .setDetail("Mail Session", detail).build();
+                .setDetail(Console.CONSTANTS.common_label_selection(), detail).build();
 
         form.bind(table);
 

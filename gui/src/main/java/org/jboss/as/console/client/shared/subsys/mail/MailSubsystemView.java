@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.subsys.mail;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.apache.catalina.Server;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
@@ -37,22 +38,22 @@ public class MailSubsystemView extends DisposableViewImpl implements MailPresent
 
         sessionEditor = new MailSessionEditor(presenter);
         smtpServerEditor = new ServerConfigView(
-                "SMTP Server",
-                "DESCRIPTION",
+                Console.MESSAGES.available("Mail Server"),
+                "Mail server definitions",
                 new FormToolStrip.FormCallback<MailServerDefinition>() {
                     @Override
                     public void onSave(Map<String, Object> changeset) {
-                        presenter.onSaveServer(MailPresenter.ServerType.smtp, changeset);
+                        presenter.onSaveServer(ServerType.smtp, changeset);
                     }
 
                     @Override
                     public void onDelete(MailServerDefinition entity) {
-                        presenter.onRemoveServer(MailPresenter.ServerType.smtp, entity);
+                        presenter.onRemoveServer(ServerType.smtp, entity);
                     }
-                });
+                }, presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), sessionEditor.asWidget());
-        panel.addPage("SMTP Server", smtpServerEditor.asWidget());
+        panel.addPage("Mail Server Configurations", smtpServerEditor.asWidget());
         //panel.addPage("JMS Destinations", jmsEditor.asWidget()) ;
 
         // default page
