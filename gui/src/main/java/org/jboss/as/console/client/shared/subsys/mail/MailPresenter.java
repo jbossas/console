@@ -46,6 +46,9 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     private BeanMetaData beanMetaData;
     private DefaultWindow window;
     private String selectedSession;
+    private EntityAdapter<MailServerDefinition> serverAdapter;
+
+    public enum ServerType {smtp, imap, pop3};
 
     public PlaceManager getPlaceManager() {
         return placeManager;
@@ -78,6 +81,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         this.dispatcher = dispatcher;
         this.beanMetaData = metaData.getBeanMetaData(MailSession.class);
         this.adapter = new EntityAdapter<MailSession>(MailSession.class, metaData);
+        this.serverAdapter= new EntityAdapter<MailServerDefinition>(MailServerDefinition.class, metaData);
 
     }
 
@@ -87,7 +91,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         getView().setPresenter(this);
     }
 
-      @Override
+    @Override
     public void prepareFromRequest(PlaceRequest request) {
         this.selectedSession = request.getParameter("name", null);
     }
@@ -95,7 +99,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
     @Override
     protected void onReset() {
         super.onReset();
-        loadMailSessions(false);
+        loadMailSessions(true);
     }
 
     public void launchNewSessionWizard() {
@@ -115,6 +119,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
 
         ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(RECURSIVE).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -133,13 +138,29 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
                     {
                         ModelNode model = item.getValue();
                         MailSession mailSession = adapter.fromDMR(model);
+
+
+                        if(model.hasDefined("server"))
+                        {
+                            List<Property> serverList = model.get("server").asPropertyList();
+                            for(Property server : serverList)
+                            {
+                                if(server.getName().equals(ServerType.smtp.name()))
+                                {
+                                    MailServerDefinition smtpServer = serverAdapter.fromDMR(server.getValue());
+                                    mailSession.setSmtpServer(smtpServer);
+                                }
+                            }
+
+                        }
+
                         sessions.add(mailSession);
                     }
 
                     getView().updateFrom(sessions);
                 }
 
-                 if(refreshDetail)
+                if(refreshDetail)
                     getView().setSelectedSession(selectedSession);
 
             }
@@ -235,4 +256,62 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
             }
         });
     }
+
+    public void onSaveServer(ServerType type, Map<String, Object> changeset) {
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "mail");
+        address.get(ADDRESS).add("mail-session", selectedSession);
+        address.get(ADDRESS).add("server", type.name());
+
+        ModelNode operation = serverAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.modificationFailed("Mail Server"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.modified("Mail Server"));
+                }
+
+                loadMailSessions(true);
+            }
+        });
+    }
+
+    public void onRemoveServer(ServerType type, MailServerDefinition entity) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "mail");
+        operation.get(ADDRESS).add("mail-session", selectedSession);
+        operation.get(ADDRESS).add("server", type.name());
+
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.deletionFailed("Mail Server"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.deleted("Mail Server"));
+                }
+
+                loadMailSessions(true);
+            }
+        });
+    }
+
 }

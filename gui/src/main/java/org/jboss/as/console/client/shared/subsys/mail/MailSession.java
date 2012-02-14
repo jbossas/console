@@ -21,16 +21,16 @@ public interface MailSession {
     boolean isDebug();
     void setDebug(boolean debug);
 
-    @Binding(detypedName = "smtp-server")
-    String getSmtpServer();
-    void setSmtpServer(String server);
+    @Binding(skip = true)
+    MailServerDefinition getSmtpServer();
+    void setSmtpServer(MailServerDefinition server);
 
-    @Binding(detypedName = "imap-server")
-    String getImapServer();
-    void setImapServer(String server);
+    @Binding(skip=true)
+    MailServerDefinition getImapServer();
+    void setImapServer(MailServerDefinition server);
 
-    @Binding(detypedName = "pop3-server")
-    String getPopServer();
-    void setPopServer(String server);
+    @Binding(skip=true)
+    MailServerDefinition getPopServer();
+    void setPopServer(MailServerDefinition server);
 
 }
