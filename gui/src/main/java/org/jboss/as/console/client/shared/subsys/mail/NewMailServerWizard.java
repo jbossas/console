@@ -91,6 +91,7 @@ public class NewMailServerWizard {
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "mail");
                         address.add("mail-session", "*");
+                        address.add("server", "smtp");
                         return address;
                     }
                 }, form
