@@ -588,4 +588,8 @@ public interface UIConstants extends Constants {
     String common_label_logout();
 
     String logout_confirm();
+
+    String subsys_mail_session_desc();
+
+    String subsys_mail_server_desc();
 }

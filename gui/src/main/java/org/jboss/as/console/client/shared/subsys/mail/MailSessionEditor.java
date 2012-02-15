@@ -97,7 +97,9 @@ public class MailSessionEditor {
         ToolButton removeBtn = new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Feedback.confirm("Remove Mail Session", "Really remove this mail session?",
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("Mail Session"),
+                        Console.MESSAGES.deleteConfirm("Mail Session"),
                         new Feedback.ConfirmationHandler() {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
@@ -157,7 +159,7 @@ public class MailSessionEditor {
                 .setPlain(true)
                 .setTitle("Mail")
                 .setHeadline("Mail Sessions")
-                .setDescription("The mail session configuration.")
+                .setDescription(Console.CONSTANTS.subsys_mail_session_desc())
                 .setMaster(Console.MESSAGES.available("Mail Session"), table)
                 .setMasterTools(toolstrip.asWidget())
                 .setDetailTools(formToolStrip.asWidget())

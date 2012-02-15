@@ -38,11 +38,11 @@ public class MailSubsystemView extends DisposableViewImpl implements MailPresent
         sessionEditor = new MailSessionEditor(presenter);
         serverConfigEditor = new ServerConfigView(
                 Console.MESSAGES.available("Mail Server"),
-                "Mail server definitions",
+                Console.CONSTANTS.subsys_mail_server_desc(),
                 presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), sessionEditor.asWidget());
-        panel.addPage("Mail Server Configurations", serverConfigEditor.asWidget());
+        panel.addPage("Mail Server", serverConfigEditor.asWidget());
         //panel.addPage("JMS Destinations", jmsEditor.asWidget()) ;
 
         // default page

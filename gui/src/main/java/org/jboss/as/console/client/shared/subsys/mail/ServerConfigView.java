@@ -4,10 +4,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
@@ -18,6 +21,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +135,26 @@ public class ServerConfigView {
         headline = new HTML();
         headline.setStyleName("content-header-label");
 
+        final FormHelpPanel helpPanel = new FormHelpPanel(
+                new FormHelpPanel.AddressCallback() {
+                    @Override
+                    public ModelNode getAddress() {
+                        ModelNode address = Baseadress.get();
+                        address.add("subsystem", "mail");
+                        address.add("mail-session", "*");
+                        address.add("server", "smtp");
+                        return address;
+                    }
+                }, form
+        );
+
+
+        VerticalPanel formlayout = new VerticalPanel();
+        formlayout.setStyleName("fill-layout-width");
+
+        formlayout.add(helpPanel.asWidget());
+        formlayout.add(form.asWidget());
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadlineWidget(headline)
@@ -138,7 +162,7 @@ public class ServerConfigView {
                 .setMaster(Console.MESSAGES.available("Mail Server"), table)
                 .setMasterTools(tableTools)
                 .setDetailTools(formTools.asWidget())
-                .setDetail(Console.CONSTANTS.common_label_selection(), form.asWidget());
+                .setDetail(Console.CONSTANTS.common_label_selection(), formlayout);
 
 
         form.bind(table);
