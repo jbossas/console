@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.core.bootstrap;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
@@ -57,6 +58,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
             @Override
             public void onFailure(Throwable caught) {
                 bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
+                Log.error(caught.getMessage());
                 callback.onSuccess(Boolean.FALSE);
             }
 

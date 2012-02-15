@@ -20,12 +20,12 @@ public class BootstrapProcess {
         hooks.add(hook);
     }
 
-    public void execute() {
+    public void execute(AsyncCallback<Boolean> outcome) {
         index = 0;
-        executeNext();
+        executeNext(outcome);
     }
 
-    private void executeNext() {
+    private void executeNext(final AsyncCallback<Boolean> outcome) {
         if(index < hooks.size())
         {
             final AsyncCommand nextHook = hooks.get(index);
@@ -43,16 +43,18 @@ public class BootstrapProcess {
                 public void onSuccess(Boolean successful) {
                     if(successful)
                     {
-                        executeNext();
+                        executeNext(outcome);
                     }
                     else
                     {
                         Console.error("Failed to execute "+nextHook.getClass().getName());
+                        outcome.onSuccess(Boolean.FALSE);
                     }
                 }
             });
         }
 
+        outcome.onSuccess(Boolean.TRUE);
         Window.setStatus("");
     }
 }
