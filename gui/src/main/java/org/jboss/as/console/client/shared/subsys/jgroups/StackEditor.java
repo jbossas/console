@@ -7,9 +7,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -23,6 +26,8 @@ import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +43,7 @@ public class StackEditor {
     private DefaultCellTable<JGroupsProtocol> table ;
     private HTML headline;
     private PropertyEditor propertyEditor;
+    private JGroupsStack selectedStack;
 
     public StackEditor(JGroupsPresenter presenter) {
         this.presenter = presenter;
@@ -117,9 +123,6 @@ public class StackEditor {
             }
         }, form);
 
-
-
-
         FormToolStrip<JGroupsProtocol> formToolStrip = new FormToolStrip<JGroupsProtocol>(
                 form, new FormToolStrip.FormCallback<JGroupsProtocol>() {
             @Override
@@ -156,14 +159,35 @@ public class StackEditor {
         form.bind(table);
         propertyEditor.setAllowEditProps(false);
 
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                JGroupsProtocol currentSelection = getCurrentSelection();
+                List<PropertyRecord> properties = currentSelection.getProperties();
+                if(properties!=null)
+                    propertyEditor.setProperties(selectedStack.getName() + "_#_" + currentSelection.getType(), properties);
+                else
+                    propertyEditor.setProperties(selectedStack.getName() + "_#_" + currentSelection.getType(), Collections.EMPTY_LIST);
+            }
+        });
         return panel;
 
     }
 
+    private JGroupsProtocol getCurrentSelection() {
+        SingleSelectionModel<JGroupsProtocol> selectionModel = (SingleSelectionModel<JGroupsProtocol>) table.getSelectionModel();
+        return selectionModel.getSelectedObject();
+
+    }
     public void setStack(JGroupsStack stack) {
+        this.selectedStack = stack;
+
         headline.setText("Protocol Stack: "+stack.getName());
 
         dataProvider.setList(stack.getProtocols());
         table.selectDefaultEntity();
+
     }
+
 }

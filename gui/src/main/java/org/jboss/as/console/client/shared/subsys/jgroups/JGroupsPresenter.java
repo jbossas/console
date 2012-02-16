@@ -17,6 +17,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -24,6 +25,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -37,8 +39,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 2/16/12
  */
-public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroupsPresenter.MyProxy> 
-    implements PropertyManagement {
+public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroupsPresenter.MyProxy>
+        implements PropertyManagement {
 
     private final PlaceManager placeManager;
 
@@ -50,6 +52,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     private BeanMetaData beanMetaData;
     private BeanFactory factory;
     private String selectedStack;
+    private DefaultWindow propertyWindow;
 
     public PlaceManager getPlaceManager() {
         return placeManager;
@@ -132,7 +135,6 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                     for(Property prop : subresources)
                     {
                         ModelNode model = prop.getValue();
-                        System.out.println(model);
 
                         JGroupsStack stack = factory.jGroupsStack().as();
                         stack.setName(prop.getName());
@@ -145,14 +147,33 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
 
                             for(Property item : items)
                             {
-                                JGroupsProtocol jGroupsProtocol = protocolAdapter.fromDMR(item.getValue());
+                                ModelNode protocolModel = item.getValue();
+                                JGroupsProtocol jGroupsProtocol = protocolAdapter.fromDMR(protocolModel);
+                                jGroupsProtocol.setProperties(new ArrayList<PropertyRecord>());
+                                // protocol properties
+                                if(protocolModel.hasDefined("property"))
+                                {
+                                    List<Property> propItems = protocolModel.get("property").asPropertyList();
+                                    for(Property p : propItems)
+                                    {
+                                        String name = p.getName();
+                                        String value = p.getValue().asObject().get("value").asString();
+                                        PropertyRecord propertyRecord = factory.property().as();
+                                        propertyRecord.setKey(name);
+                                        propertyRecord.setValue(value);
+
+                                        jGroupsProtocol.getProperties().add(propertyRecord);
+                                    }
+
+                                }
+
                                 protocols.add(jGroupsProtocol);
                             }
 
-
-
                         }
                         stack.setProtocols(protocols);
+
+                        // TODO: parse transport
 
                         stacks.add(stack);
                     }
@@ -172,47 +193,108 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     }
 
     public void launchNewStackWizard() {
-        
+
     }
 
     public void onDeleteStack(JGroupsStack entity) {
-        
+
     }
 
     public void launchNewProtocolWizard() {
-        
+
     }
 
     public void onDeleteProtocol(JGroupsProtocol editedEntity) {
-        
+
     }
 
     public void onSaveProtocol(JGroupsProtocol editedEntity, Map<String, Object> changeset) {
-        
+
     }
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
-        
+        closePropertyDialoge();
+
+        String[] tokens = reference.split("_#_");
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", tokens[0]);
+        operation.get(ADDRESS).add("protocol", tokens[1]);
+        operation.get(ADDRESS).add("property", prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.addingFailed("Protocol Property"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.added("Protocol Property"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 
     @Override
     public void onDeleteProperty(String reference, PropertyRecord prop) {
-        
+        String[] tokens = reference.split("_#_");
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", tokens[0]);
+        operation.get(ADDRESS).add("protocol", tokens[1]);
+        operation.get(ADDRESS).add("property", prop.getKey());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.deletionFailed("Protocol Property"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.deleted("Protocol Property"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 
     @Override
     public void onChangeProperty(String reference, PropertyRecord prop) {
-        
+        // not provided
     }
 
     @Override
     public void launchNewPropertyDialoge(String reference) {
-        
+
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Protocol Property"));
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+
+        propertyWindow.setWidget(
+                new NewPropertyWizard(this, reference).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+
     }
 
     @Override
     public void closePropertyDialoge() {
-        
+        if(propertyWindow!=null)
+            propertyWindow.hide();
     }
 }
