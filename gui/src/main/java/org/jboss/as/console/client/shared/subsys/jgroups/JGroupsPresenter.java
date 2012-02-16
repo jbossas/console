@@ -53,6 +53,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     private BeanFactory factory;
     private String selectedStack;
     private DefaultWindow propertyWindow;
+    private DefaultWindow window;
 
     public PlaceManager getPlaceManager() {
         return placeManager;
@@ -193,24 +194,89 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     }
 
     public void launchNewStackWizard() {
-
+        // not used atm
     }
 
     public void onDeleteStack(JGroupsStack entity) {
-
+        // not used atm
     }
 
     public void launchNewProtocolWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Protocol Property"));
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.setWidget(
+                new NewProtocolWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
+
+    // TODO: https://issues.jboss.org/browse/AS7-3791
     public void onDeleteProtocol(JGroupsProtocol editedEntity) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", selectedStack);
+        operation.get(ADDRESS).add("protocol", editedEntity.getType());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.deletionFailed("Protocol"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.deleted("Protocol"));
+
+                    loadStacks(true);
+                }
+            }
+        });
 
     }
 
     public void onSaveProtocol(JGroupsProtocol editedEntity, Map<String, Object> changeset) {
 
     }
+
+    // TODO: https://issues.jboss.org/browse/AS7-3791
+    public void onCreateProtocol(JGroupsProtocol entity) {
+
+        closeDialoge();
+
+        ModelNode operation = protocolAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", selectedStack);
+        operation.get(ADDRESS).add("protocol", entity.getType());
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.addingFailed("Protocol"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.added("Protocol"));
+
+                    loadStacks(true);
+                }
+            }
+        });
+    }
+
+    public void closeDialoge() {
+        window.hide();
+    }
+
 
     @Override
     public void onCreateProperty(String reference, PropertyRecord prop) {
