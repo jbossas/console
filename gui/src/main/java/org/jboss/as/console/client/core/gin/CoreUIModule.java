@@ -149,6 +149,8 @@ import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStore;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSourceStoreImpl;
 import org.jboss.as.console.client.shared.subsys.jca.model.DomainDriverStrategy;
 import org.jboss.as.console.client.shared.subsys.jca.model.StandaloneDriverStrategy;
+import org.jboss.as.console.client.shared.subsys.jgroups.JGroupsPresenter;
+import org.jboss.as.console.client.shared.subsys.jgroups.JGroupsSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jmx.JMXPresenter;
 import org.jboss.as.console.client.shared.subsys.jmx.JMXSubsystemView;
 import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
@@ -569,6 +571,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JPAMetricPresenter.MyView.class,
                 JPAMetricsView.class,
                 JPAMetricPresenter.MyProxy.class);
+
+        bindPresenter(JGroupsPresenter.class,
+                JGroupsPresenter.MyView.class,
+                JGroupsSubsystemView.class,
+                JGroupsPresenter.MyProxy.class);
 
 
     }
