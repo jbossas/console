@@ -59,6 +59,10 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         return placeManager;
     }
 
+    public void onSaveTransport(JGroupsTransport editedEntity, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JGroupsPresenter)
@@ -112,7 +116,6 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     }
 
     private void loadStacks(final boolean refreshDetails) {
-
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(Baseadress.get());
@@ -175,6 +178,22 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                         stack.setProtocols(protocols);
 
                         // TODO: parse transport
+
+                        if(model.hasDefined("transport"))
+                        {
+                            List<Property> transportList = model.get("transport").asPropertyList();
+                            if(transportList.isEmpty())
+                            {
+                                JGroupsTransport transport = factory.jGroupsTransport().as();
+                                stack.setTransport(transport);
+                            }
+                            else
+                            {
+                                ModelNode transportDef = transportList.get(0).getValue();
+                                JGroupsTransport transport = transportAdapter.fromDMR(transportDef);
+                                stack.setTransport(transport);
+                            }
+                        }
 
                         stacks.add(stack);
                     }

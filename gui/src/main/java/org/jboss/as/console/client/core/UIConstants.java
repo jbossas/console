@@ -594,4 +594,8 @@ public interface UIConstants extends Constants {
     String subsys_mail_server_desc();
 
     String subsys_jgroups_session_desc();
+
+    String subsys_jgroups_transport_desc();
+
+    String subsys_jgroups_protocol_desc();
 }
