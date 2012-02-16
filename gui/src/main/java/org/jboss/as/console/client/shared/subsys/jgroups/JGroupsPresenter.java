@@ -241,8 +241,30 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
 
     }
 
-    public void onSaveProtocol(JGroupsProtocol editedEntity, Map<String, Object> changeset) {
+    public void onSaveProtocol(JGroupsProtocol entity, Map<String, Object> changeset) {
 
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jgroups");
+        address.get(ADDRESS).add("stack", selectedStack);
+        address.get(ADDRESS).add("protocol", entity.getType());
+
+        ModelNode operation = protocolAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.modificationFailed("Protocol"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.modified("Protocol"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 
     // TODO: https://issues.jboss.org/browse/AS7-3791
