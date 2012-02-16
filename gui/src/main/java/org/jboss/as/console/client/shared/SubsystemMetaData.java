@@ -87,7 +87,8 @@ public class SubsystemMetaData {
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Remoting", "remoting",Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", NameTokens.BoundedQueueThreadPoolPresenter));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("JMX", "jmx"));
-        groups.get(CORE).getItems().add(new SubsystemGroupItem("Config Admin Service", "configadmin"));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("Config Admin Service", NameTokens.ConfigAdminPresenter));
+        groups.get(CORE).getItems().add(new SubsystemGroupItem("JGroups", NameTokens.JGroupsPresenter));
 
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
