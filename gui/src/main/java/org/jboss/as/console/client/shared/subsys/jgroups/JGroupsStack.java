@@ -15,4 +15,8 @@ public interface JGroupsStack {
     @Binding(skip = true)
     List<JGroupsProtocol> getProtocols();
     void setProtocols(List<JGroupsProtocol> protocols);
+
+    @Binding(skip = true)
+    JGroupsTransport getTransport();
+    void setTransport(JGroupsTransport transport);
 }

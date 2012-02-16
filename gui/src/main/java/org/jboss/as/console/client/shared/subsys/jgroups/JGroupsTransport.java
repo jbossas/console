@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface JGroupsTransport {
 
+    String getType();
+    void setType(String type);
+
     @Binding(detypedName = "diagnostics-socket-binding")
     String getDiagSocketBinding();
     void setDiagSocketBinding(String socketBinding);

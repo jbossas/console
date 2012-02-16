@@ -23,6 +23,7 @@ public class JGroupsSubsystemView extends SuspendableViewImpl implements JGroups
     private StackEditor stackEditor;
     private StackOverview stackOverview;
     private List<JGroupsStack> stacks;
+    private TransportEditor transportEditor;
 
     @Override
     public void setPresenter(JGroupsPresenter presenter) {
@@ -40,10 +41,11 @@ public class JGroupsSubsystemView extends SuspendableViewImpl implements JGroups
 
         stackOverview = new StackOverview(presenter);
         stackEditor = new StackEditor(presenter);
+        transportEditor = new TransportEditor(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), stackOverview.asWidget());
         panel.addPage("Protocols", stackEditor.asWidget());
-        panel.addPage("Transport", new HTML());
+        panel.addPage("Transport", transportEditor.asWidget());
 
         // default page
         panel.showPage(0);
@@ -79,6 +81,7 @@ public class JGroupsSubsystemView extends SuspendableViewImpl implements JGroups
 
                     // update subpages
                     stackEditor.setStack(stack);
+                    transportEditor.setStack(stack);
                     break;
                 }
             }

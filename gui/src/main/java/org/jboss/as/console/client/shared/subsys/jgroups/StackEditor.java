@@ -149,7 +149,7 @@ public class StackEditor {
                 .setPlain(true)
                 .setTitle("JGroups")
                 .setHeadlineWidget(headline)
-                .setDescription(Console.CONSTANTS.subsys_jgroups_session_desc())
+                .setDescription(Console.CONSTANTS.subsys_jgroups_protocol_desc())
                 .setMaster(Console.MESSAGES.available("Protocol Stacks"), table)
                 .setMasterTools(toolstrip.asWidget())
                 .addDetail("Attributes", detail)
@@ -183,7 +183,7 @@ public class StackEditor {
     public void setStack(JGroupsStack stack) {
         this.selectedStack = stack;
 
-        headline.setText("Protocol Stack: "+stack.getName());
+        headline.setText("Protocols: Stack "+stack.getName());
 
         dataProvider.setList(stack.getProtocols());
         table.selectDefaultEntity();
