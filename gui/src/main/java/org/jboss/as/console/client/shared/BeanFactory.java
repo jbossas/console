@@ -71,6 +71,7 @@ import org.jboss.as.console.client.shared.subsys.jca.model.ResourceAdapter;
 import org.jboss.as.console.client.shared.subsys.jca.model.WorkmanagerPool;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
 import org.jboss.as.console.client.shared.subsys.jgroups.JGroupsProtocol;
+import org.jboss.as.console.client.shared.subsys.jgroups.JGroupsStack;
 import org.jboss.as.console.client.shared.subsys.jgroups.JGroupsTransport;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
 import org.jboss.as.console.client.shared.subsys.jpa.model.JpaSubsystem;
@@ -236,6 +237,7 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JacOrbSubsystem> jacORBSubsystem();
     AutoBean<JPADeployment> jpaDeployment();
 
+    AutoBean<JGroupsStack> jGroupsStack();
     AutoBean<JGroupsProtocol> jGroupsProtocol();
     AutoBean<JGroupsTransport> jGroupsTransport();
 }
