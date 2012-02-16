@@ -214,15 +214,13 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         window.center();
     }
 
-
-    // TODO: https://issues.jboss.org/browse/AS7-3791
     public void onDeleteProtocol(JGroupsProtocol editedEntity) {
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jgroups");
         operation.get(ADDRESS).add("stack", selectedStack);
-        operation.get(ADDRESS).add("protocol", editedEntity.getType());
-        operation.get(OP).set(REMOVE);
+        operation.get(OP).set("remove-protocol");
+        operation.get("type").set(editedEntity.getType());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
@@ -267,7 +265,6 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         });
     }
 
-    // TODO: https://issues.jboss.org/browse/AS7-3791
     public void onCreateProtocol(JGroupsProtocol entity) {
 
         closeDialoge();
@@ -276,8 +273,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "jgroups");
         operation.get(ADDRESS).add("stack", selectedStack);
-        operation.get(ADDRESS).add("protocol", entity.getType());
-        operation.get(OP).set(ADD);
+        operation.get(OP).set("add-protocol");
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
