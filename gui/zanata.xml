@@ -7,10 +7,11 @@
 
   <locales>
     <locale>de</locale>
-    <locale>es</locale>
-    <locale>fr</locale>
-    <locale>ja</locale>
+    <locale>zh-Hans</locale>
     <locale>pt-BR</locale>
-    <locale map-from="zh-CN">zh-Hans</locale>
+    <locale>fr</locale>
+    <locale>es</locale>
+    <locale>ja</locale>  
   </locales>
+
 </config>
