@@ -28,16 +28,16 @@ import javax.inject.Inject;
 
 /**
  * Main view class for Infinispan Replicated Cache.
- * 
+ *
  * @author Stan Silvert
  */
-public class ReplicatedCacheView extends AbstractCacheView<ReplicatedCache> implements ReplicatedCachePresenter.MyView {
+public class ReplicatedCacheView extends NonLocalCacheView<ReplicatedCache> implements ReplicatedCachePresenter.MyView {
 
     @Inject
     public ReplicatedCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ReplicatedCache.class, propertyMetaData, dispatcher);
     }
-    
+
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_infinispan_replicatedCache();

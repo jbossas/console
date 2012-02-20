@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared;
 
 import com.google.gwt.autobean.shared.AutoBean;
 import com.google.gwt.autobean.shared.AutoBeanFactory;
+import com.google.gwt.autobean.shared.AutoBeanFactory.Category;
 import org.jboss.as.console.client.core.settings.CommonSettings;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
@@ -39,6 +40,7 @@ import org.jboss.as.console.client.shared.jvm.model.ThreadMetric;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.properties.PropertyRecordCategory;
 import org.jboss.as.console.client.shared.runtime.jpa.model.JPADeployment;
 import org.jboss.as.console.client.shared.subsys.configadmin.model.ConfigAdminData;
 import org.jboss.as.console.client.shared.subsys.deploymentscanner.model.DeploymentScanner;
@@ -121,6 +123,7 @@ import org.jboss.as.console.client.standalone.StandaloneServer;
  * @author Heiko Braun
  * @date 2/22/11
  */
+@Category(PropertyRecordCategory.class)
 public interface BeanFactory extends AutoBeanFactory {
 
     AutoBean<ProfileRecord> profile();

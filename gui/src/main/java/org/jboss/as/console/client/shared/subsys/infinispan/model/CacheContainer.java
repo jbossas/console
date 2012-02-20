@@ -37,10 +37,21 @@ public interface CacheContainer extends NamedEntity {
               localLabel="common_label_name",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT_BOX")
+              formItemTypeForAdd="TEXT_BOX",
+              order=1)
     public String getName();
     @Override
     public void setName(String name);
+
+    @Binding(detypedName= "default-cache")
+    @FormItem(defaultValue="",
+            localLabel="subsys_infinispan_default_cache",
+            required=true,
+            formItemTypeForEdit="TEXT",
+            formItemTypeForAdd="TEXT_BOX",
+            order=2)
+    String getDefaultCache();
+    void setDefaultCache(String defaultCache);
 
     @Binding(detypedName = "jndi-name")
     @FormItem(localLabel="subsys_infinispan_jndiName",
@@ -49,15 +60,6 @@ public interface CacheContainer extends NamedEntity {
             formItemTypeForAdd="TEXT_BOX")
     String getJndiName();
     void setJndiName(String jndiName);
-
-    @Binding(detypedName= "default-cache")
-    @FormItem(defaultValue="",
-            localLabel="subsys_infinispan_default_cache",
-            required=true,
-            formItemTypeForEdit="TEXT",
-            formItemTypeForAdd="TEXT_BOX")
-    String getDefaultCache();
-    void setDefaultCache(String defaultCache);
 
     @Binding(detypedName= "start")
     @FormItem(defaultValue="EAGER",

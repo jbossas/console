@@ -207,6 +207,9 @@ public interface UIConstants extends Constants {
     String subsys_infinispan_aliases();
     String subsys_infinispan_transaction();
     String subsys_infinispan_store();
+    String subsys_infinispan_file_store();
+    String subsys_infinispan_jdbc_store();
+    String subsys_infinispan_remote_store();
 
     String subsys_naming_jndiView();
     String subsys_naming_jndiBindings();

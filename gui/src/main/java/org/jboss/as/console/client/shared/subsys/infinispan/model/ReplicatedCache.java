@@ -37,7 +37,8 @@ public interface ReplicatedCache extends InvalidationCache {
               label="Name",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT_BOX")
+              formItemTypeForAdd="TEXT_BOX",
+              order=1)
     public String getName();
     @Override
     public void setName(String name);
@@ -48,7 +49,8 @@ public interface ReplicatedCache extends InvalidationCache {
               label="Cache Container",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="COMBO_BOX")
+              formItemTypeForAdd="COMBO_BOX",
+              order=2)
     public String getCacheContainer();
     @Override
     public void setCacheContainer(String cacheContainerName);
@@ -62,7 +64,8 @@ public interface ReplicatedCache extends InvalidationCache {
             label="Default for cache container?",
             required=false,
             formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
+            formItemTypeForAdd="CHECK_BOX",
+            order=3)
     public Boolean isDefault();
     @Override
     public void setDefault(Boolean isDefault);
@@ -104,8 +107,7 @@ public interface ReplicatedCache extends InvalidationCache {
 
     @Override
     @Binding(detypedName="jndi-name")
-    @FormItem(defaultValue="NONE",
-            label="Indexing",
+    @FormItem(label="JNDI Name",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX")
@@ -113,9 +115,24 @@ public interface ReplicatedCache extends InvalidationCache {
     @Override
     public void setJndiName(String jndiName);
 
+    // Not part of detyped model.  This is a flag to tell us if locking
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="locking/has-locking")
+    @FormItem(defaultValue="false",
+            label="Is locking defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_locking")
+    public boolean isHasLocking();
+    @Override
+    public void setHasLocking(boolean hasLocking);
+
     // Locking attributes
     @Override
-    @Binding(detypedName="locking/isolation")
+    @Binding(detypedName="locking/LOCKING/isolation")
     @FormItem(defaultValue="REPEATABLE_READ",
             label="Isolation",
             required=true,
@@ -128,7 +145,7 @@ public interface ReplicatedCache extends InvalidationCache {
     public void setIsolation(String isolation);
 
     @Override
-    @Binding(detypedName="locking/striping")
+    @Binding(detypedName="locking/LOCKING/striping")
     @FormItem(defaultValue="false",
             label="Striping",
             required=true,
@@ -140,9 +157,9 @@ public interface ReplicatedCache extends InvalidationCache {
     public void setStriping(Boolean striping);
 
     @Override
-    @Binding(detypedName="locking/acquire-timeout")
+    @Binding(detypedName="locking/LOCKING/acquire-timeout")
     @FormItem(defaultValue="15000",
-            label="Acquire Timeout",
+            label="Acquire Timeout (ms)",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
@@ -152,7 +169,7 @@ public interface ReplicatedCache extends InvalidationCache {
     public void setAcquireTimeout(Long aquireTimeout);
 
     @Override
-    @Binding(detypedName="locking/concurrency-level")
+    @Binding(detypedName="locking/LOCKING/concurrency-level")
     @FormItem(defaultValue="1000",
             label="Concurrency Level",
             required=true,
@@ -162,6 +179,21 @@ public interface ReplicatedCache extends InvalidationCache {
     public Integer getConcurrencyLevel();
     @Override
     public void setConcurrencyLevel(Integer concurrencyLevel);
+
+    // Not part of detyped model.  This is a flag to tell us if transaction
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="transaction/has-transaction")
+    @FormItem(defaultValue="false",
+            label="Is transaction defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_transaction")
+    public boolean isHasTransaction();
+    @Override
+    public void setHasTransaction(boolean hasTransaction);
 
     // transaction attributes
     @Override
@@ -173,9 +205,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "NONE_XA", "NONE_DURABLE_XA", "FULL_XA"},
             tabName="subsys_infinispan_transaction")
-    public String getMode();
+    public String getTransactionMode();
     @Override
-    public void setMode(String mode);
+    public void setTransactionMode(String transactionMode);
 
     @Override
     @Binding(detypedName="transaction/TRANSACTION/stop-timeout")
@@ -201,6 +233,21 @@ public interface ReplicatedCache extends InvalidationCache {
     public String getLocking();
     @Override
     public void setLocking(String locking);
+
+    // Not part of detyped model.  This is a flag to tell us if eviction
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="eviction/has-eviction")
+    @FormItem(defaultValue="false",
+            label="Is eviction defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_eviction")
+    public boolean isHasEviction();
+    @Override
+    public void setHasEviction(boolean hasEviction);
 
     // eviction attributes
     @Override
@@ -228,6 +275,20 @@ public interface ReplicatedCache extends InvalidationCache {
     @Override
     public void setMaxEntries(Integer maxEntries);
 
+    // Not part of detyped model.  This is a flag to tell us if expiration
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="expiration/has-expiration")
+    @FormItem(defaultValue="false",
+            label="Is expiration defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_expiration")
+    public boolean isHasExpiration();
+    @Override
+    public void setHasExpiration(boolean hasExpiration);
 
     // expiration attributes
     @Override
@@ -266,7 +327,35 @@ public interface ReplicatedCache extends InvalidationCache {
     @Override
     public void setInterval(Long interval);
 
-    // Store tab
+    // Not part of detyped model.  This is a flag to tell us if store
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="store/has-store")
+    @FormItem(defaultValue="false",
+            label="Is store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_store")
+    public boolean isHasStore();
+    @Override
+    public void setHasStore(boolean hasStore);
+
+    // Store attributes
+    @Override
+    @Binding(detypedName="store/STORE/class")
+    @FormItem(defaultValue="NONE",
+            label="Store Impl Class",
+            required=true,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            order=2,
+            tabName="subsys_infinispan_store")
+    public String getStoreClass();
+    @Override
+    public void setStoreClass(String storeClass);
+
     @Override
     @Binding(detypedName="store/STORE/shared")
     @FormItem(defaultValue="false",
@@ -275,9 +364,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isShared();
+    public Boolean isStoreShared();
     @Override
-    public void setShared(Boolean isShared);
+    public void setStoreShared(Boolean isShared);
 
     @Override
     @Binding(detypedName="store/STORE/preload")
@@ -287,9 +376,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPreload();
+    public Boolean isStorePreload();
     @Override
-    public void setPreload(Boolean isPreload);
+    public void setStorePreload(Boolean isPreload);
 
     @Override
     @Binding(detypedName="store/STORE/passivation")
@@ -299,9 +388,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPassivation();
+    public Boolean isStorePassivation();
     @Override
-    public void setPassivation(Boolean isPassivation);
+    public void setStorePassivation(Boolean isPassivation);
 
     @Override
     @Binding(detypedName="store/STORE/fetch-state")
@@ -311,9 +400,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isFetchState();
+    public Boolean isStoreFetchState();
     @Override
-    public void setFetchState(Boolean isFetchState);
+    public void setStoreFetchState(Boolean isFetchState);
 
     @Override
     @Binding(detypedName="store/STORE/purge")
@@ -323,9 +412,9 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPurge();
+    public Boolean isStorePurge();
     @Override
-    public void setPurge(Boolean isPurge);
+    public void setStorePurge(Boolean isPurge);
 
     @Override
     @Binding(detypedName="store/STORE/singleton")
@@ -335,11 +424,10 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isSingleton();
+    public Boolean isStoreSingleton();
     @Override
-    public void setSingleton(Boolean isSingleton);
+    public void setStoreSingleton(Boolean isSingleton);
 
-   // ------ PROPERTIES TAB --------------
     @Override
     @Binding(detypedName="store/STORE/properties",
             listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
@@ -348,20 +436,231 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="PROPERTY_EDITOR",
              formItemTypeForAdd="PROPERTY_EDITOR",
-             tabName="CUSTOM")
-    List<PropertyRecord> getProperties();
+             tabName="subsys_infinispan_store")
+    List<PropertyRecord> getStoreProperties();
     @Override
-    void setProperties(List<PropertyRecord> properties);
+    void setStoreProperties(List<PropertyRecord> properties);
+
+    // Not part of detyped model.  This is a flag to tell us if file-store
+    // singleton needs to be added to or removed from the model.
+    @Override
+    @Binding(detypedName="file-store/has-file-store")
+    @FormItem(defaultValue="false",
+             label="Is file store defined?",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             order=1,
+             tabName="subsys_infinispan_file_store")
+     public boolean isHasFileStore();
+     @Override
+     public void setHasFileStore(boolean hasFileStore);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/shared")
+     @FormItem(defaultValue="false",
+             label="Shared",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStoreShared();
+     @Override
+     public void setFileStoreShared(Boolean isShared);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/preload")
+     @FormItem(defaultValue="false",
+             label="Preload",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStorePreload();
+     @Override
+     public void setFileStorePreload(Boolean isPreload);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/passivation")
+     @FormItem(defaultValue="true",
+             label="Passivation",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStorePassivation();
+     @Override
+     public void setFileStorePassivation(Boolean isPassivation);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/fetch-state")
+     @FormItem(defaultValue="true",
+             label="Fetch State",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStoreFetchState();
+     @Override
+     public void setFileStoreFetchState(Boolean isFetchState);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/purge")
+     @FormItem(defaultValue="true",
+             label="Purge",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStorePurge();
+     @Override
+     public void setFileStorePurge(Boolean isPurge);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/singleton")
+     @FormItem(defaultValue="false",
+             label="Singletion",
+             required=false,
+             formItemTypeForEdit="CHECK_BOX",
+             formItemTypeForAdd="CHECK_BOX",
+             tabName="subsys_infinispan_file_store")
+     public Boolean isFileStoreSingleton();
+     @Override
+     public void setFileStoreSingleton(Boolean isSingleton);
+
+     @Override
+     @Binding(detypedName="file-store/FILE_STORE/properties",
+             listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+     @FormItem(defaultValue="",
+              label="Store Properties",
+              required=false,
+              formItemTypeForEdit="PROPERTY_EDITOR",
+              formItemTypeForAdd="PROPERTY_EDITOR",
+              tabName="subsys_infinispan_file_store")
+     List<PropertyRecord> getFileStoreProperties();
+     @Override
+     void setFileStoreProperties(List<PropertyRecord> properties);
+
+     // Not part of detyped model.  This is a flag to tell us if remote-store
+     // singleton needs to be added to or removed from the model.
+     @Override
+     @Binding(detypedName="remote-store/has-remote-store")
+     @FormItem(defaultValue="false",
+              label="Is remote store defined?",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              order=1,
+              tabName="subsys_infinispan_remote_store")
+      public boolean isHasRemoteStore();
+      @Override
+      public void setHasRemoteStore(boolean hasFileStore);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/shared")
+      @FormItem(defaultValue="false",
+              label="Shared",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStoreShared();
+      @Override
+      public void setRemoteStoreShared(Boolean isShared);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/preload")
+      @FormItem(defaultValue="false",
+              label="Preload",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStorePreload();
+      @Override
+      public void setRemoteStorePreload(Boolean isPreload);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/passivation")
+      @FormItem(defaultValue="true",
+              label="Passivation",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStorePassivation();
+      @Override
+      public void setRemoteStorePassivation(Boolean isPassivation);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/fetch-state")
+      @FormItem(defaultValue="true",
+              label="Fetch State",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStoreFetchState();
+      @Override
+      public void setRemoteStoreFetchState(Boolean isFetchState);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/purge")
+      @FormItem(defaultValue="true",
+              label="Purge",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStorePurge();
+      @Override
+      public void setRemoteStorePurge(Boolean isPurge);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/singleton")
+      @FormItem(defaultValue="false",
+              label="Singletion",
+              required=false,
+              formItemTypeForEdit="CHECK_BOX",
+              formItemTypeForAdd="CHECK_BOX",
+              tabName="subsys_infinispan_remote_store")
+      public Boolean isRemoteStoreSingleton();
+      @Override
+      public void setRemoteStoreSingleton(Boolean isSingleton);
+
+      @Override
+      @Binding(detypedName="remote-store/REMOTE_STORE/properties",
+              listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+      @FormItem(defaultValue="",
+               label="Store Properties",
+               required=false,
+               formItemTypeForEdit="PROPERTY_EDITOR",
+               formItemTypeForAdd="PROPERTY_EDITOR",
+               tabName="subsys_infinispan_remote_store")
+      List<PropertyRecord> getRemoteStoreProperties();
+      @Override
+      void setRemoteStoreProperties(List<PropertyRecord> properties);
 
     // attributes inherited from InvalidationCache
+    @Override
+    @Binding(detypedName="mode")
+    @FormItem(defaultValue="SYNC",
+            label="Clustered Cache Mode",
+            required=true,
+            formItemTypeForEdit="COMBO_BOX",
+            formItemTypeForAdd="COMBO_BOX",
+            acceptedValues={"SYNC", "ASYNC"})
+    public String getClusteredCacheMode();
+    @Override
+    public void setClusteredCacheMode(String clusteredCacheMode);
+
     @Override
     @Binding(detypedName="queue-size")
     @FormItem(defaultValue="1000",
             label="Queue Size",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_cluster")
+            formItemTypeForAdd="NUMBER_BOX")
     public Integer getQueueSize();
     @Override
     public void setQueueSize(Integer queueSize);
@@ -372,8 +671,7 @@ public interface ReplicatedCache extends InvalidationCache {
             label="Queue Flush Interval",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_cluster")
+            formItemTypeForAdd="NUMBER_BOX")
     public Long getQueueFlushInterval();
     @Override
     public void setQueueFlushInterval(Long queueFlushInterval);
@@ -381,11 +679,10 @@ public interface ReplicatedCache extends InvalidationCache {
     @Override
     @Binding(detypedName="remote-timeout")
     @FormItem(defaultValue="17500",
-            label="Remote Timeout",
+            label="Remote Timeout (ms)",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_cluster")
+            formItemTypeForAdd="NUMBER_BOX")
     public Long getRemoteTimeout();
     @Override
     public void setRemoteTimeout(Long remoteTimeout);
