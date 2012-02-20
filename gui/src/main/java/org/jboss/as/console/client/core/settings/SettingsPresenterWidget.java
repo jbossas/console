@@ -60,7 +60,8 @@ public class SettingsPresenterWidget
     public void onSaveDialogue(CommonSettings settings) {
 
         // see also App.gwt.xml
-        Preferences.set("as7_ui_locale", settings.getLocale());
+        if(settings.getLocale()!=null && !settings.getLocale().equals(""))
+            Preferences.set("as7_ui_locale", settings.getLocale());
 
         Console.info(Console.MESSAGES.savedSettings());
 
