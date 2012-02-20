@@ -47,18 +47,18 @@ public class EntityAdapter<T> {
     }
 
     /**
-     * Determine if this is an EntityAdapter for a one of the supported ModelNode 
+     * Determine if this is an EntityAdapter for a one of the supported ModelNode
      * base classes (String, Long, BigDecimal, etc).
-     * 
+     *
      * @return <code>true</code> if this is a base class EntityAdapter, <code>false</code> otherwise.
      */
     public boolean isBaseTypeAdapter() {
         return isBaseType(this.type);
     }
-    
+
     /**
      * Is the given class one of the supported ModelNode base classes (String, Long, BigDecimal, etc.)
-     * 
+     *
      * @param clazz The class to be tested.
      * @return <code>true</code> if the given class is a base class, <code>false</code> otherwise.
      */
@@ -71,7 +71,7 @@ public class EntityAdapter<T> {
                (clazz == BigDecimal.class) ||
                (clazz == byte[].class);
     }
-    
+
     private T convertToBaseType(ModelNode dmr) {
        if (type == String.class) return (T)dmr.asString();
        if (type == Long.class) return (T)Long.valueOf(dmr.asLong());
@@ -80,10 +80,10 @@ public class EntityAdapter<T> {
        if (type == Double.class) return (T)Double.valueOf(dmr.asDouble());
        if (type == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
        if (type == byte[].class) return (T)dmr.asBytes();
-       
+
        throw new IllegalArgumentException("Can not convert. This node is not of a base type. Actual type is " + type.getName());
     }
-    
+
     /**
      * The ModelNode can be of any type supported by ModelType except BigInteger.
      * Typically it's just the payload of a DMR response (ModelNode.get(RESULT))
@@ -92,6 +92,8 @@ public class EntityAdapter<T> {
      * @return an entity representation of type T
      */
     public T fromDMR(ModelNode dmr) {
+        dmr = dmr.clone(); // don't want our dmr.get() calls to have side effects
+
         if (isBaseTypeAdapter()) return convertToBaseType(dmr);
 
         ModelNode actualPayload = null;
@@ -172,7 +174,7 @@ public class EntityAdapter<T> {
                 /**
                  * KEYS
                  */
-                
+
                 if(propBinding.isKey())
                 {
                     // key resolution strategy:
@@ -251,8 +253,8 @@ public class EntityAdapter<T> {
                 }
                 else if ("java.util.List".equals(propBinding.getJavaTypeName()))
                 {
-                    ModelNode list = actualPayload.get(propBinding.getDetypedName());
-                    if (propValue.isDefined() && !list.asList().isEmpty()) {
+                    ModelNode list = actualPayload.get(splitDetypedName);
+                    if (list.isDefined() && propValue.isDefined() && !list.asList().isEmpty()) {
                         if (list.asList().get(0).getType().equals(ModelType.PROPERTY)) {
                             value = propBinding.getEntityAdapterForList().fromDMRPropertyList(list.asPropertyList());
                         } else {
@@ -301,7 +303,7 @@ public class EntityAdapter<T> {
 
         return entities;
     }
-    
+
     public List<PropertyRecord> fromDMRPropertyList(List<Property> dmr) {
         List<PropertyRecord> entities = new LinkedList<PropertyRecord>();
 
@@ -424,7 +426,7 @@ public class EntityAdapter<T> {
         }
         return node;
     }
-    
+
     /**
      * Creates a composite operation to create entities.
      * Basically calls {@link #fromEntity(Object)}
@@ -485,13 +487,13 @@ public class EntityAdapter<T> {
         {
             Object value = changeSet.get(binding.getJavaName());
             if (value == null) continue;
-            
+
             ModelNode step = protoType.clone();
 
             // account for flattened sub-attribute paths
             String detypedName = binding.getDetypedName();
             String[] splitDetypedName = detypedName.split("/");
-            
+
             step.get(NAME).set(splitDetypedName[0]);
             splitDetypedName[0] = VALUE;
             ModelNode nodeToSetValueUpon = step.get(splitDetypedName);
@@ -505,26 +507,26 @@ public class EntityAdapter<T> {
                 } else {
                     setValue(binding, savedStep.get(splitDetypedName), value);
                 }
-                
+
             } else {
                 setValue(binding, nodeToSetValueUpon, value);
                 steps.add(step);
             }
         }
-        
+
         // add steps for flattened attributes
         for (ModelNode step : flattenedSteps.values()) steps.add(step);
-        
+
         // add extra steps
         steps.addAll(Arrays.asList(extraSteps));
 
         operation.get(STEPS).set(steps);
         return operation;
     }
-    
+
     private void setValue(PropertyBinding binding, ModelNode nodeToSetValueUpon, Object value) {
         Class type = value.getClass();
-        
+
         if(FormItem.VALUE_SEMANTICS.class == type) {
 
             // skip undefined form item values (FormItem.UNDEFINED.Value)

@@ -28,16 +28,16 @@ import javax.inject.Inject;
 
 /**
  * Main view class for Infinispan Distributed Cache.
- * 
+ *
  * @author Stan Silvert
  */
-public class DistributedCacheView extends AbstractCacheView<DistributedCache> implements DistributedCachePresenter.MyView {
+public class DistributedCacheView extends NonLocalCacheView<DistributedCache> implements DistributedCachePresenter.MyView {
 
     @Inject
     public DistributedCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(DistributedCache.class, propertyMetaData, dispatcher);
     }
-    
+
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_infinispan_distributedCache();

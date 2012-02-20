@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -29,28 +28,27 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 
 /**
- * Main view class for Infinispan LocalCache Containers.
+ * Only difference between local and non-local cache view is that non-local caches require the mode
+ * attribute on add.  This requires the NonLocalCacheEntityToDmrBridge which knows how to create
+ * the special add operation.
  *
  * @author Stan Silvert
  */
-public class LocalCacheView extends AbstractCacheView<LocalCache> implements LocalCachePresenter.MyView {
+public abstract class NonLocalCacheView<T extends LocalCache> extends AbstractCacheView<T> implements InvalidationCachePresenter.MyView {
 
     @Inject
-    public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
-        super(LocalCache.class, propertyMetaData, dispatcher);
+    public NonLocalCacheView(Class<T> type, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
+        super(type, propertyMetaData, dispatcher);
     }
 
     @Override
-    protected String getEntityDisplayName() {
-        return Console.CONSTANTS.subsys_infinispan_localCache();
-    }
-
-    @Override
-    protected FormAdapter<LocalCache> makeAddEntityForm() {
-        Form<LocalCache> form = new Form(beanType);
+    protected FormAdapter<T> makeAddEntityForm() {
+        Form<T> form = new Form(beanType);
         form.setNumColumns(1);
         form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd(),
-                       getFormMetaData().findAttribute("cacheContainer").getFormItemForAdd(this));
+                       getFormMetaData().findAttribute("cacheContainer").getFormItemForAdd(this),
+                       getFormMetaData().findAttribute("clusteredCacheMode").getFormItemForAdd());
         return form;
     }
+
 }

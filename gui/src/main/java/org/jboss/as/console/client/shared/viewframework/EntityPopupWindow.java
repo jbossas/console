@@ -1,19 +1,19 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.viewframework;
@@ -38,11 +38,11 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public abstract class EntityPopupWindow<T> extends DefaultWindow {
-    
+
     protected EntityToDmrBridge<T> bridge;
     protected FormAdapter<T> form;
     protected Widget helpWidget;
-    
+
     public EntityPopupWindow(String title, FormAdapter<T> form, Widget helpWidget, EntityToDmrBridge<T> bridge) {
         super(title);
         this.form = form;
@@ -57,13 +57,13 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
                 EntityPopupWindow.this.hide();
             }
         });
-        
+
         setWidget(makeWidget());
         setGlassEnabled(true);
         center();
         hide();
     }
-    
+
     private Widget makeWidget() {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
@@ -71,7 +71,7 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
         if (helpWidget != null) {
             layout.add(helpWidget);
         }
-        
+
         layout.add(form.asWidget());
 
         ClickHandler cancelHandler = new ClickHandler() {
@@ -110,11 +110,11 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
         T newBean = bridge.newEntity();
         form.edit(newBean);
     }
-    
+
     public void setBean(T bean) {
         form.edit(bean);
     }
-    
+
     /**
      * Execute a command, typically delegating to the EntityToDmrBridge.
      * @param form The form that was just edited.

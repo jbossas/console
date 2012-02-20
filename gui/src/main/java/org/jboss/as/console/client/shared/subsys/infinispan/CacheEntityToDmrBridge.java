@@ -18,8 +18,10 @@
  */
 package org.jboss.as.console.client.shared.subsys.infinispan;
 
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
 import org.jboss.as.console.client.shared.viewframework.DmrCallback;
@@ -40,19 +42,32 @@ import java.util.Set;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
+ * This EntityToDmrBridge has special logic to handle the singleton-object pattern used with the cache
+ * models.  It also has logic to set a cache as the default container if requested.
  *
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBridgeImpl<T> {
 
     private static final Set<String> singletons = new HashSet<String>();
+    private static final Set<String> addRemoveSingletonCheckboxes = new HashSet<String>();
 
     static {
         singletons.add("store");
         singletons.add("locking");
         singletons.add("eviction");
         singletons.add("expiration");
-        singletons.add("rehashing");
+        singletons.add("transaction");
+        singletons.add("file-store");
+        singletons.add("remote-store");
+
+        addRemoveSingletonCheckboxes.add("hasStore");
+        addRemoveSingletonCheckboxes.add("hasLocking");
+        addRemoveSingletonCheckboxes.add("hasEviction");
+        addRemoveSingletonCheckboxes.add("hasExpiration");
+        addRemoveSingletonCheckboxes.add("hasTransaction");
+        addRemoveSingletonCheckboxes.add("hasFileStore");
+        addRemoveSingletonCheckboxes.add("hasRemoteStore");
     }
 
     public CacheEntityToDmrBridge(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
@@ -86,19 +101,19 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
 
         // for each container, find the default cache
         ModelNode readAttrOp = new ModelNode();
-        readAttrOp.get(ADDRESS).add(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", "*");
+        readAttrOp.get(ADDRESS).set(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", "*");
         readAttrOp.get(OP).set(READ_ATTRIBUTE_OPERATION);
         readAttrOp.get(NAME).set("default-cache");
         steps.get(STEPS).add(readAttrOp);
 
-    //    System.out.println("load entities for " + this.type.getName());
-    //    System.out.println(steps.toString());
+        System.out.println("load entities for " + this.type.getName());
+        System.out.println(steps.toString());
 
         dispatcher.execute(new DMRAction(steps), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
-         //      System.out.println("response=");
-         //      System.out.println(response.toString());
+               System.out.println("loadEntities response=");
+               System.out.println(response.toString());
                onLoadEntitiesSuccess(response);
             }
         });
@@ -111,24 +126,36 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
 
         // TODO: https://issues.jboss.org/browse/AS7-3670
         for (ModelNode entity : response.get(RESULT).get("step-1").get(RESULT).asList()) {
+            ModelNode result = entity.get(RESULT);
             for (Property addressProp : entity.get(ADDRESS).asPropertyList()) {
-                entity.get(RESULT).get(addressProp.getName()).set(addressProp.getValue());
+                result.get(addressProp.getName()).set(addressProp.getValue());
             }
 
-            entities.add(entityAdapter.fromDMR(entity.get(RESULT)));
+            T cache = entityAdapter.fromDMR(result);
+
+            cache.setHasEviction(result.get("eviction").isDefined());
+            cache.setHasExpiration(result.get("expiration").isDefined());
+            cache.setHasLocking(result.get("locking").isDefined());
+            cache.setHasStore(result.get("store").isDefined());
+            cache.setHasFileStore(result.get("file-store").isDefined());
+            cache.setHasRemoteStore(result.get("remote-store").isDefined());
+            cache.setHasTransaction(result.get("transaction").isDefined());
+
+            entities.add(cache);
         }
 
         entityList = sortEntities(entities);
 
         setIsDefaultCacheAttribute(response.get(RESULT).get("step-2"));
 
-        if (view != null) view.refresh();
+        refreshView(response);
     }
 
     private void setIsDefaultCacheAttribute(ModelNode response) {
         Set<String> defaultCaches = new HashSet<String>();
         for (ModelNode defaultCache : response.get(RESULT).asList()) {
-            String cacheContainer = defaultCache.get(ADDRESS).asList().get(1).get("cache-container").asString();
+            List<ModelNode> addressList = defaultCache.get(ADDRESS).asList();
+            String cacheContainer = addressList.get(addressList.size() - 1).get("cache-container").asString();
             String cache = defaultCache.get(RESULT).asString();
             defaultCaches.add(cacheContainer + "/" + cache);
         }
@@ -144,50 +171,137 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         stepsList.addAll(Arrays.asList(extraSteps));
 
         ModelNode setDefaultCacheStep = makeSetDefaultCacheStep(entity, changedValues);
+        if ((setDefaultCacheStep != null) && setDefaultCacheStep.get("ERROR").isDefined()) return;
         if (setDefaultCacheStep != null) stepsList.add(setDefaultCacheStep);
 
-        List<ModelNode> specialEntitySteps = makeSingletonEntitySteps(entity, changedValues);
-        stepsList.addAll(specialEntitySteps);
+        List<ModelNode> singletonEntitySteps = makeSingletonEntitySteps(entity, changedValues);
+        stepsList.addAll(singletonEntitySteps);
 
         super.onSaveDetails(entity, changedValues, stepsList.toArray(new ModelNode[stepsList.size()]));
     }
 
     private List<ModelNode> makeSingletonEntitySteps(T entity, Map<String, Object> changedValues) {
         List<ModelNode> stepsList = new ArrayList<ModelNode>();
-        List<String> removals = new ArrayList<String>();
+
+        String addRemoveAttrib = findAddRemoveSingletonAttribute(changedValues);
+        if ((addRemoveAttrib != null) && (!(Boolean)changedValues.get(addRemoveAttrib))) { // removing singleton
+            stepsList.add(makeAddOrRemoveSingletonStep(entity, singletonName(addRemoveAttrib), REMOVE));
+            removeSingletonAttributes(changedValues);
+            return stepsList;
+        }
+
+        if (addRemoveAttrib != null) { // adding singleton
+            changedValues.remove(addRemoveAttrib); // remove the add singleton flag, which is not written to DMR model
+            ModelNode addSingleton = makeAddOrRemoveSingletonStep(entity, singletonName(addRemoveAttrib), ADD);
+
+            if (addRemoveAttrib.equals("hasStore")) {
+                String storeImplClass = (String)changedValues.remove("storeClass");
+                if (storeImplClass == null) {
+                    Console.error("Must specify Store Impl Class when defining Store.");
+                    removeSingletonAttributes(changedValues);
+                    return stepsList;
+                }
+                addSingleton.get("class").set(storeImplClass);
+            }
+
+            stepsList.add(addSingleton);
+        }
+
         for (String javaName : changedValues.keySet()) {
-            PropertyBinding binding = formMetaData.findAttribute(javaName);
-            String[] splitDetypedName = binding.getDetypedName().split("/");
-            String singletonName = splitDetypedName[0];
+            String singletonName = singletonName(javaName);
             if (!singletons.contains(singletonName)) continue;
 
             ModelNode writeSingletonAttributeStep = getResourceAddress(getName(entity));
-            writeSingletonAttributeStep.get(ADDRESS).add(singletonName, singletonName.toUpperCase());
+            writeSingletonAttributeStep.get(ADDRESS).add(singletonName, singletonName.toUpperCase().replace('-', '_'));
             writeSingletonAttributeStep.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-            writeSingletonAttributeStep.get(NAME).set(splitDetypedName[splitDetypedName.length - 1]);
-            writeSingletonAttributeStep.get(VALUE).set(changedValues.get(javaName).toString());
+            writeSingletonAttributeStep.get(NAME).set(attributeName(javaName));
+
+            if (this.formMetaData.findAttribute(javaName).getListType() != null) {
+                for (PropertyRecord prop : (List<PropertyRecord>)changedValues.get(javaName)) {
+                    writeSingletonAttributeStep.get(VALUE).add(prop.getKey(), prop.getValue());
+                }
+            } else {
+                writeSingletonAttributeStep.get(VALUE).set(changedValues.get(javaName).toString());
+            }
             stepsList.add(writeSingletonAttributeStep);
-            removals.add(javaName);
         }
 
         // Need to remove singleton attributes from normal processing.
-        // Remove outside main loop to avoid ConcurrentModificationException
-        for (String javaName: removals) {
-            changedValues.remove(javaName);
-        }
+        removeSingletonAttributes(changedValues);
 
         return stepsList;
     }
 
+    // Find the request to add or remove a singleton
+    private String findAddRemoveSingletonAttribute(Map<String, Object> changedValues) {
+        for (Map.Entry<String, Object> entry : changedValues.entrySet()) {
+            if (addRemoveSingletonCheckboxes.contains(entry.getKey())) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
+    // If singleton attribute, such as "/transaction/TRANSACTION/foo-attribute",
+    // singleton name will be the first name in the path.
+    private String singletonName(String javaName) {
+        PropertyBinding binding = formMetaData.findAttribute(javaName);
+        String[] splitDetypedName = binding.getDetypedName().split("/");
+        return splitDetypedName[0];
+    }
+
+    // If singleton attribute, such as "/transaction/TRANSACTION/foo-attribute",
+    // singleton name will be the last name in the path.
+    private String attributeName(String javaName) {
+        PropertyBinding binding = formMetaData.findAttribute(javaName);
+        String[] splitDetypedName = binding.getDetypedName().split("/");
+        return splitDetypedName[splitDetypedName.length - 1];
+    }
+
+    // remove all singleton attributes from changedValues so they are not
+    // processed by the superclass
+    private void removeSingletonAttributes(Map<String, Object> changedValues) {
+        List<String> removals = new ArrayList<String>();
+        for (String javaName : changedValues.keySet()) {
+            String singletonName = singletonName(javaName);
+            if (!singletons.contains(singletonName)) continue;
+            removals.add(javaName);
+        }
+
+        // remove outside the loop to avoid ConcurrentModificationException
+        for (String removal : removals) {
+            changedValues.remove(removal);
+        }
+    }
+
+    // add or remove a singleton in the model.  operation param will == ADD or REMOVE.
+    private ModelNode makeAddOrRemoveSingletonStep(T entity, String singletonName, String operation) {
+        ModelNode addOrRemoveSingletonStep = getResourceAddress(getName(entity));
+        addOrRemoveSingletonStep.get(ADDRESS).add(singletonName, singletonName.toUpperCase().replace('-', '_'));
+        addOrRemoveSingletonStep.get(OP).set(operation);
+        return addOrRemoveSingletonStep;
+    }
+
+    // If user asks a cache to become the default for the cache container, set it as default in the cache-container's
+    // model.
     private ModelNode makeSetDefaultCacheStep(T entity, Map<String, Object> changedValues) {
         Boolean isDefault = (Boolean)changedValues.remove("default");
         if (isDefault == null) {
             return null;
         }
 
-        String cacheContainer = entity.getCacheContainer();
         ModelNode setDefaultCacheStep = new ModelNode();
-        setDefaultCacheStep.get(ADDRESS).add(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", cacheContainer);
+
+        if (entity.isDefault()) {
+            Console.error("Can not unset 'Default for cache container'.  Instead, set a different cache to be the default.");
+            setDefaultCacheStep.get("ERROR").set("ERROR");
+            return setDefaultCacheStep;
+        }
+
+        String cacheContainer = entity.getCacheContainer();
+
+        setDefaultCacheStep.get(ADDRESS).set(Baseadress.get()).add("subsystem", "infinispan").add("cache-container", cacheContainer);
         setDefaultCacheStep.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
         setDefaultCacheStep.get(NAME).set("default-cache");
         setDefaultCacheStep.get(VALUE).set(entity.getName());

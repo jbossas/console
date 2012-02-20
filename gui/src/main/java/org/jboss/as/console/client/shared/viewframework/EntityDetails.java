@@ -24,7 +24,6 @@ import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.EditListener;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.EnumSet;
 import java.util.Map;

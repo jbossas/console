@@ -37,7 +37,8 @@ public interface LocalCache extends NamedEntity {
               label="Name",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="TEXT_BOX")
+              formItemTypeForAdd="TEXT_BOX",
+              order=1)
     public String getName();
     @Override
     public void setName(String name);
@@ -47,7 +48,8 @@ public interface LocalCache extends NamedEntity {
               label="Cache Container",
               required=true,
               formItemTypeForEdit="TEXT",
-              formItemTypeForAdd="COMBO_BOX")
+              formItemTypeForAdd="COMBO_BOX",
+              order=2)
     public String getCacheContainer();
     public void setCacheContainer(String cacheContainerName);
 
@@ -59,7 +61,8 @@ public interface LocalCache extends NamedEntity {
             label="Default for cache container?",
             required=false,
             formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
+            formItemTypeForAdd="CHECK_BOX",
+            order=3)
     public Boolean isDefault();
     public void setDefault(Boolean isDefault);
 
@@ -93,16 +96,28 @@ public interface LocalCache extends NamedEntity {
     public void setIndexing(String indexing);
 
     @Binding(detypedName="jndi-name")
-    @FormItem(defaultValue="NONE",
-            label="Indexing",
+    @FormItem(label="JNDI Name",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX")
     public String getJndiName();
     public void setJndiName(String jndiName);
 
+    // Not part of detyped model.  This is a flag to tell us if locking
+    // singleton needs to be added to or removed from the model.
+    @Binding(detypedName="locking/has-locking")
+    @FormItem(defaultValue="false",
+            label="Is locking defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_locking")
+    public boolean isHasLocking();
+    public void setHasLocking(boolean hasLocking);
+
     // Locking attributes
-    @Binding(detypedName="locking/isolation")
+    @Binding(detypedName="locking/LOCKING/isolation")
     @FormItem(defaultValue="REPEATABLE_READ",
             label="Isolation",
             required=true,
@@ -113,7 +128,7 @@ public interface LocalCache extends NamedEntity {
     public String getIsolation();
     public void setIsolation(String isolation);
 
-    @Binding(detypedName="locking/striping")
+    @Binding(detypedName="locking/LOCKING/striping")
     @FormItem(defaultValue="false",
             label="Striping",
             required=true,
@@ -123,9 +138,9 @@ public interface LocalCache extends NamedEntity {
     public Boolean isStriping();
     public void setStriping(Boolean striping);
 
-    @Binding(detypedName="locking/acquire-timeout")
+    @Binding(detypedName="locking/LOCKING/acquire-timeout")
     @FormItem(defaultValue="15000",
-            label="Acquire Timeout",
+            label="Acquire Timeout (ms)",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
@@ -133,7 +148,7 @@ public interface LocalCache extends NamedEntity {
     public Long getAcquireTimeout();
     public void setAcquireTimeout(Long aquireTimeout);
 
-    @Binding(detypedName="locking/concurrency-level")
+    @Binding(detypedName="locking/LOCKING/concurrency-level")
     @FormItem(defaultValue="1000",
             label="Concurrency Level",
             required=true,
@@ -142,6 +157,19 @@ public interface LocalCache extends NamedEntity {
             tabName="subsys_infinispan_locking")
     public Integer getConcurrencyLevel();
     public void setConcurrencyLevel(Integer concurrencyLevel);
+
+    // Not part of detyped model.  This is a flag to tell us if transaction
+    // singleton needs to be added to or removed from the model.
+    @Binding(detypedName="transaction/has-transaction")
+    @FormItem(defaultValue="false",
+            label="Is transaction defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_transaction")
+    public boolean isHasTransaction();
+    public void setHasTransaction(boolean hasTransaction);
 
     // transaction attributes
     @Binding(detypedName="transaction/TRANSACTION/mode")
@@ -152,8 +180,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "NONE_XA", "NONE_DURABLE_XA", "FULL_XA"},
             tabName="subsys_infinispan_transaction")
-    public String getMode();
-    public void setMode(String mode);
+    public String getTransactionMode();
+    public void setTransactionMode(String transactionMode);
 
     @Binding(detypedName="transaction/TRANSACTION/stop-timeout")
     @FormItem(defaultValue="30000",
@@ -175,6 +203,19 @@ public interface LocalCache extends NamedEntity {
             tabName="subsys_infinispan_transaction")
     public String getLocking();
     public void setLocking(String locking);
+
+    // Not part of detyped model.  This is a flag to tell us if eviction
+    // singleton needs to be added to or removed from the model.
+    @Binding(detypedName="eviction/has-eviction")
+    @FormItem(defaultValue="false",
+            label="Is eviction defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_eviction")
+    public boolean isHasEviction();
+    public void setHasEviction(boolean hasEviction);
 
     // eviction attributes
     @Binding(detypedName="eviction/EVICTION/strategy")
@@ -198,6 +239,19 @@ public interface LocalCache extends NamedEntity {
     public Integer getMaxEntries();
     public void setMaxEntries(Integer maxEntries);
 
+
+    // Not part of detyped model.  This is a flag to tell us if expiration
+    // singleton needs to be added to or removed from the model.
+    @Binding(detypedName="expiration/has-expiration")
+    @FormItem(defaultValue="false",
+            label="Is expiration defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_expiration")
+    public boolean isHasExpiration();
+    public void setHasExpiration(boolean hasExpiration);
 
     // expiration attributes
     @Binding(detypedName="expiration/EXPIRATION/max-idle")
@@ -230,13 +284,26 @@ public interface LocalCache extends NamedEntity {
     public Long getInterval();
     public void setInterval(Long interval);
 
-    // Store tab
+    // Not part of detyped model.  This is a flag to tell us if store
+    // singleton needs to be added to or removed from the model.
+    @Binding(detypedName="store/has-store")
+    @FormItem(defaultValue="false",
+            label="Is store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_store")
+    public boolean isHasStore();
+    public void setHasStore(boolean hasStore);
+
+    // Store attributes
     @Binding(detypedName="store/STORE/class")
-    @FormItem(defaultValue="NONE",
-            label="Eviction Strategy",
+    @FormItem(label="Store Impl Class",
             required=true,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
+            order=2,
             tabName="subsys_infinispan_store")
     public String getStoreClass();
     public void setStoreClass(String storeClass);
@@ -248,8 +315,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isShared();
-    public void setShared(Boolean isShared);
+    public Boolean isStoreShared();
+    public void setStoreShared(Boolean isShared);
 
     @Binding(detypedName="store/STORE/preload")
     @FormItem(defaultValue="false",
@@ -258,8 +325,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPreload();
-    public void setPreload(Boolean isPreload);
+    public Boolean isStorePreload();
+    public void setStorePreload(Boolean isPreload);
 
     @Binding(detypedName="store/STORE/passivation")
     @FormItem(defaultValue="true",
@@ -268,8 +335,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPassivation();
-    public void setPassivation(Boolean isPassivation);
+    public Boolean isStorePassivation();
+    public void setStorePassivation(Boolean isPassivation);
 
     @Binding(detypedName="store/STORE/fetch-state")
     @FormItem(defaultValue="true",
@@ -278,8 +345,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isFetchState();
-    public void setFetchState(Boolean isFetchState);
+    public Boolean isStoreFetchState();
+    public void setStoreFetchState(Boolean isFetchState);
 
     @Binding(detypedName="store/STORE/purge")
     @FormItem(defaultValue="true",
@@ -288,8 +355,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isPurge();
-    public void setPurge(Boolean isPurge);
+    public Boolean isStorePurge();
+    public void setStorePurge(Boolean isPurge);
 
     @Binding(detypedName="store/STORE/singleton")
     @FormItem(defaultValue="false",
@@ -298,10 +365,9 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_store")
-    public Boolean isSingleton();
-    public void setSingleton(Boolean isSingleton);
+    public Boolean isStoreSingleton();
+    public void setStoreSingleton(Boolean isSingleton);
 
-   // ------ PROPERTIES TAB --------------
    @Binding(detypedName="store/STORE/properties",
            listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
    @FormItem(defaultValue="",
@@ -309,7 +375,259 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="CUSTOM")
-   List<PropertyRecord> getProperties();
-   void setProperties(List<PropertyRecord> properties);
+            tabName="subsys_infinispan_store")
+   List<PropertyRecord> getStoreProperties();
+   void setStoreProperties(List<PropertyRecord> properties);
+
+   // Not part of detyped model.  This is a flag to tell us if file-store
+   // singleton needs to be added to or removed from the model.
+   @Binding(detypedName="file-store/has-file-store")
+   @FormItem(defaultValue="false",
+            label="Is file store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_file_store")
+    public boolean isHasFileStore();
+    public void setHasFileStore(boolean hasFileStore);
+
+    @Binding(detypedName="file-store/FILE_STORE/shared")
+    @FormItem(defaultValue="false",
+            label="Shared",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStoreShared();
+    public void setFileStoreShared(Boolean isShared);
+
+    @Binding(detypedName="file-store/FILE_STORE/preload")
+    @FormItem(defaultValue="false",
+            label="Preload",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStorePreload();
+    public void setFileStorePreload(Boolean isPreload);
+
+    @Binding(detypedName="file-store/FILE_STORE/passivation")
+    @FormItem(defaultValue="true",
+            label="Passivation",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStorePassivation();
+    public void setFileStorePassivation(Boolean isPassivation);
+
+    @Binding(detypedName="file-store/FILE_STORE/fetch-state")
+    @FormItem(defaultValue="true",
+            label="Fetch State",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStoreFetchState();
+    public void setFileStoreFetchState(Boolean isFetchState);
+
+    @Binding(detypedName="file-store/FILE_STORE/purge")
+    @FormItem(defaultValue="true",
+            label="Purge",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStorePurge();
+    public void setFileStorePurge(Boolean isPurge);
+
+    @Binding(detypedName="file-store/FILE_STORE/singleton")
+    @FormItem(defaultValue="false",
+            label="Singletion",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_file_store")
+    public Boolean isFileStoreSingleton();
+    public void setFileStoreSingleton(Boolean isSingleton);
+
+   @Binding(detypedName="file-store/FILE_STORE/properties",
+           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+   @FormItem(defaultValue="",
+            label="Store Properties",
+            required=false,
+            formItemTypeForEdit="PROPERTY_EDITOR",
+            formItemTypeForAdd="PROPERTY_EDITOR",
+            tabName="subsys_infinispan_file_store")
+   List<PropertyRecord> getFileStoreProperties();
+   void setFileStoreProperties(List<PropertyRecord> properties);
+/*
+   // Not part of detyped model.  This is a flag to tell us if jdbc-store
+   // singleton needs to be added to or removed from the model.
+   @Binding(detypedName="jdbc-store/has-jdbc-store")
+   @FormItem(defaultValue="false",
+            label="Is JDBC store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_jdbc_store")
+    public boolean isHasJDBCStore();
+    public void setHasJDBCStore(boolean hasJDBCStore);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/shared")
+    @FormItem(defaultValue="false",
+            label="Shared",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStoreShared();
+    public void setJDBCStoreShared(Boolean isShared);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/preload")
+    @FormItem(defaultValue="false",
+            label="Preload",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStorePreload();
+    public void setJDBCStorePreload(Boolean isPreload);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/passivation")
+    @FormItem(defaultValue="true",
+            label="Passivation",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStorePassivation();
+    public void setJDBCStorePassivation(Boolean isPassivation);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/fetch-state")
+    @FormItem(defaultValue="true",
+            label="Fetch State",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStoreFetchState();
+    public void setJDBCStoreFetchState(Boolean isFetchState);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/purge")
+    @FormItem(defaultValue="true",
+            label="Purge",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStorePurge();
+    public void setJDBCStorePurge(Boolean isPurge);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/singleton")
+    @FormItem(defaultValue="false",
+            label="Singletion",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJDBCStoreSingleton();
+    public void setJDBCStoreSingleton(Boolean isSingleton);
+
+   @Binding(detypedName="jdbc-store/JDBC_STORE/properties",
+           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+   @FormItem(defaultValue="",
+            label="Store Properties",
+            required=false,
+            formItemTypeForEdit="PROPERTY_EDITOR",
+            formItemTypeForAdd="PROPERTY_EDITOR",
+            tabName="subsys_infinispan_jdbc_store")
+   List<PropertyRecord> getJDBCStoreProperties();
+   void setJDBCStoreProperties(List<PropertyRecord> properties); */
+
+   // Not part of detyped model.  This is a flag to tell us if remote-store
+   // singleton needs to be added to or removed from the model.
+   @Binding(detypedName="remote-store/has-remote-store")
+   @FormItem(defaultValue="false",
+            label="Is remote store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_remote_store")
+    public boolean isHasRemoteStore();
+    public void setHasRemoteStore(boolean hasFileStore);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/shared")
+    @FormItem(defaultValue="false",
+            label="Shared",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStoreShared();
+    public void setRemoteStoreShared(Boolean isShared);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/preload")
+    @FormItem(defaultValue="false",
+            label="Preload",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStorePreload();
+    public void setRemoteStorePreload(Boolean isPreload);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/passivation")
+    @FormItem(defaultValue="true",
+            label="Passivation",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStorePassivation();
+    public void setRemoteStorePassivation(Boolean isPassivation);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/fetch-state")
+    @FormItem(defaultValue="true",
+            label="Fetch State",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStoreFetchState();
+    public void setRemoteStoreFetchState(Boolean isFetchState);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/purge")
+    @FormItem(defaultValue="true",
+            label="Purge",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStorePurge();
+    public void setRemoteStorePurge(Boolean isPurge);
+
+    @Binding(detypedName="remote-store/REMOTE_STORE/singleton")
+    @FormItem(defaultValue="false",
+            label="Singletion",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_remote_store")
+    public Boolean isRemoteStoreSingleton();
+    public void setRemoteStoreSingleton(Boolean isSingleton);
+
+   @Binding(detypedName="remote-store/REMOTE_STORE/properties",
+           listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+   @FormItem(defaultValue="",
+            label="Store Properties",
+            required=false,
+            formItemTypeForEdit="PROPERTY_EDITOR",
+            formItemTypeForAdd="PROPERTY_EDITOR",
+            tabName="subsys_infinispan_remote_store")
+   List<PropertyRecord> getRemoteStoreProperties();
+   void setRemoteStoreProperties(List<PropertyRecord> properties);
 }
