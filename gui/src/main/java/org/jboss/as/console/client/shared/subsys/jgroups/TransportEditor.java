@@ -43,14 +43,14 @@ public class TransportEditor implements PropertyManagement {
         TextItem type = new TextItem("type", "Type");
         TextBoxItem socket= new TextBoxItem("socketBinding", "Socket Binding");
         TextBoxItem diagSocket = new TextBoxItem("diagSocketBinding", "Diagnostics Socket");
-        TextBoxItem machine = new TextBoxItem("machine", "Machine");
         CheckBoxItem shared= new CheckBoxItem("shared", "Is Shared?");
         TextBoxItem oobExecutor = new TextBoxItem("oobExecutor", "OOB Executor");
         TextBoxItem timerExecutor = new TextBoxItem("timerExecutor", "timer Executor");
         TextBoxItem defaultExecutor = new TextBoxItem("defaultExecutor", "Default Executor");
         TextBoxItem threadFactory= new TextBoxItem("threadFactory", "Thread Factory");
-        TextBoxItem site= new TextBoxItem("site", "Site");
-        TextBoxItem rack= new TextBoxItem("rack", "Rack");
+        TextBoxItem machine = new TextBoxItem("machine", "Machine", false);
+        TextBoxItem site= new TextBoxItem("site", "Site", false);
+        TextBoxItem rack= new TextBoxItem("rack", "Rack", false);
 
         /*
     @Binding(skip = true)

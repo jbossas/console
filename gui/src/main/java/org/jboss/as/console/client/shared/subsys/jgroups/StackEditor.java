@@ -150,7 +150,7 @@ public class StackEditor {
                 .setTitle("JGroups")
                 .setHeadlineWidget(headline)
                 .setDescription(Console.CONSTANTS.subsys_jgroups_protocol_desc())
-                .setMaster(Console.MESSAGES.available("Protocol Stacks"), table)
+                .setMaster(Console.MESSAGES.available("Protocols"), table)
                 .setMasterTools(toolstrip.asWidget())
                 .addDetail("Attributes", detail)
                 .addDetail("Properties", propertyEditor.asWidget())
