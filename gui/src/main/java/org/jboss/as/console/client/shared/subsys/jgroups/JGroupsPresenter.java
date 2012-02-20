@@ -59,10 +59,6 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         return placeManager;
     }
 
-    public void onSaveTransport(JGroupsTransport editedEntity, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
-    }
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JGroupsPresenter)
@@ -399,5 +395,30 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     public void closePropertyDialoge() {
         if(propertyWindow!=null)
             propertyWindow.hide();
+    }
+
+    public void onSaveTransport(JGroupsTransport entity, Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "jgroups");
+        address.get(ADDRESS).add("stack", selectedStack);
+        address.get(ADDRESS).add("transport", "TRANSPORT");
+
+        ModelNode operation = transportAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.modificationFailed("Transport"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.modified("Transport"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 }
