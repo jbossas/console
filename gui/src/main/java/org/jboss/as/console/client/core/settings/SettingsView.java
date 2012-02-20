@@ -23,6 +23,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.i18n.rebind.LocaleUtils;
+import com.google.gwt.i18n.shared.GwtLocale;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -34,6 +36,8 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
+
+import java.util.Set;
 
 
 /**
@@ -56,8 +60,9 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
         form = new Form<CommonSettings>(CommonSettings.class);
 
         ComboBoxItem localeItem = new ComboBoxItem("locale", "Locale");
-        localeItem.setValueMap(new String[] {"en", "de"});
+
         localeItem.setDefaultToFirstOption(true);
+        localeItem.setValueMap(new String[] {"en", "de", "zh_Hans", "pt_BR", "fr", "es", "ja"});
 
         form.setFields(localeItem);
 
