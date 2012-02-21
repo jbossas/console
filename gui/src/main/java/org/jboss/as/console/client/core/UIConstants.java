@@ -598,4 +598,6 @@ public interface UIConstants extends Constants {
     String subsys_jgroups_transport_desc();
 
     String subsys_jgroups_protocol_desc();
+
+    String common_label_append();
 }
