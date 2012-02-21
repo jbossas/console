@@ -178,7 +178,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
-            acceptedValues={"NONE", "NONE_XA", "NONE_DURABLE_XA", "FULL_XA"},
+            acceptedValues={"NONE", "NON_XA", "NON_DURABLE_XA", "FULL_XA"},
             tabName="subsys_infinispan_transaction")
     public String getTransactionMode();
     public void setTransactionMode(String transactionMode);
