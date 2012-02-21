@@ -9,8 +9,12 @@ import java.util.List;
  * @date 2/16/12
  */
 public interface JGroupsStack {
+
     String getName();
     void setName(String name);
+
+    String getType();
+    void setType(String type);
 
     @Binding(skip = true)
     List<JGroupsProtocol> getProtocols();

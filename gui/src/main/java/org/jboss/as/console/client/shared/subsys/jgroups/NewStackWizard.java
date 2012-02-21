@@ -6,29 +6,23 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Heiko Braun
  * @date 2/16/12
  */
-public class NewProtocolWizard {
+public class NewStackWizard {
 
 
     private JGroupsPresenter presenter;
 
-    public NewProtocolWizard(JGroupsPresenter presenter) {
+    public NewStackWizard(JGroupsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -36,22 +30,11 @@ public class NewProtocolWizard {
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("window-content");
 
-        final Form<JGroupsProtocol> form = new Form<JGroupsProtocol>(JGroupsProtocol.class);
+        final Form<JGroupsStack> form = new Form<JGroupsStack>(JGroupsStack.class);
 
-        ComboBoxItem typeField = new ComboBoxItem("type", "Type");
+        TextBoxItem nameField = new TextBoxItem("type", "Name");
 
-        List<String> names = new ArrayList<String>();
-        for (Protocol element : Protocol.values()) {
-            final String name = element.getLocalName();
-            if (name!=null && !"TCP".equals(name) && !"UDP".equals(name))
-                names.add(name);
-        }
-
-        typeField.setValueMap(names);
-
-        TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding");
-
-        form.setFields(typeField, socket);
+        form.setFields(nameField);
 
 
         DialogueOptions options = new DialogueOptions(
@@ -66,7 +49,7 @@ public class NewProtocolWizard {
                         if(validation.hasErrors())
                             return;
 
-                        presenter.onCreateProtocol(form.getUpdatedEntity());
+                        presenter.onCreateStack(form.getUpdatedEntity());
 
                     }
                 },
@@ -91,7 +74,6 @@ public class NewProtocolWizard {
                 ModelNode address = Baseadress.get();
                 address.add("subsystem", "jgroups");
                 address.add("stack", "*");
-                address.add("protocol", "*");
                 return address;
             }
         }, form);

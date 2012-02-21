@@ -209,11 +209,72 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     }
 
     public void launchNewStackWizard() {
-        // not used atm
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Protocol Stack"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.setWidget(
+                new NewStackWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onCreateStack(JGroupsStack entity) {
+
+        closeDialoge();
+
+        // keep them in sync
+        entity.setName(entity.getType());
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", entity.getType());
+        //operation.get("type").set(entity.getType());
+
+        operation.get(OP).set("add");
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.addingFailed("Protocol Stack"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.added("Protocol Stack"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 
     public void onDeleteStack(JGroupsStack entity) {
-        // not used atm
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "jgroups");
+        operation.get(ADDRESS).add("stack", entity.getName());
+        operation.get(OP).set("remove");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.deletionFailed("Protocol Stack"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.deleted("Protocol Stack"));
+
+                    loadStacks(true);
+                }
+            }
+        });
     }
 
     public void launchNewProtocolWizard() {

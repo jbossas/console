@@ -70,7 +70,7 @@ public class StackEditor {
 
         ToolStrip toolstrip = new ToolStrip();
 
-        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+        ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_append(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 presenter.launchNewProtocolWizard();
