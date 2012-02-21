@@ -24,6 +24,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.infinispan.model.LocalCache;
+import org.jboss.as.console.client.shared.subsys.infinispan.model.ReplicatedCache;
 import org.jboss.as.console.client.shared.viewframework.DmrCallback;
 import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
@@ -60,6 +61,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         singletons.add("transaction");
         singletons.add("file-store");
         singletons.add("remote-store");
+        singletons.add("state-transfer");
 
         addRemoveSingletonCheckboxes.add("hasStore");
         addRemoveSingletonCheckboxes.add("hasLocking");
@@ -68,6 +70,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         addRemoveSingletonCheckboxes.add("hasTransaction");
         addRemoveSingletonCheckboxes.add("hasFileStore");
         addRemoveSingletonCheckboxes.add("hasRemoteStore");
+        addRemoveSingletonCheckboxes.add("hasStateTransfer");
     }
 
     public CacheEntityToDmrBridge(ApplicationMetaData propertyMetadata, Class<? extends T> type, FrameworkView view,
@@ -140,6 +143,11 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
             cache.setHasFileStore(result.get("file-store").isDefined());
             cache.setHasRemoteStore(result.get("remote-store").isDefined());
             cache.setHasTransaction(result.get("transaction").isDefined());
+
+            if (cache instanceof ReplicatedCache) {
+                ReplicatedCache repl = (ReplicatedCache)cache;
+                repl.setHasStateTransfer(result.get("state-transfer").isDefined());
+            }
 
             entities.add(cache);
         }

@@ -37,6 +37,7 @@ public interface InvalidationCache extends LocalCache {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
+              tabName="subsys_infinispan_attrs",
               order=1)
     public String getName();
     @Override
@@ -49,6 +50,7 @@ public interface InvalidationCache extends LocalCache {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="COMBO_BOX",
+              tabName="subsys_infinispan_attrs",
               order=2)
     public String getCacheContainer();
     @Override
@@ -64,6 +66,7 @@ public interface InvalidationCache extends LocalCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_attrs",
             order=3)
     public Boolean isDefault();
     @Override
@@ -76,7 +79,8 @@ public interface InvalidationCache extends LocalCache {
             required=false,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
-            acceptedValues={"EAGER", "LAZY"})
+            acceptedValues={"EAGER", "LAZY"},
+            tabName="subsys_infinispan_attrs")
     public String getStart();
     @Override
     public void setStart(String start);
@@ -87,7 +91,8 @@ public interface InvalidationCache extends LocalCache {
             label="Batching",
             required=false,
             formItemTypeForEdit="CHECK_BOX",
-            formItemTypeForAdd="CHECK_BOX")
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_attrs")
     public Boolean isBatching();
     @Override
     public void setBatching(Boolean isBatching);
@@ -99,7 +104,8 @@ public interface InvalidationCache extends LocalCache {
             required=false,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
-            acceptedValues={"NONE", "LOCAL", "ALL"})
+            acceptedValues={"NONE", "LOCAL", "ALL"},
+            tabName="subsys_infinispan_attrs")
     public String getIndexing();
     @Override
     public void setIndexing(String indexing);
@@ -109,7 +115,8 @@ public interface InvalidationCache extends LocalCache {
     @FormItem(label="JNDI Name",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX")
+            formItemTypeForAdd="TEXT_BOX",
+            tabName="subsys_infinispan_attrs")
     public String getJndiName();
     @Override
     public void setJndiName(String jndiName);
@@ -202,7 +209,7 @@ public interface InvalidationCache extends LocalCache {
             required=false,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
-            acceptedValues={"NONE", "NONE_XA", "NONE_DURABLE_XA", "FULL_XA"},
+            acceptedValues={"NONE", "NON_XA", "NON_DURABLE_XA", "FULL_XA"},
             tabName="subsys_infinispan_transaction")
     public String getTransactionMode();
     @Override
@@ -647,7 +654,8 @@ public interface InvalidationCache extends LocalCache {
             required=true,
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
-            acceptedValues={"SYNC", "ASYNC"})
+            acceptedValues={"SYNC", "ASYNC"},
+            tabName="subsys_infinispan_attrs")
     public String getClusteredCacheMode();
     public void setClusteredCacheMode(String clusteredCacheMode);
 
@@ -656,7 +664,8 @@ public interface InvalidationCache extends LocalCache {
             label="Queue Size",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX")
+            formItemTypeForAdd="NUMBER_BOX",
+            tabName="subsys_infinispan_attrs")
     public Integer getQueueSize();
     public void setQueueSize(Integer queueSize);
 
@@ -665,7 +674,8 @@ public interface InvalidationCache extends LocalCache {
             label="Queue Flush Interval",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX")
+            formItemTypeForAdd="NUMBER_BOX",
+            tabName="subsys_infinispan_attrs")
     public Long getQueueFlushInterval();
     public void setQueueFlushInterval(Long queueFlushInterval);
 
@@ -674,7 +684,8 @@ public interface InvalidationCache extends LocalCache {
             label="Remote Timeout (ms)",
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
-            formItemTypeForAdd="NUMBER_BOX")
+            formItemTypeForAdd="NUMBER_BOX",
+            tabName="subsys_infinispan_attrs")
     public Long getRemoteTimeout();
     public void setRemoteTimeout(Long remoteTimeout);
 }

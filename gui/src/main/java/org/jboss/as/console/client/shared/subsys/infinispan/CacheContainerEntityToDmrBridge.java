@@ -99,7 +99,7 @@ public class CacheContainerEntityToDmrBridge extends EntityToDmrBridgeImpl<Cache
 
     private ModelNode makeTransportOperation(String operation, String cacheContainer) {
         ModelNode transportOperation = new ModelNode();
-        transportOperation.get(ADDRESS).add(Baseadress.get())
+        transportOperation.get(ADDRESS).set(Baseadress.get())
                                        .add("subsystem", "infinispan")
                                        .add("cache-container", cacheContainer)
                                        .add("transport", "TRANSPORT");
