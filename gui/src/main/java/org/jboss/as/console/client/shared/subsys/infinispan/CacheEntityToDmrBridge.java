@@ -61,6 +61,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         singletons.add("transaction");
         singletons.add("file-store");
         singletons.add("remote-store");
+        singletons.add("jdbc-store");
         singletons.add("state-transfer");
 
         addRemoveSingletonCheckboxes.add("hasStore");
@@ -70,6 +71,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
         addRemoveSingletonCheckboxes.add("hasTransaction");
         addRemoveSingletonCheckboxes.add("hasFileStore");
         addRemoveSingletonCheckboxes.add("hasRemoteStore");
+        addRemoveSingletonCheckboxes.add("hasJdbcStore");
         addRemoveSingletonCheckboxes.add("hasStateTransfer");
     }
 
@@ -142,6 +144,7 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
             cache.setHasStore(result.get("store").isDefined());
             cache.setHasFileStore(result.get("file-store").isDefined());
             cache.setHasRemoteStore(result.get("remote-store").isDefined());
+            cache.setHasJdbcStore(result.get("jdbc-store").isDefined());
             cache.setHasTransaction(result.get("transaction").isDefined());
 
             if (cache instanceof ReplicatedCache) {
@@ -210,6 +213,16 @@ public class CacheEntityToDmrBridge<T extends LocalCache> extends EntityToDmrBri
                     return stepsList;
                 }
                 addSingleton.get("class").set(storeImplClass);
+            }
+
+            if (addRemoveAttrib.equals("hasJdbcStore")) {
+                String datasource = (String)changedValues.remove("jdbcStoreDatasource");
+                if (datasource == null) {
+                    Console.error("Must specify datasource when defining JDBC Store.");
+                    removeSingletonAttributes(changedValues);
+                    return stepsList;
+                }
+                addSingleton.get("datasource").set(datasource);
             }
 
             stepsList.add(addSingleton);
