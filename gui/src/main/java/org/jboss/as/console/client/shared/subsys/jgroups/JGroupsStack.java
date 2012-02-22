@@ -16,8 +16,13 @@ public interface JGroupsStack {
     String getType();
     void setType(String type);
 
+    @Binding(skip = true)
     String getTransportType();
     void setTransportType(String type);
+
+    @Binding(skip = true)
+    String getTransportSocket();
+    void setTransportSocket(String type);
 
     @Binding(skip = true)
     List<JGroupsProtocol> getProtocols();

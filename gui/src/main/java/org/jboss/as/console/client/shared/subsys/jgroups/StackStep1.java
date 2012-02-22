@@ -41,7 +41,9 @@ public class StackStep1 {
         transportType.setDefaultToFirstOption(true);
         transportType.setValueMap(new String[]{"UDP", "TCP", "TUNNEL"});
 
-        form.setFields(nameField, transportType);
+        TextBoxItem socket = new TextBoxItem("transportSocket", "Socket Binding");
+
+        form.setFields(nameField, transportType, socket);
 
         // ----------------------------------------
 

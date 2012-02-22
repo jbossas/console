@@ -3,6 +3,7 @@ package org.jboss.as.console.client.shared.subsys.jgroups;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,6 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
@@ -37,6 +39,7 @@ public class StackStep2 {
     private NewStackWizard presenter;
     private DefaultCellTable<JGroupsProtocol> table;
     private ListDataProvider<JGroupsProtocol> dataProvider;
+    private HTML errorMessages;
 
     public StackStep2(NewStackWizard presenter) {
         this.presenter = presenter;
@@ -113,6 +116,7 @@ public class StackStep2 {
                 FormValidation validation = form.validate();
                 if(!validation.hasErrors())
                 {
+                    errorMessages.setVisible(false);
                     JGroupsProtocol protocol = form.getUpdatedEntity();
                     dataProvider.getList().add(protocol);
                     table.getSelectionModel().setSelected(protocol, true);
@@ -138,8 +142,18 @@ public class StackStep2 {
 
         toolstrip.addToolButtonRight(removeBtn);
 
+
+        layout.add(new ContentGroupLabel("Protocol Stack"));
+
+        errorMessages = new HTML(Console.CONSTANTS.subsys_jgroups_err_protocols_required());
+        errorMessages.setStyleName("error-panel");
+        errorMessages.setVisible(false);
+
+        toolstrip.addToolWidget(errorMessages);
+
         layout.add(toolstrip.asWidget());
         layout.add(table.asWidget());
+
 
         // ----
 
@@ -147,11 +161,13 @@ public class StackStep2 {
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                FormValidation validation = form.validate();
-                if(!validation.hasErrors())
-                {
-                    presenter.onFinishStep2(dataProvider.getList());
-                }
+                List<JGroupsProtocol> list = dataProvider.getList();
+                errorMessages.setVisible(false);
+                if(list.isEmpty())
+                    errorMessages.setVisible(true);
+                else
+                    presenter.onFinishStep2(list);
+
             }
         };
 
