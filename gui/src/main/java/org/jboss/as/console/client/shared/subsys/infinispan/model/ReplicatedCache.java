@@ -836,7 +836,7 @@ public interface ReplicatedCache extends InvalidationCache {
     public Boolean isStateTransferEnabled();
     public void setStateTransferEnabled(Boolean isStateTransferEnabled);
 
-    @Binding(detypedName="state-tranfer/STATE_TRANSFER/timeout")
+    @Binding(detypedName="state-transfer/STATE_TRANSFER/timeout")
     @FormItem(defaultValue="60000",
             label="Timeout (ms)",
             required=false,
@@ -846,8 +846,8 @@ public interface ReplicatedCache extends InvalidationCache {
     public Long getStateTransferTimeout();
     public void setStateTransferTimeout(Long stateTransferTimeout);
 
-    @Binding(detypedName="state-tranfer/STATE_TRANSFER/chunk-size")
-    @FormItem(defaultValue="60000",
+    @Binding(detypedName="state-transfer/STATE_TRANSFER/chunk-size")
+    @FormItem(defaultValue="10000",
             label="Chunk Size",
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
