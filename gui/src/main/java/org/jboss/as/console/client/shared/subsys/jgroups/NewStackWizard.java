@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -33,8 +34,11 @@ public class NewStackWizard {
         final Form<JGroupsStack> form = new Form<JGroupsStack>(JGroupsStack.class);
 
         TextBoxItem nameField = new TextBoxItem("type", "Name");
+        ComboBoxItem transportType = new ComboBoxItem("transportType", "Transport");
+        transportType.setValueMap(new String[]{"UDP", "TCP", "TUNNEL"});
+        transportType.setDefaultToFirstOption(true);
 
-        form.setFields(nameField);
+        form.setFields(nameField, transportType);
 
 
         DialogueOptions options = new DialogueOptions(

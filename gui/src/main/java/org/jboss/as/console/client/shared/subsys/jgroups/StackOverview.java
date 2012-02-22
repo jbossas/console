@@ -8,6 +8,8 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -73,6 +75,8 @@ public class StackOverview {
         table.addColumn(jndiName, "Name");
         table.addColumn(option, "Option");
 
+        table.setSelectionModel(new SingleSelectionModel<JGroupsStack>());
+
         ToolStrip toolstrip = new ToolStrip();
 
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
@@ -93,7 +97,10 @@ public class StackOverview {
                             @Override
                             public void onConfirmation(boolean isConfirmed) {
                                 if (isConfirmed)
-                                    presenter.onDeleteStack(form.getEditedEntity());
+                                {
+                                    SingleSelectionModel<JGroupsStack> selectionModel = (SingleSelectionModel<JGroupsStack>) table.getSelectionModel();
+                                    presenter.onDeleteStack(selectionModel.getSelectedObject());
+                                }
                             }
                         });
             }
