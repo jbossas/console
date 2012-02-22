@@ -151,7 +151,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                             List<ModelNode> sortOrder = model.get("protocols").asList();
                             final List<String> keys = new LinkedList<String>();
                             for(ModelNode key : sortOrder)
-                                    keys.add(key.asString());
+                                keys.add(key.asString());
 
                             // parse protocols
                             List<Property> items = model.get("protocol").asPropertyList();
@@ -234,8 +234,8 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
 
     public void launchNewStackWizard() {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Protocol Stack"));
-        window.setWidth(480);
-        window.setHeight(360);
+        window.setWidth(640);
+        window.setHeight(480);
 
         window.setWidget(
                 new NewStackWizard(this).asWidget()
@@ -255,19 +255,19 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         ModelNode composite = new ModelNode();
         composite.get(ADDRESS).setEmptyList();
         composite.get(OP).set(COMPOSITE);
-        
-        List<ModelNode> steps = new ArrayList<ModelNode>(3);
-        
+
+        List<ModelNode> steps = new ArrayList<ModelNode>(entity.getProtocols().size()+2);
+
         // the stack itself
         ModelNode stackOp = new ModelNode();
         stackOp.get(ADDRESS).set(Baseadress.get());
         stackOp.get(ADDRESS).add("subsystem", "jgroups");
-        stackOp.get(ADDRESS).add("stack", entity.getType());        
+        stackOp.get(ADDRESS).add("stack", entity.getType());
         stackOp.get(OP).set("add");
         steps.add(stackOp);
 
         // transport
-        
+
         ModelNode transportOp = new ModelNode();
         transportOp.get(ADDRESS).set(Baseadress.get());
         transportOp.get(ADDRESS).add("subsystem", "jgroups");
@@ -277,18 +277,25 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         transportOp.get(OP).set("add");
         steps.add(transportOp);
 
-        
-        // empty protocol list
-        ModelNode protocolOp = new ModelNode();
-        protocolOp.get(ADDRESS).set(Baseadress.get());
-        protocolOp.get(ADDRESS).add("subsystem", "jgroups");
-        protocolOp.get(ADDRESS).add("stack", entity.getType());
-        protocolOp.get(OP).set("add-protocol");
-        protocolOp.get("type").set(Protocol.UDP.getLocalName());
-        steps.add(protocolOp);
-        
+
+        // add protocols
+
+        for(JGroupsProtocol protocol : entity.getProtocols())
+        {
+            ModelNode protocolOp = new ModelNode();
+            protocolOp.get(ADDRESS).set(Baseadress.get());
+            protocolOp.get(ADDRESS).add("subsystem", "jgroups");
+            protocolOp.get(ADDRESS).add("stack", entity.getType());
+            protocolOp.get(OP).set("add-protocol");
+            protocolOp.get("type").set(protocol.getType());
+            if(protocol.getSocketBinding()!=null && !protocol.getSocketBinding().isEmpty())
+                protocolOp.get("socket-binding").set(protocol.getSocketBinding());
+
+            steps.add(protocolOp);
+        }
+
         composite.get(STEPS).set(steps);
-        
+
         System.out.println(composite);
 
         dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {

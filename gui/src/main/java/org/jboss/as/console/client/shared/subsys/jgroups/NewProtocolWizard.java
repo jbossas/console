@@ -49,7 +49,7 @@ public class NewProtocolWizard {
 
         typeField.setValueMap(names);
 
-        TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding");
+        TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding", false);
 
         form.setFields(typeField, socket);
 
