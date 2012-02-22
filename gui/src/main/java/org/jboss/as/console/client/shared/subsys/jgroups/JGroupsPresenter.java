@@ -30,6 +30,9 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -142,8 +145,29 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                         List<JGroupsProtocol> protocols = new ArrayList<JGroupsProtocol>();
                         if(model.hasDefined("protocol"))
                         {
+                            if(!model.hasDefined("protocols"))
+                                throw new RuntimeException("Protocol sort order not given!");
+
+                            List<ModelNode> sortOrder = model.get("protocols").asList();
+                            final List<String> keys = new LinkedList<String>();
+                            for(ModelNode key : sortOrder)
+                                    keys.add(key.asString());
+
                             // parse protocols
                             List<Property> items = model.get("protocol").asPropertyList();
+
+                            // todo: https://issues.jboss.org/browse/AS7-3863
+                            Collections.sort(items, new Comparator<Property>() {
+                                @Override
+                                public int compare(Property property, Property property1) {
+                                    int firstIdx = keys.indexOf(property.getName());
+                                    int secondIdx = keys.indexOf(property1.getName());
+
+                                    if(firstIdx<secondIdx) return -1;
+                                    if(firstIdx>secondIdx) return 1;
+                                    return 0;
+                                }
+                            });
 
                             for(Property item : items)
                             {
