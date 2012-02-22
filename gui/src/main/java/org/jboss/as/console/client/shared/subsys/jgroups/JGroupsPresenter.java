@@ -235,7 +235,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
     public void launchNewStackWizard() {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Protocol Stack"));
         window.setWidth(640);
-        window.setHeight(480);
+        window.setHeight(520);
 
         window.setWidget(
                 new NewStackWizard(this).asWidget()
@@ -274,6 +274,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         transportOp.get(ADDRESS).add("stack", entity.getType());
         transportOp.get(ADDRESS).add("transport", "TRANSPORT");
         transportOp.get("type").set(entity.getTransportType());
+        transportOp.get("socket-binding").set(entity.getTransportSocket());
         transportOp.get(OP).set("add");
         steps.add(transportOp);
 
@@ -296,8 +297,6 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
 
         composite.get(STEPS).set(steps);
 
-        System.out.println(composite);
-
         dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
@@ -308,7 +307,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                 } else {
                     Console.info(Console.MESSAGES.added("Protocol Stack"));
 
-                    loadStacks(true);
+                    loadStacks(false);
                 }
             }
         });
@@ -331,7 +330,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
                 } else {
                     Console.info(Console.MESSAGES.deleted("Protocol Stack"));
 
-                    loadStacks(true);
+                    loadStacks(false);
                 }
             }
         });

@@ -610,4 +610,6 @@ public interface UIConstants extends Constants {
     String subsys_jgroups_step2();
 
     String subsys_jgroups_step1();
+
+    String subsys_jgroups_err_protocols_required();
 }
