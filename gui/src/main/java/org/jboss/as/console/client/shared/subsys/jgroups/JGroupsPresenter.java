@@ -228,17 +228,46 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         // keep them in sync
         entity.setName(entity.getType());
 
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "jgroups");
-        operation.get(ADDRESS).add("stack", entity.getType());
-        //operation.get("type").set(entity.getType());
+        ModelNode composite = new ModelNode();
+        composite.get(ADDRESS).setEmptyList();
+        composite.get(OP).set(COMPOSITE);
+        
+        List<ModelNode> steps = new ArrayList<ModelNode>(3);
+        
+        // the stack itself
+        ModelNode stackOp = new ModelNode();
+        stackOp.get(ADDRESS).set(Baseadress.get());
+        stackOp.get(ADDRESS).add("subsystem", "jgroups");
+        stackOp.get(ADDRESS).add("stack", entity.getType());        
+        stackOp.get(OP).set("add");
+        steps.add(stackOp);
 
-        operation.get(OP).set("add");
+        // transport
+        
+        ModelNode transportOp = new ModelNode();
+        transportOp.get(ADDRESS).set(Baseadress.get());
+        transportOp.get(ADDRESS).add("subsystem", "jgroups");
+        transportOp.get(ADDRESS).add("stack", entity.getType());
+        transportOp.get(ADDRESS).add("transport", "TRANSPORT");
+        transportOp.get("type").set(entity.getTransportType());
+        transportOp.get(OP).set("add");
+        steps.add(transportOp);
 
-        System.out.println(operation);
+        
+        // empty protocol list
+        ModelNode protocolOp = new ModelNode();
+        protocolOp.get(ADDRESS).set(Baseadress.get());
+        protocolOp.get(ADDRESS).add("subsystem", "jgroups");
+        protocolOp.get(ADDRESS).add("stack", entity.getType());
+        protocolOp.get(OP).set("add-protocol");
+        protocolOp.get("type").set(Protocol.UDP.getLocalName());
+        steps.add(protocolOp);
+        
+        composite.get(STEPS).set(steps);
+        
+        System.out.println(composite);
 
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
