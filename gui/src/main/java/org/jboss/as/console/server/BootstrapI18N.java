@@ -1,7 +1,9 @@
 package org.jboss.as.console.server;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -14,7 +16,15 @@ import java.util.Set;
  */
 public class BootstrapI18N {
 
+    static boolean dryRun = true;
+
     public static void main(String[] args) throws Exception{
+
+
+        String env = System.getProperty("dryRun", "true");
+        dryRun = Boolean.valueOf(env);
+
+        System.out.println("DryRun: "+dryRun);
 
         File currentDir = new File("");
         File baseDir = new File(currentDir.getAbsolutePath()+"/gui/src/main/java/org/jboss/as/console/client/core");
@@ -41,15 +51,30 @@ public class BootstrapI18N {
             );
 
             System.out.println("Processing: "+target);
-            match(sourceBundle, targetBundle);
+            Set<String> remaining = match(sourceBundle, targetBundle);
+
+            // write it back
+
+            boolean success = target.delete();
+
+            if(!dryRun)
+            {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(target, false));
+                for(String remain : remaining)
+                {
+                    writer.write(remain+"="+targetBundle.getString(remain));
+                    writer.newLine();
+                }
+                writer.flush();
+                writer.close();
+            }
             System.out.println("\n\n");
 
         }
     }
 
-    private static void match(PropertyResourceBundle sourceBundle, PropertyResourceBundle targetBundle) {
+    private static Set<String> match(PropertyResourceBundle sourceBundle, PropertyResourceBundle targetBundle) {
 
-        Set<String> toBeRemoved = new HashSet<String>();
         Set<String> remaining = new HashSet<String>();
 
         Enumeration<String> targetKeys = targetBundle.getKeys();
@@ -57,22 +82,29 @@ public class BootstrapI18N {
         {
             String targetKey = targetKeys.nextElement();
             Enumeration<String> sourceKeys = sourceBundle.getKeys();
+            boolean matched = false;
             while(sourceKeys.hasMoreElements())
             {
                 if(sourceKeys.nextElement().equals(targetKey))
                 {
-                    toBeRemoved.add(targetKey);
+                    matched = true;
                     break;
                 }
             }
+
+            if(!matched)
+                remaining.add(targetKey);
+
         }
 
         System.out.println("Source keys: "+sourceBundle.keySet().size());
         System.out.println("Target keys: "+targetBundle.keySet().size());
-        System.out.println("Remove: "+toBeRemoved.size());
+        System.out.println("Remaining: "+remaining.size());
 
-        //for(String remove : toBeRemoved)
-        //    System.out.println(remove);
+        return remaining;
+
+
+
     }
 
     static class Filter implements FilenameFilter {
