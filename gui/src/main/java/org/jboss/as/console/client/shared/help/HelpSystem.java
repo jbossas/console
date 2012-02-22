@@ -47,6 +47,7 @@ public class HelpSystem {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ADDRESS).set(resourceAddress);
+        operation.get(RECURSIVE).set(true);
 
         // build field name list
 
@@ -58,8 +59,9 @@ public class HelpSystem {
         for(PropertyBinding binding : bindings)
         {
             if(formItemNames.contains(binding.getJavaName())) {
-                String[] detypedPath = binding.getDetypedName().split("/");
-                fieldNames.add(detypedPath[0]);
+                String[] splitDetypedNames = binding.getDetypedName().split("/");
+                // last one in the path is the attribute name
+                fieldNames.add(splitDetypedNames[splitDetypedNames.length - 1]);
             }
         }
 
@@ -177,6 +179,12 @@ public class HelpSystem {
             {
                 String childName = prop.getName();
                 ModelNode value = prop.getValue();
+
+                if (value.hasDefined(MODEL_DESCRIPTION)) {
+                    for (Property modDescProp : value.get(MODEL_DESCRIPTION).asPropertyList()) {
+                        matchSubElement(processed, value.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html, ATTRIBUTES);
+                    }
+                }
 
                 if(fieldNames.contains(childName))
                 {

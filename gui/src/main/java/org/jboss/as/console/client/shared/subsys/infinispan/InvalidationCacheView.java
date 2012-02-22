@@ -28,16 +28,16 @@ import javax.inject.Inject;
 
 /**
  * Main view class for Infinispan Invalidation Cache.
- * 
+ *
  * @author Stan Silvert
  */
-public class InvalidationCacheView extends AbstractCacheView<InvalidationCache> implements InvalidationCachePresenter.MyView {
+public class InvalidationCacheView extends NonLocalCacheView<InvalidationCache> implements InvalidationCachePresenter.MyView {
 
     @Inject
     public InvalidationCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(InvalidationCache.class, propertyMetaData, dispatcher);
     }
-    
+
     @Override
     protected String getEntityDisplayName() {
         return Console.CONSTANTS.subsys_infinispan_invalidationCache();

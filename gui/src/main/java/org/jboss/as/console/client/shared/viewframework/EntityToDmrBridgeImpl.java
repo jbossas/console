@@ -226,7 +226,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         operation.get(RECURSIVE).set(true);
         operation.get(INCLUDE_RUNTIME).set(true);
 
-        //System.out.println(operation);
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
@@ -239,6 +239,13 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     protected void onLoadEntitiesSuccess(ModelNode response) {
         List<T> entities = entityAdapter.fromDMRList(response.get(RESULT).asList());
         entityList = sortEntities(entities);
+        refreshView(response);
+    }
+
+    /**
+     * Overriding this method allows a subclass to modify entities before the view is refreshed.
+     */
+    protected void refreshView(ModelNode response) {
         if (view != null) view.refresh();
     }
 
@@ -249,10 +256,14 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
     }
 
     protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
+        System.out.println("operation=");
+        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
 
             @Override
             public void onDmrSuccess(ModelNode response) {
+                System.out.println("execute onDmrSuccess=");
+                System.out.println(response);
                 Console.info(successMessage);
                 loadEntities(nameEditedOrAdded);
             }

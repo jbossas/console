@@ -44,23 +44,23 @@ import java.util.List;
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
- * Main view class for Infinispan LocalCache Containers.
- * 
+ * Abstract cache view base class for Infinispan caches.
+ *
  * @author Stan Silvert
  */
 public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEntityView<T> implements FrameworkView {
 
     protected EntityToDmrBridge bridge;
     protected DispatchAsync dispatcher;
-    
+
     protected ComboBoxItem cacheContainerForAdd;
-    
+
     public AbstractCacheView(Class<T> type, ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(type, propertyMetaData);
         bridge = new CacheEntityToDmrBridge(propertyMetaData, type, this, dispatcher);
         this.dispatcher = dispatcher;
     }
-    
+
     @Override
     public EntityToDmrBridge getEntityBridge() {
         return bridge;
@@ -68,20 +68,11 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
 
     @Override
     public void itemAction(Action action, ObservableFormItem item) {
-        if (item.getPropertyBinding().getJavaName().equals("cacheContainer") && 
+        if (item.getPropertyBinding().getJavaName().equals("cacheContainer") &&
            (action == Action.CREATED) && (item.getWrapped() instanceof ComboBoxItem)) {
             cacheContainerForAdd = (ComboBoxItem) item.getWrapped();
             cacheContainerForAdd.setDefaultToFirstOption(true);
         }
-    }
-    
-    @Override
-    protected FormAdapter<T> makeAddEntityForm() {
-        Form<T> form = new Form(beanType);
-        form.setNumColumns(1);
-        form.setFields(getFormMetaData().findAttribute("name").getFormItemForAdd(), 
-                       getFormMetaData().findAttribute("cacheContainer").getFormItemForAdd(this));
-        return form;
     }
 
     @Override
@@ -92,13 +83,13 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
 
     protected void updateCacheContainerList() {
         if (this.cacheContainerForAdd == null) return;
-        
+
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(Baseadress.get());
         operation.get(ADDRESS).add("subsystem", "infinispan");
         operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
         operation.get(CHILD_TYPE).set("cache-container");
-        
+
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
@@ -106,7 +97,6 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
                 for (ModelNode container : response.get(RESULT).asList()) {
                     cacheContainers.add(container.asString());
                 }
-                System.out.println("setting value map");
                 AbstractCacheView.this.cacheContainerForAdd.setValueMap(cacheContainers);
             }
         });
@@ -115,9 +105,9 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
     @Override
     protected DefaultCellTable<T> makeEntityTable() {
         DefaultCellTable<T> table = new DefaultCellTable<T>(4);
-        
+
         table.addColumn(new NameColumn(), NameColumn.LABEL);
-        
+
         TextColumn<T> cacheContainerColumn = new TextColumn<T>() {
             @Override
             public String getValue(T record) {
@@ -125,8 +115,8 @@ public abstract class AbstractCacheView<T extends LocalCache> extends AbstractEn
             }
         };
         table.addColumn(cacheContainerColumn, Console.CONSTANTS.subsys_infinispan_cache_container());
-        
+
         return table;
     }
-    
+
 }

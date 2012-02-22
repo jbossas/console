@@ -87,6 +87,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         return this.formMetaData;
     }
 
+    /**
+     * Get the DMR address for this entity.
+     * @return The address.
+     */
     protected AddressBinding getAddress() {
         return this.address;
     }
@@ -226,18 +230,21 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
                 hideButtons
         );
 
-        String title = Console.CONSTANTS.common_label_add() + " " + getEntityDisplayName();
+        EntityPopupWindow<T> window = makeAddEntityPopup();
 
-        EntityPopupWindow<T> window = new AddEntityWindow<T>(
+        DefaultCellTable<T> table = makeEntityTable();
+
+        return new EntityEditor<T>(this, getEntityDisplayName(), window, table, entityDetails, hideButtons);
+    }
+
+    protected EntityPopupWindow<T> makeAddEntityPopup() {
+        String title = Console.CONSTANTS.common_label_add() + " " + getEntityDisplayName();
+        return new AddEntityWindow<T>(
                 title,
                 makeAddEntityForm(),
                 getAddress(),
                 getEntityBridge()
         );
-
-        DefaultCellTable<T> table = makeEntityTable();
-
-        return new EntityEditor<T>(this, getEntityDisplayName(), window, table, entityDetails, hideButtons);
     }
 
     /**
