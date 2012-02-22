@@ -5,10 +5,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.List;
 import java.util.PropertyResourceBundle;
-import java.util.Set;
 
 /**
  * @author Heiko Braun
@@ -51,31 +52,45 @@ public class BootstrapI18N {
             );
 
             System.out.println("Processing: "+target);
-            Set<String> remaining = match(sourceBundle, targetBundle);
+            List<String> remaining = match(sourceBundle, targetBundle);
 
             // write it back
 
-            boolean success = target.delete();
+            Collections.sort(remaining);
 
-            if(!dryRun)
+
+            if(!dryRun) target.delete();
+
+            BufferedWriter writer = dryRun ? null : new BufferedWriter(new FileWriter(target, false));
+
+            for(String remain : remaining)
             {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(target, false));
-                for(String remain : remaining)
+                if(dryRun)
+                {
+                    System.out.println(remain+"="+targetBundle.getString(remain));
+                }
+                else
                 {
                     writer.write(remain+"="+targetBundle.getString(remain));
                     writer.newLine();
                 }
+
+            }
+
+            if (writer!=null)
+            {
                 writer.flush();
                 writer.close();
             }
+
             System.out.println("\n\n");
 
         }
     }
 
-    private static Set<String> match(PropertyResourceBundle sourceBundle, PropertyResourceBundle targetBundle) {
+    private static List<String> match(PropertyResourceBundle sourceBundle, PropertyResourceBundle targetBundle) {
 
-        Set<String> remaining = new HashSet<String>();
+        List<String> remaining = new ArrayList<String>();
 
         Enumeration<String> targetKeys = targetBundle.getKeys();
         while(targetKeys.hasMoreElements())
@@ -92,7 +107,7 @@ public class BootstrapI18N {
                 }
             }
 
-            if(!matched)
+            if(!matched && !remaining.contains(targetKey))
                 remaining.add(targetKey);
 
         }
