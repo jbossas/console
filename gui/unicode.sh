@@ -23,7 +23,7 @@ array=( UIConstants_ja.properties UIMessages_ja.properties )
 for i in "${array[@]}"
 do
 	echo "src/main/java/org/jboss/as/console/client/core/$i"
-	native2ascii -encoding windows-31j src/main/java/org/jboss/as/console/client/core/$i src/main/java/org/jboss/as/console/client/core/$i
+	native2ascii -encoding Shift_JIS src/main/java/org/jboss/as/console/client/core/$i src/main/java/org/jboss/as/console/client/core/$i
 done
 
 
