@@ -462,7 +462,7 @@ public interface LocalCache extends NamedEntity {
             tabName="subsys_infinispan_file_store")
    List<PropertyRecord> getFileStoreProperties();
    void setFileStoreProperties(List<PropertyRecord> properties);
-/*
+
    // Not part of detyped model.  This is a flag to tell us if jdbc-store
    // singleton needs to be added to or removed from the model.
    @Binding(detypedName="jdbc-store/has-jdbc-store")
@@ -473,8 +473,19 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForAdd="CHECK_BOX",
             order=1,
             tabName="subsys_infinispan_jdbc_store")
-    public boolean isHasJDBCStore();
-    public void setHasJDBCStore(boolean hasJDBCStore);
+    public boolean isHasJdbcStore();
+    public void setHasJdbcStore(boolean hasJdbcStore);
+
+    @Binding(detypedName="jdbc-store/JDBC_STORE/datasource")
+    @FormItem(defaultValue="",
+            label="Datasource",
+            required=true,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            order=2,
+            tabName="subsys_infinispan_jdbc_store")
+    public String getJdbcStoreDatasource();
+    public void setJdbcStoreDatasource(String jdbcStoreDatasource);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/shared")
     @FormItem(defaultValue="false",
@@ -483,8 +494,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStoreShared();
-    public void setJDBCStoreShared(Boolean isShared);
+    public Boolean isJdbcStoreShared();
+    public void setJdbcStoreShared(Boolean isShared);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/preload")
     @FormItem(defaultValue="false",
@@ -493,8 +504,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStorePreload();
-    public void setJDBCStorePreload(Boolean isPreload);
+    public Boolean isJdbcStorePreload();
+    public void setJdbcStorePreload(Boolean isPreload);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/passivation")
     @FormItem(defaultValue="true",
@@ -503,8 +514,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStorePassivation();
-    public void setJDBCStorePassivation(Boolean isPassivation);
+    public Boolean isJdbcStorePassivation();
+    public void setJdbcStorePassivation(Boolean isPassivation);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/fetch-state")
     @FormItem(defaultValue="true",
@@ -513,8 +524,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStoreFetchState();
-    public void setJDBCStoreFetchState(Boolean isFetchState);
+    public Boolean isJdbcStoreFetchState();
+    public void setJdbcStoreFetchState(Boolean isFetchState);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/purge")
     @FormItem(defaultValue="true",
@@ -523,8 +534,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStorePurge();
-    public void setJDBCStorePurge(Boolean isPurge);
+    public Boolean isJdbcStorePurge();
+    public void setJdbcStorePurge(Boolean isPurge);
 
     @Binding(detypedName="jdbc-store/JDBC_STORE/singleton")
     @FormItem(defaultValue="false",
@@ -533,8 +544,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             tabName="subsys_infinispan_jdbc_store")
-    public Boolean isJDBCStoreSingleton();
-    public void setJDBCStoreSingleton(Boolean isSingleton);
+    public Boolean isJdbcStoreSingleton();
+    public void setJdbcStoreSingleton(Boolean isSingleton);
 
    @Binding(detypedName="jdbc-store/JDBC_STORE/properties",
            listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
@@ -544,8 +555,8 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
             tabName="subsys_infinispan_jdbc_store")
-   List<PropertyRecord> getJDBCStoreProperties();
-   void setJDBCStoreProperties(List<PropertyRecord> properties); */
+   List<PropertyRecord> getJdbcStoreProperties();
+   void setJdbcStoreProperties(List<PropertyRecord> properties);
 
    // Not part of detyped model.  This is a flag to tell us if remote-store
    // singleton needs to be added to or removed from the model.

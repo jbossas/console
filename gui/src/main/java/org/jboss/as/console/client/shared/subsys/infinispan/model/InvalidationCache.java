@@ -547,6 +547,119 @@ public interface InvalidationCache extends LocalCache {
      @Override
      void setFileStoreProperties(List<PropertyRecord> properties);
 
+   // Not part of detyped model.  This is a flag to tell us if jdbc-store
+   // singleton needs to be added to or removed from the model.
+   @Override
+   @Binding(detypedName="jdbc-store/has-jdbc-store")
+   @FormItem(defaultValue="false",
+            label="Is JDBC store defined?",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            order=1,
+            tabName="subsys_infinispan_jdbc_store")
+    public boolean isHasJdbcStore();
+    @Override
+    public void setHasJdbcStore(boolean hasJdbcStore);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/datasource")
+    @FormItem(defaultValue="",
+            label="Datasource",
+            required=true,
+            formItemTypeForEdit="TEXT_BOX",
+            formItemTypeForAdd="TEXT_BOX",
+            order=2,
+            tabName="subsys_infinispan_jdbc_store")
+    public String getJdbcStoreDatasource();
+    @Override
+    public void setJdbcStoreDatasource(String jdbcStoreDatasource);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/shared")
+    @FormItem(defaultValue="false",
+            label="Shared",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStoreShared();
+    @Override
+    public void setJdbcStoreShared(Boolean isShared);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/preload")
+    @FormItem(defaultValue="false",
+            label="Preload",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStorePreload();
+    @Override
+    public void setJdbcStorePreload(Boolean isPreload);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/passivation")
+    @FormItem(defaultValue="true",
+            label="Passivation",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStorePassivation();
+    @Override
+    public void setJdbcStorePassivation(Boolean isPassivation);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/fetch-state")
+    @FormItem(defaultValue="true",
+            label="Fetch State",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStoreFetchState();
+    @Override
+    public void setJdbcStoreFetchState(Boolean isFetchState);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/purge")
+    @FormItem(defaultValue="true",
+            label="Purge",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStorePurge();
+    @Override
+    public void setJdbcStorePurge(Boolean isPurge);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/singleton")
+    @FormItem(defaultValue="false",
+            label="Singletion",
+            required=false,
+            formItemTypeForEdit="CHECK_BOX",
+            formItemTypeForAdd="CHECK_BOX",
+            tabName="subsys_infinispan_jdbc_store")
+    public Boolean isJdbcStoreSingleton();
+    @Override
+    public void setJdbcStoreSingleton(Boolean isSingleton);
+
+    @Override
+    @Binding(detypedName="jdbc-store/JDBC_STORE/properties",
+            listType="org.jboss.as.console.client.shared.properties.PropertyRecord")
+    @FormItem(defaultValue="",
+             label="Store Properties",
+             required=false,
+             formItemTypeForEdit="PROPERTY_EDITOR",
+             formItemTypeForAdd="PROPERTY_EDITOR",
+             tabName="subsys_infinispan_jdbc_store")
+    List<PropertyRecord> getJdbcStoreProperties();
+    @Override
+    void setJdbcStoreProperties(List<PropertyRecord> properties);
+
      // Not part of detyped model.  This is a flag to tell us if remote-store
      // singleton needs to be added to or removed from the model.
      @Override
