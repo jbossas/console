@@ -573,7 +573,7 @@ public interface DistributedCache extends ReplicatedCache {
             tabName="subsys_infinispan_jdbc_store")
     public String getJdbcStoreDatasource();
     @Override
-    public void setJdbcStoreDatasource(String evictionStrategy);
+    public void setJdbcStoreDatasource(String jdbcStoreDatasource);
 
     @Override
     @Binding(detypedName="jdbc-store/JDBC_STORE/shared")
@@ -840,7 +840,7 @@ public interface DistributedCache extends ReplicatedCache {
     public void setStateTransferEnabled(Boolean isStateTransferEnabled);
 
     @Override
-    @Binding(detypedName="state-tranfer/STATE_TRANSFER/timeout")
+    @Binding(detypedName="state-transfer/STATE_TRANSFER/timeout")
     @FormItem(defaultValue="60000",
             label="Timeout (ms)",
             required=false,
@@ -852,8 +852,8 @@ public interface DistributedCache extends ReplicatedCache {
     public void setStateTransferTimeout(Long stateTransferTimeout);
 
     @Override
-    @Binding(detypedName="state-tranfer/STATE_TRANSFER/chunk-size")
-    @FormItem(defaultValue="60000",
+    @Binding(detypedName="state-transfer/STATE_TRANSFER/chunk-size")
+    @FormItem(defaultValue="10000",
             label="Chunk Size",
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
