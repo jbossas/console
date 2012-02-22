@@ -4,6 +4,7 @@ target
 .DS_Store
 .idea
 build.number
+*.bak
 
 gui/war/WEB-INF
 gui/war/app
