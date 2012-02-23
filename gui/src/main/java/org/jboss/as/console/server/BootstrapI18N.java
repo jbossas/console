@@ -3,8 +3,10 @@ package org.jboss.as.console.server;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -61,7 +63,9 @@ public class BootstrapI18N {
 
             if(!dryRun) target.delete();
 
-            BufferedWriter writer = dryRun ? null : new BufferedWriter(new FileWriter(target, false));
+            OutputStreamWriter writer = dryRun ? null : new OutputStreamWriter(
+                    new FileOutputStream(target, false), "UTF-8"
+            );
 
             for(String remain : remaining)
             {
@@ -72,7 +76,7 @@ public class BootstrapI18N {
                 else
                 {
                     writer.write(remain+"="+targetBundle.getString(remain));
-                    writer.newLine();
+                    writer.write("\n");
                 }
 
             }
@@ -136,7 +140,7 @@ public class BootstrapI18N {
 
         @Override
         public boolean accept(File file, String s) {
-            return s.startsWith(prefix) && s.endsWith("_en.properties") && s.contains("_");
+            return s.startsWith(prefix) && s.endsWith("_de.properties") && s.contains("_");
         }
     }
 }
