@@ -1,10 +1,8 @@
 package org.jboss.as.console.server;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
