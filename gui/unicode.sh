@@ -6,7 +6,7 @@ array=( UIConstants_de.properties UIConstants_fr.properties UIConstants_es.prope
 for i in "${array[@]}"
 do
 	echo "src/main/java/org/jboss/as/console/client/core/$i"
-	native2ascii -encoding iso-8859-1 src/main/java/org/jboss/as/console/client/core/$i src/main/java/org/jboss/as/console/client/core/$i
+	native2ascii -encoding utf-8 src/main/java/org/jboss/as/console/client/core/$i src/main/java/org/jboss/as/console/client/core/$i
 	sed -i .bak "s/\'/\&\#39\;/g" src/main/java/org/jboss/as/console/client/core/$i
 done
 
