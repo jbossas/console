@@ -138,7 +138,7 @@ public class BootstrapI18N {
 
         @Override
         public boolean accept(File file, String s) {
-            return s.startsWith(prefix) && s.endsWith("_de.properties") && s.contains("_");
+            return s.startsWith(prefix) && s.endsWith("_fr.properties") && s.contains("_");
         }
     }
 }
