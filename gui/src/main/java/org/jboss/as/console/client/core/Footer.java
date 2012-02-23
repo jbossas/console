@@ -101,7 +101,7 @@ public class Footer {
         layout.setWidgetRightWidth(logout, 5, Style.Unit.PX, 60, Style.Unit.PX);
         layout.setWidgetTopHeight(logout, 2, Style.Unit.PX, 28, Style.Unit.PX);
 
-        layout.setWidgetRightWidth(settings, 65, Style.Unit.PX, 60, Style.Unit.PX);
+        layout.setWidgetRightWidth(settings, 65, Style.Unit.PX, 120, Style.Unit.PX);
         layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
 
         return layout;
