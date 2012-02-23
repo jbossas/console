@@ -78,23 +78,9 @@
         return locale_value;
 	</property-provider>
 
-
-
-    <!--extend-property name="locale" values="en"/-->
-    <!--extend-property name="locale" values="de"/>
-
-
-    <extend-property name="locale" values="zh_Hans"/>
-    <extend-property name="locale" values="pt_BR"/>
-    <extend-property name="locale" values="fr"/>
-    <extend-property name="locale" values="es"/>
-    <extend-property name="locale" values="ja"/-->
-
-    <!--set-property-fallback name="locale" value="en"/-->
-
-    <extend-property name="locale" values="en"/>
+    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
     <set-property-fallback name="locale" value="en"/>
-    <set-property name="locale" value="en"/>
+    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
 
     <stylesheet src="console.css" />
     <stylesheet src="lab.css" />
