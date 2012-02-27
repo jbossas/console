@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.jmx;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -12,9 +13,14 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.general.SimpleSuggestion;
+import org.jboss.as.console.client.shared.general.SuggestionManagement;
+import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
+import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
@@ -34,7 +40,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 11/28/11
  */
-public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.MyProxy> {
+public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.MyProxy>
+    implements SuggestionManagement {
 
     private final PlaceManager placeManager;
 
@@ -43,6 +50,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
     private DispatchAsync dispatcher;
     private EntityAdapter<JMXSubsystem> adapter;
     private BeanMetaData beanMetaData;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.JMXPresenter)
@@ -60,7 +68,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
             PlaceManager placeManager,
             DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            ApplicationMetaData metaData) {
+            ApplicationMetaData metaData, BeanFactory factory) {
 
         super(eventBus, view, proxy);
 
@@ -70,6 +78,7 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
         this.dispatcher = dispatcher;
         this.beanMetaData = metaData.getBeanMetaData(JMXSubsystem.class);
         this.adapter = new EntityAdapter<JMXSubsystem>(JMXSubsystem.class, metaData);
+        this.factory = factory;
     }
 
     @Override
@@ -183,5 +192,37 @@ public class JMXPresenter extends Presenter<JMXPresenter.MyView, JMXPresenter.My
                 loadSubsystem();
             }
         });
+    }
+
+    @Override
+    public void requestSuggestions(final SuggestOracle.Request request, final SuggestOracle.Callback callback) {
+
+        LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, metaData);
+        cmd.execute("full-ha-sockets", new SimpleCallback<List<SocketBinding>>() {
+            @Override
+            public void onSuccess(List<SocketBinding> result) {
+
+                List<SimpleSuggestion> suggestions = new ArrayList<SimpleSuggestion>();
+                for(SocketBinding binding : result)
+                {
+                    if(binding.getName().startsWith(request.getQuery()))
+                    {
+                        SimpleSuggestion suggestion = new SimpleSuggestion(
+                                binding.getName(), binding.getName()
+                        );
+                        suggestions.add(suggestion);
+                    }
+                }
+
+
+                SuggestOracle.Response response = new SuggestOracle.Response();
+                response.setSuggestions(suggestions);
+                response.setMoreSuggestionsCount(suggestions.size());
+                callback.onSuggestionsReady(request, response);
+            }
+        });
+
+
+
     }
 }

@@ -1,8 +1,26 @@
+.gwt-SuggestBoxPopup {
+    border: 1px solid #A7ABB4;
+    background-color:#ffffff;
+    padding:4px;
+
+    -moz-box-shadow: 2px 2px 3px #000000;
+    -webkit-box-shadow: 2px 2px 3px #000000;
+    box-shadow: 2px 2px 3px #000000;
+
+    z-index:20;
+}
+
+.gwt-SuggestBoxPopup .item-selected {
+    background-color:#e5e5e5!important;
+    -webkit-transition: background-color .1s ease-in-out;
+    -moz-transition: background-color .1s ease-in-out;
+    transition: background-color .1s ease-in-out;
+    cursor: pointer;
+
+}
 
 /* *[tabindex] {
     border: 1px dashed green;
-}
-
 
 *:focus {
     border: 1px solid red;

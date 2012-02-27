@@ -1,8 +1,10 @@
 package org.jboss.as.console.client.shared.subsys.jmx;
 
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.general.DelegatingOracle;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jmx.model.JMXSubsystem;
@@ -11,6 +13,7 @@ import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
@@ -30,8 +33,13 @@ public class JMXSubsystemView extends DisposableViewImpl implements JMXPresenter
 
         form = new Form<JMXSubsystem>(JMXSubsystem.class);
 
-        TextBoxItem server = new TextBoxItem("serverBinding", "Server Binding");
-        TextBoxItem registry = new TextBoxItem("registryBinding", "Registry Binding");
+        SuggestBoxItem server = new SuggestBoxItem("serverBinding", "Server Binding");
+        SuggestBoxItem registry = new SuggestBoxItem("registryBinding", "Registry Binding");
+
+        SuggestOracle oracle = new DelegatingOracle(presenter);
+        server.setOracle(oracle);
+        registry.setOracle(oracle);
+
         CheckBoxItem showModel = new CheckBoxItem("showModel", "Show Model?");
 
         form.setFields(server, registry, showModel);
