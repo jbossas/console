@@ -23,6 +23,7 @@ import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.ReloadEvent;
 import org.jboss.as.console.client.shared.state.ReloadState;
@@ -58,6 +59,8 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         void setPresenter(StandaloneServerPresenter presenter);
         void updateFrom(StandaloneServer server);
         void setReloadRequired(boolean reloadRequired);
+
+        void setEnvironment(List<PropertyRecord> environment);
     }
 
     @Inject
@@ -102,6 +105,14 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
         fetchExtensions.get(CHILD_TYPE).set("extension");
         steps.add(fetchExtensions);
 
+        // /core-service=platform-mbean/type=runtime:read-attribute(name=system-properties)
+        ModelNode envProperties = new ModelNode();
+        envProperties.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        envProperties.get(ADDRESS).add("core-service", "platform-mbean");
+        envProperties.get(ADDRESS).add("type", "runtime");
+        envProperties.get(NAME).set("system-properties");
+        steps.add(envProperties);
+
         operation.get(STEPS).set(steps);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
@@ -124,7 +135,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                         server.setReleaseVersion(serverAttributes.get("release-version").asString());
                         server.setServerState(serverAttributes.get("server-state").asString());
                     }
-                    else
+                    else if(step.getName().equals("step-2"))
                     {
                         // socket-binding response
                         List<Property> model = stepResult.get(RESULT).asPropertyList();
@@ -137,6 +148,23 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
                         server.setExtensions(extension);
 
 
+                    }
+                    else if(step.getName().equals("step-3"))
+                    {
+                        List<Property> properties = stepResult.get(RESULT).asPropertyList();
+                        List<PropertyRecord> environment = new ArrayList<PropertyRecord>(properties.size());
+
+                        for(Property prop : properties)
+                        {
+                            PropertyRecord model = factory.property().as();
+                            model.setKey(prop.getName());
+                            model.setValue(prop.getValue().asString());
+
+                            environment.add(model);
+
+                        }
+
+                        getView().setEnvironment(environment);
                     }
                 }
 

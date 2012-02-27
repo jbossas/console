@@ -14,7 +14,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.shared.general.EnvironmentProperties;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
@@ -24,6 +26,8 @@ import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.Feedback;
+
+import java.util.List;
 
 
 /**
@@ -38,6 +42,8 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     private Form<StandaloneServer> form;
     private DefaultCellTable<String> extensionTable;
     private ListDataProvider<String> dataProvider;
+    private EnvironmentProperties environmentProperties;
+
     @Override
     public Widget createWidget() {
 
@@ -84,10 +90,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         // ----
 
         VerticalPanel configUptodate = new VerticalPanel();
-        ContentGroupLabel label = new ContentGroupLabel("Server Configuration");
-        label.getElement().setAttribute("style", "padding-top:15px;");
-        configUptodate.add(label);
-
         HorizontalPanel uptodateContent = new HorizontalPanel();
         uptodateContent.setStyleName("status-panel");
         uptodateContent.addStyleName("serverUptoDate");
@@ -105,9 +107,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         // --
 
         VerticalPanel configNeedsUpdate = new VerticalPanel();
-        ContentGroupLabel label2 = new ContentGroupLabel("Server Configuration");
-        label2.getElement().setAttribute("style", "padding-top:15px;");
-        configNeedsUpdate.add(label2);
         configNeedsUpdate.add(tools.asWidget());
 
         HorizontalPanel staleContent = new HorizontalPanel();
@@ -145,7 +144,6 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(extensionTable);
 
-        extPanel.add(new ContentGroupLabel("Extensions"));
         extPanel.add(extensionTable.asWidget());
         extPanel.add(pager);
 
@@ -155,13 +153,23 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         reloadPanel.add(configNeedsUpdate);
         reloadPanel.showWidget(0);
 
-        SimpleLayout layout = new SimpleLayout()
+
+        VerticalPanel master = new VerticalPanel();
+        master.setStyleName("fill-layout-width");
+        master.add(reloadPanel);
+        master.add(form.asWidget());
+
+
+        environmentProperties = new EnvironmentProperties();
+
+
+        OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Standalone Server")
                 .setHeadlineWidget(headline)
                 .setDescription(Console.CONSTANTS.server_config_desc())
-                .addContent("ReloadPanel", reloadPanel)
-                .addContent("Attributes", form.asWidget())
-                .addContent("Extensions", extPanel);
+                .setMaster("Server Configuration", master)
+                .addDetail("Extensions", extPanel)
+                .addDetail("Environment Properties", environmentProperties.asWidget());
 
 
         return layout.build();
@@ -184,5 +192,10 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
     @Override
     public void setReloadRequired(boolean reloadRequired) {
         reloadPanel.showWidget( reloadRequired ? 1:0);
+    }
+
+    @Override
+    public void setEnvironment(List<PropertyRecord> environment) {
+        environmentProperties.setProperties(environment);
     }
 }
