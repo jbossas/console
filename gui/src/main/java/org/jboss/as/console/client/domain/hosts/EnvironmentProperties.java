@@ -114,15 +114,15 @@ public class EnvironmentProperties {
     }
 
     public void setProperties(List<PropertyRecord> environment) {
-        /*propertyTable.setRowCount(environment.size(), true);
+        propertyTable.setRowCount(environment.size(), true);
 
         List<PropertyRecord> propList = propertyProvider.getList();
         propList.clear(); // cannot call setList() as that breaks the sort handler
         propList.addAll(environment);
 
         // Make sure the new values are properly sorted
-        ColumnSortEvent.fire(propertyTable, propertyTable.getColumnSortList());*/
-        propertyProvider.setList(environment);
+        ColumnSortEvent.fire(propertyTable, propertyTable.getColumnSortList());
+
     }
 
     public DefaultCellTable<PropertyRecord> getPropertyTable() {
