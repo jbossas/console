@@ -211,6 +211,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         bottomTabs.add(wizard.asWidget(), "Attributes");
         bottomTabs.add(propertyEditor.asWidget(), "Module Options");
 
+        propertyEditor.setAllowEditProps(false);
+
         vpanel.add(new ContentGroupLabel("Details"));
 
         vpanel.add(bottomTabs);
