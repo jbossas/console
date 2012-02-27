@@ -36,6 +36,7 @@ public class DistributedCacheView extends NonLocalCacheView<DistributedCache> im
     @Inject
     public DistributedCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(DistributedCache.class, propertyMetaData, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_infinispan_distributed_cache_desc());
     }
 
     @Override
