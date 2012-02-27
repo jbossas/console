@@ -159,7 +159,7 @@ public class PropertyEditor {
             }
         });
 
-        /*Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
+        Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
             {
                 setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
 
@@ -175,17 +175,17 @@ public class PropertyEditor {
             public String getValue(PropertyRecord object) {
                 return object.getValue();
             }
-        };  */
+        };
 
 
-        Column<PropertyRecord, SafeHtml> valueColumn = new Column<PropertyRecord, SafeHtml>(new SafeHtmlCell()) {
+        /*Column<PropertyRecord, SafeHtml> valueColumn = new Column<PropertyRecord, SafeHtml>(new SafeHtmlCell()) {
             @Override
             public SafeHtml getValue(PropertyRecord object) {
                 String val = object.getValue();
                 return new SafeHtmlBuilder().appendHtmlConstant("<span title='" +
                         new SafeHtmlBuilder().appendEscaped(val).toSafeHtml().asString() + "'>" + val + "</span>").toSafeHtml();
             }
-        };
+        };*/
 
 
         Column<PropertyRecord, String> bootColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {

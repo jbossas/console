@@ -77,7 +77,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private ContentHeaderLabel nameLabel;
     private ToolButton startBtn;
     private Form<ServerInstance> form;
-    private PropertyEditor properties;
+    private EnvironmentProperties properties;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -256,29 +256,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
                     }
                 });
 
-        /* https://issues.jboss.org/browse/AS7-953
-        tableTools.addToolButtonRight(new ToolButton("Reload", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                Feedback.confirm("Reload server configuration",
-                        "Do you want ot reload the server configuration for server "+form.getEditedEntity().getName()+"?",
-                        new Feedback.ConfirmationHandler()
-                        {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                {
-                                    ServerInstance instance = form.getEditedEntity();
-                                    presenter.reloadServer(instance.getServer());
-                                }
-                            }
-                        });
-            }
-        }));
-
-        */
-
         // -----
 
 
@@ -295,8 +272,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         formPanel.add(formWidget);
 
-        properties = new PropertyEditor(8);
-        properties.setHideButtons(true);
+        properties = new EnvironmentProperties();
 
         // ----------------------------------------------------------
         TabPanel bottomLayout = new TabPanel();
@@ -309,23 +285,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         vpanel.add(new ContentGroupLabel("Status"));
 
         vpanel.add(bottomLayout);
-
-
-        final SingleSelectionModel<PropertyRecord> propertySelection = new SingleSelectionModel<PropertyRecord>();
-
-        /*properties.getPropertyTable().setSelectionModel(propertySelection);
-
-        properties.getPropertyTable().getSelectionModel().addSelectionChangeHandler(
-            new SelectionChangeEvent.Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    PropertyRecord property = propertySelection.getSelectedObject();
-                }
-            }
-        );*/
-
-        properties.setAllowEditProps(false);
-        properties.setEnabled(false);
 
         // load system props
         final SingleSelectionModel<ServerInstance> selectionModel = (SingleSelectionModel<ServerInstance>) instanceTable.getSelectionModel();
@@ -367,6 +326,6 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
     @Override
     public void setEnvironment(List<PropertyRecord> environment) {
-        properties.setProperties("", environment);
+        properties.setProperties(environment);
     }
 }
