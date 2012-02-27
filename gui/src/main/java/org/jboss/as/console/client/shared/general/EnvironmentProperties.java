@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.domain.hosts;
+package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
@@ -30,7 +30,7 @@ public class EnvironmentProperties {
     private ListDataProvider<PropertyRecord> propertyProvider;
     private DefaultCellTable<PropertyRecord> propertyTable;
 
-    Widget asWidget() {
+   public Widget asWidget() {
         propertyTable = new DefaultCellTable<PropertyRecord>(8, new ProvidesKey<PropertyRecord>() {
             @Override
             public Object getKey(PropertyRecord item) {
