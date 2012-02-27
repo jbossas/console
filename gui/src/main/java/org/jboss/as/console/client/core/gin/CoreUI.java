@@ -102,6 +102,8 @@ import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
+import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
+import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
@@ -274,6 +276,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JacOrbPresenter> getJacOrbPresenter();
     AsyncProvider<JpaPresenter> getJpaPresenter();
     AsyncProvider<MailPresenter> getMailPresenter();
+    AsyncProvider<ModclusterPresenter> getModclusterPresenter();
     AsyncProvider<JMXPresenter> getJMXPresenter();
     AsyncProvider<EEPresenter> getEEPresenter();
 
