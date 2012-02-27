@@ -41,13 +41,25 @@ import org.jboss.as.console.client.domain.model.Predicate;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
+import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
+import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.schedule.LongRunningTask;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
+import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
+
 
 /**
  * Manage server instances on a specific host.
@@ -64,6 +76,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private List<ServerInstance> serverInstances;
     private ReloadState reloadState;
     private CurrentServerSelection serverSelection;
+    private DispatchAsync dispatcher;
+    private BeanFactory factory;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.InstancesPresenter)
@@ -74,6 +88,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public interface MyView extends SuspendableView {
         void setPresenter(ServerInstancesPresenter presenter);
         void updateInstances(String hostName, List<ServerInstance> instances);
+
+        void setEnvironment(List<PropertyRecord> environment);
     }
 
     @Inject
@@ -81,13 +97,15 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             HostInformationStore hostInfoStore, CurrentServerSelection serverSelection,
-            ReloadState reloadState) {
+            ReloadState reloadState, DispatchAsync dispatcher, BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
         this.serverSelection = serverSelection;
         this.reloadState = reloadState;
+        this.dispatcher = dispatcher;
+        this.factory = factory;
     }
 
     @Override
@@ -228,5 +246,40 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                 }
             }
         });
+    }
+
+    public void loadEnvironment(ServerInstance selectedObject) {
+        // /host=master/server=server-one/core-service=platform-mbean/type=runtime:read-attribute(name=system-properties)
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("core-service", "platform-mbean");
+        operation.get(ADDRESS).add("type", "runtime");
+        operation.get(OP).set(READ_ATTRIBUTE_OPERATION);
+        operation.get(NAME).set("system-properties");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                List<Property> properties = response.get(RESULT).asPropertyList();
+                List<PropertyRecord> environment = new ArrayList<PropertyRecord>(properties.size());
+
+                for(Property prop : properties)
+                {
+                    PropertyRecord model = factory.property().as();
+                    model.setKey(prop.getName());
+                    model.setValue(prop.getValue().asString());
+
+                    environment.add(model);
+
+                }
+
+                getView().setEnvironment(environment);
+
+            }
+        });
+
     }
 }
