@@ -36,6 +36,7 @@ public class ReplicatedCacheView extends NonLocalCacheView<ReplicatedCache> impl
     @Inject
     public ReplicatedCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(ReplicatedCache.class, propertyMetaData, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_infinispan_replicated_cache_desc());
     }
 
     @Override

@@ -61,6 +61,7 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
         super(CacheContainer.class, propertyMetaData);
         bridge = new CacheContainerEntityToDmrBridge(propertyMetaData, CacheContainer.class, this, dispatcher);
         defaultCacheContainerWindow = new DefaultCacheContainerWindow(propertyMetaData, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_infinispan_cache_container_desc());
     }
 
     @Override
