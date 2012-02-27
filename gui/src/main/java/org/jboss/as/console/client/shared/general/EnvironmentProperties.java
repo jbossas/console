@@ -37,6 +37,9 @@ public class EnvironmentProperties {
                 return item.getKey();
             }
         });
+
+        propertyTable.getElement().setAttribute("style", "margin-top:15px;");
+
         propertyProvider = new ListDataProvider<PropertyRecord>();
         propertyProvider.addDataDisplay(propertyTable);
 
