@@ -21,9 +21,12 @@ package org.jboss.as.console.client.shared.properties;
 
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -65,6 +68,12 @@ public class PropertyEditor {
 
     public PropertyEditor(PropertyManagement presenter) {
         this.presenter = presenter;
+    }
+
+    public PropertyEditor(int numRows) {
+        this.numRows = numRows;
+        this.simpleView = true;
+        this.hideButtons = true;
     }
 
     public PropertyEditor(PropertyManagement presenter, int rows) {
@@ -150,7 +159,7 @@ public class PropertyEditor {
             }
         });
 
-        Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
+        /*Column<PropertyRecord, String> valueColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
             {
                 setFieldUpdater(new FieldUpdater<PropertyRecord, String>() {
 
@@ -166,7 +175,18 @@ public class PropertyEditor {
             public String getValue(PropertyRecord object) {
                 return object.getValue();
             }
+        };  */
+
+
+        Column<PropertyRecord, SafeHtml> valueColumn = new Column<PropertyRecord, SafeHtml>(new SafeHtmlCell()) {
+            @Override
+            public SafeHtml getValue(PropertyRecord object) {
+                String val = object.getValue();
+                return new SafeHtmlBuilder().appendHtmlConstant("<span title='" +
+                        new SafeHtmlBuilder().appendEscaped(val).toSafeHtml().asString() + "'>" + val + "</span>").toSafeHtml();
+            }
         };
+
 
         Column<PropertyRecord, String> bootColumn = new Column<PropertyRecord, String>(new DefaultEditTextCell()) {
             {
@@ -186,33 +206,6 @@ public class PropertyEditor {
         };
 
 
-        // NamedCommand removeCmd = new NamedCommand(Console.CONSTANTS.common_label_delete()) {
-        //     @Override
-        //     public void execute(int rownum) {
-        //
-        //         if (!PropertyEditor.this.enabled) return;
-        //         final PropertyRecord property = propertyProvider.getList().get(rownum);
-        //
-        //         if(simpleView)
-        //         {
-        //             presenter.onDeleteProperty(reference, property);
-        //         }
-        //         else
-        //         {
-        //             Feedback.confirm(Console.MESSAGES.removeProperty(), Console.MESSAGES.removePropertyConfirm(property.getKey()),
-        //                     new Feedback.ConfirmationHandler() {
-        //                         @Override
-        //                         public void onConfirmation(boolean isConfirmed) {
-        //                             if(isConfirmed)
-        //                                 presenter.onDeleteProperty(reference, property);
-        //                         }
-        //                     });
-        //         }
-        //     }
-        // };
-        //
-        //
-        //MenuColumn menuCol = new MenuColumn("...", removeCmd);
         Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
                 new ButtonCell<PropertyRecord>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<PropertyRecord>() {
                     @Override
@@ -267,6 +260,7 @@ public class PropertyEditor {
             panel.add(helpPanel.asWidget());
         }
 
+
         //propertyTable.setEnabled(false);
         panel.add(propertyTable);
 
@@ -314,7 +308,7 @@ public class PropertyEditor {
     public void setAllowEditProps(boolean allowEditProps) {
 
         if(null==propertyTable)
-            throw new IllegalStateException("You need to call asWidget() before enabling the PropertyEditor");
+            throw new IllegalStateException("You need to call asWidget() before setAllowEditProps() is called.");
 
         this.allowEditProps = allowEditProps;
         propertyTable.setEnabled(enabled && allowEditProps);
@@ -355,5 +349,9 @@ public class PropertyEditor {
         @Override
         public void closePropertyDialoge() {
         }
+    }
+
+    public DefaultCellTable<PropertyRecord> getPropertyTable() {
+        return propertyTable;
     }
 }

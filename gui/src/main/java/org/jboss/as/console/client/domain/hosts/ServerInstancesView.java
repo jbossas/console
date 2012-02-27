@@ -38,9 +38,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerInstance;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
@@ -73,6 +77,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     private ContentHeaderLabel nameLabel;
     private ToolButton startBtn;
     private Form<ServerInstance> form;
+    private PropertyEditor properties;
 
     @Override
     public void setPresenter(ServerInstancesPresenter presenter) {
@@ -290,17 +295,47 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
 
         formPanel.add(formWidget);
 
+        properties = new PropertyEditor(8);
+        properties.setHideButtons(true);
+
         // ----------------------------------------------------------
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
 
         bottomLayout.add(formPanel, "Availability");
-
+        bottomLayout.add(properties.asWidget(), "Environment Properties");
         bottomLayout.selectTab(0);
 
         vpanel.add(new ContentGroupLabel("Status"));
 
         vpanel.add(bottomLayout);
+
+
+        final SingleSelectionModel<PropertyRecord> propertySelection = new SingleSelectionModel<PropertyRecord>();
+
+        /*properties.getPropertyTable().setSelectionModel(propertySelection);
+
+        properties.getPropertyTable().getSelectionModel().addSelectionChangeHandler(
+            new SelectionChangeEvent.Handler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    PropertyRecord property = propertySelection.getSelectedObject();
+                }
+            }
+        );*/
+
+        properties.setAllowEditProps(false);
+        properties.setEnabled(false);
+
+        // load system props
+        final SingleSelectionModel<ServerInstance> selectionModel = (SingleSelectionModel<ServerInstance>) instanceTable.getSelectionModel();
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                presenter.loadEnvironment(selectionModel.getSelectedObject());
+            }
+        });
+
 
         return layout;
     }
@@ -328,5 +363,10 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
         groupFilter.clearSelection();
         groupFilter.clearValues();
         groupFilter.setValues(names);*/
+    }
+
+    @Override
+    public void setEnvironment(List<PropertyRecord> environment) {
+        properties.setProperties("", environment);
     }
 }
