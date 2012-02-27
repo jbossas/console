@@ -26,8 +26,8 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Pavel Slegr
  * @date 2/14/12
  */
-@Address("/subsystem=modcluster/mod-cluster-config={0}")
 public interface Modcluster {
+    
     @Binding(detypedName="advertise")
     public boolean isAdvertise();
     public void setAdvertise(boolean advertise);
@@ -35,6 +35,10 @@ public interface Modcluster {
     @Binding(detypedName="advertise-socket")
     public String getAdvertiseSocket();
     public void setAdvertiseSocket(String advertiseSocket);
+    
+    @Binding(detypedName="advertise-security-key")
+    public String getAdvertiseKey();
+    public void setAdvertiseKey(String advertiseKey);
     
     @Binding(detypedName="auto-enableContexts")
     public boolean isAutoEnableContexts();
@@ -71,9 +75,11 @@ public interface Modcluster {
     
     // Proxy Discovery Configuraiton attributes
     
-    @Binding(detypedName="balancer")
     public String getBalancer();
     public void setBalancer(String balancer);
+
+    public String getDomain();
+    public void setDomain(String domain);
 
     @Binding(detypedName="flush-packets")
     public boolean isFlushPackets();
