@@ -229,6 +229,8 @@ public class ProfileMgmtPresenter
 
                 if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.ProfileMgmtPresenter))
                     revealDefaultSubsystem(result);
+                else
+                    placeManager.revealCurrentPlace();
 
             }
         });
