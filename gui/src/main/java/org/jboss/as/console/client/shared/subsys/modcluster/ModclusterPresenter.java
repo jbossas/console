@@ -15,7 +15,6 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.modcluster.model.Modcluster;
@@ -24,10 +23,7 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.Property;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -36,7 +32,8 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Pavel Slegr
  * @date 02/21/12
  */
-public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy> {
+public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
+    implements ModclusterManagement {
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
@@ -53,7 +50,7 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
     public interface MyView extends View {
         void setPresenter(ModclusterPresenter presenter);
-        void updateFrom(List<Modcluster> list);
+        void updateFrom(Modcluster modcluster);
     }
 
     @Inject
@@ -88,59 +85,33 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         loadModcluster();
     }
 
-    public void launchNewSessionWizard() {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("Modcluster"));
-        window.setWidth(480);
-        window.setHeight(360);
-
-        window.setWidget(
-                new NewModclusterWizard(this).asWidget()
-        );
-
-        window.setGlassEnabled(true);
-        window.center();
-    }
-
     private void loadModcluster() {
 
-        ModelNode operation = beanMetaData.getAddress().asSubresource(Baseadress.get());
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "modcluster");
+        operation.get(ADDRESS).add("mod-cluster-config", "configuration");
         operation.get(OP).set(READ_RESOURCE_OPERATION);
         operation.get(RECURSIVE).set(true);
-        System.out.println("Operation JSON: " + operation.toJSONString());
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = result.get();
 
+                System.out.println(response);
+
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load Modcluster");
+                    Console.error("Failed to load Modcluster subsystem", response.getFailureDescription());
                 }
                 else
                 {
-                    List<Property> items = response.get(RESULT).asPropertyList();
-                    List<Modcluster> modclusterList = new ArrayList<Modcluster>(items.size());
-                    for(Property item : items)
-                    {
-                        ModelNode model = item.getValue();
-                        System.out.println("Model: " + model.toString());
-                        Modcluster modcluster = adapter.fromDMR(model.get("configuration").asObject());
-                        modclusterList.add(modcluster);
-//                        System.out.println("Modcluster value advertise-socket: " + modcluster.getAdvertiseSocket());
-//                        System.out.println("Modcluster value excluded-contaxt: " + modcluster.getExcludedContexts());
-//                        System.out.println("Modcluster value balancer: " + modcluster.getBalancer());
-                    }
-
-                    getView().updateFrom(modclusterList);
+                    ModelNode payload = response.get(RESULT).asObject();
+                    Modcluster modcluster = adapter.fromDMR(payload);
+                    getView().updateFrom(modcluster);
                 }
 
-            }
-            @Override
-            public void onFailure(Throwable caught) {
-            	// TODO Auto-generated method stub
-            	super.onFailure(caught);
-            	System.err.println(caught);
             }
         });
     }
@@ -150,69 +121,15 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         revealStrategy.revealInParent(this);
     }
 
-    public void closeDialoge() {
-        window.hide();
-    }
-
-
-    public void onCreateModcluster(final Modcluster entity) {
-
-        closeDialoge();
-
-        ModelNode address = beanMetaData.getAddress().asResource(Baseadress.get(), "configuration");
-
-        ModelNode operation = adapter.fromEntity(entity);
-        operation.get(ADDRESS).set(address.get(ADDRESS));
-        operation.get(OP).set(ADD);
-
-        System.out.println(operation);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = result.get();
-                System.out.println("Response: " + response.toString());
-
-                if(response.isFailure())
-                {
-                    Console.error("Failed to create modcluster");
-                }
-                else
-                {
-                    Console.info("Success: Added modcluster "+" record");
-                }
-
-                loadModcluster();
-            }
-        });
-    }
-
-    public void onDelete(final Modcluster entity) {
-        ModelNode operation = beanMetaData.getAddress().asResource(Baseadress.get(), "configuration");
-        operation.get(OP).set(REMOVE);
-        System.out.println(operation);
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response  = result.get();
-                System.out.println("Response: " + response.toString());
-
-                if(response.isFailure())
-                {
-                    Console.error("Failed to remove modcluster", response.get("failure-description").asString());
-                }
-                else
-                {
-                    Console.info("Success: Removed modcluster record");
-                }
-
-                loadModcluster();
-            }
-        });
-    }
-
     public void onSave(final Modcluster editedEntity, Map<String, Object> changeset) {
-        ModelNode operation = adapter.fromChangeset(changeset, beanMetaData.getAddress().asResource(Baseadress.get(), "configuration"));
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "modcluster");
+        address.get(ADDRESS).add("mod-cluster-config", "configuration");
+
+        ModelNode operation = adapter.fromChangeset(changeset, address);
+
         System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override

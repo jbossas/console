@@ -117,7 +117,7 @@ public class OneToOneLayout {
         layout.add(scroll);
 
         // titlebar offset, if exists
-        int offset = isPlain ? 0 : 28;
+        int offset = isPlain ? 0 : 40;
 
         if(toolStrip!=null)
         {

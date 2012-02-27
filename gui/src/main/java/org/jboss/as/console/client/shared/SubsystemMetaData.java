@@ -68,7 +68,6 @@ public class SubsystemMetaData {
         groups.put(WEB, new SubsystemGroup(WEB));
         groups.put(OSGI, new SubsystemGroup(OSGI));
         groups.put(INFINISPAN, new SubsystemGroup(INFINISPAN));
-        groups.put(MODCLUSTER, new SubsystemGroup(MODCLUSTER));
         groups.put(OTHER, new SubsystemGroup(OTHER));
 
         // assign actual subsystems
@@ -81,6 +80,7 @@ public class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet/HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
+        groups.get(WEB).getItems().add(new SubsystemGroupItem("Modcluster", "modcluster",NameTokens.ModclusterPresenter));
 
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
@@ -111,9 +111,6 @@ public class SubsystemMetaData {
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Invalidation Caches", NameTokens.Infinispan, NameTokens.InvalidationCachePresenter));
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Replicated Caches", NameTokens.Infinispan, NameTokens.ReplicatedCachePresenter));
         groups.get(INFINISPAN).getItems().add(new SubsystemGroupItem("Distributed Caches", NameTokens.Infinispan, NameTokens.DistributedCachePresenter));
-        
-        groups.get(MODCLUSTER).getItems().add(new SubsystemGroupItem("Modcluster", "modcluster",NameTokens.ModclusterPresenter));
-        
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
