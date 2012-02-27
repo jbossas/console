@@ -64,8 +64,11 @@ public class ServerPicker implements HostServerManagement {
     public void setSelected(ServerInstance server, boolean isSelected)
     {
         if(!server.isRunning())
+        {
             Console.warning("Selected in-active server instance:"+server.getName());
+        }
 
+        serverSelection.selectServer(server);
 
     }
 
@@ -120,5 +123,9 @@ public class ServerPicker implements HostServerManagement {
             }
         });
 
+    }
+
+    public void clearSelection() {
+        serverSelection.clearSelection();
     }
 }

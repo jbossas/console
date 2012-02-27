@@ -334,6 +334,11 @@ public class HostServerTable {
 
     }
 
+    public void selectServer(ServerInstance server) {
+
+        serverList.getSelectionModel().setSelected(server, true);
+    }
+
     interface Template extends SafeHtmlTemplates {
         @Template("<div class='server-selection-host'>{0}</div>")
         SafeHtml message(String title);
