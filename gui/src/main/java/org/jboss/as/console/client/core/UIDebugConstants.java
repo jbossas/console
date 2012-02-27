@@ -80,4 +80,6 @@ public interface UIDebugConstants extends Constants {
     String debug_label_delete_formToolStrip();
     String debug_label_cancel_formToolStrip();
     String debug_label_add_listEditor();
+    String debug_label_add_modclusterView();
+    String debug_label_remove_modclusterView();
 }

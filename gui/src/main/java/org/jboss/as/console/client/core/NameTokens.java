@@ -79,7 +79,11 @@ public class NameTokens {
     public static final String DataSourceMetricPresenter  = "ds-metrics";
     public static final String JPAMetricPresenter = "jpa-metrics";
     public static final String WebServiceRuntimePresenter = "webservice-runtime";
+<<<<<<< HEAD
     public static final String JGroupsPresenter = "jgroups";
+=======
+    public static final String ModclusterPresenter = "modcluster";
+>>>>>>> AS7-2751 modcluster feature
 
     public static String getMainLayout() {
         return mainLayout;
