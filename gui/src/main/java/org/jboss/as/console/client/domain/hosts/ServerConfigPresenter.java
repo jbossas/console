@@ -395,7 +395,13 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                             new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName())
                     );
 
-                    getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_CONFIGURATIONS));
+                        }
+                    });
+
 
                     loadServerConfigurations(null);
                 }

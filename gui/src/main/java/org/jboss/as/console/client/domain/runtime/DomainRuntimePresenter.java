@@ -71,6 +71,10 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setServer(List<ServerInstance> server);
 
         void setSubsystems(List<SubsystemRecord> result);
+
+        void clearSelection();
+
+        void setSelectedServer(String hostName, ServerInstance server);
     }
 
     @Inject
@@ -138,6 +142,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     private void loadHostData() {
+
         // load host and server data
         hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
@@ -198,7 +203,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     }
 
     @Override
-    public void onServerSelection(String hostName, final ServerInstance server) {
+    public void onServerSelection(final String hostName, final ServerInstance server) {
+
+        getView().setSelectedServer(hostName, server);
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -247,8 +254,17 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
     @Override
     public void onStaleModel(String modelName) {
-        if(StaleModelEvent.SERVER_INSTANCES.equals(modelName))
+        if(StaleModelEvent.SERVER_INSTANCES.equals(modelName)
+                || StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
         {
+
+
+            // clear current selection
+            serverSelection.setHost(null);
+            serverSelection.setServer(null);
+
+            getView().clearSelection();
+
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {

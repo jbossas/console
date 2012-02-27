@@ -84,4 +84,14 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
     public void setSubsystems(List<SubsystemRecord> result) {
         lhsNavigation.setSubsystems(result);
     }
+
+    @Override
+    public void clearSelection() {
+        lhsNavigation.clearSelection();
+    }
+
+    @Override
+    public void setSelectedServer(String hostName, ServerInstance server) {
+        lhsNavigation.setSelectedServer(hostName, server);
+    }
 }

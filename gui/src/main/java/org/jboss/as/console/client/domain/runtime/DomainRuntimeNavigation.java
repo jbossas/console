@@ -162,5 +162,11 @@ class DomainRuntimeNavigation {
     }
 
 
+    public void clearSelection() {
+        serverPicker.clearSelection();
+    }
 
+    public void setSelectedServer(String hostName, ServerInstance server) {
+        serverPicker.setSelected(server, true);
+    }
 }
