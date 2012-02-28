@@ -12,12 +12,14 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
+import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.modcluster.model.Modcluster;
+import org.jboss.as.console.client.shared.subsys.modcluster.model.SSLConfig;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -42,6 +44,12 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
     private EntityAdapter<Modcluster> adapter;
     private BeanMetaData beanMetaData;
     private DefaultWindow window;
+    private EntityAdapter<SSLConfig> sslAdapter;
+    private BeanFactory factory;
+
+    public void onSaveSsl(SSLConfig editedEntity, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ModclusterPresenter)
@@ -59,7 +67,7 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
             PlaceManager placeManager,
             DispatchAsync dispatcher,
             RevealStrategy revealStrategy,
-            ApplicationMetaData metaData) {
+            ApplicationMetaData metaData, BeanFactory factory) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -69,6 +77,8 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         this.dispatcher = dispatcher;
         this.beanMetaData = metaData.getBeanMetaData(Modcluster.class);
         this.adapter = new EntityAdapter<Modcluster>(Modcluster.class, metaData);
+        this.sslAdapter = new EntityAdapter<SSLConfig>(SSLConfig.class, metaData);
+        this.factory = factory;
 
     }
 
@@ -99,8 +109,6 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = result.get();
 
-                System.out.println(response);
-
                 if(response.isFailure())
                 {
                     Console.error("Failed to load Modcluster subsystem", response.getFailureDescription());
@@ -108,7 +116,20 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
                 else
                 {
                     ModelNode payload = response.get(RESULT).asObject();
+
                     Modcluster modcluster = adapter.fromDMR(payload);
+
+                    if(payload.hasDefined("ssl"))
+                    {
+                        SSLConfig ssl = sslAdapter.fromDMR(payload.get("ssl").asObject());
+                        modcluster.setSSLConfig(ssl);
+                    }
+                    else
+                    {
+                        // provide an empty entity
+                        modcluster.setSSLConfig(factory.SSLConfig().as());
+                    }
+
                     getView().updateFrom(modcluster);
                 }
 

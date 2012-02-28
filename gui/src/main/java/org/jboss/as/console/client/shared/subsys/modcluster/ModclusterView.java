@@ -1,14 +1,22 @@
 package org.jboss.as.console.client.shared.subsys.modcluster;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.modcluster.model.Modcluster;
+import org.jboss.as.console.client.shared.subsys.modcluster.model.SSLConfig;
+import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.dmr.client.ModelNode;
+
+import java.util.Map;
 
 /**
  * @author Pavel Slegr
@@ -22,6 +30,8 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
     private ModclusterForm proxyForm;
     private ModclusterForm sessionForm;
     private ModclusterForm networkingForm;
+
+    private SSLEditor sslEditor;
 
     @Override
     public Widget createWidget() {
@@ -83,6 +93,13 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         NumberBoxItem ttl = new NumberBoxItem("ttl", "TTL");
 
         networkingForm.setFields(nodeTimeout, socketTimeout, stopContextTimeout, maxAttemps, flushPackets, flushWait, ping, ttl, workerTimeout);
+
+        //  --
+
+        sslEditor = new SSLEditor(presenter);
+
+        // --
+
         OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Modcluster")
                 .setHeadline("Modcluster")
@@ -91,7 +108,7 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
                 .addDetail("Sessions", sessionForm.asWidget())
                 .addDetail("Web Contexts", contextForm.asWidget())
                 .addDetail("Proxies", proxyForm.asWidget())
-                .addDetail("SSL", new HTML("TODO: Implement"))
+                .addDetail("SSL", sslEditor.asWidget())
                 .addDetail("Networking", networkingForm.asWidget());
 
 
@@ -110,5 +127,7 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         contextForm.updateFrom(modcluster);
         proxyForm.updateFrom(modcluster);
         networkingForm.updateFrom(modcluster);
+
+        sslEditor.edit(modcluster.getSSLConfig());
     }
 }
