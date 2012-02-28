@@ -18,6 +18,8 @@ import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -130,5 +132,9 @@ public class EnvironmentProperties {
 
     public DefaultCellTable<PropertyRecord> getPropertyTable() {
         return propertyTable;
+    }
+
+    public void clearValues() {
+        propertyProvider.setList(new ArrayList<PropertyRecord>());
     }
 }
