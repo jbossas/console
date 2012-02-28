@@ -115,7 +115,7 @@ public class ProfileMgmtPresenter
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
         {
-           lastSubPlace = currentToken;
+            lastSubPlace = currentToken;
         }
         else if(lastSubPlace!=null)
         {
@@ -124,20 +124,21 @@ public class ProfileMgmtPresenter
 
         if(!hasBeenRevealed)
         {
+
             hasBeenRevealed = true;
 
             // load profiles
             profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
                 @Override
-                public void onSuccess(List<ProfileRecord> result) {
+                public void onSuccess(final List<ProfileRecord> result) {
+
+                    getView().setProfiles(result);
 
                     // default profile
                     if(!result.isEmpty())
                     {
                         selectDefaultProfile(result);
                     }
-
-                    getView().setProfiles(result);
 
                     Timer t = new Timer() {
                         @Override
@@ -170,10 +171,11 @@ public class ProfileMgmtPresenter
         if(!profileSelection.isSet())
         {
             String name = result.get(0).getName();
-            Console.info("Default profile selection: "+name);
+            Console.info("Default profile selection: " + name);
             profileSelection.setName(name);
-            getEventBus().fireEvent(new ProfileSelectionEvent(name));
         }
+
+        getEventBus().fireEvent(new ProfileSelectionEvent(profileSelection.getName()));
     }
 
     private void revealDefaultSubsystem(List<SubsystemRecord> existingSubsystems) {
