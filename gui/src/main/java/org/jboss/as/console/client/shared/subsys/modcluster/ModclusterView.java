@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.modcluster;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -102,8 +103,8 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
 
         OneToOneLayout layout = new OneToOneLayout()
                 .setTitle("Modcluster")
-                .setHeadline("Modcluster")
-                .setDescription("The modcluster configuration.")
+                .setHeadline("Modcluster Subsystem")
+                .setDescription(Console.CONSTANTS.subsys_modcluster_desc())
                 .setMaster("Advertising", form.asWidget())
                 .addDetail("Sessions", sessionForm.asWidget())
                 .addDetail("Web Contexts", contextForm.asWidget())
