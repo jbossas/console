@@ -145,7 +145,6 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
 
     public void setSelectedDS(DataSource currentSelection, boolean xa) {
 
-
         if(!currentSelection.isEnabled())
         {
             Console.error(Console.MESSAGES.subsys_jca_err_ds_notEnabled(currentSelection.getName()));
@@ -171,13 +170,15 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     private void loadDSPoolMetrics(final boolean isXA) {
-        if(null==selectedDS)
+
+        DataSource target = isXA ? selectedXA : selectedDS;
+        if(null==target)
             throw new RuntimeException("DataSource selection is null!");
 
         getView().clearSamples();
 
         String subresource = isXA ? "xa-data-source": "data-source";
-        String name = isXA ? selectedXA.getName() : selectedDS.getName();
+        String name = target.getName();
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
@@ -216,13 +217,15 @@ public class DataSourceMetricPresenter extends Presenter<DataSourceMetricPresent
     }
 
     private void loadDSCacheMetrics(final boolean isXA) {
-        if(null==selectedDS)
+
+        DataSource target = isXA ? selectedXA : selectedDS;
+        if(null==target)
             throw new RuntimeException("DataSource selection is null!");
 
         getView().clearSamples();
 
         String subresource = isXA ? "xa-data-source": "data-source";
-        String name = isXA ? selectedXA.getName() : selectedDS.getName();
+        String name = target.getName();
 
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).set(RuntimeBaseAddress.get());
