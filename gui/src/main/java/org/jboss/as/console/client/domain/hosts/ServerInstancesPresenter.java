@@ -38,6 +38,7 @@ import org.jboss.as.console.client.domain.events.StaleModelEvent;
 import org.jboss.as.console.client.domain.model.EntityFilter;
 import org.jboss.as.console.client.domain.model.HostInformationStore;
 import org.jboss.as.console.client.domain.model.Predicate;
+import org.jboss.as.console.client.domain.model.Server;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
@@ -90,6 +91,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
         void updateInstances(String hostName, List<ServerInstance> instances);
 
         void setEnvironment(List<PropertyRecord> environment);
+
+        void mergeUpdatedInstance(String name, boolean started);
     }
 
     @Inject
@@ -191,8 +194,6 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     public void startServer(final String hostName, final String serverName, final boolean startIt) {
 
-        // TODO: https://issues.jboss.org/browse/AS7-3646
-
         reloadState.resetServer(serverName);
 
         hostInfoStore.startServer(hostName, serverName, startIt, new SimpleCallback<Boolean>() {
@@ -205,38 +206,40 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                     LongRunningTask poll = new LongRunningTask(new AsyncCommand<Boolean>() {
                         @Override
                         public void execute(final AsyncCallback<Boolean> callback) {
-                            hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
+
+
+                            hostInfoStore.getServerConfiguration(hostName, serverName, new SimpleCallback<Server>() {
                                 @Override
-                                public void onSuccess(List<ServerInstance> result) {
-                                    serverInstances = result;
+                                public void onSuccess(final Server server) {
 
                                     boolean keepPolling = false;
 
-                                    for(ServerInstance instance : result) {
-                                        if(instance.getServer().equals(serverName)) {
+                                    if(startIt)
+                                        keepPolling = !server.isStarted();
+                                    else
+                                        keepPolling = server.isStarted();
 
-                                            if(startIt)
-                                                keepPolling = !instance.isRunning();
-                                            else
-                                                keepPolling = instance.isRunning();
 
-                                            break;
-                                        }
+                                    if(!keepPolling) {
+
+                                        getView().mergeUpdatedInstance(server.getName(), server.isStarted());
+
+                                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                                            @Override
+                                            public void execute() {
+
+                                                // force reload of server selector (LHS nav)
+                                                getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+                                            }
+                                        });
+
                                     }
 
                                     // notify scheduler
                                     callback.onSuccess(keepPolling);
-
-                                    if(!keepPolling) {
-
-                                        getView().updateInstances(hostName, result);
-
-                                        // force reload of server selector (LHS nav)
-                                        getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
-
-                                    }
                                 }
                             });
+
                         }
                     }, limit);
 
