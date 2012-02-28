@@ -113,7 +113,7 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to load Modcluster subsystem", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.failed("Modcluster Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
@@ -162,11 +162,11 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update modcluster subsystem", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("Modcluster Subsystem"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update modcluster record");
+                    Console.info(Console.MESSAGES.modified("Modcluster Subsystem"));
                 }
 
                 loadModcluster();
@@ -226,11 +226,11 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update SSL Config", response.getFailureDescription());
+                    Console.error(Console.MESSAGES.modificationFailed("SSL Config"), response.getFailureDescription());
                 }
                 else
                 {
-                    Console.info("Success: Update SSL Config");
+                    Console.info(Console.MESSAGES.modified("SSL Config"));
                 }
 
                 loadModcluster();
