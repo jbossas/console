@@ -156,7 +156,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
 
     @Override
     public void onServerSelection(String hostName, ServerInstance server) {
-         if(isVisible() && serverSelection.isSet())
+        if(isVisible() && serverSelection.isSet())
         {
             loadHostData();
         }
@@ -263,21 +263,24 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                List<Property> properties = response.get(RESULT).asPropertyList();
-                List<PropertyRecord> environment = new ArrayList<PropertyRecord>(properties.size());
-
-                for(Property prop : properties)
+                if(!response.isFailure())
                 {
-                    PropertyRecord model = factory.property().as();
-                    model.setKey(prop.getName());
-                    model.setValue(prop.getValue().asString());
 
-                    environment.add(model);
+                    List<Property> properties = response.get(RESULT).asPropertyList();
+                    List<PropertyRecord> environment = new ArrayList<PropertyRecord>(properties.size());
 
+                    for(Property prop : properties)
+                    {
+                        PropertyRecord model = factory.property().as();
+                        model.setKey(prop.getName());
+                        model.setValue(prop.getValue().asString());
+
+                        environment.add(model);
+
+                    }
+
+                    getView().setEnvironment(environment);
                 }
-
-                getView().setEnvironment(environment);
-
             }
         });
 
