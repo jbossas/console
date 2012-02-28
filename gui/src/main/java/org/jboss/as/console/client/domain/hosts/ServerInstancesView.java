@@ -328,7 +328,28 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
     }
 
     @Override
+    public void mergeUpdatedInstance(String name, boolean started) {
+        List<ServerInstance> list = instanceProvider.getList();
+
+        for(ServerInstance existing : list)
+        {
+            if(existing.getName().equals(name))
+            {
+                // simply merge changes
+                existing.setRunning(started);
+                existing.setFlag(null);
+                break;
+            }
+        }
+
+        instanceProvider.flush();
+        instanceTable.selectDefaultEntity();
+    }
+
+    @Override
     public void setEnvironment(List<PropertyRecord> environment) {
         properties.setProperties(environment);
     }
+
+
 }

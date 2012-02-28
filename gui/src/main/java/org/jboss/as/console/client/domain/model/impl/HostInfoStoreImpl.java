@@ -148,6 +148,39 @@ public class HostInfoStoreImpl implements HostInformationStore {
         });
     }
 
+    @Override
+    public void getServerConfiguration(String host, String server, final AsyncCallback<Server> callback) {
+
+        if(host==null) throw new RuntimeException("Host parameter is null!");
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add("server-config", server);
+        operation.get(INCLUDE_RUNTIME).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+                ModelNode model = response.get("result").asObject();
+
+                Server server = serverAdapter.fromDMR(model);
+                server.setStarted(model.get("status").asString().equals("STARTED"));
+
+                callback.onSuccess(server);
+            }
+
+        });
+    }
+
     public void getVirtualMachines(String host, final AsyncCallback<List<String>> callback) {
         final ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
@@ -350,6 +383,63 @@ public class HostInfoStoreImpl implements HostInformationStore {
 
      });   */
 
+    }
+
+
+    public void updateServerInstance(String host, final Server handle, final AsyncCallback<ServerInstance> callback) {
+
+
+        final ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(INCLUDE_RUNTIME).set(true);
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(ADDRESS).add("host", host);
+        operation.get(ADDRESS).add("server", handle.getName());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ServerInstance instance = createInstanceModel(handle);
+                instance.setRunning(false);
+                callback.onSuccess(instance);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode statusResponse = result.get();
+                ModelNode payload = statusResponse.get(RESULT);
+
+                ServerInstance instance = createInstanceModel(handle);
+
+                if(statusResponse.isFailure())
+                {
+                    instance.setRunning(false);
+                }
+                else
+                {
+                    instance.setRunning(handle.isStarted());
+
+                    if(payload.hasDefined("server-state"))
+                    {
+                        String state = payload.get("server-state").asString();
+                        if(state.equals("reload-required"))
+                        {
+                            instance.setFlag(ServerFlag.RELOAD_REQUIRED);
+                        }
+                        else if (state.equals("restart-required"))
+                        {
+                            instance.setFlag(ServerFlag.RESTART_REQUIRED);
+                        }
+                    }
+
+                }
+
+                callback.onSuccess(instance);
+            }
+        });
     }
 
     private ServerInstance createInstanceModel(Server handle) {
