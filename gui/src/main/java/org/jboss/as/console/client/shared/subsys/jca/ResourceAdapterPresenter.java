@@ -584,9 +584,10 @@ public class ResourceAdapterPresenter
         createConnectionOp.get(ADDRESS).set(addressModel.get(ADDRESS));
 
         steps.add(createConnectionOp);
+
         // --
 
-        if(connectionDefinition.getProperties()!=null)
+        if(connectionDefinition.getProperties()!=null && !connectionDefinition.getProperties().isEmpty())
         {
 
             ModelNode createPropOp = new ModelNode();
