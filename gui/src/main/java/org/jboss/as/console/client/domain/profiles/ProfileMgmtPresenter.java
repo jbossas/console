@@ -170,7 +170,7 @@ public class ProfileMgmtPresenter
         if(!profileSelection.isSet())
         {
             String name = result.get(0).getName();
-            System.out.println("Default profile selection: "+name);
+            Console.info("Default profile selection: "+name);
             profileSelection.setName(name);
             getEventBus().fireEvent(new ProfileSelectionEvent(name));
         }

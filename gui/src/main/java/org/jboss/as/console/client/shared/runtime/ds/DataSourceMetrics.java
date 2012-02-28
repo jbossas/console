@@ -93,13 +93,14 @@ public class DataSourceMetrics {
         table.addColumn(protocolColumn, "JNDI");
         table.addColumn(status, "Enabled?");
 
-        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                DataSource ds = getCurrentSelection();
-                presenter.setSelectedDS(ds, isXA);
+        table.getSelectionModel().addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler(){
+                    @Override
+                    public void onSelectionChange(SelectionChangeEvent event) {
+                        DataSource ds = getCurrentSelection();
+                        presenter.setSelectedDS(ds, isXA);
 
-            }
+                    }
         });
         table.getElement().setAttribute("style", "margin-top:15px;margin-bottom:0px;");
 
