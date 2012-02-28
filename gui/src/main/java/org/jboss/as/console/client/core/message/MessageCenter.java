@@ -82,7 +82,8 @@ public class MessageCenter {
     }
 
     private void log(Message message) {
-        String formattedMessage = "On " + message.getFired() + ", MessageCenter received " + message.getConciseMessage();
+        String formattedMessage = message.getConciseMessage();
+
         if (message.severity == Message.Severity.Info) {
             Log.info(formattedMessage);
         } else if (message.severity == Message.Severity.Warning) {

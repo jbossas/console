@@ -18,7 +18,6 @@
  */
 package org.jboss.as.console.client.core.message;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -257,7 +256,6 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
     public void onMessage(final Message message) {
         if (!message.isTransient()) {
-            logMessage(message);
 
             // update the visible message count
             reflectMessageCount();
@@ -330,24 +328,6 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         messageDisplay.clear();
         messageDisplay.add(panel);
 
-    }
-
-    private static void logMessage(Message message) {
-        String logMessage = message.toString();
-        switch (message.getSeverity()) {
-            case Info:
-                Log.info(logMessage);
-                break;
-            case Warning:
-                Log.warn(logMessage);
-                break;
-            case Error:
-                Log.error(logMessage);
-                break;
-            case Fatal:
-                Log.fatal(logMessage);
-                break;
-        }
     }
 
     public static String getSeverityStyle(Message.Severity severity) {
