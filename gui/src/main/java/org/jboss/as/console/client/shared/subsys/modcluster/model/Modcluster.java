@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys.modcluster.model;
 
-import org.jboss.as.console.client.widgets.forms.Address;
 import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
@@ -63,17 +62,14 @@ public interface Modcluster {
     Integer getSocketTimeout();
     void setSocketTimeout(Integer socketTimeout);
 
-
-    // skip SSL configuration for now - place it in the separate class
     @Binding(skip=true)
-    String getSsl();
+    SSLConfig getSSLConfig();
+    void setSSLConfig(SSLConfig config);
     
     //TODO this has to be time value with SECONDS unit
     @Binding(detypedName="stop-context-timeout")
     Integer getStopContextTimeout();
     void setStopContextTimeout(Integer stopContextTimeout);
-    
-    // Proxy Discovery Configuraiton attributes
     
     public String getBalancer();
     public void setBalancer(String balancer);

@@ -94,6 +94,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Topic;
 import org.jboss.as.console.client.shared.subsys.modcluster.model.Modcluster;
+import org.jboss.as.console.client.shared.subsys.modcluster.model.SSLConfig;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiCapability;
 import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.model.OSGiBundle;
@@ -226,7 +227,8 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JpaSubsystem> jpaSubystem();
     AutoBean<MailSession> mailSession();
     AutoBean<MailServerDefinition> mailServerDefinition();
-    AutoBean<Modcluster> modcluster();    
+    AutoBean<Modcluster> modcluster();
+    AutoBean<SSLConfig> SSLConfig();
     AutoBean<JMXSubsystem> jmxSubsystem();
     AutoBean<EESubsystem> eeSubsystem();
     AutoBean<Module> eeModuleRef();
