@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.modcluster;
 
+import com.google.gwt.autobean.shared.AutoBean;
+import com.google.gwt.autobean.shared.AutoBeanUtils;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -26,16 +28,19 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Pavel Slegr
+ * @author Heiko Braun
  * @date 02/21/12
  */
 public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, ModclusterPresenter.MyProxy>
-    implements ModclusterManagement {
+        implements ModclusterManagement {
 
     private final PlaceManager placeManager;
     private RevealStrategy revealStrategy;
@@ -47,9 +52,6 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
     private EntityAdapter<SSLConfig> sslAdapter;
     private BeanFactory factory;
 
-    public void onSaveSsl(SSLConfig editedEntity, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
-    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ModclusterPresenter)
@@ -119,15 +121,17 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
                     Modcluster modcluster = adapter.fromDMR(payload);
 
-                    if(payload.hasDefined("ssl"))
+                    if(payload.hasDefined("ssl") && payload.get("ssl").hasDefined("configuration"))
                     {
-                        SSLConfig ssl = sslAdapter.fromDMR(payload.get("ssl").asObject());
+                        SSLConfig ssl = sslAdapter.fromDMR(payload.get("ssl").get("configuration").asObject());
                         modcluster.setSSLConfig(ssl);
                     }
                     else
                     {
                         // provide an empty entity
-                        modcluster.setSSLConfig(factory.SSLConfig().as());
+                        AutoBean<SSLConfig> autoBean = factory.SSLConfig();
+                        autoBean.setTag("state", "transient");
+                        modcluster.setSSLConfig(autoBean.as());
                     }
 
                     getView().updateFrom(modcluster);
@@ -151,16 +155,14 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
 
         ModelNode operation = adapter.fromChangeset(changeset, address);
 
-        System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = result.get();
-                System.out.println("Response: " + response.toString());
 
                 if(response.isFailure())
                 {
-                    Console.error("Failed to update modcluster subsystem");
+                    Console.error("Failed to update modcluster subsystem", response.getFailureDescription());
                 }
                 else
                 {
@@ -171,4 +173,69 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
             }
         });
     }
+
+    public void onSaveSsl(SSLConfig entity, Map<String, Object> changeset) {
+
+        // TODO: https://issues.jboss.org/browse/AS7-3933
+
+        // check transient: requires creation of ssl subresource. otherwise we can simply update it
+        boolean isTransient = false;
+        String state = (String)AutoBeanUtils.getAutoBean(entity).getTag("state");
+        if(state!=null && state.equals("transient"))
+            isTransient = true;
+
+        ModelNode composite = new ModelNode();
+        composite.get(ADDRESS).setEmptyList();
+        composite.set(OP).set(COMPOSITE);
+
+        List<ModelNode> steps  = new ArrayList<ModelNode>();
+
+        // the create op, if necessary
+        if(isTransient)
+        {
+            ModelNode createOp = new ModelNode();
+            createOp.get(ADDRESS).set(Baseadress.get());
+            createOp.get(ADDRESS).add("subsystem", "modcluster");
+            createOp.get(ADDRESS).add("mod-cluster-config", "configuration");
+            createOp.get(ADDRESS).add("ssl", "configuration");
+            createOp.get(OP).set(ADD);
+
+            steps.add(createOp);
+        }
+
+        // the updated values
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "modcluster");
+        address.get(ADDRESS).add("mod-cluster-config", "configuration");
+        address.get(ADDRESS).add("ssl", "configuration");
+
+        ModelNode updateOp = sslAdapter.fromChangeset(changeset, address);
+        steps.add(updateOp);
+
+        // provide steps
+        composite.set(STEPS).set(steps);
+
+        System.out.println(composite);
+
+        dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error("Failed to update SSL Config", response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info("Success: Update SSL Config");
+                }
+
+                loadModcluster();
+            }
+        });
+    }
+
 }
