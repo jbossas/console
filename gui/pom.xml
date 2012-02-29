@@ -138,7 +138,6 @@
                     <!--bindAddress>192.168.0.12</bindAddress-->
                     <extraJvmArgs>-Xmx512m -DDEBUG</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
-                    <soyc>false</soyc>
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
                     <localWorkers>2</localWorkers>
@@ -351,6 +350,39 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <profile>
+            <id>compile-report</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <version>${gwt.maven}</version>
+                        <configuration>
+                            <compileReport>true</compileReport>
+                        </configuration>
+                    </plugin>
+                </plugins>
+
+            </build>
+
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>compile-report</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
 
         <profile>
