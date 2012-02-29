@@ -140,11 +140,11 @@ public class ApplicationMetaDataGenerator extends Generator{
     }
 
     private void generateFields(SourceWriter sourceWriter) {
-        sourceWriter.println("private Map<Class<?>, List<PropertyBinding>> registry = new HashMap<Class<?>,List<PropertyBinding>>();");
-        sourceWriter.println("private Map<Class<?>, AddressBinding> addressing= new HashMap<Class<?>, AddressBinding>();");
-        sourceWriter.println("private Map<Class<?>, Mutator> mutators = new HashMap<Class<?>, Mutator>();");
-        sourceWriter.println("private Map<Class<?>, EntityFactory> factories = new HashMap<Class<?>, EntityFactory>();");
-        sourceWriter.println("private "+BEAN_FACTORY_NAME+" beanFactory = com.google.gwt.core.client.GWT.create("+BEAN_FACTORY_NAME+".class);");
+        sourceWriter.println("private static Map<Class<?>, List<PropertyBinding>> registry = new HashMap<Class<?>,List<PropertyBinding>>();");
+        sourceWriter.println("private static Map<Class<?>, AddressBinding> addressing= new HashMap<Class<?>, AddressBinding>();");
+        sourceWriter.println("private static Map<Class<?>, Mutator> mutators = new HashMap<Class<?>, Mutator>();");
+        sourceWriter.println("private static Map<Class<?>, EntityFactory> factories = new HashMap<Class<?>, EntityFactory>();");
+        sourceWriter.println("private static "+BEAN_FACTORY_NAME+" beanFactory = com.google.gwt.core.client.GWT.create("+BEAN_FACTORY_NAME+".class);");
     }
 
     private void generateConstructor(TreeLogger logger, GeneratorContext context, SourceWriter sourceWriter)
