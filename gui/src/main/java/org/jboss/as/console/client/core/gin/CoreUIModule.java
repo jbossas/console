@@ -195,6 +195,8 @@ import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.MetaDataProvider;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -583,6 +585,8 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JGroupsPresenter.MyView.class,
                 JGroupsSubsystemView.class,
                 JGroupsPresenter.MyProxy.class);
+
+        bind(ApplicationMetaData.class).toProvider(MetaDataProvider.class);
 
 
     }

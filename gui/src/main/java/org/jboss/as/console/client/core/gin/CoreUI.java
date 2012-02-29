@@ -122,6 +122,7 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 
 /**
@@ -291,5 +292,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
+
+    AsyncProvider<ApplicationMetaData> ApplicationMetaData();
 
 }
