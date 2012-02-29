@@ -1,12 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
 import com.google.gwt.core.client.GWT;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.client.widgets.forms.BeanMetaData;
-import org.jboss.as.console.client.widgets.forms.EntityFactory;
-import org.jboss.as.console.client.widgets.forms.FormMetaData;
-import org.jboss.as.console.client.widgets.forms.Mutator;
-import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 
 import java.util.List;
 
