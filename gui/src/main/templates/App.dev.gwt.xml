@@ -94,6 +94,14 @@
     <stylesheet src="console.css" />
     <stylesheet src="lab.css" />
 
+
+    <!--
+
+    This would move the left over fragment beyond the loading indicator.
+
+    extend-configuration-property name="compiler.splitpoint.initial.sequence"
+        value="@org.jboss.as.console.client.Console::onModuleLoad2()" /-->
+
     <entry-point class='org.jboss.as.console.client.Console'/>
 
 </module>
