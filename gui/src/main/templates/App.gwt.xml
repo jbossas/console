@@ -29,7 +29,9 @@
     <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
-    
+
+    <inherits name="com.google.gwt.precompress.Precompress"/>
+
     <!-- Enable debug ID. -->
 	<inherits name="com.google.gwt.user.Debug"/>
 	<set-property name="gwt.enableDebugId" value="true"/>   

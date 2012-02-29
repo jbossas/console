@@ -37,9 +37,11 @@
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
 
+    <inherits name="com.google.gwt.precompress.Precompress"/>
+
     <!-- Enable debug ID. -->
-	<!--inherits name="com.google.gwt.user.Debug"/>
-	<set-property name="gwt.enableDebugId" value="true"/-->
+	<inherits name="com.google.gwt.user.Debug"/>
+	<set-property name="gwt.enableDebugId" value="true"/>
 
 
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
@@ -89,11 +91,10 @@
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en"/>
 
-    <set-property name="user.agent" value="safari"/>
+    <set-property name="user.agent" value="safari,gecko1_8"/>
 
     <stylesheet src="console.css" />
     <stylesheet src="lab.css" />
-
 
     <!--
 
@@ -101,6 +102,8 @@
 
     extend-configuration-property name="compiler.splitpoint.initial.sequence"
         value="@org.jboss.as.console.client.Console::onModuleLoad2()" /-->
+
+
 
     <entry-point class='org.jboss.as.console.client.Console'/>
 
