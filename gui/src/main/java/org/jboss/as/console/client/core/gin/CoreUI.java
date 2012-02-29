@@ -102,9 +102,8 @@ import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
-import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
-import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
+import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.config.OSGiConfigurationPresenter;
 import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresenter;
@@ -122,7 +121,6 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
-import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 
 /**
@@ -292,7 +290,5 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<JPAMetricPresenter> JPAMetricPresenter();
 
     AsyncProvider<JGroupsPresenter> JGroupsPresenter();
-
-    AsyncProvider<ApplicationMetaData> ApplicationMetaData();
 
 }
