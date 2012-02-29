@@ -141,6 +141,7 @@
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
                     <localWorkers>2</localWorkers>
+                    <compileReport>false</compileReport>
                 </configuration>
                 <executions>
                     <execution>
@@ -351,6 +352,61 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>dev</id>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <version>${gwt.maven}</version>
+                        <configuration>
+                            <disableCastChecking>true</disableCastChecking>
+                            <disableClassMetadata>true</disableClassMetadata>
+                            <optimizationLevel>9</optimizationLevel>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+
+                            <execution>
+                                <id>custom.styles</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="src/main/templates/App.dev.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
+                                        <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
 
         <profile>
             <id>compile-report</id>
