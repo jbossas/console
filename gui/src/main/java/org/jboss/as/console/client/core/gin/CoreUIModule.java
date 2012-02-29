@@ -195,6 +195,7 @@ import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -240,6 +241,7 @@ public class CoreUIModule extends AbstractPresenterModule {
         bind(CurrentUser.class).in(Singleton.class);
         bind(BootstrapContext.class).in(Singleton.class);
         bind(ApplicationProperties.class).to(BootstrapContext.class).in(Singleton.class);
+        bind(ApplicationMetaData.class).in(Singleton.class);
 
         // sign in
         bindPresenter(SignInPagePresenter.class, SignInPagePresenter.MyView.class,
