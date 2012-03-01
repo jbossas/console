@@ -59,7 +59,7 @@ public class HelpSystem {
 
         for(PropertyBinding binding : bindings)
         {
-            if(formItemNames.contains(binding.getJavaName())) {
+            if(!binding.isKey() && formItemNames.contains(binding.getJavaName())) {
                 String[] splitDetypedNames = binding.getDetypedName().split("/");
                 // last one in the path is the attribute name
                 fieldNames.add(splitDetypedNames[splitDetypedNames.length - 1]);
@@ -89,7 +89,6 @@ public class HelpSystem {
                         descriptionModel = payload.asList().get(0);
                     else
                         descriptionModel = payload;
-
 
                     matchSubElements(descriptionModel, fieldNames, html);
 
@@ -168,25 +167,10 @@ public class HelpSystem {
 
     private static void matchSubElements(ModelNode descriptionModel, List<String> fieldNames, SafeHtmlBuilder html) {
 
-        if(fieldNames.isEmpty()) return; // nothing left todo
-
         if (descriptionModel.hasDefined(RESULT))
             descriptionModel = descriptionModel.get(RESULT).asObject();
 
         try {
-
-            // visit child elements
-            if (descriptionModel.hasDefined("children")) {
-                List<Property> children = descriptionModel.get("children").asPropertyList();
-
-                for(Property child : children )
-                {
-                    ModelNode childDesc = child.getValue();
-                    for (Property modDescProp : childDesc.get(MODEL_DESCRIPTION).asPropertyList()) {
-                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html);
-                    }
-                }
-            }
 
 
             // match attributes
@@ -213,6 +197,29 @@ public class HelpSystem {
                         html.appendEscaped(value.get("description").asString());
                         html.appendHtmlConstant("</td>");
                         html.appendHtmlConstant("</tr>");
+
+                    }
+                }
+            }
+
+
+            if(fieldNames.isEmpty())
+                return;
+
+            // visit child elements
+            if (descriptionModel.hasDefined("children")) {
+                List<Property> children = descriptionModel.get("children").asPropertyList();
+
+                for(Property child : children )
+                {
+                    ModelNode childDesc = child.getValue();
+                    for (Property modDescProp : childDesc.get(MODEL_DESCRIPTION).asPropertyList()) {
+
+                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html);
+
+                        // exit early
+                        if(fieldNames.isEmpty())
+                            return;
 
                     }
                 }

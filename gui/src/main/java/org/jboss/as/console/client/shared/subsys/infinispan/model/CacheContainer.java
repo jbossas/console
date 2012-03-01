@@ -97,7 +97,7 @@ public interface CacheContainer extends NamedEntity {
 
     // Not part of detyped model.  This is a flag to tell us if the transport
     // needs to be added to or removed from the model.
-    @Binding(detypedName="has-transport")
+    @Binding(detypedName="has-transport", skip=true)
     @FormItem(defaultValue="false",
             label="Is transport defined?",
             required=false,
