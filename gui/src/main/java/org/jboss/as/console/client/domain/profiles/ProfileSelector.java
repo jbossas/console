@@ -32,12 +32,15 @@ public class ProfileSelector {
             @Override
             public void onValueChange(final ValueChangeEvent<String> event) {
 
-                Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        Console.MODULES.getEventBus().fireEvent(new ProfileSelectionEvent(event.getValue()));
-                    }
-                });
+                Scheduler.get().scheduleDeferred(
+                        new Scheduler.ScheduledCommand() {
+                            @Override
+                            public void execute() {
+                                Console.MODULES.getEventBus().fireEvent(
+                                        new ProfileSelectionEvent(event.getValue())
+                                );
+                            }
+                        });
             }
         });
 
