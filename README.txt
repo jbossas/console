@@ -67,6 +67,16 @@ To run a customized EAP build (L&F) follow these steps:
 - Rebuild with the EAP profile turned on: mvn -Peap clean install
 
 
+Development Profile
+-------------------
+
+Due to the increased number of permutations (additional languages) the full compile times
+have increased quiet drastically. To work around this problem during development, we've added
+a development build profile that restricts the languages to english and the browser permutations to safari and firefox:
+
+mvn -Pdev clean install
+
+
 Problems?
 ---------
 Please post any questions to the jboss as 7 mailing list:
