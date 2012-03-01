@@ -19,10 +19,10 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.Timer;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -35,14 +35,12 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
 import org.jboss.as.console.client.domain.events.ProfileSelectionEvent;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
 import org.jboss.as.console.client.domain.model.ProfileStore;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerGroupStore;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
@@ -63,11 +61,10 @@ public class ProfileMgmtPresenter
     private final PlaceManager placeManager;
     private ProfileStore profileStore;
     private SubsystemStore subsysStore;
-    private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
     private CurrentProfileSelection profileSelection;
-    private BootstrapContext bootstrap;
-    private String lastSubPlace;
+
+    private String lastPlace;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -77,7 +74,6 @@ public class ProfileMgmtPresenter
     public interface MyView extends SuspendableView {
         void setProfiles(List<ProfileRecord> profileRecords);
         void setSubsystems(List<SubsystemRecord> subsystemRecords);
-        void setServerGroups(List<ServerGroupRecord> serverGroupRecords);
     }
 
     @ContentSlot
@@ -91,16 +87,14 @@ public class ProfileMgmtPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             SubsystemStore subsysStore,
             ServerGroupStore serverGroupStore,
-            CurrentProfileSelection currentProfileSelection, BootstrapContext bootstrap) {
+            CurrentProfileSelection currentProfileSelection) {
 
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.profileStore = profileStore;
         this.subsysStore = subsysStore;
-        this.serverGroupStore = serverGroupStore;
         this.profileSelection = currentProfileSelection;
-        this.bootstrap = bootstrap;
     }
 
 
@@ -112,53 +106,76 @@ public class ProfileMgmtPresenter
 
         Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
 
-        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
-        if(!currentToken.equals(getProxy().getNameToken()))
-        {
-            lastSubPlace = currentToken;
-        }
-        else if(lastSubPlace!=null)
-        {
-            placeManager.revealPlace(new PlaceRequest(lastSubPlace));
-        }
-
+        // default init when revealed the first time
         if(!hasBeenRevealed)
         {
-
             hasBeenRevealed = true;
+            loadProfiles();
+        }
 
-            // load profiles
+        // chose sub place to reveal
+        String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
+
+        // already sub pace chosen (token in URL)
+        if(!getProxy().getNameToken().equals(currentToken))
+        {
+            lastPlace = currentToken;
+            placeManager.revealPlace(new PlaceRequest(currentToken));  // not necessary?
+        }
+
+        // no token in URL (top level nav)
+        else
+        {
+            if(lastPlace!=null)
+            {
+                placeManager.revealPlace(new PlaceRequest(lastPlace));
+            }
+            else
+            {
+                // no token and no last place given
+                subsysStore.loadSubsystems(profileSelection.getName(), new SimpleCallback<List<SubsystemRecord>>() {
+                    @Override
+                    public void onSuccess(List<SubsystemRecord> existingSubsystems) {
+                        revealDefaultSubsystem(NameTokens.DataSourcePresenter, existingSubsystems);
+                    }
+                });
+            }
+        }
+
+        // TODO: highlight navigation
+
+    }
+
+    private void loadProfiles() {
+         // load profiles
             profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
                 @Override
                 public void onSuccess(final List<ProfileRecord> result) {
 
                     getView().setProfiles(result);
 
-                    // default profile
-                    if(!result.isEmpty())
-                    {
-                        selectDefaultProfile(result);
-                    }
-
-                    Timer t = new Timer() {
+                    /*Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
-                        public void run() {
-                            highlightLHSNav();
-                        }
-                    };
+                        public void execute() {
+                            // default profile
+                            if(!result.isEmpty())
+                            {
+                                selectDefaultProfile(result);
+                            }
 
-                    t.schedule(150);
+                            Timer t = new Timer() {
+                                @Override
+                                public void run() {
+                                    highlightLHSNav();
+                                }
+                            };
+
+                            t.schedule(150);
+                        }
+                    });*/
+
                 }
             });
-        }
-
-        // load server groups
-        serverGroupStore.loadServerGroups(new SimpleCallback<List<ServerGroupRecord>>() {
-            @Override
-            public void onSuccess(List<ServerGroupRecord> result) {
-                getView().setServerGroups(result);
-            }
-        });
     }
 
     @Override
@@ -167,22 +184,13 @@ public class ProfileMgmtPresenter
 
     }
 
-    private void selectDefaultProfile(List<ProfileRecord> result) {
-        if(!profileSelection.isSet())
-        {
-            String name = result.get(0).getName();
-            Console.info("Default profile selection: " + name);
-            profileSelection.setName(name);
-        }
-
-        getEventBus().fireEvent(new ProfileSelectionEvent(profileSelection.getName()));
-    }
-
-    private void revealDefaultSubsystem(List<SubsystemRecord> existingSubsystems) {
+    private void revealDefaultSubsystem(String preference, List<SubsystemRecord> existingSubsystems) {
 
         final String[] defaultSubsystem = SubsystemMetaData.getDefaultSubsystem(
-                NameTokens.DataSourcePresenter, existingSubsystems
+                preference, existingSubsystems
         );
+
+        Log.debug("reveal default subsystem : pref "+ preference + "; chosen "+defaultSubsystem[1]);
 
         placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
     }
@@ -190,19 +198,16 @@ public class ProfileMgmtPresenter
 
     private void highlightLHSNav()
     {
-        if(bootstrap.getInitialPlace()!=null)
-        {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
-                            new LHSHighlightEvent(bootstrap.getInitialPlace())
-                    );
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                Console.MODULES.getEventBus().fireEvent(
+                        new LHSHighlightEvent(placeManager.getCurrentPlaceRequest().getNameToken())
+                );
 
-                    bootstrap.setInitialPlace(null);
-                }
-            });
-        }
+            }
+        });
+
 
     }
 
@@ -222,6 +227,10 @@ public class ProfileMgmtPresenter
     @Override
     public void onProfileSelection(String profileName) {
 
+        if(!isVisible()) return;
+
+        Log.debug("onProfileSelection: "+profileName + "/ "+placeManager.getCurrentPlaceRequest().getNameToken());
+
         profileSelection.setName(profileName);
 
         subsysStore.loadSubsystems(profileName, new SimpleCallback<List<SubsystemRecord>>() {
@@ -229,11 +238,9 @@ public class ProfileMgmtPresenter
             public void onSuccess(List<SubsystemRecord> result) {
                 getView().setSubsystems(result);
 
-                if(placeManager.getCurrentPlaceRequest().getNameToken().equals(NameTokens.ProfileMgmtPresenter))
-                    revealDefaultSubsystem(result);
-                else
-                    placeManager.revealCurrentPlace();
-
+                // prefer to reveal the last place, if exists in selected profile
+                String preference = lastPlace!=null ? lastPlace : NameTokens.DataSourcePresenter;
+                revealDefaultSubsystem(preference, result);
             }
         });
 

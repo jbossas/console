@@ -93,9 +93,6 @@ class LHSProfileNavigation {
         subsystemSection.updateSubsystems(subsystems);
     }
 
-    public void updateServerGroups(List<ServerGroupRecord> serverGroupRecords) {
-        //serverGroupSection.updateSubsystems(serverGroupRecords);
-    }
 
     public void setProfiles(List<ProfileRecord> profiles) {
 

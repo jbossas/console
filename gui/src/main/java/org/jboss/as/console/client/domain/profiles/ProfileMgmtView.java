@@ -86,9 +86,4 @@ public class ProfileMgmtView extends SuspendableViewImpl
     {
         lhsNavigation.updateSubsystems(subsystemRecords);
     }
-
-    @Override
-    public void setServerGroups(List<ServerGroupRecord> serverGroupRecords) {
-        lhsNavigation.updateServerGroups(serverGroupRecords);
-    }
 }
