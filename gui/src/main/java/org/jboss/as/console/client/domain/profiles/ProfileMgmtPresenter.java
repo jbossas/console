@@ -20,7 +20,6 @@
 package org.jboss.as.console.client.domain.profiles;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
@@ -46,7 +45,6 @@ import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.model.SubsystemStore;
-import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
 import java.util.List;
 
@@ -120,7 +118,6 @@ public class ProfileMgmtPresenter
         if(!getProxy().getNameToken().equals(currentToken))
         {
             lastPlace = currentToken;
-            placeManager.revealPlace(new PlaceRequest(currentToken));  // not necessary?
         }
 
         // no token in URL (top level nav)
@@ -141,8 +138,6 @@ public class ProfileMgmtPresenter
                 });
             }
         }
-
-        // TODO: highlight navigation
 
     }
 
@@ -193,22 +188,6 @@ public class ProfileMgmtPresenter
         Log.debug("reveal default subsystem : pref "+ preference + "; chosen "+defaultSubsystem[1]);
 
         placeManager.revealPlace(new PlaceRequest(defaultSubsystem[1]));
-    }
-
-
-    private void highlightLHSNav()
-    {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                Console.MODULES.getEventBus().fireEvent(
-                        new LHSHighlightEvent(placeManager.getCurrentPlaceRequest().getNameToken())
-                );
-
-            }
-        });
-
-
     }
 
     @Override
