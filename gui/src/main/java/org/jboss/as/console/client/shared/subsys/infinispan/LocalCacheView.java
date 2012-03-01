@@ -38,6 +38,7 @@ public class LocalCacheView extends AbstractCacheView<LocalCache> implements Loc
     @Inject
     public LocalCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(LocalCache.class, propertyMetaData, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_infinispan_local_cache_desc());
     }
 
     @Override
