@@ -36,6 +36,7 @@ public class InvalidationCacheView extends NonLocalCacheView<InvalidationCache> 
     @Inject
     public InvalidationCacheView(ApplicationMetaData propertyMetaData, DispatchAsync dispatcher) {
         super(InvalidationCache.class, propertyMetaData, dispatcher);
+        setDescription(Console.CONSTANTS.subsys_infinispan_invalidation_cache_desc());
     }
 
     @Override
