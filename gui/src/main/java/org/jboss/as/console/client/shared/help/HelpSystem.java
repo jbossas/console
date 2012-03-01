@@ -13,6 +13,7 @@ import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import javax.inject.Inject;
@@ -48,7 +49,6 @@ public class HelpSystem {
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ADDRESS).set(resourceAddress);
         operation.get(RECURSIVE).set(true);
-        //operation.get("recursive-depth").set(1);
 
         // build field name list
 
@@ -82,22 +82,16 @@ public class HelpSystem {
                     final SafeHtmlBuilder html = new SafeHtmlBuilder();
                     html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
-                    List<ModelNode> modelNodes = response.get(RESULT).asList();
-                    List<String> processed = new ArrayList<String>();
+                    ModelNode payload = response.get(RESULT);
 
-                    for (ModelNode res : modelNodes) {
-                        matchAttributes(processed, res, fieldNames, html);
-                        matchChildren(processed, res, fieldNames, html);
-                    }
+                    ModelNode descriptionModel = null;
+                    if(ModelType.LIST.equals(payload.getType()))
+                        descriptionModel = payload.asList().get(0);
+                    else
+                        descriptionModel = payload;
 
-                    if(processed.isEmpty())
-                    {
-                        html.appendHtmlConstant("<tr class='help-field-row'>");
-                        html.appendHtmlConstant("<td class='help-field-desc' colspan=2>");
-                        html.appendEscaped("No matching description found.");
-                        html.appendHtmlConstant("</td>");
-                        html.appendHtmlConstant("</tr>");
-                    }
+
+                    matchSubElements(descriptionModel, fieldNames, html);
 
                     html.appendHtmlConstant("</table>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
@@ -147,13 +141,16 @@ public class HelpSystem {
                     final SafeHtmlBuilder html = new SafeHtmlBuilder();
                     html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
-                    List<ModelNode> modelNodes = response.get(RESULT).asList();
-                    List<String> processed = new ArrayList<String>();
+                    ModelNode payload = response.get(RESULT);
 
-                    for (ModelNode res : modelNodes) {
-                        matchAttributes(processed, res, attributeNames, html);
-                        matchChildren(processed, res, attributeNames, html);
-                    }
+                    ModelNode descriptionModel = null;
+                    if(ModelType.LIST.equals(payload.getType()))
+                        descriptionModel = payload.asList().get(0);
+                    else
+                        descriptionModel = payload;
+
+
+                    matchSubElements(descriptionModel, attributeNames, html);
 
                     html.appendHtmlConstant("</table>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
@@ -169,56 +166,61 @@ public class HelpSystem {
     }
 
 
-    private void matchAttributes(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        matchSubElement(processed, prototype, fieldNames, html, ATTRIBUTES);
-    }
+    private static void matchSubElements(ModelNode descriptionModel, List<String> fieldNames, SafeHtmlBuilder html) {
 
-    private void matchChildren(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
-        matchSubElement(processed, prototype, fieldNames, html, CHILDREN);
-    }
+        if(fieldNames.isEmpty()) return; // nothing left todo
 
-    private void matchSubElement(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html, String entity) {
-        if (prototype.hasDefined(RESULT))
-            prototype = prototype.get(RESULT).asObject();
-
-        if (!prototype.hasDefined(entity))
-            return;
+        if (descriptionModel.hasDefined(RESULT))
+            descriptionModel = descriptionModel.get(RESULT).asObject();
 
         try {
 
-            List<Property> attributes = prototype.get(entity).asPropertyList();
+            // visit child elements
+            if (descriptionModel.hasDefined("children")) {
+                List<Property> children = descriptionModel.get("children").asPropertyList();
 
-            for(Property prop : attributes)
-            {
-                String childName = prop.getName();
-                ModelNode value = prop.getValue();
-
-                if (value.hasDefined(MODEL_DESCRIPTION)) {
-                    for (Property modDescProp : value.get(MODEL_DESCRIPTION).asPropertyList()) {
-                        matchSubElement(processed, value.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html, ATTRIBUTES);
+                for(Property child : children )
+                {
+                    ModelNode childDesc = child.getValue();
+                    for (Property modDescProp : childDesc.get(MODEL_DESCRIPTION).asPropertyList()) {
+                        matchSubElements(childDesc.get(MODEL_DESCRIPTION, modDescProp.getName()), fieldNames, html);
                     }
                 }
+            }
 
-                if(fieldNames.contains(childName))
+
+            // match attributes
+            if(descriptionModel.hasDefined(ATTRIBUTES))
+            {
+
+                List<Property> elements = descriptionModel.get(ATTRIBUTES).asPropertyList();
+
+                for(Property element : elements)
                 {
-                    // TODO: Workaround AS7-3426
-                    if(processed.contains(childName))
-                        continue;
-                    else
-                        processed.add(childName);
+                    String childName = element.getName();
+                    ModelNode value = element.getValue();
 
-                    html.appendHtmlConstant("<tr class='help-field-row'>");
-                    html.appendHtmlConstant("<td class='help-field-name'>");
-                    html.appendEscaped(childName).appendEscaped(": ");
-                    html.appendHtmlConstant("</td>");
-                    html.appendHtmlConstant("<td class='help-field-desc'>");
-                    html.appendEscaped(value.get("description").asString());
-                    html.appendHtmlConstant("</td>");
-                    html.appendHtmlConstant("</tr>");
+                    if(fieldNames.contains(childName))
+                    {
+                        // make sure it's not processed twice
+                        fieldNames.remove(childName);
+
+                        html.appendHtmlConstant("<tr class='help-field-row'>");
+                        html.appendHtmlConstant("<td class='help-field-name'>");
+                        html.appendEscaped(childName).appendEscaped(": ");
+                        html.appendHtmlConstant("</td>");
+                        html.appendHtmlConstant("<td class='help-field-desc'>");
+                        html.appendEscaped(value.get("description").asString());
+                        html.appendHtmlConstant("</td>");
+                        html.appendHtmlConstant("</tr>");
+
+                    }
                 }
             }
+
+
         } catch (IllegalArgumentException e) {
-            Log.error("Failed to read help description", e);
+            Log.error("Failed to read help descriptionModel", e);
         }
     }
 }
