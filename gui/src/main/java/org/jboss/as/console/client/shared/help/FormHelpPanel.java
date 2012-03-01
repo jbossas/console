@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.shared.help;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -79,19 +80,12 @@ public class FormHelpPanel {
                 public void onSuccess(HTML result) {
                     helpPanel.clear();
                     helpPanel.add(result);
-
-                    /*result.addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent clickEvent) {
-                            helpPanel.setOpen(!helpPanel.isOpen());
-                        }
-                    }); */
                     hasBeenBuild = true;
                 }
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    //Console.error("Failed to retrieve attribute description", caught.getMessage());
+                    Log.error("Failed to retrieve attribute description", caught.getMessage());
                     helpPanel.clear();
                     helpPanel.add(new HTML("<ul><li>Failed to retrieve attribute descriptions.</li></ul>"));
                 }
