@@ -48,6 +48,7 @@ public class HelpSystem {
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ADDRESS).set(resourceAddress);
         operation.get(RECURSIVE).set(true);
+        //operation.get("recursive-depth").set(1);
 
         // build field name list
 
@@ -70,8 +71,13 @@ public class HelpSystem {
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                if (response.get(OUTCOME).asString().equals("success")
-                        && response.hasDefined(RESULT)) {
+                if(response.isFailure())
+                {
+                    Log.debug(response.toString());
+                    onFailure(new Exception(response.getFailureDescription()));
+                }
+                else
+                {
 
                     final SafeHtmlBuilder html = new SafeHtmlBuilder();
                     html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
@@ -84,13 +90,18 @@ public class HelpSystem {
                         matchChildren(processed, res, fieldNames, html);
                     }
 
+                    if(processed.isEmpty())
+                    {
+                        html.appendHtmlConstant("<tr class='help-field-row'>");
+                        html.appendHtmlConstant("<td class='help-field-desc' colspan=2>");
+                        html.appendEscaped("No matching description found.");
+                        html.appendHtmlConstant("</td>");
+                        html.appendHtmlConstant("</tr>");
+                    }
+
                     html.appendHtmlConstant("</table>");
                     callback.onSuccess(new HTML(html.toSafeHtml()));
 
-                } else {
-                    System.out.println(operation);
-                    System.out.println(response);
-                    onFailure(new Exception(""));
                 }
             }
 
@@ -107,53 +118,55 @@ public class HelpSystem {
     }
 
     public void getMetricDescriptions(
-                AddressCallback address,
-               Column[] columns,
-               final AsyncCallback<HTML> callback)
-       {
+            AddressCallback address,
+            Column[] columns,
+            final AsyncCallback<HTML> callback)
+    {
 
-           final List<String> attributeNames = new LinkedList<String>();
-           for(Column c : columns)
-               attributeNames.add(c.getDeytpedName());
+        final List<String> attributeNames = new LinkedList<String>();
+        for(Column c : columns)
+            attributeNames.add(c.getDeytpedName());
 
-           final ModelNode operation = address.getAddress();
-           operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+        final ModelNode operation = address.getAddress();
+        operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
 
-           dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
-               @Override
-               public void onSuccess(DMRResponse result) {
-                   ModelNode response = result.get();
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
 
-                   if (response.get(OUTCOME).asString().equals("success")
-                           && response.hasDefined(RESULT)) {
 
-                       final SafeHtmlBuilder html = new SafeHtmlBuilder();
-                       html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
-                       List<ModelNode> modelNodes = response.get(RESULT).asList();
-                       List<String> processed = new ArrayList<String>();
+                if(response.isFailure())
+                {
+                    Log.debug(response.toString());
+                    onFailure(new Exception(response.getFailureDescription()));
+                }
+                else
+                {
+                    final SafeHtmlBuilder html = new SafeHtmlBuilder();
+                    html.appendHtmlConstant("<table class='help-attribute-descriptions'>");
 
-                       for (ModelNode res : modelNodes) {
-                           matchAttributes(processed, res, attributeNames, html);
-                           matchChildren(processed, res, attributeNames, html);
-                       }
+                    List<ModelNode> modelNodes = response.get(RESULT).asList();
+                    List<String> processed = new ArrayList<String>();
 
-                       html.appendHtmlConstant("</table>");
-                       callback.onSuccess(new HTML(html.toSafeHtml()));
+                    for (ModelNode res : modelNodes) {
+                        matchAttributes(processed, res, attributeNames, html);
+                        matchChildren(processed, res, attributeNames, html);
+                    }
 
-                   } else {
-                       System.out.println(operation);
-                       System.out.println(response);
-                       onFailure(new Exception(""));
-                   }
-               }
+                    html.appendHtmlConstant("</table>");
+                    callback.onSuccess(new HTML(html.toSafeHtml()));
+                }
 
-               @Override
-               public void onFailure(Throwable caught) {
-                   callback.onFailure(caught);
-               }
-           });
-       }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
 
 
     private void matchAttributes(List<String> processed, ModelNode prototype, List<String> fieldNames, SafeHtmlBuilder html) {
@@ -205,7 +218,7 @@ public class HelpSystem {
                 }
             }
         } catch (IllegalArgumentException e) {
-             Log.error("Failed to read help description", e);
+            Log.error("Failed to read help description", e);
         }
     }
 }
