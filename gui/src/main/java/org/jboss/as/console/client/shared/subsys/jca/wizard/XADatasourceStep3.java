@@ -47,6 +47,7 @@ public class XADatasourceStep3 implements PropertyManagement {
     private PropertyEditor propEditor;
     private List<PropertyRecord> properties;
     private BeanFactory factory = GWT.create(BeanFactory.class);
+    private HTML errorMessages;
 
     public XADatasourceStep3(NewXADatasourceWizard wizard) {
         this.wizard = wizard;
@@ -81,6 +82,8 @@ public class XADatasourceStep3 implements PropertyManagement {
 
         properties.add(proto);
         propEditor.setProperties("", properties);
+
+        errorMessages.setVisible(false);
     }
 
     @Override
@@ -96,13 +99,25 @@ public class XADatasourceStep3 implements PropertyManagement {
 
         propEditor = new PropertyEditor(this, true);
 
+        errorMessages = new HTML(Console.CONSTANTS.subsys_jca_err_prop_required());
+        errorMessages.setStyleName("error-panel");
+        errorMessages.setVisible(false);
+
+        layout.add(errorMessages);
+
         Widget widget = propEditor.asWidget();
         layout.add(widget);
 
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                wizard.onConfigureProperties(properties);
+
+                boolean hasProperties = propEditor.getPropertyTable().getRowCount() > 0;
+
+                if(!hasProperties)
+                    errorMessages.setVisible(true);
+                else
+                    wizard.onConfigureProperties(properties);
             }
         };
 
