@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.jca.model;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
@@ -321,6 +322,11 @@ public class DataSourceStoreImpl implements DataSourceStore {
         operation.get(OP).set(opName);
         operation.get(ADDRESS).set(addressModel.get(ADDRESS));
 
+        if(!doEnable)
+            operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
+
+        //System.out.println(operation);
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -353,6 +359,9 @@ public class DataSourceStoreImpl implements DataSourceStore {
         ModelNode operation = xaDataSourceAdapter.fromEntity(dataSource);
         operation.get(OP).set(opName);
         operation.get(ADDRESS).set(addressModel.get(ADDRESS));
+
+        if(!doEnable)
+            operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -588,6 +597,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         AddressBinding address = dsMetaData.getAddress();
         ModelNode operation = address.asResource(baseadress.getAdress(), reference);
         operation.get(ADDRESS).add("connection-properties", prop.getKey());
+        operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
         operation.get(OP).set(ADD);
         operation.get(VALUE).set(prop.getValue());
 
@@ -612,6 +622,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         ModelNode operation = address.asResource(baseadress.getAdress(), reference);
         operation.get(ADDRESS).add("connection-properties", prop.getKey());
         operation.get(OP).set(REMOVE);
+        operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -633,6 +644,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         AddressBinding address = xadsMetaData.getAddress();
         ModelNode operation = address.asResource(baseadress.getAdress(), reference);
         operation.get(ADDRESS).add("xa-datasource-properties", prop.getKey());
+        operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
         operation.get(OP).set(ADD);
         operation.get(VALUE).set(prop.getValue());
 
@@ -656,6 +668,7 @@ public class DataSourceStoreImpl implements DataSourceStore {
         AddressBinding address = xadsMetaData.getAddress();
         ModelNode operation = address.asResource(baseadress.getAdress(), reference);
         operation.get(ADDRESS).add("xa-datasource-properties", prop.getKey());
+        operation.get(OPERATION_HEADERS).get(ALLOW_RESOURCE_SERVICE_RESTART).set(true);
         operation.get(OP).set(REMOVE);
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
