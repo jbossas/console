@@ -153,4 +153,6 @@ public interface UIMessages extends Messages {
 
 
     String server_reload_confirm(String p0);
+
+    String subsys_jca_err_ds_enabled(String name);
 }

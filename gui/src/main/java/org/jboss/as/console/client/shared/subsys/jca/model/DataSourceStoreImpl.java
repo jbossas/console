@@ -120,6 +120,37 @@ public class DataSourceStoreImpl implements DataSourceStore {
         });
     }
 
+    @Override
+    public void loadDataSource(String name, boolean isXA, final AsyncCallback<DataSource> callback) {
+
+        AddressBinding address = isXA ? xadsMetaData.getAddress() : dsMetaData.getAddress();
+        ModelNode operation = address.asResource(baseadress.getAdress(), name);
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+
+        dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    callback.onFailure(new RuntimeException(response.getFailureDescription()));
+                }
+                else
+                {
+                    DataSource datasource = dataSourceAdapter.fromDMR(response.get(RESULT).asObject());
+                    callback.onSuccess(datasource);
+                }
+            }
+        });
+    }
+
     public void loadXADataSources(final AsyncCallback<List<XADataSource>> callback) {
 
         AddressBinding address = xadsMetaData.getAddress();
