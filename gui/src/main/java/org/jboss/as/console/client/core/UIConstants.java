@@ -619,4 +619,6 @@ public interface UIConstants extends Constants {
     String subsys_jgroups_err_protocols_required();
 
     String subsys_modcluster_desc();
+
+    String subsys_jca_err_prop_required();
 }
