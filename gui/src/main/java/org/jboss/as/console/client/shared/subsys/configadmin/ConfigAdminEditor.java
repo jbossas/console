@@ -1,8 +1,11 @@
 package org.jboss.as.console.client.shared.subsys.configadmin;
 
+import java.util.List;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -10,6 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.general.InputWindow;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -23,8 +27,6 @@ import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.ballroom.client.widgets.window.Feedback;
-
-import java.util.List;
 
 public class ConfigAdminEditor implements PropertyManagement {
     private final ConfigAdminPresenter presenter;
@@ -65,7 +67,7 @@ public class ConfigAdminEditor implements PropertyManagement {
         });
         editBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_edit_configAdminEditor());
         topLevelTools.addToolButton(editBtn);
-        
+
         ToolButton deleteBtn = new ToolButton(Console.CONSTANTS.common_label_delete(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -82,7 +84,7 @@ public class ConfigAdminEditor implements PropertyManagement {
         });
         deleteBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_delete_configAdminEditor());
         topLevelTools.addToolButton(deleteBtn);
-        
+
         ToolButton addBtn = new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -142,15 +144,33 @@ public class ConfigAdminEditor implements PropertyManagement {
     public void onCreateProperty(String reference, PropertyRecord prop) {
         dialog.hide();
         ConfigAdminData data = findData(reference);
-        data.getProperties().add(prop);
-        presenter.onUpdateConfigurationAdminData(data);
+        if (data == null) {
+            Feedback.alert(Console.CONSTANTS.subsys_configadmin_add(),
+                new SafeHtmlBuilder().appendEscaped(Console.MESSAGES.subsys_configadmin_addNoPIDselected()).toSafeHtml());
+        } else {
+            data.getProperties().add(prop);
+            presenter.onUpdateConfigurationAdminData(data);
+        }
     }
 
     @Override
-    public void onDeleteProperty(String reference, PropertyRecord prop) {
+    public void onDeleteProperty(final String reference, PropertyRecord prop) {
         ConfigAdminData data = findData(reference);
         data.getProperties().remove(prop);
-        presenter.onUpdateConfigurationAdminData(data);
+        if (data.getProperties().size() > 0) {
+            presenter.onUpdateConfigurationAdminData(data);
+        } else {
+            // There are no properties left, remove the PID completely
+            Feedback.confirm(Console.MESSAGES.subsys_configadmin_remove(),
+                Console.MESSAGES.subsys_configadmin_removeOnLastValueConfirm(reference),
+                new Feedback.ConfirmationHandler() {
+                    @Override
+                    public void onConfirmation(boolean isConfirmed) {
+                        if (isConfirmed)
+                            presenter.onDeleteConfigurationAdminData(reference);
+                    }
+                });
+        }
     }
 
     @Override
