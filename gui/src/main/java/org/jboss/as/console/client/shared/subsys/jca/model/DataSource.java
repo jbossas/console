@@ -96,8 +96,8 @@ public interface DataSource {
     void setBackgroundValidation(boolean b);
 
     @Binding(detypedName = "background-validation-millis")
-    long getBackgroundValidationMillis();
-    void setBackgroundValidationMillis(long millis);
+    Long getBackgroundValidationMillis();
+    void setBackgroundValidationMillis(Long millis);
 
     @Binding(detypedName = "validate-on-match")
     boolean isValidateOnMatch();
@@ -114,8 +114,8 @@ public interface DataSource {
     // --
 
     @Binding(detypedName = "prepared-statements-cache-size")
-    long getPrepareStatementCacheSize();
-    void setPrepareStatementCacheSize(long size);
+    Long getPrepareStatementCacheSize();
+    void setPrepareStatementCacheSize(Long size);
 
     @Binding(detypedName = "share-prepared-statements")
     boolean isSharePreparedStatements();
