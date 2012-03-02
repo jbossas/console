@@ -2,11 +2,15 @@
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://translate.jboss.org/</url>
   <project>jboss_as_console</project>
-  <project-version>1.0.2</project-version>
+  <project-version>master</project-version>
+  <project-type>properties</project-type>
+
   <locales>
     <locale>de</locale>
+    <locale>es</locale>
     <locale>fr</locale>
-    <locale>en</locale>
     <locale>ja</locale>
+    <locale>pt-BR</locale>
+    <locale map-from="zh-CN">zh-Hans</locale>
   </locales>
 </config>

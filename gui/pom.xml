@@ -116,13 +116,9 @@
             <plugin>
                 <groupId>org.zanata</groupId>
                 <artifactId>zanata-maven-plugin</artifactId>
-                <version>1.4.5</version>
+                <version>1.5.0</version>
                 <configuration>
-                    <projectType>properties</projectType>
                     <includes>src/main/java/org/jboss/as/console/client/core/UIConstants.properties,src/main/java/org/jboss/as/console/client/core/UIMessages.properties</includes>
-                    <!--dryRun>true</dryRun-->
-                    <!--projectVersion>${project.version}</projectVersion-->
-                    <projectVersion>master</projectVersion>
                 </configuration>
             </plugin>
 
