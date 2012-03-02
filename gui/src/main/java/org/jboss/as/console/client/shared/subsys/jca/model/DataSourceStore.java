@@ -33,6 +33,7 @@ import java.util.Map;
 public interface DataSourceStore {
 
     void loadDataSources(AsyncCallback<List<DataSource>> callback);
+    void loadDataSource(String name, boolean isXA, final AsyncCallback<DataSource> callback) ;
     void loadXADataSources(final AsyncCallback<List<XADataSource>> callback);
     void createDataSource(DataSource datasource, AsyncCallback<ResponseWrapper<Boolean>> callback);
     void deleteDataSource(DataSource dataSource, AsyncCallback<Boolean> callback);

@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.widgets.forms;
 
+import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.as.console.client.shared.expr.ExpressionAdapter;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.widgets.forms.FormItem;
@@ -199,7 +200,7 @@ public class EntityAdapter<T> {
                     }
                     else
                     {
-                        throw new IllegalArgumentException("Key property declared, but no key assignment available: "+propBinding);
+                        Log.warn("Key property declared, but no key assignment available: " + propBinding);
                     }
                 }
 

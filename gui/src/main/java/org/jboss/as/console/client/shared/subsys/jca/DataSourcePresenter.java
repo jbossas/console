@@ -99,7 +99,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             RevealStrategy revealStrategy, ApplicationProperties bootstrap) {
         super(eventBus, view, proxy);
 
-        this.dataSourceStore = dataSourceStore;
+        this.dataSourceStore = new DataSourceStoreInterceptor(dataSourceStore);
         this.driverRegistry = driverRegistry.create();
         this.revealStrategy = revealStrategy;
         this.bootstrap = bootstrap;
