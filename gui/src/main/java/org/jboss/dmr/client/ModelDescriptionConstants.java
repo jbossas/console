@@ -171,6 +171,7 @@ public class ModelDescriptionConstants {
     public static final String VALUE = "value";
     public static final String VALUE_TYPE = "value-type";
     public static final String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
-
+    public static final String OPERATION_HEADERS = "operation-headers";
+    public static final String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
 }
 
