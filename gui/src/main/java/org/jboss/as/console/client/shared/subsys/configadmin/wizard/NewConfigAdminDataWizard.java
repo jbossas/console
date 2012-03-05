@@ -19,11 +19,16 @@
  */
 package org.jboss.as.console.client.shared.subsys.configadmin.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
@@ -35,10 +40,8 @@ import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author David Bosschaert
@@ -72,9 +75,14 @@ public class NewConfigAdminDataWizard implements PropertyManagement {
                 public void onClick(ClickEvent event) {
                     FormValidation validation = form.validate();
                     if (!validation.hasErrors()) {
-                        ConfigAdminData data = form.getUpdatedEntity();
-                        data.setProperties(properties);
-                        presenter.onAddConfigurationAdminData(data);
+                        if (properties.size() == 0) {
+                            Feedback.alert(Console.CONSTANTS.subsys_configadmin_add(),
+                                new SafeHtmlBuilder().appendEscaped(Console.MESSAGES.subsys_configadmin_oneValueRequired()).toSafeHtml());
+                        } else {
+                            ConfigAdminData data = form.getUpdatedEntity();
+                            data.setProperties(properties);
+                            presenter.onAddConfigurationAdminData(data);
+                        }
                     }
                 }
             }, new ClickHandler() {

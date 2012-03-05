@@ -52,7 +52,7 @@ public interface UIMessages extends Messages {
     String removePropertyConfirm(String key);
 
     String common_validation_requiredField();
-    
+
     String common_validation_heapSize();
 
     String mustBeDeployableArchive(String fieldName);
@@ -95,8 +95,11 @@ public interface UIMessages extends Messages {
 
     String subsys_naming_failedToLoadJNDIView();
 
+    String subsys_configadmin_addNoPIDselected();
     String subsys_configadmin_remove();
     String subsys_configadmin_removeConfirm(String pid);
+    String subsys_configadmin_oneValueRequired();
+    String subsys_configadmin_removeOnLastValueConfirm(String pid);
 
     String subsys_osgi_frameworkPropertiesHelp();
     String subsys_osgi_capabilitiesHelp();
