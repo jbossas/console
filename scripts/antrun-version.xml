@@ -29,6 +29,8 @@
         public static final String USER = "${build.user}";
         public static final String PROFILE = "${console.profile}";
         public static final String PROD_VERSION = "${product.version}";
+
+        public static final String DEV_HOST = "${dev.host}";
       }
     </echo>
   </target>
