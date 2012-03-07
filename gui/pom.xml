@@ -15,9 +15,11 @@
     </parent>
 
     <properties>
-        <ballroom.version>1.1.0.FINAL</ballroom.version>
+        <ballroom.version>1.2.0-SNAPSHOT</ballroom.version>
         <console.profile>jboss</console.profile>
         <product.version>7.1</product.version>
+
+        <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
     </properties>
 
     <!--  Dependencies -->
@@ -281,8 +283,19 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
+
+                                <!-- the App.gwt.xml -->
                                 <copy file="src/main/templates/App.gwt.xml" tofile="src/main/java/org/jboss/as/console/App.gwt.xml" overwrite="true" verbose="true"/>
                                 <replace file="src/main/java/org/jboss/as/console/App.gwt.xml" token="@ballroom_theme@" value="org.jboss.ballroom.Framework" summary="yes"/>
+
+
+                                <!-- development proxy settings -->
+                                <copy file="src/main/templates/gwt-proxy.properties" tofile="src/main/java/gwt-proxy.properties" overwrite="true" verbose="true"/>
+                                <copy file="src/main/templates/upload-proxy.properties" tofile="src/main/java/upload-proxy.properties" overwrite="true" verbose="true"/>
+
+                                <replace file="src/main/java/gwt-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
+                                <replace file="src/main/java/upload-proxy.properties" token="@bindAddress@" value="${gwt.bindAddress}" summary="yes"/>
+
                             </tasks>
                         </configuration>
                         <goals>

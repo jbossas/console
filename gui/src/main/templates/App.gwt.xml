@@ -26,8 +26,9 @@
     <inherits name="@ballroom_theme@"/>
 
     <inherits name="com.google.gwt.json.JSON"/>
-    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
 
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
+                                                                                2
     <inherits name='com.google.gwt.visualization.Visualization'/>
 
     <inherits name="com.google.gwt.precompress.Precompress"/>
