@@ -49,14 +49,16 @@ public class BootstrapContext implements ApplicationProperties {
         */
         loadPersistedProperties();
 
-        String domainApi = GWT.isScript() ? getBaseUrl()+"management" : "http://127.0.0.1:8888/app/proxy";
+        String devHost = org.jboss.as.console.client.Build.DEV_HOST;
+
+        String domainApi = GWT.isScript() ? getBaseUrl()+"management" : "http://"+devHost+":8888/app/proxy";
         setProperty(DOMAIN_API, domainApi);
 
 
-        String deploymentApi = GWT.isScript() ? getBaseUrl()+"management/add-content" : "http://127.0.0.1:8888/app/upload";
+        String deploymentApi = GWT.isScript() ? getBaseUrl()+"management/add-content" : "http://"+devHost+":8888/app/upload";
         setProperty(DEPLOYMENT_API, deploymentApi);
 
-        String logoutApi = GWT.isScript() ? getBaseUrl()+"logout" : "http://127.0.0.1:8888/app/logout";
+        String logoutApi = GWT.isScript() ? getBaseUrl()+"logout" : "http://"+devHost+":8888/app/logout";
         setProperty(LOGOUT_API, logoutApi);
 
 

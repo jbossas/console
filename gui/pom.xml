@@ -253,6 +253,9 @@
                                     <property name="src.dir" value="${project.build.directory}/generated-sources" />
                                     <property name="console.profile" value="${console.profile}" />
                                     <property name="product.version" value="${product.version}" />
+
+                                    <!-- only used in hosted mode, see BootstrapContext -->
+                                    <property name="dev.host" value="${gwt.bindAddress}" />
                                 </ant>
                             </tasks>
                             <sourceRoot>
