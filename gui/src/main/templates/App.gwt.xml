@@ -85,7 +85,6 @@
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
 
-    <stylesheet src="console.css" />
     <stylesheet src="lab.css" />
 
     <entry-point class='org.jboss.as.console.client.Console'/>

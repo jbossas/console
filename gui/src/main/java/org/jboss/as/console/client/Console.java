@@ -27,7 +27,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,6 +77,9 @@ public class Console implements EntryPoint {
     }
 
     public void onModuleLoad2() {
+
+        // load console css bundle
+        ConsoleResources.INSTANCE.css().ensureInjected();
 
         // display the loading panel
         final Widget loadingPanel = new LoadingPanel().asWidget();
