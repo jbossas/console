@@ -76,6 +76,21 @@ a development build profile that restricts the languages to english and the brow
 
 mvn -Pdev clean install
 
+Bind Address
+------------
+
+In some cases you may want to bind both the AS and the hosted mode to a specific address.
+A typical scenario is running a differnt OS (i.e windows) in a virtual machine.
+In order to make such a setup work you need to bind the hosted mode environment and the application server
+to a specific inet address that can access from thin the vertical machine:
+
+1) start the AS on a specific address:
+
+    ./bin/standalone.sh -Djboss.bind.address=192.168.2.126 -Djboss.bind.address.management=192.168.2.126
+
+2) launch hosted mode on a specific address:
+
+    mvn clean -Dgwt.bindAddress=192.168.2.126 gwt:run
 
 Problems?
 ---------

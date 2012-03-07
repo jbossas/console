@@ -283,7 +283,7 @@
 
                     <execution>
                         <id>custom.styles</id>
-                        <phase>process-resources</phase>
+                        <phase>process-sources</phase>
                         <configuration>
                             <tasks>
 
