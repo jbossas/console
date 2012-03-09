@@ -3,6 +3,9 @@
     background-color: #EEF4F9;
 }
 
+.tree-section {
+    margin-bottom:15px;
+}
 
 .tree-section > table:first-child {
     background-color: #F8F8F8;
@@ -16,7 +19,7 @@
     width:100%;
 }
 
-.tree-section-first > table:first-child {
+.tree-section-first > table:first-child{
     border-top: none !important;
 }
 
