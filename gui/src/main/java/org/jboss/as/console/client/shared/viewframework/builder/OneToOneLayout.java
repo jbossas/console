@@ -149,6 +149,8 @@ public class OneToOneLayout {
                 panel.add(new ContentGroupLabel(master.title));
 
             if(masterTools!=null) panel.add(masterTools);
+
+            master.widget.getElement().setAttribute("role", "application");
             panel.add(master.widget);
         }
 
@@ -160,6 +162,7 @@ public class OneToOneLayout {
                 panel.add(new ContentGroupLabel(detail.title));
             panel.add(detail.widget);
             detail.widget.getElement().addClassName("fill-layout-width");
+            detail.widget.getElement().setAttribute("role", "application");
         }
         else if(details.size()>0)
         {
@@ -171,6 +174,7 @@ public class OneToOneLayout {
             {
                 tabs.add(item.widget, item.title);
                 item.widget.getElement().addClassName("fill-layout-width");
+                item.widget.getElement().setAttribute("role", "application");
             }
 
             panel.add(tabs);

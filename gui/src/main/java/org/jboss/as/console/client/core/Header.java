@@ -112,6 +112,9 @@ public class Header implements ValueChangeHandler<String> {
 
         outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 58, Style.Unit.PX);
 
+
+        outerLayout.getElement().setAttribute("role", "banner");
+
         return outerLayout;
     }
 
@@ -146,6 +149,7 @@ public class Header implements ValueChangeHandler<String> {
     private Widget getLinksSection() {
         linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
+        linksPane.getElement().setAttribute("role", "menu");
 
         String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ?
                 SECTIONS_STANADLONE : SECTIONS;
@@ -155,8 +159,10 @@ public class Header implements ValueChangeHandler<String> {
             final String id = "header-" + name;
 
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<div class='header-link-label'>");
+            html.appendHtmlConstant("<div class='header-link-label' role='menubar'>");
+            html.appendHtmlConstant("<span role='menuitem'>");
             html.appendHtmlConstant(section[1]);
+            html.appendHtmlConstant("</span>");
             html.appendHtmlConstant("</div>");
             HTML widget = new HTML(html.toSafeHtml());
             widget.setStyleName("fill-layout");

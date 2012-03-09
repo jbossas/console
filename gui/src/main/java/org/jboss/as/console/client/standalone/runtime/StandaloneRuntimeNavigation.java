@@ -1,8 +1,7 @@
 package org.jboss.as.console.client.standalone.runtime;
 
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
@@ -10,7 +9,6 @@ import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +21,16 @@ public class StandaloneRuntimeNavigation {
 
     private VerticalPanel stack;
     private VerticalPanel layout;
-    private LHSNavTree subsysTree;
-    private List<SubsystemRecord> subsystems;
 
+    private List<SubsystemRecord> subsystems;
 
     private List<Predicate> metricPredicates = new ArrayList<Predicate>();
     private List<Predicate> runtimePredicates = new ArrayList<Predicate>();
 
-    private LHSNavTree metricTree;
-    private LHSNavTree runtimeOpTree;
-
     private ScrollPanel scroll;
+    private TreeItem metricLeaf;
+    private TreeItem runtimeLeaf;
+    private LHSNavTree navigation;
 
     public Widget asWidget()
     {
@@ -45,28 +42,27 @@ public class StandaloneRuntimeNavigation {
 
         // ----------------------------------------------------
 
-        subsysTree = new LHSNavTree("standalone-runtime");
 
+        navigation = new LHSNavTree("standalone-runtime");
+        navigation.getElement().setAttribute("aria-label", "Runtime Navigation");
 
         // ----------------------------------------------------
 
-        LHSNavTree statusTree = new LHSNavTree("standalone-runtime");
-
-
+        TreeItem serverLeaf = new TreeSection("Server Status", true);
+        serverLeaf.setState(true);
 
         LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM", NameTokens.VirtualMachine);
-        statusTree.addItem(server);
-        statusTree.addItem(jvmItem);
+        serverLeaf.addItem(server);
+        serverLeaf.addItem(jvmItem);
 
-        DisclosurePanel serverPanel  = new DisclosureStackPanel("Server Status", true).asWidget();
-        serverPanel.setContent(statusTree);
-        stack.add(serverPanel);
+        navigation.addItem(serverLeaf);
 
 
         // -------------
 
-        metricTree = new LHSNavTree("standalone-runtime");
+        metricLeaf = new TreeSection("Subsystem Metrics");
+
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
         LHSNavTreeItem jmsQueues = new LHSNavTreeItem("JMS Destinations", "jms-metrics");
@@ -80,65 +76,98 @@ public class StandaloneRuntimeNavigation {
         metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
 
-        DisclosurePanel metricPanel  = new DisclosureStackPanel("Subsystem Metrics").asWidget();
-        metricPanel.setContent(metricTree);
-        stack.add(metricPanel);
+        navigation.addItem(metricLeaf);
+
 
         // ---
 
-        runtimeOpTree = new LHSNavTree("standalone-runtime");
+        runtimeLeaf = new TreeSection("Runtime Operations");
+
 
         LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
 
         runtimePredicates.add(new Predicate("osgi", osgi));
 
-        DisclosurePanel runtimeOpPanel  = new DisclosureStackPanel("Runtime Operations").asWidget();
-        runtimeOpPanel.setContent(runtimeOpTree);
-        stack.add(runtimeOpPanel);
+        navigation.addItem(runtimeLeaf);
 
         // ----------------------------------------------------
 
-        Tree deploymentTree = new LHSNavTree("standalone-runtime");
-        DisclosurePanel deploymentPanel  = new DisclosureStackPanel("Deployments").asWidget();
-        deploymentPanel.setContent(deploymentTree);
+        TreeItem deploymentLeaf = new TreeSection("Deployments");
 
-        deploymentTree.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
-        deploymentTree.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
+        deploymentLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
+        deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
 
-        stack.add(deploymentPanel);
+        navigation.addItem(deploymentLeaf);
 
         // ---
-
+        stack.add(navigation);
         layout.add(stack);
 
         scroll = new ScrollPanel(layout);
 
+        expandTopLevel();
+
         return scroll;
+    }
+
+    private void expandTopLevel() {
+        for(int i=0; i<navigation.getItemCount(); i++)
+        {
+            TreeItem item = navigation.getItem(i);
+            System.out.println(item.getText());
+            item.setState(true);
+        }
     }
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {
 
 
-        metricTree.removeItems();
-        runtimeOpTree.removeItems();
+        metricLeaf.removeItems();
+        runtimeLeaf.removeItems();
 
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
 
-            //System.out.println(subsys.getKey());
-
             for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
-                    metricTree.addItem(predicate.getNavItem());
+                    metricLeaf.addItem(predicate.getNavItem());
             }
 
             for(Predicate predicate : runtimePredicates)
             {
                 if(predicate.matches(subsys.getKey()))
-                    runtimeOpTree.addItem(predicate.getNavItem());
+                    runtimeLeaf.addItem(predicate.getNavItem());
             }
+        }
+
+        expandTopLevel();
+
+    }
+
+    public class TreeSection extends TreeItem {
+
+
+        TreeSection(String title) {
+            setText(title);
+            addStyleName("tree-section");
+        }
+
+        TreeSection(String title, boolean first) {
+            setText(title);
+            addStyleName("tree-section");
+            if(first)
+                addStyleName("tree-section-first");
+        }
+
+        @Override
+        public void setSelected(boolean selected) {
+            super.setSelected(selected);
+            if(selected)
+                addStyleName("tree-section-selected");
+            else
+                removeStyleName("tree-section-selected");
         }
 
     }
