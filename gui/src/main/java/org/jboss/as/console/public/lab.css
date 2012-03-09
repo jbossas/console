@@ -1,4 +1,37 @@
 
+.tree-section-selected {
+    background-color: #EEF4F9;
+}
 
+
+.tree-section > table:first-child {
+    background-color: #F8F8F8;
+    border-top: 1px solid #A7ABB4;
+    border-bottom: 1px solid #A7ABB4;
+    color: #606060;
+    cursor: pointer;
+    padding: 0px;
+    line-height:12px!important;
+    max-height:25px;
+    width:100%;
+}
+
+.tree-section-first > table:first-child {
+    border-top: none !important;
+}
+
+
+.tree-section > table:first-child td:first-child {
+    width:16px;
+}
+
+.lhs-tree-item {
+    margin-top:4px;
+    margin-bottom:4px;
+}
+
+.stack-section {
+ margin-top:0px!important;
+}
 
 

@@ -164,6 +164,9 @@ public class MultipleToOneLayout {
                 panel.add(new ContentGroupLabel(master.title));
 
             if(masterTools!=null) panel.add(masterTools);
+
+            master.widget.getElement().setAttribute("role", "application");
+
             panel.add(master.widget);
 
             DefaultPager pager = new DefaultPager();
@@ -189,6 +192,8 @@ public class MultipleToOneLayout {
 
             for(NamedWidget item : details)
             {
+
+                item.widget.getElement().setAttribute("role", "application");
                 tabs.add(item.widget, item.title);
             }
 

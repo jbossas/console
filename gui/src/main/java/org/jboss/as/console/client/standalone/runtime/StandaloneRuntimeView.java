@@ -30,7 +30,12 @@ public class StandaloneRuntimeView extends ViewImpl implements StandaloneRuntime
         contentCanvas = new LayoutPanel();
         lhsNavigation = new StandaloneRuntimeNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 180);
+        Widget nav = lhsNavigation.asWidget();
+        nav.getElement().setAttribute("role", "navigation");
+
+        contentCanvas.getElement().setAttribute("role", "main");
+
+        layout.addWest(nav, 180);
         layout.add(contentCanvas);
 
     }
