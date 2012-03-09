@@ -113,7 +113,8 @@ public class Header implements ValueChangeHandler<String> {
         outerLayout.setWidgetTopHeight(innerLayout, 0, Style.Unit.PX, 58, Style.Unit.PX);
 
 
-        outerLayout.getElement().setAttribute("role", "banner");
+        outerLayout.getElement().setAttribute("role", "navigation");
+        outerLayout.getElement().setAttribute("aria-label", "Toplevel Categories");
 
         return outerLayout;
     }
@@ -122,12 +123,19 @@ public class Header implements ValueChangeHandler<String> {
 
         HorizontalPanel panel = new HorizontalPanel();
         panel.setStyleName("logo-section");
+        panel.getElement().setAttribute("role", "presentation");
+
         Image logo = null;
 
         if(org.jboss.as.console.client.Build.PROFILE.equals("eap"))
+        {
             logo = new Image("images/logo/eap_text.png");
-        else
+            logo.setAltText("JBoss Enterprise Application Platform");
+        }
+        else {
             logo = new Image("images/logo/jbossas7_text.png");
+            logo.setAltText("JBoss Application Server");
+        }
 
         logo.setStyleName("logo");
 
@@ -149,7 +157,7 @@ public class Header implements ValueChangeHandler<String> {
     private Widget getLinksSection() {
         linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
-        linksPane.getElement().setAttribute("role", "menu");
+        linksPane.getElement().setAttribute("role", "menubar");
 
         String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ?
                 SECTIONS_STANADLONE : SECTIONS;
@@ -159,7 +167,7 @@ public class Header implements ValueChangeHandler<String> {
             final String id = "header-" + name;
 
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<div class='header-link-label' role='menubar'>");
+            html.appendHtmlConstant("<div class='header-link-label'>");
             html.appendHtmlConstant("<span role='menuitem'>");
             html.appendHtmlConstant(section[1]);
             html.appendHtmlConstant("</span>");
@@ -254,9 +262,14 @@ public class Header implements ValueChangeHandler<String> {
                 {
                     Element element = (Element) n;
                     if(element.getId().equals("header-"+name))
+                    {
                         element.addClassName("header-link-selected");
-                    else
+                        element.setAttribute("aria-selected", "true");
+                    }
+                    else {
                         element.removeClassName("header-link-selected");
+                        element.setAttribute("aria-selected", "false");
+                    }
                 }
             }
         }

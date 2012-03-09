@@ -44,7 +44,7 @@ public class StandaloneRuntimeNavigation {
 
 
         navigation = new LHSNavTree("standalone-runtime");
-        navigation.getElement().setAttribute("aria-label", "Runtime Navigation");
+        navigation.getElement().setAttribute("aria-label", "Runtime Tasks");
 
         // ----------------------------------------------------
 

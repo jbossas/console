@@ -32,6 +32,7 @@ public class StandaloneRuntimeView extends ViewImpl implements StandaloneRuntime
 
         Widget nav = lhsNavigation.asWidget();
         nav.getElement().setAttribute("role", "navigation");
+        nav.getElement().setAttribute("aria-label", "Category Runtime");
 
         contentCanvas.getElement().setAttribute("role", "main");
 
