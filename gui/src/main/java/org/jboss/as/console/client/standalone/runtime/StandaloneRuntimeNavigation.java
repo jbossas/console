@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
+import org.jboss.as.console.client.widgets.nav.TreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
@@ -49,7 +50,6 @@ public class StandaloneRuntimeNavigation {
         // ----------------------------------------------------
 
         TreeItem serverLeaf = new TreeSection("Server Status", true);
-        serverLeaf.setState(true);
 
         LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM", NameTokens.VirtualMachine);
@@ -105,19 +105,12 @@ public class StandaloneRuntimeNavigation {
 
         scroll = new ScrollPanel(layout);
 
-        expandTopLevel();
+        navigation.expandTopLevel();
 
         return scroll;
     }
 
-    private void expandTopLevel() {
-        for(int i=0; i<navigation.getItemCount(); i++)
-        {
-            TreeItem item = navigation.getItem(i);
-            System.out.println(item.getText());
-            item.setState(true);
-        }
-    }
+
 
     public void setSubsystems(List<SubsystemRecord> subsystems) {
 
@@ -142,33 +135,9 @@ public class StandaloneRuntimeNavigation {
             }
         }
 
-        expandTopLevel();
+        navigation.expandTopLevel();
 
     }
 
-    public class TreeSection extends TreeItem {
 
-
-        TreeSection(String title) {
-            setText(title);
-            addStyleName("tree-section");
-        }
-
-        TreeSection(String title, boolean first) {
-            setText(title);
-            addStyleName("tree-section");
-            if(first)
-                addStyleName("tree-section-first");
-        }
-
-        @Override
-        public void setSelected(boolean selected) {
-            super.setSelected(selected);
-            if(selected)
-                addStyleName("tree-section-selected");
-            else
-                removeStyleName("tree-section-selected");
-        }
-
-    }
 }

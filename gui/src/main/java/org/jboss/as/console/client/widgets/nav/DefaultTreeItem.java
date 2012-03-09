@@ -1,8 +1,5 @@
 package org.jboss.as.console.client.widgets.nav;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TreeItem;
 
 /**
@@ -14,15 +11,25 @@ public class DefaultTreeItem extends TreeItem {
     public DefaultTreeItem(String title) {
         super();
 
-        HTML html = new HTML(title);
-        html.getElement().setAttribute("style", "cursor:pointer;");
+        setText(title);
+        getElement().setAttribute("style", "cursor:pointer;");
 
-        html.addClickHandler(new ClickHandler() {
+        /*html.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 setState(!getState());
             }
         });
-        setWidget(html);
+        setWidget(html);*/
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+
+        if(selected)
+            addStyleName("tree-section-selected");
+        else
+            removeStyleName("tree-section-selected");
     }
 }
