@@ -19,18 +19,16 @@
 
 package org.jboss.as.console.client.standalone;
 
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
+import org.jboss.as.console.client.widgets.nav.TreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -47,7 +45,8 @@ public class LHSStandaloneNavigation {
     private VerticalPanel stack;
 
     private VerticalPanel layout;
-    private LHSNavTree subsysTree;
+    private LHSNavTree navigation;
+    private TreeSection serverLeaf;
 
     public LHSStandaloneNavigation() {
         super();
@@ -61,17 +60,16 @@ public class LHSStandaloneNavigation {
         // ----------------------------------------------------
 
 
-        subsysTree = new LHSNavTree("profiles");
+        navigation = new LHSNavTree("profiles");
+        navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
-        DisclosurePanel subsysPanel  = new DisclosureStackPanel(Console.CONSTANTS.common_label_profile(), true).asWidget();
-        subsysPanel.setContent(subsysTree);
-        stack.add(subsysPanel);
+        serverLeaf = new TreeSection(Console.CONSTANTS.common_label_profile(), true);
+        navigation.addItem(serverLeaf);
 
         // ----------------------------------------------------
 
-        Tree commonTree = new LHSNavTree("profiles");
-        DisclosurePanel commonPanel  = new DisclosureStackPanel(Console.CONSTANTS.common_label_generalConfig()).asWidget();
-        commonPanel.setContent(commonTree);
+        TreeSection commonLeaf = new TreeSection(Console.CONSTANTS.common_label_generalConfig());
+        navigation.addItem(commonLeaf);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {
                 /*new LHSNavTreeItem("Server", NameTokens.StandaloneServerPresenter),*/
@@ -82,10 +80,13 @@ public class LHSStandaloneNavigation {
 
         for(LHSNavTreeItem item : commonItems)
         {
-            commonTree.addItem(item);
+            commonLeaf.addItem(item);
         }
 
-        stack.add(commonPanel);
+
+        navigation.expandTopLevel();
+
+        stack.add(navigation);
 
         layout.add(stack);
 
@@ -100,9 +101,11 @@ public class LHSStandaloneNavigation {
 
     public void updateFrom(List<SubsystemRecord> subsystems) {
 
-        subsysTree.removeItems();
+        serverLeaf.removeItems();
 
-        SubsystemTreeBuilder.build(subsysTree, subsystems);
+        SubsystemTreeBuilder.build(serverLeaf, subsystems);
+
+        navigation.expandTopLevel();
 
     }
 }

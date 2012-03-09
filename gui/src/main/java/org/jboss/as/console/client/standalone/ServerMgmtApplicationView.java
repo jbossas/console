@@ -53,9 +53,13 @@ public class ServerMgmtApplicationView extends ViewImpl
         layout = new SplitLayoutPanel(10);
 
         contentCanvas = new LayoutPanel();
+        contentCanvas.getElement().setAttribute("role", "main");
         lhsNavigation = new LHSStandaloneNavigation();
 
-        layout.addWest(lhsNavigation.asWidget(), 180);
+        Widget nav = lhsNavigation.asWidget();
+        nav.getElement().setAttribute("role", "navigation");
+
+        layout.addWest(nav, 180);
         layout.add(contentCanvas);
 
     }

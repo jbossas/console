@@ -19,14 +19,13 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
+import org.jboss.as.console.client.widgets.nav.TreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
-import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.List;
 
@@ -36,17 +35,21 @@ import java.util.List;
  */
 class SubsystemSection {
 
-    private LHSNavTree subsysTree;
-    private DisclosurePanel panel;
+    private TreeSection subsysTree;
+
     private ProfileSelector profileSelector;
+    private VerticalPanel layout;
 
     public SubsystemSection()  {
 
-        panel = new DisclosureStackPanel(Console.CONSTANTS.common_label_subsystems(), true).asWidget();
 
-        subsysTree = new LHSNavTree("profiles");
+        LHSNavTree navigation = new LHSNavTree("profiles");
+        navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
-        VerticalPanel layout = new VerticalPanel();
+        subsysTree = new TreeSection(Console.CONSTANTS.common_label_subsystems());
+        navigation.addItem(subsysTree);
+
+        layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
 
 
@@ -56,17 +59,17 @@ class SubsystemSection {
         Widget selectorWidget = profileSelector.asWidget();
         layout.add(selectorWidget);
 
-        // ------------
+        layout.add(navigation);
 
-        layout.add(subsysTree);
+    }
 
-        panel.setContent(layout);
-
+    public TreeSection getSubsysTree() {
+        return subsysTree;
     }
 
     public Widget asWidget()
     {
-        return panel;
+        return layout;
     }
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
