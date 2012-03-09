@@ -105,7 +105,7 @@ public class Footer {
         layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
 
 
-        layout.getElement().setAttribute("role", "banner");
+        layout.getElement().setAttribute("role", "complementary");
 
         return layout;
     }
