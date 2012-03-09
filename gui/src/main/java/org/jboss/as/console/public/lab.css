@@ -38,3 +38,11 @@
 }
 
 
+/*
+*[tabindex] {
+ border: 1px dashed green;
+}
+
+*:focus {
+ border: 1px solid red;
+}  */
