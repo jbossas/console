@@ -14,7 +14,10 @@ public class TreeSection extends TreeItem {
         setText(title);
         addStyleName("tree-section");
         if(first)
+        {
             addStyleName("tree-section-first");
+            getElement().setAttribute("tabindex", "-1");
+        }
     }
 
     @Override
@@ -25,5 +28,6 @@ public class TreeSection extends TreeItem {
         else
             removeStyleName("tree-section-selected");
     }
+
 
 }
