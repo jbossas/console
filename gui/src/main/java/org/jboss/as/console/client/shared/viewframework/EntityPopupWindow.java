@@ -58,7 +58,7 @@ public abstract class EntityPopupWindow<T> extends DefaultWindow {
             }
         });
 
-        setWidget(makeWidget());
+        trapWidget(makeWidget());
         setGlassEnabled(true);
         center();
         hide();

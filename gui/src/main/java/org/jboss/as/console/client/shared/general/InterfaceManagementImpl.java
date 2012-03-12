@@ -65,7 +65,7 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewInterfaceWizard(this).asWidget()
         );
 

@@ -339,7 +339,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewSecurityPatternWizard(this, providerEntity).asWidget()
         );
 
@@ -533,7 +533,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewAddressPatternWizard(this, providerEntity).asWidget()
         );
 
@@ -734,7 +734,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewQueueWizard(this).asWidget()
         );
 
@@ -812,7 +812,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewTopicWizard(this).asWidget()
         );
 

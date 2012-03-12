@@ -199,7 +199,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
         );
 

@@ -277,7 +277,7 @@ public class AdminObjectList implements PropertyManagement {
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewPropertyWizard(this, "").asWidget()
         );
 

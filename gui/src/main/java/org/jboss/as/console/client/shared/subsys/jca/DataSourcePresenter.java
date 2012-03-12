@@ -499,7 +499,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(new PropertyManagement() {
                     @Override
                     public void onCreateProperty(String reference, PropertyRecord prop) {
@@ -612,7 +612,7 @@ public class DataSourcePresenter extends Presenter<DataSourcePresenter.MyView, D
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference, false).asWidget()
         );
 

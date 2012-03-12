@@ -113,7 +113,7 @@ public class ServerGroupSelector {
         
         DialogueOptions options = new DialogueOptions(new GroupSelectSubmitHandler(this.deployment, window, enableBox), new CancelHandler(window));
         Widget content = new WindowContentBuilder(layout, options).build();
-        window.setWidget(content);
+        window.trapWidget(content);
         return window;
     }
     

@@ -94,7 +94,7 @@ public class EmbeddedPropertyView<T extends HasProperties, NamedEntity>
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference).asWidget()
         );
 

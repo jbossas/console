@@ -202,7 +202,7 @@ public class OSGiConfigurationPresenter extends Presenter<OSGiConfigurationPrese
         window = new DefaultWindow(title);
         window.setWidth(320);
         window.setHeight(240);
-        window.setWidget(new NewCapabilityWizard(this, capability).asWidget());
+        window.trapWidget(new NewCapabilityWizard(this, capability).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }

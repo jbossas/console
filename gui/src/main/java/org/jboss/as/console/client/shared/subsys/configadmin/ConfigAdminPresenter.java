@@ -112,7 +112,7 @@ public class ConfigAdminPresenter extends Presenter<ConfigAdminPresenter.MyView,
         window = new DefaultWindow(Console.CONSTANTS.subsys_configadmin_add());
         window.setWidth(480);
         window.setHeight(360);
-        window.setWidget(new NewConfigAdminDataWizard(this).asWidget());
+        window.trapWidget(new NewConfigAdminDataWizard(this).asWidget());
         window.setGlassEnabled(true);
         window.center();
     }

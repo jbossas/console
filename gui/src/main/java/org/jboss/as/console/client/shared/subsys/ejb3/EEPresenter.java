@@ -217,7 +217,7 @@ public class EEPresenter extends Presenter<EEPresenter.MyView, EEPresenter.MyPro
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewModuleWizard(this).asWidget()
         );
 

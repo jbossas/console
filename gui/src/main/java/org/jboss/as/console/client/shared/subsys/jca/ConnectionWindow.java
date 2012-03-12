@@ -66,7 +66,7 @@ public class ConnectionWindow {
 
         DialogueOptions options = new DialogueOptions("OK", confirmHandler, "Cancel", confirmHandler);
         Widget content = new WindowContentBuilder(panel, options.showCancel(false)).build();
-        window.setWidget(content);
+        window.trapWidget(content);
 
     }
 

@@ -279,7 +279,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                         getStackElementName());
         window.setWidth(480);
         window.setHeight(400);
-        window.setWidget(wizard.asWidget());
+        window.trapWidget(wizard.asWidget());
 
         if (editedObject != null) wizard.edit(editedObject);
 
@@ -345,7 +345,7 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, "", false).asWidget()
         );
 

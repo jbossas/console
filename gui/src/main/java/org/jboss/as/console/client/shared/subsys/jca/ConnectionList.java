@@ -270,7 +270,7 @@ public class ConnectionList implements PropertyManagement, PoolManagement {
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewPropertyWizard(this, "").asWidget()
         );
 

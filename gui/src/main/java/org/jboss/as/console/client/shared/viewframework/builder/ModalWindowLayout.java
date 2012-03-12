@@ -34,7 +34,7 @@ public class ModalWindowLayout {
         DefaultWindow window = new DefaultWindow(title);
         window.setWidth(width);
         window.setHeight(height);
-        window.setWidget( widget);
+        window.trapWidget( widget);
         window.setGlassEnabled(true);
         window.center();
 

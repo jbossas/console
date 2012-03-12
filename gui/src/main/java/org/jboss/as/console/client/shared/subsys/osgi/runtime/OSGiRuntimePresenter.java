@@ -150,7 +150,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         final DefaultWindow window = new DefaultWindow(Console.CONSTANTS.subsys_osgi());
         window.setWidth(320);
         window.setHeight(140);
-        window.setWidget(new MessageWindow(Console.MESSAGES.subsys_osgi_activate(),
+        window.trapWidget(new MessageWindow(Console.MESSAGES.subsys_osgi_activate(),
                 new MessageWindow.Result() {
                     @Override
                     public void result(boolean result) {
@@ -168,7 +168,7 @@ public class OSGiRuntimePresenter extends Presenter<OSGiRuntimePresenter.MyView,
         final DefaultWindow window = new DefaultWindow(Console.CONSTANTS.subsys_osgi());
         window.setWidth(320);
         window.setHeight(140);
-        window.setWidget(new HTML(Console.MESSAGES.subsys_osgi_activating()));
+        window.trapWidget(new HTML(Console.MESSAGES.subsys_osgi_activating()));
         window.setGlassEnabled(true);
         window.center();
 

@@ -519,7 +519,7 @@ public class JcaPresenter extends Presenter<JcaPresenter.MyView, JcaPresenter.My
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference).asWidget()
         );
 

@@ -237,7 +237,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         window.setWidth(640);
         window.setHeight(520);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewStackWizard(this).asWidget()
         );
 
@@ -341,7 +341,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewProtocolWizard(this).asWidget()
         );
 
@@ -502,7 +502,7 @@ public class JGroupsPresenter extends Presenter<JGroupsPresenter.MyView, JGroups
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference).asWidget()
         );
 

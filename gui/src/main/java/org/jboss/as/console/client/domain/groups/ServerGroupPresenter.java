@@ -260,7 +260,7 @@ public class ServerGroupPresenter
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewServerGroupWizard(this, existingProfiles, existingSockets).asWidget()
         );
 
@@ -330,7 +330,7 @@ public class ServerGroupPresenter
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, group, true).asWidget()
         );
 
