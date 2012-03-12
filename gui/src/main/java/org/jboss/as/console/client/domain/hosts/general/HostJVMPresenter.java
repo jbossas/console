@@ -284,7 +284,7 @@ public class HostJVMPresenter extends Presenter<HostJVMPresenter.MyView, HostJVM
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewHostJvmWizard(this, currentHost).asWidget()
         );
 

@@ -325,7 +325,7 @@ public class ResourceAdapterPresenter
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewAdapterWizard(this).asWidget()
         );
 
@@ -444,7 +444,7 @@ public class ResourceAdapterPresenter
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(new PropertyManagement() {
                     @Override
                     public void onCreateProperty(String reference, PropertyRecord prop) {
@@ -535,7 +535,7 @@ public class ResourceAdapterPresenter
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewConnectionWizard(this).asWidget()
         );
 
@@ -797,7 +797,7 @@ public class ResourceAdapterPresenter
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewAdminWizard(this).asWidget()
         );
 

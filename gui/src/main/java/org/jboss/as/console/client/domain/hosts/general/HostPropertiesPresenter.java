@@ -147,7 +147,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, group).asWidget()
         );
 

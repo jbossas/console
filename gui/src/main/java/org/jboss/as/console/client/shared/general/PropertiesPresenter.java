@@ -137,7 +137,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, group, true).asWidget()
         );
 

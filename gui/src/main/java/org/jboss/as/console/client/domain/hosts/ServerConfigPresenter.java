@@ -234,7 +234,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onSuccess(List<ServerGroupRecord> result) {
                 serverGroups = result;
-                window.setWidget(
+                window.trapWidget(
                         new NewServerConfigWizard(ServerConfigPresenter.this, serverGroups).asWidget()
                 );
 
@@ -534,7 +534,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             }
         });
 
-        propertyWindow.setWidget(
+        propertyWindow.trapWidget(
                 new NewPropertyWizard(this, reference).asWidget()
         );
 

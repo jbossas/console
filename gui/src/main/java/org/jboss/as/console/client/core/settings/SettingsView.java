@@ -115,7 +115,7 @@ public class SettingsView extends PopupViewImpl implements SettingsPresenterWidg
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(new WindowContentBuilder(layout, options).build());
+        window.trapWidget(new WindowContentBuilder(layout, options).build());
 
         window.setGlassEnabled(true);
         window.center();

@@ -111,7 +111,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewMailServerWizard(this).asWidget()
         );
 
@@ -124,7 +124,7 @@ public class MailPresenter extends Presenter<MailPresenter.MyView, MailPresenter
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewMailSessionWizard(this).asWidget()
         );
 

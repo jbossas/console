@@ -173,7 +173,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
         ScrollPanel scroll = new ScrollPanel();
         scroll.add(widget);
-        window.setWidget(scroll);
+        window.trapWidget(scroll);
 
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
 

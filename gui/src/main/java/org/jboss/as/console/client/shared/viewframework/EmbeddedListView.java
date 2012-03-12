@@ -103,7 +103,7 @@ public class EmbeddedListView implements ListManagement<String>, IsWidget {
         addItemDialog = new DefaultWindow(addDialogTitle);
         addItemDialog.setWidth(320);
         addItemDialog.setHeight(240);
-        addItemDialog.setWidget(newListItemWizard.asWidget());
+        addItemDialog.trapWidget(newListItemWizard.asWidget());
         addItemDialog.setGlassEnabled(true);
         addItemDialog.center();
 

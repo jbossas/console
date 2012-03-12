@@ -71,7 +71,7 @@ public class FrameworkPropertiesTable implements PropertyManagement {
         propertyWindow = new DefaultWindow(Console.CONSTANTS.subsys_osgi_frameworkPropertyAdd());
         propertyWindow.setWidth(320);
         propertyWindow.setHeight(240);
-        propertyWindow.setWidget(new NewPropertyWizard(this, reference).asWidget());
+        propertyWindow.trapWidget(new NewPropertyWizard(this, reference).asWidget());
         propertyWindow.setGlassEnabled(true);
         propertyWindow.center();
     }

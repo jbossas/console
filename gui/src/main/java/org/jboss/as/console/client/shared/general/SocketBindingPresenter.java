@@ -232,7 +232,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         window.setWidth(480);
         window.setHeight(360);
 
-        window.setWidget(
+        window.trapWidget(
                 new NewSocketWizard(this, bindingGroups).asWidget()
         );
 
@@ -287,7 +287,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 window.setWidth(480);
                 window.setHeight(400);
 
-                window.setWidget(
+                window.trapWidget(
                         new NewSocketGroupWizard(SocketBindingPresenter.this, result).asWidget()
                 );
 

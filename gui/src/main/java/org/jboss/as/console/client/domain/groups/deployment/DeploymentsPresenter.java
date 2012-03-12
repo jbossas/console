@@ -284,7 +284,7 @@ public class DeploymentsPresenter extends Presenter<DeploymentsPresenter.MyView,
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewDeploymentWizard(window, dispatcher, domainDeploymentInfo).asWidget());
 
         window.setGlassEnabled(true);

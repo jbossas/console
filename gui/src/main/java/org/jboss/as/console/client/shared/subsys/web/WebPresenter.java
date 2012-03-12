@@ -338,7 +338,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             }
         });
 
-        window.setWidget(
+        window.trapWidget(
                 new NewConnectorWizard(this, connectors ).asWidget()
         );
 
@@ -514,7 +514,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         window = new DefaultWindow(Console.MESSAGES.createTitle("Virtual Server"));
         window.setWidth(480);
         window.setHeight(360);
-        window.setWidget(
+        window.trapWidget(
                 new NewVirtualServerWizard(this,  virtualServers).asWidget()
         );
 

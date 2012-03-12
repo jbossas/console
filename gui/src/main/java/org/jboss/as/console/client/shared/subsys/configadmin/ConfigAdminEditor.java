@@ -50,7 +50,7 @@ public class ConfigAdminEditor implements PropertyManagement {
                 dialog = new DefaultWindow(Console.CONSTANTS.subsys_configadmin_editPID());
                 dialog.setWidth(320);
                 dialog.setHeight(140);
-                dialog.setWidget(new InputWindow(model.getPid(), new InputWindow.Result() {
+                dialog.trapWidget(new InputWindow(model.getPid(), new InputWindow.Result() {
                     @Override
                     public void result(String value) {
                         if (value != null && !value.equals(model.getPid())) {
@@ -183,7 +183,7 @@ public class ConfigAdminEditor implements PropertyManagement {
         dialog = new DefaultWindow(Console.CONSTANTS.subsys_configadmin_valueAdd());
         dialog.setWidth(320);
         dialog.setHeight(240);
-        dialog.setWidget(new NewPropertyWizard(this, reference).asWidget());
+        dialog.trapWidget(new NewPropertyWizard(this, reference).asWidget());
         dialog.setGlassEnabled(true);
         dialog.center();
     }
