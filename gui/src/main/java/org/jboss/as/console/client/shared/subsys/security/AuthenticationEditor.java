@@ -66,4 +66,10 @@ public class AuthenticationEditor extends AuthEditor<AuthenticationLoginModule>{
         return new NewAuthPolicyModuleWizard<AuthenticationLoginModule>(this, entityClass, flagValues,
             presenter, SecurityDomainsPresenter.AUTHENTICATION_IDENTIFIER, "login-modules");
     }
+    
+	@Override
+	void removeData() {
+        presenter.removeAuthentication(domainName, attributesProvider.getList());
+	}
+    
 }

@@ -66,4 +66,11 @@ public class AuthorizationEditor extends AuthEditor<AuthorizationPolicyProvider>
         return new NewAuthPolicyModuleWizard<AuthorizationPolicyProvider>(this, entityClass, flagValues,
             presenter, SecurityDomainsPresenter.AUTHORIZATION_IDENTIFIER, "policy-modules");
     }
+    
+	@Override
+	void removeData() {
+        presenter.removeAuthorization(domainName, attributesProvider.getList());
+		
+	}
+    
 }

@@ -77,4 +77,11 @@ public class MappingEditor extends AbstractDomainDetailEditor<MappingModule> {
     Wizard<MappingModule> getWizard() {
         return new NewMappingModuleWizard(this, presenter);
     }
+    
+	@Override
+	void removeData() {
+        presenter.removeMapping(domainName, attributesProvider.getList());
+		
+	}
+    
 }

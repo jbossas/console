@@ -63,4 +63,10 @@ public class AuditEditor extends AbstractDomainDetailEditor<GenericSecurityDomai
     void saveData() {
         presenter.saveAudit(domainName, attributesProvider.getList(), resourceExists);
     }
+
+	@Override
+	void removeData() {
+        presenter.removeAudit(domainName, attributesProvider.getList());
+		
+	}
 }
