@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.ballroom.client.widgets.window.TrappedFocusPanel;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class NewXADatasourceWizard {
     private List<PropertyRecord> properties;
     private ApplicationProperties bootstrap;
     private List<JDBCDriver> drivers;
+    private TrappedFocusPanel trap;
 
     public NewXADatasourceWizard(
             DataSourcePresenter presenter,
@@ -63,7 +65,14 @@ public class NewXADatasourceWizard {
     public Widget asWidget() {
 
 
-        deck = new DeckPanel();
+       deck = new DeckPanel() {
+            @Override
+            public void showWidget(int index) {
+                super.showWidget(index);
+                trap.getFocus().reset(getWidget(index).getElement());
+                trap.getFocus().onFirstInput();
+            }
+        };
 
         deck.add(new XADatasourceStep1(this).asWidget());
 
@@ -76,9 +85,11 @@ public class NewXADatasourceWizard {
         step4 = new XADatasourceStep4(this);
         deck.add(step4.asWidget());
 
+        trap = new TrappedFocusPanel(deck);
+
         deck.showWidget(0);
 
-        return deck;
+        return trap;
     }
 
     public DataSourcePresenter getPresenter() {
