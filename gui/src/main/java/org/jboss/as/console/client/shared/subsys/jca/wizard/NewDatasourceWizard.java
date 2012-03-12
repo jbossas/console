@@ -25,6 +25,7 @@ import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.subsys.jca.DataSourcePresenter;
 import org.jboss.as.console.client.shared.subsys.jca.model.DataSource;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
+import org.jboss.ballroom.client.widgets.window.TrappedFocusPanel;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class NewDatasourceWizard {
     private DataSource driverAttributes = null;
     private ApplicationProperties bootstrap;
     private List<JDBCDriver> drivers;
+    private TrappedFocusPanel trap;
 
     public NewDatasourceWizard(
             DataSourcePresenter presenter,
@@ -65,7 +67,14 @@ public class NewDatasourceWizard {
     public Widget asWidget() {
 
 
-        deck = new DeckPanel();
+        deck = new DeckPanel() {
+            @Override
+            public void showWidget(int index) {
+                super.showWidget(index);
+                trap.getFocus().reset(getWidget(index).getElement());
+                trap.getFocus().onFirstInput();
+            }
+        };
 
         deck.add(new DatasourceStep1(this).asWidget());
 
@@ -75,9 +84,12 @@ public class NewDatasourceWizard {
         step3 = new DataSourceStep3(this);
         deck.add(step3.asWidget());
 
+
+        trap = new TrappedFocusPanel(deck);
+
         deck.showWidget(0);
 
-        return deck;
+        return trap;
     }
 
     public DataSourcePresenter getPresenter() {
