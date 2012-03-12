@@ -94,6 +94,8 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
     }
 
     abstract void saveData();
+    
+    abstract void removeData();
 
     Widget asWidget() {
 
@@ -140,7 +142,13 @@ public abstract class AbstractDomainDetailEditor <T extends GenericSecurityDomai
                                     public void onConfirmation(boolean isConfirmed) {
                                         if (isConfirmed) {
                                             attributesProvider.getList().remove(policy);
-                                            saveData();
+                                            if(attributesProvider.getList().size() > 0){
+                                                saveData();
+                                            }
+                                            // call remove() on last provider-module instead of save()
+                                            else{
+                                            	removeData();
+                                            }
                                         }
                                     }
                                 });

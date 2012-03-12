@@ -310,6 +310,79 @@ public class SecurityDomainsPresenter
         saveGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules", resourceExists,
                 new CustomSaveHandler<GenericSecurityDomainData>());
     }
+    
+    public void removeAuthorization(String domainName, List<AuthorizationPolicyProvider> list) {
+        removeGeneric(domainName, list, AUTHORIZATION_IDENTIFIER, "policy-modules",
+                new CustomAuthSaveFieldhandler<AuthorizationPolicyProvider>());
+    }
+
+    public void removeAuthentication(String domainName, List<AuthenticationLoginModule> list) {
+
+        removeGeneric(domainName, list, AUTHENTICATION_IDENTIFIER, "login-modules",
+                new CustomAuthSaveFieldhandler<AuthenticationLoginModule>());
+    }
+
+    public void removeMapping(String domainName, List<MappingModule> list) {
+        removeGeneric(domainName, list, MAPPING_IDENTIFIER, "mapping-modules",
+                new CustomSaveHandler<MappingModule>() {
+                    @Override
+                    public void setInModel(ModelNode n, MappingModule object) {
+                        n.get("type").set(object.getType());
+                    }
+                });
+    }
+    
+    
+    public void removeAudit(String domainName, List<GenericSecurityDomainData> list) {
+        removeGeneric(domainName, list, AUDIT_IDENTIFIER, "provider-modules",
+                new CustomSaveHandler<GenericSecurityDomainData>());
+    }
+    
+    
+    public <T extends GenericSecurityDomainData> void removeGeneric(final String domainName, List<T> list, String type, String attrName,
+            CustomSaveHandler<T> customHandler) {
+
+    	ModelNode operation = null;
+
+        ModelNode valueList = new ModelNode();
+        valueList.setEmptyList();
+
+        for (T pm : list) {
+            ModelNode n = new ModelNode();
+            n.get("code").set(pm.getCode());
+
+            if (customHandler != null) {
+                customHandler.setInModel(n, pm);
+            }
+
+            List<PropertyRecord> props = pm.getProperties();
+            if (props != null)
+                n.get("module-options").set(entityAdapter.fromEntityPropertyList(props));
+
+            valueList.add(n);
+        }
+
+            operation = createOperation(ModelDescriptionConstants.REMOVE);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(SECURITY_DOMAIN, domainName);
+            operation.get(ModelDescriptionConstants.ADDRESS).add(type, CLASSIC);
+            operation.get(ModelDescriptionConstants.NAME).set(attrName);
+
+            if(list.size()>0)
+                operation.get("value").set(valueList);
+            else
+                operation.get("value").setEmptyList();
+
+        
+        dispatcher.execute(new DMRAction(operation),
+                new SimpleDMRResponseHandler(ModelDescriptionConstants.REMOVE,
+                        attrName, domainName, new Command() {
+                    @Override
+                    public void execute() {
+                        getView().loadSecurityDomain(domainName);
+                    }
+                }));
+    }
+    
 
     // TODO: https://issues.jboss.org/browse/AS7-2936
     public <T extends GenericSecurityDomainData> void saveGeneric(final String domainName, List<T> list, String type, String attrName, boolean resourceExists,
@@ -357,7 +430,7 @@ public class SecurityDomainsPresenter
                 operation.get(attrName).setEmptyList();
 
         }
-
+        
         dispatcher.execute(new DMRAction(operation),
                 new SimpleDMRResponseHandler(ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION,
                         attrName, domainName, new Command() {
