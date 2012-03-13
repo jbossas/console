@@ -18,10 +18,12 @@ import com.google.gwt.user.client.ui.Widget;
 public class DefaultTabLayoutPanel extends TabLayoutPanel {
 
     private final static boolean isIE = Window.Navigator.getUserAgent().contains("MSIE");
+    private int prevSelectedIndex = -1;
 
     public DefaultTabLayoutPanel(double barHeight, Style.Unit barUnit) {
         super(barHeight, barUnit);
         addStyleName("default-tabpanel");
+        getElement().setAttribute("role", "tablist");
     }
 
 
@@ -76,7 +78,31 @@ public class DefaultTabLayoutPanel extends TabLayoutPanel {
 
 
         html.getElement().setTabIndex(0);
-
+        html.getElement().setAttribute("role", "tab");
         super.insert(child, html, beforeIndex);
+    }
+
+    @Override
+    public void selectTab(int index) {
+
+        flagSelected(prevSelectedIndex, false);
+        super.selectTab(index);
+        flagSelected(getSelectedIndex(), true);
+
+        prevSelectedIndex = getSelectedIndex();
+
+    }
+
+    private void flagSelected(int index, boolean isSelected)
+    {
+        if(index==-1) return;
+
+        if(isSelected){
+            getTabWidget(index).getElement().setAttribute("aria-selected", "true");
+        }
+        else
+        {
+            getTabWidget(index).getElement().removeAttribute("aria-selected");
+        }
     }
 }
