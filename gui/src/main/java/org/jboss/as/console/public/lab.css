@@ -34,15 +34,32 @@
 }
 
 .stack-section {
- margin-top:0px!important;
+    margin-top:0px!important;
 }
 
 
-/*
-*[tabindex] {
- border: 1px dashed green;
+
+/* *[tabindex] {
+    border: 1px dashed green;
 }
+
 
 *:focus {
- border: 1px solid red;
-}  */
+    border: 1px solid red;
+}
+
+button:focus {
+    border: 2px solid orange;
+}
+
+
+.semantic {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+*/
