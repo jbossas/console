@@ -28,8 +28,8 @@ import org.jboss.as.console.client.shared.SubsystemGroup;
 import org.jboss.as.console.client.shared.SubsystemGroupItem;
 import org.jboss.as.console.client.shared.SubsystemMetaData;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.client.widgets.nav.DefaultTreeItem;
-import org.jboss.as.console.client.widgets.nav.TreeSection;
+import org.jboss.ballroom.client.layout.DefaultTreeItem;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
 import java.util.List;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class SubsystemTreeBuilder {
 
-    public static void build(final TreeSection subsysTree, List<SubsystemRecord> subsystems)
+    public static void build(final LHSTreeSection subsysTree, List<SubsystemRecord> subsystems)
     {
 
         int includedSubsystems =0;
@@ -91,7 +91,7 @@ public class SubsystemTreeBuilder {
     }
 
 
-    private static void displaySubsystemHelp(TreeSection subsysTree) {
+    private static void displaySubsystemHelp(LHSTreeSection subsysTree) {
         PopupPanel help = new PopupPanel();
         help.setStyleName("help-panel-open");
         help.getElement().setAttribute("style", "padding:15px");
