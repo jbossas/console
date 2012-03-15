@@ -26,7 +26,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
-import org.jboss.as.console.client.widgets.nav.TreeSection;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
@@ -46,7 +46,7 @@ public class LHSStandaloneNavigation {
 
     private VerticalPanel layout;
     private LHSNavTree navigation;
-    private TreeSection serverLeaf;
+    private LHSTreeSection serverLeaf;
 
     public LHSStandaloneNavigation() {
         super();
@@ -63,12 +63,12 @@ public class LHSStandaloneNavigation {
         navigation = new LHSNavTree("profiles");
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
-        serverLeaf = new TreeSection(Console.CONSTANTS.common_label_profile(), true);
+        serverLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_profile(), true);
         navigation.addItem(serverLeaf);
 
         // ----------------------------------------------------
 
-        TreeSection commonLeaf = new TreeSection(Console.CONSTANTS.common_label_generalConfig());
+        LHSTreeSection commonLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_generalConfig());
         navigation.addItem(commonLeaf);
 
         LHSNavTreeItem[] commonItems = new LHSNavTreeItem[] {

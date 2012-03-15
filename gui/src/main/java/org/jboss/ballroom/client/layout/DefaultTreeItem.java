@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.widgets.nav;
+package org.jboss.ballroom.client.layout;
 
 import com.google.gwt.user.client.ui.TreeItem;
 

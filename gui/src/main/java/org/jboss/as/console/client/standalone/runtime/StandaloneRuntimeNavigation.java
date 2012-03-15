@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.widgets.nav.Predicate;
-import org.jboss.as.console.client.widgets.nav.TreeSection;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 
@@ -49,7 +49,7 @@ public class StandaloneRuntimeNavigation {
 
         // ----------------------------------------------------
 
-        TreeItem serverLeaf = new TreeSection("Server Status", true);
+        TreeItem serverLeaf = new LHSTreeSection("Server Status", true);
 
         LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
         LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM", NameTokens.VirtualMachine);
@@ -61,7 +61,7 @@ public class StandaloneRuntimeNavigation {
 
         // -------------
 
-        metricLeaf = new TreeSection("Subsystem Metrics");
+        metricLeaf = new LHSTreeSection("Subsystem Metrics");
 
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
@@ -81,7 +81,7 @@ public class StandaloneRuntimeNavigation {
 
         // ---
 
-        runtimeLeaf = new TreeSection("Runtime Operations");
+        runtimeLeaf = new LHSTreeSection("Runtime Operations");
 
 
         LHSNavTreeItem osgi = new LHSNavTreeItem("OSGi", NameTokens.OSGiRuntimePresenter);
@@ -92,7 +92,7 @@ public class StandaloneRuntimeNavigation {
 
         // ----------------------------------------------------
 
-        TreeItem deploymentLeaf = new TreeSection("Deployments");
+        TreeItem deploymentLeaf = new LHSTreeSection("Deployments");
 
         deploymentLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
         deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));

@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
-import org.jboss.as.console.client.widgets.nav.TreeSection;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 class SubsystemSection {
 
-    private TreeSection subsysTree;
+    private LHSTreeSection subsysTree;
 
     private ProfileSelector profileSelector;
     private VerticalPanel layout;
@@ -46,7 +46,7 @@ class SubsystemSection {
         LHSNavTree navigation = new LHSNavTree("profiles");
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
-        subsysTree = new TreeSection(Console.CONSTANTS.common_label_subsystems());
+        subsysTree = new LHSTreeSection(Console.CONSTANTS.common_label_subsystems());
         navigation.addItem(subsysTree);
 
         layout = new VerticalPanel();
@@ -63,7 +63,7 @@ class SubsystemSection {
 
     }
 
-    public TreeSection getSubsysTree() {
+    public LHSTreeSection getSubsysTree() {
         return subsysTree;
     }
 
