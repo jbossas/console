@@ -31,7 +31,7 @@ public class FormToolStrip<T> {
     private boolean providesEditSaveOp = true;
     private List<ToolButton> additionalButtons = new LinkedList<ToolButton>();
 
-    private HTML cancelBtn = null;
+    private InlineLink cancelBtn = null;
     private ToolButton editBtn = null;
 
     private PreValidation preValidation = null;
