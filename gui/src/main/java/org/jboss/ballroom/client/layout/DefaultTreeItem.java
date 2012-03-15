@@ -3,6 +3,9 @@ package org.jboss.ballroom.client.layout;
 import com.google.gwt.user.client.ui.TreeItem;
 
 /**
+ * A tree item used with the LHS nav that doesn't reference any views.
+ * Used to group items.
+ *
  * @author Heiko Braun
  * @date 11/9/11
  */
