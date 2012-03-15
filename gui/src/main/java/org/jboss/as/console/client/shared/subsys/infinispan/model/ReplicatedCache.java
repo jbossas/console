@@ -115,8 +115,8 @@ public interface ReplicatedCache extends InvalidationCache {
     @Binding(detypedName="jndi-name")
     @FormItem(label="JNDI Name",
             required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX",
+            formItemTypeForEdit="JNDI_NAME",
+            formItemTypeForAdd="JNDI_NAME",
             tabName="subsys_infinispan_attrs")
     public String getJndiName();
     @Override

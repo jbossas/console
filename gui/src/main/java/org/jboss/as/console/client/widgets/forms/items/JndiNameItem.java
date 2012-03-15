@@ -21,7 +21,7 @@ public class JndiNameItem extends TextBoxItem {
 
         boolean isSet = value!=null && !value.isEmpty();
         boolean validPrefix = value.startsWith("java:/") || value.startsWith("java:jboss/");
-        return isSet&&validPrefix;
+        return (!isRequired() && !isSet) || (isSet&&validPrefix);
     }
 
     @Override

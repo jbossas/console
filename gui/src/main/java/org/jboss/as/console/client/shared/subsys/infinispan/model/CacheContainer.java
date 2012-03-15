@@ -56,8 +56,8 @@ public interface CacheContainer extends NamedEntity {
     @Binding(detypedName = "jndi-name")
     @FormItem(localLabel="subsys_infinispan_jndiName",
             required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX")
+            formItemTypeForEdit="JNDI_NAME",
+            formItemTypeForAdd="JNDI_NAME")
     String getJndiName();
     void setJndiName(String jndiName);
 

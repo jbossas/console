@@ -98,8 +98,8 @@ public interface LocalCache extends NamedEntity {
     @Binding(detypedName="jndi-name")
     @FormItem(label="JNDI Name",
             required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX")
+            formItemTypeForEdit="JNDI_NAME",
+            formItemTypeForAdd="JNDI_NAME")
     public String getJndiName();
     public void setJndiName(String jndiName);
 
