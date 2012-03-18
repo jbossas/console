@@ -99,7 +99,7 @@ public class WebMetricPresenter extends Presenter<WebMetricPresenter.MyView, Web
             return;
         }
 
-        LoadConnectorCmd cmd = new LoadConnectorCmd(dispatcher, factory, RuntimeBaseAddress.get());
+        LoadConnectorCmd cmd = new LoadConnectorCmd(dispatcher, factory);
         cmd.execute(new SimpleCallback<List<HttpConnector>>() {
             @Override
             public void onSuccess(List<HttpConnector> result) {

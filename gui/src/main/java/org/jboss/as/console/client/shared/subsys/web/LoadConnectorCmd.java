@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.shared.subsys.web;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.AsyncCommand;
@@ -24,11 +26,9 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
-    private ModelNode baseAddress;
 
-    public LoadConnectorCmd(DispatchAsync dispatcher, BeanFactory beanFactory, ModelNode baseAddress) {
+    public LoadConnectorCmd(DispatchAsync dispatcher, BeanFactory beanFactory) {
         this.dispatcher = dispatcher;
-        this.baseAddress = baseAddress;
         this.factory= beanFactory;
     }
 
@@ -37,7 +37,8 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
 
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
-        operation.get(ADDRESS).set(baseAddress);
+        String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
+        operation.get(ADDRESS).add("profile", selectedProfile);
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("connector");
         operation.get(RECURSIVE).set(Boolean.TRUE);
