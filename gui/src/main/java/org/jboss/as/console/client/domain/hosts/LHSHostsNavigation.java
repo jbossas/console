@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Host;
+import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
@@ -82,7 +83,7 @@ class LHSHostsNavigation {
         hostLeaf.addItem(properties);
 
         stack.add(navigation);
-
+        navigation.expandTopLevel();
         // --------
 
 
@@ -106,5 +107,6 @@ class LHSHostsNavigation {
 
         hostSelector.setHosts(hostNames);
 
+        navigation.expandTopLevel();
     }
 }

@@ -122,13 +122,12 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         }
 
         // first request, select default contents
-        if(!hasBeenRevealed &&
-                NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        if(!hasBeenRevealed && NameTokens.DomainRuntimePresenter.equals(currentToken))
         {
             placeManager.revealPlace(new PlaceRequest(NameTokens.InstancesPresenter));
             hasBeenRevealed = true;
         }
-        else if(!NameTokens.DomainRuntimePresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        else if(!NameTokens.DomainRuntimePresenter.equals(currentToken))
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override

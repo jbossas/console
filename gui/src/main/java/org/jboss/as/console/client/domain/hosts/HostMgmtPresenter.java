@@ -126,38 +126,29 @@ public class HostMgmtPresenter
         }
 
         // first request, select default contents
-        if(!hasBeenRevealed &&
-                NameTokens.HostMgmtPresenter.equals(placeManager.getCurrentPlaceRequest().getNameToken()))
+        if(!hasBeenRevealed && NameTokens.HostMgmtPresenter.equals(currentToken))
         {
 
-
-            placeManager.revealPlace(
-                    new PlaceRequest(NameTokens.ServerPresenter)
-            );
+            placeManager.revealPlace( new PlaceRequest(NameTokens.ServerPresenter));
             hasBeenRevealed = true;
 
-
-            //  highlight LHS nav
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    getEventBus().fireEvent(
-                            new LHSHighlightEvent(null, Console.CONSTANTS.common_label_serverConfigs(), "hosts")
-
-                    );
-                }
-            });
         }
 
-
-        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+        Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
             @Override
-            public void onSuccess(List<Host> hosts) {
-                if(!hostSelection.isSet())
-                    selectDefaultHost(hosts);
-                getView().updateHosts(hosts);
+            public void execute() {
+                hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+                    @Override
+                    public void onSuccess(List<Host> hosts) {
+                        if(!hostSelection.isSet())
+                            selectDefaultHost(hosts);
+                        getView().updateHosts(hosts);
+                    }
+                });
             }
         });
+
+
     }
 
     private void selectDefaultHost(List<Host> hosts) {
