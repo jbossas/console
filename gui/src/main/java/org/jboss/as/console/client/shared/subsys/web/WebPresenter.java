@@ -79,6 +79,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     private EntityAdapter<JSPContainerConfiguration> containerAdapter;
     private LoadConnectorCmd loadConnectorCmd;
+    private SocketBinding socketBinding;;
+    private List<String> socketsBindingList;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -92,6 +94,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void setVirtualServers(List<VirtualServer> servers);
         void enableEditVirtualServer(boolean b);
         void setJSPConfig(JSPContainerConfiguration jspConfig);
+        void setSocketBindigs(List<String> socketBindings);
     }
 
     @Inject
@@ -113,7 +116,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 new EntityAdapter<JSPContainerConfiguration>(JSPContainerConfiguration.class, metaData);
 
         this.loadConnectorCmd = new LoadConnectorCmd(dispatcher, factory);
-
+        this.socketBinding = new SocketBinding(dispatcher);
     }
 
     @Override
@@ -130,6 +133,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         loadJSPConfig();
         loadConnectors();
         loadVirtualServer();
+        loadSocketBindings();
     }
 
     @Override
@@ -238,10 +242,27 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             }
         });
     }
+    
+    private void loadSocketBindings() {
+        socketBinding.loadSocketBindingGroupForSelectedProfile(new SimpleCallback<List<String>>() {
+            @Override
+            public void onSuccess(List<String> result) {
+            	setSocketBindings(result);
+                getView().setSocketBindigs(result);
+            }
+        });
+        
+    }
+    
 
     private void setConnectors(List<HttpConnector> connectors) {
         this.connectors = connectors;
     }
+    
+    private void setSocketBindings(List<String> bindings) {
+        this.socketsBindingList = bindings;
+    }
+    
 
     public void onEditConnector() {
         getView().enableEditConnector(true);
@@ -339,7 +360,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         });
 
         window.trapWidget(
-                new NewConnectorWizard(this, connectors ).asWidget()
+                new NewConnectorWizard(this, connectors, socketsBindingList).asWidget()
         );
 
         window.setGlassEnabled(true);
@@ -557,5 +578,5 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void closeDialogue() {
         window.hide();
     }
-
+    
 }

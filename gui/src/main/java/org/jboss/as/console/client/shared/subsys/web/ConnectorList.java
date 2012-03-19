@@ -19,7 +19,26 @@
 
 package org.jboss.as.console.client.shared.subsys.web;
 
-import com.gargoylesoftware.htmlunit.ConfirmHandler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.help.FormHelpPanel;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
+import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
+import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
+import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.icons.Icons;
+import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
+import org.jboss.dmr.client.ModelNode;
+
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,25 +50,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
-import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
-import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.ballroom.client.widgets.icons.Icons;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -62,6 +62,7 @@ public class ConnectorList {
 
     private WebPresenter presenter;
     private Form<HttpConnector> form;
+    private ComboBoxItem socketBinding;
 
     public ConnectorList(WebPresenter presenter) {
         this.presenter = presenter;
@@ -182,7 +183,8 @@ public class ConnectorList {
 
 
         TextItem name = new TextItem("name", "Name");
-        TextBoxItem socketBinding = new TextBoxItem("socketBinding", "Socket Binding");
+        socketBinding = new ComboBoxItem("socketBinding", "Socket Binding");
+        socketBinding.setValueMap(new String[]{});
 
         ComboBoxItem protocol = new ComboBoxItem("protocol", "Protocol");
         ComboBoxItem scheme = new ComboBoxItem("scheme", "Scheme");
@@ -229,5 +231,9 @@ public class ConnectorList {
 
     public void setEnabled(boolean b) {
         form.setEnabled(b);
+    }
+    
+    public void setSocketBindigs(List<String> socketBindings){
+    	this.socketBinding.setValueMap(socketBindings);
     }
 }

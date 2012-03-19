@@ -163,4 +163,10 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
     public void setJSPConfig(JSPContainerConfiguration jspConfig) {
         form.edit(jspConfig);
     }
+
+	@Override
+	public void setSocketBindigs(List<String> socketBindings) {
+        connectorList.setSocketBindigs(socketBindings);
+		
+	}
 }

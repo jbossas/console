@@ -44,10 +44,12 @@ import java.util.List;
 public class NewConnectorWizard {
     private WebPresenter presenter;
     private List<HttpConnector> connectors;
+    private List<String> socketBindings;
 
-    public NewConnectorWizard(WebPresenter presenter, List<HttpConnector> connectors) {
+    public NewConnectorWizard(WebPresenter presenter, List<HttpConnector> connectors, List<String> socketBindings) {
         this.presenter = presenter;
         this.connectors = connectors;
+        this.socketBindings = socketBindings;
     }
 
     Widget asWidget() {
@@ -57,8 +59,7 @@ public class NewConnectorWizard {
 
         TextBoxItem name = new TextBoxItem("name", "Name");
 
-        // todo: turn into pull down. But how is the the socket-binding group resolved?
-        TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding") {
+        ComboBoxItem socket = new ComboBoxItem("socketBinding", "Socket Binding") {
 
             private String errOrig;
 
@@ -84,6 +85,7 @@ public class NewConnectorWizard {
                 return parentValid && bindingValid;
             }
         };
+        socket.setValueMap(socketBindings);
 
 
 
