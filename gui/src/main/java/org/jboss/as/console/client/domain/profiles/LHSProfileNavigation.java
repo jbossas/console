@@ -71,24 +71,11 @@ class LHSProfileNavigation {
         subsystemLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_subsystems());
         navigation.addItem(subsystemLeaf);
 
-        /*subsystemSection = new SubsystemSection();
-        Widget subsysWidget = subsystemSection.asWidget();
-        stack.add(subsysWidget);*/
-
-        // -------- groups
-
-
-        /*DisclosurePanel groupsPanel = new DisclosureStackPanel(
-                Console.CONSTANTS.common_label_serverGroups()).asWidget();
-        LHSNavTree groupsTree = new LHSNavTree("profiles");
-        groupsPanel.setContent(groupsTree);    */
-
         groupsLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverGroups());
         navigation.addItem(groupsLeaf);
 
         LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
         groupsLeaf.addItem(groupItem);
-        //stack.add(groupsPanel);
 
 
         // --------
