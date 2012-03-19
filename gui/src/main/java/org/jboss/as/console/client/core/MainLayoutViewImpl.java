@@ -50,6 +50,10 @@ public class MainLayoutViewImpl extends ViewImpl
         mainContentPanel = new LayoutPanel();
         mainContentPanel.setStyleName("main-content-panel");
 
+        // see http://www.w3.org/TR/wai-aria/states_and_properties#aria-live
+        mainContentPanel.getElement().setAttribute("aria-live", "assertive");
+
+
         headerPanel = new LayoutPanel();
         headerPanel.setStyleName("header-panel");
 
