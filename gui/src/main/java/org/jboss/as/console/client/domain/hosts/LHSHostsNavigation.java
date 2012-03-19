@@ -29,7 +29,6 @@ import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
-import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +60,6 @@ class LHSHostsNavigation {
 
         // --------
 
-       // VerticalPanel innerlayout = new VerticalPanel();
-        //innerlayout.setStyleName("fill-layout-width");
-
         hostSelector = new HostSelector();
         stack.add(hostSelector.asWidget());
 
@@ -73,12 +69,6 @@ class LHSHostsNavigation {
 
         LHSTreeSection hostLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverConfigs());
         navigation.addItem(hostLeaf);
-
-        //DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs(), true).asWidget();
-        //hostPanel.setContent(innerlayout);
-
-        //hostTree = new LHSNavTree("hosts");
-        //innerlayout.add(hostTree);
 
         LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
         //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");

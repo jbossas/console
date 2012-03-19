@@ -181,7 +181,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
     protected void onReset() {
         super.onReset();
 
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+        /*Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
                 getEventBus().fireEvent(
@@ -189,7 +189,7 @@ public class StandaloneServerPresenter extends Presenter<StandaloneServerPresent
 
                 );
             }
-        });
+        }); */
 
         loadConfig();
 
