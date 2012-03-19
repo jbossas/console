@@ -24,8 +24,14 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingLevelProducer.Lo
 import org.jboss.as.console.client.shared.subsys.logging.model.PeriodicRotatingFileHandler;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.FormMetaData;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 /**
  * Subview for PeriodicRotatingFileHandler.
@@ -33,6 +39,31 @@ import org.jboss.ballroom.client.widgets.forms.FormAdapter;
  * @author Stan Silvert ssilvert@redhat.com (C) 2011 Red Hat Inc.
  */
 public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<PeriodicRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
+	
+    TextBoxItem suffix = new TextBoxItem("suffix", "Suffix")
+    {
+    	@Override
+    	public boolean validate(String value) {
+    		boolean validation = true;
+    		try {
+    	        final DateTimeFormat format = DateTimeFormat.getFormat(value);
+    	        final int len = value.length();
+    	        for (int i = 0; i < len; i ++) {
+    	            switch (value.charAt(i)) {
+    	                case 's':
+    	                case 'S': throw new IllegalArgumentException("Rotating by second or millisecond is not supported");
+    	            }
+    	        }
+    			
+    		} catch (IllegalArgumentException ex) {
+    	        this.setErroneous(true);
+    	        this.setErrMessage(ex.getLocalizedMessage());
+    	        validation = false;
+    		}
+    		return super.validate(value) && validation;
+    	}
+    };
+	
 
     public PeriodicRotatingFileHandlerSubview(ApplicationMetaData applicationMetaData,
                               DispatchAsync dispatcher,
@@ -58,7 +89,39 @@ public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<P
                        levelItemForAdd,
                        formMetaData.findAttribute("filePath").getFormItemForAdd(),
                        formMetaData.findAttribute("fileRelativeTo").getFormItemForAdd(),
-                       formMetaData.findAttribute("suffix").getFormItemForAdd());
+//                       formMetaData.findAttribute("suffix").getFormItemForAdd());
+                       new FormItem[]{(FormItem<String>)suffix});
+        return form;
+    }
+    
+    @Override
+    protected FormAdapter<PeriodicRotatingFileHandler> makeEditEntityDetailsForm() {
+        Form<PeriodicRotatingFileHandler> form = new Form(type);
+        form.setNumColumns(2);
+        FormMetaData attributes = getFormMetaData();
+
+        // add base items to form
+        FormItem[][] items = new FormItem[attributes.getBaseAttributes().size()][];
+        int i=0;
+        for (PropertyBinding attrib : attributes.getBaseAttributes()) {
+        	if(attrib.getDetypedName().equals("suffix")){
+        		items[i++] = new FormItem[]{(FormItem<String>)suffix};
+   				continue;
+        	}
+            items[i++] = attrib.getFormItemForEdit(this);
+        }
+        form.setFields(items);
+
+        // add grouped items to form
+        for (String subgroup : attributes.getGroupNames()) {
+            FormItem[][] groupItems = new FormItem[attributes.getGroupedAttribtes(subgroup).size()][];
+            int j=0;
+            for (PropertyBinding attrib : attributes.getGroupedAttribtes(subgroup)) {
+                groupItems[j++] = attrib.getFormItemForEdit(this);
+            }
+            form.setFieldsInGroup(subgroup, groupItems);
+        }
+
         return form;
     }
 }
