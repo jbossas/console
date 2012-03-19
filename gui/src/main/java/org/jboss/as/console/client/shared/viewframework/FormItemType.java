@@ -20,6 +20,7 @@ package org.jboss.as.console.client.shared.viewframework;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ListEditorFormItem;
@@ -41,6 +42,7 @@ public enum FormItemType {
 
     TEXT(new TextItemFactory()),
     TEXT_BOX(new TextBoxItemFactory()),
+    JNDI_NAME(new JndiNameItemFactory()),
     FREE_FORM_TEXT_BOX(new FreeFormTextBoxItemFactory()),
     BYTE_UNIT(new ByteUnitItemFactory()),
     CHECK_BOX(new CheckBoxItemFactory()),
@@ -86,7 +88,16 @@ public enum FormItemType {
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
         }
     }
-    
+
+    public static class JndiNameItemFactory implements FormItemFactory {
+        @Override
+        public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
+            JndiNameItem jndiNameItem = new JndiNameItem(propBinding.getJavaName(), propBinding.getLabel());
+            jndiNameItem.setRequired(propBinding.isRequired());
+            return new ObservableFormItem[] {new ObservableFormItem(propBinding, jndiNameItem, observers)};
+        }
+    }
+
     /**
      * Unvalidated except for the required flag.
      */
@@ -97,7 +108,7 @@ public enum FormItemType {
             textBoxItem.setRequired(propBinding.isRequired());
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, textBoxItem, observers)};
         }
-        
+
         private static class FreeFormTextBoxItem extends TextBoxItem {
             public FreeFormTextBoxItem(String name, String title) {
                 super(name, title);
@@ -173,13 +184,13 @@ public enum FormItemType {
         public ObservableFormItem[] makeFormItem(PropertyBinding propBinding, FormItemObserver... observers) {
             ComboBoxItem comboBoxItem = new ComboBoxItem(propBinding.getJavaName(), propBinding.getLabel());
             comboBoxItem.setRequired(propBinding.isRequired());
-            
+
             if (values == null) {
                 comboBoxItem.setValueMap(propBinding.getAcceptedValues());
             } else {
                 comboBoxItem.setValueMap(values);
             }
-            
+
             return new ObservableFormItem[] {new ObservableFormItem(propBinding, comboBoxItem, observers)};
         }
     }
@@ -241,7 +252,7 @@ public enum FormItemType {
         }
 
     }
-    
+
     public static class StringListEditorItemFactory implements FormItemFactory {
         private int rows;
         private boolean limitChoices;
