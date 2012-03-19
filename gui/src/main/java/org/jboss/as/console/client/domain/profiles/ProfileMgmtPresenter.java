@@ -34,6 +34,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -63,6 +64,7 @@ public class ProfileMgmtPresenter
     private CurrentProfileSelection profileSelection;
 
     private String lastPlace;
+    private BootstrapContext bootstrap;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -85,7 +87,7 @@ public class ProfileMgmtPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             SubsystemStore subsysStore,
             ServerGroupStore serverGroupStore,
-            CurrentProfileSelection currentProfileSelection) {
+            CurrentProfileSelection currentProfileSelection, BootstrapContext bootstrap) {
 
         super(eventBus, view, proxy);
 
@@ -93,6 +95,7 @@ public class ProfileMgmtPresenter
         this.profileStore = profileStore;
         this.subsysStore = subsysStore;
         this.profileSelection = currentProfileSelection;
+        this.bootstrap = bootstrap;
     }
 
 
