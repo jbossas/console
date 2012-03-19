@@ -13,9 +13,9 @@ button:focus {
 }
 
 
-.semantic {
+.offscreen {
     position: absolute;
-    left: -9999px;
+    left: -999em;
     top: 0;
     height: 1px;
     width: 1px;
