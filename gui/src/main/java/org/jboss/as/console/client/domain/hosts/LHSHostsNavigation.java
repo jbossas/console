@@ -67,7 +67,7 @@ class LHSHostsNavigation {
         hostSelector = new HostSelector();
         stack.add(hostSelector.asWidget());
 
-        navigation = new LHSNavTree("profiles");
+        navigation = new LHSNavTree("hosts");
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
 
