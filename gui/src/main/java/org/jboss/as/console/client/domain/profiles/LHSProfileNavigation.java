@@ -19,18 +19,17 @@
 
 package org.jboss.as.console.client.domain.profiles;
 
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.ProfileRecord;
-import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.shared.subsys.SubsystemTreeBuilder;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
-import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +44,13 @@ class LHSProfileNavigation {
 
     private VerticalPanel layout;
     private VerticalPanel stack;
-    private SubsystemSection subsystemSection;
+
     private ScrollPanel scroll;
+    private LHSNavTree navigation;
+    private LHSTreeSection subsystemLeaf;
+    private LHSTreeSection groupsLeaf;
+    private LHSTreeSection commonLeaf;
+    private ProfileSelector profileSelector;
 
     public LHSProfileNavigation() {
 
@@ -56,27 +60,53 @@ class LHSProfileNavigation {
         stack = new VerticalPanel();
         stack.setStyleName("fill-layout-width");
 
-        subsystemSection = new SubsystemSection();
+
+        profileSelector = new ProfileSelector();
+        Widget selectorWidget = profileSelector.asWidget();
+        stack.add(selectorWidget);
+
+        navigation = new LHSNavTree("profiles");
+        navigation.getElement().setAttribute("aria-label", "Profile Tasks");
+
+        subsystemLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_subsystems());
+        navigation.addItem(subsystemLeaf);
+
+        /*subsystemSection = new SubsystemSection();
         Widget subsysWidget = subsystemSection.asWidget();
-        stack.add(subsysWidget);
+        stack.add(subsysWidget);*/
 
         // -------- groups
 
 
-        DisclosurePanel groupsPanel = new DisclosureStackPanel(
+        /*DisclosurePanel groupsPanel = new DisclosureStackPanel(
                 Console.CONSTANTS.common_label_serverGroups()).asWidget();
         LHSNavTree groupsTree = new LHSNavTree("profiles");
-        groupsPanel.setContent(groupsTree);
+        groupsPanel.setContent(groupsTree);    */
+
+        groupsLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverGroups());
+        navigation.addItem(groupsLeaf);
 
         LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
-        groupsTree.addItem(groupItem);
-        stack.add(groupsPanel);
+        groupsLeaf.addItem(groupItem);
+        //stack.add(groupsPanel);
 
 
         // --------
 
-        CommonConfigSection commonSection = new CommonConfigSection();
-        stack.add(commonSection.asWidget());
+        commonLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_generalConfig());
+        navigation.addItem(commonLeaf);
+
+        LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), NameTokens.InterfacePresenter);
+        LHSNavTreeItem sockets = new LHSNavTreeItem(Console.CONSTANTS.common_label_socketBinding(), NameTokens.SocketBindingPresenter);
+        LHSNavTreeItem properties = new LHSNavTreeItem(Console.CONSTANTS.common_label_systemProperties(), NameTokens.PropertiesPresenter);
+
+        commonLeaf.addItem(interfaces);
+        commonLeaf.addItem(sockets);
+        commonLeaf.addItem(properties);
+
+        navigation.expandTopLevel();
+
+        stack.add(navigation);
 
         layout.add(stack);
 
@@ -90,7 +120,11 @@ class LHSProfileNavigation {
 
     public void updateSubsystems(List<SubsystemRecord> subsystems) {
 
-        subsystemSection.updateSubsystems(subsystems);
+        //subsystemSection.updateSubsystems(subsystems);
+
+        subsystemLeaf.removeItems();
+
+        SubsystemTreeBuilder.build(subsystemLeaf, subsystems);
     }
 
 
@@ -102,7 +136,7 @@ class LHSProfileNavigation {
             profileNames.add(p.getName());
         }
 
-        subsystemSection.setProfiles(profileNames);
+        profileSelector.setProfiles(profileNames);
 
     }
 }
