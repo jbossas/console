@@ -28,6 +28,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.Host;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.widgets.stack.DisclosureStackPanel;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ class LHSHostsNavigation {
 
     private HostSelector hostSelector;
     private ScrollPanel scroll;
+    private LHSNavTree navigation;
 
     public LHSHostsNavigation() {
 
@@ -59,17 +61,24 @@ class LHSHostsNavigation {
 
         // --------
 
-        VerticalPanel innerlayout = new VerticalPanel();
-        innerlayout.setStyleName("fill-layout-width");
+       // VerticalPanel innerlayout = new VerticalPanel();
+        //innerlayout.setStyleName("fill-layout-width");
 
         hostSelector = new HostSelector();
-        innerlayout.add(hostSelector.asWidget());
+        stack.add(hostSelector.asWidget());
 
-        DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs(), true).asWidget();
-        hostPanel.setContent(innerlayout);
+        navigation = new LHSNavTree("profiles");
+        navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
-        hostTree = new LHSNavTree("hosts");
-        innerlayout.add(hostTree);
+
+        LHSTreeSection hostLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverConfigs());
+        navigation.addItem(hostLeaf);
+
+        //DisclosurePanel hostPanel = new DisclosureStackPanel(Console.CONSTANTS.common_label_serverConfigs(), true).asWidget();
+        //hostPanel.setContent(innerlayout);
+
+        //hostTree = new LHSNavTree("hosts");
+        //innerlayout.add(hostTree);
 
         LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
         //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
@@ -77,12 +86,12 @@ class LHSHostsNavigation {
         LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "host-interfaces");
         LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host-properties");
 
-        hostTree.addItem(serversItem);
-        hostTree.addItem(jvms);
-        hostTree.addItem(interfaces);
-        hostTree.addItem(properties);
+        hostLeaf.addItem(serversItem);
+        hostLeaf.addItem(jvms);
+        hostLeaf.addItem(interfaces);
+        hostLeaf.addItem(properties);
 
-        stack.add(hostPanel);
+        stack.add(navigation);
 
         // --------
 
