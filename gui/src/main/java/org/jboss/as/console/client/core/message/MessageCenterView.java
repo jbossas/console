@@ -230,6 +230,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         messageButton.addClickHandler(clickHandler);
 
         messageDisplay = new HorizontalPanel();
+        messageDisplay.getElement().setAttribute("role", "alert");
 
         layout.add(messageDisplay);
         layout.add(messageButton);
