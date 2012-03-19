@@ -106,7 +106,9 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
     @Override
     protected void onReset() {
         super.onReset();
-        loadProperties();
+
+        if(currentHost.isSet())
+            loadProperties();
     }
 
     private void loadProperties() {

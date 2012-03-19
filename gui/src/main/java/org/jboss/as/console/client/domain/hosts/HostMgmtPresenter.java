@@ -99,6 +99,22 @@ public class HostMgmtPresenter
     protected void onReset() {
         super.onReset();
 
+        // first thing: update host data
+        hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
+            @Override
+            public void onSuccess(List<Host> hosts) {
+                if(!hostSelection.isSet())
+                    selectDefaultHost(hosts);
+                getView().updateHosts(hosts);
+
+
+                loadViews();
+            }
+        });
+
+    }
+
+    private void loadViews() {
         if(bootstrap.getInitialPlace()!=null)
         {
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -133,22 +149,6 @@ public class HostMgmtPresenter
             hasBeenRevealed = true;
 
         }
-
-        Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                hostInfoStore.getHosts(new SimpleCallback<List<Host>>() {
-                    @Override
-                    public void onSuccess(List<Host> hosts) {
-                        if(!hostSelection.isSet())
-                            selectDefaultHost(hosts);
-                        getView().updateHosts(hosts);
-                    }
-                });
-            }
-        });
-
-
     }
 
     private void selectDefaultHost(List<Host> hosts) {
