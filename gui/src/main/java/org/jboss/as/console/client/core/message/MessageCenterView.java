@@ -18,13 +18,16 @@
  */
 package org.jboss.as.console.client.core.message;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HTML;
@@ -44,6 +47,9 @@ import org.jboss.as.console.client.widgets.lists.DefaultCellList;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.jboss.ballroom.client.widgets.window.DialogueOptions;
+import org.jboss.ballroom.client.widgets.window.TrappedFocusPanel;
+import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 import java.util.List;
 
@@ -71,6 +77,12 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         public MessageListPopup()
         {
             super(true);
+
+
+            this.sinkEvents(Event.ONKEYDOWN);
+            this.sinkEvents(Event.MOUSEEVENTS);
+
+
 
             setStyleName("default-popup");
 
@@ -125,6 +137,17 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
                     reflectMessageCount();
                 }
             });
+
+        }
+
+        @Override
+        protected void onPreviewNativeEvent(Event.NativePreviewEvent event) {
+            if (Event.ONKEYDOWN == event.getTypeInt()) {
+                if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+                    // Dismiss when escape is pressed
+                    hide();
+                }
+            }
         }
 
         public CellList<Message> getMessageList() {
@@ -142,7 +165,8 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
         msg.setNew(false);
 
-        DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetailTitle());
+        final DefaultWindow window = new DefaultWindow(Console.CONSTANTS.common_label_messageDetailTitle());
+
         window.setWidth(480);
         window.setHeight(360);
         window.setGlassEnabled(true);
@@ -168,12 +192,45 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         html.appendHtmlConstant(detail);
         html.appendHtmlConstant("</pre>");
 
-        HTML widget = new HTML(html.toSafeHtml());
+        final HTML widget = new HTML(html.toSafeHtml());
         widget.getElement().setAttribute("style", "margin:5px");
 
-        ScrollPanel scroll = new ScrollPanel();
-        scroll.add(widget);
-        window.trapWidget(scroll);
+
+        DialogueOptions options = new DialogueOptions(
+                "OK",
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        window.hide();
+                    }
+                },
+                Console.CONSTANTS.common_label_cancel(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        window.hide();
+                    }
+                }
+        );
+
+        Widget windowContent = new WindowContentBuilder(widget, options).build();
+
+        TrappedFocusPanel trap = new TrappedFocusPanel(windowContent)
+        {
+            @Override
+            protected void onAttach() {
+                super.onAttach();
+
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        getFocus().onFirstButton();
+                    }
+                });
+            }
+        };
+
+        window.setWidget(trap);
 
         window.addCloseHandler(new CloseHandler<PopupPanel>() {
 
@@ -230,7 +287,9 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         messageButton.addClickHandler(clickHandler);
 
         messageDisplay = new HorizontalPanel();
-        messageDisplay.getElement().setAttribute("role", "alert");
+        messageDisplay.getElement().setAttribute("role", "log");
+        messageDisplay.getElement().setAttribute("aria-live", "polite");
+        messageDisplay.getElement().setAttribute("aria-atomic", "true");
 
         layout.add(messageDisplay);
         layout.add(messageButton);
