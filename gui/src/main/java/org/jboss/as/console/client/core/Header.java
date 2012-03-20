@@ -124,6 +124,7 @@ public class Header implements ValueChangeHandler<String> {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setStyleName("logo-section");
         panel.getElement().setAttribute("role", "presentation");
+        panel.getElement().setAttribute("aria-hidden", "true");
 
         Image logo = null;
 
