@@ -11,20 +11,35 @@
 button:focus {
     border: 2px solid orange;
 }
+   */
 
 
-.offscreen {
-    position: absolute;
-    left: -999em;
-    top: 0;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
+.cellListKeyboardSelectedItem {
+    border: 1px dotted #3F3F3F!important;
 }
 
-*/
 
+.default-cell-table .cellTableKeyboardSelectedRowCell {
 
+    border-top: 1px dotted #3F3F3F!important;
+    border-bottom: 1px dotted #3F3F3F!important;
+}
 
+.default-cell-table .cellTableKeyboardSelectedRow .cellTableFirstColumn{
+    border-left: 1px dotted #3F3F3F!important;
+}
 
+.default-cell-table .cellTableKeyboardSelectedRow .cellTableLastColumn{
+    border-right: 1px dotted #3F3F3F!important;
+}
+
+.gwt-TreeItem-selected {
+    border: 1px dotted #3F3F3F!important;
+}
+
+.lhs-tree-item-selected .gwt-TreeItem-selected {
+    border:none!important;
+}
+
+a:hover, a:active { outline: none; }
 
