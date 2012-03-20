@@ -60,3 +60,7 @@ a:hover, a:active { outline: none; }
     float:right;
     line-height:10px;
 }
+
+.help-attribute-descriptions {
+    padding-top:5px;
+}

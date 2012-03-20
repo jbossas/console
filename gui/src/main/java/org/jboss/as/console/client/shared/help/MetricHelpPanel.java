@@ -1,5 +1,7 @@
 package org.jboss.as.console.client.shared.help;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
+import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
 /**
@@ -39,12 +42,17 @@ public class MetricHelpPanel {
 
     public Widget asWidget()
     {
-        ImageResource helpIcon = Icons.INSTANCE.help();
-        helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
+        InlineLink header = new InlineLink (Console.CONSTANTS.help_need_help());
+        header.addStyleName("help-panel-header");
+        header.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                helpPanel.setOpen(!helpPanel.isOpen());
+            }
+        });
 
+        helpPanel = new DisclosurePanel(header);
         helpPanel.addStyleName( isAligned ? "help-panel-aligned" : "help-panel");
-
-        helpPanel.getHeader().getElement().setAttribute("style", "float:right");
 
         final String popupStyle = isAligned ? "help-panel-aligned-open" : "help-panel-open";
 
@@ -53,6 +61,7 @@ public class MetricHelpPanel {
             @Override
             public void onOpen(OpenEvent<DisclosurePanel> event) {
                 event.getTarget().addStyleName(popupStyle);
+                helpPanel.getHeaderTextAccessor().setText(Console.CONSTANTS.help_close_help());
                 buildAttributeHelp();
             }
         });
@@ -61,6 +70,7 @@ public class MetricHelpPanel {
             @Override
             public void onClose(CloseEvent<DisclosurePanel> event) {
                 event.getTarget().removeStyleName(popupStyle);
+                helpPanel.getHeaderTextAccessor().setText(Console.CONSTANTS.help_need_help());
             }
         });
 
