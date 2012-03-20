@@ -40,7 +40,7 @@ public class DataSourceMetrics {
     private CellTable<DataSource> table;
     private ListDataProvider<DataSource> dataProvider;
     private Sampler poolSampler;
-    private PlainColumnView cacheSampler;
+    private Sampler cacheSampler;
     private boolean isXA;
 
     public DataSourceMetrics(DataSourceMetricPresenter presenter, boolean isXA) {
@@ -117,9 +117,6 @@ public class DataSourceMetrics {
                 address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "datasources");
                 address.get(ModelDescriptionConstants.ADDRESS).add(subaddress, getCurrentSelection().getName());
                 address.get(ModelDescriptionConstants.ADDRESS).add("statistics", "pool");
-
-                System.out.println(address);
-
                 return address;
             }
         };
@@ -163,9 +160,6 @@ public class DataSourceMetrics {
                 address.get(ModelDescriptionConstants.ADDRESS).add("subsystem", "datasources");
                 address.get(ModelDescriptionConstants.ADDRESS).add(subaddress, getCurrentSelection().getName());
                 address.get(ModelDescriptionConstants.ADDRESS).add("statistics", "jdbc");
-
-                System.out.println(address);
-
                 return address;
             }
         };
