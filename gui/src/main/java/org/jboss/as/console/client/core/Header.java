@@ -158,6 +158,7 @@ public class Header implements ValueChangeHandler<String> {
         linksPane = new HTMLPanel(createLinks());
         linksPane.getElement().setId("header-links-section");
         linksPane.getElement().setAttribute("role", "menubar");
+        linksPane.getElement().setAttribute("aria-controls", "main-content-area");
 
         String[][] sections = bootstrap.getProperty(BootstrapContext.STANDALONE).equals("true") ?
                 SECTIONS_STANADLONE : SECTIONS;
