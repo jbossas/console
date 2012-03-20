@@ -46,11 +46,19 @@ public class DeploymentCommandCell extends ActionCell<DeploymentRecord> {
 
     @Override
     public void render(Context context, DeploymentRecord record, SafeHtmlBuilder sb) {
-        SafeHtml html = new SafeHtmlBuilder().appendHtmlConstant("<button class='celltable-button' type=\"button\" tabindex=\"-1\">")
+        /*SafeHtml html = new SafeHtmlBuilder().appendHtmlConstant("<button class='celltable-button' type=\"button\" tabindex=\"-1\">")
                                              .appendHtmlConstant(this.command.getLabel(record))
                                              .appendHtmlConstant("</button>")
                                              .toSafeHtml();
-        
+          */
+
+         SafeHtml html = new SafeHtmlBuilder()
+                .appendHtmlConstant("<a href='javascript:void(0)' tabindex=\"-1\" class='textlink-cell'>")
+                .appendHtmlConstant(this.command.getLabel(record))
+                .appendHtmlConstant("</a>")
+                .toSafeHtml();
+
+
         sb.append(html);
     }
     

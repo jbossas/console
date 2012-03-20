@@ -206,6 +206,10 @@ body {
     font-size: 11px;
 }
 
+.textlink-cell:hover {
+    text-decoration: underline;
+}
+
 .content-description {
 
     margin-top: 0px;

@@ -13,7 +13,6 @@ button:focus {
 }
    */
 
-
 .cellListKeyboardSelectedItem {
     border: 1px dotted #3F3F3F!important;
 }
@@ -45,8 +44,8 @@ a:hover, a:active { outline: none; }
 
 
 
-.inline-link {
-    text-decoration: none;
+.inline-link:hover {
+    text-decoration: underline;
 }
 
 .help-panel {
@@ -63,4 +62,9 @@ a:hover, a:active { outline: none; }
 
 .help-attribute-descriptions {
     padding-top:5px;
+}
+
+
+.tree-section:focus {
+    outline: 0px;
 }
