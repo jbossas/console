@@ -62,6 +62,7 @@ public class LHSStandaloneNavigation {
 
         navigation = new LHSNavTree("profiles");
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
+        //navigation.getElement().setAttribute("aria-controls", "rhs-content-area");
 
         serverLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_profile(), true);
         navigation.addItem(serverLeaf);

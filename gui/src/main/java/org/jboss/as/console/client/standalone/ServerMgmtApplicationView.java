@@ -54,6 +54,8 @@ public class ServerMgmtApplicationView extends ViewImpl
 
         contentCanvas = new LayoutPanel();
         contentCanvas.getElement().setAttribute("role", "main");
+        //contentCanvas.getElement().setId("rhs-content-area");
+
         lhsNavigation = new LHSStandaloneNavigation();
 
         Widget nav = lhsNavigation.asWidget();
