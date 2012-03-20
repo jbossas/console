@@ -43,3 +43,20 @@ button:focus {
 
 a:hover, a:active { outline: none; }
 
+
+
+.inline-link {
+    text-decoration: none;
+}
+
+.help-panel {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.help-panel-header {
+    text-decoration: underline;
+    font-size:10px;
+    float:right;
+    line-height:10px;
+}

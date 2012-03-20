@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.shared.help;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 import org.jboss.dmr.client.ModelNode;
@@ -41,11 +44,21 @@ public class FormHelpPanel {
 
     public Widget asWidget()
     {
-        ImageResource helpIcon = Icons.INSTANCE.help();
-        helpPanel = new DisclosurePanel(helpIcon, helpIcon, "");
+        //ImageResource helpIcon = Icons.INSTANCE.noIcon();
+        //helpPanel = new DisclosurePanel(helpIcon, helpIcon, "[help]");
+
+        InlineLink header = new InlineLink (Console.CONSTANTS.help_need_help());
+        header.addStyleName("help-panel-header");
+        header.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                helpPanel.setOpen(!helpPanel.isOpen());
+            }
+        });
+
+        helpPanel = new DisclosurePanel(header);
 
         helpPanel.addStyleName( isAligned ? "help-panel-aligned" : "help-panel");
-        helpPanel.getHeader().getElement().setAttribute("style", "float:right");
 
         final String popupStyle = isAligned ? "help-panel-aligned-open" : "help-panel-open";
 
@@ -54,6 +67,7 @@ public class FormHelpPanel {
             @Override
             public void onOpen(OpenEvent<DisclosurePanel> event) {
                 event.getTarget().addStyleName(popupStyle);
+                helpPanel.getHeaderTextAccessor().setText(Console.CONSTANTS.help_close_help());
                 buildAttributeHelp();
             }
         });
@@ -61,6 +75,7 @@ public class FormHelpPanel {
         helpPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
             @Override
             public void onClose(CloseEvent<DisclosurePanel> event) {
+                helpPanel.getHeaderTextAccessor().setText(Console.CONSTANTS.help_need_help());
                 event.getTarget().removeStyleName(popupStyle);
             }
         });
