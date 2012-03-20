@@ -183,7 +183,7 @@ public class InterfaceEditor {
                 linkLocalAddress, multicast, p2p
         );
 
-        FormToolStrip<Interface> toolstrip = new FormToolStrip<Interface>(
+        final FormToolStrip<Interface> toolstrip = new FormToolStrip<Interface>(
                 form,
                 new FormToolStrip.FormCallback<Interface>() {
                     @Override
@@ -255,6 +255,7 @@ public class InterfaceEditor {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 errorMessages.setHTML("");
+                toolstrip.doCancel();
             }
         });
 
