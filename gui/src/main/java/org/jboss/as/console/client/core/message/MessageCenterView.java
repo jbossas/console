@@ -157,7 +157,7 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         }
 
         public void focusOnFirstMessage() {
-            messageList.getElement().focus();
+            messageList.setFocus(true);
         }
     }
 
