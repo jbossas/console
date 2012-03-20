@@ -202,6 +202,10 @@ body {
     background-position-right:0px 50%;
 }
 
+.textlink-cell {
+    font-size: 11px;
+}
+
 .content-description {
 
     margin-top: 0px;
