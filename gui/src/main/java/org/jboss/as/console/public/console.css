@@ -403,3 +403,12 @@ body {
 .footer-link:hover {
     text-decoration:underline;
 }
+
+.semantic {
+    position: absolute;
+    left: -999em;
+    top: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
