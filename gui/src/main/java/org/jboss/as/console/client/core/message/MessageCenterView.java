@@ -27,6 +27,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -35,7 +36,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -78,11 +78,11 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         {
             super(true);
 
+            getElement().setAttribute("role", "alert");
+            getElement().setAttribute("aria-live", "assertive");
 
             this.sinkEvents(Event.ONKEYDOWN);
             this.sinkEvents(Event.MOUSEEVENTS);
-
-
 
             setStyleName("default-popup");
 
@@ -93,8 +93,10 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
             MessageCell messageCell = new MessageCell();
             messageList = new DefaultCellList<Message>(messageCell);
+            messageList.setTabIndex(-1);
             messageList.addStyleName("message-list");
             messageList.setEmptyListWidget(new HTML(emptyMessage.toSafeHtml()));
+            messageList.setKeyboardSelectionPolicy(HasKeyboardSelectionPolicy.KeyboardSelectionPolicy.ENABLED);
 
             final SingleSelectionModel<Message> selectionModel = new SingleSelectionModel<Message>();
             messageList.setSelectionModel(selectionModel);
@@ -152,6 +154,10 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
         public CellList<Message> getMessageList() {
             return messageList;
+        }
+
+        public void focusOnFirstMessage() {
+            messageList.getElement().focus();
         }
     }
 
@@ -247,15 +253,6 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
 
     public Widget asWidget()
     {
-        /*LayoutPanel layout = new LayoutPanel()
-        {
-            @Override
-            public void onResize() {
-                super.onResize();
-                MessageListPopup popup = getMessagePopup();
-                if(popup!=null) popup.hide();
-            }
-        };*/
 
         HorizontalPanel layout = new HorizontalPanel();
         layout.getElement().setAttribute("style", "width:100%;padding-top:5px;");
@@ -278,6 +275,13 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
                 );
 
                 messagePopup.show();
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        messagePopup.focusOnFirstMessage();
+                    }
+                });
+
 
                 messagePopup.setWidth(width+"px");
                 messagePopup.setHeight(height+"px");
