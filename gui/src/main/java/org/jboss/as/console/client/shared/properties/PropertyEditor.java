@@ -35,6 +35,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.StaticHelpPanel;
 import org.jboss.as.console.client.widgets.tables.ButtonCell;
+import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultEditTextCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
@@ -207,7 +208,7 @@ public class PropertyEditor {
 
 
         Column<PropertyRecord, PropertyRecord> removeCol = new Column<PropertyRecord, PropertyRecord>(
-                new ButtonCell<PropertyRecord>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<PropertyRecord>() {
+                new TextLinkCell<PropertyRecord>(Console.CONSTANTS.common_label_delete(), new ActionCell.Delegate<PropertyRecord>() {
                     @Override
                     public void execute(final PropertyRecord o) {
 

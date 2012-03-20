@@ -20,7 +20,7 @@ public class TextLinkCell<T> extends ActionCell<T> {
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
         SafeHtml html = new SafeHtmlBuilder()
-                .appendHtmlConstant("<a href='javascript:void(0)' tabindex=\"-1\">")
+                .appendHtmlConstant("<a href='javascript:void(0)' tabindex=\"-1\" class='textlink-cell'>")
                 .appendHtmlConstant(title)
                 .appendHtmlConstant("</a>")
                 .toSafeHtml();
