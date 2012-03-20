@@ -621,4 +621,8 @@ public interface UIConstants extends Constants {
     String subsys_modcluster_desc();
 
     String subsys_jca_err_prop_required();
+
+    String help_need_help();
+
+    String help_close_help();
 }
