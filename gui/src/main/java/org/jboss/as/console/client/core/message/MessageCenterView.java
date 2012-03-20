@@ -187,14 +187,14 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
         html.appendHtmlConstant(prototype.getHTML());
         html.appendHtmlConstant("&nbsp;");
         html.appendHtmlConstant(msg.getFired().toString());
-        html.appendHtmlConstant("<h3>");
+        html.appendHtmlConstant("<h3 id='consise-message'>");
         html.appendHtmlConstant(msg.getConciseMessage());
         html.appendHtmlConstant("</h3>");
         html.appendHtmlConstant("<p/>");
 
         String detail = msg.getDetailedMessage() != null ? msg.getDetailedMessage() : "";
 
-        html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;'>");
+        html.appendHtmlConstant("<pre style='font-family:tahoma, verdana, sans-serif;' id='detail-message'>");
         html.appendHtmlConstant(detail);
         html.appendHtmlConstant("</pre>");
 
@@ -218,6 +218,8 @@ public class MessageCenterView implements MessageCenter.MessageListener, ReloadE
                     }
                 }
         );
+
+        options.getSubmit().setAttribute("aria-describedby", "consise-message detail-message");
 
         Widget windowContent = new WindowContentBuilder(widget, options).build();
 
