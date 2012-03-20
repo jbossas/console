@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.ballroom.client.widgets.InlineLink;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +35,8 @@ public class LinkBar {
 
     public void addLink(String text, ClickHandler handler) {
 
-        HTML html = new HTML();
-        html.setHTML("<a href='javascript:void(0)'>"+text+"</a>");
+        InlineLink html = new InlineLink(text);
+        //html.setHTML("<a href='javascript:void(0)' tabindex='0'>"+text+"</a>");
 
         html.addClickHandler(handler);
         html.addStyleName("link-bar");
