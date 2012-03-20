@@ -41,7 +41,7 @@ import org.jboss.as.console.client.shared.viewframework.EntityToDmrBridgeImpl;
 import org.jboss.as.console.client.shared.viewframework.FrameworkButton;
 import org.jboss.as.console.client.shared.viewframework.FrameworkView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.client.widgets.tables.ButtonCell;
+import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormAdapter;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -190,7 +190,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
                 return record;
             }
         };
-        ButtonCell<OSGiBundle> startCell = new ButtonCell<OSGiBundle>(Console.CONSTANTS.common_label_start(), new ActionCell.Delegate<OSGiBundle>() {
+        TextLinkCell<OSGiBundle> startCell = new TextLinkCell<OSGiBundle>(Console.CONSTANTS.common_label_start()+"&nbsp;&nbsp;", new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {
@@ -201,7 +201,7 @@ public class BundleRuntimeView extends AbstractEntityView<OSGiBundle> implements
             }
         });
 
-        final ButtonCell<OSGiBundle> stopCell = new ButtonCell<OSGiBundle>(Console.CONSTANTS.common_label_stop(), new ActionCell.Delegate<OSGiBundle>() {
+        final TextLinkCell<OSGiBundle> stopCell = new TextLinkCell<OSGiBundle>(Console.CONSTANTS.common_label_stop(), new ActionCell.Delegate<OSGiBundle>() {
             @Override
             public void execute(OSGiBundle bundle) {
                 if ("fragment".equals(bundle.getType())) {
