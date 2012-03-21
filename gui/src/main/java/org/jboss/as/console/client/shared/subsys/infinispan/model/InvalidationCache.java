@@ -124,7 +124,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if locking
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="locking/has-locking", skip=true)
+    @Binding(detypedName="locking/has-locking")
     @FormItem(defaultValue="false",
             label="Is locking defined?",
             required=false,
@@ -189,7 +189,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if transaction
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="transaction/has-transaction", skip=true)
+    @Binding(detypedName="transaction/has-transaction")
     @FormItem(defaultValue="false",
             label="Is transaction defined?",
             required=false,
@@ -243,7 +243,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if eviction
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="eviction/has-eviction", skip=true)
+    @Binding(detypedName="eviction/has-eviction")
     @FormItem(defaultValue="false",
             label="Is eviction defined?",
             required=false,
@@ -284,7 +284,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if expiration
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="expiration/has-expiration", skip=true)
+    @Binding(detypedName="expiration/has-expiration")
     @FormItem(defaultValue="false",
             label="Is expiration defined?",
             required=false,
@@ -336,7 +336,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if store
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="store/has-store", skip=true)
+    @Binding(detypedName="store/has-store")
     @FormItem(defaultValue="false",
             label="Is store defined?",
             required=false,
@@ -450,7 +450,7 @@ public interface InvalidationCache extends LocalCache {
     // Not part of detyped model.  This is a flag to tell us if file-store
     // singleton needs to be added to or removed from the model.
     @Override
-    @Binding(detypedName="file-store/has-file-store", skip=true)
+    @Binding(detypedName="file-store/has-file-store")
     @FormItem(defaultValue="false",
              label="Is file store defined?",
              required=false,
@@ -550,7 +550,7 @@ public interface InvalidationCache extends LocalCache {
    // Not part of detyped model.  This is a flag to tell us if jdbc-store
    // singleton needs to be added to or removed from the model.
    @Override
-   @Binding(detypedName="jdbc-store/has-jdbc-store", skip=true)
+   @Binding(detypedName="jdbc-store/has-jdbc-store")
    @FormItem(defaultValue="false",
             label="Is JDBC store defined?",
             required=false,
@@ -663,7 +663,7 @@ public interface InvalidationCache extends LocalCache {
      // Not part of detyped model.  This is a flag to tell us if remote-store
      // singleton needs to be added to or removed from the model.
      @Override
-     @Binding(detypedName="remote-store/has-remote-store", skip=true)
+     @Binding(detypedName="remote-store/has-remote-store")
      @FormItem(defaultValue="false",
               label="Is remote store defined?",
               required=false,
