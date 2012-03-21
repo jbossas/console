@@ -149,7 +149,7 @@ public class EntityEditor<T> implements EntityListView<T> {
         dataProvider = new ListDataProvider<T>();
         dataProvider.addDataDisplay(table);
 
-        if(customTools!=null)
+        if(customTools!=null && customTools.hasButtons())
         {
              panel.add(customTools);
         }
