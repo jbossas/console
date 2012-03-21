@@ -130,8 +130,6 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
     @Override
     public Widget createWidget() {
 
-        System.out.println(">> 1");
-
         LayoutPanel layout = new LayoutPanel();
 
         // Top Most Tab
