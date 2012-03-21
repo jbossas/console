@@ -174,34 +174,47 @@ public class SocketBinding {
    }
    
    public void loadSocketBindingGroupForSelectedProfile(final AsyncCallback<List<String>> callback) {
-       this.loadServerGroupNames(new SimpleCallback<List<String>>() {
-           @Override
-           public void onSuccess(final List<String> groupNames) {
-        	   sgbBind = new HashMap<String,String>(); 
-               for(final String groupName : groupNames){
-        	       getSocketBindingGroupForServerGroup(groupName, new SimpleCallback<String[]>() {
-        	           @Override
-        	           public void onSuccess(String[] result) {
-        	        	   sgbBind.put(result[0], result[1]);
-        	        	   if(sync(groupNames.size())){
-        	        		   loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+	   final String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
+	   if(selectedProfile != null){
+	       this.loadServerGroupNames(new SimpleCallback<List<String>>() {
+	           @Override
+	           public void onSuccess(final List<String> groupNames) {
+	        	   sgbBind = new HashMap<String,String>(); 
+	               for(final String groupName : groupNames){
+	        	       getSocketBindingGroupForServerGroup(groupName, new SimpleCallback<String[]>() {
+	        	           @Override
+	        	           public void onSuccess(String[] result) {
+	        	        	   sgbBind.put(result[0], result[1]);
+	        	        	   if(sync(groupNames.size())){
+	        	        		   loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
 
-								@Override
-								public void onSuccess(List<String> result) {
-									callback.onSuccess(result);
-								}
-        	        			   
-        	        		   });
-        	        	   }
-        	           }
-        	           @Override
-        		        public void onFailure(Throwable caught) {
-        		        	super.onFailure(caught);
-        		        }
-        	       });
-               }
-           }
-       });
+									@Override
+									public void onSuccess(List<String> result) {
+										callback.onSuccess(result);
+									}
+	        	        			   
+	        	        		   });
+	        	        	   }
+	        	           }
+	        	           @Override
+	        		        public void onFailure(Throwable caught) {
+	        		        	super.onFailure(caught);
+	        		        }
+	        	       });
+	               }
+	           }
+	       });
+	   }
+	   else{
+		   loadSocketBindingGroupForName(finalSGB,new SimpleCallback<List<String>>() {
+
+				@Override
+				public void onSuccess(List<String> result) {
+					callback.onSuccess(result);
+				}
+   			   
+   		   });
+	   }
    }
    
    private String sanitizeProperty(String value){

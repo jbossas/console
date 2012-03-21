@@ -38,7 +38,9 @@ public class LoadConnectorCmd implements AsyncCommand<List<HttpConnector>>{
         ModelNode operation = new ModelNode();
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
         String selectedProfile = Console.MODULES.getCurrentSelectedProfile().getName();
-        operation.get(ADDRESS).add("profile", selectedProfile);
+        if(selectedProfile != null){
+        	operation.get(ADDRESS).add("profile", selectedProfile);
+        }
         operation.get(ADDRESS).add("subsystem", "web");
         operation.get(CHILD_TYPE).set("connector");
         operation.get(RECURSIVE).set(Boolean.TRUE);
