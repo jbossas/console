@@ -61,6 +61,7 @@ public class EntityEditor<T> implements EntityListView<T> {
 
     private boolean includeTools = true;
     private FrameworkPresenter presenter;
+    private ToolStrip customTools = null;
 
     /**
      * Create a new Entity.
@@ -148,7 +149,11 @@ public class EntityEditor<T> implements EntityListView<T> {
         dataProvider = new ListDataProvider<T>();
         dataProvider.addDataDisplay(table);
 
-        if(includeTools)
+        if(customTools!=null)
+        {
+             panel.add(customTools);
+        }
+        else if(includeTools)
         {
             toolStrip = createTools();
             if(toolStrip.hasButtons())
@@ -256,5 +261,9 @@ public class EntityEditor<T> implements EntityListView<T> {
 
     public void setEditingEnabled(boolean isEnabled) {
         this.details.setEditingEnabled(isEnabled);
+    }
+
+    public void setTools(ToolStrip toolStrip) {
+        this.customTools = toolStrip;
     }
 }

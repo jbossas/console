@@ -130,6 +130,8 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
     @Override
     public Widget createWidget() {
 
+        System.out.println(">> 1");
+
         LayoutPanel layout = new LayoutPanel();
 
         // Top Most Tab
@@ -144,8 +146,9 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
 
         entityEditor = makeEntityEditor();
         entityEditor.setDescription(description);
+        entityEditor.setTools(createToolStrip());
 
-        Widget editorWidget = entityEditor.setIncludeTools(true).asWidget();
+        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 
         /*ToolStrip tools = createToolStrip();
@@ -189,8 +192,9 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
 
         entityEditor = makeEntityEditor();
         entityEditor.setDescription(description);
+        entityEditor.setTools(createToolStrip());
 
-        Widget editorWidget = entityEditor.setIncludeTools(true).asWidget();
+        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
         panel.add(editorWidget);
 
         /*ToolStrip tools = createToolStrip();

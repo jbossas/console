@@ -76,6 +76,8 @@ public class CacheContainerView extends AbstractEntityView<CacheContainer> imple
 
     @Override
     protected ToolStrip createToolStrip() {
+
+        System.out.println(">> custom tools");
         ToolStrip toolStrip = super.createToolStrip();
 
         toolStrip.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_setDefault(),
