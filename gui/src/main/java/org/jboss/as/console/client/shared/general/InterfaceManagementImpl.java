@@ -101,22 +101,23 @@ public class InterfaceManagementImpl implements InterfaceManagement {
         else if(entity.isAnyAddress())
             operation.get("any-address").set(true);
         else if(entity.isAnyIP4Address())
-            operation.get("any-ip4-address").set(true);
+            operation.get("any-ipv4-address").set(true);
         else if(entity.isAnyIP6Address())
-            operation.get("any-ip6-address").set(true);
+            operation.get("any-ipv6-address").set(true);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode response = dmrResponse.get();
-                if(ModelNodeUtil.indicatesSuccess(response))
-                {
-                    Console.info(Console.MESSAGES.added("Network Interface"));
-                }
-                else
+                if(response.isFailure())
                 {
                     Console.error(Console.MESSAGES.addingFailed("Network Interface"),
                             response.getFailureDescription());
+
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.added("Network Interface"));
                 }
 
                 loadInterfaces();
