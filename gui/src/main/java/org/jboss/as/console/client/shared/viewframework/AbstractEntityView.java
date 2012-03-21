@@ -145,10 +145,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         entityEditor = makeEntityEditor();
         entityEditor.setDescription(description);
 
-        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        Widget editorWidget = entityEditor.setIncludeTools(true).asWidget();
         panel.add(editorWidget);
 
-        ToolStrip tools = createToolStrip();
+        /*ToolStrip tools = createToolStrip();
 
         if(tools.hasButtons())
         {
@@ -161,8 +161,11 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         else
         {
             layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-            layout.setWidgetTopHeight(scrollPanel, 28, Style.Unit.PX, 100, Style.Unit.PCT);
-        }
+            layout.setWidgetTopHeight(scrollPanel, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+        }  */
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(scrollPanel, 40, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
@@ -187,10 +190,10 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         entityEditor = makeEntityEditor();
         entityEditor.setDescription(description);
 
-        Widget editorWidget = entityEditor.setIncludeTools(false).asWidget();
+        Widget editorWidget = entityEditor.setIncludeTools(true).asWidget();
         panel.add(editorWidget);
 
-        ToolStrip tools = createToolStrip();
+        /*ToolStrip tools = createToolStrip();
 
         if(tools.hasButtons())
         {
@@ -202,7 +205,9 @@ public abstract class AbstractEntityView<T> extends SuspendableViewImpl
         else
         {
             layout.setWidgetTopHeight(scrollPanel, 0, Style.Unit.PX, 100, Style.Unit.PCT);
-        }
+        }             */
+
+        layout.setWidgetTopHeight(scrollPanel, 0, Style.Unit.PX, 100, Style.Unit.PCT);
 
         return layout;
     }
