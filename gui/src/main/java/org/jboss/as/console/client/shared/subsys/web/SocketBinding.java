@@ -199,6 +199,8 @@ public class SocketBinding {
 	        	           @Override
 	        		        public void onFailure(Throwable caught) {
 	        		        	super.onFailure(caught);
+	        		        	// increase syncCounter in case of Failure to prevent to show empty list of sockets, but rather show standard-sockets one
+	        		        	syncCounter++;
 	        		        }
 	        	       });
 	               }
