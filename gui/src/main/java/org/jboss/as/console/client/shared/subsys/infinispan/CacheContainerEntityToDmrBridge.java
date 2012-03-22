@@ -57,14 +57,17 @@ public class CacheContainerEntityToDmrBridge extends EntityToDmrBridgeImpl<Cache
         super.refreshView(response);
     }
 
-
     /**
      * Special logic to save transport attributes, which are kept in a special entity called "TRANSPORT".
      */
     @Override
     public void onSaveDetails(CacheContainer entity, Map<String, Object> changedValues, ModelNode... extraSteps) {
-        if (!isStackSetOnAdd(changedValues)) {
-            super.onSaveDetails(entity, changedValues, extraSteps);
+        Boolean hasTransport = (Boolean)changedValues.remove("hasTransport");
+        boolean removingTransport = (hasTransport != null) && !hasTransport;
+        boolean addingTransport = (hasTransport != null) && hasTransport;
+        boolean modifyingTransport = (hasTransport == null) && entity.isHasTransport();
+
+        if (addingTransport && !isStackSetOnAdd(changedValues)) {
             return;
         }
 
@@ -72,22 +75,44 @@ public class CacheContainerEntityToDmrBridge extends EntityToDmrBridgeImpl<Cache
         List<ModelNode> stepsList = new ArrayList<ModelNode>();
         stepsList.addAll(Arrays.asList(extraSteps));
 
-        handleAddRemoveTransport(cacheContainer, changedValues, stepsList);
+        if (addingTransport) {
+            addTransport(cacheContainer, changedValues, stepsList);
+        }
 
-        Boolean hasTransport = (Boolean)changedValues.remove("hasTransport");
-        if ((hasTransport != null) && (hasTransport)) {
+        if (removingTransport) {
+            removeTransport(cacheContainer, stepsList);
+        }
+
+        if (!removingTransport && (addingTransport || modifyingTransport)) {
             handleWriteTransportAttributes(cacheContainer, changedValues, stepsList);
         }
+
+        removeTransportAttribs(changedValues);
 
         super.onSaveDetails(entity, changedValues, stepsList.toArray(new ModelNode[stepsList.size()]));
     }
 
+    // remove transport attributes from normal processing
+    private void removeTransportAttribs(Map<String, Object> changedValues) {
+        List<String> removals = new ArrayList<String>();
+        for (String javaName : changedValues.keySet()) {
+            if (isTransportAttribute(javaName)) removals.add(javaName);
+        }
+
+        // avoid ConcurrentModificationException
+        for (String javaName : removals) {
+            changedValues.remove(javaName);
+        }
+    }
+
+    private boolean isTransportAttribute(String javaName) {
+        PropertyBinding binding = formMetaData.findAttribute(javaName);
+        String detypedName = binding.getDetypedName();
+        return detypedName.startsWith("transport");
+    }
+
     // if adding transport, see if required stack param was set
     private boolean isStackSetOnAdd(Map<String, Object> changedValues) {
-        Boolean addTransport = (Boolean)changedValues.get("hasTransport");
-        if (addTransport == null) return true;
-        if (!addTransport) return true;
-
         if (!changedValues.containsKey("stack")) {
             Console.error("Stack is required when defining the transport.");
             changedValues.remove("hasTransport");
@@ -108,40 +133,27 @@ public class CacheContainerEntityToDmrBridge extends EntityToDmrBridgeImpl<Cache
     }
 
     private void handleWriteTransportAttributes(String cacheContainer, Map<String, Object> changedValues, List<ModelNode> stepsList) {
-        List<String> removals = new ArrayList<String>();
         for (String javaName : changedValues.keySet()) {
+            if (!isTransportAttribute(javaName)) continue;
+
             PropertyBinding binding = formMetaData.findAttribute(javaName);
             String detypedName = binding.getDetypedName();
-            if (!detypedName.startsWith("transport")) continue;
-
             ModelNode writeTransportAttributeStep = makeTransportOperation(WRITE_ATTRIBUTE_OPERATION, cacheContainer);
             writeTransportAttributeStep.get(NAME).set(detypedName.substring(detypedName.lastIndexOf("/") + 1));
             writeTransportAttributeStep.get(VALUE).set(changedValues.get(javaName).toString());
             stepsList.add(writeTransportAttributeStep);
-            removals.add(javaName);
-        }
-
-        // Need to remove transport attributes from normal processing.
-        // Remove outside main loop to avoid ConcurrentModificationException
-        for (String javaName: removals) {
-            changedValues.remove(javaName);
         }
     }
 
-    private void handleAddRemoveTransport(String cacheContainer, Map<String, Object> changedValues, List<ModelNode> stepsList) {
-        if (!changedValues.containsKey("hasTransport")) return;
+    private void addTransport(String cacheContainer, Map<String, Object> changedValues, List<ModelNode> stepsList) {
+        ModelNode addTransport = makeTransportOperation(ADD, cacheContainer);
+        addTransport.get("stack").set(changedValues.remove("stack").toString());
+        stepsList.add(addTransport);
+    }
 
-        // if hasTransport was toggled then we must be adding or removing it
-        ModelNode addOrRemoveTransport = null;
-        Boolean addTransport = (Boolean)changedValues.get("hasTransport");
-        if (addTransport) {
-            addOrRemoveTransport = makeTransportOperation(ADD, cacheContainer);
-            addOrRemoveTransport.get("stack").set(changedValues.remove("stack").toString());
-        } else {
-            addOrRemoveTransport = makeTransportOperation(REMOVE, cacheContainer);
-        }
-
-        stepsList.add(addOrRemoveTransport);
+    private void removeTransport(String cacheContainer, List<ModelNode> stepsList) {
+        ModelNode removeTransport = makeTransportOperation(REMOVE, cacheContainer);
+        stepsList.add(removeTransport);
     }
 
 }
