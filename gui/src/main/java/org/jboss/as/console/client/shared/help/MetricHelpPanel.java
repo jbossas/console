@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
+import org.jboss.as.console.client.widgets.nav.AriaLink;
 import org.jboss.ballroom.client.widgets.InlineLink;
 import org.jboss.ballroom.client.widgets.icons.Icons;
 
@@ -42,7 +43,7 @@ public class MetricHelpPanel {
 
     public Widget asWidget()
     {
-        InlineLink header = new InlineLink (Console.CONSTANTS.help_need_help());
+        AriaLink header = new AriaLink (Console.CONSTANTS.help_need_help());
         header.addStyleName("help-panel-header");
         header.addClickHandler(new ClickHandler() {
             @Override
