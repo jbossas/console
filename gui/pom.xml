@@ -339,6 +339,38 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.jboss.ballroom</groupId>
+                <artifactId>code-generator</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>process-template</goal>
+                    </goals>
+                    <id>Generate Plugins Module</id>
+                    <configuration>
+                        <!-- "true" is the default value, so this could be omitted-->
+                        <!-- available since version 1.1 -->
+                        <addToBuildPath>true</addToBuildPath>
+                        <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/core/gin/PluginsModule.java</targetFile>
+                        <template>src/main/templates/PluginsModule.tmpl</template>
+                        <entries>
+                            <entry>values</entry>
+                            <entry>used</entry>
+                            <entry>inside</entry>
+                            <entry>the</entry>
+                            <entry>template</entry>
+                            <entry>to</entry>
+                            <entry>iterate</entry>
+                        </entries>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
