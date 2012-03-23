@@ -196,6 +196,7 @@ import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.ballroom.apt.ExtensionModule;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -203,6 +204,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
  * @author Heiko Braun
  * @date 1/31/11
  */
+@ExtensionModule
 public class CoreUIModule extends AbstractPresenterModule {
 
     protected void configure() {

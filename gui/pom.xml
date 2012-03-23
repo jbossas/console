@@ -358,13 +358,14 @@
                         <configuration>
                             <factory>org.jboss.ballroom.apt.ProcessorFactory</factory>
                             <sourceOutputDirectory>${build.outputDirectory}/.generated</sourceOutputDirectory>
+                            <showWarnings>false</showWarnings>
                         </configuration>
 
                     </execution>
                 </executions>
             </plugin>
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.jboss.ballroom</groupId>
                 <artifactId>code-generator</artifactId>
                 <version>1.0-SNAPSHOT</version>
@@ -385,7 +386,7 @@
                     </configuration>
                 </execution>
                 </executions>
-            </plugin>
+            </plugin-->
 
         </plugins>
     </build>
