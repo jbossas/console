@@ -99,6 +99,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.ballroom</groupId>
+            <artifactId>code-generator</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <!-- Plugins -->
@@ -350,7 +356,7 @@
                             <goal>process</goal>
                         </goals>
                         <configuration>
-                            <factory>org.jboss.as.console.plugins.ProcessorFactory</factory>
+                            <factory>org.jboss.ballroom.apt.ProcessorFactory</factory>
                         </configuration>
                     </execution>
                 </executions>
