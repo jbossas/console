@@ -357,7 +357,9 @@
                         </goals>
                         <configuration>
                             <factory>org.jboss.ballroom.apt.ProcessorFactory</factory>
+                            <sourceOutputDirectory>${build.outputDirectory}/.generated</sourceOutputDirectory>
                         </configuration>
+
                     </execution>
                 </executions>
             </plugin>
@@ -378,7 +380,7 @@
                         <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/core/gin/PluginsModule.java</targetFile>
                         <template>src/main/templates/PluginsModule.tmpl</template>
                         <entries>
-                            <entry>org.jboss.ballroom.decorator.GinDecorator</entry>
+                            <entry>org.jboss.ballroom.mojo.GinDecorator</entry>
                         </entries>
                     </configuration>
                 </execution>
