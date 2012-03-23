@@ -358,13 +358,7 @@
                         <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/core/gin/PluginsModule.java</targetFile>
                         <template>src/main/templates/PluginsModule.tmpl</template>
                         <entries>
-                            <entry>values</entry>
-                            <entry>used</entry>
-                            <entry>inside</entry>
-                            <entry>the</entry>
-                            <entry>template</entry>
-                            <entry>to</entry>
-                            <entry>iterate</entry>
+                            <entry>org.jboss.ballroom.decorator.GinDecorator</entry>
                         </entries>
                     </configuration>
                 </execution>
