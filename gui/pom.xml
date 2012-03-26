@@ -204,9 +204,9 @@
                         <id>Generate Plugins Module</id>
                         <configuration>
                             <addToBuildPath>true</addToBuildPath>
-                            <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/shared/SubsystemExtensions.java</targetFile>
+                            <processor>org.jboss.as.console.spi.SubsystemExtensions</processor>
                             <template>src/main/templates/SubsystemExtensions.tmpl</template>
-                            <processor>org.jboss.ballroom.codegen.mojo.SubsystemProcessor</processor>
+                            <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/shared/SubsystemExtensions.java</targetFile>
                         </configuration>
                     </execution>
                 </executions>
