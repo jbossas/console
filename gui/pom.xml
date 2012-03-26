@@ -191,6 +191,26 @@
                 </configuration>
             </plugin>
 
+            <!--plugin>
+                <groupId>org.jboss.ballroom</groupId>
+                <artifactId>code-generator</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>process-template</goal>
+                        </goals>
+                        <id>Generate Plugins Module</id>
+                        <configuration>
+                            <addToBuildPath>true</addToBuildPath>
+                            <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/shared/SubsystemExtensions.java</targetFile>
+                            <template>src/main/templates/SubsystemExtensions.tmpl</template>
+                            <processor>org.jboss.ballroom.codegen.mojo.SubsystemProcessor</processor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
@@ -347,25 +367,6 @@
                     </systemProperties>
                 </configuration>
             </plugin>
-
-            <!--plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-                <version>1.0-alpha-4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <factory>org.jboss.ballroom.apt.ProcessorFactory</factory>
-                            <sourceOutputDirectory>${build.outputDirectory}/.generated</sourceOutputDirectory>
-                            <showWarnings>false</showWarnings>
-                        </configuration>
-
-                    </execution>
-                </executions>
-            </plugin-->
 
         </plugins>
     </build>

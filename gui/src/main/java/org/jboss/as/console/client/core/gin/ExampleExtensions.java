@@ -3,7 +3,7 @@ package org.jboss.as.console.client.core.gin;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
-import org.jboss.ballroom.apt.ExtensionModule;
+import org.jboss.ballroom.codegen.ExtensionModule;
 
 /**
  * @author Heiko Braun

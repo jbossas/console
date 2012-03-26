@@ -193,10 +193,8 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
-import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
-import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.ballroom.apt.ExtensionModule;
+import org.jboss.ballroom.codegen.ExtensionModule;
 
 /**
  * Provides the bindings for the core UI widgets.
