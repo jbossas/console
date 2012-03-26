@@ -191,13 +191,13 @@
                 </configuration>
             </plugin>
 
-            <!--plugin>
+            <plugin>
                 <groupId>org.jboss.ballroom</groupId>
                 <artifactId>code-generator</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>process-template</goal>
                         </goals>
@@ -210,7 +210,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin-->
+            </plugin>
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>

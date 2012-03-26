@@ -22,6 +22,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.BeanMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.ballroom.codegen.Subsystem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -33,6 +34,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 10/25/11
  */
+@Subsystem
 public class TransactionPresenter extends Presenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
 
     private final PlaceManager placeManager;
@@ -44,6 +46,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TransactionPresenter)
+
     public interface MyProxy extends Proxy<TransactionPresenter>, Place {
     }
 
