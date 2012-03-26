@@ -186,6 +186,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <!--generatedSourcesDirectory>${project.build.sourceDirectory}</generatedSourcesDirectory-->
                 </configuration>
             </plugin>
 
@@ -346,7 +347,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
                 <version>1.0-alpha-4</version>
@@ -362,29 +363,6 @@
                         </configuration>
 
                     </execution>
-                </executions>
-            </plugin>
-
-            <!--plugin>
-                <groupId>org.jboss.ballroom</groupId>
-                <artifactId>code-generator</artifactId>
-                <version>1.0-SNAPSHOT</version>
-                <executions>
-                <execution>
-                    <phase>generate-sources</phase>
-                    <goals>
-                        <goal>process-template</goal>
-                    </goals>
-                    <id>Generate Plugins Module</id>
-                    <configuration>
-                        <addToBuildPath>true</addToBuildPath>
-                        <targetFile>${project.build.directory}/classes/org/jboss/as/console/client/core/gin/PluginsModule.java</targetFile>
-                        <template>src/main/templates/PluginsModule.tmpl</template>
-                        <entries>
-                            <entry>org.jboss.ballroom.mojo.GinDecorator</entry>
-                        </entries>
-                    </configuration>
-                </execution>
                 </executions>
             </plugin-->
 
