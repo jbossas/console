@@ -132,7 +132,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
  * @author Heiko Braun
  * @date 1/31/11
  */
-@GinModules(PluginsModule.class)
+@GinModules(PluginContainer.class)
 public interface CoreUI extends Ginjector {
 
     PlaceManager getPlaceManager();

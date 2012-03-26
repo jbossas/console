@@ -488,10 +488,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JndiView.class,
                 JndiPresenter.MyProxy.class);
 
-        bindPresenter(VMMetricsPresenter.class,
+        /*bindPresenter(VMMetricsPresenter.class,
                 VMMetricsPresenter.MyView.class,
                 VMMetricsView.class,
-                VMMetricsPresenter.MyProxy.class);
+                VMMetricsPresenter.MyProxy.class);*/
 
         bindPresenter(HostVMMetricPresenter.class,
                 HostVMMetricPresenter.MyView.class,

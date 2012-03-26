@@ -186,7 +186,8 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                    <!--generatedSourcesDirectory>${project.build.sourceDirectory}</generatedSourcesDirectory-->
+                    <generatedSourcesDirectory>${project.build.directory}/generated-sources</generatedSourcesDirectory>
+                    <compilerArgument>-Aballroom.extension.class=org.jboss.as.console.client.core.gin.PluginContainer</compilerArgument>
                 </configuration>
             </plugin>
 
