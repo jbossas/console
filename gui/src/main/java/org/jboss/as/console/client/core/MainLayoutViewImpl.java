@@ -25,8 +25,8 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.core.message.MessageCenter;
 
 /**
  * The main console layout that builds on GWT 2.1 layout panels.
@@ -43,9 +43,12 @@ public class MainLayoutViewImpl extends ViewImpl
     private LayoutPanel footerPanel;
 
     private Header header;
+    private MessageCenter messageCenter;
 
     @Inject
-    public MainLayoutViewImpl(Header header, Footer footer) {
+    public MainLayoutViewImpl(Header header, Footer footer, MessageCenter messageCenter) {
+
+        this.messageCenter = messageCenter;
 
         mainContentPanel = new LayoutPanel();
         mainContentPanel.setStyleName("main-content-panel");
@@ -84,7 +87,7 @@ public class MainLayoutViewImpl extends ViewImpl
                 setMainContent(content);
         }
         else {
-            Console.MODULES.getMessageCenter().notify(
+            messageCenter.notify(
                     new Message("Unknown slot requested:" + slot)
             );
         }

@@ -286,7 +286,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onFailure(Throwable caught) {
 
-                Console.MODULES.getMessageCenter().notify(
+                Console. MODULES.getMessageCenter().notify(
                         new Message(Console.MESSAGES.addingFailed("Server Configuration ") + newServer.getName(), Message.Severity.Error)
                 );
 

@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.auth.CurrentUser;
@@ -40,11 +41,13 @@ import org.jboss.ballroom.client.widgets.window.Feedback;
 public class Footer {
 
     private Label userName;
+    private PlaceManager placeManager;
 
     @Inject
-    public Footer(EventBus bus, CurrentUser user) {
+    public Footer(EventBus bus, CurrentUser user, PlaceManager placeManager) {
         this.userName = new Label();
         this.userName.setText(user.getUserName());
+        this.placeManager = placeManager;
     }
 
     public Widget asWidget() {
@@ -59,7 +62,7 @@ public class Footer {
         settings.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Console.MODULES.getPlaceManager().revealPlace(
+                placeManager.revealPlace(
                         new PlaceRequest(NameTokens.SettingsPresenter)
                 );
             }

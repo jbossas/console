@@ -24,6 +24,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -186,6 +187,10 @@ public class Console implements EntryPoint {
                 cmd.execute();
             }
         });
+    }
+
+    public static EventBus getEventBus() {
+        return MODULES.getEventBus();
     }
 
     public static native boolean visAPILoaded() /*-{

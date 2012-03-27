@@ -36,6 +36,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.StaleModelEvent;
@@ -56,6 +57,7 @@ public class ServerGroupMgmtPresenter
     private final PlaceManager placeManager;
     private ServerGroupStore serverGroupStore;
     private boolean hasBeenRevealed;
+    private Header header;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ServerGroupMgmtPresenter)
@@ -77,11 +79,12 @@ public class ServerGroupMgmtPresenter
     public ServerGroupMgmtPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
-            ServerGroupStore serverGroupStore) {
+            ServerGroupStore serverGroupStore, Header header) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.serverGroupStore = serverGroupStore;
+        this.header = header;
     }
 
     @Override
@@ -126,7 +129,7 @@ public class ServerGroupMgmtPresenter
     protected void onReset() {
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.ServerGroupMgmtPresenter);
+        header.highlight(NameTokens.ServerGroupMgmtPresenter);
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -64,6 +65,7 @@ public class HostMgmtPresenter
     public static final GwtEvent.Type<RevealContentHandler<?>> TYPE_MainContent = new GwtEvent.Type<RevealContentHandler<?>>();
     private BootstrapContext bootstrap;
     private String lastSubPlace;
+    private Header header;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.HostMgmtPresenter)
@@ -80,13 +82,14 @@ public class HostMgmtPresenter
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager,
             HostInformationStore hostInfoStore, CurrentHostSelection hostSelection,
-            BootstrapContext bootstrap) {
+            BootstrapContext bootstrap, Header header) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.hostInfoStore = hostInfoStore;
         this.hostSelection = hostSelection;
         this.bootstrap = bootstrap;
+        this.header = header;
     }
 
     @Override
@@ -120,7 +123,7 @@ public class HostMgmtPresenter
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
+                    Console.getEventBus().fireEvent(
                             new LHSHighlightEvent(bootstrap.getInitialPlace())
                     );
 
@@ -129,7 +132,7 @@ public class HostMgmtPresenter
             });
         }
 
-        Console.MODULES.getHeader().highlight(NameTokens.HostMgmtPresenter);
+        header.highlight(NameTokens.HostMgmtPresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))

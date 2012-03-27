@@ -37,9 +37,11 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.message.MessageBar;
+import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 
 /**
@@ -71,12 +73,17 @@ public class Header implements ValueChangeHandler<String> {
     //private Map<String,Widget> appLinks = new HashMap<String, Widget>();
 
     private BootstrapContext bootstrap;
+    private MessageCenter messageCenter;
+    private PlaceManager placeManager;
 
     @Inject
-    public Header(MessageBar messageBar, BootstrapContext bootstrap) {
-        this.messageBar = messageBar;
+    public Header(MessageCenter messageCenter, BootstrapContext bootstrap, PlaceManager placeManager) {
+        this.messageBar = new MessageBar(messageCenter);
         this.bootstrap = bootstrap;
+        this.messageCenter = messageCenter;
+        this.placeManager = placeManager;
         History.addValueChangeHandler(this);
+
     }
 
     public Widget asWidget() {
@@ -90,7 +97,7 @@ public class Header implements ValueChangeHandler<String> {
         LayoutPanel rhs = new LayoutPanel();
         rhs.setStyleName("fill-layout");
 
-        MessageCenterView messageCenterView = Console.MODULES.getMessageCenterView();
+        MessageCenterView messageCenterView = new MessageCenterView(messageCenter);
         Widget messageCenter = messageCenterView.asWidget();
         rhs.add(messageCenter);
         rhs.add(links);
@@ -180,7 +187,7 @@ public class Header implements ValueChangeHandler<String> {
             widget.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    Console.MODULES.getPlaceManager().revealPlace(
+                    placeManager.revealPlace(
                             new PlaceRequest(name)
                     );
                 }

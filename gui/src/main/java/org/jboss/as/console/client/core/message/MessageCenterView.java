@@ -308,7 +308,7 @@ public class MessageCenterView implements MessageListener, ReloadEvent.ReloadLis
 
         // register listener
         messageCenter.addMessageListener(this);
-        Console.MODULES.getEventBus().addHandler(ReloadEvent.TYPE, this);
+        Console.getEventBus().addHandler(ReloadEvent.TYPE, this);
 
         return layout;
     }

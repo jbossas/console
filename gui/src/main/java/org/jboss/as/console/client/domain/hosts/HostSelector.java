@@ -37,7 +37,7 @@ public class HostSelector {
                     Scheduler.get().scheduleEntry(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            Console.MODULES.getEventBus().fireEvent(
+                            Console.getEventBus().fireEvent(
                                     new HostSelectionEvent(event.getValue())
                             );
                         }
