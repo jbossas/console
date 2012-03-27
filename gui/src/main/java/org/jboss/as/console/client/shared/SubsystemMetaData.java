@@ -47,13 +47,9 @@ public class SubsystemMetaData {
 
     private static final String CONTAINER = "Container";
 
-    private static final String EJB = "EJB";
-
     private static final String OSGI = "OSGi";
 
     private static final String INFINISPAN = "Infinispan";
-
-    private static final String MODCLUSTER = "Modcluster";
 
     private static final String SECURITY = "Security";
 

@@ -57,7 +57,7 @@ import java.util.List;
  * @author Greg Hinkle
  * @author Heiko Braun
  */
-public class MessageCenterView implements MessageCenter.MessageListener, ReloadEvent.ReloadListener {
+public class MessageCenterView implements MessageListener, ReloadEvent.ReloadListener {
 
     private MessageCenter messageCenter;
     private HorizontalPanel messageDisplay;

@@ -45,6 +45,8 @@ import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.StandaloneUse;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.core.message.MessageCenterImpl;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
 import org.jboss.as.console.client.core.settings.SettingsPresenterViewImpl;
@@ -219,7 +221,7 @@ public class CoreUIModule extends AbstractPresenterModule {
 
         // supporting components
         bind(MessageBar.class).in(Singleton.class);
-        bind(MessageCenter.class).in(Singleton.class);
+        bind(MessageCenter.class).to(MessageCenterImpl.class).in(Singleton.class);
         bind(MessageCenterView.class).in(Singleton.class);
 
         bind(HelpSystem.class).in(Singleton.class);

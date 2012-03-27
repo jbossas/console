@@ -45,7 +45,7 @@ public class MainLayoutViewImpl extends ViewImpl
     private Header header;
 
     @Inject
-    public MainLayoutViewImpl() {
+    public MainLayoutViewImpl(Header header, Footer footer) {
 
         mainContentPanel = new LayoutPanel();
         mainContentPanel.setStyleName("main-content-panel");
@@ -68,10 +68,8 @@ public class MainLayoutViewImpl extends ViewImpl
         panel.addSouth(footerPanel, 25);
         panel.add(mainContentPanel);
 
-        header = Console.MODULES.getHeader();
         getHeaderPanel().add(header.asWidget());
-
-        getFooterPanel().add(Console.MODULES.getFooter().asWidget());
+        getFooterPanel().add(footer.asWidget());
     }
 
     public Widget asWidget() {

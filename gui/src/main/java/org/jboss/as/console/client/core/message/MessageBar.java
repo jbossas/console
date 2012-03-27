@@ -33,7 +33,7 @@ import com.google.inject.Inject;
  * @author Heiko Braun
  * @date 1/28/11
  */
-public class MessageBar extends LayoutPanel implements MessageCenter.MessageListener {
+public class MessageBar extends LayoutPanel implements MessageListener {
 
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
