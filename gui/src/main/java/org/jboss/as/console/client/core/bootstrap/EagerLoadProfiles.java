@@ -21,6 +21,14 @@ import java.util.List;
  */
 public class EagerLoadProfiles implements AsyncCommand<Boolean> {
 
+    private ProfileStore profileStore;
+    private CurrentProfileSelection profileSelection;
+
+    public EagerLoadProfiles(ProfileStore profileStore, CurrentProfileSelection profileSelection) {
+        this.profileStore = profileStore;
+        this.profileSelection = profileSelection;
+    }
+
     @Override
     public void execute(final AsyncCallback<Boolean> callback) {
 
@@ -28,8 +36,6 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
 
         if(!bootstrapContext.isStandalone())
         {
-            ProfileStore profileStore = Console.MODULES.getProfileStore();
-
             profileStore.loadProfiles(new SimpleCallback<List<ProfileRecord>>() {
 
                 @Override
@@ -60,7 +66,6 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
 
     private void selectDefaultProfile(List<ProfileRecord> result) {
 
-        CurrentProfileSelection profileSelection = Console.MODULES.getCurrentSelectedProfile();
         if(!profileSelection.isSet())
         {
             String name = result.get(0).getName();

@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.apache.xpath.operations.Mod;
 import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
@@ -48,6 +49,7 @@ import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
 import org.jboss.as.console.client.core.message.MessageCenter;
+import org.jboss.as.console.client.shared.help.HelpSystem;
 
 import java.util.EnumSet;
 
@@ -102,9 +104,9 @@ public class Console implements EntryPoint {
                 BootstrapProcess bootstrap = new BootstrapProcess();
 
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
-                bootstrap.addHook(new RegisterSubsystems());
+                bootstrap.addHook(new RegisterSubsystems(MODULES.getSubsystemRegistry()));
                 bootstrap.addHook(new ChoseProcessor(MODULES.getBootstrapContext()));
-                bootstrap.addHook(new EagerLoadProfiles());
+                bootstrap.addHook(new EagerLoadProfiles(MODULES.getProfileStore(), MODULES.getCurrentSelectedProfile()));
                 bootstrap.addHook(new RemoveLoadingPanel(loadingPanel));
                 bootstrap.addHook(new LoadMainApp(MODULES.getBootstrapContext(), MODULES.getPlaceManager(), MODULES.getTokenFormatter()));
 
@@ -209,6 +211,12 @@ public class Console implements EntryPoint {
         return MODULES.getBootstrapContext();
     }
 
+    public static HelpSystem getHelpSystem() {
+        return MODULES.getHelpSystem();
+    }
+
+
+    @Deprecated
     public static native boolean visAPILoaded() /*-{
         if ($wnd['google'] && $wnd.google['load']) {
             return true;

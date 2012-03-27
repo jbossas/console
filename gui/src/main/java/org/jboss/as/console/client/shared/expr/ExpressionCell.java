@@ -11,9 +11,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.domain.model.SimpleCallback;
 
 /**
  * @author Heiko Braun
@@ -46,7 +43,7 @@ public class ExpressionCell extends AbstractCell<String> {
 
     }
 
-    @Override
+    /*@Override
     protected void onEnterKeyDown(
             Context context, Element parent, String value,
             NativeEvent event, ValueUpdater<String> valueUpdater) {
@@ -63,6 +60,6 @@ public class ExpressionCell extends AbstractCell<String> {
 
         //System.out.println("Clicked "+rowSelection);
 
-    }
+    } */
 
 }

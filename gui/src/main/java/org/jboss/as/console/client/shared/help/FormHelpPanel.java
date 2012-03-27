@@ -90,7 +90,7 @@ public class FormHelpPanel {
 
         if(!hasBeenBuild)
         {
-            Console.MODULES.getHelpSystem().getAttributeDescriptions(
+            Console.getHelpSystem().getAttributeDescriptions(
                     address.getAddress(), form, new AsyncCallback<HTML>() {
                 @Override
                 public void onSuccess(HTML result) {

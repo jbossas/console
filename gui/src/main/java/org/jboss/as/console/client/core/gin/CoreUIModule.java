@@ -214,6 +214,9 @@ public class CoreUIModule extends AbstractPresenterModule {
         // SPI first
         bind(SubsystemRegistry.class).to(SubsystemRegistryImpl.class).in(Singleton.class);
 
+        // static injections
+        requestStaticInjection(RuntimeBaseAddress.class);
+        requestStaticInjection(Baseadress.class);
 
         // main layout
         bind(Header.class).in(Singleton.class);

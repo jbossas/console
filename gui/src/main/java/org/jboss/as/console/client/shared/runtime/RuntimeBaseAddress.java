@@ -1,6 +1,5 @@
 package org.jboss.as.console.client.shared.runtime;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.dmr.client.ModelNode;
 
@@ -12,7 +11,8 @@ import javax.inject.Inject;
  */
 public class RuntimeBaseAddress {
 
-    private CurrentServerSelection serverSelection;
+    @Inject private static CurrentServerSelection serverSelection;
+    @Inject private static RuntimeBaseAddress instance;
 
     @Inject
     public RuntimeBaseAddress(
@@ -21,7 +21,7 @@ public class RuntimeBaseAddress {
     }
 
     public static ModelNode get() {
-        return Console.MODULES.getRuntimeBaseAddress().getAddress();
+        return instance.getAddress();
     }
 
     public ModelNode getAddress() {

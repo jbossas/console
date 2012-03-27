@@ -85,7 +85,7 @@ public class MetricHelpPanel {
         if(!hasBeenBuild)
         {
 
-            Console.MODULES.getHelpSystem().getMetricDescriptions(
+            Console.getHelpSystem().getMetricDescriptions(
                     addressCallback, columns, new AsyncCallback<HTML>() {
                 @Override
                 public void onSuccess(HTML result) {

@@ -19,7 +19,6 @@
 
 package org.jboss.as.console.client.shared.subsys;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.dmr.client.ModelNode;
 
@@ -31,7 +30,8 @@ import javax.inject.Inject;
  */
 public class Baseadress {
 
-    private static CurrentProfileSelection profileSelection;
+    @Inject private static CurrentProfileSelection profileSelection;
+    @Inject private static Baseadress instance;
 
     @Inject
     public Baseadress(CurrentProfileSelection profileSelection) {
@@ -39,7 +39,7 @@ public class Baseadress {
     }
 
     public static ModelNode get() {
-        return Console.MODULES.getBaseadress().getAdress();
+        return instance.getAdress();
     }
 
     public ModelNode getAdress() {
