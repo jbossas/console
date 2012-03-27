@@ -83,6 +83,8 @@ import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtView;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimeView;
+import org.jboss.as.console.client.plugins.SubsystemRegistry;
+import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -206,6 +208,10 @@ import org.jboss.as.console.spi.ExtensionModule;
 public class CoreUIModule extends AbstractPresenterModule {
 
     protected void configure() {
+
+        // SPI first
+        bind(SubsystemRegistry.class).to(SubsystemRegistryImpl.class).in(Singleton.class);
+
 
         // main layout
         bind(Header.class).in(Singleton.class);

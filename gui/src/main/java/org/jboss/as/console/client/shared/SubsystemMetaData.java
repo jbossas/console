@@ -19,9 +19,13 @@
 
 package org.jboss.as.console.client.shared;
 
+import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.spi.Subsystem;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -114,6 +118,26 @@ public class SubsystemMetaData {
 
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("SAR", "sar",Boolean.TRUE));
         groups.get(OTHER).getItems().add(new SubsystemGroupItem("Arquillian", "arquillian",Boolean.TRUE));
+    }
+
+    public static void bootstrap(SubsystemRegistry registry) {
+        List<SubsystemExtension> extensions = registry.getExtensions();
+
+        Log.info("Discovered "+extensions.size() +" subsystem extensions");
+
+        for(SubsystemExtension ext : extensions)
+        {
+            String groupName = ext.getGroup();
+            if(!groups.containsKey(groupName))
+                groups.put(groupName, new SubsystemGroup(groupName));
+
+            groups.get(groupName).getItems().add(
+                    new SubsystemGroupItem(
+                            ext.getName(),
+                            ext.getToken()
+                    )
+            );
+        }
     }
 
     public static Map<String, SubsystemGroup> getGroups() {

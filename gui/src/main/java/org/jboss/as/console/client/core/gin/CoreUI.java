@@ -57,6 +57,7 @@ import org.jboss.as.console.client.domain.overview.DomainOverviewPresenter;
 import org.jboss.as.console.client.domain.profiles.CurrentProfileSelection;
 import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 import org.jboss.as.console.client.domain.runtime.DomainRuntimePresenter;
+import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
@@ -134,6 +135,9 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
  */
 @GinModules(PluginContainer.class)
 public interface CoreUI extends Ginjector {
+
+
+    SubsystemRegistry getSubsystemRegistry();
 
     PlaceManager getPlaceManager();
     EventBus getEventBus();

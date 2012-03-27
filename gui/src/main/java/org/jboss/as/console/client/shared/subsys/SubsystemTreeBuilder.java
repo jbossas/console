@@ -43,7 +43,7 @@ public class SubsystemTreeBuilder {
     public static void build(final LHSTreeSection subsysTree, List<SubsystemRecord> subsystems)
     {
 
-        int includedSubsystems =0;
+        int includedSubsystems = 0;
 
         // build groups first
         for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
