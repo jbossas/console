@@ -120,7 +120,7 @@ public class DataSourceDetails {
        /* toolStrip.addToolButtonRight(disableBtn);
 
         // not available in domain mode
-        if(Console.MODULES.getBootstrapContext().isStandalone())
+        if(Console.getBootstrapContext().isStandalone())
             toolStrip.addToolButtonRight(verifyBtn);  */
 
         detailPanel.add(toolStrip.asWidget());

@@ -93,7 +93,7 @@ public class SubsystemMetaData {
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Config Admin", NameTokens.ConfigAdminPresenter));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("JGroups", NameTokens.JGroupsPresenter));
 
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
+        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee"));
         //groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));

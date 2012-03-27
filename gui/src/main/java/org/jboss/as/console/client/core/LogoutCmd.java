@@ -11,7 +11,7 @@ import org.jboss.as.console.client.Console;
 public class LogoutCmd implements Command {
     @Override
     public void execute() {
-        String logoutUrl = Console.MODULES.getBootstrapContext().getLogoutUrl();
+        String logoutUrl = Console.getBootstrapContext().getLogoutUrl();
         clearMsie();
         Window.Location.replace(logoutUrl);
     }

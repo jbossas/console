@@ -113,11 +113,11 @@ public class ServerPicker implements HostServerManagement {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                Console.MODULES.getEventBus().fireEvent(
+                Console.getEventBus().fireEvent(
                         new HostSelectionEvent(host.getName())
                 );
 
-                Console.MODULES.getEventBus().fireEvent(
+                Console.getEventBus().fireEvent(
                         new ServerSelectionEvent(host.getName(), server)
                 );
             }

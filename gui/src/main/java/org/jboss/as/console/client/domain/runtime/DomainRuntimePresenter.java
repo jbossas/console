@@ -17,6 +17,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.events.HostSelectionEvent;
@@ -54,6 +55,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     private String lastSubPlace;
     private ServerGroupStore serverGroupStore;
     private String previousServerSelection = null;
+    private Header header;
 
 
     @ProxyCodeSplit
@@ -83,7 +85,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             PlaceManager placeManager,  HostInformationStore hostInfoStore,
             CurrentServerSelection serverSelection, CurrentHostSelection hostSelection,
             SubsystemStore subsysStore, BootstrapContext bootstrap,
-            ServerGroupStore serverGroupStore) {
+            ServerGroupStore serverGroupStore, Header header) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -93,6 +95,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         this.subsysStore = subsysStore;
         this.bootstrap = bootstrap;
         this.serverGroupStore = serverGroupStore;
+        this.header = header;
     }
 
     @Override
@@ -109,7 +112,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     protected void onReset() {
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.DomainRuntimePresenter);
+        header.highlight(NameTokens.DomainRuntimePresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
@@ -236,7 +239,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                                 @Override
                                 public void execute() {
-                                    Console.MODULES.getEventBus().fireEvent(
+                                    Console.getEventBus().fireEvent(
                                             new LHSHighlightEvent(
                                                     placeManager.getCurrentPlaceRequest().getNameToken()
                                             )

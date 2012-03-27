@@ -65,7 +65,7 @@ public class NewPropertyWizard {
         TextBoxItem valueItem = new TextBoxItem("value", "Value");
         CheckBoxItem bootItem = new CheckBoxItem("bootTime", "Boot-Time");
 
-        if(Console.MODULES.getBootstrapContext().isStandalone() || !includeBootTime)
+        if(Console.getBootstrapContext().isStandalone() || !includeBootTime)
             form.setFields(nameItem, valueItem);
         else
             form.setFields(nameItem, valueItem, bootItem);

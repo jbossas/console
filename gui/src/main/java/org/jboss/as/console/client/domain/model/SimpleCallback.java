@@ -33,7 +33,7 @@ public abstract class SimpleCallback<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable caught) {
         Log.error("Unknown error", caught);
-        Console.MODULES.getMessageCenter().notify(
+        Console.getMessageCenter().notify(
                 new Message("Unknown error", caught.getMessage(), Message.Severity.Error)
         );
     }

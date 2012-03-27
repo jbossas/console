@@ -53,7 +53,7 @@ public class StandaloneRuntimeView extends ViewImpl implements StandaloneRuntime
                 setContent(content);
 
         } else {
-            Console.MODULES.getMessageCenter().notify(
+            Console.getMessageCenter().notify(
                     new Message("Unknown slot requested:" + slot)
             );
         }

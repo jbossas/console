@@ -92,7 +92,7 @@ public class PagedView {
          // TODO: clear history tokens
         if(index==0)
         {
-            PlaceManager placeManager = Console.MODULES.getPlaceManager();
+            PlaceManager placeManager = Console.getPlaceManager();
             String nameToken = placeManager.getCurrentPlaceRequest().getNameToken();
             History.newItem(nameToken, false);
         }

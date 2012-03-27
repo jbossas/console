@@ -128,7 +128,7 @@ public class VMMetricsView extends SuspendableViewImpl implements VMMetricsPrese
   jvmConfigLink.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent event) {
-          Console.MODULES.getPlaceManager().revealPlace(
+          Console.getPlaceManager().revealPlace(
                   new PlaceRequest(NameTokens.HostJVMPresenter)
           );
       }

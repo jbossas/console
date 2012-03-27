@@ -36,7 +36,7 @@ public class ProfileSelector {
                         new Scheduler.ScheduledCommand() {
                             @Override
                             public void execute() {
-                                Console.MODULES.getEventBus().fireEvent(
+                                Console.getEventBus().fireEvent(
                                         new ProfileSelectionEvent(event.getValue())
                                 );
                             }

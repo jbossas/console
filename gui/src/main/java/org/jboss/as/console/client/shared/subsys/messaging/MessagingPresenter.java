@@ -191,7 +191,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
 
     private void loadProvider() {
-        new LoadHornetQServersCmd(Console.MODULES.getDispatchAsync()).execute(
+        new LoadHornetQServersCmd(dispatcher).execute(
                 new AsyncCallback<List<String>>() {
                     @Override
                     public void onFailure(Throwable caught) {

@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.DelayedBindRegistry;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.LoadingPanel;
 import org.jboss.as.console.client.core.UIConstants;
 import org.jboss.as.console.client.core.UIDebugConstants;
@@ -45,6 +47,7 @@ import org.jboss.as.console.client.core.bootstrap.RegisterSubsystems;
 import org.jboss.as.console.client.core.bootstrap.RemoveLoadingPanel;
 import org.jboss.as.console.client.core.gin.CoreUI;
 import org.jboss.as.console.client.core.message.Message;
+import org.jboss.as.console.client.core.message.MessageCenter;
 
 import java.util.EnumSet;
 
@@ -133,25 +136,25 @@ public class Console implements EntryPoint {
     }
 
     public static void info(String message) {
-        MODULES.getMessageCenter().notify(
+        getMessageCenter().notify(
                 new Message(message, Message.Severity.Info)
         );
     }
 
     public static void error(String message) {
-        MODULES.getMessageCenter().notify(
+        getMessageCenter().notify(
                 new Message(message, Message.Severity.Error)
         );
     }
 
     public static void error(String message, String detail) {
-        MODULES.getMessageCenter().notify(
+        getMessageCenter().notify(
                 new Message(message, detail, Message.Severity.Error)
         );
     }
 
     public static void warning(String message) {
-        MODULES.getMessageCenter().notify(
+        getMessageCenter().notify(
                 new Message(message, Message.Severity.Warning)
         );
     }
@@ -161,7 +164,7 @@ public class Console implements EntryPoint {
                 new Message(message, Message.Severity.Warning, EnumSet.of(Message.Option.Sticky)) :
                 new Message(message, Message.Severity.Warning);
 
-        MODULES.getMessageCenter().notify(msg);
+        getMessageCenter().notify(msg);
     }
 
     public static void warning(String message, String detail, boolean sticky) {
@@ -170,11 +173,11 @@ public class Console implements EntryPoint {
                 new Message(message, detail, Message.Severity.Warning);
 
 
-        MODULES.getMessageCenter().notify(msg);
+        getMessageCenter().notify(msg);
     }
 
     public static void warning(String message, String detail) {
-        MODULES.getMessageCenter().notify(
+        getMessageCenter().notify(
                 new Message(message, detail, Message.Severity.Warning)
         );
     }
@@ -191,6 +194,19 @@ public class Console implements EntryPoint {
 
     public static EventBus getEventBus() {
         return MODULES.getEventBus();
+    }
+
+    public static MessageCenter getMessageCenter() {
+        return MODULES.getMessageCenter();
+    }
+
+    public static PlaceManager getPlaceManager() {
+        return MODULES.getPlaceManager();
+    }
+
+    public static BootstrapContext getBootstrapContext()
+    {
+        return MODULES.getBootstrapContext();
     }
 
     public static native boolean visAPILoaded() /*-{

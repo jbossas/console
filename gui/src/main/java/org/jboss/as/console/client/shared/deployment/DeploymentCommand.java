@@ -89,12 +89,12 @@ public enum DeploymentCommand {
     }
 
     public void displaySuccessMessage(DeployCommandExecutor executor, DeploymentRecord record) {
-        Console.MODULES.getMessageCenter().notify(
+        Console.getMessageCenter().notify(
                 new Message(messageMaker.makeSuccessMessage(record, executor), Message.Severity.Info));
     }
 
     public void displayFailureMessage(DeployCommandExecutor executor, DeploymentRecord record, Throwable t) {
-        Console.MODULES.getMessageCenter().notify(
+        Console.getMessageCenter().notify(
                 new Message(messageMaker.makeFailureMessage(record, executor), t.getMessage(), Message.Severity.Error));
     }
 
@@ -110,7 +110,7 @@ public enum DeploymentCommand {
     }
 
     private static class RemoveMessageMaker implements MessageMaker {
-        private static boolean isStandalone = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
+        private static boolean isStandalone = Console.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
         
         private String findTarget(DeploymentRecord record) {
             if (record.getServerGroup() != null) return record.getServerGroup();

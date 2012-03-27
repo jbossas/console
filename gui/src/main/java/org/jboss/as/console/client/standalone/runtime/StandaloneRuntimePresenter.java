@@ -18,6 +18,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -43,6 +44,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
     private BootstrapContext bootstrap;
 
     private String lastSubPlace;
+    private Header header;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.StandaloneRuntimePresenter)
@@ -57,12 +59,14 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
     @Inject
     public StandaloneRuntimePresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, SubsystemStore subsysStore,  BootstrapContext bootstrap) {
+            PlaceManager placeManager, SubsystemStore subsysStore,
+            BootstrapContext bootstrap, Header header) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.bootstrap = bootstrap;
         this.subsysStore = subsysStore;
+        this.header = header;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
         super.onReset();
 
 
-        Console.MODULES.getHeader().highlight(NameTokens.StandaloneRuntimePresenter);
+        header.highlight(NameTokens.StandaloneRuntimePresenter);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))
@@ -126,7 +130,7 @@ public class StandaloneRuntimePresenter extends Presenter<StandaloneRuntimePrese
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
+                    Console.getEventBus().fireEvent(
                             new LHSHighlightEvent(bootstrap.getInitialPlace())
                     );
                     bootstrap.setInitialPlace(null);

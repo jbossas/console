@@ -89,7 +89,7 @@ public class DataSourceConnectionEditor {
         formTools.providesDeleteOp(false);
 
         // standalone only
-        if(Console.MODULES.getBootstrapContext().isStandalone())
+        if(Console.getBootstrapContext().isStandalone())
             formTools.addToolButtonRight(verifyBtn);
 
         FormLayout layout = new FormLayout()

@@ -112,7 +112,7 @@ public class DomainOverview
                 ServerGroupRecord selectedRecord = selectionModel.getSelectedObject();
                 final String groupName = selectedRecord.getGroupName();
 
-                Console.MODULES.getPlaceManager().revealPlaceHierarchy(
+                Console.getPlaceManager().revealPlaceHierarchy(
                         new ArrayList<PlaceRequest>() {{
                             add(new PlaceRequest("domain"));
                             add(new PlaceRequest(NameTokens.ServerGroupPresenter).with("name", groupName));

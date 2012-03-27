@@ -121,7 +121,7 @@ public class NewDeploymentWizard  {
 
         RequestBuilder rb = new RequestBuilder(
                 RequestBuilder.POST,
-                Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.DOMAIN_API)
+                Console.getBootstrapContext().getProperty(BootstrapContext.DOMAIN_API)
         );
 
         rb.setHeader(HEADER_CONTENT_TYPE, APPLICATION_JSON);
@@ -162,7 +162,7 @@ public class NewDeploymentWizard  {
     }
 
     private void onDeploymentFailed(DeploymentReference deployment) {
-        Console.MODULES.getMessageCenter().notify(
+        Console.getMessageCenter().notify(
                 new Message(Console.CONSTANTS.common_error_deploymentFailed() + ": " + deployment.getName(), Message.Severity.Error)
         );
     }

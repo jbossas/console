@@ -286,7 +286,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             @Override
             public void onFailure(Throwable caught) {
 
-                Console. MODULES.getMessageCenter().notify(
+                Console.getMessageCenter().notify(
                         new Message(Console.MESSAGES.addingFailed("Server Configuration ") + newServer.getName(), Message.Severity.Error)
                 );
 
@@ -382,7 +382,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         hostInfoStore.deleteServerConfig(hostSelection.getName(), server, new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(Throwable caught) {
-                Console.MODULES.getMessageCenter().notify(
+                Console.getMessageCenter().notify(
                         new Message(Console.MESSAGES.deletionFailed("Server Configuration ")+server.getName(), Message.Severity.Error)
                 );
             }
@@ -391,7 +391,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(Boolean wasSuccessful) {
                 if(wasSuccessful)
                 {
-                    Console.MODULES.getMessageCenter().notify(
+                    Console.getMessageCenter().notify(
                             new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName())
                     );
 
@@ -407,7 +407,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
                 }
                 else
                 {
-                    Console.MODULES.getMessageCenter().notify(
+                    Console.getMessageCenter().notify(
                             new Message(Console.MESSAGES.deleted("Server Configuration ")+server.getName(), Message.Severity.Error)
                     );
                 }

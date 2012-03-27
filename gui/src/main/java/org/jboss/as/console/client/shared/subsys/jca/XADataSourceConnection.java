@@ -85,7 +85,7 @@ public class XADataSourceConnection {
         formTools.providesDeleteOp(false);
 
         // standalone only
-        if(Console.MODULES.getBootstrapContext().isStandalone())
+        if(Console.getBootstrapContext().isStandalone())
             formTools.addToolButtonRight(verifyBtn);
 
         form.setFields(connectionSql, tx, rmOverride, interleave, padXid, wrap, BlankItem.INSTANCE);

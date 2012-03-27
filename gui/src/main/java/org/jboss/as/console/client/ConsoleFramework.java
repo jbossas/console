@@ -17,12 +17,12 @@ public class ConsoleFramework implements Framework {
 
     @Override
     public EventBus getEventBus() {
-        return Console.MODULES.getEventBus();
+        return Console.getEventBus();
     }
 
     @Override
     public PlaceManager getPlaceManager() {
-        return Console.MODULES.getPlaceManager();
+        return Console.getPlaceManager();
     }
 
     @Override

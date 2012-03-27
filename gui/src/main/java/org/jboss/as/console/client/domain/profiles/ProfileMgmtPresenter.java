@@ -35,6 +35,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -65,6 +66,7 @@ public class ProfileMgmtPresenter
 
     private String lastPlace;
     private BootstrapContext bootstrap;
+    private Header header;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.ProfileMgmtPresenter)
@@ -87,7 +89,8 @@ public class ProfileMgmtPresenter
             PlaceManager placeManager, ProfileStore profileStore,
             SubsystemStore subsysStore,
             ServerGroupStore serverGroupStore,
-            CurrentProfileSelection currentProfileSelection, BootstrapContext bootstrap) {
+            CurrentProfileSelection currentProfileSelection, BootstrapContext bootstrap,
+            Header header) {
 
         super(eventBus, view, proxy);
 
@@ -96,6 +99,7 @@ public class ProfileMgmtPresenter
         this.subsysStore = subsysStore;
         this.profileSelection = currentProfileSelection;
         this.bootstrap = bootstrap;
+        this.header = header;
     }
 
 
@@ -105,7 +109,7 @@ public class ProfileMgmtPresenter
 
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.ProfileMgmtPresenter);
+        header.highlight(NameTokens.ProfileMgmtPresenter);
 
         // default init when revealed the first time
         if(!hasBeenRevealed)

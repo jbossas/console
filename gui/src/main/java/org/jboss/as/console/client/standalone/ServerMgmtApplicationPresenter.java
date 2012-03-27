@@ -36,6 +36,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.BootstrapContext;
+import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
@@ -61,6 +62,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     private boolean matchCurrent;
     private BootstrapContext bootstrap;
     private String lastSubPlace;
+    private Header header;
 
     public interface ServerManagementView extends View {
 
@@ -78,11 +80,12 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     public ServerMgmtApplicationPresenter(
             EventBus eventBus, ServerManagementView view,
             ServerManagementProxy proxy, PlaceManager placeManager,
-            SubsystemStore subsysStore, BootstrapContext bootstrap) {
+            SubsystemStore subsysStore, BootstrapContext bootstrap, Header header) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.subsysStore = subsysStore;
         this.bootstrap = bootstrap;
+        this.header = header;
     }
 
 
@@ -108,7 +111,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
-                    Console.MODULES.getEventBus().fireEvent(
+                    Console.getEventBus().fireEvent(
                             new LHSHighlightEvent(bootstrap.getInitialPlace())
                     );
 
@@ -123,7 +126,7 @@ public class ServerMgmtApplicationPresenter extends Presenter<ServerMgmtApplicat
     protected void onReset() {
         super.onReset();
 
-        Console.MODULES.getHeader().highlight(NameTokens.serverConfig);
+        header.highlight(NameTokens.serverConfig);
 
         String currentToken = placeManager.getCurrentPlaceRequest().getNameToken();
         if(!currentToken.equals(getProxy().getNameToken()))

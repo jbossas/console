@@ -54,7 +54,7 @@ public class DomainRuntimeView extends ViewImpl implements DomainRuntimePresente
                 setContent(content);
 
         } else {
-            Console.MODULES.getMessageCenter().notify(
+            Console.getMessageCenter().notify(
                     new Message("Unknown slot requested:" + slot)
             );
         }

@@ -66,7 +66,7 @@ public class CurrentServerSelection {
     }
 
     public boolean isActive() {
-        boolean standalone = Console.MODULES.getBootstrapContext().isStandalone();
+        boolean standalone = Console.getBootstrapContext().isStandalone();
         return standalone || (hasSetServer() && server.isRunning());
     }
 }

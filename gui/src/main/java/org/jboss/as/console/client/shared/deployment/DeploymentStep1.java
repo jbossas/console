@@ -60,7 +60,7 @@ public class DeploymentStep1 {
 
         // Create a FormPanel and point it at a service.
         final FormPanel form = new FormPanel();
-        String url = Console.MODULES.getBootstrapContext().getProperty(BootstrapContext.DEPLOYMENT_API);
+        String url = Console.getBootstrapContext().getProperty(BootstrapContext.DEPLOYMENT_API);
         form.setAction(url);
 
         form.setEncoding(FormPanel.ENCODING_MULTIPART);

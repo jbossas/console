@@ -81,7 +81,7 @@ public class PoolConfigurationView {
         toolStrip.providesDeleteOp(false);
 
         // TODO: https://issues.jboss.org/browse/AS7-3254
-        if(Console.MODULES.getBootstrapContext().isStandalone()) {
+        if(Console.getBootstrapContext().isStandalone()) {
             toolStrip.addToolButtonRight(
                     new ToolButton("Flush", new ClickHandler() {
                         @Override

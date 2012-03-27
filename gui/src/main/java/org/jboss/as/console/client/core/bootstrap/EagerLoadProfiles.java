@@ -24,7 +24,7 @@ public class EagerLoadProfiles implements AsyncCommand<Boolean> {
     @Override
     public void execute(final AsyncCallback<Boolean> callback) {
 
-        BootstrapContext bootstrapContext = Console.MODULES.getBootstrapContext();
+        BootstrapContext bootstrapContext = Console.getBootstrapContext();
 
         if(!bootstrapContext.isStandalone())
         {
