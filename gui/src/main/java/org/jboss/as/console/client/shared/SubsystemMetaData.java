@@ -49,7 +49,7 @@ public class SubsystemMetaData {
 
     private static final String INFINISPAN = "Infinispan";
 
-    private static final String MODCLUSTER = "Modcluster";
+    private static final String MODCLUSTER = "mod_cluster";
 
     private static final String SECURITY = "Security";
 
@@ -80,7 +80,7 @@ public class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Servlet/HTTP", "web"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Web Services", "webservices"));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
-        groups.get(WEB).getItems().add(new SubsystemGroupItem("Modcluster", "modcluster",NameTokens.ModclusterPresenter));
+        groups.get(WEB).getItems().add(new SubsystemGroupItem("mod_cluster", "modcluster", NameTokens.ModclusterPresenter));
 
         groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
 
