@@ -205,7 +205,7 @@
                                 <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginContainer</console.spi.extension.class>
                             </options>
                             <processors>
-                                <processor>org.jboss.as.console.spi.GinModuleProcessor</processor>
+                                <processor>org.jboss.as.console.spi.ModuleProcessor</processor>
                                 <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
                             </processors>
                         </configuration>

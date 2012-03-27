@@ -23,7 +23,7 @@ import static javax.lang.model.SourceVersion.RELEASE_6;
  * implementation, that installs each discovered module.
  */
 @SupportedSourceVersion(RELEASE_6)
-public class GinModuleProcessor extends AbstractProcessor {
+public class ModuleProcessor extends AbstractProcessor {
 
     private final static String FINAL_MODULE_NAME = "console.spi.extension.class";
     private final static String DEFAULT_MODULE_NAME = "org.jboss.as.console.app.client.PluginModule";
