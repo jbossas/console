@@ -6,7 +6,6 @@ import freemarker.template.Template;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Map;
  */
 public class TemplateProcessor {
 
-    public void process(String name, Map<String, List> model, OutputStream output) {
+    public void process(String name, Map<String, Object> model, OutputStream output) {
 
         try
         {

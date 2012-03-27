@@ -10,10 +10,13 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static javax.lang.model.SourceVersion.RELEASE_6;
@@ -24,6 +27,8 @@ import static javax.lang.model.SourceVersion.RELEASE_6;
  */
 @SupportedSourceVersion(RELEASE_6)
 public class ModuleProcessor extends AbstractProcessor {
+
+    private static final String TEMPLATE = "PluginContainer.tmpl";
 
     private final static String FINAL_MODULE_NAME = "console.spi.extension.class";
     private final static String DEFAULT_MODULE_NAME = "org.jboss.as.console.app.client.PluginModule";
@@ -78,7 +83,7 @@ public class ModuleProcessor extends AbstractProcessor {
         {
             try {
                 // generate the actual implementation
-                writeModuleFile(discovered);
+                writeModuleFile();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -105,7 +110,7 @@ public class ModuleProcessor extends AbstractProcessor {
         }
     }
 
-    private void writeModuleFile(List<ExtensionDeclaration> discovered) throws Exception {
+    private void writeModuleFile() throws Exception {
 
         JavaFileObject sourceFile = filer.createSourceFile(finalModule);
 
@@ -114,27 +119,16 @@ public class ModuleProcessor extends AbstractProcessor {
 
         System.out.println("Module file: " + packageName+"."+simpleName);
 
-        PrintWriter writer = new PrintWriter(sourceFile.openOutputStream());
-        writer.println("package "+packageName+";");
-        writer.println();
-        writer.println("import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;");
-        writer.println();
-        writer.println("public class "+simpleName+" extends AbstractPresenterModule {");
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("packageName", packageName);
+        model.put("className", simpleName);
+        model.put("extensions", discovered);
 
-            writer.println("protected void configure() {");
+        OutputStream output = sourceFile.openOutputStream();
+        new TemplateProcessor().process(TEMPLATE, model, output);
 
-            for(ExtensionDeclaration ext : discovered)
-            {
-                System.out.println("Install: "+ext.type);
-                writer.println("install(new " + ext.type + "());");
-            }
-
-            writer.println("}");
-
-        writer.println("}");
-
-        writer.flush();
-        writer.close();
+        output.flush();
+        output.close();
 
     }
 }

@@ -207,6 +207,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
+                            <outputDiagnostics>false</outputDiagnostics>
                             <options>
                                 <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginContainer</console.spi.extension.class>
                             </options>

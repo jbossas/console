@@ -114,7 +114,7 @@ public class SubsystemProcessor extends AbstractProcessor {
 
         try
         {
-            Map<String, List> model = new HashMap<String, List>();
+            Map<String, Object> model = new HashMap<String, Object>();
             model.put("subsystemExtensions", declararions);
 
             JavaFileObject sourceFile = filer.createSourceFile(FILENAME);

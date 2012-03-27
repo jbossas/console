@@ -1,0 +1,11 @@
+package ${packageName};
+
+import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
+
+public class ${className} extends AbstractPresenterModule {
+    protected void configure() {
+        <#list extensions as ext>
+            install(new ${ext.getType()}());
+        </#list>
+    }
+}
