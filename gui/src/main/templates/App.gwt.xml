@@ -40,7 +40,7 @@
 
     <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
     <set-configuration-property name="gin.ginjector"
-                                value="org.jboss.as.console.client.core.gin.CoreUI" />
+                                value="org.jboss.as.console.client.core.gin.PluginSpecification" />
 
     <set-property name="log_ConsoleLogger" value="ENABLED" />
     <set-property name="log_GWTLogger" value="ENABLED" />

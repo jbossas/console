@@ -1,0 +1,18 @@
+package org.jboss.as.console.client.core.gin;
+
+import com.google.gwt.inject.client.GinModules;
+import com.google.gwt.inject.client.Ginjector;
+
+<#list extensions as ext>
+import ${ext};
+</#list>
+
+@GinModules(PluginBinding.class)
+public interface PluginSpecification extends Ginjector,
+    <#list extensions as ext>
+        ${ext},
+    </#list>
+    CoreUI {
+
+    // NOTE: this class was generated. don't modify it manually.
+}

@@ -1,8 +1,5 @@
 package org.jboss.as.console.spi;
 
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import org.jboss.as.console.client.plugins.SubsystemExtension;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -11,6 +8,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -24,46 +22,42 @@ import java.util.Set;
 
 import static javax.lang.model.SourceVersion.RELEASE_6;
 
-/**
- * Discovers Subsystem extension points and populates a registry that will be used within the
- * console to dynamically build the LHS navigator.
- *
- * @author Heiko Braun
- * @date 3/23/12
- */
 @SupportedSourceVersion(RELEASE_6)
-public class SubsystemProcessor extends AbstractProcessor {
+public class PluginProcessor extends AbstractProcessor {
 
-    private static final String FILENAME = "org.jboss.as.console.client.plugins.SubsystemRegistryImpl";
-    private static final String TEMPLATE = "SubsystemExtensions.tmpl";
+    private static final String TEMPLATE = "PluginSpecification.tmpl";
+    private static final String FILENAME = "org.jboss.as.console.client.core.gin.PluginSpecification";
+
 
     private Filer filer;
     private Messager messager;
-    private ProcessingEnvironment env;
-    private List<SubsystemExtension> declararions = new ArrayList<SubsystemExtension>();
+    private ProcessingEnvironment processingEnv;
+    List<String> discovered;
+
 
     @Override
     public void init(ProcessingEnvironment env) {
-        this.env = env;
+        this.processingEnv = env;
         this.filer = env.getFiler();
         this.messager = env.getMessager();
+        this.discovered = new ArrayList<String>();
+
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(Subsystem.class.getName());
-        types.add(NameToken.class.getName());
+        types.add(Plugin.class.getName());
         return types;
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> typeElements, RoundEnvironment roundEnv) {
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         if(!roundEnv.processingOver()) {
-            System.out.println("Begin Subsystem discovery ...");
+            System.out.println("Begin Components discovery ...");
 
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Subsystem.class);
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Plugin.class);
 
             for (Element element: elements)
             {
@@ -82,7 +76,7 @@ public class SubsystemProcessor extends AbstractProcessor {
                 e.printStackTrace();
             }
 
-            System.out.println("Subsystem discovery completed.");
+            System.out.println("Components discovery completed.");
         }
 
         return true;
@@ -95,20 +89,15 @@ public class SubsystemProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(Subsystem.class.getName()) )
+            if ( annotationType.equals(Plugin.class.getName()) )
             {
-                NameToken nameToken = element.getAnnotation(NameToken.class);
-                Subsystem subsystem = element.getAnnotation(Subsystem.class);
+                Plugin comps  = element.getAnnotation(Plugin.class);
 
-                if(nameToken!=null)   {
-                    System.out.println("Subsystem: " + subsystem.name() +" -> "+nameToken.value());
-
-                    SubsystemExtension declared = new SubsystemExtension(
-                            subsystem.name(), nameToken.value(), subsystem.group()
-                    );
-
-                    declararions.add(declared);
-                }
+                PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(element);
+                String fqn = packageElement.getQualifiedName().toString()+"."+
+                        element.getSimpleName().toString();
+                System.out.println("Components: " + fqn);
+                discovered.add(fqn);
             }
         }
     }
@@ -118,7 +107,7 @@ public class SubsystemProcessor extends AbstractProcessor {
         try
         {
             Map<String, Object> model = new HashMap<String, Object>();
-            model.put("subsystemExtensions", declararions);
+            model.put("extensions", discovered);
 
             JavaFileObject sourceFile = filer.createSourceFile(FILENAME);
             OutputStream output = sourceFile.openOutputStream();
@@ -132,3 +121,4 @@ public class SubsystemProcessor extends AbstractProcessor {
         }
     }
 }
+

@@ -134,8 +134,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
  * @author Heiko Braun
  * @date 1/31/11
  */
-@GinModules(PluginContainer.class)
-public interface CoreUI extends Ginjector {
+public interface CoreUI {
 
 
     SubsystemRegistry getSubsystemRegistry();
@@ -272,7 +271,7 @@ public interface CoreUI extends Ginjector {
     AsyncProvider<VMMetricsPresenter> getVMMetricsPresenter();
     AsyncProvider<HostVMMetricPresenter> getServerVMMetricPresenter();
 
-    AsyncProvider<TransactionPresenter> getTransactionPresenter();
+    //AsyncProvider<TransactionPresenter> getTransactionPresenter();
     AsyncProvider<SecuritySubsystemPresenter> getSecuritySubsystemPresenter();
     AsyncProvider<SecurityDomainsPresenter> getSecurityDomainsPresenter();
 

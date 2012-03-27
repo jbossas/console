@@ -209,10 +209,11 @@
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
                             <options>
-                                <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginContainer</console.spi.extension.class>
+                                <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginBinding</console.spi.extension.class>
                             </options>
                             <processors>
-                                <processor>org.jboss.as.console.spi.ModuleProcessor</processor>
+                                <processor>org.jboss.as.console.spi.PluginProcessor</processor>
+                                <processor>org.jboss.as.console.spi.PluginBindingProcessor</processor>
                                 <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
                             </processors>
                         </configuration>

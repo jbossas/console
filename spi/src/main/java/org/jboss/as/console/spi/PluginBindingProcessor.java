@@ -11,7 +11,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,13 +21,13 @@ import java.util.Set;
 import static javax.lang.model.SourceVersion.RELEASE_6;
 
 /**
- * Discovers {@link ExtensionModule}'s and dynamically creates a GinModule
+ * Discovers {@link PluginBinding}'s and dynamically creates a GinModule
  * implementation, that installs each discovered module.
  */
 @SupportedSourceVersion(RELEASE_6)
-public class ModuleProcessor extends AbstractProcessor {
+public class PluginBindingProcessor extends AbstractProcessor {
 
-    private static final String TEMPLATE = "PluginContainer.tmpl";
+    private static final String TEMPLATE = "PluginBinding.tmpl";
 
     private final static String FINAL_MODULE_NAME = "console.spi.extension.class";
     private final static String DEFAULT_MODULE_NAME = "org.jboss.as.console.app.client.PluginModule";
@@ -60,7 +59,7 @@ public class ModuleProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(ExtensionModule.class.getName());
+        types.add(PluginBinding.class.getName());
         return types;
     }
 
@@ -103,7 +102,7 @@ public class ModuleProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(ExtensionModule.class.getName()) )
+            if ( annotationType.equals(PluginBinding.class.getName()) )
             {
                 discovered.add(new ExtensionDeclaration(aElement.asType().toString()));
             }

@@ -45,7 +45,6 @@ import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.StandaloneUse;
 import org.jboss.as.console.client.core.message.MessageBar;
 import org.jboss.as.console.client.core.message.MessageCenter;
-import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterImpl;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
@@ -90,7 +89,6 @@ import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
-import org.jboss.as.console.client.shared.dispatch.ResponseProcessor;
 import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
@@ -200,7 +198,7 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.spi.ExtensionModule;
+import org.jboss.as.console.spi.PluginBinding;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -208,7 +206,7 @@ import org.jboss.as.console.spi.ExtensionModule;
  * @author Heiko Braun
  * @date 1/31/11
  */
-@ExtensionModule
+@PluginBinding
 public class CoreUIModule extends AbstractPresenterModule {
 
     protected void configure() {
