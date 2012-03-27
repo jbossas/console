@@ -90,6 +90,8 @@ import org.jboss.as.console.client.plugins.SubsystemRegistryImpl;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.HandlerMapping;
 import org.jboss.as.console.client.shared.dispatch.InvocationMetrics;
+import org.jboss.as.console.client.shared.dispatch.ResponseProcessor;
+import org.jboss.as.console.client.shared.dispatch.ResponseProcessorFactory;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRHandler;
 import org.jboss.as.console.client.shared.dispatch.impl.DispatchAsyncImpl;
 import org.jboss.as.console.client.shared.dispatch.impl.HandlerRegistry;
@@ -217,6 +219,8 @@ public class CoreUIModule extends AbstractPresenterModule {
         // static injections
         requestStaticInjection(RuntimeBaseAddress.class);
         requestStaticInjection(Baseadress.class);
+        requestStaticInjection(ResponseProcessorFactory.class);
+
 
         // main layout
         bind(Header.class).in(Singleton.class);

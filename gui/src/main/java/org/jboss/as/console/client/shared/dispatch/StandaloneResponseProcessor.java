@@ -5,6 +5,7 @@ import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -20,10 +21,16 @@ public class StandaloneResponseProcessor implements ResponseProcessor {
     private static final String RELOAD_REQUIRED = "reload-required";
     private static final String STANDLONE_SERVER = "Standlone Server";
 
+    private ReloadState reloadState;
+
+    @Inject
+    public StandaloneResponseProcessor(ReloadState reloadState) {
+        this.reloadState = reloadState;
+    }
+
     @Override
     public void process(ModelNode response) {
 
-        ReloadState reloadState = Console.MODULES.getReloadState();
         boolean staleModel = parseServerState(response, reloadState);
 
         reloadState.propagateChanges();

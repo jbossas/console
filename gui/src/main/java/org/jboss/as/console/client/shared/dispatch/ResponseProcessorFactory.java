@@ -1,6 +1,9 @@
 package org.jboss.as.console.client.shared.dispatch;
 
+import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.dmr.client.ModelNode;
+
+import javax.inject.Inject;
 
 /**
  * @author Heiko Braun
@@ -8,7 +11,8 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class ResponseProcessorFactory {
 
-    public static ResponseProcessorFactory INSTANCE = new ResponseProcessorFactory();
+    @Inject
+    public static ResponseProcessorFactory INSTANCE;
 
     // used before bootstrap completes
     public static ResponseProcessor NOOP = new ResponseProcessor() {
@@ -19,18 +23,24 @@ public class ResponseProcessorFactory {
         }
     };
 
-    public static ResponseProcessor PROCESSOR = NOOP;
+    private ResponseProcessor delegate = NOOP;
+    private ReloadState reloadState;
 
-    public ResponseProcessor create()
-    {
-        return PROCESSOR;
+    @Inject
+    public ResponseProcessorFactory(ReloadState reloadState) {
+
+        this.reloadState = reloadState;
+    }
+
+    public ResponseProcessor get() {
+        return INSTANCE.delegate;
     }
 
     public void bootstrap(boolean isStandalone)
     {
         if(isStandalone)
-            PROCESSOR = new StandaloneResponseProcessor();
+            delegate = new StandaloneResponseProcessor(reloadState);
         else
-            PROCESSOR = new DomainResponseProcessor();
+            delegate = new DomainResponseProcessor(reloadState);
     }
 }

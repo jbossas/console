@@ -39,7 +39,7 @@ public class DMRResponse implements Result<ModelNode> {
         this.responseText = responseText;
         this.contentType = contentType;
 
-        this.processor = ResponseProcessorFactory.INSTANCE.create();
+        this.processor = ResponseProcessorFactory.INSTANCE.get();
     }
 
     @Override

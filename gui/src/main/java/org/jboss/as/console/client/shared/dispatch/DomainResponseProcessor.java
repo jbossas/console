@@ -1,10 +1,10 @@
 package org.jboss.as.console.client.shared.dispatch;
 
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.state.ReloadState;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -21,10 +21,15 @@ public class DomainResponseProcessor implements ResponseProcessor {
     private static final String SERVER_GROUPS = "server-groups";
     private static final String RESPONSE = "response";
 
+    private ReloadState reloadState;
+
+    @Inject
+    public DomainResponseProcessor(ReloadState reloadState) {
+        this.reloadState = reloadState;
+    }
+
     @Override
     public void process(ModelNode response) {
-
-        ReloadState reloadState = Console.MODULES.getReloadState();
 
         parseServerState(response, reloadState);
 
