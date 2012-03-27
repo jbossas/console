@@ -96,7 +96,7 @@ public class SubsystemMetaData {
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Naming", "naming", !Console.MODULES.getBootstrapContext().isStandalone()));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EJB 3", "ejb3"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("EE", "ee"));
-        groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
+        //groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Transactions", "transactions"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("Weld", "weld",Boolean.TRUE));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JPA", "jpa"));
         groups.get(CONTAINER).getItems().add(new SubsystemGroupItem("JacORB", "jacorb"));

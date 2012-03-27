@@ -1,0 +1,28 @@
+
+package org.jboss.as.console.client.plugins;
+
+import java.util.*;
+
+public class SubsystemRegistryImpl implements SubsystemRegistry{
+
+    private List<SubsystemExtension> list;
+
+    public SubsystemRegistryImpl() {
+
+        list = new ArrayList<SubsystemExtension>();
+
+        <#list subsystemExtensions as subsystem>
+            list.add(new SubsystemExtension(
+                "${subsystem.getName()}",
+                "${subsystem.getToken()}",
+                "${subsystem.getGroup()}")
+            );
+        </#list>
+
+    }
+
+    public List<SubsystemExtension> getExtensions() {
+        return list;
+    }
+
+}

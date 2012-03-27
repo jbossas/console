@@ -45,7 +45,7 @@ public class TransactionPresenter extends Presenter<TransactionPresenter.MyView,
 
     @ProxyCodeSplit
     @NameToken(NameTokens.TransactionPresenter)
-    @Subsystem
+    @Subsystem(name="Transactions", group="Container")
     public interface MyProxy extends Proxy<TransactionPresenter>, Place {
     }
 

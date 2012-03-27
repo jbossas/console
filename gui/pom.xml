@@ -106,6 +106,12 @@
             <version>${version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>console-spi</artifactId>
+            <version>${version}</version>
+            <classifier>sources</classifier>
+        </dependency>
     </dependencies>
 
     <!-- Plugins -->
