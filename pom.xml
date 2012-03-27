@@ -97,6 +97,7 @@
     </properties>
 
     <modules>
+        <module>spi</module>
         <module>gui</module>
         <!--module>testsuite</module-->
     </modules>
