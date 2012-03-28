@@ -103,13 +103,13 @@
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>console-spi</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>console-spi</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
             <classifier>sources</classifier>
         </dependency>
     </dependencies>
