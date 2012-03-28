@@ -126,7 +126,7 @@ import org.jboss.as.console.client.standalone.StandaloneServer;
  * @date 2/22/11
  */
 @Category(PropertyRecordCategory.class)
-public interface BeanFactory extends AutoBeanFactory {
+public interface CoreBeanFactory extends AutoBeanFactory {
 
     AutoBean<ProfileRecord> profile();
     AutoBean<SubsystemRecord> subsystem();
@@ -215,7 +215,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<BlockingQueuelessThreadPool> blockingQueuelessThreadPool();
     AutoBean<ScheduledThreadPool> scheduledThreadPool();
 
-    AutoBean<TransactionManager> transactionManager();
     AutoBean<SecuritySubsystem> securitySubsystem();
     AutoBean<SecurityDomain> securityDomain();
     AutoBean<AuthenticationLoginModule> authenticationLoginModule();
@@ -247,4 +246,6 @@ public interface BeanFactory extends AutoBeanFactory {
     AutoBean<JGroupsStack> jGroupsStack();
     AutoBean<JGroupsProtocol> jGroupsProtocol();
     AutoBean<JGroupsTransport> jGroupsTransport();
+
+    AutoBean<TransactionManager> transactionManager();
 }
