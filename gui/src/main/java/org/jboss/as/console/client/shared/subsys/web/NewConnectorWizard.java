@@ -21,6 +21,7 @@ package org.jboss.as.console.client.shared.subsys.web;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
@@ -30,11 +31,13 @@ import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.ComboBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.FormValidation;
+import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 import org.jboss.dmr.client.ModelNode;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,7 +62,7 @@ public class NewConnectorWizard {
 
         TextBoxItem name = new TextBoxItem("name", "Name");
 
-        ComboBoxItem socket = new ComboBoxItem("socketBinding", "Socket Binding") {
+        SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding") {
 
             private String errOrig;
 
@@ -85,7 +88,12 @@ public class NewConnectorWizard {
                 return parentValid && bindingValid;
             }
         };
-        socket.setValueMap(socketBindings);
+
+        MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+        oracle.addAll(socketBindings);
+        socket.setOracle(oracle);
+
+        //socket.setValueMap(socketBindings);
 
 
 
