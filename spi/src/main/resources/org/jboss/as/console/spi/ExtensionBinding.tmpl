@@ -1,8 +1,8 @@
-package ${packageName};
+package org.jboss.as.console.client.core.gin;
 
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 
-public class ${className} extends AbstractPresenterModule {
+public class CompositeBinding extends AbstractPresenterModule {
     protected void configure() {
         <#list extensions as ext>
             install(new ${ext.getType()}());

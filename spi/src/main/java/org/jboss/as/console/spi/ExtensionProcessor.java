@@ -23,10 +23,10 @@ import java.util.Set;
 import static javax.lang.model.SourceVersion.RELEASE_6;
 
 @SupportedSourceVersion(RELEASE_6)
-public class PluginProcessor extends AbstractProcessor {
+public class ExtensionProcessor extends AbstractProcessor {
 
-    private static final String TEMPLATE = "PluginSpecification.tmpl";
-    private static final String FILENAME = "org.jboss.as.console.client.core.gin.PluginSpecification";
+    private static final String TEMPLATE = "Extension.tmpl";
+    private static final String FILENAME = "org.jboss.as.console.client.core.gin.Composite";
 
 
     private Filer filer;
@@ -47,7 +47,7 @@ public class PluginProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(Plugin.class.getName());
+        types.add(GinExtension.class.getName());
         return types;
     }
 
@@ -57,7 +57,7 @@ public class PluginProcessor extends AbstractProcessor {
         if(!roundEnv.processingOver()) {
             System.out.println("Begin Components discovery ...");
 
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Plugin.class);
+            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(GinExtension.class);
 
             for (Element element: elements)
             {
@@ -89,9 +89,9 @@ public class PluginProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(Plugin.class.getName()) )
+            if ( annotationType.equals(GinExtension.class.getName()) )
             {
-                Plugin comps  = element.getAnnotation(Plugin.class);
+                GinExtension comps  = element.getAnnotation(GinExtension.class);
 
                 PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(element);
                 String fqn = packageElement.getQualifiedName().toString()+"."+

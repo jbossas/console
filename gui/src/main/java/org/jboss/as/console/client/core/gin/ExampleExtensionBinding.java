@@ -3,14 +3,14 @@ package org.jboss.as.console.client.core.gin;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsView;
-import org.jboss.as.console.spi.PluginBinding;
+import org.jboss.as.console.spi.GinExtensionBinding;
 
 /**
  * @author Heiko Braun
  * @date 3/23/12
  */
-@PluginBinding
-public class ExtensionBinding extends AbstractPresenterModule {
+@GinExtensionBinding
+public class ExampleExtensionBinding extends AbstractPresenterModule {
     @Override
     protected void configure() {
 

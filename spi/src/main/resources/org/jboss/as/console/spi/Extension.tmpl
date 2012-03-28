@@ -7,8 +7,8 @@ import com.google.gwt.inject.client.Ginjector;
 import ${ext};
 </#list>
 
-@GinModules(PluginBinding.class)
-public interface PluginSpecification extends Ginjector,
+@GinModules(CompositeBinding.class)
+public interface Composite extends Ginjector,
     <#list extensions as ext>
         ${ext},
     </#list>

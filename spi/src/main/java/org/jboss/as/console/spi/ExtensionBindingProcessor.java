@@ -21,22 +21,21 @@ import java.util.Set;
 import static javax.lang.model.SourceVersion.RELEASE_6;
 
 /**
- * Discovers {@link PluginBinding}'s and dynamically creates a GinModule
+ * Discovers {@link GinExtensionBinding}'s and dynamically creates a GinModule
  * implementation, that installs each discovered module.
  */
 @SupportedSourceVersion(RELEASE_6)
-public class PluginBindingProcessor extends AbstractProcessor {
+public class ExtensionBindingProcessor extends AbstractProcessor {
 
-    private static final String TEMPLATE = "PluginBinding.tmpl";
+    private static final String TEMPLATE = "ExtensionBinding.tmpl";
+    private final static String FILENAME = "org.jboss.as.console.client.core.gin.CompositeBinding";
 
-    private final static String FINAL_MODULE_NAME = "console.spi.extension.class";
-    private final static String DEFAULT_MODULE_NAME = "org.jboss.as.console.app.client.PluginModule";
 
     private Filer filer;
 	private Messager messager;
     private ProcessingEnvironment processingEnv;
     List<ExtensionDeclaration> discovered;
-    private String finalModule;
+    //private String finalModule;
 
     @Override
 	public void init(ProcessingEnvironment env) {
@@ -44,22 +43,22 @@ public class PluginBindingProcessor extends AbstractProcessor {
         this.filer = env.getFiler();
 		this.messager = env.getMessager();
         this.discovered = new ArrayList<ExtensionDeclaration>();
-        this.finalModule = env.getOptions().get(FINAL_MODULE_NAME) !=null ?
-                env.getOptions().get(FINAL_MODULE_NAME) : DEFAULT_MODULE_NAME;
+       /* this.finalModule = env.getOptions().get(FINAL_MODULE_NAME) !=null ?
+                env.getOptions().get(FINAL_MODULE_NAME) : DEFAULT_MODULE_NAME;*/
 
     }
 
-    @Override
+    /*@Override
     public Set<String> getSupportedOptions() {
         Set<String> types = new HashSet<String>();
         types.add(FINAL_MODULE_NAME);
         return types;
-    }
+    } */
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new HashSet<String>();
-        types.add(PluginBinding.class.getName());
+        types.add(GinExtensionBinding.class.getName());
         return types;
     }
 
@@ -102,7 +101,7 @@ public class PluginBindingProcessor extends AbstractProcessor {
         {
             final String annotationType = mirror.getAnnotationType().toString();
 
-            if ( annotationType.equals(PluginBinding.class.getName()) )
+            if ( annotationType.equals(GinExtensionBinding.class.getName()) )
             {
                 discovered.add(new ExtensionDeclaration(aElement.asType().toString()));
             }
@@ -111,16 +110,14 @@ public class PluginBindingProcessor extends AbstractProcessor {
 
     private void writeModuleFile() throws Exception {
 
-        JavaFileObject sourceFile = filer.createSourceFile(finalModule);
+        JavaFileObject sourceFile = filer.createSourceFile(FILENAME);
 
-        String simpleName = finalModule.substring(finalModule.lastIndexOf(".")+1, finalModule.length());
-        String packageName = finalModule.substring(0, finalModule.lastIndexOf("."));
-
-        System.out.println("Module file: " + packageName+"."+simpleName);
+        //String simpleName = finalModule.substring(finalModule.lastIndexOf(".")+1, finalModule.length());
+        //String packageName = finalModule.substring(0, finalModule.lastIndexOf("."));
 
         Map<String, Object> model = new HashMap<String, Object>();
-        model.put("packageName", packageName);
-        model.put("className", simpleName);
+        //model.put("packageName", packageName);
+        //model.put("className", simpleName);
         model.put("extensions", discovered);
 
         OutputStream output = sourceFile.openOutputStream();

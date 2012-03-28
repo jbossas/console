@@ -198,7 +198,7 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
-import org.jboss.as.console.spi.PluginBinding;
+import org.jboss.as.console.spi.GinExtensionBinding;
 
 /**
  * Provides the bindings for the core UI widgets.
@@ -206,7 +206,7 @@ import org.jboss.as.console.spi.PluginBinding;
  * @author Heiko Braun
  * @date 1/31/11
  */
-@PluginBinding
+@GinExtensionBinding
 public class CoreUIModule extends AbstractPresenterModule {
 
     protected void configure() {

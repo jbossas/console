@@ -212,8 +212,8 @@
                                 <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginBinding</console.spi.extension.class>
                             </options>
                             <processors>
-                                <processor>org.jboss.as.console.spi.PluginProcessor</processor>
-                                <processor>org.jboss.as.console.spi.PluginBindingProcessor</processor>
+                                <processor>org.jboss.as.console.spi.ExtensionProcessor</processor>
+                                <processor>org.jboss.as.console.spi.ExtensionBindingProcessor</processor>
                                 <processor>org.jboss.as.console.spi.SubsystemProcessor</processor>
                             </processors>
                         </configuration>
