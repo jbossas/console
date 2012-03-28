@@ -164,7 +164,7 @@ public class ApplicationMetaDataGenerator extends Generator{
 
             int idx = 0;
 
-            for(Method method : beanFactoryClass.getDeclaredMethods())
+            for(Method method : beanFactoryClass.getMethods())
             {
                 Type returnType = method.getGenericReturnType();
                 if(!(returnType instanceof ParameterizedType)) continue;
@@ -175,7 +175,8 @@ public class ApplicationMetaDataGenerator extends Generator{
                 
                 Class beanTypeClass = (Class) typeArguments[0];
                 
-                sourceWriter.println(beanTypeClass.getSimpleName() + "_" + idx + "();");
+                //sourceWriter.println(beanTypeClass.getSimpleName() + "_" + idx + "();");
+                sourceWriter.println(beanTypeClass.getSimpleName() +  "();");
                 
                 idx++;
             }
@@ -397,7 +398,7 @@ public class ApplicationMetaDataGenerator extends Generator{
 
             int idx = 0;
 
-            for(Method method : beanFactoryClass.getDeclaredMethods())
+            for(Method method : beanFactoryClass.getMethods())
             {
                 
                 
@@ -409,7 +410,8 @@ public class ApplicationMetaDataGenerator extends Generator{
                     if(typeArguments[0] instanceof Class)
                     {
                         Class beanTypeClass = (Class) typeArguments[0];
-                        sourceWriter.println("public void " + beanTypeClass.getSimpleName() + "_" + idx + "() {");
+                        //sourceWriter.println("public void " + beanTypeClass.getSimpleName() + "_" + idx + "() {");
+                        sourceWriter.println("public void " + beanTypeClass.getSimpleName() + "() {");
                         sourceWriter.indent();
                         sourceWriter.println("Class<?> listType = null;");
                         sourceWriter.println("String label = \"\";");

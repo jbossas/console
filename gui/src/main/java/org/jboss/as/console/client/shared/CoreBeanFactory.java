@@ -126,7 +126,7 @@ import org.jboss.as.console.client.standalone.StandaloneServer;
  * @date 2/22/11
  */
 @Category(PropertyRecordCategory.class)
-public interface CoreBeanFactory extends AutoBeanFactory {
+public interface CoreBeanFactory {
 
     AutoBean<ProfileRecord> profile();
     AutoBean<SubsystemRecord> subsystem();
@@ -247,5 +247,4 @@ public interface CoreBeanFactory extends AutoBeanFactory {
     AutoBean<JGroupsProtocol> jGroupsProtocol();
     AutoBean<JGroupsTransport> jGroupsTransport();
 
-    AutoBean<TransactionManager> transactionManager();
 }
