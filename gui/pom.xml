@@ -217,9 +217,6 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDiagnostics>false</outputDiagnostics>
-                            <options>
-                                <console.spi.extension.class>org.jboss.as.console.client.core.gin.PluginBinding</console.spi.extension.class>
-                            </options>
                             <processors>
                                 <processor>org.jboss.as.console.spi.ExtensionProcessor</processor>
                                 <processor>org.jboss.as.console.spi.ExtensionBindingProcessor</processor>
