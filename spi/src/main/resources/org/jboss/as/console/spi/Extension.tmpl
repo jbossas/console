@@ -3,10 +3,6 @@ package org.jboss.as.console.client.core.gin;
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 
-<#list extensions as ext>
-import ${ext};
-</#list>
-
 @GinModules(CompositeBinding.class)
 public interface Composite extends
     <#list extensions as ext>
