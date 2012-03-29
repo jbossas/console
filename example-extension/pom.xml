@@ -30,6 +30,13 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-console</artifactId>
+            <version>${bom.version}</version>
+            <classifier>export</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
         </dependency>
@@ -129,6 +136,47 @@
         <plugins>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/imported-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeClassifiers>export</includeClassifiers>
+                            <includeTypes>jar</includeTypes>
+                            <outputDirectory>${basedir}/target/imported-sources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.zanata</groupId>
                 <artifactId>zanata-maven-plugin</artifactId>
                 <version>1.5.0</version>
@@ -205,6 +253,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
+                            <sourceDirectory>${basedir}/target/imported-sources</sourceDirectory>
                             <outputDiagnostics>false</outputDiagnostics>
                             <processors>
                                 <processor>org.jboss.as.console.spi.ExtensionProcessor</processor>
