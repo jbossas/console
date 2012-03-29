@@ -22,7 +22,7 @@
     </description>
 
     <properties>
-        <ballroom.version>1.2.0.Final</ballroom.version>
+        <ballroom.version>1.3.0-SNAPSHOT</ballroom.version>
         <gwt.version>2.3.2-redhat</gwt.version>
         <gwtp.version>0.6</gwtp.version>
         <gwt.maven>2.3.0</gwt.maven>
@@ -53,6 +53,13 @@
             <dependency>
                 <groupId>org.jboss.ballroom</groupId>
                 <artifactId>widgets</artifactId>
+                <version>${ballroom.version}</version>
+            </dependency>
+
+             <dependency>
+                <groupId>org.jboss.ballroom</groupId>
+                <artifactId>widgets</artifactId>
+                 <classifier>sources</classifier>
                 <version>${ballroom.version}</version>
             </dependency>
 

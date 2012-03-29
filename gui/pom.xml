@@ -22,7 +22,7 @@
     </properties>
 
     <!--  Dependencies -->
-     <dependencyManagement>
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.jboss.as</groupId>
@@ -39,6 +39,17 @@
         <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>console-spi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>console-spi</artifactId>
+            <classifier>sources</classifier>
         </dependency>
 
         <!-- GWT -->
@@ -110,18 +121,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>console-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>console-spi</artifactId>
-            <version>${project.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
     </dependencies>
 
     <!-- Plugins -->
