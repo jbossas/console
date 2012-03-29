@@ -13,6 +13,8 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.extension.model.DataModel;
 import org.jboss.as.console.client.shared.BeanFactory;
+import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.Subsystem;
 
 /**
  * @author Heiko Braun
@@ -22,26 +24,29 @@ public class HelloWorldPresenter extends Presenter<HelloWorldPresenter.MyView, H
 
     private final PlaceManager placeManager;
     private BeanFactory factory;
+    private RevealStrategy revealStrategy;
 
     @ProxyCodeSplit
     @NameToken("helloworld")
+    @Subsystem(name="HelloWorld", group = "Examples")
     public interface MyProxy extends Proxy<HelloWorldPresenter>, Place {
     }
 
     public interface MyView extends View {
         void setPresenter(HelloWorldPresenter presenter);
-
         void setData(DataModel data);
     }
 
     @Inject
     public HelloWorldPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, BeanFactory factory) {
+            PlaceManager placeManager, BeanFactory factory,
+            RevealStrategy revealStrategy) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
         this.factory = factory;
+        this.revealStrategy = revealStrategy;
     }
 
     @Override
@@ -66,6 +71,6 @@ public class HelloWorldPresenter extends Presenter<HelloWorldPresenter.MyView, H
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(getEventBus(), MainLayoutPresenter.TYPE_MainContent, this);
+        revealStrategy.revealInParent(this);
     }
 }

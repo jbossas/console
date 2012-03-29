@@ -19,72 +19,13 @@
 
 <module rename-to="app">
 
-    <inherits name="com.google.gwt.i18n.I18N"/>
-    <inherits name="org.jboss.dmr.DMR"/>
+    <inherits name="org.jboss.as.console.App"/>
 
-
-    <inherits name="org.jboss.ballroom.Framework"/>
-
-    <inherits name="com.google.gwt.json.JSON"/>
-
-    <inherits name="com.allen_sauer.gwt.log.gwt-log-ERROR" />
-
-    <inherits name='com.google.gwt.visualization.Visualization'/>
-
-    <!-- Enable debug ID. -->
-	<inherits name="com.google.gwt.user.Debug"/>
-	<set-property name="gwt.enableDebugId" value="true"/>
-
-
-    <define-configuration-property name="gin.ginjector" is-multi-valued="false" />
-    <set-configuration-property name="gin.ginjector"
-                                value="org.jboss.as.console.client.core.gin.Composite" />
-
-    <set-property name="log_ConsoleLogger" value="ENABLED" />
-    <set-property name="log_GWTLogger" value="ENABLED" />
-    <set-property name="log_SystemLogger" value="ENABLED" />
-
-    <!-- Loggers Disabled by default -->
-    <set-property name="log_DivLogger" value="DISABLED" />
-    <set-property name="log_FirebugLogger" value="DISABLED" />
-    <set-property name="log_WindowLogger" value="DISABLED" />
-    <set-configuration-property name="log_pattern" value="%d [%-5p] %m%n" />
-
-    <generate-with class="org.jboss.as.console.rebind.forms.ApplicationMetaDataGenerator">
-        <when-type-assignable class="org.jboss.as.console.client.widgets.forms.ApplicationMetaData" />
-    </generate-with>
-
-
-    <replace-with class="org.jboss.as.console.client.ConsoleFramework">
-        <when-type-is class="org.jboss.ballroom.client.spi.Framework"/>
-    </replace-with>
-
-	<property-provider name="locale">
-        var locale_value = "";
-        var cookieName = "as7_ui_locale";
-
-        var theCookie=" "+document.cookie;
-        var ind=theCookie.indexOf(" "+cookieName+"=");
-        if (ind==-1) ind=theCookie.indexOf(";"+cookieName+"=");
-
-        if (ind==-1 || cookieName=="") {
-            locale_value = "en";
-        }
-        else {
-            var ind1=theCookie.indexOf(";",ind+1);
-            if (ind1==-1) ind1=theCookie.length;
-            locale_value = unescape(theCookie.substring(ind+cookieName.length+2,ind1));
-        }
-
-        return locale_value;
-	</property-provider>
-
-    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <extend-property name="locale" values="en"/>
     <set-property-fallback name="locale" value="en"/>
-    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <set-property name="locale" value="en"/>
 
-    <stylesheet src="lab.css" />
+    <set-property name="user.agent" value="safari,gecko1_8"/>
 
-    <entry-point class='org.jboss.as.console.client.Console'/>
 
 </module>
