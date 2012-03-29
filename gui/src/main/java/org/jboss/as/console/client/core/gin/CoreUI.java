@@ -124,6 +124,7 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.spi.GinExtension;
 
 
 /**
@@ -134,6 +135,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
  * @author Heiko Braun
  * @date 1/31/11
  */
+@GinExtension
 public interface CoreUI {
 
 

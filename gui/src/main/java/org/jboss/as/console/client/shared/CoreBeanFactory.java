@@ -119,6 +119,7 @@ import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceProvider;
 import org.jboss.as.console.client.standalone.StandaloneServer;
+import org.jboss.as.console.spi.BeanFactoryExtension;
 
 
 /**
@@ -126,6 +127,7 @@ import org.jboss.as.console.client.standalone.StandaloneServer;
  * @date 2/22/11
  */
 @Category(PropertyRecordCategory.class)
+@BeanFactoryExtension
 public interface CoreBeanFactory {
 
     AutoBean<ProfileRecord> profile();
