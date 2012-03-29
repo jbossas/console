@@ -8,6 +8,13 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
+            <directory>${basedir}/target/generated-sources</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>org/jboss/as/console/client/Build.java</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/main/java</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
