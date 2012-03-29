@@ -144,8 +144,6 @@
                 <configuration>
                     <projectType>properties</projectType>
                     <includes>src/main/java/org/jboss/as/console/client/core/UIConstants.properties,src/main/java/org/jboss/as/console/client/core/UIMessages.properties</includes>
-                    <!--dryRun>true</dryRun-->
-                    <!--projectVersion>${project.version}</projectVersion-->
                     <projectVersion>master</projectVersion>
                 </configuration>
             </plugin>
@@ -159,7 +157,6 @@
                     <logLevel>TRACE</logLevel>
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
-                    <!--bindAddress>192.168.0.12</bindAddress-->
                     <extraJvmArgs>-Xmx512m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
                     <style>OBF</style>
