@@ -15,19 +15,30 @@
     </parent>
 
     <properties>
-        <ballroom.version>1.2.0.Final</ballroom.version>
+        <gwt.maven>2.3.0</gwt.maven>
         <console.profile>jboss</console.profile>
         <product.version>7.1</product.version>
         <gwt.bindAddress>127.0.0.1</gwt.bindAddress>
     </properties>
 
     <!--  Dependencies -->
+     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-console-bom</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+
         <dependency>
             <groupId>org.jboss.ballroom</groupId>
             <artifactId>widgets</artifactId>
-            <version>${ballroom.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- GWT -->
@@ -57,13 +68,12 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
@@ -174,6 +184,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>scripts/assembly.xml</descriptor>
+                        <descriptor>scripts/export.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

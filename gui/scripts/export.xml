@@ -1,0 +1,37 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>export</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/src/main/java</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <excludes>
+                <exclude>org/jboss/as/console/client/core/gin/Composite.java</exclude>
+                <exclude>org/jboss/as/console/client/core/gin/CompositeBinding.java</exclude>
+                <exclude>org/jboss/as/console/client/shared/BeanFactory.java</exclude>
+                <exclude>org/jboss/as/console/client/plugins/SubsystemRegistryImpl.java</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/war/WEB-INF/classes</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <excludes>
+                <exclude>org/jboss/as/console/client/core/gin/Composite.class</exclude>
+                <exclude>org/jboss/as/console/client/core/gin/CompositeBinding.class</exclude>
+                <exclude>org/jboss/as/console/client/shared/BeanFactory.class</exclude>
+                <exclude>org/jboss/as/console/client/plugins/SubsystemRegistryImpl.class</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+</assembly>

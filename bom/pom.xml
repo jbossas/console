@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.as</groupId>
+    <artifactId>jboss-as-console-bom</artifactId>
+    <packaging>pom</packaging>
+    <version>1.3.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-console-parent</artifactId>
+        <version>1.3.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>JBoss 7 - Management Console :: BOM</name>
+
+    <!-- Minimal project metadata, for more see parent/pom.xml -->
+
+    <description>
+        AS 7 console "bill of materials" which can be imported by any project
+        providing extensions to the console. It provides dependency management for the developer APIs and SPIs.
+    </description>
+
+    <properties>
+        <ballroom.version>1.2.0.Final</ballroom.version>
+        <gwt.version>2.3.2-redhat</gwt.version>
+        <gwtp.version>0.6</gwtp.version>
+        <gwt.maven>2.3.0</gwt.maven>
+        <gwt-log.version>3.1.3</gwt-log.version>
+        <gwt-vis.version>1.1.1</gwt-vis.version>
+        <junit.version>4.8.1</junit.version>
+        <gin.version>1.5_past22</gin.version>
+        <guice.version>3.0</guice.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>console-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>console-spi</artifactId>
+                <version>${project.version}</version>
+                <classifier>sources</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.ballroom</groupId>
+                <artifactId>widgets</artifactId>
+                <version>${ballroom.version}</version>
+            </dependency>
+
+            <!-- GWT related -->
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-servlet</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+                <classifier>sources</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code</groupId>
+                <artifactId>gwt-visualization</artifactId>
+                <version>${gwt-vis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gwt-log</groupId>
+                <artifactId>gwt-log</artifactId>
+                <version>${gwt-log.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-mvp-client</artifactId>
+                <version>${gwtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-assistedinject</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.gwt.inject</groupId>
+                <artifactId>gin</artifactId>
+                <version>${gin.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>
