@@ -54,6 +54,7 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         contextForm = new ModclusterForm(presenter);
 
         TextAreaItem excludedContexts = new TextAreaItem("excludedContexts", "Excluded Contexts");
+        excludedContexts.setRequired(false);
         CheckBoxItem autoEnableContexts = new CheckBoxItem("autoEnableContexts", "Auto Enable Contexts");
 
         contextForm.setFields(autoEnableContexts, excludedContexts);
@@ -64,6 +65,7 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         proxyForm = new ModclusterForm(presenter);
 
         TextAreaItem proxyList = new TextAreaItem("proxyList", "Proxy List");
+        proxyList.setRequired(false);
         TextBoxItem proxyUrl = new TextBoxItem("proxyUrl", "Proxy Url");
 
         proxyForm.setFields(proxyUrl, proxyList);
