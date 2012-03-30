@@ -104,7 +104,8 @@ public class SubsystemProcessor extends AbstractProcessor {
                     System.out.println("Subsystem: " + subsystem.name() +" -> "+nameToken.value());
 
                     SubsystemExtension declared = new SubsystemExtension(
-                            subsystem.name(), nameToken.value(), subsystem.group()
+                            subsystem.name(), nameToken.value(),
+                            subsystem.group(), subsystem.key()
                     );
 
                     declararions.add(declared);

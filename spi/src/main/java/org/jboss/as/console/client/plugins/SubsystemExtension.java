@@ -8,11 +8,13 @@ public class SubsystemExtension {
     private String token;
     private String name;
     private String group;
+    private String key;
 
-    public SubsystemExtension(String name, String token, String group) {
+    public SubsystemExtension(String name, String token, String group, String key) {
         this.name = name;
         this.token = token;
         this.group = group;
+        this.key = key;
     }
 
     public String getName() {
@@ -25,5 +27,9 @@ public class SubsystemExtension {
 
     public String getToken() {
         return token;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

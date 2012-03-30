@@ -28,7 +28,7 @@ public class HelloWorldPresenter extends Presenter<HelloWorldPresenter.MyView, H
 
     @ProxyCodeSplit
     @NameToken("helloworld")
-    @Subsystem(name="HelloWorld", group = "Examples")
+    @Subsystem(name="HelloWorld", group = "Examples", key="logging")
     public interface MyProxy extends Proxy<HelloWorldPresenter>, Place {
     }
 

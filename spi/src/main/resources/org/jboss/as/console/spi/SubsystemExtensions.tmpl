@@ -15,7 +15,8 @@ public class SubsystemRegistryImpl implements SubsystemRegistry{
             list.add(new SubsystemExtension(
                 "${subsystem.getName()}",
                 "${subsystem.getToken()}",
-                "${subsystem.getGroup()}")
+                "${subsystem.getGroup()}",
+                "${subsystem.getKey()}")
             );
         </#list>
 

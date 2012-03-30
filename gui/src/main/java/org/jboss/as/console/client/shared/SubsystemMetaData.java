@@ -19,14 +19,13 @@
 
 package org.jboss.as.console.client.shared;
 
-import com.allen_sauer.gwt.log.client.Log;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.plugins.SubsystemExtension;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
-import org.jboss.as.console.spi.Subsystem;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 3/29/11
  */
+@Deprecated
 public class SubsystemMetaData {
 
     static Map<String, SubsystemGroup> groups = new LinkedHashMap<String, SubsystemGroup>();
@@ -117,23 +117,25 @@ public class SubsystemMetaData {
     }
 
     public static void bootstrap(SubsystemRegistry registry) {
-        List<SubsystemExtension> extensions = registry.getExtensions();
+        List<SubsystemExtension> defaults = new ArrayList<SubsystemExtension>();
 
-        Log.info("Discovered "+extensions.size() +" subsystem extensions");
-
-        for(SubsystemExtension ext : extensions)
+        for(String groupName : groups.keySet())
         {
-            String groupName = ext.getGroup();
-            if(!groups.containsKey(groupName))
-                groups.put(groupName, new SubsystemGroup(groupName));
-
-            groups.get(groupName).getItems().add(
-                    new SubsystemGroupItem(
-                            ext.getName(),
-                            ext.getToken()
-                    )
-            );
+            SubsystemGroup group = groups.get(groupName);
+            for(SubsystemGroupItem item : group.getItems())
+            {
+                if(!item.isDisabled())
+                {
+                    defaults.add(new SubsystemExtension(
+                            item.getName(), item.getPresenter(),
+                            group.getName(), item.getKey())
+                    );
+                }
+            }
         }
+
+        registry.getExtensions().addAll(defaults);
+
     }
 
     public static Map<String, SubsystemGroup> getGroups() {

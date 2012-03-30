@@ -9,4 +9,5 @@ package org.jboss.as.console.spi;
 public @interface Subsystem {
     String name();
     String group() default "";
+    String key();
 }

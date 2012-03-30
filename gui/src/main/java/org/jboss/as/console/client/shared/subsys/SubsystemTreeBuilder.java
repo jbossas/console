@@ -24,15 +24,19 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
-import org.jboss.as.console.client.shared.SubsystemGroup;
-import org.jboss.as.console.client.shared.SubsystemGroupItem;
-import org.jboss.as.console.client.shared.SubsystemMetaData;
+import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.plugins.SubsystemExtension;
+import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
 import org.jboss.ballroom.client.layout.DefaultTreeItem;
-import org.jboss.ballroom.client.layout.LHSTreeSection;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
+import org.jboss.ballroom.client.layout.LHSTreeSection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -43,27 +47,43 @@ public class SubsystemTreeBuilder {
     public static void build(final LHSTreeSection subsysTree, List<SubsystemRecord> subsystems)
     {
 
+        SubsystemRegistry registry = Console.getSubsystemRegistry();
+
+        Map<String, List<SubsystemExtension>> grouped = new HashMap<String, List<SubsystemExtension>>();
+        List<String> groupNames = new ArrayList<String>();
+        for(SubsystemExtension ext : registry.getExtensions())
+        {
+            if(!grouped.containsKey(ext.getGroup()))
+            {
+                groupNames.add(ext.getGroup());
+                grouped.put(ext.getGroup(), new ArrayList<SubsystemExtension>());
+            }
+
+            grouped.get(ext.getGroup()).add(ext);
+        }
+
         int includedSubsystems = 0;
 
-        // build groups first
-        for(SubsystemGroup group : SubsystemMetaData.getGroups().values())
-        {
-            final TreeItem groupTreeItem = new DefaultTreeItem(group.getName());
 
-            for(final SubsystemGroupItem groupItem : group.getItems())
+        Collections.sort(groupNames);
+
+        // build groups first
+        for(String groupName : groupNames)
+        {
+            List<SubsystemExtension> items = grouped.get(groupName);
+
+            final TreeItem groupTreeItem = new DefaultTreeItem(groupName);
+
+            for(SubsystemExtension candidate : items)
             {
-                for(SubsystemRecord subsys: subsystems)
+                for(SubsystemRecord actual: subsystems)
                 {
-                    if(subsys.getKey().equals(groupItem.getKey())
-                            && groupItem.isDisabled()==false)
+                    if(actual.getKey().equals(candidate.getKey()))
                     {
                         includedSubsystems++;
 
-                        final String key = groupItem.getPresenter();
-
-                        String token = key;
-                        final LHSNavTreeItem link = new LHSNavTreeItem(groupItem.getName(), token);
-                        link.setKey(key);
+                        final LHSNavTreeItem link = new LHSNavTreeItem(candidate.getName(), candidate.getToken());
+                        link.setKey(candidate.getKey());
 
                         groupTreeItem.addItem(link);
                     }
