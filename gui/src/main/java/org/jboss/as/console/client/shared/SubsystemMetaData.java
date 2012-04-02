@@ -82,7 +82,7 @@ public class SubsystemMetaData {
         groups.get(WEB).getItems().add(new SubsystemGroupItem("JAXRS", "jaxrs",Boolean.TRUE));
         groups.get(WEB).getItems().add(new SubsystemGroupItem("Modcluster", "modcluster",NameTokens.ModclusterPresenter));
 
-        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Messaging Provider", "messaging"));
+        groups.get(MESSAGING).getItems().add(new SubsystemGroupItem("Destinations", "messaging"));
 
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Threads", "threads", Boolean.TRUE));
         groups.get(CORE).getItems().add(new SubsystemGroupItem("Logging", "logging"));

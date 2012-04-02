@@ -81,6 +81,7 @@ public class NameTokens {
     public static final String WebServiceRuntimePresenter = "webservice-runtime";
     public static final String JGroupsPresenter = "jgroups";
     public static final String ModclusterPresenter = "modcluster";
+    public static final String MsgConnectionsPresenter = "messaging-connections";
 
     public static String getMainLayout() {
         return mainLayout;

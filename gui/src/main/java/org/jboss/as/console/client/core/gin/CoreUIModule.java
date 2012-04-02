@@ -166,6 +166,8 @@ import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailSubsystemView;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
+import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsView;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterView;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
@@ -405,6 +407,11 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MessagingView.class,
                 MessagingPresenter.MyProxy.class);
 
+        bindPresenter(MsgConnectionsPresenter.class,
+                MsgConnectionsPresenter.MyView.class,
+                MsgConnectionsView.class,
+                MsgConnectionsPresenter.MyProxy.class);
+
         bindPresenter(LoggingPresenter.class,
                 LoggingPresenter.MyView.class,
                 LoggingView.class,
@@ -480,7 +487,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 WebServiceView.class,
                 WebServicePresenter.MyProxy.class);
 
-         bindPresenter(WebServiceRuntimePresenter.class,
+        bindPresenter(WebServiceRuntimePresenter.class,
                 WebServiceRuntimePresenter.MyView.class,
                 WebServiceRuntimeView.class,
                 WebServiceRuntimePresenter.MyProxy.class);
@@ -558,7 +565,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 ModclusterPresenter.MyView.class,
                 ModclusterView.class,
                 ModclusterPresenter.MyProxy.class);
-        
+
         bindPresenter(JMXPresenter.class,
                 JMXPresenter.MyView.class,
                 JMXSubsystemView.class,
@@ -584,7 +591,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 JMSMetricView.class,
                 JMSMetricPresenter.MyProxy.class);
 
-         bindPresenter(DataSourceMetricPresenter.class,
+        bindPresenter(DataSourceMetricPresenter.class,
                 DataSourceMetricPresenter.MyView.class,
                 DataSourceMetricView.class,
                 DataSourceMetricPresenter.MyProxy.class);
