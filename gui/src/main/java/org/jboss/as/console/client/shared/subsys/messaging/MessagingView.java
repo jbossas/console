@@ -44,7 +44,7 @@ import java.util.List;
 public class MessagingView extends SuspendableViewImpl implements MessagingPresenter.MyView, MessagingPresenter.JMSView{
 
     private MessagingPresenter presenter;
-    private MessagingProviderEditor providerEditor;
+
     private JMSEditor jmsEditor;
     private PagedView panel;
     private ProviderList providerList;
@@ -60,12 +60,13 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
         panel = new PagedView();
 
         providerList = new ProviderList(presenter);
-        providerEditor = new MessagingProviderEditor(presenter);
         jmsEditor = new JMSEditor(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
-        panel.addPage("Provider Config", providerEditor.asWidget());
-        panel.addPage("JMS Destinations", jmsEditor.asWidget()) ;
+        panel.addPage("Queues/Topics", jmsEditor.asWidget()) ;
+        panel.addPage("Connection Factories", new HTML()) ;
+        panel.addPage("Security Settings", new HTML()) ;
+        panel.addPage("Addressing Settings", new HTML()) ;
 
         // default page
         panel.showPage(0);
@@ -86,7 +87,7 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
 
     @Override
     public void setProviderDetails(MessagingProvider provider) {
-        providerEditor.setProviderDetails(provider);
+        providerList.setProviderDetails(provider);
     }
 
     @Override
@@ -116,12 +117,12 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
 
     @Override
     public void setSecurityConfig(List<SecurityPattern> secPatterns) {
-        providerEditor.setSecurityConfig(secPatterns);
+        //providerEditor.setSecurityConfig(secPatterns);
     }
 
     @Override
     public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
-        providerEditor.setAddressingConfig(addrPatterns);
+        //providerEditor.setAddressingConfig(addrPatterns);
     }
 
     @Override

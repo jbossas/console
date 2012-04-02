@@ -19,26 +19,17 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
-import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
-import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
-import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,9 +40,6 @@ public class MessagingProviderEditor {
 
     private MessagingPresenter presenter;
     private Form<MessagingProvider> form;
-    private SecurityDetails secDetails;
-    private AddressingDetails addrDetails;
-    private HTML serverName;
 
     public MessagingProviderEditor(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -60,20 +48,7 @@ public class MessagingProviderEditor {
     public Widget asWidget() {
 
         LayoutPanel layout = new LayoutPanel();
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
-
-        ScrollPanel scroll = new ScrollPanel(panel);
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(scroll, 0, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        serverName = new HTML("Replace me");
-        serverName.setStyleName("content-header-label");
-
-        panel.add(serverName);
-        panel.add(new ContentDescription(Console.CONSTANTS.subsys_messaging_jms_provider_desc()));
-
+        layout.setStyleName("fill-layout");
 
         form = new Form(MessagingProvider.class);
         form.setNumColumns(2);
@@ -87,7 +62,6 @@ public class MessagingProviderEditor {
 
         form.setFields(persistenceItem, securityItem, messageCounterItem);
         //form.setFieldsInGroup("Connections", new DisclosureGroupRenderer(), acceptor, connector);
-
 
         FormToolStrip<MessagingProvider> toolStrip = new FormToolStrip<MessagingProvider>(
                 form,
@@ -104,8 +78,6 @@ public class MessagingProviderEditor {
                 });
         toolStrip.providesDeleteOp(false);
 
-        panel.add(toolStrip.asWidget());
-
         FormHelpPanel helpPanel = new FormHelpPanel(new FormHelpPanel.AddressCallback(){
             @Override
             public ModelNode getAddress() {
@@ -116,28 +88,9 @@ public class MessagingProviderEditor {
             }
         }, form);
 
-        panel.add(helpPanel.asWidget());
+
         Widget formWidget = form.asWidget();
-        panel.add(formWidget);
-
-        formWidget.getElement().setAttribute("style", "padding-bottom:20px;");
-
-        // ------
-
-        TabPanel bottomLayout = new TabPanel();
-        bottomLayout.addStyleName("default-tabpanel");
-
-
-        secDetails = new SecurityDetails(presenter);
-        bottomLayout.add(secDetails.asWidget(), "Security");
-
-        addrDetails = new AddressingDetails(presenter);
-        bottomLayout.add(addrDetails.asWidget(), "Addressing");
-
-        bottomLayout.selectTab(0);
-
-        panel.add(bottomLayout);
-        bottomLayout.getElement().setAttribute("style", "padding-top:10px");
+        layout.add(formWidget);
 
         return layout;
     }
@@ -145,20 +98,8 @@ public class MessagingProviderEditor {
 
     public void setProviderDetails(MessagingProvider provider) {
 
-        serverName.setHTML(Console.MESSAGES.subsys_messaging(provider.getName()));
-
         form.edit(provider);
         form.setEnabled(false);
 
-        addrDetails.setProvider(provider);
-
-    }
-
-    public void setSecurityConfig(List<SecurityPattern> patterns) {
-        secDetails.setSecurityConfig(patterns);
-    }
-
-    public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
-        addrDetails.setAddressingConfig(addrPatterns);
     }
 }

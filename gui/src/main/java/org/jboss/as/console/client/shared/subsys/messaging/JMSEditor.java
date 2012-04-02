@@ -138,7 +138,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
 
-        serverName.setHTML("JMS Config: "+presenter.getCurrentServer());
+        serverName.setHTML("Provider: "+presenter.getCurrentServer());
 
         factoryProvider.setList(factories);
     }

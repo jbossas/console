@@ -10,6 +10,9 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
+import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.as.console.client.widgets.tables.TextLinkCell;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -25,6 +28,7 @@ public class ProviderList {
     private MessagingPresenter presenter;
     private CellTable<String> table;
     private ListDataProvider<String> dataProvider;
+    private MessagingProviderEditor providerEditor;
 
     public ProviderList(MessagingPresenter presenter) {
         this.presenter = presenter;
@@ -64,13 +68,16 @@ public class ProviderList {
 
         table.setSelectionModel(new SingleSelectionModel<String>());
 
+
+        providerEditor = new MessagingProviderEditor(presenter);
+
         // ----
-        SimpleLayout layoutBuilder = new SimpleLayout()
+        MultipleToOneLayout layoutBuilder = new MultipleToOneLayout()
                 .setPlain(true)
-                .setTitle("Messaging Provider")
                 .setHeadline("JMS Messaging Provider")
-                .setDescription(Console.CONSTANTS.subsys_messaging_jms_provider_desc())
-                .addContent(Console.MESSAGES.available("Messaging Provider"), table);
+                .setDescription("Destination settings: Queues, Topics, Connection Factories, etc.")
+                .setMaster(Console.MESSAGES.available("Messaging Provider"), table)
+                .setDetail("Overall Settings", providerEditor.asWidget());
 
         return layoutBuilder.build();
     }
@@ -87,5 +94,9 @@ public class ProviderList {
         if(!adapters.isEmpty())
             table.getSelectionModel().setSelected(adapters.get(0), true);
 
+    }
+
+    public void setProviderDetails(MessagingProvider provider) {
+        providerEditor.setProviderDetails(provider);
     }
 }
