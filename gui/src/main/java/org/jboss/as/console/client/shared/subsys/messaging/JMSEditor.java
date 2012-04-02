@@ -41,7 +41,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class JMSEditor implements MsgDestinationsPresenter.JMSView{
+public class JMSEditor {
 
     private MsgDestinationsPresenter presenter;
     private TopicList topicList;
@@ -91,7 +91,7 @@ public class JMSEditor implements MsgDestinationsPresenter.JMSView{
         return layout;
     }
 
-    @Override
+
     public void setTopics(List<JMSEndpoint> topics) {
         topicList.setTopics(topics);
     }
@@ -101,12 +101,11 @@ public class JMSEditor implements MsgDestinationsPresenter.JMSView{
     }
 
 
-    @Override
+
     public void enableEditQueue(boolean b) {
         queueList.setEnabled(b);
     }
 
-    @Override
     public void enableEditTopic(boolean b) {
         topicList.setEnabled(b);
     }

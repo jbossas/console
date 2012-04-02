@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -39,7 +40,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/10/11
  */
-public class MessagingView extends SuspendableViewImpl implements MsgDestinationsPresenter.MyView, MsgDestinationsPresenter.JMSView{
+public class MsgDestinationsView extends SuspendableViewImpl implements MsgDestinationsPresenter.MyView, MsgDestinationsPresenter.JMSView{
 
     private MsgDestinationsPresenter presenter;
 
@@ -124,6 +125,12 @@ public class MessagingView extends SuspendableViewImpl implements MsgDestination
     @Override
     public void setProvider(List<String> result) {
         providerList.setProvider(result);
+    }
+
+
+    @Override
+    public void setConnectionFactories(List<ConnectionFactory> factories) {
+        connectionFactories.setFactories(factories);
     }
 
     @Override

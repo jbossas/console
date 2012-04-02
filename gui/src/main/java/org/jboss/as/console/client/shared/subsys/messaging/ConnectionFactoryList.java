@@ -9,6 +9,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFacto
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 4/2/12
@@ -60,5 +62,9 @@ public class ConnectionFactoryList {
                 .addDetail("Detail 1", new HTML());
 
         return layout.build();
+    }
+
+    public void setFactories(List<ConnectionFactory> factories) {
+        factoryProvider.setList(factories);
     }
 }

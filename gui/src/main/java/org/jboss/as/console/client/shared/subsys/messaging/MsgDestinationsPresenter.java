@@ -46,6 +46,7 @@ import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -110,12 +111,10 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     public interface JMSView {
         void setQueues(List<Queue> queues);
         void setTopics(List<JMSEndpoint> topics);
-
+        void setConnectionFactories(List<ConnectionFactory> factories);
         void enableEditQueue(boolean b);
         void enableEditTopic(boolean b);
     }
-
-    // void setConnectionFactories(List<ConnectionFactory> factories);
 
     @Inject
     public MsgDestinationsPresenter(
@@ -611,6 +610,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         loadJMSCmd.execute(address, new SimpleCallback<AggregatedJMSModel>() {
             @Override
             public void onSuccess(AggregatedJMSModel result) {
+                getJMSView().setConnectionFactories(result.getFactories());
                 getJMSView().setQueues(result.getQueues());
                 getJMSView().setTopics(result.getTopics());
             }
