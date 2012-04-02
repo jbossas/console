@@ -114,6 +114,7 @@ public class TopicList {
         endpointProvider.addDataDisplay(table);
 
         layout.add(table);
+        table.getElement().setAttribute("style", "margin-bottom:15px;");
 
 
         // -----

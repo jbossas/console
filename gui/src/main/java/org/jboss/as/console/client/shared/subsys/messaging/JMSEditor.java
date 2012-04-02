@@ -19,9 +19,7 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -48,8 +46,6 @@ public class JMSEditor implements MsgDestinationsPresenter.JMSView{
     private MsgDestinationsPresenter presenter;
     private TopicList topicList;
     private QueueList queueList;
-    private DefaultCellTable<ConnectionFactory> factoryTable;
-    private ListDataProvider<ConnectionFactory> factoryProvider;
 
     private HTML serverName;
 
@@ -75,40 +71,9 @@ public class JMSEditor implements MsgDestinationsPresenter.JMSView{
         serverName.setStyleName("content-header-label");
 
         panel.add(serverName);
-        panel.add(new ContentDescription(Console.CONSTANTS.subsys_messaging_jms_desc()));
+        panel.add(new ContentDescription("Queue and Topic destinations."));
 
         // ----
-
-        panel.add(new ContentGroupLabel("Connection Factories"));
-
-        factoryTable = new DefaultCellTable<ConnectionFactory>(10);
-        factoryProvider = new ListDataProvider<ConnectionFactory>();
-        factoryProvider.addDataDisplay(factoryTable);
-
-        Column<ConnectionFactory, String> nameColumn = new Column<ConnectionFactory, String>(new TextCell()) {
-            @Override
-            public String getValue(ConnectionFactory object) {
-                return object.getName();
-            }
-        };
-
-        Column<ConnectionFactory, String> jndiColumn = new Column<ConnectionFactory, String>(new TextCell()) {
-            @Override
-            public String getValue(ConnectionFactory object) {
-                return object.getJndiName();
-            }
-        };
-
-        factoryTable.addColumn(nameColumn, "Name");
-        factoryTable.addColumn(jndiColumn, "JNDI");
-
-        panel.add(factoryTable);
-
-        // ----
-
-        ContentGroupLabel destinations = new ContentGroupLabel("Destinations");
-        panel.add(destinations);
-        destinations.getElement().setAttribute("style", "padding-top:20px;");
 
         TabPanel bottomLayout = new TabPanel();
         bottomLayout.addStyleName("default-tabpanel");
@@ -135,13 +100,6 @@ public class JMSEditor implements MsgDestinationsPresenter.JMSView{
         queueList.setQueues(queues);
     }
 
-    @Override
-    public void setConnectionFactories(List<ConnectionFactory> factories) {
-
-        serverName.setHTML("Provider: "+presenter.getCurrentServer());
-
-        factoryProvider.setList(factories);
-    }
 
     @Override
     public void enableEditQueue(boolean b) {

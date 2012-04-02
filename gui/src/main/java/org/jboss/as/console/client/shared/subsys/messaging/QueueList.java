@@ -141,7 +141,7 @@ public class QueueList {
         queueTable.addColumn(jndiNameColumn, "JNDI");
 
         layout.add(queueTable);
-
+        queueTable.getElement().setAttribute("style", "margin-bottom:15px;");
 
         // ----
 

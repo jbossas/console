@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
-import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -47,6 +46,7 @@ public class MessagingView extends SuspendableViewImpl implements MsgDestination
     private JMSEditor jmsEditor;
     private PagedView panel;
     private ProviderList providerList;
+    private ConnectionFactoryList connectionFactories;
 
     @Override
     public Widget createWidget() {
@@ -60,10 +60,11 @@ public class MessagingView extends SuspendableViewImpl implements MsgDestination
 
         providerList = new ProviderList(presenter);
         jmsEditor = new JMSEditor(presenter);
+        connectionFactories = new ConnectionFactoryList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Queues/Topics", jmsEditor.asWidget()) ;
-        panel.addPage("Connection Factories", new HTML()) ;
+        panel.addPage("Connection Factories", connectionFactories.asWidget()) ;
         panel.addPage("Security Settings", new HTML()) ;
         panel.addPage("Addressing Settings", new HTML()) ;
         panel.addPage("Diverts", new HTML()) ;
@@ -98,11 +99,6 @@ public class MessagingView extends SuspendableViewImpl implements MsgDestination
     @Override
     public void setTopics(List<JMSEndpoint> topics) {
         jmsEditor.setTopics(topics);
-    }
-
-    @Override
-    public void setConnectionFactories(List<ConnectionFactory> factories) {
-        jmsEditor.setConnectionFactories(factories);
     }
 
     @Override
