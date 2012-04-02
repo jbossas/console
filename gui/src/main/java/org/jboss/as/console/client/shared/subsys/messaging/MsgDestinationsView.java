@@ -48,6 +48,8 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
     private PagedView panel;
     private ProviderList providerList;
     private ConnectionFactoryList connectionFactories;
+    private SecurityDetails securitySettings;
+    private AddressingDetails addressingSettings;
 
     @Override
     public Widget createWidget() {
@@ -62,12 +64,14 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
         providerList = new ProviderList(presenter);
         jmsEditor = new JMSEditor(presenter);
         connectionFactories = new ConnectionFactoryList(presenter);
+        securitySettings = new SecurityDetails(presenter);
+        addressingSettings = new AddressingDetails(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Queues/Topics", jmsEditor.asWidget()) ;
         panel.addPage("Connection Factories", connectionFactories.asWidget()) ;
-        panel.addPage("Security Settings", new HTML()) ;
-        panel.addPage("Addressing Settings", new HTML()) ;
+        panel.addPage("Security Settings", securitySettings.asWidget()) ;
+        panel.addPage("Addressing Settings", addressingSettings.asWidget()) ;
         panel.addPage("Diverts", new HTML()) ;
 
         // default page
@@ -114,12 +118,12 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
 
     @Override
     public void setSecurityConfig(List<SecurityPattern> secPatterns) {
-        //providerEditor.setSecurityConfig(secPatterns);
+        securitySettings.setSecurityConfig(secPatterns);
     }
 
     @Override
     public void setAddressingConfig(List<AddressingPattern> addrPatterns) {
-        //providerEditor.setAddressingConfig(addrPatterns);
+        addressingSettings.setAddressingConfig(addrPatterns);
     }
 
     @Override

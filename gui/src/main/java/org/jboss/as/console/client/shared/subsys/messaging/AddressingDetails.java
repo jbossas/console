@@ -32,6 +32,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -63,8 +64,6 @@ public class AddressingDetails {
     }
 
     Widget asWidget() {
-
-        VerticalPanel layout = new VerticalPanel();
 
         addrTable = new DefaultCellTable<AddressingPattern>(8, new ProvidesKey<AddressingPattern>() {
             @Override
@@ -152,14 +151,22 @@ public class AddressingDetails {
 
         tableTools.addToolButtonRight(removeBtn);
 
-        layout.add(tableTools.asWidget());
-        layout.add(addrTable);
+        VerticalPanel formPanel = new VerticalPanel();
+        formPanel.addStyleName("fill-layout-width");
 
-        layout.add(formTools.asWidget());
-        layout.add(helpPanel.asWidget());
-        layout.add(form.asWidget());
+        formPanel.add(helpPanel.asWidget());
+        formPanel.add(formTools.asWidget());
+        formPanel.add(form.asWidget());
 
-        return layout;
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setPlain(true)
+                .setHeadline("Security Settings")
+                .setMaster("TODO", addrTable)
+                .setMasterTools(tableTools.asWidget())
+                .setDetail("Details", formPanel);
+
+        return layout.build();
+
     }
 
     void setProvider(MessagingProvider provider)

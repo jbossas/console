@@ -31,6 +31,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
+import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
@@ -62,7 +63,6 @@ public class SecurityDetails {
 
     Widget asWidget() {
 
-        VerticalPanel layout = new VerticalPanel();
 
         secTable = new DefaultCellTable<SecurityPattern>(8, new ProvidesKey<SecurityPattern>() {
             @Override
@@ -171,14 +171,24 @@ public class SecurityDetails {
 
         tableTools.addToolButtonRight(removeBtn);
 
-        // asembly
-        layout.add(tableTools.asWidget());
-        layout.add(secTable);
-        layout.add(helpPanel.asWidget());
-        layout.add(formTools.asWidget());
-        layout.add(form.asWidget());
+        //  ----
 
-        return layout;
+
+        VerticalPanel formPanel = new VerticalPanel();
+        formPanel.addStyleName("fill-layout-width");
+
+        formPanel.add(helpPanel.asWidget());
+        formPanel.add(formTools.asWidget());
+        formPanel.add(form.asWidget());
+
+        MultipleToOneLayout layout = new MultipleToOneLayout()
+                .setPlain(true)
+                .setHeadline("Security Settings")
+                .setMaster("TODO", secTable)
+                .setMasterTools(tableTools.asWidget())
+                .setDetail("Details", formPanel);
+
+        return layout.build();
     }
 
     public void setSecurityConfig(List<SecurityPattern> patterns) {
