@@ -71,7 +71,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @author Heiko Braun
  * @date 5/10/11
  */
-public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, MessagingPresenter.MyProxy> {
+public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter.MyView, MsgDestinationsPresenter.MyProxy> implements CommonMsgPresenter {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -93,18 +93,18 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
-    public interface MyProxy extends Proxy<MessagingPresenter>, Place {
+    public interface MyProxy extends Proxy<MsgDestinationsPresenter>, Place {
     }
 
     public interface MyView extends View {
 
         // Messaging Provider
-        void setPresenter(MessagingPresenter presenter);
+        void setPresenter(MsgDestinationsPresenter presenter);
         void setProviderDetails(MessagingProvider provider);
         void setSecurityConfig(List<SecurityPattern> secPatterns);
         void setAddressingConfig(List<AddressingPattern> addrPatterns);
 
-        void setProvider(List<String> result);
+        void setProvider(List<String> names);
         void setSelectedProvider(String selectedProvider);
     }
 
@@ -117,7 +117,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
     }
 
     @Inject
-    public MessagingPresenter(
+    public MsgDestinationsPresenter(
             EventBus eventBus, MyView view, MyProxy proxy,
             PlaceManager placeManager, DispatchAsync dispatcher,
             BeanFactory factory, RevealStrategy revealStrategy,
@@ -177,6 +177,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
         loadProvider();
     }
 
+    @Override
     public PlaceManager getPlaceManager() {
 
         return placeManager;
@@ -209,7 +210,7 @@ public class MessagingPresenter extends Presenter<MessagingPresenter.MyView, Mes
 
     }
 
-    private void loadProviderDetails() {
+    public void loadProviderDetails() {
 
         AddressBinding address = metaData.getBeanMetaData(MessagingProvider.class).getAddress();
         ModelNode operation = address.asResource(Baseadress.get(), getCurrentServer());

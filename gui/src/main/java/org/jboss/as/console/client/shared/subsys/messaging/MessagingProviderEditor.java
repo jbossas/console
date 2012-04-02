@@ -19,9 +19,8 @@
 
 package org.jboss.as.console.client.shared.subsys.messaging;
 
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
@@ -38,17 +37,17 @@ import java.util.Map;
  */
 public class MessagingProviderEditor {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private Form<MessagingProvider> form;
 
-    public MessagingProviderEditor(MessagingPresenter presenter) {
+    public MessagingProviderEditor(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 
     public Widget asWidget() {
 
-        LayoutPanel layout = new LayoutPanel();
-        layout.setStyleName("fill-layout");
+        VerticalPanel layout = new VerticalPanel();
+        layout.setStyleName("fill-layout-width");
 
         form = new Form(MessagingProvider.class);
         form.setNumColumns(2);
@@ -90,6 +89,10 @@ public class MessagingProviderEditor {
 
 
         Widget formWidget = form.asWidget();
+        form.setEnabled(false);
+
+        layout.add(toolStrip.asWidget());
+        layout.add(helpPanel.asWidget());
         layout.add(formWidget);
 
         return layout;

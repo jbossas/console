@@ -41,10 +41,10 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class NewSecurityPatternWizard {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private MessagingProvider provider;
 
-    public NewSecurityPatternWizard(MessagingPresenter presenter, MessagingProvider provider) {
+    public NewSecurityPatternWizard(MsgDestinationsPresenter presenter, MessagingProvider provider) {
         this.presenter = presenter;
         this.provider = provider;
     }

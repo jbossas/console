@@ -164,7 +164,7 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingView;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailSubsystemView;
-import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.MsgDestinationsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MessagingView;
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsView;
@@ -402,10 +402,10 @@ public class CoreUIModule extends AbstractPresenterModule {
                 EJB3View.class,
                 EJB3Presenter.MyProxy.class);
 
-        bindPresenter(MessagingPresenter.class,
-                MessagingPresenter.MyView.class,
+        bindPresenter(MsgDestinationsPresenter.class,
+                MsgDestinationsPresenter.MyView.class,
                 MessagingView.class,
-                MessagingPresenter.MyProxy.class);
+                MsgDestinationsPresenter.MyProxy.class);
 
         bindPresenter(MsgConnectionsPresenter.class,
                 MsgConnectionsPresenter.MyView.class,

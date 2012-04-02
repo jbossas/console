@@ -13,6 +13,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.spi.Subsystem;
@@ -22,7 +23,8 @@ import org.jboss.ballroom.client.widgets.window.DefaultWindow;
  * @author Heiko Braun
  * @date 4/2/12
  */
-public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.MyView, MsgConnectionsPresenter.MyProxy> {
+public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.MyView, MsgConnectionsPresenter.MyProxy>
+    implements CommonMsgPresenter {
 
 
     private final PlaceManager placeManager;
@@ -32,6 +34,11 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private ApplicationMetaData metaData;
+
+    @Override
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)

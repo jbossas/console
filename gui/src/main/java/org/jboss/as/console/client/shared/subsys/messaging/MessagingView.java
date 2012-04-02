@@ -32,7 +32,6 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvid
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.widgets.pages.PagedView;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
 import java.util.List;
@@ -41,9 +40,9 @@ import java.util.List;
  * @author Heiko Braun
  * @date 5/10/11
  */
-public class MessagingView extends SuspendableViewImpl implements MessagingPresenter.MyView, MessagingPresenter.JMSView{
+public class MessagingView extends SuspendableViewImpl implements MsgDestinationsPresenter.MyView, MsgDestinationsPresenter.JMSView{
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
 
     private JMSEditor jmsEditor;
     private PagedView panel;
@@ -54,7 +53,7 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
 
         LayoutPanel layout = new LayoutPanel();
 
-        FakeTabPanel titleBar = new FakeTabPanel("Messaging Provider");
+        FakeTabPanel titleBar = new FakeTabPanel("Messaging Destinations");
         layout.add(titleBar);
 
         panel = new PagedView();
@@ -67,6 +66,7 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
         panel.addPage("Connection Factories", new HTML()) ;
         panel.addPage("Security Settings", new HTML()) ;
         panel.addPage("Addressing Settings", new HTML()) ;
+        panel.addPage("Diverts", new HTML()) ;
 
         // default page
         panel.showPage(0);
@@ -81,13 +81,13 @@ public class MessagingView extends SuspendableViewImpl implements MessagingPrese
     }
 
     @Override
-    public void setPresenter(MessagingPresenter presenter) {
+    public void setPresenter(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void setProviderDetails(MessagingProvider provider) {
-        providerList.setProviderDetails(provider);
+        //providerList.setProviderDetails(provider);
     }
 
     @Override

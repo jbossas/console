@@ -40,9 +40,9 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class NewTopicWizard {
 
-    private MessagingPresenter  presenter;
+    private MsgDestinationsPresenter presenter;
 
-    public NewTopicWizard(final MessagingPresenter  presenter) {
+    public NewTopicWizard(final MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

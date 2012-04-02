@@ -43,9 +43,9 @@ import java.util.List;
  * @author Heiko Braun
  * @date 3/29/11
  */
-public class JMSEditor implements MessagingPresenter.JMSView{
+public class JMSEditor implements MsgDestinationsPresenter.JMSView{
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private TopicList topicList;
     private QueueList queueList;
     private DefaultCellTable<ConnectionFactory> factoryTable;
@@ -53,7 +53,7 @@ public class JMSEditor implements MessagingPresenter.JMSView{
 
     private HTML serverName;
 
-    public JMSEditor(MessagingPresenter presenter) {
+    public JMSEditor(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

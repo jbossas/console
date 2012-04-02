@@ -46,10 +46,10 @@ public class TopicList {
     private EndpointTable table;
     private ListDataProvider<JMSEndpoint> endpointProvider;
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private Form<Topic> form;
 
-    public TopicList(MessagingPresenter presenter) {
+    public TopicList(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

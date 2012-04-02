@@ -53,10 +53,10 @@ public class QueueList {
     private DefaultCellTable<Queue> queueTable;
     private ListDataProvider<Queue> queueProvider;
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private Form<Queue> form ;
 
-    public QueueList(MessagingPresenter presenter) {
+    public QueueList(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

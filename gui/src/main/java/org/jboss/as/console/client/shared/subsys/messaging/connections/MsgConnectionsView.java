@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -17,6 +18,8 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
 
     private PagedView panel;
     private MsgConnectionsPresenter presenter;
+    private ProviderList providerList;
+
 
     @Override
     public Widget createWidget() {
@@ -24,15 +27,19 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
         LayoutPanel layout = new LayoutPanel();
 
 
-        FakeTabPanel titleBar = new FakeTabPanel("Messaging Destinations");
+        FakeTabPanel titleBar = new FakeTabPanel("Messaging Connections");
         layout.add(titleBar);
 
 
         panel = new PagedView();
 
-        panel.addPage(Console.CONSTANTS.common_label_back(), new HTML());
-        /*panel.addPage("Provider Config", providerEditor.asWidget());
-     panel.addPage("JMS Destinations", jmsEditor.asWidget()) ;*/
+        providerList = new ProviderList(presenter);
+
+        panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
+        panel.addPage("Acceptor", new HTML()) ;
+        panel.addPage("Connector", new HTML()) ;
+        panel.addPage("Connector Service", new HTML()) ;
+        panel.addPage("Bridges", new HTML()) ;
 
         // default page
         panel.showPage(0);

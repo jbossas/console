@@ -50,13 +50,13 @@ import java.util.Map;
  */
 public class SecurityDetails {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private Form<SecurityPattern> form;
 
     private DefaultCellTable<SecurityPattern> secTable;
     private ListDataProvider<SecurityPattern> secProvider;
 
-    public SecurityDetails(MessagingPresenter presenter) {
+    public SecurityDetails(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

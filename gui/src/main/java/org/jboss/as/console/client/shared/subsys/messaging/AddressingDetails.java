@@ -51,14 +51,14 @@ import java.util.Map;
  */
 public class AddressingDetails {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private Form<AddressingPattern> form;
     private MessagingProvider providerEntity;
 
     private DefaultCellTable<AddressingPattern> addrTable;
     private ListDataProvider<AddressingPattern> addrProvider;
 
-    public AddressingDetails(MessagingPresenter presenter) {
+    public AddressingDetails(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

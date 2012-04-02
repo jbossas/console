@@ -41,9 +41,9 @@ import org.jboss.dmr.client.ModelNode;
  */
 public class NewQueueWizard {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
 
-    public NewQueueWizard(final MessagingPresenter presenter) {
+    public NewQueueWizard(final MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
     }
 

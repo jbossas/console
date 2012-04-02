@@ -38,10 +38,10 @@ import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
  */
 public class NewAddressPatternWizard {
 
-    private MessagingPresenter presenter;
+    private MsgDestinationsPresenter presenter;
     private MessagingProvider provider;
 
-    public NewAddressPatternWizard (MessagingPresenter presenter, MessagingProvider provider) {
+    public NewAddressPatternWizard (MsgDestinationsPresenter presenter, MessagingProvider provider) {
         this.presenter = presenter;
         this.provider = provider;
     }

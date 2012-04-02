@@ -21,8 +21,6 @@ package org.jboss.as.console.client.core.gin;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AsyncProvider;
-import com.google.gwt.inject.client.GinModules;
-import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
@@ -36,7 +34,6 @@ import org.jboss.as.console.client.core.Header;
 import org.jboss.as.console.client.core.MainLayoutPresenter;
 import org.jboss.as.console.client.core.StandaloneGateKeeper;
 import org.jboss.as.console.client.core.message.MessageBar;
-import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenter;
 import org.jboss.as.console.client.core.message.MessageCenterView;
 import org.jboss.as.console.client.core.settings.SettingsPresenter;
@@ -104,7 +101,8 @@ import org.jboss.as.console.client.shared.subsys.jpa.JpaPresenter;
 import org.jboss.as.console.client.shared.subsys.logging.HandlerListManager;
 import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
-import org.jboss.as.console.client.shared.subsys.messaging.MessagingPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.MsgDestinationsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
@@ -113,7 +111,6 @@ import org.jboss.as.console.client.shared.subsys.osgi.runtime.OSGiRuntimePresent
 import org.jboss.as.console.client.shared.subsys.security.SecurityDomainsPresenter;
 import org.jboss.as.console.client.shared.subsys.security.SecuritySubsystemPresenter;
 import org.jboss.as.console.client.shared.subsys.threads.ThreadsPresenter;
-import org.jboss.as.console.client.shared.subsys.tx.TransactionPresenter;
 import org.jboss.as.console.client.shared.subsys.web.WebPresenter;
 import org.jboss.as.console.client.shared.subsys.ws.DomainEndpointStrategy;
 import org.jboss.as.console.client.shared.subsys.ws.EndpointRegistry;
@@ -230,7 +227,7 @@ public interface CoreUI {
     DriverRegistry getDriverRegistry();
 
     AsyncProvider<EJB3Presenter> getEJB3Presenter();
-    AsyncProvider<MessagingPresenter> getMessagingPresenter();
+    AsyncProvider<MsgDestinationsPresenter> getMsgDestinationsPresenter();
     AsyncProvider<MsgConnectionsPresenter> getMsgConnectionsPresenter();
 
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
