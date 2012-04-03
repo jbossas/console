@@ -113,7 +113,7 @@ public class DivertList {
         {
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+                presenter.onSaveDivert(getSelectedEntity().getRoutingName(), changeset);
             }
 
             @Override

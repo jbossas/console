@@ -1096,5 +1096,30 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         });
     }
 
+     public void onSaveDivert(String name, Map<String, Object> changeset) {
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "messaging");
+        address.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        address.get(ADDRESS).add("divert", name);
+
+        ModelNode operation = divertAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.saveFailed("Divert " + getCurrentServer()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.saved("Divert " + getCurrentServer()));
+
+                loadDiverts();
+            }
+        });
+    }
 
 }
