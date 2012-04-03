@@ -18,6 +18,7 @@ import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class ConnectionFactoryList {
         connectionAttributes = new CFConnectionsForm(new FormToolStrip.FormCallback<ConnectionFactory>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-               presenter.saveConnnectionFactory(getSelectedFactory().getName(), changeset);
+                presenter.saveConnnectionFactory(getSelectedFactory().getName(), changeset);
             }
 
             @Override
@@ -107,11 +108,23 @@ public class ConnectionFactoryList {
                     }
                 }));
 
-         tools.addToolButtonRight(
+        tools.addToolButtonRight(
                 new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                         presenter.onDeleteCF();
+
+                        Feedback.confirm(
+                                Console.MESSAGES.deleteTitle("Connection Factory"),
+                                Console.MESSAGES.deleteConfirm("Connection Factory " + getSelectedFactory().getName()),
+                                new Feedback.ConfirmationHandler() {
+                                    @Override
+                                    public void onConfirmation(boolean isConfirmed) {
+                                        if (isConfirmed) {
+                                            presenter.onDeleteCF(getSelectedFactory().getName());
+                                        }
+                                    }
+                                });
+
                     }
 
                 }));

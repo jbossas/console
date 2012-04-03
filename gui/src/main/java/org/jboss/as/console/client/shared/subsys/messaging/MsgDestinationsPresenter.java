@@ -58,6 +58,7 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         this.revealStrategy = revealStrategy;
         this.metaData = propertyMetaData;
 
-       /* this.queueAdapter = new EntityAdapter<Queue>(
+        /* this.queueAdapter = new EntityAdapter<Queue>(
                 Queue.class,
                 propertyMetaData
         );
@@ -923,31 +924,81 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         });
     }
 
-    public void onDeleteCF() {
+    public void onDeleteCF(final String name) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("connection-factory", name);
 
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Connection Factory " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Connection Factory " + name));
+
+                loadJMSConfig();
+            }
+        });
     }
 
     public void launchNewCFWizard() {
         window = new DefaultWindow(Console.MESSAGES.createTitle("Connection Factory"));
         window.setWidth(480);
         window.setHeight(360);
-        window.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
 
-            }
-        });
-
-        window.trapWidget(
-                new NewCFWizard(this).asWidget()
-        );
+        window.trapWidget(new NewCFWizard(this).asWidget());
 
         window.setGlassEnabled(true);
         window.center();
     }
 
-    public void onCreateCF(ConnectionFactory entity) {
+    public void onCreateCF(final ConnectionFactory entity) {
         window.hide();
 
+        // default values
+        entity.setUseGlobalPools(true);
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("connection-factory", entity.getName());
+
+        ModelNode operation = factoryAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        // jndi names
+        operation.get("entries").setEmptyList();
+        operation.get("entries").add(entity.getJndiName());
+
+        // TODO: https://issues.jboss.org/browse/AS7-4377
+        operation.get("connector").setEmptyList();
+        operation.get("connector").add(entity.getConnector());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Connection Factory " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Connection Factory " + entity.getName()));
+
+                loadJMSConfig();
+            }
+        });
     }
 }
