@@ -5,8 +5,8 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
-import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.forms.items.JndiNameItem;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
@@ -21,22 +21,33 @@ import org.jboss.dmr.client.ModelNode;
 public class DefaultCFForm {
 
 
-    private Form<ConnectionFactory> form;
+    private Form<ConnectionFactory> form = new Form<ConnectionFactory>(ConnectionFactory.class);
     private FormToolStrip.FormCallback<ConnectionFactory> callback;
+    private boolean provideTools = true;
+    private boolean isCreate = false;
 
     public DefaultCFForm(FormToolStrip.FormCallback<ConnectionFactory> callback) {
         this.callback = callback;
+        form.setNumColumns(2);
+    }
+
+    public DefaultCFForm(FormToolStrip.FormCallback<ConnectionFactory> callback, boolean provideTools) {
+        this.callback = callback;
+        this.provideTools = provideTools;
+        form.setNumColumns(2);
+    }
+
+    public void setIsCreate(boolean b) {
+        this.isCreate = b;
     }
 
     public Widget asWidget() {
-        form = new Form<ConnectionFactory>(ConnectionFactory.class);
-        form.setNumColumns(2);
 
-        TextItem name = new TextItem("name", "Name");
-        TextItem jndiName = new TextItem("jndiName", "JNDI Name");
+
+        JndiNameItem jndiName = new JndiNameItem("jndiName", "JNDI Name");
 
         TextBoxItem groupId = new TextBoxItem("groupId", "Group ID", false);
-        TextItem connector = new TextItem("connector", "Connector");
+        TextBoxItem connector = new TextBoxItem("connector", "Connector");
 
         CheckBoxItem failoverInitial = new CheckBoxItem("failoverInitial", "Failover Initial?");
         CheckBoxItem failoverShutdown = new CheckBoxItem("failoverShutdown", "Failover Shutdown=");
@@ -46,13 +57,25 @@ public class DefaultCFForm {
         NumberBoxItem threadPool = new NumberBoxItem("threadPoolMax", "Thread Pool Max");
         NumberBoxItem txBatch = new NumberBoxItem("transactionBatchSize", "Transaction Batch Size");
 
-        form.setFields(
-                name, jndiName,
-                connector, groupId,
-                failoverInitial, failoverShutdown,
-                threadPool, txBatch,
-                globalPools);
+        if(isCreate) {
 
+            TextBoxItem name = new TextBoxItem("name", "Name");
+
+            form.setFields(
+                    name, jndiName,
+                    connector);
+        }
+        else
+        {
+            TextItem name = new TextItem("name", "Name");
+
+            form.setFields(
+                    name, jndiName,
+                    connector, groupId,
+                    failoverInitial, failoverShutdown,
+                    threadPool, txBatch,
+                    globalPools);
+        }
 
         FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
@@ -69,9 +92,11 @@ public class DefaultCFForm {
         FormToolStrip<ConnectionFactory> formTools = new FormToolStrip<ConnectionFactory>(form, callback);
 
         FormLayout formLayout = new FormLayout()
-                .setSetTools(formTools)
                 .setForm(form)
                 .setHelp(helpPanel);
+
+        if(provideTools)
+            formLayout.setSetTools(formTools);
 
         return formLayout.build();
     }

@@ -1,10 +1,14 @@
 package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.CFConnectionsForm;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.DefaultCFForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -12,6 +16,8 @@ import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLay
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.tools.ToolStrip;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +45,13 @@ public class ConnectionFactoryList {
 
         serverName = new ContentHeaderLabel();
 
-        factoryTable = new DefaultCellTable<ConnectionFactory>(10);
+        factoryTable = new DefaultCellTable<ConnectionFactory>(10, new ProvidesKey<ConnectionFactory>() {
+            @Override
+            public Object getKey(ConnectionFactory connectionFactory) {
+                return connectionFactory.getName();
+            }
+        });
+
         factoryProvider = new ListDataProvider<ConnectionFactory>();
         factoryProvider.addDataDisplay(factoryTable);
 
@@ -85,11 +97,31 @@ public class ConnectionFactoryList {
             }
         });
 
+
+        ToolStrip tools = new ToolStrip();
+        tools.addToolButtonRight(
+                new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        presenter.launchNewCFWizard();
+                    }
+                }));
+
+         tools.addToolButtonRight(
+                new ToolButton(Console.CONSTANTS.common_label_remove(), new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                         presenter.onDeleteCF();
+                    }
+
+                }));
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadlineWidget(serverName)
                 .setDescription("Connection factories for applications. Used to connect to the server using the JMS API.")
                 .setMaster("Connection Factories", factoryTable)
+                .setMasterTools(tools)
                 .addDetail("Common", defaultAttributes.asWidget())
                 .addDetail("Connections", connectionAttributes.asWidget());
 

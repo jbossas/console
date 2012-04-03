@@ -922,4 +922,32 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
             }
         });
     }
+
+    public void onDeleteCF() {
+
+    }
+
+    public void launchNewCFWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Connection Factory"));
+        window.setWidth(480);
+        window.setHeight(360);
+        window.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+
+            }
+        });
+
+        window.trapWidget(
+                new NewCFWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onCreateCF(ConnectionFactory entity) {
+        window.hide();
+
+    }
 }

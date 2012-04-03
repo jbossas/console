@@ -14,6 +14,7 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.spi.Subsystem;
@@ -39,6 +40,8 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     public PlaceManager getPlaceManager() {
         return placeManager;
     }
+
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)
