@@ -59,7 +59,6 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -91,6 +90,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     private LoadJMSCmd loadJMSCmd;
     private EntityAdapter<ConnectionFactory> factoryAdapter;
     private EntityAdapter<Divert> divertAdapter;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -992,6 +992,17 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         window.center();
     }
 
+    public void launchNewDivertWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Divert"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.trapWidget(new NewDivertWizard(this).asWidget());
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
     public void onCreateCF(final ConnectionFactory entity) {
         window.hide();
 
@@ -1030,4 +1041,60 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
             }
         });
     }
+
+    public void onCreateDivert(final Divert entity) {
+        window.hide();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("divert", entity.getRoutingName());
+
+        ModelNode operation = divertAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Divert " + entity.getRoutingName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Divert " + entity.getRoutingName()));
+
+                loadDiverts();
+            }
+        });
+    }
+
+    public void onDeleteDivert(final String name) {
+       ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("divert", name);
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Divert " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Divert " + name));
+
+                loadDiverts();
+            }
+        });
+    }
+
+
 }

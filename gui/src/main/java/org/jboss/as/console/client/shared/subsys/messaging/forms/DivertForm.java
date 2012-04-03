@@ -80,10 +80,20 @@ public class DivertForm {
         FormToolStrip<Divert> formTools = new FormToolStrip<Divert>(form, callback);
 
         FormLayout formLayout = new FormLayout()
-                .setSetTools(formTools)
                 .setForm(form)
                 .setHelp(helpPanel);
 
+        if(!isCreate)
+            formLayout.setSetTools(formTools);
+
         return formLayout.build();
+    }
+
+    public Form<Divert> getForm() {
+        return form;
+    }
+
+    public void setIsCreate(boolean create) {
+        isCreate = create;
     }
 }

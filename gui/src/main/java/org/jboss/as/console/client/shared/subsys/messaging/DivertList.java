@@ -82,7 +82,7 @@ public class DivertList {
                 new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-
+                        presenter.launchNewDivertWizard();
                     }
                 }));
 
@@ -98,7 +98,7 @@ public class DivertList {
                                     @Override
                                     public void onConfirmation(boolean isConfirmed) {
                                         if (isConfirmed) {
-                                            presenter.onDeleteCF(getSelectedEntity().getRoutingName());
+                                            presenter.onDeleteDivert(getSelectedEntity().getRoutingName());
                                         }
                                     }
                                 });
@@ -132,6 +132,8 @@ public class DivertList {
                 .setMasterTools(tools)
                 .setDetail("Details", form.asWidget());
 
+
+        form.getForm().bind(table);
 
         return layout.build();
     }
