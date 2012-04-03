@@ -61,7 +61,7 @@ public interface ConnectionFactory {
     Long getConnectionTTL();
     void setConnectionTTL(Long ttl);
 
-    @Binding(detypedName = "failover-on-initial-connection ")
+    @Binding(detypedName = "failover-on-initial-connection")
     boolean isFailoverInitial();
     void setFailoverInitial(boolean b);
 

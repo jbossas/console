@@ -2,9 +2,9 @@ package org.jboss.as.console.client.shared.subsys.messaging;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.CFConnectionsForm;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.DefaultCFForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -65,9 +65,8 @@ public class ConnectionFactoryList {
         defaultAttributes = new DefaultCFForm(new FormToolStrip.FormCallback<ConnectionFactory>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+                presenter.saveConnnectionFactory(getSelectedFactory().getName(), changeset);
             }
-
             @Override
             public void onDelete(ConnectionFactory entity) {
 
@@ -77,7 +76,7 @@ public class ConnectionFactoryList {
         connectionAttributes = new CFConnectionsForm(new FormToolStrip.FormCallback<ConnectionFactory>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-
+               presenter.saveConnnectionFactory(getSelectedFactory().getName(), changeset);
             }
 
             @Override
@@ -109,5 +108,11 @@ public class ConnectionFactoryList {
 
         factoryTable.selectDefaultEntity();
     }
+
+    public ConnectionFactory getSelectedFactory() {
+        SingleSelectionModel<ConnectionFactory> selectionModel = (SingleSelectionModel<ConnectionFactory>)factoryTable.getSelectionModel();
+        return selectionModel.getSelectedObject();
+    }
+
 
 }

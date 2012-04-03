@@ -87,9 +87,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     private EntityAdapter<AddressingPattern> addressingAdapter;
     private String currentServer = null;
     private LoadJMSCmd loadJMSCmd;
-    //private EntityAdapter<Queue> queueAdapter;
-    //private EntityAdapter<Topic> topicAdapter;
-
+    private EntityAdapter<ConnectionFactory> factoryAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -154,6 +152,9 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
                 AddressingPattern.class,
                 propertyMetaData
         );
+
+
+        factoryAdapter = new EntityAdapter<ConnectionFactory>(ConnectionFactory.class, metaData);
 
         this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
@@ -894,5 +895,31 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     public String getCurrentServer() {
 
         return currentServer;
+    }
+
+    public void saveConnnectionFactory(String name, Map<String, Object> changeset) {
+
+        ModelNode address = new ModelNode();
+        address.get(ADDRESS).set(Baseadress.get());
+        address.get(ADDRESS).add("subsystem", "messaging");
+        address.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        address.get(ADDRESS).add("connection-factory", name);
+
+        ModelNode operation = factoryAdapter.fromChangeset(changeset, address);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  =result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.saveFailed("Connection Factory " + getCurrentServer()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.saved("Connection Factory " + getCurrentServer()));
+
+                loadJMSConfig();
+            }
+        });
     }
 }

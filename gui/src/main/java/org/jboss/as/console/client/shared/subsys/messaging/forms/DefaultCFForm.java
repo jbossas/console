@@ -35,7 +35,7 @@ public class DefaultCFForm {
         TextItem name = new TextItem("name", "Name");
         TextItem jndiName = new TextItem("jndiName", "JNDI Name");
 
-        TextBoxItem groupId = new TextBoxItem("groupId", "Group ID");
+        TextBoxItem groupId = new TextBoxItem("groupId", "Group ID", false);
         TextItem connector = new TextItem("connector", "Connector");
 
         CheckBoxItem failoverInitial = new CheckBoxItem("failoverInitial", "Failover Initial?");
