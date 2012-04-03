@@ -11,6 +11,8 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -27,10 +29,16 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
 
     private DispatchAsync dispatcher;
     private BeanFactory factory;
+    private ApplicationMetaData metaData;
+    private EntityAdapter<ConnectionFactory> factoryAdapter;
 
-    public LoadJMSCmd(DispatchAsync dispatcher, BeanFactory factory) {
+    public LoadJMSCmd(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metaData) {
         this.dispatcher = dispatcher;
+        this.metaData = metaData;
         this.factory = factory;
+
+
+        factoryAdapter = new EntityAdapter<ConnectionFactory>(ConnectionFactory.class, metaData);
     }
 
     @Override
@@ -77,11 +85,15 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
                 ModelNode factoryValue = factoryProp.getValue();
                 String jndi = factoryValue.get("entries").asList().get(0).asString();
 
-                ConnectionFactory factoryModel = factory.connectionFactory().as();
+                /*ConnectionFactory factoryModel = factory.connectionFactory().as();
                 factoryModel.setName(name);
-                factoryModel.setJndiName(jndi);
+                factoryModel.setJndiName(jndi);*/
 
-                factoryModels.add(factoryModel);
+                ConnectionFactory connectionFactory = factoryAdapter.fromDMR(factoryValue);
+                connectionFactory.setName(name);
+                connectionFactory.setJndiName(jndi);
+
+                factoryModels.add(connectionFactory);
             }
 
 

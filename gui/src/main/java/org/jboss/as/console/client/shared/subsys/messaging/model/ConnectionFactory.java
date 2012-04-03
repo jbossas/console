@@ -20,6 +20,7 @@
 package org.jboss.as.console.client.shared.subsys.messaging.model;
 
 import org.jboss.as.console.client.widgets.forms.Address;
+import org.jboss.as.console.client.widgets.forms.Binding;
 
 /**
  * @author Heiko Braun
@@ -28,10 +29,69 @@ import org.jboss.as.console.client.widgets.forms.Address;
 @Address("/subsystem=messaging/hornetq-server={0}/connection-factory={1}")
 public interface ConnectionFactory {
 
+    @Binding(skip = true)
     String getName();
     void setName(String name);
 
+    @Binding(skip = true)
     String getJndiName();
     void setJndiName(String jndi);
 
+    @Binding(detypedName = "call-timeout")
+    Long getCallTimeout();
+    void setCallTimeout(Long timeout);
+
+    @Binding(detypedName = "compress-large-messages")
+    boolean isCompressLarge();
+    void setCompressLarge(boolean b);
+
+    @Binding(detypedName = "connection-ttl")
+    Long getConnectionTTL();
+    void setConnectionTTL(Long ttl);
+
+    @Binding(detypedName = "failover-on-initial-connection ")
+    boolean isFailoverInitial();
+    void setFailoverInitial(boolean b);
+
+
+    @Binding(detypedName = "failover-on-server-shutdown")
+    boolean isFailoverShutdown();
+    void setFailoverShutdown(boolean b);
+
+    @Binding(detypedName = "connection-load-balancing-policy-class-name")
+    String getLoadbalancingClassName();
+    void setLoadbalancingClassName(String name);
+
+    @Binding(detypedName = "max-retry-interval")
+    Long getMaxRetryInterval();
+    void setMaxRetryInterval(Long interval);
+
+    @Binding(detypedName = "min-large-message-size")
+    Long getMinLargeMessageSize();
+    void setMinLargeMessageSize(Long size);
+
+    @Binding(detypedName = "reconnect-attempts")
+    Long getReconnectAttempts();
+    void setReconnectAttempts(Long numAttempts);
+
+    @Binding(detypedName = "retry-interval")
+    Long getRetryInterval();
+    void setRetryInterval(Long interval);
+
+    @Binding(detypedName = "thread-pool-max-size")
+    Long getThreadPoolMax();
+    void setThreadPoolMax(Long max);
+
+
+    @Binding(detypedName = "transaction-batch-size")
+    Long getTransactionBatchSize();
+    void setTransactionBatchSize(Long size);
+
+    @Binding(detypedName = "use-global-pools")
+    boolean isUseGlobalPools();
+    void setUseGlobalPools(boolean b);
+
+    @Binding(detypedName = "factory-type")
+    Integer getFactoryType();
+    void setFactoryType(Integer type);
 }

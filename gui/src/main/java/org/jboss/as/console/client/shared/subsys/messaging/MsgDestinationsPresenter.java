@@ -155,7 +155,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
                 propertyMetaData
         );
 
-        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory);
+        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
 
     @Override

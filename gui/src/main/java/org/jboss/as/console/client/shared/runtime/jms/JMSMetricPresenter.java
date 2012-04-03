@@ -84,7 +84,7 @@ public class JMSMetricPresenter extends Presenter<JMSMetricPresenter.MyView, JMS
         this.serverSelection = serverSelection;
         this.factory = factory;
 
-        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory);
+        this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
 
     public void setSelectedTopic(JMSEndpoint topic) {
