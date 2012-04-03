@@ -23,6 +23,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -33,6 +34,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
@@ -56,6 +58,7 @@ public class SecurityDetails {
 
     private DefaultCellTable<SecurityPattern> secTable;
     private ListDataProvider<SecurityPattern> secProvider;
+    private ContentHeaderLabel serverName;
 
     public SecurityDetails(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
@@ -181,10 +184,13 @@ public class SecurityDetails {
         formPanel.add(formTools.asWidget());
         formPanel.add(form.asWidget());
 
+        serverName = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Security Settings")
-                .setMaster("TODO", secTable)
+                .setHeadlineWidget(serverName)
+                .setDescription("A security setting allows sets of permissions to be defined against queues based on their address.")
+                .setMaster("Available security settings", secTable)
                 .setMasterTools(tableTools.asWidget())
                 .setDetail("Details", formPanel);
 
@@ -197,5 +203,7 @@ public class SecurityDetails {
         secTable.selectDefaultEntity();
 
         form.setEnabled(false);
+
+        serverName.setText("Security Settings: Provider "+presenter.getCurrentServer());
     }
 }

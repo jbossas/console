@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 public class ConnectionFactoryList {
 
 
-    private HTML serverName;
+    private ContentHeaderLabel serverName;
     private DefaultCellTable<ConnectionFactory> factoryTable;
     private ListDataProvider<ConnectionFactory> factoryProvider;
     private MsgDestinationsPresenter presenter;
@@ -30,8 +31,7 @@ public class ConnectionFactoryList {
     Widget asWidget() {
 
 
-        serverName = new HTML("Replace me");
-        serverName.setStyleName("content-header-label");
+        serverName = new ContentHeaderLabel();
 
         factoryTable = new DefaultCellTable<ConnectionFactory>(10);
         factoryProvider = new ListDataProvider<ConnectionFactory>();
@@ -57,6 +57,7 @@ public class ConnectionFactoryList {
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
                 .setHeadlineWidget(serverName)
+                .setDescription("Connection factories for applications. Used to connect to the server using the JMS API.")
                 .setMaster("Connection Factories", factoryTable)
                 .addDetail("Detail 1", new HTML())
                 .addDetail("Detail 1", new HTML());
@@ -66,5 +67,6 @@ public class ConnectionFactoryList {
 
     public void setFactories(List<ConnectionFactory> factories) {
         factoryProvider.setList(factories);
+        serverName.setText("Connection Factories: Provider "+presenter.getCurrentServer());
     }
 }

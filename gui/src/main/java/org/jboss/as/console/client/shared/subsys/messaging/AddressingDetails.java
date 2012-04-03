@@ -34,6 +34,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPatte
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -58,6 +59,7 @@ public class AddressingDetails {
 
     private DefaultCellTable<AddressingPattern> addrTable;
     private ListDataProvider<AddressingPattern> addrProvider;
+    private ContentHeaderLabel serverName;
 
     public AddressingDetails(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
@@ -158,9 +160,12 @@ public class AddressingDetails {
         formPanel.add(formTools.asWidget());
         formPanel.add(form.asWidget());
 
+        serverName = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Security Settings")
+                .setHeadlineWidget(serverName)
+                .setDescription("An address setting defines some attributes that are defined against an address wildcard rather than a specific queue.")
                 .setMaster("TODO", addrTable)
                 .setMasterTools(tableTools.asWidget())
                 .setDetail("Details", formPanel);
@@ -182,6 +187,8 @@ public class AddressingDetails {
         addrTable.selectDefaultEntity();
 
         form.setEnabled(false);
+
+        serverName.setText("Address Settings: Provider "+presenter.getCurrentServer());
     }
 
 }

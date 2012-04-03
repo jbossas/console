@@ -71,7 +71,7 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
         panel.addPage("Queues/Topics", jmsEditor.asWidget()) ;
         panel.addPage("Connection Factories", connectionFactories.asWidget()) ;
         panel.addPage("Security Settings", securitySettings.asWidget()) ;
-        panel.addPage("Addressing Settings", addressingSettings.asWidget()) ;
+        panel.addPage("Address Settings", addressingSettings.asWidget()) ;
         panel.addPage("Diverts", new HTML()) ;
 
         // default page

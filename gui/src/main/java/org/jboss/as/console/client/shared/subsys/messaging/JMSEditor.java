@@ -98,9 +98,9 @@ public class JMSEditor {
 
     public void setQueues(List<Queue> queues) {
         queueList.setQueues(queues);
+
+        serverName.setText("JMS Endpoints: Provider "+presenter.getCurrentServer());
     }
-
-
 
     public void enableEditQueue(boolean b) {
         queueList.setEnabled(b);
