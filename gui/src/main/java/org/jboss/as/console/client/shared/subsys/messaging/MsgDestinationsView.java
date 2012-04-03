@@ -27,6 +27,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -50,6 +51,7 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
     private ConnectionFactoryList connectionFactories;
     private SecurityDetails securitySettings;
     private AddressingDetails addressingSettings;
+    private DivertList divertList;
 
     @Override
     public Widget createWidget() {
@@ -66,13 +68,14 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
         connectionFactories = new ConnectionFactoryList(presenter);
         securitySettings = new SecurityDetails(presenter);
         addressingSettings = new AddressingDetails(presenter);
+        divertList = new DivertList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Queues/Topics", jmsEditor.asWidget()) ;
         panel.addPage("Connection Factories", connectionFactories.asWidget()) ;
         panel.addPage("Security Settings", securitySettings.asWidget()) ;
         panel.addPage("Address Settings", addressingSettings.asWidget()) ;
-        panel.addPage("Diverts", new HTML()) ;
+        panel.addPage("Diverts", divertList.asWidget()) ;
 
         // default page
         panel.showPage(0);
@@ -135,6 +138,11 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
     @Override
     public void setConnectionFactories(List<ConnectionFactory> factories) {
         connectionFactories.setFactories(factories);
+    }
+
+    @Override
+    public void setDiverts(List<Divert> diverts) {
+        divertList.setDiverts(diverts);
     }
 
     @Override

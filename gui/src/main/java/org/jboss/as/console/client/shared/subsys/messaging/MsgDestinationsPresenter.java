@@ -47,6 +47,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
 import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -89,6 +90,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     private String currentServer = null;
     private LoadJMSCmd loadJMSCmd;
     private EntityAdapter<ConnectionFactory> factoryAdapter;
+    private EntityAdapter<Divert> divertAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MessagingPresenter)
@@ -105,6 +107,8 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
 
         void setProvider(List<String> names);
         void setSelectedProvider(String selectedProvider);
+
+        void setDiverts(List<Divert> diverts);
     }
 
     public interface JMSView {
@@ -156,6 +160,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
 
 
         factoryAdapter = new EntityAdapter<ConnectionFactory>(ConnectionFactory.class, metaData);
+        divertAdapter = new EntityAdapter<Divert>(Divert.class, metaData);
 
         this.loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
@@ -190,8 +195,34 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         loadSecurityConfig();
         loadAddressingConfig();
         loadJMSConfig();
+        loadDiverts();
     }
 
+    private void loadDiverts() {
+        AddressBinding address = metaData.getBeanMetaData(MessagingProvider.class).getAddress();
+        ModelNode operation = address.asResource(Baseadress.get(), getCurrentServer());
+
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("divert");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                List<ModelNode> modelNodes = response.get(RESULT).asList();
+                List<Divert> diverts = new ArrayList<Divert>(modelNodes.size());
+                for(ModelNode node : modelNodes)
+                {
+                    Divert divert = divertAdapter.fromDMR(node);
+                    diverts.add(divert);
+                }
+
+                getView().setDiverts(diverts);
+            }
+        });
+    }
 
     private void loadProvider() {
         new LoadHornetQServersCmd(dispatcher).execute(
@@ -983,8 +1014,6 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         // TODO: https://issues.jboss.org/browse/AS7-4377
         operation.get("connector").setEmptyList();
         operation.get("connector").add(entity.getConnector());
-
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

@@ -89,6 +89,7 @@ import org.jboss.as.console.client.shared.subsys.mail.MailServerDefinition;
 import org.jboss.as.console.client.shared.subsys.mail.MailSession;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.shared.subsys.messaging.model.SecurityPattern;
@@ -150,6 +151,7 @@ public interface CoreBeanFactory {
     AutoBean<Queue> queue();
     AutoBean<Topic> topic();
     AutoBean<ConnectionFactory> connectionFactory();
+    AutoBean<Divert> divert();
 
     AutoBean<EJB3Subsystem> ejb3Subsystem();
     AutoBean<StrictMaxBeanPool> strictMaxBeanPool();
