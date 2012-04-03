@@ -33,9 +33,17 @@ public interface ConnectionFactory {
     String getName();
     void setName(String name);
 
+    @Binding(detypedName = "group-id")
+    String getGroupId();
+    void setGroupId(String id);
+
     @Binding(skip = true)
     String getJndiName();
     void setJndiName(String jndi);
+
+    @Binding(skip=true)
+    String getConnector();
+    void setConnector(String connector);
 
     @Binding(detypedName = "call-timeout")
     Long getCallTimeout();
@@ -91,7 +99,13 @@ public interface ConnectionFactory {
     boolean isUseGlobalPools();
     void setUseGlobalPools(boolean b);
 
-    @Binding(detypedName = "factory-type")
+    /*@Binding(detypedName = "factory-type")
     Integer getFactoryType();
     void setFactoryType(Integer type);
+
+    @Binding(skip=true)
+    String getFactoryTypeName();
+    void setFactoryTypeName(String name);*/
+
+
 }

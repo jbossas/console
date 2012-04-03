@@ -77,7 +77,6 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
             // factories
             List<Property> factories = response.get("connection-factory").asPropertyList();
 
-
             for(Property factoryProp : factories)
             {
                 String name = factoryProp.getName();
@@ -85,13 +84,19 @@ public class LoadJMSCmd implements AsyncCommand<AggregatedJMSModel> {
                 ModelNode factoryValue = factoryProp.getValue();
                 String jndi = factoryValue.get("entries").asList().get(0).asString();
 
-                /*ConnectionFactory factoryModel = factory.connectionFactory().as();
-                factoryModel.setName(name);
-                factoryModel.setJndiName(jndi);*/
-
                 ConnectionFactory connectionFactory = factoryAdapter.fromDMR(factoryValue);
                 connectionFactory.setName(name);
                 connectionFactory.setJndiName(jndi);
+
+                if(factoryValue.hasDefined("connector"))
+                {
+                    List<Property> items = factoryValue.get("connector").asPropertyList();
+                    String list = "";
+                    for(Property item : items)
+                        list+= " "+item.getName();
+
+                    connectionFactory.setConnector(list);
+                }
 
                 factoryModels.add(connectionFactory);
             }
