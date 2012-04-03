@@ -49,6 +49,10 @@ public interface ConnectionFactory {
     Long getCallTimeout();
     void setCallTimeout(Long timeout);
 
+    @Binding(detypedName = "min-large-message-size")
+    Long getMinLargeMessageSize();
+    void setMinLargeMessageSize(Long size);
+
     @Binding(detypedName = "compress-large-messages")
     boolean isCompressLarge();
     void setCompressLarge(boolean b);
@@ -61,7 +65,6 @@ public interface ConnectionFactory {
     boolean isFailoverInitial();
     void setFailoverInitial(boolean b);
 
-
     @Binding(detypedName = "failover-on-server-shutdown")
     boolean isFailoverShutdown();
     void setFailoverShutdown(boolean b);
@@ -73,10 +76,6 @@ public interface ConnectionFactory {
     @Binding(detypedName = "max-retry-interval")
     Long getMaxRetryInterval();
     void setMaxRetryInterval(Long interval);
-
-    @Binding(detypedName = "min-large-message-size")
-    Long getMinLargeMessageSize();
-    void setMinLargeMessageSize(Long size);
 
     @Binding(detypedName = "reconnect-attempts")
     Long getReconnectAttempts();

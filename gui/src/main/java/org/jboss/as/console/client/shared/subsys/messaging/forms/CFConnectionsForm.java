@@ -5,26 +5,23 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
-import org.jboss.as.console.client.widgets.forms.BlankItem;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.dmr.client.ModelNode;
 
 /**
  * @author Heiko Braun
  * @date 4/3/12
  */
-public class DefaultCFForm {
+public class CFConnectionsForm {
 
 
     private Form<ConnectionFactory> form;
     private FormToolStrip.FormCallback<ConnectionFactory> callback;
 
-    public DefaultCFForm(FormToolStrip.FormCallback<ConnectionFactory> callback) {
+    public CFConnectionsForm(FormToolStrip.FormCallback<ConnectionFactory> callback) {
         this.callback = callback;
     }
 
@@ -32,26 +29,17 @@ public class DefaultCFForm {
         form = new Form<ConnectionFactory>(ConnectionFactory.class);
         form.setNumColumns(2);
 
-        TextItem name = new TextItem("name", "Name");
-        TextItem jndiName = new TextItem("jndiName", "JNDI Name");
+        NumberBoxItem callTimeout = new NumberBoxItem("callTimeout", "Call Timeout");
+        NumberBoxItem connectionTTL = new NumberBoxItem("connectionTTL", "Connection TTL");
 
-        TextBoxItem groupId = new TextBoxItem("groupId", "Group ID");
-        TextItem connector = new TextItem("connector", "Connector");
+        NumberBoxItem maxRetryInterval = new NumberBoxItem("maxRetryInterval", "Max Retry");
+        NumberBoxItem retryInterval = new NumberBoxItem("retryInterval", "Retry Interval");
 
-        CheckBoxItem failoverInitial = new CheckBoxItem("failoverInitial", "Failover Initial?");
-        CheckBoxItem failoverShutdown = new CheckBoxItem("failoverShutdown", "Failover Shutdown=");
+        NumberBoxItem reconnect = new NumberBoxItem("reconnectAttempts", "Reconnect Attempts");
 
-        CheckBoxItem globalPools = new CheckBoxItem("useGlobalPools", "Global Pools?");
+        TextAreaItem lbClass = new TextAreaItem("loadbalancingClassName", "Load Balacer Class");
 
-        NumberBoxItem threadPool = new NumberBoxItem("threadPoolMax", "Thread Pool Max");
-        NumberBoxItem txBatch = new NumberBoxItem("transactionBatchSize", "Transaction Batch Size");
-
-        form.setFields(
-                name, jndiName,
-                connector, groupId,
-                failoverInitial, failoverShutdown,
-                threadPool, txBatch,
-                globalPools);
+        form.setFields(callTimeout, connectionTTL, retryInterval, maxRetryInterval, reconnect, lbClass);
 
 
         FormHelpPanel helpPanel = new FormHelpPanel(
