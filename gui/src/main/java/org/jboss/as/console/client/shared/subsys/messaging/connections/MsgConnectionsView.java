@@ -4,13 +4,11 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.shared.subsys.messaging.JMSEditor;
-import org.jboss.as.console.client.shared.subsys.messaging.MsgDestinationsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -25,6 +23,7 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     private PagedView panel;
     private MsgConnectionsPresenter presenter;
     private ProviderList providerList;
+    private AcceptorOverview acceptorOverview;
 
 
     @Override
@@ -40,9 +39,10 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
         panel = new PagedView();
 
         providerList = new ProviderList(presenter, NameTokens.MsgConnectionsPresenter);
+        acceptorOverview = new AcceptorOverview(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
-        panel.addPage("Acceptor", new HTML()) ;
+        panel.addPage("Acceptor", acceptorOverview.asWidget()) ;
         panel.addPage("Connector", new HTML()) ;
         panel.addPage("Connector Service", new HTML()) ;
         panel.addPage("Bridges", new HTML()) ;
@@ -75,7 +75,7 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
         }
         else{
 
-            //presenter.loadDetails(selectedProvider);
+            presenter.loadDetails(selectedProvider);
 
             // move to first page if still showing overview
             if(0==panel.getPage())
@@ -86,5 +86,10 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     @Override
     public void setProvider(List<String> provider) {
         providerList.setProvider(provider);
+    }
+
+    @Override
+    public void setGenericAcceptors(List<Acceptor> genericAcceptors) {
+        acceptorOverview.setGenericAcceptors(genericAcceptors);
     }
 }
