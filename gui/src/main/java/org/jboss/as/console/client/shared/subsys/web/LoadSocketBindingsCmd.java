@@ -43,14 +43,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @date 3/19/12
  */
 
-public class SocketBinding {
+public class LoadSocketBindingsCmd {
 
     private DispatchAsync dispatcher;
     private int syncCounter;
     private Map<String,String> sgbBind;
     private String finalSGB = "standard-sockets";
 	
-	public SocketBinding(DispatchAsync dispatcher) {
+	public LoadSocketBindingsCmd(DispatchAsync dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 	

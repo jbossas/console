@@ -71,7 +71,7 @@ public class AcceptorList {
                 new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        presenter.launchNewAcceptorWizard();
+                        presenter.launchNewAcceptorWizard(type);
                     }
                 }));
 

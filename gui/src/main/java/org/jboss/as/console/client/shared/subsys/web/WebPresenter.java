@@ -79,7 +79,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
     private EntityAdapter<JSPContainerConfiguration> containerAdapter;
     private LoadConnectorCmd loadConnectorCmd;
-    private SocketBinding socketBinding;;
+    private LoadSocketBindingsCmd socketBinding;;
     private List<String> socketsBindingList;
 
     @ProxyCodeSplit
@@ -116,7 +116,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 new EntityAdapter<JSPContainerConfiguration>(JSPContainerConfiguration.class, metaData);
 
         this.loadConnectorCmd = new LoadConnectorCmd(dispatcher, factory);
-        this.socketBinding = new SocketBinding(dispatcher);
+        this.socketBinding = new LoadSocketBindingsCmd(dispatcher);
     }
 
     @Override

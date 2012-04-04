@@ -24,6 +24,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -33,7 +34,6 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +61,11 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     public PlaceManager getPlaceManager() {
         return placeManager;
     }
+
+    public void closeDialogue() {
+        window.hide();
+    }
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)
@@ -187,13 +192,13 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                 }
                 else
                 {
-                    List<Acceptor> generic = parseAcceptors(response.get(RESULT).get("step-1"));
+                    List<Acceptor> generic = parseAcceptors(response.get(RESULT).get("step-1"), AcceptorType.GENERIC);
                     getView().setGenericAcceptors(generic);
 
-                    List<Acceptor> remote = parseAcceptors(response.get(RESULT).get("step-2"));
+                    List<Acceptor> remote = parseAcceptors(response.get(RESULT).get("step-2"), AcceptorType.REMOTE);
                     getView().setRemoteAcceptors(remote);
 
-                    List<Acceptor> invm = parseAcceptors(response.get(RESULT).get("step-3"));
+                    List<Acceptor> invm = parseAcceptors(response.get(RESULT).get("step-3"), AcceptorType.INVM);
                     getView().setInvmAcceptors(invm);
                 }
             }
@@ -201,7 +206,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     }
 
-    private List<Acceptor> parseAcceptors(ModelNode step) {
+    private List<Acceptor> parseAcceptors(ModelNode step, AcceptorType type) {
 
         List<Property> generic = step.get(RESULT).asPropertyList();
         List<Acceptor> genericAcceptors = new ArrayList<Acceptor>();
@@ -210,6 +215,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
             ModelNode acceptor = prop.getValue();
             Acceptor model = acceptorAdapter.fromDMR(acceptor);
             model.setName(prop.getName());
+            model.setType(type);
 
             if(acceptor.hasDefined("param"))
             {
@@ -250,12 +256,52 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         revealStrategy.revealInParent(this);
     }
 
-    public void launchNewAcceptorWizard() {
+    public void launchNewAcceptorWizard(final AcceptorType type) {
+        loadSocketBindings(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error("Failed to load socket bindings", throwable.getMessage());
+            }
 
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Acceptor"));
+                window.setWidth(480);
+                window.setHeight(360);
+
+                window.trapWidget(new NewAcceptorWizard(MsgConnectionsPresenter.this, names, type).asWidget());
+
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
     }
 
-    public void onDeleteAcceptor(Acceptor socketBinding) {
+    public void onDeleteAcceptor(final Acceptor entity) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
 
+        ModelNode operation = acceptorAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Acceptor " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Acceptor " + entity.getName()));
+
+                loadAcceptors();
+            }
+        });
     }
 
     public void onSaveAcceptor(Acceptor entity, Map<String, Object> changeset) {
@@ -267,4 +313,33 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         // TODO
         callback.onSuccess(Collections.EMPTY_LIST);
     }
+
+    public void onCreateAcceptor(final Acceptor entity) {
+        window.hide();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
+
+        ModelNode operation = acceptorAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Acceptor " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Acceptor " + entity.getName()));
+
+                loadAcceptors();
+            }
+        });
+    }
+
 }
