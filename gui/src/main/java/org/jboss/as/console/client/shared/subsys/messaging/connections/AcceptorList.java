@@ -13,6 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.AcceptorForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
@@ -34,9 +35,11 @@ public class AcceptorList {
     private ListDataProvider<Acceptor> provider;
     private MsgConnectionsPresenter presenter;
     private AcceptorForm acceptorForm;
+    private AcceptorType type;
 
-    public AcceptorList(MsgConnectionsPresenter presenter) {
+    public AcceptorList(MsgConnectionsPresenter presenter,  AcceptorType type) {
         this.presenter = presenter;
+        this.type = type;
     }
 
     Widget asWidget() {
@@ -106,7 +109,7 @@ public class AcceptorList {
             public void onDelete(Acceptor entity) {
 
             }
-        }, Acceptor.Type.GENERIC);
+        }, type);
 
         // ----
         VerticalPanel layout = new VerticalPanel();

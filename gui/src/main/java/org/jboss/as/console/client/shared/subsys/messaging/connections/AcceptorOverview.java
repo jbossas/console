@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
 import org.jboss.as.console.client.widgets.ContentDescription;
 
 import java.util.List;
@@ -21,6 +22,8 @@ public class AcceptorOverview {
     private HTML serverName;
     private MsgConnectionsPresenter presenter;
     private AcceptorList genericAcceptors;
+    private AcceptorList remoteAcceptors;
+    private AcceptorList invmAcceptors;
 
     public AcceptorOverview(MsgConnectionsPresenter presenter) {
         this.presenter = presenter;
@@ -52,10 +55,12 @@ public class AcceptorOverview {
         bottomLayout.addStyleName("default-tabpanel");
 
 
-        genericAcceptors = new AcceptorList(presenter);
+        genericAcceptors = new AcceptorList(presenter, AcceptorType.GENERIC);
+        remoteAcceptors = new AcceptorList(presenter, AcceptorType.REMOTE);
+        invmAcceptors = new AcceptorList(presenter, AcceptorType.INVM);
 
-        bottomLayout.add(new HTML(),"Remote");
-        bottomLayout.add(new HTML(),"In-VM");
+        bottomLayout.add(remoteAcceptors.asWidget(),"Remote");
+        bottomLayout.add(invmAcceptors.asWidget(),"In-VM");
         bottomLayout.add(genericAcceptors.asWidget(),"Generic");
 
         bottomLayout.selectTab(0);
@@ -66,6 +71,15 @@ public class AcceptorOverview {
     }
 
     public void setGenericAcceptors(List<Acceptor> list) {
+        serverName.setText("Acceptors: Provider "+ presenter.getCurrentServer());
         genericAcceptors.setAcceptors(list);
+    }
+
+    public void setRemoteAcceptors(List<Acceptor> remote) {
+        remoteAcceptors.setAcceptors(remote);
+    }
+
+    public void setInvmAcceptors(List<Acceptor> invm) {
+        invmAcceptors.setAcceptors(invm);
     }
 }

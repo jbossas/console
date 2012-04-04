@@ -74,6 +74,10 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         void setProvider(List<String> provider);
 
         void setGenericAcceptors(List<Acceptor> genericAcceptors);
+
+        void setRemoteAcceptors(List<Acceptor> remote);
+
+        void setInvmAcceptors(List<Acceptor> invm);
     }
 
     @Inject
@@ -171,8 +175,6 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
         operation.get(STEPS).set(steps);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
@@ -185,28 +187,43 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                 }
                 else
                 {
-                    System.out.println(response);
+                    List<Acceptor> generic = parseAcceptors(response.get(RESULT).get("step-1"));
+                    getView().setGenericAcceptors(generic);
 
-                    ModelNode step1 = response.get(RESULT).get("step-1");
+                    List<Acceptor> remote = parseAcceptors(response.get(RESULT).get("step-2"));
+                    getView().setRemoteAcceptors(remote);
 
-                    List<Property> generic = step1.get(RESULT).asPropertyList();
-                    List<Acceptor> genericAcceptors = new ArrayList<Acceptor>();
-                    for(Property prop : generic)
-                    {
-                        ModelNode acceptor = prop.getValue();
-                        Acceptor model = acceptorAdapter.fromDMR(acceptor);
-                        model.setName(prop.getName());
-
-                        List<PropertyRecord> param = parseProperties(acceptor.get("param").asPropertyList());
-                        model.setParameter(param);
-                        genericAcceptors.add(model);
-                    }
-
-                    getView().setGenericAcceptors(genericAcceptors);
+                    List<Acceptor> invm = parseAcceptors(response.get(RESULT).get("step-3"));
+                    getView().setInvmAcceptors(invm);
                 }
             }
         });
 
+    }
+
+    private List<Acceptor> parseAcceptors(ModelNode step) {
+
+        List<Property> generic = step.get(RESULT).asPropertyList();
+        List<Acceptor> genericAcceptors = new ArrayList<Acceptor>();
+        for(Property prop : generic)
+        {
+            ModelNode acceptor = prop.getValue();
+            Acceptor model = acceptorAdapter.fromDMR(acceptor);
+            model.setName(prop.getName());
+
+            if(acceptor.hasDefined("param"))
+            {
+                List<PropertyRecord> param = parseProperties(acceptor.get("param").asPropertyList());
+                model.setParameter(param);
+            }
+            else
+            {
+                model.setParameter(Collections.EMPTY_LIST);
+            }
+
+            genericAcceptors.add(model);
+        }
+        return genericAcceptors;
     }
 
     private List<PropertyRecord> parseProperties(List<Property> properties) {

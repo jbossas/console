@@ -31,10 +31,8 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
 
         LayoutPanel layout = new LayoutPanel();
 
-
         FakeTabPanel titleBar = new FakeTabPanel("Messaging Connections");
         layout.add(titleBar);
-
 
         panel = new PagedView();
 
@@ -91,5 +89,15 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     @Override
     public void setGenericAcceptors(List<Acceptor> genericAcceptors) {
         acceptorOverview.setGenericAcceptors(genericAcceptors);
+    }
+
+    @Override
+    public void setRemoteAcceptors(List<Acceptor> remote) {
+        acceptorOverview.setRemoteAcceptors(remote);
+    }
+
+    @Override
+    public void setInvmAcceptors(List<Acceptor> invm) {
+        acceptorOverview.setInvmAcceptors(invm);
     }
 }

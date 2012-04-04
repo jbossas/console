@@ -40,6 +40,7 @@ public class FormLayout {
 
         VerticalPanel layout = new VerticalPanel();
         layout.setStyleName("fill-layout-width");
+        layout.getElement().setAttribute("style", "margin-top:15px;");
 
         if(tools!=null)layout.add(tools.asWidget());
         if(help!=null)layout.add(help.asWidget());

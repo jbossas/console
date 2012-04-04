@@ -11,15 +11,13 @@ import java.util.List;
  */
 public interface Acceptor {
 
-    public enum Type {GENERIC, REMOTE, INVM}
-
     @Binding(skip = true)
     String getName();
     void setName(String name);
 
     @Binding(skip = true)
-    Type getType();
-    void setType(Type type);
+    AcceptorType getType();
+    void setType(AcceptorType type);
 
     @Binding(detypedName = "socket-binding")
     String getSocketBinding();

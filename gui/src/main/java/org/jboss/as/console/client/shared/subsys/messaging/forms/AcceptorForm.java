@@ -5,9 +5,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
@@ -22,23 +24,24 @@ import java.util.List;
  */
 public class AcceptorForm {
 
-    Acceptor.Type type = null;
 
     Form<Acceptor> form = new Form<Acceptor>(Acceptor.class);
+    private AcceptorType type = null;
+
     boolean isCreate = false;
     private FormToolStrip.FormCallback<Acceptor> callback;
 
     private MultiWordSuggestOracle oracle;
 
 
-    public AcceptorForm(FormToolStrip.FormCallback<Acceptor> callback, Acceptor.Type type) {
+    public AcceptorForm(FormToolStrip.FormCallback<Acceptor> callback, AcceptorType type) {
         this.callback = callback;
         oracle = new MultiWordSuggestOracle();
         oracle.setDefaultSuggestionsFromText(Collections.EMPTY_LIST);
         this.type = type;
     }
 
-    public AcceptorForm(FormToolStrip.FormCallback<Acceptor> callback, Acceptor.Type type, boolean create) {
+    public AcceptorForm(FormToolStrip.FormCallback<Acceptor> callback, AcceptorType type, boolean create) {
         this.callback = callback;
         isCreate = create;
         oracle = new MultiWordSuggestOracle();
@@ -48,13 +51,18 @@ public class AcceptorForm {
 
     public Widget asWidget() {
 
-        TextBoxItem name = new TextBoxItem("name", "Name");
-        SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding");
-        TextAreaItem factory= new TextAreaItem("factoryClass", "Factory Class");
+        switch (type)
+        {
+            case GENERIC:
+                buildGenericForm();
+                break;
+            case REMOTE:
+                buildRemoteForm();
+                break;
+            case INVM:
+                buildInvmForm();
 
-        socket.setOracle(oracle);
-
-        form.setFields(name,socket, factory);
+        }
 
         if(isCreate)
         {
@@ -66,14 +74,16 @@ public class AcceptorForm {
             form.setEnabled(false);
         }
 
+
         FormHelpPanel helpPanel = new FormHelpPanel(
                 new FormHelpPanel.AddressCallback() {
                     @Override
                     public ModelNode getAddress() {
+
                         ModelNode address = Baseadress.get();
                         address.add("subsystem", "messaging");
                         address.add("hornetq-server", "*");
-                        address.add("acceptor", "*");
+                        address.add(type.getResource(), "*");
                         return address;
                     }
                 }, form);
@@ -88,6 +98,32 @@ public class AcceptorForm {
             formLayout.setSetTools(formTools);
 
         return formLayout.build();
+    }
+
+    private void buildInvmForm() {
+        TextBoxItem name = new TextBoxItem("name", "Name");
+        NumberBoxItem server = new NumberBoxItem("serverId", "Server ID");
+
+        form.setFields(name, server);
+    }
+
+    private void buildRemoteForm() {
+        TextBoxItem name = new TextBoxItem("name", "Name");
+        SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding");
+
+        socket.setOracle(oracle);
+
+        form.setFields(name,socket);
+    }
+
+    private void buildGenericForm() {
+        TextBoxItem name = new TextBoxItem("name", "Name");
+        SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding");
+        TextAreaItem factory= new TextAreaItem("factoryClass", "Factory Class");
+
+        socket.setOracle(oracle);
+
+        form.setFields(name,socket, factory);
     }
 
     public Form<Acceptor> getForm() {
