@@ -265,7 +265,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
             @Override
             public void onSuccess(List<String> names) {
-                window = new DefaultWindow(Console.MESSAGES.createTitle("Acceptor"));
+                window = new DefaultWindow(Console.MESSAGES.createTitle(type.name().toUpperCase() + " Acceptor"));
                 window.setWidth(480);
                 window.setHeight(360);
 

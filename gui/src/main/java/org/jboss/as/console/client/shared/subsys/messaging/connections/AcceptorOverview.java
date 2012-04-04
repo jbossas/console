@@ -1,8 +1,13 @@
 package org.jboss.as.console.client.shared.subsys.messaging.connections;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -46,26 +51,47 @@ public class AcceptorOverview {
         serverName = new HTML("Replace me");
         serverName.setStyleName("content-header-label");
 
-        panel.add(serverName);
-        panel.add(new ContentDescription("Defines a way in which connections can be made to the HornetQ server."));
+
+        HorizontalPanel header = new HorizontalPanel();
+        header.setStyleName("fill-layout-width");
+        header.add(serverName);
 
         // ----
 
-        TabPanel bottomLayout = new TabPanel();
-        bottomLayout.addStyleName("default-tabpanel");
+        final DeckPanel deck = new DeckPanel();
+        deck.addStyleName("fill-layout");
 
+        final ListBox selector = new ListBox();
+
+        selector.addItem("Remote");
+        selector.addItem("In-VM");
+        selector.addItem("Generic");
+
+        selector.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                deck.showWidget(selector.getSelectedIndex());
+            }
+        });
+
+        header.add(selector);
+        selector.getElement().getParentElement().setAttribute("align", "right");
+
+
+        panel.add(header);
+        panel.add(new ContentDescription("Defines a way in which connections can be made to the HornetQ server."));
 
         genericAcceptors = new AcceptorList(presenter, AcceptorType.GENERIC);
         remoteAcceptors = new AcceptorList(presenter, AcceptorType.REMOTE);
         invmAcceptors = new AcceptorList(presenter, AcceptorType.INVM);
 
-        bottomLayout.add(remoteAcceptors.asWidget(),"Remote");
-        bottomLayout.add(invmAcceptors.asWidget(),"In-VM");
-        bottomLayout.add(genericAcceptors.asWidget(),"Generic");
+        deck.add(remoteAcceptors.asWidget());
+        deck.add(invmAcceptors.asWidget());
+        deck.add(genericAcceptors.asWidget());
 
-        bottomLayout.selectTab(0);
+        deck.showWidget(0);
 
-        panel.add(bottomLayout);
+        panel.add(deck);
 
         return layout;
     }
