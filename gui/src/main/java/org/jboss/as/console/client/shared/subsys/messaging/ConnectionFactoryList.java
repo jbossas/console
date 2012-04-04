@@ -136,7 +136,7 @@ public class ConnectionFactoryList {
                 .setMaster("Connection Factories", factoryTable)
                 .setMasterTools(tools)
                 .addDetail("Common", defaultAttributes.asWidget())
-                .addDetail("Connections", connectionAttributes.asWidget());
+                .addDetail("Connection Management", connectionAttributes.asWidget());
 
         defaultAttributes.getForm().bind(factoryTable);
         defaultAttributes.getForm().setEnabled(false);
