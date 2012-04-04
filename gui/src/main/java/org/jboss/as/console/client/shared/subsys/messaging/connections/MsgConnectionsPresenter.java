@@ -1,6 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.messaging.connections;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -8,25 +9,29 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.spi.Subsystem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 4/2/12
  */
 public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.MyView, MsgConnectionsPresenter.MyProxy>
-    implements CommonMsgPresenter {
-
+        implements CommonMsgPresenter {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -35,13 +40,12 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private DefaultWindow window = null;
     private RevealStrategy revealStrategy;
     private ApplicationMetaData metaData;
+    private String currentServer = null;
 
     @Override
     public PlaceManager getPlaceManager() {
         return placeManager;
     }
-
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)
@@ -52,13 +56,14 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     public interface MyView extends View {
         void setPresenter(MsgConnectionsPresenter presenter);
         void setSelectedProvider(String selectedProvider);
+        void setProvider(List<String> provider);
     }
 
     @Inject
     public MsgConnectionsPresenter( EventBus eventBus, MyView view, MyProxy proxy,
-            PlaceManager placeManager, DispatchAsync dispatcher,
-            BeanFactory factory, RevealStrategy revealStrategy,
-            ApplicationMetaData propertyMetaData) {
+                                    PlaceManager placeManager, DispatchAsync dispatcher,
+                                    BeanFactory factory, RevealStrategy revealStrategy,
+                                    ApplicationMetaData propertyMetaData) {
         super(eventBus, view, proxy);
 
         this.placeManager = placeManager;
@@ -74,10 +79,39 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         getView().setPresenter(this);
     }
 
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        currentServer = request.getParameter("name", null);
+    }
 
     @Override
     protected void onReset() {
         super.onReset();
+
+        loadProvider();
+    }
+
+    private void loadProvider() {
+        new LoadHornetQServersCmd(dispatcher).execute(
+                new AsyncCallback<List<String>>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Console.error("Failed to load messaging server names", caught.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(List<String> result) {
+
+                        getView().setProvider(result);
+                        getView().setSelectedProvider(currentServer);
+                    }
+                }
+        );
+
+    }
+
+    public String getCurrentServer() {
+        return currentServer;
     }
 
     @Override

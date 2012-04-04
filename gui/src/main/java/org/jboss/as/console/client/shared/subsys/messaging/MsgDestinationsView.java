@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
@@ -63,7 +64,7 @@ public class MsgDestinationsView extends SuspendableViewImpl implements MsgDesti
 
         panel = new PagedView();
 
-        providerList = new ProviderList(presenter);
+        providerList = new ProviderList(presenter, NameTokens.MessagingPresenter);
         jmsEditor = new JMSEditor(presenter);
         connectionFactories = new ConnectionFactoryList(presenter);
         securitySettings = new SecurityDetails(presenter);

@@ -26,9 +26,11 @@ public class ProviderList {
     private CellTable<String> table;
     private ListDataProvider<String> dataProvider;
     private MessagingProviderEditor providerEditor;
+    private String token;
 
-    public ProviderList(CommonMsgPresenter presenter) {
+    public ProviderList(CommonMsgPresenter presenter, String token) {
         this.presenter = presenter;
+        this.token = token;
     }
 
     public Widget asWidget() {
@@ -49,7 +51,7 @@ public class ProviderList {
                     @Override
                     public void execute(String selection) {
                         presenter.getPlaceManager().revealPlace(
-                                new PlaceRequest(NameTokens.MessagingPresenter).with("name", selection)
+                                new PlaceRequest(token).with("name", selection)
                         );
                     }
                 })
