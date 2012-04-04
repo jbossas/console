@@ -45,6 +45,7 @@ import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.model.ResponseWrapper;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
@@ -59,6 +60,7 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -993,15 +995,28 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     }
 
     public void launchNewDivertWizard() {
-        window = new DefaultWindow(Console.MESSAGES.createTitle("Divert"));
-        window.setWidth(480);
-        window.setHeight(360);
 
-        window.trapWidget(new NewDivertWizard(this).asWidget());
 
-        window.setGlassEnabled(true);
-        window.center();
-    }
+        loadExistingQueueNames(new AsyncCallback<List<String>> () {
+            @Override
+            public void onFailure(Throwable throwable) {
+               Console.error("Failed to load queue names", throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Divert"));
+                window.setWidth(480);
+                window.setHeight(360);
+
+                window.trapWidget(new NewDivertWizard(MsgDestinationsPresenter.this, names).asWidget());
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+
+     }
 
     public void onCreateCF(final ConnectionFactory entity) {
         window.hide();
@@ -1023,8 +1038,9 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         operation.get("entries").add(entity.getJndiName());
 
         // TODO: https://issues.jboss.org/browse/AS7-4377
-        operation.get("connector").setEmptyList();
-        operation.get("connector").add(entity.getConnector());
+        ModelNode connector = new ModelNode();
+        connector.get(entity.getConnector()).set(ModelType.UNDEFINED);
+        operation.get("connector").set(connector);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -1058,7 +1074,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
 
             @Override
             public void onSuccess(DMRResponse result) {
-                ModelNode response  =result.get();
+                ModelNode response = result.get();
 
                 if(response.isFailure())
                     Console.error(Console.MESSAGES.addingFailed("Divert " + entity.getRoutingName()), response.getFailureDescription());
@@ -1071,7 +1087,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
     }
 
     public void onDeleteDivert(final String name) {
-       ModelNode address = Baseadress.get();
+        ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());
         address.add("divert", name);
@@ -1096,7 +1112,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         });
     }
 
-     public void onSaveDivert(String name, Map<String, Object> changeset) {
+    public void onSaveDivert(String name, Map<String, Object> changeset) {
 
         ModelNode address = new ModelNode();
         address.get(ADDRESS).set(Baseadress.get());
@@ -1105,6 +1121,8 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
         address.get(ADDRESS).add("divert", name);
 
         ModelNode operation = divertAdapter.fromChangeset(changeset, address);
+
+        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -1120,6 +1138,38 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
                 loadDiverts();
             }
         });
+    }
+
+    public void loadExistingQueueNames(final AsyncCallback<List<String>> callback) {
+
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+
+
+
+        loadJMSCmd.execute(address, new SimpleCallback<AggregatedJMSModel>() {
+            @Override
+            public void onSuccess(AggregatedJMSModel result) {
+
+                final List<String> names = new ArrayList<String>();
+
+                for(Queue queue : result.getQueues())
+                {
+                    names.add(queue.getName());
+                }
+
+
+                for(JMSEndpoint topic : result.getTopics())
+                {
+                    names.add(topic.getName());
+                }
+
+                callback.onSuccess(names);
+            }
+        });
+
     }
 
 }

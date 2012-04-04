@@ -4,6 +4,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -32,6 +33,7 @@ public class DivertList {
     private DefaultCellTable<Divert> table;
     private ListDataProvider<Divert> provider;
     private MsgDestinationsPresenter presenter;
+    private DivertForm divertForm;
 
     public DivertList(MsgDestinationsPresenter presenter) {
         this.presenter = presenter;
@@ -109,7 +111,7 @@ public class DivertList {
 
         // ----
 
-        DivertForm form = new DivertForm(new FormToolStrip.FormCallback<Divert>()
+        divertForm = new DivertForm(new FormToolStrip.FormCallback<Divert>()
         {
             @Override
             public void onSave(Map<String, Object> changeset) {
@@ -130,10 +132,10 @@ public class DivertList {
                 .setDescription("A messaging resource that allows you to transparently divert messages routed to one address to some other address, without making any changes to any client application logic.")
                 .setMaster("Diverts", table)
                 .setMasterTools(tools)
-                .setDetail("Details", form.asWidget());
+                .setDetail("Details", divertForm.asWidget());
 
 
-        form.getForm().bind(table);
+        divertForm.getForm().bind(table);
 
         return layout.build();
     }
@@ -143,6 +145,20 @@ public class DivertList {
         serverName.setText("Diverts: Provider "+presenter.getCurrentServer());
 
         table.selectDefaultEntity();
+
+
+        // populate oracle
+        presenter.loadExistingQueueNames(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(List<String> names) {
+                divertForm.setQueueNames(names);
+            }
+        });
     }
 
     public Divert getSelectedEntity() {

@@ -12,6 +12,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,10 +22,12 @@ import java.util.Map;
 public class NewDivertWizard {
 
 
-    MsgDestinationsPresenter presenter;
+    private MsgDestinationsPresenter presenter;
+    private List<String> queueNames;
 
-    public NewDivertWizard(MsgDestinationsPresenter presenter) {
+    public NewDivertWizard(MsgDestinationsPresenter presenter, List<String> queueNames) {
         this.presenter = presenter;
+        this.queueNames = queueNames;
     }
 
     Widget asWidget() {
@@ -44,6 +47,7 @@ public class NewDivertWizard {
                 },false
         );
 
+        divertForm.setQueueNames(queueNames);
         divertForm.getForm().setNumColumns(1);
         divertForm.setIsCreate(true);
 
