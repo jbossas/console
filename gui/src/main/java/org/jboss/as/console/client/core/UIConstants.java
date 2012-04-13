@@ -101,6 +101,7 @@ public interface UIConstants extends Constants {
     String common_label_areYouSure();
     String common_label_addToGroup();
     String common_label_addToGroups();
+    String common_label_updateContent();
 
     // use the term "delete" instead
     @Deprecated

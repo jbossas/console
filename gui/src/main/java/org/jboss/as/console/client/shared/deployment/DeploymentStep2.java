@@ -46,11 +46,13 @@ public class DeploymentStep2 {
     private DefaultWindow window;
     private Form<DeploymentReference> form;
     private DeploymentViewRefresher refresher;
+    private boolean isUpdate;
 
-    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, DeploymentViewRefresher refresher) {
+    public DeploymentStep2(NewDeploymentWizard wizard, DefaultWindow window, DeploymentViewRefresher refresher, boolean isUpdate) {
         this.wizard = wizard;
         this.window = window;
         this.refresher = refresher;
+        this.isUpdate = isUpdate;
     }
 
     public Widget asWidget() {
@@ -65,8 +67,9 @@ public class DeploymentStep2 {
         TextItem hashField = new TextItem("hash", Console.CONSTANTS.common_label_key());
         DeploymentNameTextBoxItem nameField = new DeploymentNameTextBoxItem("name",
                 Console.CONSTANTS.common_label_name(),
-                refresher.getAllDeploymentNames());
-        RuntimeNameTextBoxItem runtimeNameField = new RuntimeNameTextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName());
+                refresher.getAllDeploymentNames(),
+                isUpdate);
+        RuntimeNameTextBoxItem runtimeNameField = new RuntimeNameTextBoxItem("runtimeName", Console.CONSTANTS.common_label_runtimeName(), isUpdate);
 
         form.setFields(hashField, nameField, runtimeNameField);
 
@@ -112,11 +115,14 @@ public class DeploymentStep2 {
 
     private static class Step2TextBoxItem extends TextBoxItem {
         protected String errorMessage = "";
-        
-        public Step2TextBoxItem(String name, String title) {
+        protected boolean isUpdate;
+
+        public Step2TextBoxItem(String name, String title, boolean isUpdate) {
             super(name, title);
+            this.isUpdate = isUpdate;
+            setEnabled(!isUpdate);
         }
-        
+
         @Override
         public boolean validate(String name) {
             if (!super.validate(name)) {
@@ -125,44 +131,46 @@ public class DeploymentStep2 {
             }
             return true;
         }
-        
+
         @Override
         public String getErrMessage() {
             return errorMessage;
         }
     }
-    
+
     private static class DeploymentNameTextBoxItem extends Step2TextBoxItem {
         private List<String> currentDeploymentNames;
 
-        public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames) {
-            super(name, title);
+        public DeploymentNameTextBoxItem(String name, String title, List<String> currentDeploymentNames, boolean isUpdate) {
+            super(name, title, isUpdate);
             this.currentDeploymentNames = currentDeploymentNames;
         }
 
         @Override
         public boolean validate(String name) {
+            if (isUpdate) return true;
             if (!super.validate(name)) return false;
-            
+
             if (currentDeploymentNames.contains(name)) {
                 String nameField = Console.CONSTANTS.common_label_name();
                 errorMessage = Console.MESSAGES.alreadyExists(nameField);
                 return false;
             }
-            
+
             return true;
         }
     }
 
     private static class RuntimeNameTextBoxItem extends Step2TextBoxItem {
-        public RuntimeNameTextBoxItem(String name, String title) {
-            super(name, title);
+        public RuntimeNameTextBoxItem(String name, String title, boolean isUpdate) {
+            super(name, title, isUpdate);
         }
 
         @Override
         public boolean validate(String name) {
+            if (isUpdate) return true;
             if (!super.validate(name)) return false;
-            
+
             // need actual list of acceptable extensions like *.war, *.ear, *.rar
             // for now just make sure it is an archive name with 3 char extension
             if (!name.matches(".+\\....")) {
@@ -170,7 +178,7 @@ public class DeploymentStep2 {
                 errorMessage = Console.MESSAGES.mustBeDeployableArchive(runtimeNameField);
                 return false;
             }
-            
+
             return true;
         }
     }

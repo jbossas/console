@@ -99,9 +99,11 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         String[] columnHeaders = new String[]{Console.CONSTANTS.common_label_name(),
                 Console.CONSTANTS.common_label_runtimeName(),
                 Console.CONSTANTS.common_label_addToGroups(),
+                Console.CONSTANTS.common_label_updateContent(),
                 Console.CONSTANTS.common_label_remove()};
         List<Column> columns = makeNameAndRuntimeColumns();
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ADD_TO_GROUP));
+        columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.UPDATE_CONTENT));
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_DOMAIN));
 
         ContentGroupLabel repositoryLabel = new ContentGroupLabel(Console.CONSTANTS.common_label_contentRepository());
@@ -283,7 +285,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewDeploymentDialoge();
+                presenter.launchNewDeploymentDialoge(null, false);
             }
         });
         addContentBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_addContent_deploymentsOverview());

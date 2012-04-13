@@ -1,19 +1,19 @@
-/* 
- * JBoss, Home of Professional Open Source 
+/*
+ * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
+ * as indicated by the @author tags. All rights reserved.
+ * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
 package org.jboss.as.console.client.shared.deployment;
@@ -25,7 +25,7 @@ import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.ballroom.client.widgets.window.Feedback;
 
 /**
- * Enumeration of commands used to manipulate deployments on the client side.  
+ * Enumeration of commands used to manipulate deployments on the client side.
  * These commands delegate to an executor that knows how to contact the server
  * side and carry out the command.
  *
@@ -36,9 +36,10 @@ public enum DeploymentCommand {
     ENABLE_DISABLE(new EnableDisableMessageMaker()),
     REMOVE_FROM_GROUP(new RemoveMessageMaker()),
     ADD_TO_GROUP(new AddToGroupMessageMaker()),
+    UPDATE_CONTENT(new UpdateContentMessageMaker()),
     REMOVE_FROM_DOMAIN(new RemoveMessageMaker()),
     REMOVE_FROM_STANDALONE(new RemoveMessageMaker());
-    
+
     private MessageMaker messageMaker;
 
     private DeploymentCommand(MessageMaker messageMaker) {
@@ -48,7 +49,7 @@ public enum DeploymentCommand {
     /**
      * Throw up an "Are you sure" dialog and then select the correct method
      * on the executor.
-     * 
+     *
      * @param executor An implementation that can execute the command on the back end.
      * @param record The deployment to be manipulated.
      */
@@ -57,9 +58,14 @@ public enum DeploymentCommand {
             executor.promptForGroupSelections(record);
             return;
         }
-        
-        Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(), 
-                         messageMaker.makeConfirmMessage(record, executor), 
+
+        if  ((this == DeploymentCommand.UPDATE_CONTENT)) {
+            executor.updateDeployment(record);
+            return;
+        }
+
+        Feedback.confirm(Console.CONSTANTS.common_label_areYouSure(),
+                         messageMaker.makeConfirmMessage(record, executor),
                          new Feedback.ConfirmationHandler() {
 
             @Override
@@ -111,13 +117,13 @@ public enum DeploymentCommand {
 
     private static class RemoveMessageMaker implements MessageMaker {
         private static boolean isStandalone = Console.getBootstrapContext().getProperty(BootstrapContext.STANDALONE).equals("true");
-        
+
         private String findTarget(DeploymentRecord record) {
             if (record.getServerGroup() != null) return record.getServerGroup();
             if (isStandalone) return Console.CONSTANTS.common_label_server();
             return Console.CONSTANTS.common_label_domain();
         }
-        
+
         @Override
         public String makeConfirmMessage(DeploymentRecord record, DeployCommandExecutor executor) {
             return Console.MESSAGES.removeFromConfirm(record.getName(), findTarget(record));
@@ -138,7 +144,29 @@ public enum DeploymentCommand {
             return Console.MESSAGES.removedFrom(record.getName(), findTarget(record));
         }
     }
-    
+
+    private static class UpdateContentMessageMaker implements MessageMaker {
+        @Override
+        public String makeConfirmMessage(DeploymentRecord record, DeployCommandExecutor executor) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String makeFailureMessage(DeploymentRecord record, DeployCommandExecutor executor) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String makeLabel(DeploymentRecord record) {
+            return Console.CONSTANTS.common_label_updateContent();
+        }
+
+        @Override
+        public String makeSuccessMessage(DeploymentRecord record, DeployCommandExecutor executor) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private static class EnableDisableMessageMaker implements MessageMaker {
 
         @Override
@@ -167,9 +195,9 @@ public enum DeploymentCommand {
             return Console.MESSAGES.successEnabled(record.getName());
         }
     }
-    
+
     private static class AddToGroupMessageMaker implements MessageMaker {
-       
+
         @Override
         public String makeConfirmMessage(DeploymentRecord record, DeployCommandExecutor executor) {
             return Console.MESSAGES.addConfirm(record.getName(), Console.CONSTANTS.common_label_selectedGroups());
