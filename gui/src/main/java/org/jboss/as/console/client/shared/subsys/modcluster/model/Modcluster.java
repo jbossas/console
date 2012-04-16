@@ -39,7 +39,7 @@ public interface Modcluster {
     public String getAdvertiseKey();
     public void setAdvertiseKey(String advertiseKey);
     
-    @Binding(detypedName="auto-enableContexts")
+    @Binding(detypedName="auto-enable-contexts")
     public boolean isAutoEnableContexts();
     public void setAutoEnableContexts(boolean autoEnableContexts);
 
