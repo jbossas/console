@@ -40,31 +40,9 @@ import com.google.gwt.i18n.client.DateTimeFormat;
  */
 public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<PeriodicRotatingFileHandler> implements FrameworkView, LogLevelConsumer, HandlerProducer {
 	
-    TextBoxItem suffix = new TextBoxItem("suffix", "Suffix")
-    {
-    	@Override
-    	public boolean validate(String value) {
-    		boolean validation = true;
-    		try {
-    	        final DateTimeFormat format = DateTimeFormat.getFormat(value);
-    	        final int len = value.length();
-    	        for (int i = 0; i < len; i ++) {
-    	            switch (value.charAt(i)) {
-    	                case 's':
-    	                case 'S': throw new IllegalArgumentException("Rotating by second or millisecond is not supported");
-    	            }
-    	        }
-    			
-    		} catch (IllegalArgumentException ex) {
-    	        this.setErroneous(true);
-    	        this.setErrMessage(ex.getLocalizedMessage());
-    	        validation = false;
-    		}
-    		return super.validate(value) && validation;
-    	}
-    };
-	
-
+    TextBoxItem suffixAdd = new SuffixValidatingTextItem();
+    TextBoxItem suffixEdit = new SuffixValidatingTextItem();
+    
     public PeriodicRotatingFileHandlerSubview(ApplicationMetaData applicationMetaData,
                               DispatchAsync dispatcher,
                               HandlerListManager handlerListManager) {
@@ -90,7 +68,7 @@ public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<P
                        formMetaData.findAttribute("filePath").getFormItemForAdd(),
                        formMetaData.findAttribute("fileRelativeTo").getFormItemForAdd(),
 //                       formMetaData.findAttribute("suffix").getFormItemForAdd());
-                       new FormItem[]{(FormItem<String>)suffix});
+                       new FormItem[]{(FormItem<String>)suffixAdd});
         return form;
     }
     
@@ -105,7 +83,7 @@ public class PeriodicRotatingFileHandlerSubview extends AbstractHandlerSubview<P
         int i=0;
         for (PropertyBinding attrib : attributes.getBaseAttributes()) {
         	if(attrib.getDetypedName().equals("suffix")){
-        		items[i++] = new FormItem[]{(FormItem<String>)suffix};
+        		items[i++] = new FormItem[]{(FormItem<String>)suffixEdit};
    				continue;
         	}
             items[i++] = attrib.getFormItemForEdit(this);
