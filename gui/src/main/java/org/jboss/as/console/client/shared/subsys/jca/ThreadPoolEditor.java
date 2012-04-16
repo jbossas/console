@@ -138,7 +138,7 @@ public class ThreadPoolEditor {
         attributesForm.setNumColumns(2);
         attributesForm.setEnabled(false);
 
-        TextItem nameItem = new TextItem("name", "Name");
+        TextBoxItem nameItemAttr = new TextBoxItem("name", "Name");
         CheckBoxItem allowCore = new CheckBoxItem ("allowCoreTimeout", "Allow Core Timeout?");
         NumberBoxItem keepAliveTimeout = new NumberBoxItem("keepaliveTime", "Keep Alive Timeout") {
             {
@@ -156,7 +156,7 @@ public class ThreadPoolEditor {
         unit.selectItem(4);
 
         attributesForm.setFields(
-                nameItem, BlankItem.INSTANCE,
+                nameItemAttr, BlankItem.INSTANCE,
                 keepAliveTimeout, unit,
                 allowCore, threadFactory
         );
@@ -168,11 +168,12 @@ public class ThreadPoolEditor {
         sizingForm.setNumColumns(2);
         sizingForm.setEnabled(false);
 
+        TextBoxItem nameItemSizing = new TextBoxItem("name", "Name");
         NumberBoxItem maxThreads = new NumberBoxItem("maxThreads", "Max Threads");
         NumberBoxItem maxThreadsPerCPU = new NumberBoxItem("coreThreads", "Core threads");
         NumberBoxItem queueLength = new NumberBoxItem("queueLength", "Queue Length");
 
-        sizingForm.setFields(nameItem, BlankItem.INSTANCE, maxThreads, maxThreadsPerCPU, queueLength);
+        sizingForm.setFields(nameItemSizing, BlankItem.INSTANCE, maxThreads, maxThreadsPerCPU, queueLength);
 
         attributesForm.bind(table);
         sizingForm.bind(table);
