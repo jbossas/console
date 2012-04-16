@@ -9,6 +9,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -101,5 +102,21 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     @Override
     public void setInvmAcceptors(List<Acceptor> invm) {
         acceptorOverview.setInvmAcceptors(invm);
+    }
+
+
+    @Override
+    public void setGenericConnectors(List<Connector> generic) {
+        connectorOverview.setGenericConnectors(generic);
+    }
+
+    @Override
+    public void setRemoteConnectors(List<Connector> remote) {
+        connectorOverview.setRemoteConnectors(remote);
+    }
+
+    @Override
+    public void setInvmConnectors(List<Connector> invm) {
+        connectorOverview.setInvmConnectors(invm);
     }
 }

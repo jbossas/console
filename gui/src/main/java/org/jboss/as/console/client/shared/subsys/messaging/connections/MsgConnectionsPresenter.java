@@ -58,6 +58,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private ApplicationMetaData metaData;
     private String currentServer = null;
     private EntityAdapter<Acceptor> acceptorAdapter;
+    private EntityAdapter<Connector> connectorAdapter;
 
     @Override
     public PlaceManager getPlaceManager() {
@@ -85,6 +86,12 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         void setRemoteAcceptors(List<Acceptor> remote);
 
         void setInvmAcceptors(List<Acceptor> invm);
+
+        void setGenericConnectors(List<Connector> generic);
+
+        void setRemoteConnectors(List<Connector> remote);
+
+        void setInvmConnectors(List<Connector> invm);
     }
 
     @Inject
@@ -101,6 +108,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         this.metaData = propertyMetaData;
 
         acceptorAdapter = new EntityAdapter<Acceptor>(Acceptor.class, metaData);
+        connectorAdapter = new EntityAdapter<Connector>(Connector.class, metaData);
     }
 
     @Override
@@ -123,6 +131,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     public void loadDetails(String selectedProvider) {
         loadAcceptors();
+        loadConnectors();
     }
 
     private void loadProvider() {
@@ -141,6 +150,70 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                     }
                 }
         );
+
+    }
+
+    public void loadConnectors() {
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).setEmptyList();
+        operation.get(OP).set(COMPOSITE);
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode generic = new ModelNode();
+        generic.get(ADDRESS).set(Baseadress.get());
+        generic.get(ADDRESS).add("subsystem", "messaging");
+        generic.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        generic.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        generic.get(CHILD_TYPE).set("connector");
+        generic.get(RECURSIVE).set(true);
+        steps.add(generic);
+
+
+        ModelNode remote = new ModelNode();
+        remote.get(ADDRESS).set(Baseadress.get());
+        remote.get(ADDRESS).add("subsystem", "messaging");
+        remote.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        remote.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        remote.get(CHILD_TYPE).set("remote-connector");
+        remote.get(RECURSIVE).set(true);
+        steps.add(remote);
+
+        ModelNode invm = new ModelNode();
+        invm.get(ADDRESS).set(Baseadress.get());
+        invm.get(ADDRESS).add("subsystem", "messaging");
+        invm.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        invm.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        invm.get(CHILD_TYPE).set("in-vm-connector");
+        invm.get(RECURSIVE).set(true);
+        steps.add(invm);
+
+        operation.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading connectors " + getCurrentServer()), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Connector> generic = parseConnectors(response.get(RESULT).get("step-1"), ConnectorType.GENERIC);
+                    getView().setGenericConnectors(generic);
+
+                    List<Connector> remote = parseConnectors(response.get(RESULT).get("step-2"), ConnectorType.REMOTE);
+                    getView().setRemoteConnectors(remote);
+
+                    List<Connector> invm = parseConnectors(response.get(RESULT).get("step-3"), ConnectorType.INVM);
+                    getView().setInvmConnectors(invm);
+                }
+            }
+        });
 
     }
 
@@ -206,6 +279,33 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
             }
         });
 
+    }
+
+    private List<Connector> parseConnectors(ModelNode step, ConnectorType type) {
+
+        List<Property> generic = step.get(RESULT).asPropertyList();
+        List<Connector> genericAcceptors = new ArrayList<Connector>();
+        for(Property prop : generic)
+        {
+            ModelNode acceptor = prop.getValue();
+            Connector model = connectorAdapter.fromDMR(acceptor);
+            model.setName(prop.getName());
+            model.setType(type);
+
+            if(acceptor.hasDefined("param"))
+            {
+                List<PropertyRecord> param = parseProperties(acceptor.get("param").asPropertyList());
+                model.setParameter(param);
+            }
+            else
+            {
+                model.setParameter(Collections.EMPTY_LIST);
+            }
+
+            genericAcceptors.add(model);
+        }
+
+        return genericAcceptors;
     }
 
     private List<Acceptor> parseAcceptors(ModelNode step, AcceptorType type) {
