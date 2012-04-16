@@ -70,6 +70,8 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     }
 
 
+
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgConnectionsPresenter)
     @Subsystem(name="Connections", group = "Messaging", key="messaging")
@@ -406,8 +408,31 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         });
     }
 
-    public void onSaveAcceptor(Acceptor entity, Map<String, Object> changeset) {
+    public void onSaveAcceptor(final Acceptor entity, Map<String, Object> changeset) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
 
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = acceptorAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Acceptor " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Acceptor " + entity.getName()));
+
+                loadAcceptors();
+            }
+        });
     }
 
     public void loadSocketBindings(AsyncCallback<List<String>> callback) {
@@ -444,15 +469,106 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         });
     }
 
-    public void launchNewConnectorWizard(ConnectorType type) {
+    public void launchNewConnectorWizard(final ConnectorType type) {
+        loadSocketBindings(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error("Failed to load socket bindings", throwable.getMessage());
+            }
 
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle(type.name().toUpperCase() + " Connector"));
+                window.setWidth(480);
+                window.setHeight(360);
+
+                window.trapWidget(new NewConnectorWizard(MsgConnectionsPresenter.this, names, type).asWidget());
+
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
     }
 
-    public void onDeleteConnector(Connector entity) {
+    public void onDeleteConnector(final Connector entity) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
 
+        ModelNode operation = connectorAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Connector " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Connector " + entity.getName()));
+
+                loadConnectors();
+            }
+        });
     }
 
-    public void onSaveConnector(Connector entity, Map<String, Object> changeset) {
+    public void onSaveConnector(final Connector entity, Map<String, Object> changeset) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
 
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = connectorAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Connector " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Connector " + entity.getName()));
+
+                loadConnectors();
+            }
+        });
+    }
+
+    public void onCreateConnector(final Connector entity) {
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add(entity.getType().getResource(), entity.getName());
+
+        ModelNode operation = connectorAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Connector " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Connector " + entity.getName()));
+
+                loadConnectors();
+            }
+        });
     }
 }
