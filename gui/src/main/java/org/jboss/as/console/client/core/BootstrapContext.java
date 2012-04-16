@@ -96,7 +96,11 @@ public class BootstrapContext implements ApplicationProperties {
         else
         {
             host = remainder.substring(0, remainder.indexOf("/"));
-            port = "80";
+            if ("https://".equalsIgnoreCase(protocol)) {
+                port = "443";
+            } else {
+                port = "80";
+            }
         }
 
         // default url
