@@ -64,7 +64,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
     public void setPresenter(DeploymentListPresenter presenter) {
         this.presenter = presenter;
     }
-    
+
     @Override
     public void updateDeploymentInfo(List<DeploymentRecord> deployments) {
       deploymentProvider.setList(deployments);
@@ -85,7 +85,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
             @Override
             public void onClick(ClickEvent event) {
-                presenter.launchNewDeploymentDialoge();
+                presenter.launchNewDeploymentDialoge(null, false);
             }
         });
         addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_deploymentListView());
@@ -127,8 +127,9 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         deploymentTable.addColumn(dplNameColumn, Console.CONSTANTS.common_label_name());
         deploymentTable.addColumn(dplRuntimeColumn, Console.CONSTANTS.common_label_runtimeName());
         deploymentTable.addColumn(makeEnabledColumn(), Console.CONSTANTS.common_label_enabled());
-        
+
         deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE), Console.CONSTANTS.common_label_enOrDisable());
+        deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.UPDATE_CONTENT), Console.CONSTANTS.common_label_updateContent());
         deploymentTable.addColumn(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_STANDALONE), Console.CONSTANTS.common_label_remove());
 
 
@@ -146,10 +147,10 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
 
         layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
         layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
-        
+
         return layout;
     }
-    
+
     // Refactor Me!  Copied from org.jboss.as.console.client.domain.groups.deployment.DeploymentsOverview
     private Column makeEnabledColumn() {
         return new Column<DeploymentRecord, ImageResource>(new ImageResourceCell()) {
@@ -169,5 +170,5 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
             }
         };
     }
-    
+
 }

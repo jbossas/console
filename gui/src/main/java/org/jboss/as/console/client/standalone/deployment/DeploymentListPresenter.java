@@ -188,7 +188,12 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         throw new UnsupportedOperationException("Not supported in standalone mode.");
     }
 
-    public void launchNewDeploymentDialoge() {
+    @Override
+    public void updateDeployment(DeploymentRecord record) {
+        launchNewDeploymentDialoge(record, true);
+    }
+
+    public void launchNewDeploymentDialoge(DeploymentRecord record, boolean isUpdate) {
         window = new DefaultWindow(Console.CONSTANTS.common_label_upload());
         window.setWidth(480);
         window.setHeight(360);
@@ -200,7 +205,7 @@ public class DeploymentListPresenter extends Presenter<DeploymentListPresenter.M
         });
 
         window.trapWidget(
-                new NewDeploymentWizard(window, dispatcher, deploymentInfo).asWidget()
+                new NewDeploymentWizard(window, dispatcher, deploymentInfo, isUpdate, record).asWidget()
         );
 
         window.setGlassEnabled(true);
