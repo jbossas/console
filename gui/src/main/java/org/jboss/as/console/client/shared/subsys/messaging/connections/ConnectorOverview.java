@@ -9,11 +9,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
-import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorType;
 import org.jboss.as.console.client.widgets.ContentDescription;
 
 import java.util.List;
@@ -22,15 +21,15 @@ import java.util.List;
  * @author Heiko Braun
  * @date 4/4/12
  */
-public class AcceptorOverview {
+public class ConnectorOverview {
 
     private HTML serverName;
     private MsgConnectionsPresenter presenter;
-    private AcceptorList genericAcceptors;
-    private AcceptorList remoteAcceptors;
-    private AcceptorList invmAcceptors;
+    private ConnectorList genericConnectors;
+    private ConnectorList remoteConnectors;
+    private ConnectorList invmConnectors;
 
-    public AcceptorOverview(MsgConnectionsPresenter presenter) {
+    public ConnectorOverview(MsgConnectionsPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -79,15 +78,15 @@ public class AcceptorOverview {
 
 
         panel.add(header);
-        panel.add(new ContentDescription("Defines a way in which connections can be made to the HornetQ server."));
+        panel.add(new ContentDescription("A connector can be used by a client to define how it connects to a server."));
 
-        genericAcceptors = new AcceptorList(presenter, AcceptorType.GENERIC);
-        remoteAcceptors = new AcceptorList(presenter, AcceptorType.REMOTE);
-        invmAcceptors = new AcceptorList(presenter, AcceptorType.INVM);
+        genericConnectors = new ConnectorList(presenter, ConnectorType.GENERIC);
+        remoteConnectors = new ConnectorList(presenter, ConnectorType.REMOTE);
+        invmConnectors = new ConnectorList(presenter, ConnectorType.INVM);
 
-        deck.add(remoteAcceptors.asWidget());
-        deck.add(invmAcceptors.asWidget());
-        deck.add(genericAcceptors.asWidget());
+        deck.add(remoteConnectors.asWidget());
+        deck.add(invmConnectors.asWidget());
+        deck.add(genericConnectors.asWidget());
 
         deck.showWidget(0);
 
@@ -96,16 +95,16 @@ public class AcceptorOverview {
         return layout;
     }
 
-    public void setGenericAcceptors(List<Acceptor> list) {
-        serverName.setText("Acceptors: Provider "+ presenter.getCurrentServer());
-        genericAcceptors.setAcceptors(list);
+    public void setGenericConnectors(List<Connector> list) {
+        serverName.setText("Connectors: Provider "+ presenter.getCurrentServer());
+        genericConnectors.setConnectors(list);
     }
 
-    public void setRemoteAcceptors(List<Acceptor> remote) {
-        remoteAcceptors.setAcceptors(remote);
+    public void setRemoteConnectors(List<Connector> remote) {
+        remoteConnectors.setConnectors(remote);
     }
 
-    public void setInvmAcceptors(List<Acceptor> invm) {
-        invmAcceptors.setAcceptors(invm);
+    public void setInvmConnectors(List<Connector> invm) {
+        invmConnectors.setConnectors(invm);
     }
 }

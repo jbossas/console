@@ -25,6 +25,8 @@ import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorType;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -342,4 +344,15 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         });
     }
 
+    public void launchNewConnectorWizard(ConnectorType type) {
+
+    }
+
+    public void onDeleteConnector(Connector entity) {
+
+    }
+
+    public void onSaveConnector(Connector entity, Map<String, Object> changeset) {
+
+    }
 }
