@@ -155,6 +155,7 @@ public class AcceptorList {
     }
 
     public void setAcceptors(List<Acceptor> Acceptors) {
+        properties.clearValues();
         provider.setList(Acceptors);
         serverName.setText("Acceptors: Provider "+presenter.getCurrentServer());
 

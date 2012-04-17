@@ -4,12 +4,14 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.ConnectorServiceForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
@@ -34,6 +36,7 @@ public class ConnectorServiceList {
     private ListDataProvider<ConnectorService> provider;
     private MsgConnectionsPresenter presenter;
     private ConnectorServiceForm ConnectorServiceForm;
+    private PropertyEditor properties;
 
     public ConnectorServiceList(MsgConnectionsPresenter presenter) {
         this.presenter = presenter;
@@ -108,6 +111,9 @@ public class ConnectorServiceList {
             }
         });
 
+
+        properties = new PropertyEditor(presenter, true);
+
         // ----
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
@@ -115,15 +121,29 @@ public class ConnectorServiceList {
                 .setDescription("Class name of the factory class that can instantiate the connector service.")
                 .setMaster(Console.MESSAGES.available("Services"), table)
                 .setMasterTools(tools)
-                .setDetail("Detail", ConnectorServiceForm.asWidget());
+                .addDetail("Detail", ConnectorServiceForm.asWidget())
+                .addDetail("Properties", properties.asWidget());
 
         ConnectorServiceForm.getForm().bind(table);
 
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                List<PropertyRecord> props = getSelectedEntity().getParameter();
+
+                String tokens = "connector-service_#_" + getSelectedEntity().getName();
+                properties.setProperties(tokens, props);
+            }
+        });
+
         return layout.build();
+
     }
 
     public void setConnectorServices(List<ConnectorService> ConnectorServices) {
         provider.setList(ConnectorServices);
+        properties.clearValues();
         serverName.setText("ConnectorServices: Provider "+presenter.getCurrentServer());
 
         table.selectDefaultEntity();
