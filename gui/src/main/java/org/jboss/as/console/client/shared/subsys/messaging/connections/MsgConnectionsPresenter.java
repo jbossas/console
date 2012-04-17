@@ -67,21 +67,6 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         return placeManager;
     }
 
-    public void closeDialogue() {
-        window.hide();
-    }
-
-    public void launchNewConnectorServiceWizard() {
-
-    }
-
-    public void onDeleteConnectorService(ConnectorService selectedEntity) {
-
-    }
-
-    public void onSaveConnectorService(ConnectorService selectedEntity, Map<String, Object> changeset) {
-
-    }
 
 
     @ProxyCodeSplit
@@ -635,6 +620,103 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                     Console.info(Console.MESSAGES.added("Connector " + entity.getName()));
 
                 loadConnectors();
+            }
+        });
+    }
+
+    public void closeDialogue() {
+        window.hide();
+    }
+
+    public void launchNewConnectorServiceWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Connector Service"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.trapWidget(new NewConnectorServiceWizard(MsgConnectionsPresenter.this).asWidget());
+
+
+        window.setGlassEnabled(true);
+        window.center();
+    }
+
+    public void onCreateConnectorService(final ConnectorService entity) {
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("connector-service", entity.getName());
+
+        ModelNode operation = connectorServiceAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Connector Service " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Connector Service " + entity.getName()));
+
+                loadConnectorServices();
+            }
+        });
+    }
+
+    public void onDeleteConnectorService(final ConnectorService entity) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("connector-service", entity.getName());
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Connector Service " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Connector Service " + entity.getName()));
+
+                loadConnectorServices();
+            }
+        });
+    }
+
+    public void onSaveConnectorService(final ConnectorService entity, Map<String, Object> changeset) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("connector-service", entity.getName());
+
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = connectorServiceAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Connector Service " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Connector Service " + entity.getName()));
+
+                loadConnectorServices();
             }
         });
     }

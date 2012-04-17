@@ -8,8 +8,10 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorServic
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Collections;
@@ -84,7 +86,14 @@ public class ConnectorServiceForm {
     }
 
     private void buildForm() {
-        TextBoxItem name = new TextBoxItem("name", "Name");
+
+        FormItem name = null;
+
+        if(isCreate)
+            name = new TextBoxItem("name", "Name");
+        else
+            name = new TextItem("name", "Name");
+
         TextAreaItem factory= new TextAreaItem("factoryClass", "Factory Class");
 
         form.setFields(name, factory);
