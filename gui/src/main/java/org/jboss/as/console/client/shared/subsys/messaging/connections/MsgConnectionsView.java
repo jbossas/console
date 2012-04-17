@@ -28,6 +28,7 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     private AcceptorOverview acceptorOverview;
     private ConnectorOverview connectorOverview;
     private ConnectorServiceList connectorServiceList;
+    private BridgesList bridgesList;
 
 
     @Override
@@ -44,12 +45,13 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
         acceptorOverview = new AcceptorOverview(presenter);
         connectorOverview = new ConnectorOverview(presenter);
         connectorServiceList = new ConnectorServiceList(presenter);
+        bridgesList = new BridgesList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Acceptor", acceptorOverview.asWidget()) ;
         panel.addPage("Connector", connectorOverview.asWidget()) ;
         panel.addPage("Connector Services", connectorServiceList.asWidget()) ;
-        panel.addPage("Bridges", new HTML()) ;
+        panel.addPage("Bridges", bridgesList.asWidget()) ;
 
         // default page
         panel.showPage(0);

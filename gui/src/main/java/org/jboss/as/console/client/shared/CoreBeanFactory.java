@@ -89,6 +89,7 @@ import org.jboss.as.console.client.shared.subsys.mail.MailServerDefinition;
 import org.jboss.as.console.client.shared.subsys.mail.MailSession;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Bridge;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
@@ -158,6 +159,7 @@ public interface CoreBeanFactory {
     AutoBean<Acceptor> acceptor();
     AutoBean<Connector> connector();
     AutoBean<ConnectorService> connectorService();
+    AutoBean<Bridge> bridge();
 
     AutoBean<EJB3Subsystem> ejb3Subsystem();
     AutoBean<StrictMaxBeanPool> strictMaxBeanPool();

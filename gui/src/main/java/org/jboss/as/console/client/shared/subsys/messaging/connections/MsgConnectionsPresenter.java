@@ -67,6 +67,17 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         return placeManager;
     }
 
+    public void saveBridge(String name, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void launchNewBridgeWizard() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void onDeleteBridge(String name) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
 
 
     @ProxyCodeSplit
