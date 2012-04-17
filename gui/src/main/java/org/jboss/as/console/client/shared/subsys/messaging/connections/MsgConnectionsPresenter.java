@@ -1,7 +1,10 @@
 package org.jboss.as.console.client.shared.subsys.messaging.connections;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -18,6 +21,8 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.NewPropertyWizard;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -54,7 +59,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
  * @date 4/2/12
  */
 public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.MyView, MsgConnectionsPresenter.MyProxy>
-        implements CommonMsgPresenter {
+        implements CommonMsgPresenter, PropertyManagement  {
 
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
@@ -69,6 +74,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private EntityAdapter<ConnectorService> connectorServiceAdapter;
     private EntityAdapter<Bridge> bridgeAdapter;
     private LoadJMSCmd loadJMSCmd;
+    private DefaultWindow propertyWindow;
 
     @Override
     public PlaceManager getPlaceManager() {
@@ -779,8 +785,6 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     public void saveBridge(final String name, Map<String, Object> changeset) {
 
-        System.out.println(changeset);
-
         ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());
@@ -789,9 +793,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         ModelNode addressNode = new ModelNode();
         addressNode.get(ADDRESS).set(address);
 
-        ModelNode operation = connectorServiceAdapter.fromChangeset(changeset, addressNode);
-
-        System.out.println(operation);
+        ModelNode operation = bridgeAdapter.fromChangeset(changeset, addressNode);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -804,7 +806,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                 else
                     Console.info(Console.MESSAGES.modified("Bridge " + name));
 
-                loadConnectorServices();
+                loadBridges();
             }
         });
     }
@@ -931,4 +933,88 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     }
 
+    @Override
+    public void onCreateProperty(String reference, PropertyRecord prop) {
+
+        closePropertyDialoge();
+
+        String[] tokens = reference.split("_#_");
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add(tokens[0], tokens[1]);
+        operation.get(ADDRESS).add("param", prop.getKey());
+        operation.get(OP).set(ADD);
+        operation.get(VALUE).set(prop.getValue());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.addingFailed("Config Parameter"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.added("Config Parameter"));
+
+                    loadDetails(currentServer);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDeleteProperty(String reference, PropertyRecord prop) {
+        String[] tokens = reference.split("_#_");
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(ADDRESS).add(tokens[0], tokens[1]);
+        operation.get(ADDRESS).add("param", prop.getKey());
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if (response.isFailure()) {
+                    Console.error(Console.MESSAGES.deletionFailed("Config Parameter"), response.getFailureDescription());
+                } else {
+                    Console.info(Console.MESSAGES.deleted("Config Parameter"));
+
+                    loadDetails(currentServer);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onChangeProperty(String reference, PropertyRecord prop) {
+
+    }
+
+    @Override
+    public void launchNewPropertyDialoge(String reference) {
+        propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("Config Parameter"));
+        propertyWindow.setWidth(320);
+        propertyWindow.setHeight(240);
+
+        propertyWindow.trapWidget(
+                new NewPropertyWizard(this, reference, false).asWidget()
+        );
+
+        propertyWindow.setGlassEnabled(true);
+        propertyWindow.center();
+    }
+
+    @Override
+    public void closePropertyDialoge() {
+        propertyWindow.hide();
+    }
 }

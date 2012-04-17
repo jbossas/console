@@ -5,12 +5,16 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.messaging.forms.AcceptorForm;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
@@ -36,6 +40,7 @@ public class AcceptorList {
     private MsgConnectionsPresenter presenter;
     private AcceptorForm acceptorForm;
     private AcceptorType type;
+    private PropertyEditor properties;
 
     public AcceptorList(MsgConnectionsPresenter presenter,  AcceptorType type) {
         this.presenter = presenter;
@@ -112,13 +117,39 @@ public class AcceptorList {
         }, type);
 
         // ----
+
+        properties = new PropertyEditor(presenter, true);
+
         VerticalPanel layout = new VerticalPanel();
 
         layout.add(tools);
         layout.add(table);
-        layout.add(acceptorForm.asWidget());
 
         acceptorForm.getForm().bind(table);
+
+
+        TabPanel tabs = new TabPanel();
+        tabs.setStyleName("default-tabpanel");
+        tabs.getElement().setAttribute("style", "margin-top:15px;");
+
+        tabs.add(acceptorForm.asWidget(), "Details");
+        tabs.add(properties.asWidget(), "Properties");
+
+        layout.add(tabs);
+        tabs.selectTab(0);
+
+
+        // ----
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                List<PropertyRecord> props = getSelectedEntity().getParameter();
+
+                String tokens = getSelectedEntity().getType().getResource()+"_#_"+getSelectedEntity().getName();
+                properties.setProperties(tokens, props);
+            }
+        });
 
         return layout;
     }
