@@ -10,6 +10,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -26,6 +27,7 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     private ProviderList providerList;
     private AcceptorOverview acceptorOverview;
     private ConnectorOverview connectorOverview;
+    private ConnectorServiceList connectorServiceList;
 
 
     @Override
@@ -41,11 +43,12 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
         providerList = new ProviderList(presenter, NameTokens.MsgConnectionsPresenter);
         acceptorOverview = new AcceptorOverview(presenter);
         connectorOverview = new ConnectorOverview(presenter);
+        connectorServiceList = new ConnectorServiceList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Acceptor", acceptorOverview.asWidget()) ;
         panel.addPage("Connector", connectorOverview.asWidget()) ;
-        panel.addPage("Connector Service", new HTML()) ;
+        panel.addPage("Connector Services", connectorServiceList.asWidget()) ;
         panel.addPage("Bridges", new HTML()) ;
 
         // default page
@@ -118,5 +121,10 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     @Override
     public void setInvmConnectors(List<Connector> invm) {
         connectorOverview.setInvmConnectors(invm);
+    }
+
+    @Override
+    public void setConnetorServices(List<ConnectorService> services) {
+        connectorServiceList.setConnectorServices(services);
     }
 }

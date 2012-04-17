@@ -26,6 +26,7 @@ import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorType;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -59,6 +60,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private String currentServer = null;
     private EntityAdapter<Acceptor> acceptorAdapter;
     private EntityAdapter<Connector> connectorAdapter;
+    private EntityAdapter<ConnectorService> connectorServiceAdapter;
 
     @Override
     public PlaceManager getPlaceManager() {
@@ -69,7 +71,17 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         window.hide();
     }
 
+    public void launchNewConnectorServiceWizard() {
 
+    }
+
+    public void onDeleteConnectorService(ConnectorService selectedEntity) {
+
+    }
+
+    public void onSaveConnectorService(ConnectorService selectedEntity, Map<String, Object> changeset) {
+
+    }
 
 
     @ProxyCodeSplit
@@ -94,6 +106,8 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         void setRemoteConnectors(List<Connector> remote);
 
         void setInvmConnectors(List<Connector> invm);
+
+        void setConnetorServices(List<ConnectorService> services);
     }
 
     @Inject
@@ -111,6 +125,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
         acceptorAdapter = new EntityAdapter<Acceptor>(Acceptor.class, metaData);
         connectorAdapter = new EntityAdapter<Connector>(Connector.class, metaData);
+        connectorServiceAdapter = new EntityAdapter<ConnectorService>(ConnectorService.class, metaData);
     }
 
     @Override
@@ -134,6 +149,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     public void loadDetails(String selectedProvider) {
         loadAcceptors();
         loadConnectors();
+        loadConnectorServices();
     }
 
     private void loadProvider() {
@@ -152,6 +168,57 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                     }
                 }
         );
+
+    }
+
+    public void loadConnectorServices() {
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("connector-service");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading connector services " + getCurrentServer()), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Property> model = response.get(RESULT).asPropertyList();
+                    List<ConnectorService> services = new ArrayList<ConnectorService>();
+                    for(Property prop : model)
+                    {
+                        ModelNode svc = prop.getValue();
+                        ConnectorService entity = connectorServiceAdapter.fromDMR(svc);
+                        entity.setName(prop.getName());
+
+                        if(svc.hasDefined("param"))
+                        {
+                            List<PropertyRecord> param = parseProperties(svc.get("param").asPropertyList());
+                            entity.setParameter(param);
+                        }
+                        else
+                        {
+                            entity.setParameter(Collections.EMPTY_LIST);
+                        }
+
+                        services.add(entity);
+                    }
+
+                    getView().setConnetorServices(services);
+
+                }
+            }
+        });
 
     }
 
