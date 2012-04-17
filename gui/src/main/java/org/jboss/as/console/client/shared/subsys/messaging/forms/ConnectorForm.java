@@ -9,10 +9,12 @@ import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorType;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.FormItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.SuggestBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Collections;
@@ -101,14 +103,25 @@ public class ConnectorForm {
     }
 
     private void buildInvmForm() {
-        TextBoxItem name = new TextBoxItem("name", "Name");
+        FormItem name = null;
+
+        if(isCreate)
+            name = new TextBoxItem("name", "Name");
+        else
+            name = new TextItem("name", "Name");
+
         NumberBoxItem server = new NumberBoxItem("serverId", "Server ID");
 
         form.setFields(name, server);
     }
 
     private void buildRemoteForm() {
-        TextBoxItem name = new TextBoxItem("name", "Name");
+        FormItem name = null;
+
+        if(isCreate)
+            name = new TextBoxItem("name", "Name");
+        else
+            name = new TextItem("name", "Name");
         SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding");
 
         socket.setOracle(oracle);
@@ -117,7 +130,12 @@ public class ConnectorForm {
     }
 
     private void buildGenericForm() {
-        TextBoxItem name = new TextBoxItem("name", "Name");
+        FormItem name = null;
+
+        if(isCreate)
+            name = new TextBoxItem("name", "Name");
+        else
+            name = new TextItem("name", "Name");
         SuggestBoxItem socket = new SuggestBoxItem("socketBinding", "Socket Binding");
         TextAreaItem factory= new TextAreaItem("factoryClass", "Factory Class");
 
