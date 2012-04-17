@@ -50,7 +50,6 @@ public class DivertForm {
         SuggestBoxItem divertFrom = new SuggestBoxItem("divertAddress", "Divert Address");
         SuggestBoxItem divertTo = new SuggestBoxItem("forwardingAddress", "Forwarding Address");
 
-
         divertFrom.setOracle(oracle);
         divertTo.setOracle(oracle);
 

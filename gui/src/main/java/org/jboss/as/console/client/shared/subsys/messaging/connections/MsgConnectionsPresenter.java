@@ -21,19 +21,25 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.messaging.AggregatedJMSModel;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
+import org.jboss.as.console.client.shared.subsys.messaging.LoadJMSCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AcceptorType;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Bridge;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorType;
+import org.jboss.as.console.client.shared.subsys.messaging.model.JMSEndpoint;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.spi.Subsystem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -61,22 +67,12 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
     private EntityAdapter<Acceptor> acceptorAdapter;
     private EntityAdapter<Connector> connectorAdapter;
     private EntityAdapter<ConnectorService> connectorServiceAdapter;
+    private EntityAdapter<Bridge> bridgeAdapter;
+    private LoadJMSCmd loadJMSCmd;
 
     @Override
     public PlaceManager getPlaceManager() {
         return placeManager;
-    }
-
-    public void saveBridge(String name, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
-    }
-
-    public void launchNewBridgeWizard() {
-        //To change body of created methods use File | Settings | File Templates.
-    }
-
-    public void onDeleteBridge(String name) {
-        //To change body of created methods use File | Settings | File Templates.
     }
 
 
@@ -104,6 +100,8 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         void setInvmConnectors(List<Connector> invm);
 
         void setConnetorServices(List<ConnectorService> services);
+
+        void setBridges(List<Bridge> bridges);
     }
 
     @Inject
@@ -122,6 +120,9 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         acceptorAdapter = new EntityAdapter<Acceptor>(Acceptor.class, metaData);
         connectorAdapter = new EntityAdapter<Connector>(Connector.class, metaData);
         connectorServiceAdapter = new EntityAdapter<ConnectorService>(ConnectorService.class, metaData);
+        bridgeAdapter = new EntityAdapter<Bridge>(Bridge.class, metaData);
+
+        loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
 
     @Override
@@ -146,6 +147,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         loadAcceptors();
         loadConnectors();
         loadConnectorServices();
+        loadBridges();
     }
 
     private void loadProvider() {
@@ -166,6 +168,49 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         );
 
     }
+
+    public void loadBridges() {
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("bridge");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading bridges " + getCurrentServer()), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Property> model = response.get(RESULT).asPropertyList();
+                    List<Bridge> bridges = new ArrayList<Bridge>();
+                    for(Property prop : model)
+                    {
+                        ModelNode svc = prop.getValue();
+                        Bridge entity = bridgeAdapter.fromDMR(svc);
+                        entity.setName(prop.getName());
+
+
+                        bridges.add(entity);
+                    }
+
+                    getView().setBridges(bridges);
+
+                }
+            }
+        });
+
+    }
+
 
     public void loadConnectorServices() {
 
@@ -731,4 +776,159 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
             }
         });
     }
+
+    public void saveBridge(final String name, Map<String, Object> changeset) {
+
+        System.out.println(changeset);
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("bridge", name);
+
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = connectorServiceAdapter.fromChangeset(changeset, addressNode);
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Bridge " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Bridge " + name));
+
+                loadConnectorServices();
+            }
+        });
+    }
+
+    public void launchNewBridgeWizard() {
+
+
+        loadExistingQueueNames(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error(Console.MESSAGES.failed("Load queue names"));
+            }
+
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Bridge"));
+                window.setWidth(480);
+                window.setHeight(450);
+
+                window.trapWidget(
+                        new NewBridgeWizard(MsgConnectionsPresenter.this, names).asWidget()
+                );
+
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+
+
+    }
+
+    public void onCreateBridge(final Bridge entity) {
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("bridge", entity.getName());
+
+        ModelNode operation = bridgeAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        List<String> values = entity.getStaticConnectors();
+        if(!values.isEmpty())
+        {
+            ModelNode list = new ModelNode();
+            for(String con: values)
+                list.add(con);
+
+            operation.get("static-connectors").set(list);
+            operation.remove("discovery-group-name");
+        }
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Bridge " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Bridge " + entity.getName()));
+
+                loadBridges();
+            }
+        });
+    }
+
+    public void onDeleteBridge(final String name) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("bridge", name);
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Bridge " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Bridge " + name));
+
+                loadBridges();
+            }
+        });
+    }
+
+    public void loadExistingQueueNames(final AsyncCallback<List<String>> callback) {
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+
+        loadJMSCmd.execute(address, new SimpleCallback<AggregatedJMSModel>() {
+            @Override
+            public void onSuccess(AggregatedJMSModel result) {
+
+                final List<String> names = new ArrayList<String>();
+
+                for(Queue queue : result.getQueues())
+                {
+                    names.add(queue.getName());
+                }
+
+
+                for(JMSEndpoint topic : result.getTopics())
+                {
+                    names.add(topic.getName());
+                }
+
+                callback.onSuccess(names);
+            }
+        });
+
+    }
+
 }

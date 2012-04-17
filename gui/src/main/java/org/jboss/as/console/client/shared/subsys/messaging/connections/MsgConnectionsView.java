@@ -9,6 +9,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
+import org.jboss.as.console.client.shared.subsys.messaging.model.Bridge;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
 import org.jboss.as.console.client.widgets.pages.PagedView;
@@ -128,5 +129,10 @@ public class MsgConnectionsView extends SuspendableViewImpl implements MsgConnec
     @Override
     public void setConnetorServices(List<ConnectorService> services) {
         connectorServiceList.setConnectorServices(services);
+    }
+
+    @Override
+    public void setBridges(List<Bridge> bridges) {
+        bridgesList.setBridges(bridges);
     }
 }

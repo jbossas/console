@@ -4,6 +4,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -70,9 +71,16 @@ public class BridgesList {
             }
         };
 
+        Column<Bridge, String> toColumn = new Column<Bridge, String>(new TextCell()) {
+            @Override
+            public String getValue(Bridge object) {
+                return object.getForwardingAddress();
+            }
+        };
+
         factoryTable.addColumn(nameColumn, "Name");
         factoryTable.addColumn(queueColumn, "Queue");
-
+        factoryTable.addColumn(toColumn, "Forward");
 
         // defaultAttributes
         defaultAttributes = new DefaultBridgeForm(new FormToolStrip.FormCallback<Bridge>() {
@@ -152,6 +160,19 @@ public class BridgesList {
         serverName.setText("Bridges: Provider "+presenter.getCurrentServer());
 
         factoryTable.selectDefaultEntity();
+
+         // populate oracle
+        presenter.loadExistingQueueNames(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(List<String> names) {
+                defaultAttributes.setQueueNames(names);
+            }
+        });
     }
 
     public Bridge getSelectedEntity() {

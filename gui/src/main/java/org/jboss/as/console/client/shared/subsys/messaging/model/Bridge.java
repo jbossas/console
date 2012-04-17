@@ -2,6 +2,8 @@ package org.jboss.as.console.client.shared.subsys.messaging.model;
 
 import org.jboss.as.console.client.widgets.forms.Binding;
 
+import java.util.List;
+
 /**
  * @author Heiko Braun
  * @date 4/17/12
@@ -59,4 +61,12 @@ public interface Bridge {
 
     boolean isStarted();
     void setStarted(boolean b);
+
+    @Binding(skip = true)
+    List<String> getStaticConnectors();
+    void setStaticConnectors(List<String> connectors);
+
+    @Binding(detypedName = "discovery-group-name")
+    String getDiscoveryGroup();
+    void setDiscoveryGroup(String group);
 }
