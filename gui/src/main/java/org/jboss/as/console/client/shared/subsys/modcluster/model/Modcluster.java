@@ -86,7 +86,7 @@ public interface Modcluster {
     Integer getFlushWait();
     void setFlushWait(Integer flushWait);
 
-    @Binding(detypedName="max-attemps")
+    @Binding(detypedName="max-attempts")
     Integer getMaxAttemps();
     void setMaxAttemps(Integer maxAttemps);
 
