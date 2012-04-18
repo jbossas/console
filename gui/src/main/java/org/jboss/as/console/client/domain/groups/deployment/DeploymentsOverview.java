@@ -203,7 +203,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.ENABLE_DISABLE));
         columns.add(new DeploymentCommandColumn(this.presenter, DeploymentCommand.REMOVE_FROM_GROUP));
 
-        vpanel.add(makeDeploymentTable(this.selectedServerGroupLabel, serverGroupDeploymentsDataProvider, columns, columnHeaders));
+        vpanel.add(makeDeploymentTable(this.selectedServerGroupLabel, serverGroupDeploymentsDataProvider, columns, columnHeaders, false));
 
         return vpanel;
     }
@@ -265,6 +265,15 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             ListDataProvider<DeploymentRecord> dataProvider,
             List<Column> columns,
             String[] columnHeaders) {
+        return makeDeploymentTable(tableLabel, dataProvider, columns, columnHeaders, true);
+    }
+
+    private Widget makeDeploymentTable(
+            ContentGroupLabel tableLabel,
+            ListDataProvider<DeploymentRecord> dataProvider,
+            List<Column> columns,
+            String[] columnHeaders,
+            boolean includeAddContentButton) {
 
         VerticalPanel vpanel = new VerticalPanel();
         vpanel.setStyleName("fill-layout-width");
@@ -280,6 +289,21 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
             serverGroupDeploymentTable.addColumn(columns.get(i), columnHeaders[i]);
         }
 
+        if (includeAddContentButton) {
+            vpanel.add(makeAddContentButton().asWidget());
+        }
+
+        vpanel.add(serverGroupDeploymentTable);
+
+        DefaultPager pager = new DefaultPager();
+        pager.setDisplay(serverGroupDeploymentTable);
+
+        vpanel.add(pager);
+
+        return vpanel;
+    }
+
+    private ToolStrip makeAddContentButton() {
         final ToolStrip toolStrip = new ToolStrip();
         ToolButton addContentBtn = new ToolButton(Console.CONSTANTS.common_label_addContent(), new ClickHandler() {
 
@@ -290,16 +314,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
         });
         addContentBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_addContent_deploymentsOverview());
         toolStrip.addToolButtonRight(addContentBtn);
-
-        vpanel.add(toolStrip.asWidget());
-        vpanel.add(serverGroupDeploymentTable);
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(serverGroupDeploymentTable);
-
-        vpanel.add(pager);
-
-        return vpanel;
+        return toolStrip;
     }
 
     private List<Column> makeNameAndRuntimeColumns() {
