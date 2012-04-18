@@ -9,6 +9,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.shared.subsys.messaging.model.BroadcastGroup;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ClusterConnection;
 import org.jboss.as.console.client.shared.subsys.messaging.model.DiscoveryGroup;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
@@ -25,6 +26,7 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
     private ProviderList providerList;
     private BroadcastGroupList broadcastGroupList;
     private DiscoveryGroupList discoveryGroupList;
+    private ClusterConnectionList clusterConnectionList;
 
     @Override
     public void setPresenter(MsgClusteringPresenter presenter) {
@@ -43,11 +45,12 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
         providerList = new ProviderList(presenter, NameTokens.MsgClusteringPresenter);
         broadcastGroupList = new BroadcastGroupList(presenter);
         discoveryGroupList = new DiscoveryGroupList(presenter);
+        clusterConnectionList = new ClusterConnectionList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Broadcast", broadcastGroupList.asWidget()) ;
         panel.addPage("Discovery", discoveryGroupList.asWidget()) ;
-        panel.addPage("Connections", new HTML()) ;
+        panel.addPage("Connections", clusterConnectionList.asWidget()) ;
 
 
         // default page
@@ -94,5 +97,10 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
     @Override
     public void setDiscoveryGroups(List<DiscoveryGroup> groups) {
         discoveryGroupList.setDiscoveryGroups(groups);
+    }
+
+    @Override
+    public void setClusterConnection(List<ClusterConnection> groups) {
+        clusterConnectionList.setClusterConnections(groups);
     }
 }

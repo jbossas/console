@@ -60,10 +60,11 @@ public class MsgClusteringPresenter
     private String currentServer = null;
     private EntityAdapter<BroadcastGroup> bcastGroupAdapter;
     private EntityAdapter<DiscoveryGroup> discGroupAdapter;
-    private EntityAdapter<ClusterConnection> clusterGroupAdapter;
+    private EntityAdapter<ClusterConnection> clusterConnectionsAdapter;
 
     private LoadJMSCmd loadJMSCmd;
     private DefaultWindow propertyWindow;
+
 
 
     @ProxyCodeSplit
@@ -82,6 +83,8 @@ public class MsgClusteringPresenter
         void setBroadcastGroups(List<BroadcastGroup> groups);
 
         void setDiscoveryGroups(List<DiscoveryGroup> groups);
+
+        void setClusterConnection(List<ClusterConnection> groups);
     }
 
     @Inject
@@ -99,7 +102,7 @@ public class MsgClusteringPresenter
 
         bcastGroupAdapter = new EntityAdapter<BroadcastGroup>(BroadcastGroup.class, metaData);
         discGroupAdapter = new EntityAdapter<DiscoveryGroup>(DiscoveryGroup.class, metaData);
-        clusterGroupAdapter = new EntityAdapter<ClusterConnection>(ClusterConnection.class, metaData);
+        clusterConnectionsAdapter = new EntityAdapter<ClusterConnection>(ClusterConnection.class, metaData);
 
         loadJMSCmd = new LoadJMSCmd(dispatcher, factory, metaData);
     }
@@ -155,6 +158,7 @@ public class MsgClusteringPresenter
     public void loadDetails(String selectedProvider) {
         loadBroadcastGroups();
         loadDiscoveryGroups();
+        loadClusterConnections();
     }
 
     private void loadBroadcastGroups() {
@@ -236,6 +240,44 @@ public class MsgClusteringPresenter
         });
     }
 
+    private void loadClusterConnections() {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("cluster-connection");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading cluster connections " + getCurrentServer()), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Property> model = response.get(RESULT).asPropertyList();
+                    List<ClusterConnection> groups = new ArrayList<ClusterConnection>();
+                    for(Property prop : model)
+                    {
+                        ModelNode node = prop.getValue();
+                        ClusterConnection entity = clusterConnectionsAdapter.fromDMR(node);
+                        entity.setName(prop.getName());
+
+                        groups.add(entity);
+                    }
+
+                    getView().setClusterConnection(groups);
+
+                }
+            }
+        });
+    }
 
     public void saveBroadcastGroup(final String name, Map<String, Object> changeset) {
 
@@ -386,7 +428,7 @@ public class MsgClusteringPresenter
     }
 
     public void saveDiscoveryGroup(final String name, Map<String, Object> changeset) {
-         ModelNode address = Baseadress.get();
+        ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());
         address.add("discovery-group", name);
@@ -489,4 +531,17 @@ public class MsgClusteringPresenter
             }
         });
     }
+
+    public void saveClusterConnection(String name, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void launchNewClusterConnectionWizard() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void onDeleteClusterConnection(String name) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
 }
