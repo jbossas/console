@@ -71,7 +71,7 @@ public class ProviderList {
         SimpleLayout layoutBuilder = new SimpleLayout()
                 .setPlain(true)
                 .setHeadline("JMS Messaging Provider")
-                .setDescription("Destination settings: Queues, Topics, Connection Factories, etc.")
+                .setDescription("Please chose a provider from below for specific settings.")
                 .addContent(Console.MESSAGES.available("Messaging Provider"), table);
 
         return layoutBuilder.build();

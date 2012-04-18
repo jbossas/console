@@ -82,6 +82,7 @@ public class NameTokens {
     public static final String JGroupsPresenter = "jgroups";
     public static final String ModclusterPresenter = "modcluster";
     public static final String MsgConnectionsPresenter = "messaging-connections";
+    public static final String MsgClusteringPresenter  =  "messaging-cluster";
 
     public static String getMainLayout() {
         return mainLayout;

@@ -86,7 +86,7 @@ public class BridgesList {
         defaultAttributes = new DefaultBridgeForm(new FormToolStrip.FormCallback<Bridge>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-                presenter.saveBridge(getSelectedEntity().getName(), changeset);
+                presenter.onSaveBridge(getSelectedEntity().getName(), changeset);
             }
             @Override
             public void onDelete(Bridge entity) {
@@ -97,7 +97,7 @@ public class BridgesList {
         connectionAttributes = new BridgeConnectionsForm(new FormToolStrip.FormCallback<Bridge>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-                presenter.saveBridge(getSelectedEntity().getName(), changeset);
+                presenter.onSaveBridge(getSelectedEntity().getName(), changeset);
             }
 
             @Override

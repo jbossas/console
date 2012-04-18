@@ -90,9 +90,12 @@ import org.jboss.as.console.client.shared.subsys.mail.MailSession;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Acceptor;
 import org.jboss.as.console.client.shared.subsys.messaging.model.AddressingPattern;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Bridge;
+import org.jboss.as.console.client.shared.subsys.messaging.model.BroadcastGroup;
+import org.jboss.as.console.client.shared.subsys.messaging.model.ClusterConnection;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectionFactory;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Connector;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ConnectorService;
+import org.jboss.as.console.client.shared.subsys.messaging.model.DiscoveryGroup;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Divert;
 import org.jboss.as.console.client.shared.subsys.messaging.model.MessagingProvider;
 import org.jboss.as.console.client.shared.subsys.messaging.model.Queue;
@@ -160,6 +163,9 @@ public interface CoreBeanFactory {
     AutoBean<Connector> connector();
     AutoBean<ConnectorService> connectorService();
     AutoBean<Bridge> bridge();
+    AutoBean<BroadcastGroup> BroadcastGroup();
+    AutoBean<DiscoveryGroup> DiscoveryGroup();
+    AutoBean<ClusterConnection> ClusterConnection();
 
     AutoBean<EJB3Subsystem> ejb3Subsystem();
     AutoBean<StrictMaxBeanPool> strictMaxBeanPool();

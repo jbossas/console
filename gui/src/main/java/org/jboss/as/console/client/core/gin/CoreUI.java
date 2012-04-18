@@ -103,6 +103,7 @@ import org.jboss.as.console.client.shared.subsys.logging.LoggingPresenter;
 import org.jboss.as.console.client.shared.subsys.mail.MailPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.MsgDestinationsPresenter;
+import org.jboss.as.console.client.shared.subsys.messaging.cluster.MsgClusteringPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.connections.MsgConnectionsPresenter;
 import org.jboss.as.console.client.shared.subsys.modcluster.ModclusterPresenter;
 import org.jboss.as.console.client.shared.subsys.naming.JndiPresenter;
@@ -229,6 +230,7 @@ public interface CoreUI {
     AsyncProvider<EJB3Presenter> getEJB3Presenter();
     AsyncProvider<MsgDestinationsPresenter> getMsgDestinationsPresenter();
     AsyncProvider<MsgConnectionsPresenter> getMsgConnectionsPresenter();
+    AsyncProvider<MsgClusteringPresenter> getMsgClusteringPresenter();
 
     AsyncProvider<LoggingPresenter> getLoggingPresenter();
     HandlerListManager getHandlerListManager();

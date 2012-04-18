@@ -16,8 +16,8 @@ public class BeanMetaData {
         this.beanType = beanType;
 
         if(null==properties)
-            throw new IllegalStateException("No meta data available for type "+beanType+
-                    ". Make sure its exposed through the BeanFactory.");
+            throw new IllegalStateException("No meta data available for type '"+beanType+
+                    "'. Make sure its exposed through the BeanFactory.");
 
         this.address = address;
         this.properties = properties;

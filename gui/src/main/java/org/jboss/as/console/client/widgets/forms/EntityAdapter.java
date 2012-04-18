@@ -65,24 +65,24 @@ public class EntityAdapter<T> {
      */
     public boolean isBaseType(Class<?> clazz) {
         return (clazz == String.class) ||
-               (clazz == Long.class) ||
-               (clazz == Integer.class) ||
-               (clazz == Boolean.class) ||
-               (clazz == Double.class) ||
-               (clazz == BigDecimal.class) ||
-               (clazz == byte[].class);
+                (clazz == Long.class) ||
+                (clazz == Integer.class) ||
+                (clazz == Boolean.class) ||
+                (clazz == Double.class) ||
+                (clazz == BigDecimal.class) ||
+                (clazz == byte[].class);
     }
 
     private T convertToBaseType(ModelNode dmr) {
-       if (type == String.class) return (T)dmr.asString();
-       if (type == Long.class) return (T)Long.valueOf(dmr.asLong());
-       if (type == Integer.class) return (T)Integer.valueOf(dmr.asInt());
-       if (type == Boolean.class) return (T)Boolean.valueOf(dmr.asBoolean());
-       if (type == Double.class) return (T)Double.valueOf(dmr.asDouble());
-       if (type == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
-       if (type == byte[].class) return (T)dmr.asBytes();
+        if (type == String.class) return (T)dmr.asString();
+        if (type == Long.class) return (T)Long.valueOf(dmr.asLong());
+        if (type == Integer.class) return (T)Integer.valueOf(dmr.asInt());
+        if (type == Boolean.class) return (T)Boolean.valueOf(dmr.asBoolean());
+        if (type == Double.class) return (T)Double.valueOf(dmr.asDouble());
+        if (type == BigDecimal.class) return (T)BigDecimal.valueOf(dmr.asDouble());
+        if (type == byte[].class) return (T)dmr.asBytes();
 
-       throw new IllegalArgumentException("Can not convert. This node is not of a base type. Actual type is " + type.getName());
+        throw new IllegalArgumentException("Can not convert. This node is not of a base type. Actual type is " + type.getName());
     }
 
     /**
@@ -93,7 +93,7 @@ public class EntityAdapter<T> {
      * @return an entity representation of type T
      */
     public T fromDMR(ModelNode dmr) {
-        dmr = dmr.clone(); // don't want our dmr.get() calls to have side effects
+        dmr = dmr.clone(); // don't want our dmr.get() calls to have side effects TODO: necessary?
 
         if (isBaseTypeAdapter()) return convertToBaseType(dmr);
 
@@ -275,8 +275,8 @@ public class EntityAdapter<T> {
             }
             catch (RuntimeException e)
             {
-              //  System.out.println("Error on property binding: '"+propBinding.toString()+"'");
-              //  System.out.println(dmr);
+                //  System.out.println("Error on property binding: '"+propBinding.toString()+"'");
+                //  System.out.println(dmr);
                 throw e;
             }
 
@@ -327,6 +327,7 @@ public class EntityAdapter<T> {
      */
     public ModelNode fromEntity(T entity)
     {
+
         ModelNode operation = new ModelNode();
         List<PropertyBinding> properties = metaData.getBeanMetaData(type).getProperties();
         Mutator mutator = metaData.getMutator(type);
@@ -338,7 +339,7 @@ public class EntityAdapter<T> {
             /**
              * KEYS
              */
-      //      if(property.isKey()) continue;
+            //      if(property.isKey()) continue;
 
             Object propertyValue = mutator.getValue(entity, property.getJavaName());
 
@@ -366,9 +367,9 @@ public class EntityAdapter<T> {
                 try {
                     ModelType modelType = resolveModelType(property.getJavaTypeName());
                     if ((modelType == ModelType.LIST) && (property.getListType() == PropertyBinding.class)) {
-                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List)propertyValue));
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityPropertyList((List) propertyValue));
                     } else if (modelType == ModelType.LIST) {
-                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List)propertyValue));
+                        operation.get(splitDetypedName).set(modelType, property.getEntityAdapterForList().fromEntityList((List) propertyValue));
                     } else {
                         operation.get(splitDetypedName).set(modelType, propertyValue);
                     }
@@ -583,4 +584,20 @@ public class EntityAdapter<T> {
             throw new RuntimeException("Unsupported type: "+type);
         }
     }
+
+    public static List<String> modelToList(ModelNode model, String elementName)
+    {
+        List<String> strings = new ArrayList<String>();
+
+        if(model.hasDefined(elementName))
+        {
+            List<ModelNode> items = model.get(elementName).asList();
+            for(ModelNode item : items)
+                strings.add(item.asString());
+
+        }
+
+        return strings;
+    }
+
 }
