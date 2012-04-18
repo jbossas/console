@@ -9,6 +9,7 @@ import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.subsys.messaging.ProviderList;
 import org.jboss.as.console.client.shared.subsys.messaging.model.BroadcastGroup;
+import org.jboss.as.console.client.shared.subsys.messaging.model.DiscoveryGroup;
 import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
 
@@ -23,6 +24,7 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
     private PagedView panel;
     private ProviderList providerList;
     private BroadcastGroupList broadcastGroupList;
+    private DiscoveryGroupList discoveryGroupList;
 
     @Override
     public void setPresenter(MsgClusteringPresenter presenter) {
@@ -40,10 +42,11 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
 
         providerList = new ProviderList(presenter, NameTokens.MsgClusteringPresenter);
         broadcastGroupList = new BroadcastGroupList(presenter);
+        discoveryGroupList = new DiscoveryGroupList(presenter);
 
         panel.addPage(Console.CONSTANTS.common_label_back(), providerList.asWidget());
         panel.addPage("Broadcast", broadcastGroupList.asWidget()) ;
-        panel.addPage("Discovery", new HTML()) ;
+        panel.addPage("Discovery", discoveryGroupList.asWidget()) ;
         panel.addPage("Connections", new HTML()) ;
 
 
@@ -86,5 +89,10 @@ public class MsgClusteringView extends SuspendableViewImpl implements MsgCluster
     @Override
     public void setBroadcastGroups(List<BroadcastGroup> groups) {
         broadcastGroupList.setBroadcastGroups(groups);
+    }
+
+    @Override
+    public void setDiscoveryGroups(List<DiscoveryGroup> groups) {
+        discoveryGroupList.setDiscoveryGroups(groups);
     }
 }

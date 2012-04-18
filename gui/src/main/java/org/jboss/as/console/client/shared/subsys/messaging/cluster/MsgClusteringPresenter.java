@@ -65,6 +65,7 @@ public class MsgClusteringPresenter
     private LoadJMSCmd loadJMSCmd;
     private DefaultWindow propertyWindow;
 
+
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgClusteringPresenter)
     @Subsystem(name="Clustering", group = "Messaging", key="messaging")
@@ -79,6 +80,8 @@ public class MsgClusteringPresenter
         void setSelectedProvider(String currentServer);
 
         void setBroadcastGroups(List<BroadcastGroup> groups);
+
+        void setDiscoveryGroups(List<DiscoveryGroup> groups);
     }
 
     @Inject
@@ -151,6 +154,7 @@ public class MsgClusteringPresenter
 
     public void loadDetails(String selectedProvider) {
         loadBroadcastGroups();
+        loadDiscoveryGroups();
     }
 
     private void loadBroadcastGroups() {
@@ -192,6 +196,46 @@ public class MsgClusteringPresenter
             }
         });
     }
+
+    private void loadDiscoveryGroups() {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "messaging");
+        operation.get(ADDRESS).add("hornetq-server", getCurrentServer());
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("discovery-group");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.failed("Loading discovery groups " + getCurrentServer()), response.getFailureDescription());
+                }
+                else
+                {
+                    List<Property> model = response.get(RESULT).asPropertyList();
+                    List<DiscoveryGroup> groups = new ArrayList<DiscoveryGroup>();
+                    for(Property prop : model)
+                    {
+                        ModelNode node = prop.getValue();
+                        DiscoveryGroup entity = discGroupAdapter.fromDMR(node);
+                        entity.setName(prop.getName());
+
+                        groups.add(entity);
+                    }
+
+                    getView().setDiscoveryGroups(groups);
+
+                }
+            }
+        });
+    }
+
 
     public void saveBroadcastGroup(final String name, Map<String, Object> changeset) {
 
@@ -339,5 +383,110 @@ public class MsgClusteringPresenter
 
     public void closeDialogue() {
         window.hide();
+    }
+
+    public void saveDiscoveryGroup(final String name, Map<String, Object> changeset) {
+         ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("discovery-group", name);
+
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = bcastGroupAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Broadcast Group " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Broadcast Group " + name));
+
+                loadBroadcastGroups();
+            }
+        });
+    }
+
+    public void launchNewDiscoveryGroupWizard() {
+        loadExistingSocketBindings(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error(Console.MESSAGES.failed("Loading socket bindings"), throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Discovery Group"));
+                window.setWidth(480);
+                window.setHeight(450);
+
+                window.trapWidget(
+                        new NewDiscoveryGroupWizard(MsgClusteringPresenter.this, names).asWidget()
+                );
+
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
+    }
+
+    public void onDeleteDiscoveryGroup(final String name) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("discovery-group", name);
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Discovery Group " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Discovery Group " + name));
+
+                loadDiscoveryGroups();
+            }
+        });
+    }
+
+    public void onCreateDiscoveryGroup(final DiscoveryGroup entity) {
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("discovery-group", entity.getName());
+
+        ModelNode operation = discGroupAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Discovery Group " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Discovery Group " + entity.getName()));
+
+                loadDiscoveryGroups();
+            }
+        });
     }
 }
