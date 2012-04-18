@@ -23,7 +23,6 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.shared.subsys.messaging.CommonMsgPresenter;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadHornetQServersCmd;
 import org.jboss.as.console.client.shared.subsys.messaging.LoadJMSCmd;
-import org.jboss.as.console.client.shared.subsys.messaging.model.Bridge;
 import org.jboss.as.console.client.shared.subsys.messaging.model.BroadcastGroup;
 import org.jboss.as.console.client.shared.subsys.messaging.model.ClusterConnection;
 import org.jboss.as.console.client.shared.subsys.messaging.model.DiscoveryGroup;
@@ -41,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 
 /**
  * @author Heiko Braun
@@ -67,8 +64,6 @@ public class MsgClusteringPresenter
 
     private LoadJMSCmd loadJMSCmd;
     private DefaultWindow propertyWindow;
-
-
 
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgClusteringPresenter)
@@ -226,7 +221,6 @@ public class MsgClusteringPresenter
                 bcastGroupAdapter.fromChangeset(changeset, addressNode, extra) :
                 bcastGroupAdapter.fromChangeset(changeset, addressNode);
 
-        System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -245,18 +239,105 @@ public class MsgClusteringPresenter
     }
 
     public void launchNewBroadcastGroupWizard() {
-        //To change body of created methods use File | Settings | File Templates.
-    }
+        loadExistingSocketBindings(new AsyncCallback<List<String>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Console.error(Console.MESSAGES.failed("Loading socket bindings"), throwable.getMessage());
+            }
 
-    public void onDeleteBroadcastGroup(String name) {
-        //To change body of created methods use File | Settings | File Templates.
+            @Override
+            public void onSuccess(List<String> names) {
+                window = new DefaultWindow(Console.MESSAGES.createTitle("Broadcast Group"));
+                window.setWidth(480);
+                window.setHeight(450);
+
+                window.trapWidget(
+                        new NewBroadcastGroupWizard(MsgClusteringPresenter.this, names).asWidget()
+                );
+
+
+                window.setGlassEnabled(true);
+                window.center();
+            }
+        });
     }
 
     public String getCurrentServer() {
         return currentServer;
     }
 
-    public void loadExistingSocketBindings(AsyncCallback<List<String>> asyncCallback) {
+    public void loadExistingSocketBindings(AsyncCallback<List<String>> callback) {
 
+        // TODO
+        callback.onSuccess(Collections.EMPTY_LIST);
+    }
+
+    public void onCreateBroadcastGroup(final BroadcastGroup entity) {
+
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("broadcast-group", entity.getName());
+
+        ModelNode operation = bcastGroupAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        List<String> values = entity.getConnectors();
+        if(!values.isEmpty())
+        {
+            ModelNode list = new ModelNode();
+            for(String con: values)
+                list.add(con);
+
+            operation.get("connectors").set(list);
+        }
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Broadcast Group " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Broadcast Group " + entity.getName()));
+
+                loadBroadcastGroups();
+            }
+        });
+    }
+
+    public void onDeleteBroadcastGroup(final String name) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("broadcast-group", name);
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Broadcast Group " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Broadcast Group " + name));
+
+                loadBroadcastGroups();
+            }
+        });
+    }
+
+    public void closeDialogue() {
+        window.hide();
     }
 }

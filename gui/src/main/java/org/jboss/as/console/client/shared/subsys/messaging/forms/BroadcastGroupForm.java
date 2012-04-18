@@ -98,7 +98,10 @@ public class BroadcastGroupForm {
         TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding");
         NumberBoxItem period = new NumberBoxItem("broadcastPeriod", "Broadcast Period");
 
-        form.setFields(name, socket, connectors, period);
+        if(isCreate)
+            form.setFields(name, socket, connectors);
+        else
+            form.setFields(name, socket, connectors, period);
     }
 
     public Form<BroadcastGroup> getForm() {
