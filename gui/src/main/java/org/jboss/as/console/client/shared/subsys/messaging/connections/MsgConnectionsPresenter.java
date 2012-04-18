@@ -1,10 +1,7 @@
 package org.jboss.as.console.client.shared.subsys.messaging.connections;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -44,7 +41,6 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.spi.Subsystem;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -205,7 +201,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
                         Bridge entity = bridgeAdapter.fromDMR(svc);
                         entity.setName(prop.getName());
 
-
+                        entity.setStaticConnectors(EntityAdapter.modelToList(svc, "static-connectors"));
                         bridges.add(entity);
                     }
 
@@ -783,8 +779,9 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         });
     }
 
-    public void saveBridge(final String name, Map<String, Object> changeset) {
+    public void onSaveBridge(final String name, Map<String, Object> changeset) {
 
+        System.out.println(changeset);
         ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());
@@ -793,7 +790,24 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
         ModelNode addressNode = new ModelNode();
         addressNode.get(ADDRESS).set(address);
 
-        ModelNode operation = bridgeAdapter.fromChangeset(changeset, addressNode);
+        ModelNode extra = null;
+        List<String> items = (List<String>)changeset.get("staticConnectors");
+        if(items!=null)
+        {
+            extra = new ModelNode();
+            extra.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            extra.get(NAME).set("static-connectors");
+            extra.get(ADDRESS).set(address);
+            extra.get(VALUE).setEmptyList();
+            for(String item : items)
+                extra.get(VALUE).add(item);
+
+        }
+
+        ModelNode operation = extra!=null ?
+                bridgeAdapter.fromChangeset(changeset, addressNode, extra) :
+                bridgeAdapter.fromChangeset(changeset, addressNode);
+
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

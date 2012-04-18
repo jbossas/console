@@ -62,7 +62,7 @@ public interface Bridge {
     boolean isStarted();
     void setStarted(boolean b);
 
-    @Binding(skip = true)
+    @Binding(detypedName = "static-connectors", skip = true)
     List<String> getStaticConnectors();
     void setStaticConnectors(List<String> connectors);
 
