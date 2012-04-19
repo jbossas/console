@@ -74,8 +74,9 @@ public interface Modcluster {
     public String getBalancer();
     public void setBalancer(String balancer);
 
-    public String getDomain();
-    public void setDomain(String domain);
+    @Binding(detypedName="load-balancing-group")
+    public String getLoadBalancingGroup();
+    public void setLoadBalancingGroup(String loadBalancingGroup);
 
     @Binding(detypedName="flush-packets")
     public boolean isFlushPackets();

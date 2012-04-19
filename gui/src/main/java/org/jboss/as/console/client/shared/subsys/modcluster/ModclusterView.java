@@ -45,9 +45,9 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         TextBoxItem advertiseKey= new TextBoxItem("advertiseKey", "Advertise Key", false);
 
         TextBoxItem balancer = new TextBoxItem("balancer", "Balancer", false);
-        TextBoxItem domain = new TextBoxItem("domain", "Domain", false);
+        TextBoxItem loadBalancingGroup = new TextBoxItem("loadBalancingGroup", "Load Balancing Group", false);
 
-        form.setFields(domain, balancer, advertiseSocket, advertiseKey, advertise);
+        form.setFields(loadBalancingGroup, balancer, advertiseSocket, advertiseKey, advertise);
 
         // ---
 
@@ -104,8 +104,8 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         // --
 
         OneToOneLayout layout = new OneToOneLayout()
-                .setTitle("Modcluster")
-                .setHeadline("Modcluster Subsystem")
+                .setTitle("mod_cluster")
+                .setHeadline("mod_cluster Subsystem")
                 .setDescription(Console.CONSTANTS.subsys_modcluster_desc())
                 .setMaster("Advertising", form.asWidget())
                 .addDetail("Sessions", sessionForm.asWidget())
