@@ -33,8 +33,8 @@ public class RemoteSocketList {
     private DefaultCellTable<RemoteSocketBinding> factoryTable;
     private ListDataProvider<RemoteSocketBinding> factoryProvider;
     private RemoteSocketForm defaultAttributes;
+    private ContentHeaderLabel headline;
 
-    
     public RemoteSocketList(SocketBindingPresenter presenter) {
         this.presenter = presenter;        
     }    
@@ -74,6 +74,9 @@ public class RemoteSocketList {
         });
 
         ToolStrip tools = new ToolStrip();
+
+        //  ----
+
         tools.addToolButtonRight(
                 new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                     @Override
@@ -103,9 +106,12 @@ public class RemoteSocketList {
 
                 }));
 
+
+        headline = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Remote Socket Bindings")
+                .setHeadlineWidget(headline)
                 .setDescription("Configuration information for a, remote destination, outbound socket binding.")
                 .setMaster("Remote Socket Bindings", factoryTable)
                 .setMasterTools(tools)
@@ -117,7 +123,9 @@ public class RemoteSocketList {
         return layout.build();
     }
 
-    public void setRemoteSocketBindings(List<RemoteSocketBinding> RemoteSocketBindings) {
+    public void setRemoteSocketBindings(String groupName, List<RemoteSocketBinding> RemoteSocketBindings) {
+
+        headline.setText("Remote Socket Bindings: Group "+groupName);
         factoryProvider.setList(RemoteSocketBindings);
 
         factoryTable.selectDefaultEntity();
@@ -127,4 +135,5 @@ public class RemoteSocketList {
         SingleSelectionModel<RemoteSocketBinding> selectionModel = (SingleSelectionModel<RemoteSocketBinding>)factoryTable.getSelectionModel();
         return selectionModel.getSelectedObject();
     }
+
 }

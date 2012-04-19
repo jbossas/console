@@ -61,8 +61,8 @@ public class SocketList {
 
     private SocketBindingPresenter presenter;
     private SocketTable socketTable;
-    private ComboBox groupFilter;
     private Form<SocketBinding> form;
+    private ContentHeaderLabel headline;
 
     public SocketList(SocketBindingPresenter presenter) {
         this.presenter = presenter;
@@ -71,6 +71,7 @@ public class SocketList {
     public Widget asWidget() {
 
         ToolStrip toolstrip = new ToolStrip();
+
         ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
 
             @Override
@@ -103,20 +104,6 @@ public class SocketList {
         // -----------
 
         socketTable = new SocketTable();
-
-        groupFilter = new ComboBox();
-        groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.onFilterGroup(event.getValue());
-            }
-        });
-        Widget groupFilterWidget = groupFilter.asWidget();
-        groupFilterWidget.getElement().setAttribute("style", "width:200px;");
-
-        /*DefaultPager pager = new DefaultPager();
-        pager.setDisplay(socketTableWidget);
-        panel.add(pager); */
 
         // -----------
 
@@ -194,9 +181,13 @@ public class SocketList {
 
         // ------------------------------------------
 
+
+
+        headline = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Socket Bindings")
+                .setHeadlineWidget(headline)
                 .setDescription(Console.CONSTANTS.common_socket_bindings_desc())
                 .setMaster(Console.MESSAGES.available("Socket Bindings"), socketTable.asWidget())
                 .setMasterTools(toolstrip)
@@ -211,22 +202,8 @@ public class SocketList {
         this.presenter = presenter;
     }
 
-    public void updateGroups(List<String> groups) {
-        groupFilter.setValues(groups);
-
-        int i=0;
-        for(String group : groups)
-        {
-            if(group.equals("standard-sockets"))
-                break;
-            i++;
-        }
-
-        groupFilter.setItemSelected(i, true);
-    }
-
     public void setBindings(String groupName, List<SocketBinding> bindings) {
-
+        headline.setText("Socket Bindings: Group "+ groupName);
         socketTable.updateFrom(groupName, bindings);
     }
 

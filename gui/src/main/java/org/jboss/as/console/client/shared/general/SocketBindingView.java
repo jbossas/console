@@ -20,44 +20,18 @@
 package org.jboss.as.console.client.shared.general;
 
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
-import org.jboss.as.console.client.shared.help.FormHelpPanel;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.forms.ComboBox;
-import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
-import org.jboss.ballroom.client.widgets.forms.Form;
-import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
-import org.jboss.ballroom.client.widgets.forms.StatusItem;
-import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
-import org.jboss.ballroom.client.widgets.forms.TextItem;
-import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
-import org.jboss.ballroom.client.widgets.tables.DefaultPager;
+import org.jboss.as.console.client.widgets.pages.PagedView;
 import org.jboss.ballroom.client.widgets.tabs.FakeTabPanel;
-import org.jboss.ballroom.client.widgets.tools.ToolButton;
-import org.jboss.ballroom.client.widgets.tools.ToolStrip;
-import org.jboss.ballroom.client.widgets.window.Feedback;
-import org.jboss.dmr.client.ModelNode;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -70,26 +44,41 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     private SocketList sockets;
     private RemoteSocketList remoteSockets;
     private LocalSocketList localSockets;
+    private PagedView panel;
+    private SocketGroupList socketGroups;
 
     @Override
     public Widget createWidget() {
 
-
+        socketGroups = new SocketGroupList(presenter, NameTokens.SocketBindingPresenter);
         sockets = new SocketList(presenter);
         remoteSockets = new RemoteSocketList(presenter);
         localSockets = new LocalSocketList(presenter);
 
-        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
-        tabLayoutpanel.addStyleName("default-tabpanel");
+        LayoutPanel layout = new LayoutPanel();
+
+        FakeTabPanel titleBar = new FakeTabPanel("Socket Bindings");
+        layout.add(titleBar);
+
+        panel = new PagedView();
+
+        panel.addPage(Console.CONSTANTS.common_label_back(), socketGroups.asWidget());
+        panel.addPage("Inbound", sockets.asWidget()) ;
+        panel.addPage("Outbound Remote", remoteSockets.asWidget()) ;
+        panel.addPage("Outbound Local", localSockets.asWidget()) ;
 
 
-        tabLayoutpanel.add(sockets.asWidget(), "Inbound", true);
-        tabLayoutpanel.add(remoteSockets.asWidget(), "Outbound Remote", true);
-        tabLayoutpanel.add(localSockets.asWidget(), "Outbound Local", true);
+        // default page
+        panel.showPage(0);
 
-        tabLayoutpanel.selectTab(0);
 
-        return tabLayoutpanel;
+        Widget panelWidget = panel.asWidget();
+        layout.add(panelWidget);
+
+        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
+        layout.setWidgetTopHeight(panelWidget, 40, Style.Unit.PX, 100, Style.Unit.PCT);
+
+        return layout;
 
     }
 
@@ -99,8 +88,26 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     }
 
     @Override
+    public void setSelectedGroup(String selectedGroup) {
+
+
+        if(null==selectedGroup)
+        {
+            panel.showPage(0);
+        }
+        else{
+
+            presenter.loadDetails(selectedGroup);
+
+            // move to first page if still showing overview
+            if(0==panel.getPage())
+                panel.showPage(1);
+        }
+    }
+
+    @Override
     public void updateGroups(List<String> groups) {
-        sockets.updateGroups(groups);
+        socketGroups.setGroups(groups);
     }
 
     @Override
@@ -114,12 +121,12 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     }
 
     @Override
-    public void setRemoteSockets(List<RemoteSocketBinding> entities) {
-        remoteSockets.setRemoteSocketBindings(entities);
+    public void setRemoteSockets(String groupName, List<RemoteSocketBinding> entities) {
+        remoteSockets.setRemoteSocketBindings(groupName, entities);
     }
 
     @Override
-    public void setLocalSockets(List<LocalSocketBinding> entities) {
-        localSockets.setLocalSocketBindings(entities);
+    public void setLocalSockets(String groupName, List<LocalSocketBinding> entities) {
+        localSockets.setLocalSocketBindings(groupName, entities);
     }
 }

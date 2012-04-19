@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.NameTokens;
@@ -35,14 +36,12 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
 import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
-import org.jboss.as.console.client.shared.general.wizard.NewSocketGroupWizard;
 import org.jboss.as.console.client.shared.general.wizard.NewSocketWizard;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
@@ -76,7 +75,11 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private EntityAdapter<SocketGroup> socketGroupAdapter;
     private EntityAdapter<RemoteSocketBinding> remoteSocketAdapter;
     private EntityAdapter<LocalSocketBinding> localSocketAdapter;
+    private String selectedSocketGroup = null;
 
+    public PlaceManager getPlaceManager() {
+        return placeManager;
+    }
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -89,9 +92,10 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         void setBindings(String groupName, List<SocketBinding> bindings);
         void setEnabled(boolean b);
 
-        void setRemoteSockets(List<RemoteSocketBinding> entities);
+        void setRemoteSockets(String groupName, List<RemoteSocketBinding> entities);
 
-        void setLocalSockets(List<LocalSocketBinding> entities);
+        void setLocalSockets(String groupName, List<LocalSocketBinding> entities);
+        void setSelectedGroup(String selectedGroup);
     }
 
     @Inject
@@ -124,6 +128,11 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         getView().setPresenter(this);
     }
 
+    @Override
+    public void prepareFromRequest(PlaceRequest request) {
+        super.prepareFromRequest(request);
+        selectedSocketGroup = request.getParameter("name", null);
+    }
 
     @Override
     protected void onReset() {
@@ -135,7 +144,6 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     protected void revealInParent() {
         revealStrategy.revealInParent(this);
     }
-
 
     private void loadBindingGroups()
     {
@@ -167,18 +175,17 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
                     bindingGroups = groups;
                     getView().updateGroups(groups);
+                    getView().setSelectedGroup(selectedSocketGroup);
                 }
             }
         });
     }
 
-    public void onFilterGroup(String groupName) {
-
-        if(!groupName.isEmpty())
-            loadBindings(groupName);
+    public void loadDetails(String selectedGroup) {
+        loadBindings(selectedGroup);
     }
 
-    private void loadBindings(final String groupName) {
+    public void loadBindings(final String groupName) {
 
         LoadSocketBindingsCmd cmd = new LoadSocketBindingsCmd(dispatcher, factory, metaData);
         cmd.execute(groupName, new SimpleCallback<List<SocketBinding>>() {
@@ -193,7 +200,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         loadLocalSockets(groupName);
     }
 
-    private void loadRemoteSockets(String groupName) {
+    private void loadRemoteSockets(final String groupName) {
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("socket-binding-group", groupName);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -215,12 +222,12 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                     entities.add(remoteSocketBinding);
                 }
 
-                getView().setRemoteSockets(entities);
+                getView().setRemoteSockets(groupName, entities);
             }
         });
     }
 
-    private void loadLocalSockets(String groupName) {
+    private void loadLocalSockets(final String groupName) {
         ModelNode operation = new ModelNode();
         operation.get(ADDRESS).add("socket-binding-group", groupName);
         operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
@@ -242,7 +249,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                     entities.add(LocalSocketBinding);
                 }
 
-                getView().setLocalSockets(entities);
+                getView().setLocalSockets(groupName, entities);
             }
         });
     }
@@ -347,7 +354,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         window.hide();
     }
 
-    public void launchNewGroupDialogue() {
+    /*public void launchNewGroupDialogue() {
 
 
         loadInterfacesCmd.execute(new SimpleCallback<List<Interface>>() {
@@ -365,7 +372,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 window.center();
             }
         });
-    }
+    }*/
 
     public void createNewSocketGroup(SocketGroup newGroup) {
         /*closeDialoge();
@@ -391,15 +398,42 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     public void saveRemoteSocketBinding(String name, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
+
     }
 
     public void launchNewRemoteSocketBindingWizard() {
-        //To change body of created methods use File | Settings | File Templates.
+
     }
 
     public void onDeleteRemoteSocketBinding(String name) {
-        //To change body of created methods use File | Settings | File Templates.
+
+    }
+
+    public void onCreateRemoteSocketBinding(final RemoteSocketBinding entity) {
+
+        closeDialoge();
+
+        ModelNode operation = remoteSocketAdapter.fromEntity(entity);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("socket-binding-group", selectedSocketGroup);
+        operation.get(ADDRESS).add("remote-destination-outbound-socket-binding", entity.getName());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.added("Remote Socket Binding "+entity.getName()));
+                else
+                    Console.error(Console.MESSAGES.addingFailed("Remote Socket Binding " + entity.getName()), response.getFailureDescription());
+
+                loadRemoteSockets(selectedSocketGroup);
+            }
+        });
+    }
+
+    public void closeDialogue() {
+        window.hide();
     }
 
     public void saveLocalSocketBinding(String name, Map<String, Object> changeset) {

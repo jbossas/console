@@ -13,6 +13,7 @@ import org.jboss.as.console.client.shared.general.forms.LocalSocketForm;
 import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -26,17 +27,17 @@ import java.util.Map;
  * @date 4/19/12
  */
 public class LocalSocketList {
-    
+
     private SocketBindingPresenter presenter;
 
     private DefaultCellTable<LocalSocketBinding> factoryTable;
     private ListDataProvider<LocalSocketBinding> factoryProvider;
     private LocalSocketForm defaultAttributes;
+    private ContentHeaderLabel headline;
 
-    
     public LocalSocketList(SocketBindingPresenter presenter) {
-        this.presenter = presenter;        
-    }    
+        this.presenter = presenter;
+    }
 
     Widget asWidget() {
 
@@ -73,6 +74,7 @@ public class LocalSocketList {
         });
 
         ToolStrip tools = new ToolStrip();
+
         tools.addToolButtonRight(
                 new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                     @Override
@@ -102,9 +104,11 @@ public class LocalSocketList {
 
                 }));
 
+        headline = new ContentHeaderLabel();
+
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Local Socket Bindings")
+                .setHeadlineWidget(headline)
                 .setDescription("Configuration information for a, local destination, outbound socket binding.")
                 .setMaster("Local Socket Bindings", factoryTable)
                 .setMasterTools(tools)
@@ -116,7 +120,10 @@ public class LocalSocketList {
         return layout.build();
     }
 
-    public void setLocalSocketBindings(List<LocalSocketBinding> LocalSocketBindings) {
+    public void setLocalSocketBindings(String groupName, List<LocalSocketBinding> LocalSocketBindings) {
+
+
+        headline.setText("Remote Socket Bindings: Group "+groupName);
         factoryProvider.setList(LocalSocketBindings);
 
         factoryTable.selectDefaultEntity();
@@ -126,4 +133,5 @@ public class LocalSocketList {
         SingleSelectionModel<LocalSocketBinding> selectionModel = (SingleSelectionModel<LocalSocketBinding>)factoryTable.getSelectionModel();
         return selectionModel.getSelectedObject();
     }
+
 }
