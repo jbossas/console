@@ -31,7 +31,9 @@
 
     <inherits name='com.google.gwt.visualization.Visualization'/>
 
-    <inherits name="com.google.gwt.precompress.Precompress"/>
+    <!--
+    https://issues.jboss.org/browse/AS7-3977
+    inherits name="com.google.gwt.precompress.Precompress"/-->
 
     <!-- Enable debug ID. -->
 	<inherits name="com.google.gwt.user.Debug"/>
