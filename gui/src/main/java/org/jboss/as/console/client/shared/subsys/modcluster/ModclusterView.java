@@ -45,9 +45,9 @@ public class ModclusterView extends DisposableViewImpl implements ModclusterPres
         TextBoxItem advertiseKey= new TextBoxItem("advertiseKey", "Advertise Key", false);
 
         TextBoxItem balancer = new TextBoxItem("balancer", "Balancer", false);
-        TextBoxItem domain = new TextBoxItem("domain", "Domain", false);
+        TextBoxItem loadBalancingGroup = new TextBoxItem("loadBalancingGroup", "Load Balancing Group", false);
 
-        form.setFields(domain, balancer, advertiseSocket, advertiseKey, advertise);
+        form.setFields(loadBalancingGroup, balancer, advertiseSocket, advertiseKey, advertise);
 
         // ---
 
