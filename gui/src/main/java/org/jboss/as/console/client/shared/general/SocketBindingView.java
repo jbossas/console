@@ -32,10 +32,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
@@ -64,189 +66,27 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     private SocketBindingPresenter presenter;
 
-    private SocketTable socketTable;
-    private ComboBox groupFilter;
-    private Form<SocketBinding> form;
+    private SocketList sockets;
+    private RemoteSocketList remoteSockets;
 
     @Override
     public Widget createWidget() {
-        LayoutPanel layout = new LayoutPanel();
-
-        FakeTabPanel titleBar = new FakeTabPanel("Socket Binding");
-        layout.add(titleBar);
-
-        ToolStrip toolstrip = new ToolStrip();
-        ToolButton addBtn = new ToolButton("Add", new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.launchNewSocketDialogue();
-            }
-        });
-        addBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_add_socketBindingView());
-        toolstrip.addToolButtonRight(addBtn);
-
-        ToolButton removeBtn = new ToolButton("Remove", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final SocketBinding editedEntity = form.getEditedEntity();
-                Feedback.confirm(
-                        Console.MESSAGES.deleteTitle("Socket Binding"),
-                        Console.MESSAGES.deleteConfirm("Socket Binding " + editedEntity.getName()),
-                        new Feedback.ConfirmationHandler() {
-                            @Override
-                            public void onConfirmation(boolean isConfirmed) {
-                                if(isConfirmed)
-                                    presenter.onDelete(editedEntity);
-                            }
-                        });
-            }
-        });
-        removeBtn.ensureDebugId(Console.DEBUG_CONSTANTS.debug_label_remove_socketBindingView());
-        toolstrip.addToolButtonRight(removeBtn);
-
-        /*
-
-        TODO: this is more complex then I thought...
-        toolstrip.addToolButtonRight(
-                new ToolButton(Console.CONSTANTS.common_label_newGroup(), new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        presenter.launchNewGroupDialogue();
-                    }
-                }));
-          */
 
 
-        // -----------
-        VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("rhs-content-panel");
+        sockets = new SocketList(presenter);
+        remoteSockets = new RemoteSocketList(presenter);
 
-        ContentHeaderLabel nameLabel = new ContentHeaderLabel("Socket Bindings");
-
-        panel.add(nameLabel);
-        panel.add(new ContentDescription(Console.CONSTANTS.common_socket_bindings_desc()));
-
-        panel.add(new ContentGroupLabel(Console.MESSAGES.available("Socket Bindings")));
-
-        socketTable = new SocketTable();
-
-        HorizontalPanel tableOptions = new HorizontalPanel();
-        tableOptions.getElement().setAttribute("cellpadding", "2px");
-
-        groupFilter = new ComboBox();
-        groupFilter.addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                presenter.onFilterGroup(event.getValue());
-            }
-        });
-        Widget groupFilterWidget = groupFilter.asWidget();
-        groupFilterWidget.getElement().setAttribute("style", "width:200px;");
+        DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
+        tabLayoutpanel.addStyleName("default-tabpanel");
 
 
-        tableOptions.add(new Label("Socket Binding Group:"));
-        tableOptions.add(groupFilterWidget);
+        tabLayoutpanel.add(sockets.asWidget(), "Inbound", true);
+        tabLayoutpanel.add(remoteSockets.asWidget(), "Outbound Remote", true);
 
+        tabLayoutpanel.selectTab(0);
 
-        tableOptions.getElement().setAttribute("style", "float:right;");
-        panel.add(tableOptions);
-        DefaultCellTable socketTableWidget = socketTable.asWidget();
-        panel.add(toolstrip.asWidget());
-        panel.add(socketTableWidget);
+        return tabLayoutpanel;
 
-
-        DefaultPager pager = new DefaultPager();
-        pager.setDisplay(socketTableWidget);
-        panel.add(pager);
-
-
-        ScrollPanel scroll = new ScrollPanel(panel);
-        layout.add(scroll);
-
-        layout.setWidgetTopHeight(titleBar, 0, Style.Unit.PX, 40, Style.Unit.PX);
-        layout.setWidgetTopHeight(scroll, 40, Style.Unit.PX, 100, Style.Unit.PCT);
-
-        // -----------
-
-        form = new Form<SocketBinding>(SocketBinding.class);
-        form.setNumColumns(2);
-
-        FormToolStrip<SocketBinding> detailToolStrip = new FormToolStrip<SocketBinding>(
-                form,
-                new FormToolStrip.FormCallback<SocketBinding>()
-                {
-                    @Override
-                    public void onSave(Map<String, Object> changeset) {
-                        SocketBinding updatedEntity = form.getUpdatedEntity();
-                        presenter.saveSocketBinding(
-                                updatedEntity.getName(),
-                                form.getEditedEntity().getGroup(),  // TODO: why does it not get pushed through?
-                                form.getChangedValues()
-                        );
-                    }
-
-                    @Override
-                    public void onDelete(SocketBinding entity) {
-
-                    }
-                }
-        );
-
-        detailToolStrip.providesDeleteOp(false);
-
-        panel.add(new ContentGroupLabel(Console.CONSTANTS.common_label_selection()));
-
-        panel.add(detailToolStrip.asWidget());
-        // ---
-
-
-
-        TextItem nameItem = new TextItem("name", "Name");
-        TextItem interfaceItem = new TextItem("interface", "Interface");
-        //TextItem defaultInterface = new TextItem("defaultInterface", "Default Interface");
-        NumberBoxItem portItem = new NumberBoxItem("port", "Port");
-        StatusItem fixedPort = new StatusItem("fixedPort", "Fixed Port?");
-
-        TextBoxItem multicastItem = new TextBoxItem("multiCastAddress", "Multicast Address") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-        NumberBoxItem multicastPortItem = new NumberBoxItem("multiCastPort", "Multicast Port") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-
-        form.setFields(nameItem, interfaceItem, portItem, fixedPort);
-        form.setFieldsInGroup("Multicast", new DisclosureGroupRenderer(), multicastPortItem, multicastItem);
-        form.bind(socketTable.getCellTable());
-
-        Widget formWidget = form.asWidget();
-        form.setEnabled(false);
-
-
-        final FormHelpPanel helpPanel = new FormHelpPanel(
-                new FormHelpPanel.AddressCallback() {
-                    @Override
-                    public ModelNode getAddress() {
-                        ModelNode address = new ModelNode();
-                        address.add("socket-binding-group", form.getEditedEntity().getGroup());
-                        address.add("socket-binding", "*");
-                        return address;
-                    }
-                }, form
-        );
-        panel.add(helpPanel.asWidget());
-
-        panel.add(formWidget);
-
-        // ------------------------------------------
-
-        return layout;
     }
 
     @Override
@@ -256,27 +96,21 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     @Override
     public void updateGroups(List<String> groups) {
-        groupFilter.setValues(groups);
-
-        int i=0;
-        for(String group : groups)
-        {
-            if(group.equals("standard-sockets"))
-                break;
-            i++;
-        }
-
-        groupFilter.setItemSelected(i, true);
+        sockets.updateGroups(groups);
     }
 
     @Override
     public void setBindings(String groupName, List<SocketBinding> bindings) {
-
-        socketTable.updateFrom(groupName, bindings);
+        sockets.setBindings(groupName, bindings);
     }
 
     @Override
     public void setEnabled(boolean b) {
-        form.setEnabled(b);
+        sockets.setEnabled(b);
+    }
+
+    @Override
+    public void setRemoteSockets(List<RemoteSocketBinding> entities) {
+        remoteSockets.setRemoteSocketBindings(entities);
     }
 }

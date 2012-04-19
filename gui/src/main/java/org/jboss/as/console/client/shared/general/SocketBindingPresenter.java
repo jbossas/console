@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
+import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
 import org.jboss.as.console.client.shared.general.wizard.NewSocketGroupWizard;
@@ -48,6 +49,7 @@ import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private EntityAdapter<SocketBinding> entityAdapter;
     private LoadInterfacesCmd loadInterfacesCmd;
     private EntityAdapter<SocketGroup> socketGroupAdapter;
+    private EntityAdapter<RemoteSocketBinding> remoteSocketAdapter;
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -82,6 +85,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         void updateGroups(List<String> groups);
         void setBindings(String groupName, List<SocketBinding> bindings);
         void setEnabled(boolean b);
+
+        void setRemoteSockets(List<RemoteSocketBinding> entities);
     }
 
     @Inject
@@ -99,6 +104,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         this.metaData = propertyMetaData;
 
         this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
+        this.remoteSocketAdapter = new EntityAdapter<RemoteSocketBinding>(RemoteSocketBinding.class, metaData);
         this.socketGroupAdapter = new EntityAdapter<SocketGroup>(SocketGroup.class, metaData);
 
         ModelNode address = new ModelNode();
@@ -173,6 +179,36 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
             @Override
             public void onSuccess(List<SocketBinding> result) {
                 getView().setBindings(groupName, result);
+            }
+        });
+
+
+        loadRemoteSockets(groupName);
+    }
+
+    private void loadRemoteSockets(String groupName) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add("socket-binding-group", groupName);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("remote-destination-outbound-socket-binding");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+                List<Property> items = response.get(RESULT).asPropertyList();
+                List<RemoteSocketBinding> entities = new ArrayList<RemoteSocketBinding>();
+                for(Property item : items)
+                {
+                    RemoteSocketBinding remoteSocketBinding = remoteSocketAdapter.fromDMR(item.getValue());
+                    remoteSocketBinding.setName(item.getName());
+                    entities.add(remoteSocketBinding);
+                }
+
+                getView().setRemoteSockets(entities);
             }
         });
     }
@@ -318,5 +354,17 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         });*/
 
 
+    }
+
+    public void saveRemoteSocketBinding(String name, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void launchNewRemoteSocketBindingWizard() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void onDeleteRemoteSocketBinding(String name) {
+        //To change body of created methods use File | Settings | File Templates.
     }
 }

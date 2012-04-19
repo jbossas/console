@@ -30,6 +30,7 @@ import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.domain.model.ServerInstance;
 import org.jboss.as.console.client.shared.deployment.DeploymentReference;
 import org.jboss.as.console.client.shared.general.model.Interface;
+import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
 import org.jboss.as.console.client.shared.jvm.Jvm;
@@ -186,6 +187,7 @@ public interface CoreBeanFactory {
 
     AutoBean<DeploymentScanner> deploymentScanner();
     AutoBean<SocketBinding> socketBinding();
+    AutoBean<RemoteSocketBinding> RemoteSocketBinding();
     AutoBean<SocketGroup> socketGroup();
     AutoBean<DeploymentReference> deploymentReference();
 

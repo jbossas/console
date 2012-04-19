@@ -26,14 +26,6 @@ public class SocketTable {
     private int portOffset = 0;
 
     public SocketTable() {
-    }
-
-    public SocketTable(int portOffset) {
-        this.portOffset = portOffset;
-    }
-
-    public DefaultCellTable asWidget() {
-
         table = new DefaultCellTable<SocketBinding>(8, new ProvidesKey<SocketBinding>() {
             @Override
             public Object getKey(SocketBinding item) {
@@ -42,6 +34,9 @@ public class SocketTable {
         });
         dataProvider = new ListDataProvider<SocketBinding>();
         dataProvider.addDataDisplay(table);
+    }
+
+    public DefaultCellTable asWidget() {
 
         ColumnSortEvent.ListHandler<SocketBinding> sortHandler =
                 new ColumnSortEvent.ListHandler<SocketBinding>(dataProvider.getList());
