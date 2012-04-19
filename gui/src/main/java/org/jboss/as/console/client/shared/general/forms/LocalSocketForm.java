@@ -2,7 +2,7 @@ package org.jboss.as.console.client.shared.general.forms;
 
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
+import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
@@ -22,24 +22,24 @@ import java.util.List;
  * @author Heiko Braun
  * @date 4/3/12
  */
-public class RemoteSocketForm {
+public class LocalSocketForm {
 
 
-    Form<RemoteSocketBinding> form = new Form<RemoteSocketBinding>(RemoteSocketBinding.class);
+    Form<LocalSocketBinding> form = new Form<LocalSocketBinding>(LocalSocketBinding.class);
 
     boolean isCreate = false;
-    private FormToolStrip.FormCallback<RemoteSocketBinding> callback;
+    private FormToolStrip.FormCallback<LocalSocketBinding> callback;
 
     private MultiWordSuggestOracle oracle;
 
 
-    public RemoteSocketForm(FormToolStrip.FormCallback<RemoteSocketBinding> callback) {
+    public LocalSocketForm(FormToolStrip.FormCallback<LocalSocketBinding> callback) {
         this.callback = callback;
         oracle = new MultiWordSuggestOracle();
         oracle.setDefaultSuggestionsFromText(Collections.EMPTY_LIST);
     }
 
-    public RemoteSocketForm(FormToolStrip.FormCallback<RemoteSocketBinding> callback, boolean create) {
+    public LocalSocketForm(FormToolStrip.FormCallback<LocalSocketBinding> callback, boolean create) {
         this.callback = callback;
         isCreate = create;
         oracle = new MultiWordSuggestOracle();
@@ -68,12 +68,12 @@ public class RemoteSocketForm {
 
                         ModelNode address = Baseadress.get();
                         address.add("socket-binding-group", "*");
-                        address.add("remote-destination-outbound-socket-binding", "*");
+                        address.add("local-destination-outbound-socket-binding", "*");
                         return address;
                     }
                 }, form);
 
-        FormToolStrip<RemoteSocketBinding> formTools = new FormToolStrip<RemoteSocketBinding>(form, callback);
+        FormToolStrip<LocalSocketBinding> formTools = new FormToolStrip<LocalSocketBinding>(form, callback);
 
         FormLayout formLayout = new FormLayout()
                 .setForm(form)
@@ -93,8 +93,7 @@ public class RemoteSocketForm {
         else
             name = new TextItem("name", "Name");
 
-        NumberBoxItem port= new NumberBoxItem("port", "Port");
-        TextBoxItem host = new TextBoxItem("host", "Host");
+        TextBoxItem socket = new TextBoxItem("socketBinding", "Socket Binding");
 
         NumberBoxItem sourcePort = new NumberBoxItem("sourcePort", "Source Port");
         TextBoxItem sourceInterface = new TextBoxItem("sourceInterface", "Source Interface");
@@ -103,12 +102,12 @@ public class RemoteSocketForm {
 
 
         if(isCreate)
-            form.setFields(name, host, port);
+            form.setFields(name, socket);
         else
-            form.setFields(name, host, port, sourceInterface, sourcePort, fixed);
+            form.setFields(name, socket, sourceInterface, sourcePort, fixed);
     }
 
-    public Form<RemoteSocketBinding> getForm() {
+    public Form<LocalSocketBinding> getForm() {
         return form;
     }
 

@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
@@ -68,6 +69,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
     private SocketList sockets;
     private RemoteSocketList remoteSockets;
+    private LocalSocketList localSockets;
 
     @Override
     public Widget createWidget() {
@@ -75,6 +77,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         sockets = new SocketList(presenter);
         remoteSockets = new RemoteSocketList(presenter);
+        localSockets = new LocalSocketList(presenter);
 
         DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
@@ -82,6 +85,7 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
 
         tabLayoutpanel.add(sockets.asWidget(), "Inbound", true);
         tabLayoutpanel.add(remoteSockets.asWidget(), "Outbound Remote", true);
+        tabLayoutpanel.add(localSockets.asWidget(), "Outbound Local", true);
 
         tabLayoutpanel.selectTab(0);
 
@@ -112,5 +116,10 @@ public class SocketBindingView extends DisposableViewImpl implements SocketBindi
     @Override
     public void setRemoteSockets(List<RemoteSocketBinding> entities) {
         remoteSockets.setRemoteSocketBindings(entities);
+    }
+
+    @Override
+    public void setLocalSockets(List<LocalSocketBinding> entities) {
+        localSockets.setLocalSocketBindings(entities);
     }
 }

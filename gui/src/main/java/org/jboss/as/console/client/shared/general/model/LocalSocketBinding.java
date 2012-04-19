@@ -6,7 +6,7 @@ import org.jboss.as.console.client.widgets.forms.Binding;
  * @author Heiko Braun
  * @date 4/19/12
  */
-public interface LocalOutboundSocket {
+public interface LocalSocketBinding {
 
     @Binding(skip = true)
     String getName();

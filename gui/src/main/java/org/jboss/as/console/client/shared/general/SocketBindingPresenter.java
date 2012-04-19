@@ -38,6 +38,7 @@ import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.general.model.Interface;
 import org.jboss.as.console.client.shared.general.model.LoadInterfacesCmd;
 import org.jboss.as.console.client.shared.general.model.LoadSocketBindingsCmd;
+import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
@@ -74,6 +75,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     private LoadInterfacesCmd loadInterfacesCmd;
     private EntityAdapter<SocketGroup> socketGroupAdapter;
     private EntityAdapter<RemoteSocketBinding> remoteSocketAdapter;
+    private EntityAdapter<LocalSocketBinding> localSocketAdapter;
+
 
     @ProxyCodeSplit
     @NameToken(NameTokens.SocketBindingPresenter)
@@ -87,6 +90,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         void setEnabled(boolean b);
 
         void setRemoteSockets(List<RemoteSocketBinding> entities);
+
+        void setLocalSockets(List<LocalSocketBinding> entities);
     }
 
     @Inject
@@ -105,6 +110,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
         this.entityAdapter = new EntityAdapter<SocketBinding>(SocketBinding.class, metaData);
         this.remoteSocketAdapter = new EntityAdapter<RemoteSocketBinding>(RemoteSocketBinding.class, metaData);
+        this.localSocketAdapter = new EntityAdapter<LocalSocketBinding>(LocalSocketBinding.class, metaData);
         this.socketGroupAdapter = new EntityAdapter<SocketGroup>(SocketGroup.class, metaData);
 
         ModelNode address = new ModelNode();
@@ -184,6 +190,7 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
 
         loadRemoteSockets(groupName);
+        loadLocalSockets(groupName);
     }
 
     private void loadRemoteSockets(String groupName) {
@@ -209,6 +216,33 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
                 }
 
                 getView().setRemoteSockets(entities);
+            }
+        });
+    }
+
+    private void loadLocalSockets(String groupName) {
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).add("socket-binding-group", groupName);
+        operation.get(OP).set(READ_CHILDREN_RESOURCES_OPERATION);
+        operation.get(CHILD_TYPE).set("local-destination-outbound-socket-binding");
+        operation.get(RECURSIVE).set(true);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+
+                ModelNode response = result.get();
+                List<Property> items = response.get(RESULT).asPropertyList();
+                List<LocalSocketBinding> entities = new ArrayList<LocalSocketBinding>();
+                for(Property item : items)
+                {
+                    LocalSocketBinding LocalSocketBinding = localSocketAdapter.fromDMR(item.getValue());
+                    LocalSocketBinding.setName(item.getName());
+                    entities.add(LocalSocketBinding);
+                }
+
+                getView().setLocalSockets(entities);
             }
         });
     }
@@ -365,6 +399,18 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     public void onDeleteRemoteSocketBinding(String name) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void saveLocalSocketBinding(String name, Map<String, Object> changeset) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void launchNewLocalSocketBindingWizard() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void onDeleteLocalSocketBinding(String name) {
         //To change body of created methods use File | Settings | File Templates.
     }
 }

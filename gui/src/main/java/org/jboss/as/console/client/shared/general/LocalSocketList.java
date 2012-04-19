@@ -9,11 +9,10 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.shared.general.forms.RemoteSocketForm;
-import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
+import org.jboss.as.console.client.shared.general.forms.LocalSocketForm;
+import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.viewframework.builder.MultipleToOneLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.ballroom.client.widgets.tools.ToolStrip;
@@ -26,34 +25,34 @@ import java.util.Map;
  * @author Heiko Braun
  * @date 4/19/12
  */
-public class RemoteSocketList {
+public class LocalSocketList {
     
     private SocketBindingPresenter presenter;
 
-    private DefaultCellTable<RemoteSocketBinding> factoryTable;
-    private ListDataProvider<RemoteSocketBinding> factoryProvider;
-    private RemoteSocketForm defaultAttributes;
+    private DefaultCellTable<LocalSocketBinding> factoryTable;
+    private ListDataProvider<LocalSocketBinding> factoryProvider;
+    private LocalSocketForm defaultAttributes;
 
     
-    public RemoteSocketList(SocketBindingPresenter presenter) {
+    public LocalSocketList(SocketBindingPresenter presenter) {
         this.presenter = presenter;        
     }    
 
     Widget asWidget() {
 
-        factoryTable = new DefaultCellTable<RemoteSocketBinding>(10, new ProvidesKey<RemoteSocketBinding>() {
+        factoryTable = new DefaultCellTable<LocalSocketBinding>(10, new ProvidesKey<LocalSocketBinding>() {
             @Override
-            public Object getKey(RemoteSocketBinding RemoteSocketBinding) {
-                return RemoteSocketBinding.getName();
+            public Object getKey(LocalSocketBinding LocalSocketBinding) {
+                return LocalSocketBinding.getName();
             }
         });
 
-        factoryProvider = new ListDataProvider<RemoteSocketBinding>();
+        factoryProvider = new ListDataProvider<LocalSocketBinding>();
         factoryProvider.addDataDisplay(factoryTable);
 
-        Column<RemoteSocketBinding, String> nameColumn = new Column<RemoteSocketBinding, String>(new TextCell()) {
+        Column<LocalSocketBinding, String> nameColumn = new Column<LocalSocketBinding, String>(new TextCell()) {
             @Override
-            public String getValue(RemoteSocketBinding object) {
+            public String getValue(LocalSocketBinding object) {
                 return object.getName();
             }
         };
@@ -62,13 +61,13 @@ public class RemoteSocketList {
         factoryTable.addColumn(nameColumn, "Name");
 
         // defaultAttributes
-        defaultAttributes = new RemoteSocketForm(new FormToolStrip.FormCallback<RemoteSocketBinding>() {
+        defaultAttributes = new LocalSocketForm(new FormToolStrip.FormCallback<LocalSocketBinding>() {
             @Override
             public void onSave(Map<String, Object> changeset) {
-                presenter.saveRemoteSocketBinding(getSelectedEntity().getName(), changeset);
+                presenter.saveLocalSocketBinding(getSelectedEntity().getName(), changeset);
             }
             @Override
-            public void onDelete(RemoteSocketBinding entity) {
+            public void onDelete(LocalSocketBinding entity) {
 
             }
         });
@@ -78,7 +77,7 @@ public class RemoteSocketList {
                 new ToolButton(Console.CONSTANTS.common_label_add(), new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
-                        presenter.launchNewRemoteSocketBindingWizard();
+                        presenter.launchNewLocalSocketBindingWizard();
                     }
                 }));
 
@@ -88,13 +87,13 @@ public class RemoteSocketList {
                     public void onClick(ClickEvent clickEvent) {
 
                         Feedback.confirm(
-                                Console.MESSAGES.deleteTitle("Remote Socket Binding"),
-                                Console.MESSAGES.deleteConfirm("Remote Socket Binding " + getSelectedEntity().getName()),
+                                Console.MESSAGES.deleteTitle("Local Socket Binding"),
+                                Console.MESSAGES.deleteConfirm("Local Socket Binding " + getSelectedEntity().getName()),
                                 new Feedback.ConfirmationHandler() {
                                     @Override
                                     public void onConfirmation(boolean isConfirmed) {
                                         if (isConfirmed) {
-                                            presenter.onDeleteRemoteSocketBinding(getSelectedEntity().getName());
+                                            presenter.onDeleteLocalSocketBinding(getSelectedEntity().getName());
                                         }
                                     }
                                 });
@@ -105,9 +104,9 @@ public class RemoteSocketList {
 
         MultipleToOneLayout layout = new MultipleToOneLayout()
                 .setPlain(true)
-                .setHeadline("Remote Socket Bindings")
-                .setDescription("Configuration information for a, remote destination, outbound socket binding.")
-                .setMaster("Remote Socket Bindings", factoryTable)
+                .setHeadline("Local Socket Bindings")
+                .setDescription("Configuration information for a, local destination, outbound socket binding.")
+                .setMaster("Local Socket Bindings", factoryTable)
                 .setMasterTools(tools)
                 .setDetail("Details", defaultAttributes.asWidget());
 
@@ -117,14 +116,14 @@ public class RemoteSocketList {
         return layout.build();
     }
 
-    public void setRemoteSocketBindings(List<RemoteSocketBinding> RemoteSocketBindings) {
-        factoryProvider.setList(RemoteSocketBindings);
+    public void setLocalSocketBindings(List<LocalSocketBinding> LocalSocketBindings) {
+        factoryProvider.setList(LocalSocketBindings);
 
         factoryTable.selectDefaultEntity();
     }
 
-    public RemoteSocketBinding getSelectedEntity() {
-        SingleSelectionModel<RemoteSocketBinding> selectionModel = (SingleSelectionModel<RemoteSocketBinding>)factoryTable.getSelectionModel();
+    public LocalSocketBinding getSelectedEntity() {
+        SingleSelectionModel<LocalSocketBinding> selectionModel = (SingleSelectionModel<LocalSocketBinding>)factoryTable.getSelectionModel();
         return selectionModel.getSelectedObject();
     }
 }
