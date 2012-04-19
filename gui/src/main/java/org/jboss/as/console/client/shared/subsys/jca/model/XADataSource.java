@@ -32,7 +32,7 @@ import java.util.List;
 @Address("/subsystem=datasources/xa-data-source={0}")
 public interface XADataSource extends DataSource {
 
-    @Binding(detypedName = "xa-data-source-class")
+    @Binding(detypedName = "xa-datasource-class")
     String getDataSourceClass();
     void setDataSourceClass(String dadaSourceClass);
 

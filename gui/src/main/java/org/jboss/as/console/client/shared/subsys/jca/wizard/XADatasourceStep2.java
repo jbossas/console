@@ -21,19 +21,19 @@ package org.jboss.as.console.client.shared.subsys.jca.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.jca.model.JDBCDriver;
 import org.jboss.as.console.client.shared.subsys.jca.model.XADataSource;
+import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.ComboBox;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.tables.DefaultPager;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
@@ -53,7 +53,8 @@ public class XADatasourceStep2 {
     private CellTable<JDBCDriver> table;
     private ComboBox groupSelection;
     private boolean isStandalone;
-    private Integer selectedTab;
+    private HTML errorMessages;
+
 
     public XADatasourceStep2(NewXADatasourceWizard wizard) {
         this.wizard = wizard;
@@ -82,15 +83,15 @@ public class XADatasourceStep2 {
             }
         };
 
-        TextColumn<JDBCDriver> xaClassColumn = new TextColumn<JDBCDriver>() {
+        /*TextColumn<JDBCDriver> xaClassColumn = new TextColumn<JDBCDriver>() {
             @Override
             public String getValue(JDBCDriver record) {
                 return record.getXaDataSourceClass();
             }
-        };
+        };*/
 
         table.addColumn(nameColumn, "Name");
-        table.addColumn(xaClassColumn, "Datasource Class");
+        //table.addColumn(xaClassColumn, "Datasource Class");
 
         selectionModel = new SingleSelectionModel<JDBCDriver>();
         table.setSelectionModel(selectionModel);
@@ -101,45 +102,65 @@ public class XADatasourceStep2 {
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(table);
 
-        VerticalPanel driverPanel = new VerticalPanel();
-        driverPanel.add(table);
-        driverPanel.add(pager);
+        errorMessages = new HTML("");
+        errorMessages.setStyleName("error-panel");
+        errorMessages.setVisible(false);
 
-        // --
+        layout.add(errorMessages);
 
-        TabPanel tabs = new TabPanel();
-        tabs.setStyleName("default-tabpanel");
-        tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+        layout.add(new ContentGroupLabel("Driver"));
+        layout.add(table);
+        layout.add(pager);
+
+        final TextAreaItem dsClass = new TextAreaItem("dataSourceClass", "XA Data Source Class");
+
+        layout.add(new ContentGroupLabel("XA Data Source Class"));
+        layout.add(dsClass.asWidget());
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
-            public void onSelection(SelectionEvent<Integer> event) {
-                selectedTab = event.getSelectedItem();
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                String xaDataSourceClass = selectionModel.getSelectedObject().getXaDataSourceClass();
+                dsClass.setValue(xaDataSourceClass);
             }
         });
 
-        tabs.add(driverPanel, "Chose Driver");
-        tabs.selectTab(0);
-
-        layout.add(tabs);
+        // --
 
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+
+
+                errorMessages.setVisible(false);
+
                 SingleSelectionModel<JDBCDriver> selection =
                         (SingleSelectionModel<JDBCDriver>) table.getSelectionModel();
                 JDBCDriver driver = selection.getSelectedObject();
 
                 if(driver!=null) { // force selected driver
+
+
+                    if(dsClass.getValue()==null
+                            || dsClass.getValue().equals(""))
+                    {
+                        errorMessages.setText("XA Datasource Class is required!");
+                        errorMessages.setVisible(true);
+                        return;
+                    }
+
                     editedEntity.setDriverName(driver.getName());
                     editedEntity.setDriverClass(driver.getDriverClass());
-                    editedEntity.setDataSourceClass(driver.getXaDataSourceClass());
+                    editedEntity.setDataSourceClass(dsClass.getValue());
                     editedEntity.setMajorVersion(driver.getMajorVersion());
                     editedEntity.setMinorVersion(driver.getMinorVersion());
 
                     wizard.onConfigureDriver(editedEntity);
                 }
                 else {
-                    Console.warning(Console.CONSTANTS.subsys_jca_dataSource_select_driver(),
-                            "If no driver is available you may need to deploy one!");
+                    errorMessages.setText(Console.CONSTANTS.subsys_jca_dataSource_select_driver()+
+                            ": If no driver is available you may need to deploy one!");
+                    errorMessages.setVisible(true);
                 }
             }
         };

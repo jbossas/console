@@ -30,6 +30,7 @@ import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.StatusItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.dmr.client.ModelNode;
@@ -82,11 +83,12 @@ public class XADataSourceDetails {
         TextBoxItem jndiItem = new JndiNameItem("jndiName", "JNDI");
         StatusItem enabledFlagItem = new StatusItem("enabled", "Is enabled?");
         TextItem driverItem = new TextItem("driverName", "Driver");
+        TextAreaItem dsClass = new TextAreaItem("dataSourceClass", "XA Data Source Class");
 
         CheckBoxItem shareStatements = new CheckBoxItem("sharePreparedStatements", "Share Prepared Statements");
         NumberBoxItem statementCacheSize = new NumberBoxItem("prepareStatementCacheSize", "Statement Cache Size");
 
-        form.setFields(nameItem, jndiItem, enabledFlagItem, driverItem, shareStatements, statementCacheSize);
+        form.setFields(nameItem, jndiItem, dsClass, enabledFlagItem, driverItem, shareStatements, statementCacheSize);
 
         form.setEnabled(false); // currently not editable
 
