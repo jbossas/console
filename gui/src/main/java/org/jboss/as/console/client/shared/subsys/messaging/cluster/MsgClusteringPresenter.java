@@ -65,8 +65,6 @@ public class MsgClusteringPresenter
     private LoadJMSCmd loadJMSCmd;
     private DefaultWindow propertyWindow;
 
-
-
     @ProxyCodeSplit
     @NameToken(NameTokens.MsgClusteringPresenter)
     @Subsystem(name="Clustering", group = "Messaging", key="messaging")
@@ -532,16 +530,99 @@ public class MsgClusteringPresenter
         });
     }
 
-    public void saveClusterConnection(String name, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
+    public void saveClusterConnection(final String name, Map<String, Object> changeset) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("cluster-connection", name);
+
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = clusterConnectionsAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Cluster Connection " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Cluster Connection " + name));
+
+                loadClusterConnections();
+            }
+        });
     }
 
     public void launchNewClusterConnectionWizard() {
-        //To change body of created methods use File | Settings | File Templates.
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Cluster Connection"));
+        window.setWidth(480);
+        window.setHeight(450);
+
+        window.trapWidget(
+                new NewClusterConnectionWizard(MsgClusteringPresenter.this, Collections.EMPTY_LIST).asWidget()
+        );
+
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
-    public void onDeleteClusterConnection(String name) {
-        //To change body of created methods use File | Settings | File Templates.
+    public void onCreateClusterConnection(final ClusterConnection entity) {
+        closeDialogue();
+
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("cluster-connection", entity.getName());
+
+        ModelNode operation = clusterConnectionsAdapter.fromEntity(entity);
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(ADD);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.addingFailed("Cluster Connection " + entity.getName()), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.added("Cluster Connection " + entity.getName()));
+
+                loadClusterConnections();
+            }
+        });
+    }
+
+    public void onDeleteClusterConnection(final String name) {
+        ModelNode address = Baseadress.get();
+        address.add("subsystem", "messaging");
+        address.add("hornetq-server", getCurrentServer());
+        address.add("cluster-connection", name);
+
+        ModelNode operation = new ModelNode();
+        operation.get(ADDRESS).set(address);
+        operation.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.deletionFailed("Cluster Connection " + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.deleted("Cluster Connection " + name));
+
+                loadClusterConnections();
+            }
+        });
     }
 
 }
