@@ -62,8 +62,18 @@ public class HostServerTable {
     private DefaultPager hostPager  ;
     private DefaultPager serverPager;
 
+    private int clipAt = 20;
+
     public HostServerTable(HostServerManagement presenter) {
         this.presenter = presenter;
+    }
+
+    private static String clip(String value, int clipping)
+    {
+        String result = value;
+        if(value!=null && value.length()>clipping)
+            result = value.substring(0, clipping)+"...";
+        return result;
     }
 
     public void setRightToLeft(boolean rightToLeft) {
@@ -250,10 +260,11 @@ public class HostServerTable {
     }
 
     private void updateDisplay() {
-        currentDisplayedValue.setHTML(         // TODO: cope with long names
-                getSelectedHost().getName() + ": "
-                        + getSelectedServer().getName()
-        );
+
+        //String host = clip(getSelectedHost().getName(), clipAt);
+        String server = clip(getSelectedServer().getName(), clipAt);
+
+        currentDisplayedValue.setText(server);
     }
 
     public Host getSelectedHost() {
@@ -362,7 +373,7 @@ public class HostServerTable {
                 Host host,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            safeHtmlBuilder.append(HOST_TEMPLATE.message(host.getName()));
+            safeHtmlBuilder.append(HOST_TEMPLATE.message(clip(host.getName(), clipAt)));
         }
 
     }
@@ -376,7 +387,7 @@ public class HostServerTable {
                 SafeHtmlBuilder safeHtmlBuilder)
         {
             String state = server.isRunning() ? " (active)":"";
-            safeHtmlBuilder.append(SERVER_TEMPLATE.message(server.getName()+state));
+            safeHtmlBuilder.append(SERVER_TEMPLATE.message(clip(server.getName(), clipAt)+state));
         }
 
     }
