@@ -58,7 +58,11 @@ public class DataInput {
     }
 
     public double readDouble() throws IOException {
-        return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
+        // See  https://issues.jboss.org/browse/AS7-4126
+        //return IEEE754.toDouble(bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++], bytes[pos++]);
+        byte doubleBytes[] = new byte[8];
+        readFully(doubleBytes);
+        return IEEE754.toDouble(doubleBytes);
     }
 
     public float readFloat() throws IOException {

@@ -192,6 +192,44 @@ public class IEEE754 {
         }
     }-*/;
 
+
+    public static native double toDouble(byte[] bytes) /*-{
+        var ebits = 11;
+        var fbits = 52;
+
+        // Bytes to bits
+        var bits = [];
+        for (var i = bytes.length; i; i -= 1) {
+            var byteA = bytes[i - 1];
+            for (var j = 8; j; j -= 1) {
+                bits.push(byteA % 2 ? 1 : 0); byteA = byteA >> 1;
+            }
+        }
+        bits.reverse();
+        var str = bits.join('');
+
+        // Unpack sign, exponent, fraction
+        var bias = (1 << (ebits - 1)) - 1;
+        var s = parseInt(str.substring(0, 1), 2) ? -1 : 1;
+        var e = parseInt(str.substring(1, 1 + ebits), 2);
+        var f = parseInt(str.substring(1 + ebits), 2);
+
+        // Produce number
+        if (e === (1 << ebits) - 1) {
+            return f !== 0 ? NaN : s * Infinity;
+        }
+        else if (e > 0) {
+            return s * Math.pow(2, e - bias) * (1 + f / Math.pow(2, fbits));
+        }
+        else if (f !== 0) {
+            return s * Math.pow(2, -(bias-1)) * (f / Math.pow(2, fbits));
+        }
+        else {
+            return s * 0;
+        }
+    }-*/;
+
+
 //    function fromIEEE754Double(b) { return fromIEEE754(b, 11, 52); }
 //    function   toIEEE754Double(v) { return   toIEEE754(v, 11, 52); }
 //    function fromIEEE754Single(b) { return fromIEEE754(b,  8, 23); }
