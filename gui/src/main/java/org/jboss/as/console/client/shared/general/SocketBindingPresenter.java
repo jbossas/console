@@ -42,10 +42,10 @@ import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
+import org.jboss.as.console.client.shared.general.wizard.NewLocalSocketWizard;
 import org.jboss.as.console.client.shared.general.wizard.NewRemoteSocketWizard;
 import org.jboss.as.console.client.shared.general.wizard.NewSocketWizard;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
-import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -486,14 +486,84 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
     }
 
     public void saveLocalSocketBinding(final String name, Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.add("socket-binding-group", selectedSocketGroup);
+        address.add("local-destination-outbound-socket-binding", name);
 
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = localSocketAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Local Socket Binding" + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Local Socket Binding " + name));
+
+                loadLocalSockets(selectedSocketGroup);
+            }
+        });
     }
 
     public void launchNewLocalSocketBindingWizard() {
-        //To change body of created methods use File | Settings | File Templates.
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Local Socket Binding"));
+        window.setWidth(480);
+        window.setHeight(360);
+
+        window.trapWidget(
+                new NewLocalSocketWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
-    public void onDeleteLocalSocketBinding(String name) {
-        //To change body of created methods use File | Settings | File Templates.
+    public void onCreateLocalSocketBinding(final LocalSocketBinding entity) {
+        closeDialoge();
+
+        ModelNode operation = localSocketAdapter.fromEntity(entity);
+        operation.get(OP).set(ADD);
+        operation.get(ADDRESS).add("socket-binding-group", selectedSocketGroup);
+        operation.get(ADDRESS).add("local-destination-outbound-socket-binding", entity.getName());
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.added("Local Socket Binding "+entity.getName()));
+                else
+                    Console.error(Console.MESSAGES.addingFailed("Local Socket Binding " + entity.getName()), response.getFailureDescription());
+
+                loadLocalSockets(selectedSocketGroup);
+            }
+        });
+    }
+
+
+    public void onDeleteLocalSocketBinding(final String name) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("socket-binding-group", selectedSocketGroup);
+        operation.get(ADDRESS).add("local-destination-outbound-socket-binding", name);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.deleted("Local Socket Binding " + name));
+                else
+                    Console.error(Console.MESSAGES.deletionFailed("Local Socket Binding " + name), response.getFailureDescription());
+
+                loadLocalSockets(selectedSocketGroup);
+            }
+        });
     }
 }
