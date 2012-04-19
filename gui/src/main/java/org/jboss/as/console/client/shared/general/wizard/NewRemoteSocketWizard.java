@@ -1,4 +1,4 @@
-package org.jboss.as.console.client.shared.subsys.messaging.cluster;
+package org.jboss.as.console.client.shared.general.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,7 +22,6 @@ import java.util.Map;
  */
 public class NewRemoteSocketWizard {
     private SocketBindingPresenter presenter;
-    private List<String> names;
 
     public NewRemoteSocketWizard(SocketBindingPresenter presenter) {
         this.presenter = presenter;                
@@ -45,7 +44,6 @@ public class NewRemoteSocketWizard {
         }, false);
 
         form.setIsCreate(true);
-        form.setSocketBindings(names);
 
         layout.add(form.asWidget());
 

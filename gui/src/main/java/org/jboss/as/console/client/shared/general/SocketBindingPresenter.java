@@ -42,8 +42,10 @@ import org.jboss.as.console.client.shared.general.model.LocalSocketBinding;
 import org.jboss.as.console.client.shared.general.model.RemoteSocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketBinding;
 import org.jboss.as.console.client.shared.general.model.SocketGroup;
+import org.jboss.as.console.client.shared.general.wizard.NewRemoteSocketWizard;
 import org.jboss.as.console.client.shared.general.wizard.NewSocketWizard;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
+import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -397,16 +399,63 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
 
     }
 
-    public void saveRemoteSocketBinding(String name, Map<String, Object> changeset) {
+    public void saveRemoteSocketBinding(final String name, Map<String, Object> changeset) {
+        ModelNode address = new ModelNode();
+        address.add("socket-binding-group", selectedSocketGroup);
+        address.add("remote-destination-outbound-socket-binding", name);
 
+        ModelNode addressNode = new ModelNode();
+        addressNode.get(ADDRESS).set(address);
+
+        ModelNode operation = remoteSocketAdapter.fromChangeset(changeset, addressNode);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+
+                if(response.isFailure())
+                    Console.error(Console.MESSAGES.modificationFailed("Remote Socket Binding" + name), response.getFailureDescription());
+                else
+                    Console.info(Console.MESSAGES.modified("Remote Socket Binding " + name));
+
+                loadRemoteSockets(selectedSocketGroup);
+            }
+        });
     }
 
     public void launchNewRemoteSocketBindingWizard() {
+        window = new DefaultWindow(Console.MESSAGES.createTitle("Remote Socket Binding"));
+        window.setWidth(480);
+        window.setHeight(360);
 
+        window.trapWidget(
+                new NewRemoteSocketWizard(this).asWidget()
+        );
+
+        window.setGlassEnabled(true);
+        window.center();
     }
 
-    public void onDeleteRemoteSocketBinding(String name) {
+    public void onDeleteRemoteSocketBinding(final String name) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(REMOVE);
+        operation.get(ADDRESS).add("socket-binding-group", selectedSocketGroup);
+        operation.get(ADDRESS).add("remote-destination-outbound-socket-binding", name);
 
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                if(ModelAdapter.wasSuccess(response))
+                    Console.info(Console.MESSAGES.deleted("Remote Socket Binding " + name));
+                else
+                    Console.error(Console.MESSAGES.deletionFailed("Remote Socket Binding " + name), response.getFailureDescription());
+
+                loadRemoteSockets(selectedSocketGroup);
+            }
+        });
     }
 
     public void onCreateRemoteSocketBinding(final RemoteSocketBinding entity) {
@@ -436,8 +485,8 @@ public class SocketBindingPresenter extends Presenter<SocketBindingPresenter.MyV
         window.hide();
     }
 
-    public void saveLocalSocketBinding(String name, Map<String, Object> changeset) {
-        //To change body of created methods use File | Settings | File Templates.
+    public void saveLocalSocketBinding(final String name, Map<String, Object> changeset) {
+
     }
 
     public void launchNewLocalSocketBindingWizard() {

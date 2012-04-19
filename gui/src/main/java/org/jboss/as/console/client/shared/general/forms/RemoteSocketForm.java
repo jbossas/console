@@ -30,20 +30,15 @@ public class RemoteSocketForm {
     boolean isCreate = false;
     private FormToolStrip.FormCallback<RemoteSocketBinding> callback;
 
-    private MultiWordSuggestOracle oracle;
-
 
     public RemoteSocketForm(FormToolStrip.FormCallback<RemoteSocketBinding> callback) {
         this.callback = callback;
-        oracle = new MultiWordSuggestOracle();
-        oracle.setDefaultSuggestionsFromText(Collections.EMPTY_LIST);
+
     }
 
     public RemoteSocketForm(FormToolStrip.FormCallback<RemoteSocketBinding> callback, boolean create) {
         this.callback = callback;
         isCreate = create;
-        oracle = new MultiWordSuggestOracle();
-        oracle.setDefaultSuggestionsFromText(Collections.EMPTY_LIST);
 
     }
 
@@ -66,7 +61,7 @@ public class RemoteSocketForm {
                     @Override
                     public ModelNode getAddress() {
 
-                        ModelNode address = Baseadress.get();
+                        ModelNode address = new ModelNode();
                         address.add("socket-binding-group", "*");
                         address.add("remote-destination-outbound-socket-binding", "*");
                         return address;
@@ -114,10 +109,5 @@ public class RemoteSocketForm {
 
     public void setIsCreate(boolean create) {
         isCreate = create;
-    }
-
-    public void setSocketBindings(List<String> socketBindings) {
-        this.oracle.clear();
-        this.oracle.addAll(socketBindings);
     }
 }
