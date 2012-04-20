@@ -154,15 +154,16 @@
                 <version>${gwt.maven}</version>
                 <configuration>
                     <inplace>true</inplace>
-                    <logLevel>TRACE</logLevel>
+                    <logLevel>ERROR</logLevel>
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
-                    <extraJvmArgs>-Xmx512m -DDEBUG -XX:MaxPermSize=256M</extraJvmArgs>
+                    <extraJvmArgs>-server -XX:MaxPermSize=256M</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
                     <localWorkers>2</localWorkers>
                     <compileReport>false</compileReport>
+                    <optimizationLevel>9</optimizationLevel>
                 </configuration>
                 <executions>
                     <execution>
@@ -199,6 +200,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <debug>false</debug>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
@@ -428,9 +430,9 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <version>${gwt.maven}</version>
                         <configuration>
-                            <disableCastChecking>true</disableCastChecking>
-                            <disableClassMetadata>true</disableClassMetadata>
-                            <optimizationLevel>9</optimizationLevel>
+                             <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
+                            <!--disableCastChecking>true</disableCastChecking>
+                            <disableClassMetadata>true</disableClassMetadata-->
                         </configuration>
                     </plugin>
 

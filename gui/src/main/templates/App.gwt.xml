@@ -87,6 +87,12 @@
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
 
+     <!--removes client-side stack trace info (can reduce size up to 15%)-->
+    <set-property name="compiler.stackMode" value="strip"/>
+
+    <!-- used for minimal-length selector names -->
+    <set-configuration-property name="CssResource.obfuscationPrefix" value="empty" />
+
     <stylesheet src="lab.css" />
 
     <entry-point class='org.jboss.as.console.client.Console'/>
