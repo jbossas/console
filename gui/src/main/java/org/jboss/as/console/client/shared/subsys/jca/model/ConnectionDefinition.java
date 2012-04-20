@@ -41,8 +41,8 @@ public interface ConnectionDefinition {
     void setBackgroundValidation(boolean b);
 
     @Binding(detypedName = "background-validation-millis")
-    long getBackgroundValidationMillis();
-    void setBackgroundValidationMillis(long millis);
+    Long getBackgroundValidationMillis();
+    void setBackgroundValidationMillis(Long millis);
 
     @Binding(skip = true)
     List<PropertyRecord> getProperties();
