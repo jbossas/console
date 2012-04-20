@@ -43,8 +43,10 @@ public class ThreadChartView implements Sampler {
         else
         {
             StringBuilder html = new StringBuilder();
-            html.append("thread-count: The current number of live threads including both daemon and non-daemon threads.\n");
-            html.append("daemon-thread-count:The current number of live daemon threads.\n");
+             html.append("<table class='help-attribute-descriptions'>");
+            html.append("<tr><td>thread-count: </td><td>The current number of live threads including both daemon and non-daemon threads.</td></tr>");
+            html.append("<tr><td>daemon-thread-count: </td><td>The current number of live daemon threads.</td></tr>");
+            html.append("</table>");
 
             sampler = new PlainColumnView(title)
                     .setColumns(threadCols)

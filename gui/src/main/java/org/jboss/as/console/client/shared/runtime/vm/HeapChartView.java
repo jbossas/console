@@ -61,10 +61,12 @@ public class HeapChartView implements Sampler {
 
             if(hasHelp) {
                 StringBuilder html = new StringBuilder();
-                html.append("max: The maximum amount of memory in bytes that can be used for memory management.\n");
-                html.append("used: The amount of used memory in mega bytes.\n");
-                html.append("comitted: The amount of memory in bytes that is committed for the Java virtual machine to use.\n");
-                html.append("init:The amount of memory in bytes that the Java virtual machine initially requests from the operating system for memory management.\n");
+                html.append("<table class='help-attribute-descriptions'>");
+                html.append("<tr><td>max: </td><td>The maximum amount of memory in bytes that can be used for memory management.</td></tr>");
+                html.append("<tr><td>used: </td><td>The amount of used memory in mega bytes.</td></tr>");
+                html.append("<tr><td>comitted: </td><td>The amount of memory in bytes that is committed for the Java virtual machine to use.</td></tr>");
+                html.append("<tr><td>init: </td><td>The amount of memory in bytes that the Java virtual machine initially requests from the operating system for memory management.</td></tr>");
+                html.append("</table>");
 
                 ((PlainColumnView)sampler).setStaticHelp(new StaticHelpPanel(html.toString()));
             }

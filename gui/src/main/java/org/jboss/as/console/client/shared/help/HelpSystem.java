@@ -152,6 +152,7 @@ public class HelpSystem {
                     matchSubElements(descriptionModel, attributeNames, html);
 
                     html.appendHtmlConstant("</table>");
+
                     callback.onSuccess(new HTML(html.toSafeHtml()));
                 }
 
