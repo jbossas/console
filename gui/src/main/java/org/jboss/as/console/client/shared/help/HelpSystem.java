@@ -4,6 +4,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
+import org.jboss.as.console.client.shared.Preferences;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
@@ -49,6 +50,7 @@ public class HelpSystem {
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
         operation.get(ADDRESS).set(resourceAddress);
         operation.get(RECURSIVE).set(true);
+        operation.get(LOCALE).set(getLocale());
 
         // build field name list
 
@@ -110,6 +112,12 @@ public class HelpSystem {
         ModelNode getAddress();
     }
 
+    private String getLocale() {
+        String locale = Preferences.get("as7_ui_locale") != null ?
+                Preferences.get("as7_ui_locale") : "en";
+        return locale;
+
+    }
     public void getMetricDescriptions(
             AddressCallback address,
             Column[] columns,
@@ -122,6 +130,7 @@ public class HelpSystem {
 
         final ModelNode operation = address.getAddress();
         operation.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+        operation.get(LOCALE).set(getLocale());
 
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
