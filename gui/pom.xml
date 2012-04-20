@@ -363,6 +363,7 @@
                     <additionalClasspathElements>
                         <additionalClasspathElement>${basedir}/war/WEB-INF/classes/</additionalClasspathElement>
                         <additionalClasspathElement>${basedir}/target/generated-sources/</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/target/generated-sources/apt</additionalClasspathElement>
                         <additionalClasspathElement>${project.build.testSourceDirectory}</additionalClasspathElement>
                     </additionalClasspathElements>
                     <includes>
