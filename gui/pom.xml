@@ -157,7 +157,7 @@
                     <logLevel>ERROR</logLevel>
                     <runTarget>App.html</runTarget>
                     <warSourceDirectory>war</warSourceDirectory>
-                    <extraJvmArgs>-server -XX:MaxPermSize=256M</extraJvmArgs>
+                    <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
                     <servicePattern>**/*Service.java</servicePattern>
                     <style>OBF</style>
                     <hostedWebapp>war</hostedWebapp>
