@@ -128,15 +128,6 @@ public interface CacheContainer extends NamedEntity {
     String getExecutor();
     void setExecutor(String executor);
 
-    @Binding(detypedName="transport/TRANSPORT/site")
-    @FormItem(label="Site",
-            required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX",
-            tabName="subsys_infinispan_transport")
-    String getSite();
-    void setSite(String site);
-
     @Binding(detypedName="transport/TRANSPORT/lock-timeout")
     @FormItem(defaultValue = "60000",
             label="Lock Timeout (ms)",
@@ -147,23 +138,14 @@ public interface CacheContainer extends NamedEntity {
     Long getLockTimeout();
     void setLockTimeout(Long lockTimeout);
 
-    @Binding(detypedName="transport/TRANSPORT/rack")
-    @FormItem(label="Rack",
+    @Binding(detypedName="transport/TRANSPORT/cluster")
+    @FormItem(label="Cluster",
             required=false,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             tabName="subsys_infinispan_transport")
-    String getRack();
-    void setRack(String rack);
-
-    @Binding(detypedName="transport/TRANSPORT/machine")
-    @FormItem(label="Machine",
-            required=false,
-            formItemTypeForEdit="TEXT_BOX",
-            formItemTypeForAdd="TEXT_BOX",
-            tabName="subsys_infinispan_transport")
-    String getMachine();
-    void setMachine(String machine);
+    String getCluster();
+    void setCluster(String cluster);
 
     @Binding(detypedName="aliases",
              listType="java.lang.String")
