@@ -431,6 +431,7 @@
                         <version>${gwt.maven}</version>
                         <configuration>
                              <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
+                                <optimizationLevel>9</optimizationLevel>
                             <!--disableCastChecking>true</disableCastChecking>
                             <disableClassMetadata>true</disableClassMetadata-->
                         </configuration>
