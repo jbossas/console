@@ -24,10 +24,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.plugins.SubsystemExtension;
 import org.jboss.as.console.client.plugins.SubsystemRegistry;
 import org.jboss.as.console.client.shared.model.SubsystemRecord;
+import org.jboss.as.console.client.widgets.tree.GroupItem;
 import org.jboss.ballroom.client.layout.DefaultTreeItem;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
@@ -72,7 +74,7 @@ public class SubsystemTreeBuilder {
         {
             List<SubsystemExtension> items = grouped.get(groupName);
 
-            final TreeItem groupTreeItem = new DefaultTreeItem(groupName);
+            final GroupItem groupTreeItem = new GroupItem(groupName);
 
             for(SubsystemExtension candidate : items)
             {
