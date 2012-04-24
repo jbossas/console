@@ -247,7 +247,8 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
                                             public void execute() {
 
                                                 // force reload of server selector (LHS nav)
-                                                getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+                                                //getEventBus().fireEvent(new StaleModelEvent(StaleModelEvent.SERVER_INSTANCES));
+                                                onReset();
                                             }
                                         });
 

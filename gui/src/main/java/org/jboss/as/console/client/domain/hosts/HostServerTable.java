@@ -391,7 +391,8 @@ public class HostServerTable {
                 ServerInstance server,
                 SafeHtmlBuilder safeHtmlBuilder)
         {
-            String state = server.isRunning() ? " (active)":"";
+           // String state = server.isRunning() ? " (active)":"";
+            String state = "";
             safeHtmlBuilder.append(SERVER_TEMPLATE.message(clip(server.getName(), clipAt)+state));
         }
 
