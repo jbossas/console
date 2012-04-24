@@ -11,11 +11,4 @@ public class GroupItem extends TreeItem {
         getElement().setAttribute("style", "cursor:pointer;");
     }
 
-    @Override
-    public void setState(boolean open) {
-        super.setState(open);
-
-        String text = open ? "open " : "close ";
-        System.out.println(text+getText());
-    }
 }
