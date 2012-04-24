@@ -45,56 +45,67 @@ public class DomainResponseProcessor implements ResponseProcessor {
             List<Property> serverGroups = response.get(SERVER_GROUPS).asPropertyList();
             for(Property serverGroup : serverGroups)
             {
+                //System.out.println("\n\n");
                 ModelNode serverGroupValue = serverGroup.getValue();
+                //System.out.println("server-group: "+serverGroup.getName());
 
-                List<Property> hosts = serverGroupValue.asPropertyList();
+                //  -- Server Group --
+
+                List<Property> hosts = serverGroupValue.get("host").asPropertyList();
                 for(Property host : hosts)
                 {
-                    Property hostValue = host.getValue().asProperty();
-                    final String actualHostName = hostValue.getName();
+                    // -- Host  --
 
-                    //System.out.println(actualHostName +" > "+hostValue.getValue());
-
-                    List<Property> servers = hostValue.getValue().asPropertyList();
-                    for(Property server : servers)
-                    {
-                        ModelNode serverValue = server.getValue();
-                        final String actualServerName = server.getName();
-
-                        ModelNode serverResponse = serverValue.get(RESPONSE);
-                        //System.out.println(actualServerName + " > " + serverResponse);
-
-                        if(serverResponse.hasDefined(RESPONSE_HEADERS))
-                        {
-                            List<Property> headers = serverResponse.get(RESPONSE_HEADERS).asPropertyList();
-                            for(Property header : headers)
-                            {
-                                if(PROCESS_STATE.equals(header.getName()))
-                                {
-                                    String headerValue = header.getValue().asString();
-
-                                    if(RESTART_REQUIRED.equals(headerValue))
-                                    {
-                                        staleModel=true;
-                                        reloadState.setRestartRequired(
-                                                "Host: "+actualHostName+", server: "+actualServerName,
-                                                staleModel);
-                                    }
-                                    else if(RELOAD_REQUIRED.equals(headerValue))
-                                    {
-                                        staleModel=true;
-                                        reloadState.setReloadRequired(
-                                                "Host: "+actualHostName+", server: "+actualServerName
-                                                , staleModel);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    ModelNode hostValue = host.getValue();
+                    //System.out.println("host: "+host.getName());
+                    parseHost(host.getName(), hostValue, reloadState);
                 }
             }
         }
 
         return staleModel;
+    }
+
+    private static void parseHost(final String hostName, ModelNode hostValue, ReloadState reloadState) {
+
+        //System.out.println(hostValue);
+
+        List<Property> servers = hostValue.asPropertyList();
+
+        for(Property server : servers)
+        {
+
+            // -- Server  --
+            //System.out.println("server: "+ server.getName());
+
+            ModelNode serverResponse = server.getValue().get(RESPONSE);
+
+            if(serverResponse.hasDefined(RESPONSE_HEADERS))
+            {
+                List<Property> headers = serverResponse.get(RESPONSE_HEADERS).asPropertyList();
+                for(Property header : headers)
+                {
+                    if(PROCESS_STATE.equals(header.getName()))
+                    {
+                        String headerValue = header.getValue().asString();
+
+                        if(RESTART_REQUIRED.equals(headerValue))
+                        {
+                            reloadState.setRestartRequired(
+                                    "Host: "+hostName+", server: "+server.getName(),
+                                    true
+                            );
+                        }
+                        else if(RELOAD_REQUIRED.equals(headerValue))
+                        {
+                            reloadState.setReloadRequired(
+                                    "Host: "+hostName+", server: "+server.getName(),
+                                    true
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 }
