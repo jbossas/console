@@ -29,8 +29,8 @@ public class JMSMetricView extends SuspendableViewImpl implements JMSMetricPrese
         DefaultTabLayoutPanel tabLayoutpanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
         tabLayoutpanel.addStyleName("default-tabpanel");
 
-        tabLayoutpanel.add(topicMetrics.asWidget(), "Topics", true);
         tabLayoutpanel.add(queueMetrics.asWidget(), "Queues", true);
+        tabLayoutpanel.add(topicMetrics.asWidget(), "Topics", true);
 
         tabLayoutpanel.selectTab(0);
 
