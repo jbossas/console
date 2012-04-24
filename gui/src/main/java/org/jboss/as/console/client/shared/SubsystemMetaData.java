@@ -117,6 +117,7 @@ public class SubsystemMetaData {
     }
 
     public static void bootstrap(SubsystemRegistry registry) {
+
         List<SubsystemExtension> defaults = new ArrayList<SubsystemExtension>();
 
         for(String groupName : groups.keySet())
@@ -195,7 +196,18 @@ public class SubsystemMetaData {
     public static String[] resolveTokens(String key) {
         String[] token = new String[2];
 
-        for(String groupName : groups.keySet())
+        final SubsystemRegistry subsystemRegistry = Console.MODULES.getSubsystemRegistry();
+        for(SubsystemExtension ext : subsystemRegistry.getExtensions())
+        {
+            if(ext.getKey().equals(key))
+            {
+                token[0] = ext.getName();
+                token[1] = ext.getToken();
+                break;
+            }
+        }
+
+        /*for(String groupName : groups.keySet())
         {
             SubsystemGroup group = groups.get(groupName);
             for(SubsystemGroupItem item : group.getItems())
@@ -208,7 +220,7 @@ public class SubsystemMetaData {
                     break;
                 }
             }
-        }
+        } */
 
         return token;
     }
