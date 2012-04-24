@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -57,6 +58,7 @@ import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.*;
@@ -135,9 +137,14 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     private void loadHostData() {
 
         if(!serverSelection.isSet())
-            throw new RuntimeException("Host selection not set!");
+        {
+            Log.debug("server selection not set!");
+            return;
+        }
 
-        hostInfoStore.getServerInstances(serverSelection.getHost(), new SimpleCallback<List<ServerInstance>>() {
+        final String hostName = serverSelection.getHost();
+
+        hostInfoStore.getServerInstances(hostName, new SimpleCallback<List<ServerInstance>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -147,7 +154,7 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
             @Override
             public void onSuccess(List<ServerInstance> result) {
                 serverInstances = result;
-                getView().updateInstances(serverSelection.getHost(), result);
+                getView().updateInstances(hostName, result);
             }
         });
     }
@@ -158,11 +165,22 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     }
 
     @Override
-    public void onServerSelection(String hostName, ServerInstance server) {
-        if(isVisible() && serverSelection.isSet())
-        {
-            loadHostData();
-        }
+    public void onServerSelection(final String hostName, final ServerInstance server) {
+
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                if(hostName!=null && server==null) // host changed, but has no servers
+                {
+                    getView().updateInstances(hostName, Collections.EMPTY_LIST);
+                }
+                else if(isVisible() && serverSelection.isSet())
+                {
+                    loadHostData();
+                }
+            }
+        });
     }
 
     public void onFilterByGroup(String serverConfig) {

@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.domain.runtime;
 
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,8 +14,10 @@ import org.jboss.as.console.client.widgets.nav.Predicate;
 import org.jboss.ballroom.client.layout.LHSNavTree;
 import org.jboss.ballroom.client.layout.LHSNavTreeItem;
 import org.jboss.ballroom.client.layout.LHSTreeSection;
+import org.jboss.ballroom.client.widgets.forms.ComboBox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,14 +60,18 @@ class DomainRuntimeNavigation {
 
         //Tree statusTree = new LHSNavTree("domain-runtime");
 
-        LHSTreeSection statusLeaf = new LHSTreeSection("Domain Status");
-        navigation.addItem(statusLeaf);
+        LHSTreeSection domainLeaf = new LHSTreeSection("Domain");
+        navigation.addItem(domainLeaf);
+
+
+        domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
 
         LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), NameTokens.InstancesPresenter);
-        LHSNavTreeItem jvm = new LHSNavTreeItem("JVM Status", NameTokens.HostVMMetricPresenter);
+        domainLeaf.addItem(serverInstances);
+        domainLeaf.addItem(serverInstances);
 
-        statusLeaf.addItem(serverInstances);
-        statusLeaf.addItem(jvm);
+        domainLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
+
 
         //DisclosurePanel statusPanel  = new DisclosureStackPanel("Domain Status").asWidget();
         //statusPanel.setContent(statusTree);
@@ -72,7 +79,7 @@ class DomainRuntimeNavigation {
 
         // -------------
 
-        metricLeaf = new LHSTreeSection("Subsystem Metrics");
+        metricLeaf = new LHSTreeSection("Server Status");
         navigation.addItem(metricLeaf);
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", NameTokens.DataSourceMetricPresenter);
@@ -80,6 +87,7 @@ class DomainRuntimeNavigation {
         LHSNavTreeItem web = new LHSNavTreeItem("Web", NameTokens.WebMetricPresenter);
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", NameTokens.TXMetrics);
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
+
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
@@ -97,11 +105,11 @@ class DomainRuntimeNavigation {
 
         // ----------------------------------------------------
 
-        LHSTreeSection deploymentLeaf = new LHSTreeSection("Deployments");
-        navigation.addItem(deploymentLeaf);
+       // LHSTreeSection deploymentLeaf = new LHSTreeSection("Deployments");
+        //navigation.addItem(deploymentLeaf);
 
-        deploymentLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentsPresenter));
-        deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
+
+       // deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
 
         navigation.expandTopLevel();
 
@@ -131,9 +139,13 @@ class DomainRuntimeNavigation {
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
+        LHSNavTreeItem jvm = new LHSNavTreeItem("JVM", NameTokens.HostVMMetricPresenter);
+        metricLeaf.addItem(jvm);
+
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
+
             for(Predicate predicate : metricPredicates)
             {
                 if(predicate.matches(subsys.getKey()))
@@ -152,12 +164,4 @@ class DomainRuntimeNavigation {
 
     }
 
-
-    public void clearSelection() {
-        serverPicker.clearSelection();
-    }
-
-    public void setSelectedServer(String hostName, ServerInstance server) {
-        serverPicker.setSelected(server, true);
-    }
 }

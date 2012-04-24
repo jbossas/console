@@ -313,14 +313,19 @@ public class HostServerTable {
      * Display the currently active servers for selection
      * @param servers
      */
-    public void setServer(List<ServerInstance> servers) {
-
-        serverPager.setVisible(servers.size()>=5);
+    public void setServer(Host selectedHost, List<ServerInstance> servers) {
 
         serverProvider.setList(servers);
 
+        serverPager.setVisible(servers.size()>=5);
+
         if(!servers.isEmpty())
             serverList.getSelectionModel().setSelected(servers.get(0), true);
+        else
+        {
+            currentDisplayedValue.setText("");
+            presenter.onServerSelected(selectedHost, null);
+        }
     }
 
     public void setHosts(List<Host> hosts) {

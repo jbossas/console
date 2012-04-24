@@ -35,6 +35,7 @@ import org.jboss.as.console.client.shared.state.CurrentServerSelection;
 import org.jboss.as.console.client.shared.state.ServerSelectionEvent;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +44,8 @@ import java.util.List;
  */
 public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyView, DomainRuntimePresenter.MyProxy>
         implements ServerSelectionEvent.ServerSelectionListener,
-        StaleModelEvent.StaleModelListener{
+        StaleModelEvent.StaleModelListener,
+        HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
     private boolean hasBeenRevealed = false;
@@ -71,12 +73,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
         void setPresenter(DomainRuntimePresenter presenter);
         void setHosts(List<Host> hosts);
         void setServer(List<ServerInstance> server);
-
         void setSubsystems(List<SubsystemRecord> result);
-
-        void clearSelection();
-
-        void setSelectedServer(String hostName, ServerInstance server);
     }
 
     @Inject
@@ -105,6 +102,7 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
 
         getEventBus().addHandler(StaleModelEvent.TYPE, this);
         getEventBus().addHandler(ServerSelectionEvent.TYPE, DomainRuntimePresenter.this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, DomainRuntimePresenter.this);
 
     }
 
@@ -140,6 +138,11 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
             });
 
         }
+
+    }
+
+    @Override
+    public void onHostSelection(String hostName) {
 
     }
 
@@ -207,15 +210,19 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
     @Override
     public void onServerSelection(final String hostName, final ServerInstance server) {
 
-        getView().setSelectedServer(hostName, server);
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                loadSubsystems(server);
+                if(server!=null)
+                    loadSubsystems(server);
+                else
+                {
+                    getView().setServer(Collections.EMPTY_LIST);
+                }
+
             }
         });
-
 
     }
 
@@ -260,12 +267,9 @@ public class DomainRuntimePresenter extends Presenter<DomainRuntimePresenter.MyV
                 || StaleModelEvent.SERVER_CONFIGURATIONS.equals(modelName))
         {
 
-
             // clear current selection
             serverSelection.setHost(null);
             serverSelection.setServer(null);
-
-            getView().clearSelection();
 
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override

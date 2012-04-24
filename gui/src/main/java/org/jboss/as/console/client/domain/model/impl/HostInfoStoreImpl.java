@@ -561,8 +561,6 @@ public class HostInfoStoreImpl implements HostInformationStore {
         List<PropertyBinding> bindings = propertyMetaData.getBindingsForType(Server.class);
         ModelNode operation  = ModelAdapter.detypedFromChangeset(proto, changedValues, bindings);
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {

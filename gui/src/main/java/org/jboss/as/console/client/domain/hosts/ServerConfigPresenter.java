@@ -333,8 +333,6 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                System.out.println(response);
-
                 if(response.isFailure())
                 {
                     Console.error(Console.MESSAGES.modificationFailed("Server Configuration ") +name, response.getFailureDescription());

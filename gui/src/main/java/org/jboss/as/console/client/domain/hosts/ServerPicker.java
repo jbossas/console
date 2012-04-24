@@ -63,6 +63,8 @@ public class ServerPicker implements HostServerManagement {
 
     public void setSelected(ServerInstance server, boolean isSelected)
     {
+        if(null==server) return;
+
         if(!server.isRunning())
         {
             Console.warning("Selected in-active server instance:"+server.getName());
@@ -93,14 +95,22 @@ public class ServerPicker implements HostServerManagement {
     }
 
     @Override
-    public void loadServer(Host selectedHost) {
-
-        serverSelection.setServer(Collections.EMPTY_LIST);
+    public void loadServer(final Host selectedHost) {
 
         loadServerCmd.execute(selectedHost.getName(), new SimpleCallback<List<ServerInstance>>() {
             @Override
             public void onSuccess(List<ServerInstance> result) {
-                serverSelection.setServer(result);
+
+                serverSelection.setServer(selectedHost, result);
+
+                if(result.isEmpty())
+                {
+                    // no server on host. some operation are not available
+                    Console.getEventBus().fireEvent(
+                            new HostSelectionEvent(selectedHost.getName())
+                    );
+
+                }
             }
         });
     }
@@ -108,24 +118,18 @@ public class ServerPicker implements HostServerManagement {
     @Override
     public void onServerSelected(final Host host, final ServerInstance server) {
 
-        //System.out.println("** Fire " + host.getName()+"/"+server.getName());
+        String name = server!=null ? server.getName(): "";
+
+        //System.out.println("** Fire " + host.getName()+"/"+ name);
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                Console.getEventBus().fireEvent(
-                        new HostSelectionEvent(host.getName())
-                );
-
                 Console.getEventBus().fireEvent(
                         new ServerSelectionEvent(host.getName(), server)
                 );
             }
         });
 
-    }
-
-    public void clearSelection() {
-        serverSelection.clearSelection();
     }
 }
