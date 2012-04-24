@@ -105,12 +105,6 @@ class DomainRuntimeNavigation {
 
         // ----------------------------------------------------
 
-       // LHSTreeSection deploymentLeaf = new LHSTreeSection("Deployments");
-        //navigation.addItem(deploymentLeaf);
-
-
-       // deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
-
         navigation.expandTopLevel();
 
         stack.add(navigation);
@@ -159,6 +153,8 @@ class DomainRuntimeNavigation {
             }
         }
 
+        final LHSNavTreeItem webservices = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
+        metricLeaf.addItem(webservices);
 
         navigation.expandTopLevel();
 
