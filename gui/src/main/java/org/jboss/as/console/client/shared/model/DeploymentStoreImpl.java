@@ -84,6 +84,8 @@ public class DeploymentStoreImpl implements DeploymentStore {
                             rec.setRuntimeName(handler.get("runtime-name").asString());
                             if (isStandalone) rec.setEnabled(handler.get("enabled").asBoolean());
                             if (!isStandalone) rec.setEnabled(true);
+                            if (isStandalone) rec.setPersistent(handler.get("persistent").asBoolean());
+                            if (!isStandalone) rec.setPersistent(true);
                             rec.setServerGroup(null);
                             deployments.add(rec);
                         } catch (IllegalArgumentException e) {
@@ -107,7 +109,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
         operation.get(ADDRESS).add("server-group", "*");
         operation.get(ADDRESS).add("deployment", "*");
         operation.get(OP).set(READ_RESOURCE_OPERATION);
-        
+
         dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -120,7 +122,7 @@ public class DeploymentStoreImpl implements DeploymentStore {
                 if (!response.get("result").isDefined()) {
                     callback.onFailure(new Exception("Unexpected dmr result=" + response.toString()));
                 }
-                
+
                 List<ModelNode> payload = response.get("result").asList();
                 for (ModelNode deployment : payload) {
                     String serverGroup = deployment.get("address").asList().get(0).get("server-group").asString();
@@ -131,12 +133,13 @@ public class DeploymentStoreImpl implements DeploymentStore {
                         rec.setServerGroup(serverGroup);
                         rec.setRuntimeName(resultNode.get("runtime-name").asString());
                         rec.setEnabled(resultNode.get("enabled").asBoolean());
+                        rec.setPersistent(true);
                         deployments.add(rec);
                     } catch (IllegalArgumentException e) {
                         Log.error("Failed to parse data source representation", e);
                     }
                 }
-                
+
                 callback.onSuccess(deployments);
             }
         });
@@ -164,9 +167,9 @@ public class DeploymentStoreImpl implements DeploymentStore {
     }
 
     @Override
-    public void addToServerGroups(String[] serverGroups, 
-                                  boolean enable, 
-                                  DeploymentRecord deploymentRecord, 
+    public void addToServerGroups(String[] serverGroups,
+                                  boolean enable,
+                                  DeploymentRecord deploymentRecord,
                                   AsyncCallback<DMRResponse> callback) {
         ModelNode operation = new ModelNode();
         operation.get(OP).set(COMPOSITE);
@@ -183,10 +186,10 @@ public class DeploymentStoreImpl implements DeploymentStore {
         }
 
         operation.get(STEPS).set(steps);
-        
+
         doDeploymentCommand(operation, callback);
     }
-    
+
     private ModelNode makeOperation(String command, String serverGroup, DeploymentRecord deployment) {
         ModelNode operation = new ModelNode();
         if ((serverGroup != null) && (!serverGroup.equals(""))) {
