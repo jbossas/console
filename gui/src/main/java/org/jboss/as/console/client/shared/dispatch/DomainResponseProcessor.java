@@ -47,33 +47,47 @@ public class DomainResponseProcessor implements ResponseProcessor {
             {
                 ModelNode serverGroupValue = serverGroup.getValue();
 
-                List<Property> servers = serverGroupValue.asPropertyList();
-                for(Property server : servers)
+                List<Property> hosts = serverGroupValue.asPropertyList();
+                for(Property host : hosts)
                 {
-                    ModelNode serverValue = server.getValue();
-                    ModelNode serverResponse = serverValue.get(RESPONSE);
+                    Property hostValue = host.getValue().asProperty();
+                    final String actualHostName = hostValue.getName();
 
-                    if(serverResponse.hasDefined(RESPONSE_HEADERS))
+                    //System.out.println(actualHostName +" > "+hostValue.getValue());
+
+                    List<Property> servers = hostValue.getValue().asPropertyList();
+                    for(Property server : servers)
                     {
-                        List<Property> headers = serverResponse.get(RESPONSE_HEADERS).asPropertyList();
-                        for(Property header : headers)
+                        ModelNode serverValue = server.getValue();
+                        final String actualServerName = server.getName();
+
+                        ModelNode serverResponse = serverValue.get(RESPONSE);
+                        //System.out.println(actualServerName + " > " + serverResponse);
+
+                        if(serverResponse.hasDefined(RESPONSE_HEADERS))
                         {
-                            if(PROCESS_STATE.equals(header.getName()))
+                            List<Property> headers = serverResponse.get(RESPONSE_HEADERS).asPropertyList();
+                            for(Property header : headers)
                             {
-                                String headerValue = header.getValue().asString();
-
-                                if(RESTART_REQUIRED.equals(headerValue))
+                                if(PROCESS_STATE.equals(header.getName()))
                                 {
-                                    staleModel=true;
-                                    reloadState.setRestartRequired(server.getName(), staleModel);
-                                }
-                                else if(RELOAD_REQUIRED.equals(headerValue))
-                                {
-                                    staleModel=true;
-                                    reloadState.setReloadRequired(server.getName(), staleModel);
-                                }
+                                    String headerValue = header.getValue().asString();
 
-                                System.out.println(server.getName() +" >> "+staleModel);
+                                    if(RESTART_REQUIRED.equals(headerValue))
+                                    {
+                                        staleModel=true;
+                                        reloadState.setRestartRequired(
+                                                "Host: "+actualHostName+", server: "+actualServerName,
+                                                staleModel);
+                                    }
+                                    else if(RELOAD_REQUIRED.equals(headerValue))
+                                    {
+                                        staleModel=true;
+                                        reloadState.setReloadRequired(
+                                                "Host: "+actualHostName+", server: "+actualServerName
+                                                , staleModel);
+                                    }
+                                }
                             }
                         }
                     }
