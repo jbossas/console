@@ -53,7 +53,8 @@ import java.util.List;
  * @date 3/2/11
  */
 public class HostMgmtPresenter
-        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy> {
+        extends Presenter<HostMgmtPresenter.MyView, HostMgmtPresenter.MyProxy>
+    implements HostSelectionEvent.HostSelectionListener {
 
     private final PlaceManager placeManager;
 
@@ -93,9 +94,15 @@ public class HostMgmtPresenter
     }
 
     @Override
+    public void onHostSelection(String hostName) {
+        hostSelection.setName(hostName);
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getEventBus().addHandler(HostSelectionEvent.TYPE, this);
     }
 
     @Override

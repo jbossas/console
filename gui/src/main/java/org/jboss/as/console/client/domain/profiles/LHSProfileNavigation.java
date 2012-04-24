@@ -48,7 +48,6 @@ class LHSProfileNavigation {
     private ScrollPanel scroll;
     private LHSNavTree navigation;
     private LHSTreeSection subsystemLeaf;
-    private LHSTreeSection groupsLeaf;
     private LHSTreeSection commonLeaf;
     private ProfileSelector profileSelector;
 
@@ -70,13 +69,6 @@ class LHSProfileNavigation {
 
         subsystemLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_subsystems());
         navigation.addItem(subsystemLeaf);
-
-        groupsLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverGroups());
-        navigation.addItem(groupsLeaf);
-
-        LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
-        groupsLeaf.addItem(groupItem);
-
 
         // --------
 

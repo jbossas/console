@@ -68,8 +68,8 @@ class LHSHostsNavigation {
         navigation.getElement().setAttribute("aria-label", "Profile Tasks");
 
 
-        LHSTreeSection hostLeaf = new LHSTreeSection(Console.CONSTANTS.common_label_serverConfigs());
-        navigation.addItem(hostLeaf);
+        LHSTreeSection serverLeaf = new LHSTreeSection("Server");
+        navigation.addItem(serverLeaf);
 
         LHSNavTreeItem serversItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverConfigs(), NameTokens.ServerPresenter);
         //LHSNavTreeItem paths = new LHSNavTreeItem(Console.CONSTANTS.common_label_paths(), "hosts/host-paths");
@@ -77,10 +77,19 @@ class LHSHostsNavigation {
         LHSNavTreeItem interfaces = new LHSNavTreeItem(Console.CONSTANTS.common_label_interfaces(), "host-interfaces");
         LHSNavTreeItem properties = new LHSNavTreeItem("Host Properties", "host-properties");
 
-        hostLeaf.addItem(serversItem);
-        hostLeaf.addItem(jvms);
-        hostLeaf.addItem(interfaces);
-        hostLeaf.addItem(properties);
+        serverLeaf.addItem(serversItem);
+
+
+        LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
+        serverLeaf.addItem(groupItem);
+
+
+        LHSTreeSection hostsLeaf = new LHSTreeSection("Host Settings");
+        navigation.addItem(hostsLeaf);
+        hostsLeaf.addItem(jvms);
+        hostsLeaf.addItem(interfaces);
+        hostsLeaf.addItem(properties);
+
 
         stack.add(navigation);
         navigation.expandTopLevel();

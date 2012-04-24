@@ -616,21 +616,29 @@ public class HostInfoStoreImpl implements HostInformationStore {
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
 
-                List<Property> jvms = result.get(RESULT).asPropertyList();
-                if(!jvms.isEmpty())
+                if(result.isFailure())
                 {
-                    // select first entry
-                    Property property = jvms.get(0);
-                    Jvm jvm = jvmAdapter.fromDMR(property.getValue().asObject());
-                    jvm.setName(property.getName());
-
-                    callback.onSuccess(jvm);
+                    callback.onFailure(new Throwable("Failed to load jvms: "+result.getFailureDescription()));
                 }
                 else
                 {
-                    callback.onSuccess(null);
-                }
 
+
+                    List<Property> jvms = result.get(RESULT).asPropertyList();
+                    if(!jvms.isEmpty())
+                    {
+                        // select first entry
+                        Property property = jvms.get(0);
+                        Jvm jvm = jvmAdapter.fromDMR(property.getValue().asObject());
+                        jvm.setName(property.getName());
+
+                        callback.onSuccess(jvm);
+                    }
+                    else
+                    {
+                        callback.onSuccess(null);
+                    }
+                }
             }
         });
 
@@ -649,21 +657,30 @@ public class HostInfoStoreImpl implements HostInformationStore {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 ModelNode result = dmrResponse.get();
-                List<Property> properties = result.get(RESULT).asPropertyList();
-                List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
 
-                for(Property prop : properties)
+
+                if(result.isFailure())
                 {
-                    PropertyRecord record = factory.property().as();
-                    record.setKey(prop.getName());
-                    ModelNode payload = prop.getValue().asObject();
-                    record.setValue(payload.get("value").asString());
-                    record.setBootTime(payload.get("boot-time").asBoolean());
-
-                    records.add(record);
+                    callback.onFailure(new Throwable("Failed to load server:"+result.getFailureDescription()));
                 }
+                else
+                {
+                    List<Property> properties = result.get(RESULT).asPropertyList();
+                    List<PropertyRecord> records = new ArrayList<PropertyRecord>(properties.size());
 
-                callback.onSuccess(records);
+                    for(Property prop : properties)
+                    {
+                        PropertyRecord record = factory.property().as();
+                        record.setKey(prop.getName());
+                        ModelNode payload = prop.getValue().asObject();
+                        record.setValue(payload.get("value").asString());
+                        record.setBootTime(payload.get("boot-time").asBoolean());
+
+                        records.add(record);
+                    }
+
+                    callback.onSuccess(records);
+                }
             }
         });
     }

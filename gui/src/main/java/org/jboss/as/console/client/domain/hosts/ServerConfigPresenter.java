@@ -19,6 +19,7 @@
 
 package org.jboss.as.console.client.domain.hosts;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -183,8 +184,10 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     private void loadServerConfigurations(final String selectedConfigName) {
 
         if(!hostSelection.isSet())
-            throw new RuntimeException("Host selection not set!");
-
+        {
+            Log.debug("Host selection not set!");
+            return;
+        }
 
         hostInfoStore.getServerConfigurations(hostSelection.getName(), new SimpleCallback<List<Server>>() {
             @Override
@@ -210,10 +213,16 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     }
 
     @Override
-    public void onHostSelection(String hostName) {
+    public void onHostSelection(final String hostName) {
 
-        if(isVisible())
-            loadServerConfigurations(null);
+        if(isVisible()) {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    loadServerConfigurations(null);
+                }
+            });
+        }
     }
 
     public void launchNewConfigDialoge() {
