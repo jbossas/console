@@ -80,7 +80,7 @@ class LHSHostsNavigation {
         serverLeaf.addItem(serversItem);
 
 
-        LHSNavTreeItem groupItem = new LHSNavTreeItem(Console.CONSTANTS.common_label_serverGroupConfigurations(), NameTokens.ServerGroupPresenter);
+        LHSNavTreeItem groupItem = new LHSNavTreeItem("Server Groups", NameTokens.ServerGroupPresenter);
         serverLeaf.addItem(groupItem);
 
 
