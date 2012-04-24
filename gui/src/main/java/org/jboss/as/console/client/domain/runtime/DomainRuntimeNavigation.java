@@ -64,7 +64,7 @@ class DomainRuntimeNavigation {
         navigation.addItem(domainLeaf);
 
 
-        domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
+        //domainLeaf.addItem(new LHSNavTreeItem("Overview", ""));
 
         LHSNavTreeItem serverInstances= new LHSNavTreeItem(Console.CONSTANTS.common_label_serverInstances(), NameTokens.InstancesPresenter);
         domainLeaf.addItem(serverInstances);
