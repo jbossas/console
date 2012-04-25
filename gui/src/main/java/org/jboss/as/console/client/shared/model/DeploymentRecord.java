@@ -36,7 +36,10 @@ public interface DeploymentRecord  {
 
     public String getServerGroup();
     public void setServerGroup(String groupName);
-    
+
     public boolean isEnabled();
     public void setEnabled(boolean enabaled);
+
+    public boolean isPersistent();
+    public void setPersistent(boolean isPersistent);
 }
