@@ -49,19 +49,18 @@ public class StandaloneRuntimeNavigation {
 
         // ----------------------------------------------------
 
-        TreeItem serverLeaf = new LHSTreeSection("Server Status", true);
+        TreeItem serverLeaf = new LHSTreeSection("Server", true);
 
         LHSNavTreeItem server = new LHSNavTreeItem("Configuration", NameTokens.StandaloneServerPresenter);
-        LHSNavTreeItem jvmItem = new LHSNavTreeItem("JVM", NameTokens.VirtualMachine);
-        serverLeaf.addItem(server);
-        serverLeaf.addItem(jvmItem);
 
+        serverLeaf.addItem(server);
+        serverLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
         navigation.addItem(serverLeaf);
 
 
         // -------------
 
-        metricLeaf = new LHSTreeSection("Subsystem Metrics");
+        metricLeaf = new LHSTreeSection("Status");
 
 
         LHSNavTreeItem datasources = new LHSNavTreeItem("Datasources", "ds-metrics");
@@ -69,12 +68,14 @@ public class StandaloneRuntimeNavigation {
         LHSNavTreeItem web = new LHSNavTreeItem("Web", "web-metrics");
         LHSNavTreeItem tx = new LHSNavTreeItem("Transactions", "tx-metrics");
         LHSNavTreeItem jpa = new LHSNavTreeItem("JPA", NameTokens.JPAMetricPresenter);
+        LHSNavTreeItem ws = new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter);
 
         metricPredicates.add(new Predicate("datasources", datasources));
         metricPredicates.add(new Predicate("messaging", jmsQueues));
         metricPredicates.add(new Predicate("web", web));
         metricPredicates.add(new Predicate("transactions", tx));
         metricPredicates.add(new Predicate("jpa", jpa));
+        metricPredicates.add(new Predicate("webservices", ws));
 
         navigation.addItem(metricLeaf);
 
@@ -91,13 +92,6 @@ public class StandaloneRuntimeNavigation {
         navigation.addItem(runtimeLeaf);
 
         // ----------------------------------------------------
-
-        TreeItem deploymentLeaf = new LHSTreeSection("Deployments");
-
-        deploymentLeaf.addItem(new LHSNavTreeItem("Manage Deployments", NameTokens.DeploymentListPresenter));
-        deploymentLeaf.addItem(new LHSNavTreeItem("Webservices", NameTokens.WebServiceRuntimePresenter));
-
-        navigation.addItem(deploymentLeaf);
 
         // ---
         stack.add(navigation);
@@ -118,6 +112,7 @@ public class StandaloneRuntimeNavigation {
         metricLeaf.removeItems();
         runtimeLeaf.removeItems();
 
+        metricLeaf.addItem( new LHSNavTreeItem("JVM", NameTokens.VirtualMachine));
         // match subsystems
         for(SubsystemRecord subsys : subsystems)
         {
