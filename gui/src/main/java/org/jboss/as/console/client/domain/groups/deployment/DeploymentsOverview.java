@@ -37,6 +37,7 @@ import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.domain.model.ServerGroupRecord;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
+import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
@@ -320,13 +321,7 @@ public class DeploymentsOverview extends SuspendableViewImpl implements Deployme
     private List<Column> makeNameAndRuntimeColumns() {
         List<Column> columns = new ArrayList<Column>(2);
 
-        columns.add(new TextColumn<DeploymentRecord>() {
-
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getName();
-            }
-        });
+        columns.add(new TitleColumn());
 
         columns.add(new TextColumn<DeploymentRecord>() {
 

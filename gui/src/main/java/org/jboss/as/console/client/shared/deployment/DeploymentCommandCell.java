@@ -78,9 +78,7 @@ public class DeploymentCommandCell extends ActionCell<DeploymentRecord> {
             sb.append(html);
         } else {
             SafeHtml html = new SafeHtmlBuilder()
-                .appendHtmlConstant("<i>")
-                .appendHtmlConstant(Console.CONSTANTS.common_label_useFileSystem())
-                .appendHtmlConstant("</i>")
+                .appendHtmlConstant("&nbsp;")
                 .toSafeHtml();
             sb.append(html);
         }

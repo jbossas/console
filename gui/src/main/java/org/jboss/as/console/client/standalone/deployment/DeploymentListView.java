@@ -19,11 +19,15 @@
 
 package org.jboss.as.console.client.standalone.deployment;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -36,6 +40,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommand;
 import org.jboss.as.console.client.shared.deployment.DeploymentCommandColumn;
+import org.jboss.as.console.client.shared.deployment.TitleColumn;
 import org.jboss.as.console.client.shared.model.DeploymentRecord;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -110,12 +115,7 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
         deploymentProvider = new ListDataProvider<DeploymentRecord>();
         deploymentProvider.addDataDisplay(deploymentTable);
 
-        TextColumn<DeploymentRecord> dplNameColumn = new TextColumn<DeploymentRecord>() {
-            @Override
-            public String getValue(DeploymentRecord record) {
-                return record.getName();
-            }
-        };
+        TitleColumn dplNameColumn = new TitleColumn() {};
 
         TextColumn<DeploymentRecord> dplRuntimeColumn = new TextColumn<DeploymentRecord>() {
             @Override
@@ -170,5 +170,4 @@ public class DeploymentListView extends SuspendableViewImpl implements Deploymen
             }
         };
     }
-
 }
