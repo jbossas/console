@@ -29,6 +29,7 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.shared.subsys.web.model.WebSubsystem;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
@@ -37,6 +38,7 @@ import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.DisclosureGroupRenderer;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.tools.ToolButton;
 import org.jboss.dmr.client.ModelNode;
 
@@ -51,6 +53,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
     private WebPresenter presenter;
     private Form<JSPContainerConfiguration> form;
+    private Form<WebSubsystem> wsForm;
     private ConnectorList connectorList;
     private VirtualServerList serverList;
     private ToolButton edit;
@@ -81,6 +84,35 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
                     }
                 }
         );
+        
+        wsForm = new Form(WebSubsystem.class);
+        wsForm.setNumColumns(2);
+        
+        TextBoxItem instanceId = new TextBoxItem("instanceId", "Instance Id");
+        wsForm.setFields(instanceId);
+        
+        
+        FormToolStrip toolStripWs = new FormToolStrip<WebSubsystem>(
+                wsForm,
+                new FormToolStrip.FormCallback<WebSubsystem>() {
+                    @Override
+                    public void onSave(Map<String, Object> changeset) {
+                    	String instanceId = (String)changeset.get("instanceId");
+                        presenter.onSaveWebSubsystemDetails(instanceId);
+                    }
+
+					@Override
+					public void onDelete(WebSubsystem entity) {
+						// TODO Auto-generated method stub
+						
+					}
+                }
+        );
+        
+        toolStripWs.providesDeleteOp(false);
+        layout.add(toolStripWs.asWidget());
+        layout.add(wsForm.asWidget());
+        wsForm.setEnabled(false);
 
         toolStrip.providesDeleteOp(false);
         layout.add(toolStrip.asWidget());
@@ -167,6 +199,12 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 	@Override
 	public void setSocketBindigs(List<String> socketBindings) {
         connectorList.setSocketBindigs(socketBindings);
+		
+	}
+
+	@Override
+	public void setProviderDetails(WebSubsystem provider) {
+		wsForm.edit(provider);
 		
 	}
 }

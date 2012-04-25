@@ -126,6 +126,7 @@ import org.jboss.as.console.client.shared.subsys.tx.model.TransactionManager;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.shared.subsys.web.model.WebSubsystem;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceEndpoint;
 import org.jboss.as.console.client.shared.subsys.ws.model.WebServiceProvider;
 import org.jboss.as.console.client.standalone.StandaloneServer;
@@ -201,6 +202,7 @@ public interface CoreBeanFactory {
     AutoBean<HttpConnector> httpConnector();
     AutoBean<JSPContainerConfiguration> jspConfig();
     AutoBean<VirtualServer> virtualServer();
+    AutoBean<WebSubsystem> webSubsystem();
 
     AutoBean<Interface> interfaceDeclaration();
     AutoBean<JDBCDriver> jdbcDriver();
