@@ -116,6 +116,12 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                         Log.error("Redirect '"+location+"'. Could not execute "+operation.toString());
                         redirect(location);
                     }
+                    else if(503 == statusCode)
+                    {
+                        resultCallback.onFailure(
+                                new Exception("Service unavailable. Most likely the server is still booting." )
+                        );
+                    }
                     else
                     {
                         StringBuilder sb = new StringBuilder();
