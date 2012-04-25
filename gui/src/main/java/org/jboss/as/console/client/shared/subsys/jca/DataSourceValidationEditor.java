@@ -8,6 +8,7 @@ import org.jboss.as.console.client.widgets.forms.FormEditor;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
 
@@ -39,7 +40,7 @@ public class DataSourceValidationEditor extends FormEditor<DataSource>{
             }
         };
 
-        TextBoxItem connectionSql= new TextBoxItem("checkValidSql", "Check Valid Sql") {
+        TextAreaItem connectionSql= new TextAreaItem("checkValidSql", "Check Valid Sql") {
             @Override
             public boolean isRequired() {
                 return false;

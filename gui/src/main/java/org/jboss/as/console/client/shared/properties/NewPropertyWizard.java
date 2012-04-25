@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.jboss.ballroom.client.widgets.forms.TextAreaItem;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.ballroom.client.widgets.window.DialogueOptions;
 
@@ -47,7 +48,7 @@ public class NewPropertyWizard {
         this.reference = reference;
         this.includeBootTime = includeBootTime;
     }
-    
+
     public NewPropertyWizard(PropertyManagement presenter, String reference) {
         this(presenter, reference, false);
     }
@@ -62,7 +63,9 @@ public class NewPropertyWizard {
         final Form<PropertyRecord> form = new Form<PropertyRecord>(PropertyRecord.class);
 
         TextBoxItem nameItem = new TextBoxItem("key", "Name");
-        TextBoxItem valueItem = new TextBoxItem("value", "Value");
+        TextAreaItem valueItem = new TextAreaItem("value", "Value");
+        valueItem.setVisibleLines(2);
+
         CheckBoxItem bootItem = new CheckBoxItem("bootTime", "Boot-Time");
 
         if(Console.getBootstrapContext().isStandalone() || !includeBootTime)
@@ -74,7 +77,7 @@ public class NewPropertyWizard {
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                         // save
+                        // save
                         PropertyRecord property = form.getUpdatedEntity();
                         if(!form.validate().hasErrors())
                             presenter.onCreateProperty(reference, property);
