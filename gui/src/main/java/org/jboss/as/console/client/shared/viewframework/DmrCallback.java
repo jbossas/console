@@ -59,7 +59,7 @@ public abstract class DmrCallback implements AsyncCallback<DMRResponse> {
      */
     public void onDmrFailure(ModelNode operation, ModelNode response) {
 
-        String message = null;
+        String message = "Unkown error";
 
         if(response.hasDefined(FAILURE_DESCRIPTION))
             message = response.get(FAILURE_DESCRIPTION).asString();
