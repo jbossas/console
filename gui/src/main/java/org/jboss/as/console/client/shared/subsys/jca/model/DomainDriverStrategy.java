@@ -49,10 +49,6 @@ public class DomainDriverStrategy implements DriverStrategy {
     private HostInformationStore hostInformationStore;
     private BeanFactory factory;
 
-    final List<JDBCDriver> drivers = new ArrayList<JDBCDriver>();
-    int numRequests = 0;
-    int numResponses = 0;
-
     @Inject
     public DomainDriverStrategy(
             DispatchAsync dispatcher,
@@ -66,9 +62,8 @@ public class DomainDriverStrategy implements DriverStrategy {
     @Override
     public void refreshDrivers(final AsyncCallback<List<JDBCDriver>> callback) {
 
-        drivers.clear();
-        numRequests = 0;
-        numResponses = 0;
+        final Counter counter = new Counter();
+        final List<JDBCDriver> drivers = new ArrayList<JDBCDriver>();
 
         hostInformationStore.getHosts(new SimpleCallback<List<Host>>() {
             @Override
@@ -76,14 +71,47 @@ public class DomainDriverStrategy implements DriverStrategy {
 
                 for(Host host : hosts)
                 {
-                    driversOnHost(host.getName(), callback);
+                    counter.numRequests++;
+
+                    driversOnHost(host.getName(), new SimpleCallback<List<JDBCDriver>>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            super.onFailure(caught);
+                            counter.numResponses++;
+                        }
+
+                        @Override
+                        public void onSuccess(List<JDBCDriver> jdbcDrivers) {
+                            // for each host
+
+                            counter.numResponses++;
+
+
+                            for(JDBCDriver driver : jdbcDrivers)
+                                addIfNotExists(driver, drivers);
+
+                            if(counter.numRequests==counter.numResponses)
+                            {
+                                callback.onSuccess(drivers);
+                            }
+                        }
+                    });
                 }
             }
         });
 
     }
 
+    class Counter {
+        int numRequests = 0;
+        int numResponses = 0;
+    }
+
     private void driversOnHost(final String host, final AsyncCallback<List<JDBCDriver>> callback) {
+
+        final List<JDBCDriver> drivers = new ArrayList<JDBCDriver>();
+        final Counter counter = new Counter();
 
         hostInformationStore.getServerInstances(host, new SimpleCallback<List<ServerInstance>>() {
             @Override
@@ -104,21 +132,21 @@ public class DomainDriverStrategy implements DriverStrategy {
                     operation.get(ADDRESS).add("server", server.getName());
                     operation.get(ADDRESS).add("subsystem", "datasources");
 
-                    numRequests++;
+                    counter.numRequests++;
 
                     dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
                         @Override
                         public void onFailure(Throwable caught) {
 
-                            numResponses++;
-                            checkComplete(callback, caught);
+                            counter.numResponses++;
+                            checkComplete(counter, callback, caught);
                         }
 
                         @Override
                         public void onSuccess(DMRResponse result) {
 
-                            numResponses++;
+                            counter.numResponses++;
 
                             ModelNode response = result.get();
 
@@ -141,16 +169,16 @@ public class DomainDriverStrategy implements DriverStrategy {
                                     if(item.hasDefined("driver-xa-datasource-class-name"))
                                         driver.setXaDataSourceClass(item.get("driver-xa-datasource-class-name").asString());
 
-                                    addIfNotExists(driver);
+                                    addIfNotExists(driver, drivers);
 
                                 }
 
                             }
                             else {
-                                checkComplete(callback, new RuntimeException(response.toString()));
+                                checkComplete(counter, callback, new RuntimeException(response.toString()));
                             }
 
-                            checkComplete(callback);
+                            checkComplete(counter, drivers, callback);
 
                         }
                     });
@@ -164,7 +192,7 @@ public class DomainDriverStrategy implements DriverStrategy {
 
     }
 
-    private void addIfNotExists(JDBCDriver driver) {
+    private void addIfNotExists(JDBCDriver driver, List<JDBCDriver> drivers) {
 
         boolean doesExist = false;
         for(JDBCDriver existing : drivers) // we don't control the AutoBean hash() or equals() method.
@@ -180,13 +208,13 @@ public class DomainDriverStrategy implements DriverStrategy {
             drivers.add(driver);
     }
 
-    private void checkComplete(AsyncCallback<List<JDBCDriver>> callback) {
-        if(numResponses==numRequests)
+    private void checkComplete(Counter counter, List<JDBCDriver> drivers, AsyncCallback<List<JDBCDriver>> callback) {
+        if(counter.numResponses==counter.numResponses)
             callback.onSuccess(drivers);
     }
 
-    private void checkComplete(AsyncCallback<List<JDBCDriver>> callback, Throwable caught) {
-        if(numResponses==numRequests)
+    private void checkComplete(Counter counter, AsyncCallback<List<JDBCDriver>> callback, Throwable caught) {
+        if(counter.numResponses==counter.numRequests)
             callback.onFailure(caught);
         else
             Console.error("Failed to query JDBC drivers", caught.getMessage());
