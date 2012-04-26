@@ -255,7 +255,7 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
         return entities;
     }
 
-    protected void execute(ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
+    protected void execute(final ModelNode operation, final String nameEditedOrAdded, final String successMessage) {
    //     System.out.println("operation=");
    //     System.out.println(operation);
         dispatcher.execute(new DMRAction(operation), new DmrCallback() {
@@ -269,8 +269,8 @@ public class EntityToDmrBridgeImpl<T extends NamedEntity> implements EntityToDmr
             }
 
             @Override
-            public void onDmrFailure(ModelNode response) {
-                super.onDmrFailure(response);
+            public void onDmrFailure(ModelNode operation, ModelNode response) {
+                super.onDmrFailure(operation, response);
                 loadEntities(nameEditedOrAdded);
             }
         });

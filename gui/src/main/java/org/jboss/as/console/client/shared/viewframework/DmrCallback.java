@@ -44,10 +44,11 @@ public abstract class DmrCallback implements AsyncCallback<DMRResponse> {
     @Override
     public void onSuccess(DMRResponse result) {
         ModelNode response = result.get();
+
         if (response.get(OUTCOME).asString().equals(SUCCESS)) {
             onDmrSuccess(response);
         } else {
-            onDmrFailure(response);
+            onDmrFailure(null, response);
         }
     }
     
@@ -56,8 +57,19 @@ public abstract class DmrCallback implements AsyncCallback<DMRResponse> {
      * Override this if you want more elaborate handling.
      * @param response The full response as a ModelNode.
      */
-    public void onDmrFailure(ModelNode response) {
-        Console.error(response.get(FAILURE_DESCRIPTION).asString());
+    public void onDmrFailure(ModelNode operation, ModelNode response) {
+
+        String message = null;
+
+        if(response.hasDefined(FAILURE_DESCRIPTION))
+            message = response.get(FAILURE_DESCRIPTION).asString();
+        else if(response.hasDefined("rolled-back"))
+            message = "The operation did fail and has been rolled back: "+response.get("rolled-back").asBoolean();
+
+        if(operation!=null)
+            Console.error(message, "Request:\n"+operation.toString());
+        else
+            Console.error(message);
     }
     
     /**

@@ -119,7 +119,7 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
         if (changedValues.isEmpty())
             return;
 
-        ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
+        final ModelNode batch = entityAdapter.fromChangeset(changedValues, resourceAddress, extraSteps);
         dispatcher.execute(new DMRAction(batch), new DmrCallback() {
             @Override
             public void onDmrSuccess(ModelNode response) {
@@ -128,8 +128,8 @@ public class SingleEntityToDmrBridgeImpl<T> implements EntityToDmrBridge<T> {
             }
 
             @Override
-            public void onDmrFailure(ModelNode response) {
-                super.onDmrFailure(response);
+            public void onDmrFailure(ModelNode operation, ModelNode response) {
+                super.onDmrFailure(batch, response);
                 loadEntities(null);
             }
         });
