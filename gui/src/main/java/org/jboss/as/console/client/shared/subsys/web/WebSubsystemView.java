@@ -29,7 +29,6 @@ import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
-import org.jboss.as.console.client.shared.subsys.web.model.WebSubsystem;
 import org.jboss.as.console.client.widgets.ContentDescription;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.layout.RHSContentPanel;
@@ -53,7 +52,7 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
     private WebPresenter presenter;
     private Form<JSPContainerConfiguration> form;
-    private Form<WebSubsystem> wsForm;
+
     private ConnectorList connectorList;
     private VirtualServerList serverList;
     private ToolButton edit;
@@ -84,35 +83,6 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
                     }
                 }
         );
-        
-        wsForm = new Form(WebSubsystem.class);
-        wsForm.setNumColumns(2);
-        
-        TextBoxItem instanceId = new TextBoxItem("instanceId", "Instance Id");
-        wsForm.setFields(instanceId);
-        
-        
-        FormToolStrip toolStripWs = new FormToolStrip<WebSubsystem>(
-                wsForm,
-                new FormToolStrip.FormCallback<WebSubsystem>() {
-                    @Override
-                    public void onSave(Map<String, Object> changeset) {
-                    	String instanceId = (String)changeset.get("instanceId");
-                        presenter.onSaveWebSubsystemDetails(instanceId);
-                    }
-
-					@Override
-					public void onDelete(WebSubsystem entity) {
-						// TODO Auto-generated method stub
-						
-					}
-                }
-        );
-        
-        toolStripWs.providesDeleteOp(false);
-        layout.add(toolStripWs.asWidget());
-        layout.add(wsForm.asWidget());
-        wsForm.setEnabled(false);
 
         toolStrip.providesDeleteOp(false);
         layout.add(toolStrip.asWidget());
@@ -122,12 +92,14 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 
         CheckBoxItem disabled= new CheckBoxItem("disabled", "Disabled?");
         CheckBoxItem development= new CheckBoxItem("development", "Development?");
+        TextBoxItem instanceId = new TextBoxItem("instanceId", "Instance ID", false);
+
         CheckBoxItem keepGenerated= new CheckBoxItem("keepGenerated", "Keep Generated?");
         NumberBoxItem checkInterval = new NumberBoxItem("checkInterval", "Check Interval");
         CheckBoxItem sourceFragment= new CheckBoxItem("displaySource", "Display Source?");
 
 
-        form.setFields(disabled, development);
+        form.setFields(disabled, development, instanceId);
         form.setFieldsInGroup(Console.CONSTANTS.common_label_advanced(), new DisclosureGroupRenderer(), keepGenerated, checkInterval, sourceFragment);
 
 
@@ -202,9 +174,4 @@ public class WebSubsystemView extends DisposableViewImpl implements WebPresenter
 		
 	}
 
-	@Override
-	public void setProviderDetails(WebSubsystem provider) {
-		wsForm.edit(provider);
-		
-	}
 }

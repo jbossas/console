@@ -39,21 +39,19 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
-import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
-import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
-import org.jboss.as.console.client.shared.subsys.web.model.WebSubsystem;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.MyProxy> {
 
     public static final String INSTANCE_ID_ATTRIBUTE = "instance-id";
-    
+
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
@@ -87,8 +85,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private LoadConnectorCmd loadConnectorCmd;
     private LoadSocketBindingsCmd socketBinding;;
     private List<String> socketsBindingList;
-    private WebSubsystem providerEntity;
-    
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -103,7 +99,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void enableEditVirtualServer(boolean b);
         void setJSPConfig(JSPContainerConfiguration jspConfig);
         void setSocketBindigs(List<String> socketBindings);
-        void setProviderDetails(WebSubsystem provider);        
     }
 
     @Inject
@@ -138,8 +133,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     @Override
     protected void onReset() {
         super.onReset();
-
-        loadWebSubsystemDetails();
         loadJSPConfig();
         loadConnectors();
         loadVirtualServer();
@@ -200,30 +193,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         });
 
     }
-    
-    private void loadWebSubsystemDetails() {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(READ_RESOURCE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "web");
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-
-            @Override
-            public void onSuccess(DMRResponse result) {
-                ModelNode response = result.get();
-                final ModelNode model = response.get(RESULT);
-
-                providerEntity = factory.webSubsystem().as();
-
-                String instanceId = model.get(INSTANCE_ID_ATTRIBUTE).asString();
-                providerEntity.setInstanceId(instanceId);
-                getView().setProviderDetails(providerEntity);
-            }
-        });
-
-    }
-    
 
     private void loadJSPConfig() {
 
@@ -247,11 +216,19 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
                 }
                 else
                 {
-                    ModelNode config = response.get(RESULT).asObject().get("configuration").asObject();
+
+
+                    final ModelNode payload = response.get(RESULT).asObject();
+
+                    ModelNode config = payload.get("configuration").asObject();
                     ModelNode jspCfg  = config.get("jsp-configuration").asObject();
                     //ModelNode staticCfg = config.get("static-resources").asObject();
 
                     JSPContainerConfiguration jspConfig = factory.jspConfig().as();
+
+                    if(payload.hasDefined("instance-id"))
+                        jspConfig.setInstanceId(payload.get("instance-id").asString());
+
                     jspConfig.setDisabled(jspCfg.get("disabled").asBoolean());
                     jspConfig.setCheckInterval(jspCfg.get("check-interval").asInt());
                     jspConfig.setDevelopment(jspCfg.get("development").asBoolean());
@@ -276,27 +253,27 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
             }
         });
     }
-    
+
     private void loadSocketBindings() {
         socketBinding.loadSocketBindingGroupForSelectedProfile(new SimpleCallback<List<String>>() {
             @Override
             public void onSuccess(List<String> result) {
-            	setSocketBindings(result);
+                setSocketBindings(result);
                 getView().setSocketBindigs(result);
             }
         });
-        
+
     }
-    
+
 
     private void setConnectors(List<HttpConnector> connectors) {
         this.connectors = connectors;
     }
-    
+
     private void setSocketBindings(List<String> bindings) {
         this.socketsBindingList = bindings;
     }
-    
+
 
     public void onEditConnector() {
         getView().enableEditConnector(true);
@@ -400,26 +377,6 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         window.setGlassEnabled(true);
         window.center();
     }
-    
-    void onSaveWebSubsystemDetails(String instanceId) {
-        ModelNode operation = new ModelNode();
-        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
-        operation.get(ADDRESS).set(Baseadress.get());
-        operation.get(ADDRESS).add("subsystem", "web");
-        operation.get(NAME).set(INSTANCE_ID_ATTRIBUTE);
-        operation.get(VALUE).set(instanceId);
-
-        dispatcher.execute(new DMRAction(operation),
-                new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION, INSTANCE_ID_ATTRIBUTE, instanceId,
-                    new Command() {
-                        @Override
-                        public void execute() {
-                            loadWebSubsystemDetails();
-                        }
-                    }));
-    }
-    
-
 
     public void onCreateConnector(final HttpConnector entity) {
         closeDialogue();
@@ -601,25 +558,44 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
 
         AddressBinding addressBinding = metaData.getBeanMetaData(JSPContainerConfiguration.class).getAddress();
         ModelNode address = addressBinding.asResource(Baseadress.get());
+        ModelNode extra = null;
 
-        ModelNode operation = containerAdapter.fromChangeset(changeset, address);
+        if(changeset.containsKey("instanceId"))
+        {
+            Object instanceId = changeset.get("instanceId");
+            changeset.remove("instanceId");
+
+            extra = new ModelNode();
+            extra.get(ADDRESS).set(Baseadress.get());
+            extra.get(ADDRESS).add("subsystem", "web");
+            extra.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+            extra.get(NAME).set("instance-id");
+
+            if(instanceId instanceof String)
+            {
+                extra.get(VALUE).set((String)instanceId);
+            }
+        }
+
+        ModelNode operation = null;
+        if(extra!=null)
+            operation = containerAdapter.fromChangeset(changeset, address, extra);
+        else
+            operation = containerAdapter.fromChangeset(changeset, address);
+
+
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
-                boolean successful = response.get(OUTCOME).asString().equals(SUCCESS);
+                boolean successful = !response.isFailure();
                 if(successful)
                     Console.info(Console.MESSAGES.successful("JSP Configuration"));
                 else
-                    Console.error(Console.MESSAGES.failed("JSP Configuration"));
+                    Console.error(Console.MESSAGES.failed("JSP Configuration"), response.getFailureDescription());
 
-                Console.schedule(new Command() {
-                    @Override
-                    public void execute() {
-                        loadJSPConfig();
-                    }
-                });
+                loadJSPConfig();
 
             }
         });
@@ -631,5 +607,5 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     public void closeDialogue() {
         window.hide();
     }
-    
+
 }

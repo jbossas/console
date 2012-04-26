@@ -54,4 +54,8 @@ public interface JSPContainerConfiguration {
     //boolean isListings();
     //void setListings(boolean b);
 
+    @Binding(detypedName = "instance-id")
+   	String getInstanceId();
+   	void setInstanceId(String instanceId);
+
 }
