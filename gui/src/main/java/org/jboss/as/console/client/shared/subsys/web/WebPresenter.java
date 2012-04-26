@@ -39,12 +39,15 @@ import org.jboss.as.console.client.shared.BeanFactory;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.dispatch.impl.SimpleDMRResponseHandler;
 import org.jboss.as.console.client.shared.model.ModelAdapter;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.client.shared.subsys.osgi.config.model.OSGiSubsystem;
 import org.jboss.as.console.client.shared.subsys.web.model.HttpConnector;
 import org.jboss.as.console.client.shared.subsys.web.model.JSPContainerConfiguration;
 import org.jboss.as.console.client.shared.subsys.web.model.VirtualServer;
+import org.jboss.as.console.client.shared.subsys.web.model.WebSubsystem;
 import org.jboss.as.console.client.widgets.forms.AddressBinding;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.client.widgets.forms.EntityAdapter;
@@ -61,10 +64,13 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
+ * @author Pavel Slegr
  * @date 5/11/11
  */
 public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.MyProxy> {
 
+    public static final String INSTANCE_ID_ATTRIBUTE = "instance-id";
+    
     private final PlaceManager placeManager;
     private BeanFactory factory;
     private DispatchAsync dispatcher;
@@ -81,6 +87,8 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     private LoadConnectorCmd loadConnectorCmd;
     private LoadSocketBindingsCmd socketBinding;;
     private List<String> socketsBindingList;
+    private WebSubsystem providerEntity;
+    
 
     @ProxyCodeSplit
     @NameToken(NameTokens.WebPresenter)
@@ -95,6 +103,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         void enableEditVirtualServer(boolean b);
         void setJSPConfig(JSPContainerConfiguration jspConfig);
         void setSocketBindigs(List<String> socketBindings);
+        void setProviderDetails(WebSubsystem provider);        
     }
 
     @Inject
@@ -130,6 +139,7 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
     protected void onReset() {
         super.onReset();
 
+        loadWebSubsystemDetails();
         loadJSPConfig();
         loadConnectors();
         loadVirtualServer();
@@ -190,6 +200,30 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         });
 
     }
+    
+    private void loadWebSubsystemDetails() {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(READ_RESOURCE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "web");
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response = result.get();
+                final ModelNode model = response.get(RESULT);
+
+                providerEntity = factory.webSubsystem().as();
+
+                String instanceId = model.get(INSTANCE_ID_ATTRIBUTE).asString();
+                providerEntity.setInstanceId(instanceId);
+                getView().setProviderDetails(providerEntity);
+            }
+        });
+
+    }
+    
 
     private void loadJSPConfig() {
 
@@ -366,6 +400,25 @@ public class WebPresenter extends Presenter<WebPresenter.MyView, WebPresenter.My
         window.setGlassEnabled(true);
         window.center();
     }
+    
+    void onSaveWebSubsystemDetails(String instanceId) {
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(WRITE_ATTRIBUTE_OPERATION);
+        operation.get(ADDRESS).set(Baseadress.get());
+        operation.get(ADDRESS).add("subsystem", "web");
+        operation.get(NAME).set(INSTANCE_ID_ATTRIBUTE);
+        operation.get(VALUE).set(instanceId);
+
+        dispatcher.execute(new DMRAction(operation),
+                new SimpleDMRResponseHandler(WRITE_ATTRIBUTE_OPERATION, INSTANCE_ID_ATTRIBUTE, instanceId,
+                    new Command() {
+                        @Override
+                        public void execute() {
+                            loadWebSubsystemDetails();
+                        }
+                    }));
+    }
+    
 
 
     public void onCreateConnector(final HttpConnector entity) {
