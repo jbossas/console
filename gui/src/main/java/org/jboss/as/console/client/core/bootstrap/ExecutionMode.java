@@ -58,6 +58,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
             @Override
             public void onFailure(Throwable caught) {
                 bootstrap.setProperty(BootstrapContext.STANDALONE, "false");
+                bootstrap.setlastError(caught);
                 Log.error(caught.getMessage());
                 callback.onSuccess(Boolean.FALSE);
             }

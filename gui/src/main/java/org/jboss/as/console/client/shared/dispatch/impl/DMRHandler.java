@@ -107,7 +107,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     }
                     else if(401 == statusCode || 0 == statusCode)
                     {
-                        resultCallback.onFailure( new Exception("Authentication required. Could not execute "+operation.toString() ));
+                        resultCallback.onFailure( new Exception("Authentication required."));
 
                     }
                     else if(307 == statusCode)
@@ -119,7 +119,7 @@ public class DMRHandler implements ActionHandler<DMRAction, DMRResponse> {
                     else if(503 == statusCode)
                     {
                         resultCallback.onFailure(
-                                new Exception("Service unavailable. Most likely the server is still booting." )
+                                new Exception("Service temporarily unavailable. Is the server is still booting?" )
                         );
                     }
                     else

@@ -40,6 +40,7 @@ public class BootstrapContext implements ApplicationProperties {
             //STANDALONE
     };
     private String initialPlace = null;
+    private Throwable lastError;
 
     @Inject
     public BootstrapContext() {
@@ -188,5 +189,13 @@ public class BootstrapContext implements ApplicationProperties {
         if(!GWT.isScript())
             url += "?gwt.codesvr=" + Window.Location.getParameter("gwt.codesvr");
         return url;
+    }
+
+    public void setlastError(Throwable caught) {
+        this.lastError = caught;
+    }
+
+    public Throwable getLastError() {
+        return lastError;
     }
 }

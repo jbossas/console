@@ -101,7 +101,7 @@ public class Console implements EntryPoint {
                 DelayedBindRegistry.bind(MODULES);
 
                 // ordered bootstrap
-                BootstrapProcess bootstrap = new BootstrapProcess();
+                final BootstrapProcess bootstrap = new BootstrapProcess();
 
                 bootstrap.addHook(new ExecutionMode(MODULES.getBootstrapContext(), MODULES.getDispatchAsync()));
                 bootstrap.addHook(new RegisterSubsystems(MODULES.getSubsystemRegistry()));
@@ -126,7 +126,11 @@ public class Console implements EntryPoint {
                             // currently we only deal with authentication errors
                             RootLayoutPanel.get().remove(loadingPanel);
 
-                            HTMLPanel explanation = new HTMLPanel("<center><div style='padding-top:150px;'>The web console could not be loaded. Please refresh this page to start over.</div></center>");
+                            String cause = "";
+                            if(MODULES.getBootstrapContext().getLastError()!=null)
+                                cause = MODULES.getBootstrapContext().getLastError().getMessage();
+
+                            HTMLPanel explanation = new HTMLPanel("<center><div style='padding-top:150px;'><h2>The web console could not be loaded.</h2>"+cause+"</div></center>");
                             RootLayoutPanel.get().add(explanation);
                         }
 
