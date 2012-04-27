@@ -257,6 +257,11 @@ public class XmlHttpProxy {
                 // redirect
                 throw new RedirectException(httpclient.getHeader("Location"));
             }
+            else if(503==responseCode)
+            {
+                // service unavailable
+                throw new ServiceUnavailableException(httpclient.getHeader("Retry-After"));
+            }
             else
             {
                 throw new IOException("Failed to open input stream, status: "+responseCode);

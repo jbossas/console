@@ -494,6 +494,12 @@ public class XmlHttpProxyServlet extends HttpServlet
                 res.setHeader("WWW-Authenticate", authEx.getAuthHeader());
                 res.setStatus(authEx.getCode());
             }
+            else if(iox instanceof ServiceUnavailableException)
+            {
+                ServiceUnavailableException unavailble = (ServiceUnavailableException)iox;
+                res.setHeader("Retry-After", unavailble.getRetryAfter() !=null ? unavailble.getRetryAfter() : "2");
+                res.setStatus(503);
+            }
             /*else if(iox instanceof RedirectException)
             {
                 RedirectException redirect = (RedirectException)iox;
