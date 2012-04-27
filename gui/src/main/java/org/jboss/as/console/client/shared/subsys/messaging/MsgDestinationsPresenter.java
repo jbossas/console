@@ -1122,7 +1122,7 @@ public class MsgDestinationsPresenter extends Presenter<MsgDestinationsPresenter
 
         ModelNode operation = divertAdapter.fromChangeset(changeset, address);
 
-        System.out.println(operation);
+        //System.out.println(operation);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 

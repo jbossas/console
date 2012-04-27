@@ -217,7 +217,7 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         // provide steps
         composite.set(STEPS).set(steps);
 
-        System.out.println(composite);
+        //System.out.println(composite);
 
         dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
             @Override

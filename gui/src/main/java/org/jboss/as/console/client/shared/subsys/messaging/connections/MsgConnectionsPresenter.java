@@ -781,7 +781,7 @@ public class MsgConnectionsPresenter extends Presenter<MsgConnectionsPresenter.M
 
     public void onSaveBridge(final String name, Map<String, Object> changeset) {
 
-        System.out.println(changeset);
+        //System.out.println(changeset);
         ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());

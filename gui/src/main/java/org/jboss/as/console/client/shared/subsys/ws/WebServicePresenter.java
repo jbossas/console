@@ -136,7 +136,7 @@ public class WebServicePresenter extends Presenter<WebServicePresenter.MyView, W
             public void onSuccess(DMRResponse result) {
                 ModelNode response = result.get();
 
-                System.out.println(response);
+                //System.out.println(response);
                 if(response.isFailure())
                 {
                     Console.error(Console.MESSAGES.modificationFailed("Web Service Provider"), response.getFailureDescription());
