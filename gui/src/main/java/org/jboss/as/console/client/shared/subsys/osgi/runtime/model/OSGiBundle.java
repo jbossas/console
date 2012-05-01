@@ -37,6 +37,10 @@ public interface OSGiBundle extends NamedEntity {
     @Override
     public void setName(String name);
 
+    @FormItem(localLabel="subsys_osgi_bundleLocation", order=7)
+    public String getLocation();
+    public void setLocation(String l);
+
     @FormItem(localLabel="subsys_osgi_bundleState", order=6)
     public String getState();
     public void setState(String s);

@@ -247,6 +247,7 @@ public interface UIConstants extends Constants {
     String subsys_osgi_frameworkPropertyAdd();
     String subsys_osgi_properties();
     String subsys_osgi_bundleID();
+    String subsys_osgi_bundleLocation();
     String subsys_osgi_bundleSymbolicName();
     String subsys_osgi_bundleVersion();
     String subsys_osgi_bundleState();
