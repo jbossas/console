@@ -407,6 +407,11 @@ public class EntityAdapter<T> {
 
     public ModelNode fromBaseTypeList(List<?> baseTypeValues, Class<?> baseType) {
         ModelNode node = new ModelNode();
+        if (baseTypeValues.isEmpty()) {
+            node.setEmptyList();
+            return node;
+        }
+
         for (Object obj : baseTypeValues) {
             if (baseType == String.class) {
                 node.add((String)obj);
