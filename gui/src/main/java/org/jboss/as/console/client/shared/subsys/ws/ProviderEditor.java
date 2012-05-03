@@ -51,7 +51,7 @@ public class ProviderEditor {
 
 
         CheckBoxItem modify = new CheckBoxItem("modifyAddress", "Modify SOAP Address");
-        TextBoxItem wsdlHost = new TextBoxItem("wsdlHost", "WSDL Host", false);
+        TextBoxItem wsdlHost = new TextBoxItem("wsdlHost", "WSDL Host", true);
         NumberBoxItem wsdlPort = new NumberBoxItem("wsdlPort", "WSDL Port", false) {
             {
                 isRequired=false;
