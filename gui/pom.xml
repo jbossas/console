@@ -541,8 +541,8 @@
                         <version>1.5.0</version>
                         <configuration>
                             <projectType>properties</projectType>
-                            <includes>${project.build.directory}/i18n/UIConstants.properties,${project.build.directory}/i18n/UIMessages.properties</includes>
-                            <projectVersion>test</projectVersion>
+                            <includes>UIConstants.properties,UIMessages.properties</includes>
+                            <projectVersion>master</projectVersion>
                             <srcDir>${project.build.directory}/i18n</srcDir>
                             <transDir>${project.build.directory}/i18n</transDir>
                         </configuration>
@@ -572,6 +572,17 @@
                                                 <include name="UIConstants_ja.properties"/>
                                                 <include name="UIConstants_pt_BR.properties"/>
                                                 <include name="UIConstants_zh_Hans.properties"/>
+                                            </fileset>
+                                        </copy>
+
+                                        <copy todir="${project.build.directory}/i18n">
+                                            <fileset dir="./src/main/java/org/jboss/as/console/client/core/">
+                                                <include name="UIMessages_de.properties"/>
+                                                <include name="UIMessages_es.properties"/>
+                                                <include name="UIMessages_fr.properties"/>
+                                                <include name="UIMessages_ja.properties"/>
+                                                <include name="UIMessages_pt_BR.properties"/>
+                                                <include name="UIMessages_zh_Hans.properties"/>
                                             </fileset>
                                         </copy>
                                     </tasks>
