@@ -138,17 +138,6 @@
         <plugins>
 
             <plugin>
-                <groupId>org.zanata</groupId>
-                <artifactId>zanata-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <configuration>
-                    <projectType>properties</projectType>
-                    <includes>src/main/java/org/jboss/as/console/client/core/UIConstants.properties,src/main/java/org/jboss/as/console/client/core/UIMessages.properties</includes>
-                    <projectVersion>master</projectVersion>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>${gwt.maven}</version>
@@ -430,8 +419,8 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <version>${gwt.maven}</version>
                         <configuration>
-                             <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
-                                <optimizationLevel>9</optimizationLevel>
+                            <extraJvmArgs>-server -Xmx512m -XX:MaxPermSize=256M</extraJvmArgs>
+                            <optimizationLevel>9</optimizationLevel>
                             <!--disableCastChecking>true</disableCastChecking>
                             <disableClassMetadata>true</disableClassMetadata-->
                         </configuration>
@@ -538,6 +527,64 @@
             </build>
         </profile>
 
+
+        <profile>
+            <id>i18n</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                           see also ant executions
+                        -->
+                        <groupId>org.zanata</groupId>
+                        <artifactId>zanata-maven-plugin</artifactId>
+                        <version>1.5.0</version>
+                        <configuration>
+                            <projectType>properties</projectType>
+                            <includes>${project.build.directory}/i18n/UIConstants.properties,${project.build.directory}/i18n/UIMessages.properties</includes>
+                            <projectVersion>test</projectVersion>
+                            <srcDir>${project.build.directory}/i18n</srcDir>
+                            <transDir>${project.build.directory}/i18n</transDir>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>prepare.zanata</id>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <tasks>
+                                        <mkdir dir="${project.build.directory}/i18n"/>
+                                        <copy file="./src/main/java/org/jboss/as/console/client/core/UIConstants_en.properties"
+                                              tofile="${project.build.directory}/i18n/UIConstants.properties" overwrite="true"/>
+                                        <copy file="./src/main/java/org/jboss/as/console/client/core/UIMessages.properties"
+                                              todir="${project.build.directory}/i18n" overwrite="true"/>
+
+                                        <copy todir="${project.build.directory}/i18n">
+                                            <fileset dir="./src/main/java/org/jboss/as/console/client/core/">
+                                                <include name="UIConstants_de.properties"/>
+                                                <include name="UIConstants_es.properties"/>
+                                                <include name="UIConstants_fr.properties"/>
+                                                <include name="UIConstants_ja.properties"/>
+                                                <include name="UIConstants_pt_BR.properties"/>
+                                                <include name="UIConstants_zh_Hans.properties"/>
+                                            </fileset>
+                                        </copy>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <pluginRepositories>
