@@ -116,14 +116,37 @@ public class DataOutput {
     }
 
     public void writeUTF(String s) throws IOException {
-        byte[] encoded = s.getBytes("UTF-8");
-        writeShort(encoded.length);
-        write(encoded);
+        final int length = s.length();
+        final byte[] bytes = new byte[length * 3];
+        int bl = 0;
+        char c;
+        for (int i = 0; i < length; i ++) {
+            c = s.charAt(i);
+            if (c > 0 && c <= 0x7f) {
+                bytes[bl ++] = (byte) c;
+            } else if (c <= 0x07ff) {
+                bytes[bl ++] = (byte)(0xc0 | 0x1f & c >> 6);
+                bytes[bl ++] = (byte)(0x80 | 0x3f & c);
+            } else {
+                bytes[bl ++] = (byte)(0xe0 | 0x0f & c >> 12);
+                bytes[bl ++] = (byte)(0x80 | 0x3f & c >> 6);
+                bytes[bl ++] = (byte)(0x80 | 0x3f & c);
+            }
+        }
+        writeShort(bl);
+        write(bytes, 0, bl);
     }
 
     public void write(byte[] bits) {
         growToFit(bits.length);
         for (int i = 0; i < bits.length; i++)
             bytes[pos++] = bits[i];
+    }
+
+    public void write(byte[] b, int off, int len) {
+        growToFit(len);
+        for (int i = 0; i < len; i ++) {
+            bytes[pos++] = b[off + i];
+        }
     }
 }
