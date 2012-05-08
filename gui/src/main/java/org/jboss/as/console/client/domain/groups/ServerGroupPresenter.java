@@ -329,7 +329,7 @@ public class ServerGroupPresenter
 
         propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
-        propertyWindow.setHeight(240);
+        propertyWindow.setHeight(270);
 
         propertyWindow.trapWidget(
                 new NewPropertyWizard(this, group, true).asWidget()
@@ -363,7 +363,7 @@ public class ServerGroupPresenter
     {
         ModelNode address = new ModelNode();
         address.add("server-group", groupName);
-        address.add("system-property", prop.getValue());
+        address.add("system-property", prop.getKey());
 
         DeletePropertyCmd cmd = new DeletePropertyCmd(dispatcher,factory,address);
         cmd.execute(prop, new SimpleCallback<Boolean>() {

@@ -533,7 +533,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
     public void launchNewPropertyDialoge(String reference) {
         propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
-        propertyWindow.setHeight(240);
+        propertyWindow.setHeight(279);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -542,7 +542,7 @@ public class ServerConfigPresenter extends Presenter<ServerConfigPresenter.MyVie
         });
 
         propertyWindow.trapWidget(
-                new NewPropertyWizard(this, reference).asWidget()
+                new NewPropertyWizard(this, reference, true).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);

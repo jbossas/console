@@ -141,7 +141,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
 
         propertyWindow = new DefaultWindow("New Host Property");
         propertyWindow.setWidth(320);
-        propertyWindow.setHeight(240);
+        propertyWindow.setHeight(270);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -150,7 +150,7 @@ public class HostPropertiesPresenter extends Presenter<HostPropertiesPresenter.M
         });
 
         propertyWindow.trapWidget(
-                new NewPropertyWizard(this, group).asWidget()
+                new NewPropertyWizard(this, group, true).asWidget()
         );
 
         propertyWindow.setGlassEnabled(true);

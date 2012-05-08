@@ -129,7 +129,7 @@ public class PropertiesPresenter extends Presenter<PropertiesPresenter.MyView, P
 
         propertyWindow = new DefaultWindow(Console.MESSAGES.createTitle("System Property"));
         propertyWindow.setWidth(320);
-        propertyWindow.setHeight(240);
+        propertyWindow.setHeight(270);
         propertyWindow.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
