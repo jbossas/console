@@ -106,22 +106,42 @@ public class DataInput {
 
     private int readUtfChar(StringBuilder sb) throws IOException {
         int a = readUnsignedByte();
-        if ((a & 0x80) == 0) {
+        if (a < 0x80) {
             sb.append((char) a);
             return 1;
-        }
-        if ((a & 0xe0) == 0xb0) {
+        } else if (a < 0xc0) {
+            sb.append('?');
+            return 1;
+        } else if (a < 0xe0) {
             int b = readUnsignedByte();
-            sb.append((char)(((a& 0x1F) << 6) | (b & 0x3F)));
+            if ((b & 0xc0) != 0x80) {
+                sb.append('?');
+                // probably a US-ASCII char after a Latin-1 char
+                sb.append((char) b);
+            } else {
+                sb.append((char) ((a & 0x1F) << 6 | b & 0x3F));
+            }
             return 2;
-        }
-        if ((a & 0xf0) == 0xe0) {
+        } else if (a < 0xf0) {
             int b = readUnsignedByte();
+            if ((b & 0xc0) != 0x80) {
+                sb.append('?');
+                sb.append((char) b);
+                return 2;
+            }
             int c = readUnsignedByte();
-            sb.append((char)(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+            if ((c & 0xc0) != 0x80) {
+                // probably a US-ASCII char after two Latin-1 chars?
+                sb.append('?').append('?');
+                sb.append((char) c);
+            } else {
+                sb.append((char) ((a & 0x0F) << 12 | (b & 0x3F) << 6 | c & 0x3F));
+            }
             return 3;
+        } else {
+            sb.append('?');
+            return 1;
         }
-        throw new IllegalArgumentException("Illegal byte "+a);
     }
 
     public int readUnsignedByte() throws IOException {
