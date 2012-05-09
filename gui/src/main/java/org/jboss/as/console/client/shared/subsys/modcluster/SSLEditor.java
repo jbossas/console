@@ -1,6 +1,9 @@
 package org.jboss.as.console.client.shared.subsys.modcluster;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.modcluster.model.SSLConfig;
@@ -8,6 +11,8 @@ import org.jboss.as.console.client.shared.viewframework.builder.FormLayout;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
+import org.jboss.ballroom.client.widgets.tools.ToolButton;
+import org.jboss.ballroom.client.widgets.window.Feedback;
 import org.jboss.dmr.client.ModelNode;
 
 import java.util.Map;
@@ -64,6 +69,22 @@ public class SSLEditor {
             }
         });
 
+
+        sslTools.addToolButtonRight(new ToolButton(Console.CONSTANTS.common_label_clear(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Feedback.confirm(
+                        Console.MESSAGES.deleteTitle("SSL Config"),
+                        Console.MESSAGES.deleteConfirm("SSL Config"),
+                        new Feedback.ConfirmationHandler() {
+                            @Override
+                            public void onConfirmation(boolean isConfirmed) {
+                                if (isConfirmed)
+                                    presenter.onClearSslConfig();
+                            }
+                        });
+            }
+        }));
 
         FormLayout sslPanel = new FormLayout()
                 .setForm(sslForm)

@@ -28,7 +28,7 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.jboss.dmr.client.ModelNode;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -184,23 +184,17 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         if(state!=null && state.equals("transient"))
             isTransient = true;
 
-        ModelNode composite = new ModelNode();
-        composite.get(ADDRESS).setEmptyList();
-        composite.set(OP).set(COMPOSITE);
-
-        List<ModelNode> steps  = new ArrayList<ModelNode>();
+        ModelNode createOp = null;
 
         // the create op, if necessary
         if(isTransient)
         {
-            ModelNode createOp = new ModelNode();
+            createOp = new ModelNode();
             createOp.get(ADDRESS).set(Baseadress.get());
             createOp.get(ADDRESS).add("subsystem", "modcluster");
             createOp.get(ADDRESS).add("mod-cluster-config", "configuration");
             createOp.get(ADDRESS).add("ssl", "configuration");
             createOp.get(OP).set(ADD);
-
-            steps.add(createOp);
         }
 
         // the updated values
@@ -212,14 +206,18 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         address.get(ADDRESS).add("ssl", "configuration");
 
         ModelNode updateOp = sslAdapter.fromChangeset(changeset, address);
-        steps.add(updateOp);
+        if(createOp!=null)
+        {
+            final List<ModelNode> steps = updateOp.get("steps").asList();
+            LinkedList<ModelNode> orderedSteps = new LinkedList<ModelNode>();
+            orderedSteps.addAll(steps);
+            orderedSteps.addFirst(createOp);
+            updateOp.get("steps").set(orderedSteps);
+        }
 
-        // provide steps
-        composite.set(STEPS).set(steps);
+        //System.out.println(updateOp);
 
-        //System.out.println(composite);
-
-        dispatcher.execute(new DMRAction(composite), new SimpleCallback<DMRResponse>() {
+        dispatcher.execute(new DMRAction(updateOp), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse result) {
                 ModelNode response  = result.get();
@@ -238,4 +236,30 @@ public class ModclusterPresenter extends Presenter<ModclusterPresenter.MyView, M
         });
     }
 
+    public void onClearSslConfig() {
+        ModelNode removeOp = new ModelNode();
+        removeOp.get(ADDRESS).set(Baseadress.get());
+        removeOp.get(ADDRESS).add("subsystem", "modcluster");
+        removeOp.get(ADDRESS).add("mod-cluster-config", "configuration");
+        removeOp.get(ADDRESS).add("ssl", "configuration");
+        removeOp.get(OP).set(REMOVE);
+
+        dispatcher.execute(new DMRAction(removeOp), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse result) {
+                ModelNode response  = result.get();
+
+                if(response.isFailure())
+                {
+                    Console.error(Console.MESSAGES.deletionFailed("SSL Config"), response.getFailureDescription());
+                }
+                else
+                {
+                    Console.info(Console.MESSAGES.deleted("SSL Config"));
+                }
+
+                loadModcluster();
+            }
+        });
+    }
 }
