@@ -32,6 +32,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DomainGateKeeper;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.core.SuspendableView;
@@ -273,8 +274,15 @@ public class ServerInstancesPresenter extends Presenter<ServerInstancesPresenter
     public void loadEnvironment(ServerInstance selectedObject) {
         // /host=master/server=server-one/core-service=platform-mbean/type=runtime:read-attribute(name=system-properties)
 
+        if(!serverSelection.hasSetHost())
+        {
+            Console.error("Host not selected!");
+            return;
+        }
+
         ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).set(RuntimeBaseAddress.get());
+        operation.get(ADDRESS).add("host",serverSelection.getHost());
+        operation.get(ADDRESS).add("server",selectedObject.getName());
         operation.get(ADDRESS).add("core-service", "platform-mbean");
         operation.get(ADDRESS).add("type", "runtime");
         operation.get(OP).set(READ_ATTRIBUTE_OPERATION);

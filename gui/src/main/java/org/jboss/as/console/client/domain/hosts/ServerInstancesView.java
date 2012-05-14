@@ -291,6 +291,7 @@ public class ServerInstancesView extends SuspendableViewImpl implements ServerIn
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 ServerInstance instance = selectionModel.getSelectedObject();
+
                 if(instance.isRunning())
                     presenter.loadEnvironment(instance);
                 else
