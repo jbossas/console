@@ -426,6 +426,7 @@ public class MsgClusteringPresenter
     }
 
     public void saveDiscoveryGroup(final String name, Map<String, Object> changeset) {
+
         ModelNode address = Baseadress.get();
         address.add("subsystem", "messaging");
         address.add("hornetq-server", getCurrentServer());
@@ -434,7 +435,7 @@ public class MsgClusteringPresenter
         ModelNode addressNode = new ModelNode();
         addressNode.get(ADDRESS).set(address);
 
-        ModelNode operation = bcastGroupAdapter.fromChangeset(changeset, addressNode);
+        ModelNode operation = discGroupAdapter.fromChangeset(changeset, addressNode);
 
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
 
@@ -447,7 +448,7 @@ public class MsgClusteringPresenter
                 else
                     Console.info(Console.MESSAGES.modified("Broadcast Group " + name));
 
-                loadBroadcastGroups();
+                loadDiscoveryGroups();
             }
         });
     }
