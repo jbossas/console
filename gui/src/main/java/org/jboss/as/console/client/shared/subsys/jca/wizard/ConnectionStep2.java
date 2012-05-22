@@ -77,7 +77,7 @@ public class ConnectionStep2 implements PropertyManagement {
         ClickHandler submitHandler = new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                parent.onCompleteStep2(properties);
+               // parent.onCompleteStep2(properties);
             }
         };
 
