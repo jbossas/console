@@ -6,6 +6,7 @@ import org.jboss.as.console.client.shared.help.FormHelpPanel;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.as.console.client.shared.subsys.jca.model.ConnectionDefinition;
 import org.jboss.as.console.client.widgets.forms.FormToolStrip;
+import org.jboss.ballroom.client.widgets.forms.CheckBoxItem;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextBoxItem;
 import org.jboss.dmr.client.ModelNode;
@@ -37,25 +38,9 @@ public class AdapterSecurity {
 
         form = new Form<ConnectionDefinition>(ConnectionDefinition.class);
 
-        TextBoxItem domain = new TextBoxItem("securityDomain", "Security Domain") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-        TextBoxItem application = new TextBoxItem("application", "Application") {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
-        TextBoxItem domainApplication = new TextBoxItem("domainAndApplication", "Domain And Application")
-        {
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-        };
+        TextBoxItem domain = new TextBoxItem("securityDomain", "Security Domain", false);
+        CheckBoxItem application = new CheckBoxItem("application", "Application");
+        TextBoxItem domainApplication = new TextBoxItem("domainAndApplication", "Domain And Application", false);
 
         form.setFields(domain, application, domainApplication);
         form.setEnabled(false);

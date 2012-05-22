@@ -29,8 +29,8 @@ public interface ConnectionDefinition {
     void setSecurityDomain(String domain);
 
     @Binding(detypedName = "security-application")
-    String getApplication();
-    void setApplication(String application);
+    boolean isApplication();
+    void setApplication(boolean application);
 
     @Binding(detypedName = "security-domain-and-application")
     String getDomainAndApplication();
