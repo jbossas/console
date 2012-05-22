@@ -22,3 +22,6 @@ gui/src/main/java/upload-proxy.properties
 gui/src/main/java/gwt-proxy.properties
 
 gui/generated
+gui/war/treelayout/clear.cache.gif
+gui/war/treelayout/hosted.html
+gui/war/treelayout/treelayout.nocache.js
