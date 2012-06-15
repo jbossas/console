@@ -55,6 +55,16 @@ public class Footer {
         LayoutPanel layout = new LayoutPanel();
         layout.setStyleName("footer-panel");
 
+        HTML dmrBrowser = new HTML("Browser");
+        dmrBrowser.addStyleName("footer-link");
+        dmrBrowser.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                placeManager.revealPlace(
+                        new PlaceRequest(NameTokens.DMRBrowser)
+                );
+            }
+        });
 
 
         HTML settings = new HTML(Console.CONSTANTS.common_label_settings());
@@ -93,6 +103,7 @@ public class Footer {
 
         layout.add(logout);
         layout.add(settings);
+        layout.add(dmrBrowser);
 
         HTML version = new HTML(org.jboss.as.console.client.Build.VERSION);
         version.getElement().setAttribute("style", "color:#ffffff;font-size:10px; align:left");
@@ -106,6 +117,9 @@ public class Footer {
 
         layout.setWidgetRightWidth(settings, 65, Style.Unit.PX, 120, Style.Unit.PX);
         layout.setWidgetTopHeight(settings, 2, Style.Unit.PX, 28, Style.Unit.PX);
+
+        layout.setWidgetRightWidth(dmrBrowser, 125, Style.Unit.PX, 185, Style.Unit.PX);
+        layout.setWidgetTopHeight(dmrBrowser, 2, Style.Unit.PX, 28, Style.Unit.PX);
 
 
         layout.getElement().setAttribute("role", "complementary");

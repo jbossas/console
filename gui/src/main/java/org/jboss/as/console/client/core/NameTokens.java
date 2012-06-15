@@ -83,6 +83,8 @@ public class NameTokens {
     public static final String ModclusterPresenter = "modcluster";
     public static final String MsgConnectionsPresenter = "messaging-connections";
     public static final String MsgClusteringPresenter  =  "messaging-cluster";
+    public static final String DMRBrowser = "browser";
+    public static final String ToolsPresenter = "tools";
 
     public static String getMainLayout() {
         return mainLayout;
