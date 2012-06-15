@@ -4,7 +4,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.domain.profiles.ProfileMgmtPresenter;
 
 /**
  * @author Heiko Braun
@@ -22,7 +21,7 @@ public class ToolsView extends SuspendableViewImpl implements ToolsPresenter.MyV
     @Override
     public Widget createWidget() {
 
-        setContent(new HTML("<center>This is the workbench. No tool selected.</center>"));
+        //setContent(new HTML("<center>This is the workbench. No tool selected.</center>"));
         return contentCanvas;
     }
 
