@@ -3,12 +3,12 @@ package org.jboss.as.console.client.tools;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTree;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
@@ -32,6 +32,7 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     private Property root;
 
     VerticalPanel treeContainer;
+    private RawView rawView;
 
     @Override
     public void setPresenter(BrowserPresenter presenter) {
@@ -49,7 +50,21 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         ScrollPanel scroll = new ScrollPanel(treeContainer);
         layout.addWest(scroll, 300);
-        layout.add(new LayoutPanel());
+
+        rawView = new RawView();
+
+        layout.add(rawView.asWidget());
+
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
+                if(selectionModel.getSelectedObject()!=null)
+                {
+                    rawView.display(selectionModel.getSelectedObject());
+                }
+
+            }
+        });
 
         return layout;
     }
@@ -91,13 +106,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
                     dataProvider.setList(entry.getValue().asPropertyList());
                 }
 
-            } else {
-                /*setFinish(new Command() {
-                    @Override
-                    public void execute() {
-                        dataProvider.setList(rootEntry.getChildren());
-                    }
-                });*/
             }
 
             return new DefaultNodeInfo<Property>(
@@ -122,10 +130,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
                 if(prop.getValue().isDefined())
                     System.out.println(prop.getValue().getType() + " ::: "+ prop.getValue());
 
-                /*return prop.getValue().isDefined()
-                        && prop.getValue().getType().equals(ModelType.OBJECT)
-                        && prop.getValue().asObject().keys().isEmpty();*/
-
                 isLeaf = !hasChildren(prop.getValue());
             }
 
@@ -135,8 +139,13 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
     class PropertyCell extends AbstractCell<Property> {
         @Override
-        public void render(Context context, Property value, SafeHtmlBuilder sb) {
-            sb.appendEscaped(value.getName());
+        public void render(Context context, Property prop, SafeHtmlBuilder sb) {
+
+            String color = "#000000";
+            if(!prop.getValue().isDefined()) color = "#cccccc";
+            sb.appendHtmlConstant("<div style='color:"+color+"'>");
+            sb.appendEscaped(prop.getName());
+            sb.appendHtmlConstant("</div>");
         }
     }
 
