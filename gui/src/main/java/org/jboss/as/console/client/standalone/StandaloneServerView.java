@@ -1,6 +1,8 @@
 package org.jboss.as.console.client.standalone;
 
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
@@ -9,6 +11,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -17,7 +20,6 @@ import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.general.EnvironmentProperties;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
-import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.jboss.ballroom.client.widgets.icons.Icons;
@@ -144,6 +146,8 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
         DefaultPager pager = new DefaultPager();
         pager.setDisplay(extensionTable);
 
+
+
         extPanel.add(extensionTable.asWidget());
         extPanel.add(pager);
 
@@ -173,6 +177,10 @@ public class StandaloneServerView extends DisposableViewImpl implements Standalo
 
 
         return layout.build();
+    }
+
+    private void filterProperties(String prefix) {
+        environmentProperties.filterByPrefix(prefix);
     }
 
     @Override
