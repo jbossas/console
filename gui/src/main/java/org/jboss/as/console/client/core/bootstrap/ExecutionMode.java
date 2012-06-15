@@ -70,6 +70,7 @@ public class ExecutionMode implements AsyncCommand<Boolean>{
                 boolean isServer = response.get(RESULT).asString().equals("Server");
                 bootstrap.setProperty(BootstrapContext.STANDALONE, Boolean.valueOf(isServer).toString());
 
+
                 callback.onSuccess(Boolean.TRUE);
 
             }
