@@ -122,6 +122,7 @@ import org.jboss.as.console.client.standalone.StandaloneServerPresenter;
 import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.VMMetricsPresenter;
+import org.jboss.as.console.client.tools.ToolsPresenter;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.spi.GinExtension;
 
@@ -182,6 +183,7 @@ public interface CoreUI {
     // ----------------------------------------------------------------------
     Provider<SignInPagePresenter> getSignInPagePresenter();
     AsyncProvider<MainLayoutPresenter> getMainLayoutPresenter();
+    AsyncProvider<ToolsPresenter> getToolsPresenter();
     AsyncProvider<SettingsPresenter> getSettingsPresenter();
     AsyncProvider<SettingsPresenterWidget> getSettingsPresenterWidget();
 

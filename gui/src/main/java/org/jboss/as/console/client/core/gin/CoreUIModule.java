@@ -201,6 +201,8 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
+import org.jboss.as.console.client.tools.ToolsPresenter;
+import org.jboss.as.console.client.tools.ToolsView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
 import org.jboss.as.console.spi.GinExtensionBinding;
 
@@ -269,6 +271,12 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutPresenter.MainLayoutView.class,
                 MainLayoutViewImpl.class,
                 MainLayoutPresenter.MainLayoutProxy.class);
+
+         // tools
+        bindPresenter(ToolsPresenter.class,
+                ToolsPresenter.MyView.class,
+                ToolsView.class,
+                ToolsPresenter.MyProxy.class);
 
         bindPresenter(SettingsPresenter.class,
                 SettingsPresenter.MyView.class,
