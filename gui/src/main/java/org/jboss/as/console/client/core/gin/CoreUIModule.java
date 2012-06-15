@@ -201,6 +201,8 @@ import org.jboss.as.console.client.standalone.deployment.DeploymentListPresenter
 import org.jboss.as.console.client.standalone.deployment.DeploymentListView;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimePresenter;
 import org.jboss.as.console.client.standalone.runtime.StandaloneRuntimeView;
+import org.jboss.as.console.client.tools.BrowserPresenter;
+import org.jboss.as.console.client.tools.BrowserView;
 import org.jboss.as.console.client.tools.ToolsPresenter;
 import org.jboss.as.console.client.tools.ToolsView;
 import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
@@ -272,11 +274,16 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MainLayoutViewImpl.class,
                 MainLayoutPresenter.MainLayoutProxy.class);
 
-         // tools
+        // tools
         bindPresenter(ToolsPresenter.class,
                 ToolsPresenter.MyView.class,
                 ToolsView.class,
                 ToolsPresenter.MyProxy.class);
+
+        bindPresenter(BrowserPresenter.class,
+                BrowserPresenter.MyView.class,
+                BrowserView.class,
+                BrowserPresenter.MyProxy.class);
 
         bindPresenter(SettingsPresenter.class,
                 SettingsPresenter.MyView.class,
@@ -422,7 +429,7 @@ public class CoreUIModule extends AbstractPresenterModule {
                 MsgConnectionsView.class,
                 MsgConnectionsPresenter.MyProxy.class);
 
-         bindPresenter(MsgClusteringPresenter.class,
+        bindPresenter(MsgClusteringPresenter.class,
                 MsgClusteringPresenter.MyView.class,
                 MsgClusteringView.class,
                 MsgClusteringPresenter.MyProxy.class);
