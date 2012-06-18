@@ -135,8 +135,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
             if(value instanceof Property) {
                 final Property prop = (Property) value;
                 isLeaf = !hasChildren(prop.getValue());
-
-                System.out.println("isLeaf? "+prop.getName()+" "+isLeaf);
             }
 
 
@@ -151,7 +149,12 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
             String color = "#000000";
             if(!prop.getValue().isDefined()) color = "#cccccc";
             sb.appendHtmlConstant("<div style='color:"+color+"'>");
+
             sb.appendEscaped(prop.getName());
+
+            if(prop.getValue().getType().equals(ModelType.OBJECT)) {
+                sb.appendHtmlConstant(" &hellip;");
+            }
             sb.appendHtmlConstant("</div>");
         }
     }
@@ -165,7 +168,7 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
     private static boolean hasChildren(ModelNode model)
     {
-        boolean result = false;
+        /*boolean result = false;
         if(model.getType().equals(ModelType.OBJECT))
         {
             for(String attribute : model.asObject().keys())
@@ -177,6 +180,8 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
                 }
             }
         }
-        return result;
+        return result;   */
+
+        return model.getType().equals(ModelType.OBJECT);
     }
 }
