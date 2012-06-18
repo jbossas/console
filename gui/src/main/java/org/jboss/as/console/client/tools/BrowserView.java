@@ -18,6 +18,7 @@ import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.List;
+import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -58,9 +59,11 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                if(selectionModel.getSelectedObject()!=null)
+                final Property selection = selectionModel.getSelectedObject();
+                if(selection !=null)
                 {
-                    rawView.display(selectionModel.getSelectedObject());
+                    //if(!hasChildren(selection.getValue()))
+                        rawView.display(selection);
                 }
 
             }
@@ -76,11 +79,16 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         if(properties.isEmpty()) return;
 
-        final Property entryPoint = properties.get(12);
-        treeModel = new BrowserTreeModel(entryPoint);
-        cellTree = new BrowserTree(treeModel, entryPoint);
+        for(Property prop : properties)
+        {
+            if(RESULT.equals(prop.getName()))
+            {
+                treeModel = new BrowserTreeModel(prop);
+                cellTree = new BrowserTree(treeModel, prop);
 
-        treeContainer.add(cellTree);
+                treeContainer.add(cellTree);
+            }
+        }
     }
 
     class BrowserTreeModel implements TreeViewModel {
@@ -126,12 +134,11 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
             if(value instanceof Property) {
                 final Property prop = (Property) value;
-
-                if(prop.getValue().isDefined())
-                    System.out.println(prop.getValue().getType() + " ::: "+ prop.getValue());
-
                 isLeaf = !hasChildren(prop.getValue());
+
+                System.out.println("isLeaf? "+prop.getName()+" "+isLeaf);
             }
+
 
             return isLeaf;
         }

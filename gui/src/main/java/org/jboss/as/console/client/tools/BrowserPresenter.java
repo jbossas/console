@@ -73,7 +73,7 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
-                getView().setModel(response.get(RESULT).asPropertyList());
+                getView().setModel(response.asPropertyList());
             }
         });
     }
