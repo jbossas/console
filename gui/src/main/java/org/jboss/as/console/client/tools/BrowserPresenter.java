@@ -39,9 +39,8 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
 
     public interface MyView extends View {
         void setPresenter(BrowserPresenter presenter);
-        void setDescription(CompositeDescription desc);
-
-        void setChildTypes(ModelNode address, List<ModelNode> childTypes);
+        void updateChildrenTypes(ModelNode address, List<ModelNode> modelNodes);
+        void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes);
     }
 
     @Inject
@@ -65,77 +64,12 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
     protected void onReset() {
         super.onReset();
 
-        loadDescription(new ModelNode().setEmptyList());
+        readChildrenTypes(new ModelNode().setEmptyList());
     }
 
-    public void loadDescription(final ModelNode address) {
+    public void readChildrenTypes(final ModelNode address) {
 
-        ModelNode operation = new ModelNode();
-        operation.get(ADDRESS).setEmptyList();
-        operation.get(OP).set(COMPOSITE);
-
-        List<ModelNode> steps = new ArrayList<ModelNode>();
-
-        ModelNode descriptionOp = new ModelNode();
-        descriptionOp.get(ADDRESS).set(address);
-        descriptionOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
-        descriptionOp.get("recursive-depth").set(2);
-        steps.add(descriptionOp);
-
-        final List<ModelNode> path = address.asList();
-        if(!path.isEmpty())
-        {
-
-            ModelNode childTypeOp = new ModelNode();
-            childTypeOp.get(ADDRESS).setEmptyList();  // TODO
-            childTypeOp.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
-            childTypeOp.get(CHILD_TYPE).set(address.get(path.size()-1).asProperty().getName());
-            steps.add(childTypeOp);
-        }
-
-        operation.get(STEPS).set(steps);
-
-
-        //System.out.println(operation);
-
-        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
-            @Override
-            public void onSuccess(DMRResponse dmrResponse) {
-                final ModelNode response = dmrResponse.get();
-
-                System.out.println("---");
-                System.out.println(response);
-                System.out.println("---");
-
-                List<Property> propertyList = response.get(RESULT).asPropertyList();
-
-                CompositeDescription desc = new CompositeDescription();
-                desc.setAddress(address);
-
-                for(Property step : propertyList)
-                {
-                    ModelNode stepResult = step.getValue();
-                    if(step.getName().equals("step-1"))
-                    {
-                        if(stepResult.isDefined())
-                            desc.setDescription(stepResult.get(RESULT).asObject());
-                        else
-                            desc.setDescription(new ModelNode());
-                    }
-                    else if (step.getName().equals("step-2"))
-                    {
-                        desc.setChildNames(stepResult.get(RESULT).asList());
-                    }
-
-                    getView().setDescription(desc);
-                }
-
-            }
-        });
-    }
-
-    public void loadChildTypes(final ModelNode address) {
-        ModelNode operation = new ModelNode();
+        ModelNode operation  = new ModelNode();
         operation.get(ADDRESS).set(address);
         operation.get(OP).set(READ_CHILDREN_TYPES_OPERATION);
 
@@ -143,12 +77,43 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
-                //System.out.println(response);
-                //getView().setChildTypes(address, response.get(RESULT).asList());
+                getView().updateChildrenTypes(address, response.get(RESULT).asList());
             }
         });
     }
 
+    public void readChildrenNames(final ModelNode address) {
+
+        final List<ModelNode> addressList = address.asList();
+        ModelNode typeDenominator = null;
+        List<ModelNode> actualAddress = new ArrayList<ModelNode>();
+        int i=0;
+        for(ModelNode path : addressList)
+        {
+            if(i< addressList.size()-1)
+                actualAddress.add(path);
+            else
+                typeDenominator = path;
+        }
+
+        ModelNode operation  = new ModelNode();
+        operation.get(ADDRESS).set(actualAddress);
+        operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
+        operation.get(CHILD_TYPE).set(typeDenominator.asProperty().getName());
+
+        System.out.println(operation);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+                final ModelNode response = dmrResponse.get();
+
+                System.out.println(response);
+                getView().updateChildrenNames(address, response.get(RESULT).asList());
+            }
+        });
+
+    }
 
     @Override
     protected void revealInParent() {
