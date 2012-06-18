@@ -62,8 +62,8 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
                 final Property selection = selectionModel.getSelectedObject();
                 if(selection !=null)
                 {
-                    //if(!hasChildren(selection.getValue()))
-                        rawView.display(selection);
+                    rawView.display(selection);
+
                 }
 
             }
