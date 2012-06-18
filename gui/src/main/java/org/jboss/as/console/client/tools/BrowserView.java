@@ -1,24 +1,23 @@
 package org.jboss.as.console.client.tools;
 
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import com.google.gwt.view.client.TreeViewModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
-import org.jboss.as.console.client.widgets.tree.DefaultCellTreeResources;
 import org.jboss.dmr.client.ModelNode;
-import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
@@ -27,14 +26,11 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.*;
 public class BrowserView extends SuspendableViewImpl implements BrowserPresenter.MyView {
     private BrowserPresenter presenter;
     private SplitLayoutPanel layout;
-    private BrowserTreeModel treeModel;
-    private BrowserTree cellTree;
     private SingleSelectionModel<Property> selectionModel;
-    private Property root;
 
-    VerticalPanel treeContainer;
+    private VerticalPanel treeContainer;
     private RawView rawView;
-
+    private Tree tree;
     @Override
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
@@ -43,11 +39,17 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     @Override
     public Widget createWidget() {
 
+        tree = new Tree();
+        tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
+            @Override
+            public void onSelection(SelectionEvent<TreeItem> selection) {
+                System.out.println(">> "+selection.getSelectedItem().getText());
+            }
+        });
         layout = new SplitLayoutPanel(10);
         treeContainer = new VerticalPanel();
         treeContainer.setStyleName("fill-layout");
-
-        selectionModel = new SingleSelectionModel<Property>();
+        treeContainer.add(tree);
 
         ScrollPanel scroll = new ScrollPanel(treeContainer);
         layout.addWest(scroll, 300);
@@ -56,132 +58,183 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         layout.add(rawView.asWidget());
 
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+
+        tree.addOpenHandler(new OpenHandler<TreeItem>() {
             @Override
-            public void onSelectionChange(SelectionChangeEvent selectionChangeEvent) {
-                final Property selection = selectionModel.getSelectedObject();
-                if(selection !=null)
-                {
-                    rawView.display(selection);
-
-                }
-
+            public void onOpen(OpenEvent<TreeItem> event) {
+                onItemOpenend(event.getTarget());
             }
         });
 
         return layout;
     }
 
+    private void onItemOpenend(TreeItem treeItem) {
+
+        // check if it has a placeholder child
+        if(treeItem.getChildCount()>0 && (treeItem.getChild(0) instanceof PlaceholderItem))
+        {
+            final ModelNode address = deriveAddress(treeItem.getChild(0));
+            System.out.println(address);
+
+            final List<ModelNode> path = address.asList();
+            final String suffix = path.get(path.size() - 1).asProperty().getValue().asString();
+            if(suffix.equals("*"))
+            {
+                // need to fetch the child types
+                presenter.loadDescription(address);
+            }
+
+        }
+    }
+
     @Override
-    public void setModel(List<Property> properties) {
+    public void setDescription(CompositeDescription desc) {
 
-        treeContainer.clear();
+        System.out.println("Update "+desc.getAddress());
 
-        if(properties.isEmpty()) return;
+        TreeItem rootItem = null;
 
-        for(Property prop : properties)
+        if(desc.getAddress().asList().isEmpty())
         {
-            if(RESULT.equals(prop.getName()))
-            {
-                treeModel = new BrowserTreeModel(prop);
-                cellTree = new BrowserTree(treeModel, prop);
+            tree.clear();
+            rootItem = new DescribedTreeItem("Server Config", desc.getDescription());
+            tree.addItem(rootItem);
+        }
+        else
+        {
+            rootItem = findTreeItemForAddress(tree.getItem(0), desc.getAddress());
+        }
 
-                treeContainer.add(cellTree);
-            }
+        parseChildren(rootItem, desc);
+
+    }
+
+    @Override
+    public void setChildTypes(ModelNode address, List<ModelNode> childTypes) {
+
+        TreeItem rootItem = findTreeItemForAddress(tree.getItem(0), address);
+
+        for(ModelNode childType : childTypes)
+        {
+            rootItem.addItem(childType.asString());
         }
     }
 
-    class BrowserTreeModel implements TreeViewModel {
-        Property rootEntry;
+    private TreeItem findTreeItemForAddress(TreeItem root, ModelNode address) {
 
-        BrowserTreeModel(Property root) {
-            this.rootEntry = root;
+        TreeItem next = root;
+        final List<ModelNode> pathList = address.asList();
+        final Iterator<ModelNode> iterator = pathList.iterator();
+        boolean matched = false;
+
+        while(!matched && next!=null)
+        {
+            if(!iterator.hasNext()) break;
+            next = traverse(next, iterator.next().asProperty().getName());
         }
 
-        /**
-         * Get the {@link NodeInfo} that provides the children
-         * of the specified value.
-         */
-        public <T> NodeInfo<?> getNodeInfo(T value) {
+        if(next!=null)
+            System.out.println("Tree item @ "+address+" : "+next.getText());
 
-            final ListDataProvider<Property> dataProvider = new ListDataProvider<Property>();
-
-            if (value instanceof Property) {
-                Property entry = (Property)value;
-                if(entry.getValue().isDefined()
-                        && entry.getValue().getType().equals(ModelType.OBJECT))
-                {
-                    dataProvider.setList(entry.getValue().asPropertyList());
-                }
-
-            }
-
-            return new DefaultNodeInfo<Property>(
-                    dataProvider,
-                    new PropertyCell(),
-                    selectionModel,
-                    null
-            );
-        }
-
-        /**
-         * Check if the specified value represents a leaf node.
-         * Leaf nodes cannot be opened.
-         */
-        public boolean isLeaf(Object value) {
-
-            boolean isLeaf = false;
-
-            if(value instanceof Property) {
-                final Property prop = (Property) value;
-                isLeaf = !hasChildren(prop.getValue());
-            }
-
-
-            return isLeaf;
-        }
+        return next;
     }
 
-    class PropertyCell extends AbstractCell<Property> {
-        @Override
-        public void render(Context context, Property prop, SafeHtmlBuilder sb) {
-
-            String color = "#000000";
-            if(!prop.getValue().isDefined()) color = "#cccccc";
-            sb.appendHtmlConstant("<div style='color:"+color+"'>");
-
-            sb.appendEscaped(prop.getName());
-
-            if(prop.getValue().getType().equals(ModelType.OBJECT)) {
-                sb.appendHtmlConstant(" &hellip;");
-            }
-            sb.appendHtmlConstant("</div>");
-        }
-    }
-
-    public class BrowserTree extends CellTree {
-
-        public BrowserTree(TreeViewModel treeModel, Property root) {
-            super(treeModel, root, new DefaultCellTreeResources());
-        }
-    }
-
-    private static boolean hasChildren(ModelNode model)
+    private static TreeItem traverse(TreeItem root, String path)
     {
-        /*boolean result = false;
-        if(model.getType().equals(ModelType.OBJECT))
+        TreeItem match = null;
+        for(int i=0; i<root.getChildCount(); i++)
         {
-            for(String attribute : model.asObject().keys())
+            TreeItem child = root.getChild(i);
+            if(child.getText().equals(path))
             {
-                if(model.get(attribute).getType().equals(ModelType.OBJECT))
-                {
-                    result = true;
-                    break;
-                }
+                match = child;
+                break;
             }
         }
-        return result;   */
 
-        return model.getType().equals(ModelType.OBJECT);
+        return match;
+    }
+
+    private void parseChildren(TreeItem root, CompositeDescription desc) {
+
+        assert root!=null : "root node cannot be null";
+
+        // parse children
+
+        if(desc.getChildNames().isEmpty()
+                && desc.getDescription().hasDefined("children"))
+        {
+            final List<Property> children = desc.getDescription().get("children").asPropertyList();
+            for(Property child : children)
+            {
+                DescribedTreeItem childItem = new DescribedTreeItem(child.getName());
+                childItem.addItem(new PlaceholderItem("*"));
+                root.addItem(childItem);
+            }
+        }
+        else
+        {
+            root.removeItems();
+            for(ModelNode childName : desc.getChildNames())
+            {
+                root.addItem(childName.asString());
+            }
+        }
+
+    }
+
+    public static ModelNode deriveAddress(TreeItem item)
+    {
+        int nestinglevel = 0;
+        LinkedList<ModelNode> address = new LinkedList<ModelNode>();
+        recurseToTop(nestinglevel, item, address);
+
+        return new ModelNode().set(address);
+    }
+
+    private static void recurseToTop(int nestingLevel, TreeItem item, LinkedList<ModelNode> address)
+    {
+        if(item.getParentItem()!=null)
+        {
+            nestingLevel++;
+            if(nestingLevel%2==0)
+                address.addFirst(new ModelNode().set(item.getText(), "*"));
+            // TODO else statement
+
+            recurseToTop(nestingLevel, item.getParentItem(), address);
+        }
+    }
+
+    class DescribedTreeItem extends TreeItem
+    {
+        private ModelNode description;
+
+        DescribedTreeItem(String name) {
+            super(name);
+        }
+
+        public boolean isDescribed() {
+            return this.description!=null;
+        }
+
+        public void setDescription(ModelNode description) {
+            this.description = description;
+        }
+
+        DescribedTreeItem(String name, ModelNode description) {
+            super(name);
+            this.description = description;
+        }
+
+        public ModelNode getDescription() {
+            return description;
+        }
+    }
+
+    class PlaceholderItem extends TreeItem {
+        PlaceholderItem(String html) {
+            super(html);
+        }
     }
 }
