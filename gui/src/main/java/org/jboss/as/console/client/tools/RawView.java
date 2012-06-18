@@ -1,9 +1,11 @@
 package org.jboss.as.console.client.tools;
 
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
 import org.jboss.dmr.client.Property;
 
 /**
@@ -15,6 +17,7 @@ public class RawView {
     private TextArea dump;
     private TextBox name;
     private TextBox type;
+    private ContentHeaderLabel address;
 
     Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
@@ -28,7 +31,9 @@ public class RawView {
 
         name = new TextBox();
         type = new TextBox();
+        address = new ContentHeaderLabel();
 
+        layout.add(address);
         layout.add(name);
         layout.add(type);
         layout.add(dump);
