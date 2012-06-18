@@ -75,49 +75,68 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         if(treeItem.getChildCount()>0 && (treeItem.getChild(0) instanceof PlaceholderItem))
         {
             final ModelNode address = deriveAddress(treeItem.getChild(0));
-            System.out.println(address);
 
             final List<ModelNode> path = address.asList();
             final String suffix = path.get(path.size() - 1).asProperty().getValue().asString();
             if(suffix.equals("*"))
             {
                 // need to fetch the child types
-                presenter.loadDescription(address);
+                presenter.readChildrenNames(address);
             }
-
         }
     }
 
     @Override
-    public void setDescription(CompositeDescription desc) {
+    public void updateChildrenTypes(ModelNode address, List<ModelNode> modelNodes) {
 
-        System.out.println("Update "+desc.getAddress());
+        System.out.println("Update types "+address);
 
         TreeItem rootItem = null;
 
-        if(desc.getAddress().asList().isEmpty())
+        if(address.asList().isEmpty())
         {
             tree.clear();
-            rootItem = new DescribedTreeItem("Server Config", desc.getDescription());
+            rootItem = new TreeItem("Server Config");
             tree.addItem(rootItem);
         }
         else
         {
-            rootItem = findTreeItemForAddress(tree.getItem(0), desc.getAddress());
+            rootItem = findTreeItemForAddress(tree.getItem(0), address);
         }
 
-        parseChildren(rootItem, desc);
+        addChildrenTypes(rootItem, modelNodes);
 
     }
 
     @Override
-    public void setChildTypes(ModelNode address, List<ModelNode> childTypes) {
+    public void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes) {
+
+        System.out.println("Update names "+address);
 
         TreeItem rootItem = findTreeItemForAddress(tree.getItem(0), address);
 
-        for(ModelNode childType : childTypes)
+        addChildrenNames(rootItem, modelNodes);
+
+    }
+
+    private void addChildrenTypes(TreeItem rootItem, List<ModelNode> modelNodes) {
+        for(ModelNode child : modelNodes)
         {
-            rootItem.addItem(childType.asString());
+            TreeItem childItem = new TreeItem(child.asString());
+            childItem.addItem(new PlaceholderItem());
+            rootItem.addItem(childItem);
+        }
+    }
+
+    private void addChildrenNames(TreeItem rootItem, List<ModelNode> modelNodes) {
+
+        rootItem.removeItems();
+
+        for(ModelNode child : modelNodes)
+        {
+            TreeItem childItem = new TreeItem(child.asString());
+            childItem.addItem(new PlaceholderItem());
+            rootItem.addItem(childItem);
         }
     }
 
@@ -156,34 +175,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         return match;
     }
 
-    private void parseChildren(TreeItem root, CompositeDescription desc) {
-
-        assert root!=null : "root node cannot be null";
-
-        // parse children
-
-        if(desc.getChildNames().isEmpty()
-                && desc.getDescription().hasDefined("children"))
-        {
-            final List<Property> children = desc.getDescription().get("children").asPropertyList();
-            for(Property child : children)
-            {
-                DescribedTreeItem childItem = new DescribedTreeItem(child.getName());
-                childItem.addItem(new PlaceholderItem("*"));
-                root.addItem(childItem);
-            }
-        }
-        else
-        {
-            root.removeItems();
-            for(ModelNode childName : desc.getChildNames())
-            {
-                root.addItem(childName.asString());
-            }
-        }
-
-    }
-
     public static ModelNode deriveAddress(TreeItem item)
     {
         int nestinglevel = 0;
@@ -206,35 +197,9 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         }
     }
 
-    class DescribedTreeItem extends TreeItem
-    {
-        private ModelNode description;
-
-        DescribedTreeItem(String name) {
-            super(name);
-        }
-
-        public boolean isDescribed() {
-            return this.description!=null;
-        }
-
-        public void setDescription(ModelNode description) {
-            this.description = description;
-        }
-
-        DescribedTreeItem(String name, ModelNode description) {
-            super(name);
-            this.description = description;
-        }
-
-        public ModelNode getDescription() {
-            return description;
-        }
-    }
-
     class PlaceholderItem extends TreeItem {
-        PlaceholderItem(String html) {
-            super(html);
+        PlaceholderItem() {
+            super("*");
         }
     }
 }
