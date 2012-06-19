@@ -17,6 +17,7 @@ import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.ModelType;
 import org.jboss.dmr.client.Property;
 
 import java.util.ArrayList;
@@ -153,7 +154,13 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
                     ModelNode stepResult = step.getValue();
                     if(step.getName().equals("step-1"))
                     {
-                        getView().updateDescription(address, stepResult.get(RESULT).asObject());
+                        ModelNode desc = null;
+                        if(ModelType.LIST.equals(stepResult.get(RESULT).getType()))
+                            desc = stepResult.get(RESULT).asList().get(0).get(RESULT).asObject();
+                        else
+                            desc = stepResult.get(RESULT).asObject();
+
+                        getView().updateDescription(address, desc);
                     }
                     else if(step.getName().equals("step-2"))
                     {
