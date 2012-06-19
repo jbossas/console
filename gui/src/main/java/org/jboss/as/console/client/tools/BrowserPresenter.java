@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.tools;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -158,7 +159,18 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
                         if(ModelType.LIST.equals(stepResult.get(RESULT).getType()))
                             desc = stepResult.get(RESULT).asList().get(0).get(RESULT).asObject();
                         else
-                            desc = stepResult.get(RESULT).asObject();
+                        {
+                            // workaround ...
+                            if(!stepResult.hasDefined(RESULT))
+                            {
+                                Log.error("Undefined element: "+address);
+                                desc = new ModelNode();
+                            }
+                            else
+                            {
+                                desc = stepResult.get(RESULT).asObject();
+                            }
+                        }
 
                         getView().updateDescription(address, desc);
                     }

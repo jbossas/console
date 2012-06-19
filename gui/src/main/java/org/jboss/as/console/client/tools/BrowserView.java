@@ -64,7 +64,7 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         treeContainer.add(tree);
 
         ScrollPanel scroll = new ScrollPanel(treeContainer);
-        layout.addWest(scroll, 300);
+        layout.addWest(scroll, 250);
 
         rawView = new RawView();
         descView = new DescriptionView();
