@@ -32,8 +32,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     private RawView rawView;
     private Tree tree;
 
-    private static String ROOT_ITEM = "Server Config";
-
     @Override
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
@@ -111,8 +109,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     @Override
     public void updateChildrenTypes(ModelNode address, List<ModelNode> modelNodes) {
 
-        System.out.println("Update types "+address);
-
         HasTreeItems rootItem = null;
 
         if(address.asList().isEmpty())
@@ -131,8 +127,6 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
     @Override
     public void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes) {
-
-        System.out.println("Update names "+address);
 
         TreeItem rootItem = findTreeItem(tree, address);
 

@@ -77,7 +77,6 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
-                System.out.println(response);
                 getView().updateChildrenTypes(address, response.get(RESULT).asList());
             }
         });
@@ -108,7 +107,6 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
-                System.out.println(response);
                 getView().updateChildrenNames(address, response.get(RESULT).asList());
             }
         });
