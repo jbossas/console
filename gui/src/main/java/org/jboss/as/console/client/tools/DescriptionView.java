@@ -51,11 +51,11 @@ public class DescriptionView {
             sb.append("/").append(p.getName()).append("=").append(p.getValue().asString());
         }
 
-        builder.appendHtmlConstant("<h1 class='content-header-label'>")
+        builder.appendHtmlConstant("<h1 class='doc-address'>")
                        .appendEscaped(sb.toString())
                        .appendHtmlConstant("</h1>");
 
-        builder.appendHtmlConstant("<h2>")
+        builder.appendHtmlConstant("<h2 class='doc-description'>")
                 .appendEscaped(description.get("description").asString())
                 .appendHtmlConstant("</h2>");
 
@@ -63,16 +63,16 @@ public class DescriptionView {
 
         if(description.hasDefined("attributes"))
         {
-            builder.appendHtmlConstant("<table style='border:1px solid grey; font-size:12px!important' width='90%' cellpadding=5>");
+            builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
             for(Property att : description.get("attributes").asPropertyList())
             {
                 builder.appendHtmlConstant("<tr>");
-                builder.appendHtmlConstant("<td>").appendEscaped(att.getName()).appendHtmlConstant("</td>");
+                builder.appendHtmlConstant("<td class='doc-attribute'>").appendEscaped(att.getName()).appendHtmlConstant("</td>");
                 builder.appendHtmlConstant("<td>").appendEscaped(att.getValue().get("type").asString()).appendHtmlConstant("</td>");
                 builder.appendHtmlConstant("</tr>");
 
-                builder.appendHtmlConstant("<tr>");
-                builder.appendHtmlConstant("<td colspan=2 style='font-size:10px!important;padding-bottom:8px;border-bottom:1px solid grey'>").appendEscaped(att.getValue().get("description").asString()).appendHtmlConstant("</td>");
+                builder.appendHtmlConstant("<tr class='doc-table-description'>");
+                builder.appendHtmlConstant("<td colspan=2>").appendEscaped(att.getValue().get("description").asString()).appendHtmlConstant("</td>");
                 builder.appendHtmlConstant("</tr>");
             }
             builder.appendHtmlConstant("</table>");
@@ -82,17 +82,17 @@ public class DescriptionView {
 
         if(description.hasDefined("children"))
                 {
-                    builder.appendHtmlConstant("<table style='border:1px solid grey; font-size:12px' width='90%' cellpadding=5>");
+                    builder.appendHtmlConstant("<table class='doc-table' cellpadding=5>");
                     for(Property child : description.get("children").asPropertyList())
                     {
                         builder.appendHtmlConstant("<tr>");
-                        builder.appendHtmlConstant("<td>")
+                        builder.appendHtmlConstant("<td class='doc-child'>")
                                 .appendEscaped(child.getName())
                                 .appendHtmlConstant("</td>");
                         builder.appendHtmlConstant("</tr>");
 
-                        builder.appendHtmlConstant("<tr>");
-                        builder.appendHtmlConstant("<td colspan=2 style='font-size:10px!important;padding-bottom:8px;border-bottom:1px solid grey'>")
+                        builder.appendHtmlConstant("<tr class='doc-table-description'>");
+                        builder.appendHtmlConstant("<td colspan=2>")
                                 .appendEscaped(child.getValue().get("description").asString())
                                 .appendHtmlConstant("</td>");
                         builder.appendHtmlConstant("</tr>");
