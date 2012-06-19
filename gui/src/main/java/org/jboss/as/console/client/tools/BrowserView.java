@@ -1,5 +1,6 @@
 package org.jboss.as.console.client.tools;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -7,11 +8,13 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
+import org.jboss.as.console.client.widgets.tabs.DefaultTabLayoutPanel;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
 
@@ -31,6 +34,7 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
     private VerticalPanel treeContainer;
     private RawView rawView;
     private Tree tree;
+    private DescriptionView descView;
 
     @Override
     public void setPresenter(BrowserPresenter presenter) {
@@ -45,9 +49,15 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
             @Override
             public void onSelection(SelectionEvent<TreeItem> selection) {
                 final LinkedList<String> path = resolvePath(selection.getSelectedItem());
-                System.out.println(">> "+ toAddress(path));
+                System.out.println(">> "+ path +" :: "+ toAddress(path));
+
+                rawView.clearDisplay();
+                descView.clearDisplay();
+                if(path.size()%2==0)
+                    presenter.readResource(toAddress(path));
             }
         });
+
         layout = new SplitLayoutPanel(10);
         treeContainer = new VerticalPanel();
         treeContainer.setStyleName("fill-layout");
@@ -57,9 +67,16 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         layout.addWest(scroll, 300);
 
         rawView = new RawView();
+        descView = new DescriptionView();
 
-        layout.add(rawView.asWidget());
 
+        DefaultTabLayoutPanel tabLayoutPanel = new DefaultTabLayoutPanel(40, Style.Unit.PX);
+                tabLayoutPanel.addStyleName("default-tabpanel");
+        layout.add(tabLayoutPanel);
+
+        tabLayoutPanel.add(descView.asWidget(), "Description");
+        tabLayoutPanel.add(rawView.asWidget(), "Model");
+        tabLayoutPanel.selectTab(0);
 
         tree.addOpenHandler(new OpenHandler<TreeItem>() {
             @Override
@@ -134,6 +151,19 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         addChildrenNames(rootItem, modelNodes);
 
+    }
+
+    @Override
+    public void updateDescription(ModelNode address, ModelNode description) {
+        descView.updateDescription(address, description);
+    }
+
+    @Override
+    public void updateResource(ModelNode address, ModelNode resource) {
+
+        final List<Property> tokens = address.asPropertyList();
+        String name = tokens.get(tokens.size()-1).getValue().asString();
+        rawView.display(new Property(name, resource));
     }
 
     private void addChildrenTypes(HasTreeItems rootItem, List<ModelNode> modelNodes) {
