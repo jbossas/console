@@ -120,6 +120,43 @@ a:hover, a:active { outline: none; }
 }
 
 
+/* doc browser */
+
+.doc-table {
+    border: 1px solid grey;
+    width:90%;
+}
+
+.doc-attribute {
+    font-weight: BOLD;
+    color: #3B4D64;
+}
+
+.doc-child {
+    font-weight: BOLD;
+    color: #3B4D64;
+}
+
+.doc-description {
+    font-size: 14px !important;
+    padding-bottom: 8px;
+}
+
+.doc-address{
+    font-weight: BOLD;
+    color: #3B4D64;
+    font-size: 16px !important;
+    padding-bottom: 8px;
+}
+
+.doc-table-description td {
+    border-bottom: 1px solid grey;
+}
+
+.doc-table-description:last-child td {
+    border-bottom: none;
+}
+
 input[type="checkbox"] {
     width: 15px!important;
 }
