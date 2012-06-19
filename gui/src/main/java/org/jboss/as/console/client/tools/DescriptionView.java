@@ -5,10 +5,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
+
+import java.util.List;
 
 /**
  * @author Heiko Braun
@@ -41,6 +42,18 @@ public class DescriptionView {
         System.out.println(description);
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
+
+
+        final List<Property> path = address.asPropertyList();
+        StringBuffer sb = new StringBuffer();
+        for(Property p : path)
+        {
+            sb.append("/").append(p.getName()).append("=").append(p.getValue().asString());
+        }
+
+        builder.appendHtmlConstant("<h1 class='content-header-label'>")
+                       .appendEscaped(sb.toString())
+                       .appendHtmlConstant("</h1>");
 
         builder.appendHtmlConstant("<h2>")
                 .appendEscaped(description.get("description").asString())
@@ -82,6 +95,10 @@ public class DescriptionView {
                 }
 
         html.setHTML(builder.toSafeHtml());
+    }
+
+    public DescriptionView() {
+        super();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     public void clearDisplay() {
