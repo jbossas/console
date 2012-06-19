@@ -4,13 +4,13 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SingleSelectionModel;
 import org.jboss.as.console.client.core.SuspendableViewImpl;
 import org.jboss.dmr.client.ModelNode;
 import org.jboss.dmr.client.Property;
@@ -24,13 +24,16 @@ import java.util.List;
  * @date 6/15/12
  */
 public class BrowserView extends SuspendableViewImpl implements BrowserPresenter.MyView {
+
     private BrowserPresenter presenter;
     private SplitLayoutPanel layout;
-    private SingleSelectionModel<Property> selectionModel;
 
     private VerticalPanel treeContainer;
     private RawView rawView;
     private Tree tree;
+
+    private static String ROOT_ITEM = "Server Config";
+
     @Override
     public void setPresenter(BrowserPresenter presenter) {
         this.presenter = presenter;
@@ -43,7 +46,8 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> selection) {
-                System.out.println(">> "+selection.getSelectedItem().getText());
+                final LinkedList<String> path = resolvePath(selection.getSelectedItem());
+                System.out.println(">> "+ toAddress(path));
             }
         });
         layout = new SplitLayoutPanel(10);
@@ -74,16 +78,34 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         // check if it has a placeholder child
         if(treeItem.getChildCount()>0 && (treeItem.getChild(0) instanceof PlaceholderItem))
         {
-            final ModelNode address = deriveAddress(treeItem.getChild(0));
+            final List<String> path = resolvePath(treeItem.getChild(0));
 
-            final List<ModelNode> path = address.asList();
-            final String suffix = path.get(path.size() - 1).asProperty().getValue().asString();
-            if(suffix.equals("*"))
-            {
-                // need to fetch the child types
-                presenter.readChildrenNames(address);
-            }
+            if(path.size()%2==0)
+                presenter.readChildrenNames(toAddress(path));
+            else
+                presenter.readChildrenTypes(toAddress(path));
+
         }
+    }
+
+    public static ModelNode toAddress(List<String> path)
+    {
+
+        ModelNode address = new ModelNode();
+        address.setEmptyList();
+
+        if(path.size()<2) return address;
+
+        for(int i=1; i<path.size();i+=2)
+        {
+            if(i%2!=0 )
+                address.add(path.get(i-1), path.get(i));
+            else
+                address.add(path.get(i), "*");
+        }
+
+        return address;
+
     }
 
     @Override
@@ -91,17 +113,16 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         System.out.println("Update types "+address);
 
-        TreeItem rootItem = null;
+        HasTreeItems rootItem = null;
 
         if(address.asList().isEmpty())
         {
             tree.clear();
-            rootItem = new TreeItem("Server Config");
-            tree.addItem(rootItem);
+            rootItem = tree;
         }
         else
         {
-            rootItem = findTreeItemForAddress(tree.getItem(0), address);
+            rootItem = findTreeItem(tree, address);
         }
 
         addChildrenTypes(rootItem, modelNodes);
@@ -113,13 +134,18 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         System.out.println("Update names "+address);
 
-        TreeItem rootItem = findTreeItemForAddress(tree.getItem(0), address);
+        TreeItem rootItem = findTreeItem(tree, address);
+
+        assert rootItem!=null : "unable to find matching tree item: "+address;
 
         addChildrenNames(rootItem, modelNodes);
 
     }
 
-    private void addChildrenTypes(TreeItem rootItem, List<ModelNode> modelNodes) {
+    private void addChildrenTypes(HasTreeItems rootItem, List<ModelNode> modelNodes) {
+
+        rootItem.removeItems();
+
         for(ModelNode child : modelNodes)
         {
             TreeItem childItem = new TreeItem(child.asString());
@@ -140,60 +166,84 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
         }
     }
 
-    private TreeItem findTreeItemForAddress(TreeItem root, ModelNode address) {
+    private static TreeItem findTreeItem(Tree root, ModelNode address) {
 
-        TreeItem next = root;
-        final List<ModelNode> pathList = address.asList();
-        final Iterator<ModelNode> iterator = pathList.iterator();
-        boolean matched = false;
-
-        while(!matched && next!=null)
+        LinkedList<String> path = new LinkedList<String>();
+        for(Property prop : address.asPropertyList())
         {
-            if(!iterator.hasNext()) break;
-            next = traverse(next, iterator.next().asProperty().getName());
-        }
-
-        if(next!=null)
-            System.out.println("Tree item @ "+address+" : "+next.getText());
-
-        return next;
-    }
-
-    private static TreeItem traverse(TreeItem root, String path)
-    {
-        TreeItem match = null;
-        for(int i=0; i<root.getChildCount(); i++)
-        {
-            TreeItem child = root.getChild(i);
-            if(child.getText().equals(path))
-            {
-                match = child;
-                break;
+            path.add(prop.getName());
+            final String value = prop.getValue().asString();
+            if(!"*".equals(value)) {
+                path.add(value);
             }
         }
 
-        return match;
+        final Iterator<String> iterator = path.iterator();
+
+        TreeItem next = null;
+
+        if(iterator.hasNext())
+        {
+            final String pathName = iterator.next();
+            for(int i=0; i<root.getItemCount(); i++)
+            {
+                if(root.getItem(i).getText().equals(pathName))
+                {
+                    next = root.getItem(i);
+                    break;
+                }
+            }
+        }
+
+        if(next==null)
+            return null;
+        else if (next!=null && !iterator.hasNext())
+            return next;
+        else
+            return findTreeItem(next, iterator);
     }
 
-    public static ModelNode deriveAddress(TreeItem item)
+    private static TreeItem findTreeItem(TreeItem root, Iterator<String> iterator)
     {
-        int nestinglevel = 0;
-        LinkedList<ModelNode> address = new LinkedList<ModelNode>();
-        recurseToTop(nestinglevel, item, address);
+        TreeItem next = null;
+        if(iterator.hasNext())
+        {
+            final String pathName = iterator.next();
+            for(int i=0; i<root.getChildCount(); i++)
+            {
 
-        return new ModelNode().set(address);
+                if(root.getChild(i).getText().equals(pathName))
+                {
+                    next = root.getChild(i);
+                    break;
+                }
+            }
+        }
+
+        if(next==null)
+            return null;
+        else if (next!=null && !iterator.hasNext())
+            return next;
+        else
+            return findTreeItem(next, iterator);
+
     }
 
-    private static void recurseToTop(int nestingLevel, TreeItem item, LinkedList<ModelNode> address)
+    public static LinkedList<String> resolvePath(TreeItem item)
     {
+        LinkedList<String> address = new LinkedList<String>();
+        recurseToTop(item, address);
+
+        return address;
+    }
+
+    private static void recurseToTop(TreeItem item, LinkedList<String> address)
+    {
+        address.addFirst(item.getText());
+
         if(item.getParentItem()!=null)
         {
-            nestingLevel++;
-            if(nestingLevel%2==0)
-                address.addFirst(new ModelNode().set(item.getText(), "*"));
-            // TODO else statement
-
-            recurseToTop(nestingLevel, item.getParentItem(), address);
+            recurseToTop(item.getParentItem(), address);
         }
     }
 
