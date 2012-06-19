@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import org.jboss.as.console.client.core.BootstrapContext;
 import org.jboss.as.console.client.core.NameTokens;
 import org.jboss.as.console.client.domain.model.SimpleCallback;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
@@ -32,6 +33,8 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
     private final PlaceManager placeManager;
     private DispatchAsync dispatcher;
 
+
+
     @ProxyCodeSplit
     @NameToken(NameTokens.DMRBrowser)
     public interface MyProxy extends Proxy<BrowserPresenter>, Place {
@@ -41,6 +44,10 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
         void setPresenter(BrowserPresenter presenter);
         void updateChildrenTypes(ModelNode address, List<ModelNode> modelNodes);
         void updateChildrenNames(ModelNode address, List<ModelNode> modelNodes);
+
+        void updateResource(ModelNode address, ModelNode resource);
+
+        void updateDescription(ModelNode address, ModelNode description);
     }
 
     @Inject
@@ -111,6 +118,50 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             }
         });
 
+    }
+
+    public void readResource(final ModelNode address) {
+
+        ModelNode operation = new ModelNode();
+        operation.get(OP).set(COMPOSITE);
+        operation.get(ADDRESS).setEmptyList();
+
+
+        List<ModelNode> steps = new ArrayList<ModelNode>();
+
+        ModelNode descriptionOp  = new ModelNode();
+        descriptionOp.get(ADDRESS).set(address);
+        descriptionOp.get(OP).set(READ_RESOURCE_DESCRIPTION_OPERATION);
+        steps.add(descriptionOp);
+
+        ModelNode resourceOp  = new ModelNode();
+        resourceOp.get(ADDRESS).set(address);
+        resourceOp.get(OP).set(READ_RESOURCE_OPERATION);
+        steps.add(resourceOp);
+
+        operation.get(STEPS).set(steps);
+
+        dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
+            @Override
+            public void onSuccess(DMRResponse dmrResponse) {
+
+                final ModelNode response = dmrResponse.get();
+                List<Property> propertyList = response.get(RESULT).asPropertyList();
+
+                for(Property step : propertyList)
+                {
+                    ModelNode stepResult = step.getValue();
+                    if(step.getName().equals("step-1"))
+                    {
+                        getView().updateDescription(address, stepResult.get(RESULT).asObject());
+                    }
+                    else if(step.getName().equals("step-2"))
+                    {
+                        getView().updateResource(address, stepResult.get(RESULT).asObject());
+                    }
+                }
+            }}
+        );
     }
 
     @Override

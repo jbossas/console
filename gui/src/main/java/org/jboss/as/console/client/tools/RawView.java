@@ -47,4 +47,11 @@ public class RawView {
         type.setText(model.getValue().getType().name());
         dump.setText(model.getValue().toString());
     }
+
+    public void clearDisplay()
+       {
+           name.setText("");
+           type.setText("");
+           dump.setText("");
+       }
 }
