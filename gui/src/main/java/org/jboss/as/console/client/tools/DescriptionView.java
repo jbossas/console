@@ -90,6 +90,12 @@ public class DescriptionView {
                                 .appendEscaped(child.getName())
                                 .appendHtmlConstant("</td>");
                         builder.appendHtmlConstant("</tr>");
+
+                        builder.appendHtmlConstant("<tr>");
+                        builder.appendHtmlConstant("<td colspan=2 style='font-size:10px!important;padding-bottom:8px;border-bottom:1px solid grey'>")
+                                .appendEscaped(child.getValue().get("description").asString())
+                                .appendHtmlConstant("</td>");
+                        builder.appendHtmlConstant("</tr>");
                     }
                     builder.appendHtmlConstant("</table>");
                 }
