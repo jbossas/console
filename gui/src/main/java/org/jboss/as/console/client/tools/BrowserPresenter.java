@@ -77,6 +77,7 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
+                System.out.println(response);
                 getView().updateChildrenTypes(address, response.get(RESULT).asList());
             }
         });
@@ -90,10 +91,12 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
         int i=0;
         for(ModelNode path : addressList)
         {
-            if(i< addressList.size()-1)
+            if(i<addressList.size()-1)
                 actualAddress.add(path);
             else
                 typeDenominator = path;
+
+            i++;
         }
 
         ModelNode operation  = new ModelNode();
@@ -101,13 +104,10 @@ public class BrowserPresenter extends Presenter<BrowserPresenter.MyView, Browser
         operation.get(OP).set(READ_CHILDREN_NAMES_OPERATION);
         operation.get(CHILD_TYPE).set(typeDenominator.asProperty().getName());
 
-        System.out.println(operation);
-
         dispatcher.execute(new DMRAction(operation), new SimpleCallback<DMRResponse>() {
             @Override
             public void onSuccess(DMRResponse dmrResponse) {
                 final ModelNode response = dmrResponse.get();
-
                 System.out.println(response);
                 getView().updateChildrenNames(address, response.get(RESULT).asList());
             }
