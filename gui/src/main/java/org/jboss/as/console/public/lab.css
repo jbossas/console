@@ -125,6 +125,8 @@ a:hover, a:active { outline: none; }
 .doc-table {
     border: 1px solid grey;
     width:90%;
+    margin-left:5px;
+    margin-right:5px;
 }
 
 .doc-attribute {
