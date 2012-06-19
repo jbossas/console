@@ -182,6 +182,9 @@ public class BrowserView extends SuspendableViewImpl implements BrowserPresenter
 
         rootItem.removeItems();
 
+        if(modelNodes.isEmpty())
+            rootItem.addItem(new PlaceholderItem());
+
         for(ModelNode child : modelNodes)
         {
             TreeItem childItem = new TreeItem(child.asString());
