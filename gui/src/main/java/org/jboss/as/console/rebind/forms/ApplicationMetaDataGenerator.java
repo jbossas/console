@@ -153,11 +153,11 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("public " + className + "() { ");
         sourceWriter.indent();
         sourceWriter.println("super();");
-    /*    sourceWriter.println("String label = \"\";");
-        sourceWriter.println("Class<?> listType = null;");
-        sourceWriter.println("String subgroup = \"\";");
-        sourceWriter.println("String tabName = \"\";");
-        sourceWriter.println("String[] acceptedValues = null;"); */
+        /*    sourceWriter.println("String label = \"\";");
+    sourceWriter.println("Class<?> listType = null;");
+    sourceWriter.println("String subgroup = \"\";");
+    sourceWriter.println("String localTabName = \"\";");
+    sourceWriter.println("String[] acceptedValues = null;"); */
 
         try {
             Class<?> beanFactoryClass = getClass().getClassLoader().loadClass(BEAN_FACTORY_NAME);
@@ -168,16 +168,16 @@ public class ApplicationMetaDataGenerator extends Generator{
             {
                 Type returnType = method.getGenericReturnType();
                 if(!(returnType instanceof ParameterizedType)) continue;
-                
+
                 ParameterizedType type = (ParameterizedType) returnType;
                 Type[] typeArguments = type.getActualTypeArguments();
                 if(!(typeArguments[0] instanceof Class)) continue;
-                
+
                 Class beanTypeClass = (Class) typeArguments[0];
-                
+
                 //sourceWriter.println(beanTypeClass.getSimpleName() + "_" + idx + "();");
                 sourceWriter.println(beanTypeClass.getSimpleName() +  "();");
-                
+
                 idx++;
             }
 
@@ -285,11 +285,12 @@ public class ApplicationMetaDataGenerator extends Generator{
         String defaultValue = "";
         String label = "";
         String localLabel = "";
+        String tabName = "";
         boolean required = false;
         String formItemTypeForEdit = "TEXT_BOX";
         String formItemTypeForAdd = "TEXT_BOX";
         String subgroup = "";
-        String tabName = "common_label_attributes";
+        String localTabName = "common_label_attributes";
         int order = 100;
         String[] acceptedValues = new String[0];
 
@@ -302,14 +303,16 @@ public class ApplicationMetaDataGenerator extends Generator{
             formItemTypeForEdit = formItemDeclaration.formItemTypeForEdit();
             formItemTypeForAdd = formItemDeclaration.formItemTypeForAdd();
             subgroup = formItemDeclaration.subgroup();
+            localTabName = formItemDeclaration.localTabName();
             tabName = formItemDeclaration.tabName();
             order = formItemDeclaration.order();
             acceptedValues = formItemDeclaration.acceptedValues();
         }
 
         FormItemDeclaration decl = new FormItemDeclaration(defaultValue, label, localLabel, required,
-                                                         formItemTypeForEdit, formItemTypeForAdd,
-                                                         subgroup, tabName, order, acceptedValues);
+                formItemTypeForEdit, formItemTypeForAdd,
+                subgroup, localTabName, order, acceptedValues,
+                tabName);
         return decl;
     }
 
@@ -356,7 +359,7 @@ public class ApplicationMetaDataGenerator extends Generator{
 
     private void generateMethods(SourceWriter sourceWriter)
     {
-        
+
         sourceWriter.println("public List<PropertyBinding> getBindingsForType(Class<?> type) { ");
         sourceWriter.indent();
         sourceWriter.println("return registry.get(type);");
@@ -386,12 +389,12 @@ public class ApplicationMetaDataGenerator extends Generator{
         sourceWriter.println("return factories.get(type);");
         sourceWriter.outdent();
         sourceWriter.println("}");
-        
+
         generateMethodMethods(sourceWriter);
     }
-    
+
     private void generateMethodMethods(SourceWriter sourceWriter) {
-        
+
 
         try {
             Class<?> beanFactoryClass = getClass().getClassLoader().loadClass(BEAN_FACTORY_NAME);
@@ -400,8 +403,8 @@ public class ApplicationMetaDataGenerator extends Generator{
 
             for(Method method : beanFactoryClass.getMethods())
             {
-                
-                
+
+
                 Type returnType = method.getGenericReturnType();
                 if(returnType instanceof ParameterizedType){
                     ParameterizedType type = (ParameterizedType) returnType;
@@ -419,7 +422,7 @@ public class ApplicationMetaDataGenerator extends Generator{
                         sourceWriter.println("String tabName = \"\";");
                         sourceWriter.println("String[] acceptedValues = null;");
                         sourceWriter.println("");
-                
+
                         sourceWriter.println("registry.put("+beanTypeClass.getName()+".class, new ArrayList<PropertyBinding>());");
 
 
@@ -441,58 +444,62 @@ public class ApplicationMetaDataGenerator extends Generator{
 
                             if(bindDecl.skip()) continue;
 
+                            if (!bindDecl.listType().equals("")) {
+                                sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
+                            }
+
                             if (formDecl.localLabel().equals("")) {
                                 sourceWriter.println("label = \"" +  formDecl.label() + "\";");
                             } else {
                                 sourceWriter.println("label = Console.CONSTANTS." + formDecl.localLabel() + "();");
                             }
 
-                            if (!bindDecl.listType().equals("")) {
-                                sourceWriter.println("listType = " + bindDecl.listType() + ".class;");
-                            }
-
                             if (!"".equals(formDecl.subgroup())) {
-                                sourceWriter.println("subgroup = Console.CONSTANTS." + formDecl.subgroup() + "();");
+                                sourceWriter.println("subgroup = \"" +  formDecl.subgroup() + "\";");
                             } else {
                                 sourceWriter.println("subgroup = \"\";");
                             }
 
-                            if(!"CUSTOM".equals(formDecl.tabName()))
-                                sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.tabName() + "();");
+                            if("CUSTOM".equals(formDecl.tabName()))
+                                sourceWriter.println("tabName = \"CUSTOM\";"); // will be set programmatically
+                            else if("".equals(formDecl.localTabName()))
+                                sourceWriter.println("tabName = \"" +  formDecl.tabName() + "\";");
                             else
-                                sourceWriter.println("tabName = \"CUSTOM\";");
+                                sourceWriter.println("tabName = Console.CONSTANTS." + formDecl.localTabName() + "();");
+
+
 
                             sourceWriter.println("acceptedValues = " + makeStringArrayString(formDecl.acceptedValues()) + ";");
                             sourceWriter.println("registry.get("+beanTypeClass.getName()+".class).add(");
                             sourceWriter.indent();
                             sourceWriter.println("new PropertyBinding(\"" + bindDecl.getJavaName() + "\", \"" + bindDecl.getDetypedName() +
-                                                                      "\", \"" + bindDecl.getJavaTypeName() +
-                                                                      "\", listType, this, " + bindDecl.key()
-                                                                        + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
-                                                                      ", \"" + formDecl.defaultValue() + "\", label, " +
-                                                                      formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() +
-                                                                      "\", \"" + formDecl.formItemTypeForAdd() + "\", subgroup, tabName, " +
-                                                                      formDecl.order() + ", acceptedValues)");
+                                    "\", \"" + bindDecl.getJavaTypeName() +
+                                    "\", listType, this, " + bindDecl.key()
+                                    + ", " + bindDecl.expr() + ", " + bindDecl.writeUndefined() +
+                                    ", \"" + formDecl.defaultValue() + "\", label, " +
+                                    formDecl.required() + ", \"" + formDecl.formItemTypeForEdit() +
+                                    "\", \"" + formDecl.formItemTypeForAdd() + "\", subgroup, tabName, " +
+                                    formDecl.order() + ", acceptedValues)");
                             sourceWriter.outdent();
                             sourceWriter.println(");");
 
 
                             // create and register setters
                             sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Setter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public void invoke("+bindDecl.getBeanClassName()+" entity, Object value) {\n" +
-                                            "entity.set"+bindDecl.getPropertyName()+"(("+bindDecl.getJavaTypeName()+")value);\n"+
-                                        "}\n"+
+                                    "public void invoke("+bindDecl.getBeanClassName()+" entity, Object value) {\n" +
+                                    "entity.set"+bindDecl.getPropertyName()+"(("+bindDecl.getJavaTypeName()+")value);\n"+
+                                    "}\n"+
                                     "});\n");
 
-                             // create and register getters
+                            // create and register getters
 
                             String prefix = "get";
                             if(bindDecl.getJavaTypeName().equals("java.lang.Boolean")) prefix = "is";
 
                             sourceWriter.println("mut_"+idx+".register(\"" + bindDecl.getJavaName() + "\", new Getter<"+beanTypeClass.getName()+">() {\n" +
-                                        "public Object invoke("+bindDecl.getBeanClassName()+" entity) {\n" +
-                                            "   return entity."+prefix+bindDecl.getPropertyName()+"();\n"+
-                                        "}\n"+
+                                    "public Object invoke("+bindDecl.getBeanClassName()+" entity) {\n" +
+                                    "   return entity."+prefix+bindDecl.getPropertyName()+"();\n"+
+                                    "}\n"+
                                     "});\n");
 
                         }
@@ -512,14 +519,14 @@ public class ApplicationMetaDataGenerator extends Generator{
                         // -----------------------------
                         // Factory lookup
                         sourceWriter.println("factories.put("+beanTypeClass.getName()+".class, new EntityFactory<"+beanTypeClass.getName()+">() {\n" +
-                                        "public "+beanTypeClass.getName()+" create() {\n" +
-                                            "return beanFactory."+method.getName()+"().as();\n"+
-                                        "}\n"+
+                                "public "+beanTypeClass.getName()+" create() {\n" +
+                                "return beanFactory."+method.getName()+"().as();\n"+
+                                "}\n"+
                                 "});\n");
 
 
                         sourceWriter.println("// ---- End " +beanTypeClass.getName() +" ----");
-                        
+
                         sourceWriter.outdent();
                         sourceWriter.println("}");
                         sourceWriter.println("");

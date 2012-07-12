@@ -38,7 +38,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="TEXT_BOX",
-              tabName="subsys_infinispan_attrs",
+              localTabName ="subsys_infinispan_attrs",
               order=1)
     public String getName();
     @Override
@@ -51,7 +51,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=true,
               formItemTypeForEdit="TEXT",
               formItemTypeForAdd="COMBO_BOX",
-              tabName="subsys_infinispan_attrs",
+              localTabName ="subsys_infinispan_attrs",
               order=2)
     public String getCacheContainer();
     @Override
@@ -67,7 +67,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_attrs",
+            localTabName ="subsys_infinispan_attrs",
             order=3)
     public Boolean isDefault();
     @Override
@@ -81,7 +81,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"EAGER", "LAZY"},
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public String getStart();
     @Override
     public void setStart(String start);
@@ -93,7 +93,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public Boolean isBatching();
     @Override
     public void setBatching(Boolean isBatching);
@@ -106,7 +106,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "LOCAL", "ALL"},
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public String getIndexing();
     @Override
     public void setIndexing(String indexing);
@@ -117,7 +117,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="JNDI_NAME",
             formItemTypeForAdd="JNDI_NAME",
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public String getJndiName();
     @Override
     public void setJndiName(String jndiName);
@@ -132,7 +132,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public boolean isHasLocking();
     @Override
     public void setHasLocking(boolean hasLocking);
@@ -146,7 +146,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "READ_UNCOMMITTED", "READ_COMMITTED", "REPEATABLE_READ", "SERIALIZABLE"},
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public String getIsolation();
     @Override
     public void setIsolation(String isolation);
@@ -158,7 +158,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Boolean isStriping();
     @Override
     public void setStriping(Boolean striping);
@@ -170,7 +170,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Long getAcquireTimeout();
     @Override
     public void setAcquireTimeout(Long aquireTimeout);
@@ -182,7 +182,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Integer getConcurrencyLevel();
     @Override
     public void setConcurrencyLevel(Integer concurrencyLevel);
@@ -197,7 +197,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public boolean isHasTransaction();
     @Override
     public void setHasTransaction(boolean hasTransaction);
@@ -211,7 +211,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "NON_XA", "NON_DURABLE_XA", "FULL_XA"},
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public String getTransactionMode();
     @Override
     public void setTransactionMode(String transactionMode);
@@ -223,7 +223,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public Long getStopTimeout();
     @Override
     public void setStopTimeout(Long stopTimeout);
@@ -236,7 +236,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"OPTIMISTIC","PESSIMISTIC"},
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public String getLocking();
     @Override
     public void setLocking(String locking);
@@ -251,7 +251,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public boolean isHasEviction();
     @Override
     public void setHasEviction(boolean hasEviction);
@@ -265,7 +265,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "UNORDERED", "FIFO", "LRU", "LIRS"},
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public String getEvictionStrategy();
     @Override
     public void setEvictionStrategy(String evictionStrategy);
@@ -277,7 +277,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public Integer getMaxEntries();
     @Override
     public void setMaxEntries(Integer maxEntries);
@@ -292,7 +292,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public boolean isHasExpiration();
     @Override
     public void setHasExpiration(boolean hasExpiration);
@@ -305,7 +305,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getMaxIdle();
     @Override
     public void setMaxIdle(Long maxIdle);
@@ -317,7 +317,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getLifespan();
     @Override
     public void setLifespan(Long lifespan);
@@ -329,7 +329,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getInterval();
     @Override
     public void setInterval(Long interval);
@@ -344,7 +344,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public boolean isHasStore();
     @Override
     public void setHasStore(boolean hasStore);
@@ -358,7 +358,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2,
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public String getStoreClass();
     @Override
     public void setStoreClass(String storeClass);
@@ -370,7 +370,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreShared();
     @Override
     public void setStoreShared(Boolean isShared);
@@ -382,7 +382,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePreload();
     @Override
     public void setStorePreload(Boolean isPreload);
@@ -394,7 +394,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePassivation();
     @Override
     public void setStorePassivation(Boolean isPassivation);
@@ -406,7 +406,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreFetchState();
     @Override
     public void setStoreFetchState(Boolean isFetchState);
@@ -418,7 +418,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePurge();
     @Override
     public void setStorePurge(Boolean isPurge);
@@ -430,7 +430,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreSingleton();
     @Override
     public void setStoreSingleton(Boolean isSingleton);
@@ -443,7 +443,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="PROPERTY_EDITOR",
              formItemTypeForAdd="PROPERTY_EDITOR",
-             tabName="subsys_infinispan_store")
+             localTabName ="subsys_infinispan_store")
     List<PropertyRecord> getStoreProperties();
     @Override
     void setStoreProperties(List<PropertyRecord> properties);
@@ -458,7 +458,7 @@ public interface ReplicatedCache extends InvalidationCache {
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
              order=1,
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public boolean isHasFileStore();
      @Override
      public void setHasFileStore(boolean hasFileStore);
@@ -470,7 +470,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStoreShared();
      @Override
      public void setFileStoreShared(Boolean isShared);
@@ -482,7 +482,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStorePreload();
      @Override
      public void setFileStorePreload(Boolean isPreload);
@@ -494,7 +494,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStorePassivation();
      @Override
      public void setFileStorePassivation(Boolean isPassivation);
@@ -506,7 +506,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStoreFetchState();
      @Override
      public void setFileStoreFetchState(Boolean isFetchState);
@@ -518,7 +518,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStorePurge();
      @Override
      public void setFileStorePurge(Boolean isPurge);
@@ -530,7 +530,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
-             tabName="subsys_infinispan_file_store")
+             localTabName ="subsys_infinispan_file_store")
      public Boolean isFileStoreSingleton();
      @Override
      public void setFileStoreSingleton(Boolean isSingleton);
@@ -543,7 +543,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="PROPERTY_EDITOR",
               formItemTypeForAdd="PROPERTY_EDITOR",
-              tabName="subsys_infinispan_file_store")
+              localTabName ="subsys_infinispan_file_store")
      List<PropertyRecord> getFileStoreProperties();
      @Override
      void setFileStoreProperties(List<PropertyRecord> properties);
@@ -558,7 +558,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public boolean isHasJdbcStore();
     @Override
     public void setHasJdbcStore(boolean hasJdbcStore);
@@ -571,7 +571,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2,
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public String getJdbcStoreDatasource();
     @Override
     public void setJdbcStoreDatasource(String jdbcStoreDatasource);
@@ -583,7 +583,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreShared();
     @Override
     public void setJdbcStoreShared(Boolean isShared);
@@ -595,7 +595,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePreload();
     @Override
     public void setJdbcStorePreload(Boolean isPreload);
@@ -607,7 +607,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePassivation();
     @Override
     public void setJdbcStorePassivation(Boolean isPassivation);
@@ -619,7 +619,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreFetchState();
     @Override
     public void setJdbcStoreFetchState(Boolean isFetchState);
@@ -631,7 +631,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePurge();
     @Override
     public void setJdbcStorePurge(Boolean isPurge);
@@ -643,7 +643,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreSingleton();
     @Override
     public void setJdbcStoreSingleton(Boolean isSingleton);
@@ -656,7 +656,7 @@ public interface ReplicatedCache extends InvalidationCache {
              required=false,
              formItemTypeForEdit="PROPERTY_EDITOR",
              formItemTypeForAdd="PROPERTY_EDITOR",
-             tabName="subsys_infinispan_jdbc_store")
+             localTabName ="subsys_infinispan_jdbc_store")
     List<PropertyRecord> getJdbcStoreProperties();
     @Override
     void setJdbcStoreProperties(List<PropertyRecord> properties);
@@ -671,7 +671,7 @@ public interface ReplicatedCache extends InvalidationCache {
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
               order=1,
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public boolean isHasRemoteStore();
       @Override
       public void setHasRemoteStore(boolean hasFileStore);
@@ -683,7 +683,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStoreShared();
       @Override
       public void setRemoteStoreShared(Boolean isShared);
@@ -695,7 +695,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStorePreload();
       @Override
       public void setRemoteStorePreload(Boolean isPreload);
@@ -707,7 +707,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStorePassivation();
       @Override
       public void setRemoteStorePassivation(Boolean isPassivation);
@@ -719,7 +719,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStoreFetchState();
       @Override
       public void setRemoteStoreFetchState(Boolean isFetchState);
@@ -731,7 +731,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStorePurge();
       @Override
       public void setRemoteStorePurge(Boolean isPurge);
@@ -743,7 +743,7 @@ public interface ReplicatedCache extends InvalidationCache {
               required=false,
               formItemTypeForEdit="CHECK_BOX",
               formItemTypeForAdd="CHECK_BOX",
-              tabName="subsys_infinispan_remote_store")
+              localTabName ="subsys_infinispan_remote_store")
       public Boolean isRemoteStoreSingleton();
       @Override
       public void setRemoteStoreSingleton(Boolean isSingleton);
@@ -756,7 +756,7 @@ public interface ReplicatedCache extends InvalidationCache {
                required=false,
                formItemTypeForEdit="PROPERTY_EDITOR",
                formItemTypeForAdd="PROPERTY_EDITOR",
-               tabName="subsys_infinispan_remote_store")
+               localTabName ="subsys_infinispan_remote_store")
       List<PropertyRecord> getRemoteStoreProperties();
       @Override
       void setRemoteStoreProperties(List<PropertyRecord> properties);
@@ -770,7 +770,7 @@ public interface ReplicatedCache extends InvalidationCache {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"SYNC", "ASYNC"},
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public String getClusteredCacheMode();
     @Override
     public void setClusteredCacheMode(String clusteredCacheMode);
@@ -782,7 +782,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public Integer getQueueSize();
     @Override
     public void setQueueSize(Integer queueSize);
@@ -794,7 +794,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public Long getQueueFlushInterval();
     @Override
     public void setQueueFlushInterval(Long queueFlushInterval);
@@ -806,7 +806,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_attrs")
+            localTabName ="subsys_infinispan_attrs")
     public Long getRemoteTimeout();
     @Override
     public void setRemoteTimeout(Long remoteTimeout);
@@ -821,7 +821,7 @@ public interface ReplicatedCache extends InvalidationCache {
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
              order=1,
-             tabName="subsys_infinispan_stateTransfer")
+             localTabName ="subsys_infinispan_stateTransfer")
     public boolean isHasStateTransfer();
     public void setHasStateTransfer(boolean hasStateTranfer);
 
@@ -832,7 +832,7 @@ public interface ReplicatedCache extends InvalidationCache {
              formItemTypeForEdit="CHECK_BOX",
              formItemTypeForAdd="CHECK_BOX",
              order=2,
-             tabName="subsys_infinispan_stateTransfer")
+             localTabName ="subsys_infinispan_stateTransfer")
     public Boolean isStateTransferEnabled();
     public void setStateTransferEnabled(Boolean isStateTransferEnabled);
 
@@ -842,7 +842,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_stateTransfer")
+            localTabName ="subsys_infinispan_stateTransfer")
     public Long getStateTransferTimeout();
     public void setStateTransferTimeout(Long stateTransferTimeout);
 
@@ -852,7 +852,7 @@ public interface ReplicatedCache extends InvalidationCache {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_stateTransfer")
+            localTabName ="subsys_infinispan_stateTransfer")
     public Integer getStateTransferChunkSize();
     public void setStateTransferChunkSize(Integer stateTransferChunkSize);
 }

@@ -104,7 +104,7 @@ public interface CacheContainer extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_transport")
+            localTabName ="subsys_infinispan_transport")
     public boolean isHasTransport();
     public void setHasTransport(boolean hasTransport);
 
@@ -115,7 +115,7 @@ public interface CacheContainer extends NamedEntity {
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2,
-            tabName="subsys_infinispan_transport")
+            localTabName ="subsys_infinispan_transport")
     String getStack();
     void setStack(String stack);
 
@@ -124,7 +124,7 @@ public interface CacheContainer extends NamedEntity {
             required=false,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
-            tabName="subsys_infinispan_transport")
+            localTabName ="subsys_infinispan_transport")
     String getExecutor();
     void setExecutor(String executor);
 
@@ -134,7 +134,7 @@ public interface CacheContainer extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_transport")
+            localTabName ="subsys_infinispan_transport")
     Long getLockTimeout();
     void setLockTimeout(Long lockTimeout);
 
@@ -143,7 +143,7 @@ public interface CacheContainer extends NamedEntity {
             required=false,
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
-            tabName="subsys_infinispan_transport")
+            localTabName ="subsys_infinispan_transport")
     String getCluster();
     void setCluster(String cluster);
 
@@ -154,7 +154,7 @@ public interface CacheContainer extends NamedEntity {
              required=false,
              formItemTypeForEdit="UNLIMITED_STRING_LIST_EDITOR",
              formItemTypeForAdd="UNLIMITED_STRING_LIST_EDITOR",
-             tabName="CUSTOM")
+             tabName ="CUSTOM")
     public List<String> getAliases();
     public void setAliases(List<String> aliases);
 }

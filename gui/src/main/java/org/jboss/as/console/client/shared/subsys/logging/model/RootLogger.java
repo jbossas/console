@@ -65,7 +65,7 @@ public interface RootLogger extends NamedEntity, HasHandlers {
              required=false,
              formItemTypeForEdit="STRING_LIST_EDITOR",
              formItemTypeForAdd="STRING_LIST_EDITOR",
-             tabName="CUSTOM")
+             tabName ="CUSTOM")
     public List<String> getHandlers();
     @Override
     public void setHandlers(List<String> handlers);

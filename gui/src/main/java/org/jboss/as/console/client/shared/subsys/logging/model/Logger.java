@@ -73,7 +73,7 @@ public interface Logger extends NamedEntity, HasHandlers {
              required=false,
              formItemTypeForEdit="STRING_LIST_EDITOR",
              formItemTypeForAdd="STRING_LIST_EDITOR",
-             tabName="CUSTOM")
+             tabName ="CUSTOM")
     public List<String> getHandlers();
     public void setHandlers(List<String> handlers);
 }

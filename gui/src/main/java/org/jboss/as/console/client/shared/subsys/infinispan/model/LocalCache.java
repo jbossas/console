@@ -112,7 +112,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public boolean isHasLocking();
     public void setHasLocking(boolean hasLocking);
 
@@ -124,7 +124,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "READ_UNCOMMITTED", "READ_COMMITTED", "REPEATABLE_READ", "SERIALIZABLE"},
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public String getIsolation();
     public void setIsolation(String isolation);
 
@@ -134,7 +134,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Boolean isStriping();
     public void setStriping(Boolean striping);
 
@@ -144,7 +144,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Long getAcquireTimeout();
     public void setAcquireTimeout(Long aquireTimeout);
 
@@ -154,7 +154,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_locking")
+            localTabName ="subsys_infinispan_locking")
     public Integer getConcurrencyLevel();
     public void setConcurrencyLevel(Integer concurrencyLevel);
 
@@ -167,7 +167,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public boolean isHasTransaction();
     public void setHasTransaction(boolean hasTransaction);
 
@@ -179,7 +179,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "NON_XA", "NON_DURABLE_XA", "FULL_XA"},
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public String getTransactionMode();
     public void setTransactionMode(String transactionMode);
 
@@ -189,7 +189,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public Long getStopTimeout();
     public void setStopTimeout(Long stopTimeout);
 
@@ -200,7 +200,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"OPTIMISTIC","PESSIMISTIC"},
-            tabName="subsys_infinispan_transaction")
+            localTabName ="subsys_infinispan_transaction")
     public String getLocking();
     public void setLocking(String locking);
 
@@ -213,7 +213,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public boolean isHasEviction();
     public void setHasEviction(boolean hasEviction);
 
@@ -225,7 +225,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="COMBO_BOX",
             formItemTypeForAdd="COMBO_BOX",
             acceptedValues={"NONE", "UNORDERED", "FIFO", "LRU", "LIRS"},
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public String getEvictionStrategy();
     public void setEvictionStrategy(String evictionStrategy);
 
@@ -235,7 +235,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX",
             formItemTypeForAdd="NUMBER_BOX",
-            tabName="subsys_infinispan_eviction")
+            localTabName ="subsys_infinispan_eviction")
     public Integer getMaxEntries();
     public void setMaxEntries(Integer maxEntries);
 
@@ -249,7 +249,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public boolean isHasExpiration();
     public void setHasExpiration(boolean hasExpiration);
 
@@ -260,7 +260,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getMaxIdle();
     public void setMaxIdle(Long maxIdle);
 
@@ -270,7 +270,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getLifespan();
     public void setLifespan(Long lifespan);
 
@@ -280,7 +280,7 @@ public interface LocalCache extends NamedEntity {
             required=true,
             formItemTypeForEdit="NUMBER_BOX_ALLOW_NEGATIVE",
             formItemTypeForAdd="NUMBER_BOX_ALLOW_NEGATIVE",
-            tabName="subsys_infinispan_expiration")
+            localTabName ="subsys_infinispan_expiration")
     public Long getInterval();
     public void setInterval(Long interval);
 
@@ -293,7 +293,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public boolean isHasStore();
     public void setHasStore(boolean hasStore);
 
@@ -304,7 +304,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2,
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public String getStoreClass();
     public void setStoreClass(String storeClass);
 
@@ -314,7 +314,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreShared();
     public void setStoreShared(Boolean isShared);
 
@@ -324,7 +324,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePreload();
     public void setStorePreload(Boolean isPreload);
 
@@ -334,7 +334,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePassivation();
     public void setStorePassivation(Boolean isPassivation);
 
@@ -344,7 +344,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreFetchState();
     public void setStoreFetchState(Boolean isFetchState);
 
@@ -354,7 +354,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStorePurge();
     public void setStorePurge(Boolean isPurge);
 
@@ -364,7 +364,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
     public Boolean isStoreSingleton();
     public void setStoreSingleton(Boolean isSingleton);
 
@@ -375,7 +375,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="subsys_infinispan_store")
+            localTabName ="subsys_infinispan_store")
    List<PropertyRecord> getStoreProperties();
    void setStoreProperties(List<PropertyRecord> properties);
 
@@ -388,7 +388,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public boolean isHasFileStore();
     public void setHasFileStore(boolean hasFileStore);
 
@@ -398,7 +398,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStoreShared();
     public void setFileStoreShared(Boolean isShared);
 
@@ -408,7 +408,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStorePreload();
     public void setFileStorePreload(Boolean isPreload);
 
@@ -418,7 +418,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStorePassivation();
     public void setFileStorePassivation(Boolean isPassivation);
 
@@ -428,7 +428,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStoreFetchState();
     public void setFileStoreFetchState(Boolean isFetchState);
 
@@ -438,7 +438,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStorePurge();
     public void setFileStorePurge(Boolean isPurge);
 
@@ -448,7 +448,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
     public Boolean isFileStoreSingleton();
     public void setFileStoreSingleton(Boolean isSingleton);
 
@@ -459,7 +459,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="subsys_infinispan_file_store")
+            localTabName ="subsys_infinispan_file_store")
    List<PropertyRecord> getFileStoreProperties();
    void setFileStoreProperties(List<PropertyRecord> properties);
 
@@ -472,7 +472,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public boolean isHasJdbcStore();
     public void setHasJdbcStore(boolean hasJdbcStore);
 
@@ -483,7 +483,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="TEXT_BOX",
             formItemTypeForAdd="TEXT_BOX",
             order=2,
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public String getJdbcStoreDatasource();
     public void setJdbcStoreDatasource(String jdbcStoreDatasource);
 
@@ -493,7 +493,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreShared();
     public void setJdbcStoreShared(Boolean isShared);
 
@@ -503,7 +503,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePreload();
     public void setJdbcStorePreload(Boolean isPreload);
 
@@ -513,7 +513,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePassivation();
     public void setJdbcStorePassivation(Boolean isPassivation);
 
@@ -523,7 +523,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreFetchState();
     public void setJdbcStoreFetchState(Boolean isFetchState);
 
@@ -533,7 +533,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStorePurge();
     public void setJdbcStorePurge(Boolean isPurge);
 
@@ -543,7 +543,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
     public Boolean isJdbcStoreSingleton();
     public void setJdbcStoreSingleton(Boolean isSingleton);
 
@@ -554,7 +554,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="subsys_infinispan_jdbc_store")
+            localTabName ="subsys_infinispan_jdbc_store")
    List<PropertyRecord> getJdbcStoreProperties();
    void setJdbcStoreProperties(List<PropertyRecord> properties);
 
@@ -567,7 +567,7 @@ public interface LocalCache extends NamedEntity {
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
             order=1,
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public boolean isHasRemoteStore();
     public void setHasRemoteStore(boolean hasFileStore);
 
@@ -577,7 +577,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStoreShared();
     public void setRemoteStoreShared(Boolean isShared);
 
@@ -587,7 +587,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStorePreload();
     public void setRemoteStorePreload(Boolean isPreload);
 
@@ -597,7 +597,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStorePassivation();
     public void setRemoteStorePassivation(Boolean isPassivation);
 
@@ -607,7 +607,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStoreFetchState();
     public void setRemoteStoreFetchState(Boolean isFetchState);
 
@@ -617,7 +617,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStorePurge();
     public void setRemoteStorePurge(Boolean isPurge);
 
@@ -627,7 +627,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="CHECK_BOX",
             formItemTypeForAdd="CHECK_BOX",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
     public Boolean isRemoteStoreSingleton();
     public void setRemoteStoreSingleton(Boolean isSingleton);
 
@@ -638,7 +638,7 @@ public interface LocalCache extends NamedEntity {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="subsys_infinispan_remote_store")
+            localTabName ="subsys_infinispan_remote_store")
    List<PropertyRecord> getRemoteStoreProperties();
    void setRemoteStoreProperties(List<PropertyRecord> properties);
 }

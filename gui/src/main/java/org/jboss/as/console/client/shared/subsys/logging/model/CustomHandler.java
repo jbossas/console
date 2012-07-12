@@ -108,7 +108,7 @@ public interface CustomHandler extends NamedEntity, HasLevel, HasProperties {
             required=false,
             formItemTypeForEdit="PROPERTY_EDITOR",
             formItemTypeForAdd="PROPERTY_EDITOR",
-            tabName="CUSTOM")
+            tabName ="CUSTOM")
    List<PropertyRecord> getProperties();
    void setProperties(List<PropertyRecord> properties);
 }
